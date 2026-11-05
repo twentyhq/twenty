@@ -1443,7 +1443,8 @@ describe('useFrontComponentExecutionContext', () => {
         );
       const nonBlobResult =
         await result.current.frontComponentHostCommunicationApi.uploadFile(
-          'not-a-blob' as unknown as Blob,
+          // @ts-expect-error front components can be written in plain JavaScript
+          'not-a-blob',
           { fieldMetadataId: 'files-field-id' },
         );
 

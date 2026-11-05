@@ -94,7 +94,8 @@ describe('getOrderByForRelationField', () => {
       EnrichedObjectMetadataItem,
       'fields' | 'labelIdentifierFieldMetadataId'
     > = {
-      labelIdentifierFieldMetadataId: undefined as unknown as string,
+      // @ts-expect-error the server schema leaves this field nullable
+      labelIdentifierFieldMetadataId: undefined,
       fields: [
         {
           id: 'name-field-id',

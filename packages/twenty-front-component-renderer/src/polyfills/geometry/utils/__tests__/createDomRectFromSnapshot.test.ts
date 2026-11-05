@@ -33,11 +33,9 @@ describe('createDomRectFromSnapshot', () => {
   });
 
   it('should expose the native toJSON shape when DOMRect is unavailable', () => {
-    const globalWithDomRect = globalThis as unknown as {
-      DOMRect: typeof DOMRect | undefined;
-    };
-    const originalDomRect = globalWithDomRect.DOMRect;
-    globalWithDomRect.DOMRect = undefined;
+    const originalDomRect = globalThis.DOMRect;
+    // @ts-expect-error the worker scope can lack DOMRect
+    globalThis.DOMRect = undefined;
 
     try {
       const rect = createDomRectFromSnapshot({
@@ -58,7 +56,7 @@ describe('createDomRectFromSnapshot', () => {
         bottom: 60,
       });
     } finally {
-      globalWithDomRect.DOMRect = originalDomRect;
+      globalThis.DOMRect = originalDomRect;
     }
   });
 });

@@ -5,6 +5,7 @@ import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutatio
 import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 type WorkerMutationObserverConstructor = new (
   callback: WorkerMutationObserverCallback,
@@ -14,16 +15,17 @@ const createSandbox = (installHooks?: (hooks: Partial<Hooks>) => void) => {
   const polyfillWindow = new Window();
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-  installHooks?.(
-    (polyfillWindow as unknown as Record<symbol, Partial<Hooks>>)[HOOKS],
-  );
+  installHooks?.(polyfillWindow[HOOKS]);
 
   installMutationObserver({ globalScope });
 
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const document: Document = polyfillWindow.document;
+
   return {
     globalScope,
-    polyfillWindow: polyfillWindow as unknown as Record<string, unknown>,
-    document: polyfillWindow.document as unknown as Document,
+    polyfillWindow: toGlobalScopeRecord(polyfillWindow),
+    document,
     MutationObserver:
       globalScope.MutationObserver as WorkerMutationObserverConstructor,
   };
@@ -647,7 +649,8 @@ describe('installMutationObserver', () => {
 
     expect(
       () =>
-        new MutationObserver(123 as unknown as WorkerMutationObserverCallback),
+        // @ts-expect-error front components are authored in plain JS and can pass anything
+        new MutationObserver(123),
     ).toThrow(TypeError);
   });
 

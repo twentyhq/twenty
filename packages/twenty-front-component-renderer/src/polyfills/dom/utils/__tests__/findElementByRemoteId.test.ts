@@ -4,7 +4,8 @@ import { Window } from '@remote-dom/polyfill';
 import { findElementByRemoteId } from '../findElementByRemoteId';
 
 const createPolyfillDocument = (): Document =>
-  new Window().document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  new Window().document;
 
 describe('findElementByRemoteId', () => {
   it('should find the element carrying the remote id under the root', () => {

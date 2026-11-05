@@ -3,7 +3,10 @@ import { isAbsoluteUrl } from 'twenty-shared/utils';
 import { type ApplicationConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 
 export const normalizeApplicationAssets = (
-  application: ApplicationConfig,
+  application: Pick<
+    ApplicationConfig,
+    'logo' | 'logoUrl' | 'galleryImages' | 'screenshots'
+  >,
 ): {
   logo?: string;
   galleryImages: string[];

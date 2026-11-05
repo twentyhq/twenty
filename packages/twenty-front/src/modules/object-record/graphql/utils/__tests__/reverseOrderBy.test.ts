@@ -41,9 +41,10 @@ describe('reverseOrderBy', () => {
   });
 
   it('should leave unknown values untouched', () => {
-    const orderBy = [
+    const orderBy: RecordGqlOperationOrderBy = [
+      // @ts-expect-error order-by values are not validated at runtime
       { name: 'Unknown' },
-    ] as unknown as RecordGqlOperationOrderBy;
+    ];
 
     expect(reverseOrderBy(orderBy)).toEqual([{ name: 'Unknown' }]);
   });

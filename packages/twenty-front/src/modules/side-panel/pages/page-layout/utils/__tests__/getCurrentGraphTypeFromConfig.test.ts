@@ -53,8 +53,9 @@ describe('getCurrentGraphTypeFromConfig', () => {
   it('throws for unknown configuration type', () => {
     const unknownConfig = {
       __typename: 'UnknownConfiguration',
-    } as unknown as ChartConfiguration;
+    };
 
+    // @ts-expect-error a newer server can send a configuration this client does not know
     expect(() => getCurrentGraphTypeFromConfig(unknownConfig)).toThrow(
       'Unknown chart configuration type',
     );

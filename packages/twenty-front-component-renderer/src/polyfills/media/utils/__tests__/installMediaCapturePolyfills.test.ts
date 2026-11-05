@@ -80,7 +80,7 @@ const installOnFreshScope = (transport: MediaSessionHostFunctions) => {
   const globalScope: Record<string, unknown> = {};
   installMediaCapturePolyfills({ globalScope, bridge });
 
-  return { bridge, mediaGlobals: globalScope as unknown as MediaGlobals };
+  return { bridge, mediaGlobals: globalScope as MediaGlobals };
 };
 
 const createMediaRecorder = async () => {
@@ -321,9 +321,8 @@ describe('installMediaCapturePolyfills', () => {
 
     expect(
       () =>
-        new mediaGlobals.MediaRecorder({
-          id: 'not-a-stream',
-        } as unknown as MediaStreamLike),
+        // @ts-expect-error plain JS callers can pass a foreign value
+        new mediaGlobals.MediaRecorder({ id: 'not-a-stream' }),
     ).toThrow(TypeError);
 
     const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({

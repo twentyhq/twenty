@@ -160,7 +160,8 @@ describe('normalizeTableData', () => {
       {
         index: 0,
         header: 'Unrecognized',
-        type: 'Unknown' as unknown as SpreadsheetColumnType.matched,
+        // @ts-expect-error the fallback branch only runs on a type outside the union
+        type: 'Unknown',
         value: '',
       },
     ];

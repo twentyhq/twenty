@@ -26,8 +26,11 @@ const createSelectorFixture = (): SelectorFixture => {
       activeElementStore.getFocusVisibleElement(),
   });
 
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const document: Document = polyfillWindow.document;
+
   return {
-    document: polyfillWindow.document as unknown as Document,
+    document,
     setActiveElement: activeElementStore.setActiveElement,
   };
 };
@@ -738,8 +741,7 @@ describe('installSelectorMethodsPolyfill', () => {
     it('should derive the checked option from the select value or its first enabled option', () => {
       const { document } = createSelectorFixture();
       const createSelect = (optionValues: string[]) => {
-        const select = document.createElement('select') as unknown as Element &
-          Record<string, unknown>;
+        const select = document.createElement('select');
         const options = optionValues.map((optionValue) => {
           const option = document.createElement('option');
 

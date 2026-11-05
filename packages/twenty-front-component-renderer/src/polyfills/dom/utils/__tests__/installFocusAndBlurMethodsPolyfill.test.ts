@@ -30,7 +30,8 @@ const createPolyfillDocument = (): Document => {
     activeElementStore,
   });
 
-  return polyfillWindow.document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  return polyfillWindow.document;
 };
 
 describe('installFocusAndBlurMethodsPolyfill', () => {
@@ -136,7 +137,8 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     const activeElementStore = createWorkerActiveElementStore();
     const focusTransport = createWorkerFocusTransport();
     const connection = { mutate: jest.fn(), call: jest.fn() };
-    const document = polyfillWindow.document as unknown as Document;
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    const document: Document = polyfillWindow.document;
     const container = document.createElement('div');
     const button = document.createElement('button');
     const removeChild = jest.fn(({ node }: { node: Node }) =>
@@ -144,7 +146,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     );
 
     polyfillWindow[HOOKS].removeChild = (_parent, node) =>
-      removeChild({ node: node as unknown as Node });
+      removeChild({ node });
     installActiveElementDetachmentHook({
       hooks: polyfillWindow[HOOKS],
       activeElementStore,
@@ -300,7 +302,8 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
         activeElementStore.getFocusVisibleElement(),
     });
 
-    const document = polyfillWindow.document as unknown as Document;
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    const document: Document = polyfillWindow.document;
     const container = document.createElement('div');
     const button = document.createElement('button');
 

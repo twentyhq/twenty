@@ -10,7 +10,8 @@ const createOwnedPressFixture = () => {
   installEventConstructorPolyfills({
     globalScope: toGlobalScopeRecord(polyfillWindow),
   });
-  const documentTarget = polyfillWindow.document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const documentTarget: Document = polyfillWindow.document;
   const connection = { mutate: jest.fn(), call: jest.fn() };
   const backdrop = documentTarget.createElement('div');
 

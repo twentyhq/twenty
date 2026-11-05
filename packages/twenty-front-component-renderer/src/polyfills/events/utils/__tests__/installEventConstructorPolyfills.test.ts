@@ -18,11 +18,14 @@ const createInstalledScope = () => {
 
   installEventConstructorPolyfills({ globalScope });
 
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const document: Document = polyfillWindow.document;
+
   return {
     globalScope,
     polyfillWindow,
     polyfillWindowRecord: toGlobalScopeRecord(polyfillWindow),
-    document: polyfillWindow.document as unknown as Document,
+    document,
   };
 };
 

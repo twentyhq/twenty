@@ -3,7 +3,8 @@ import { Window } from '@remote-dom/polyfill';
 import { createWorkerTextTreeWalker } from '../createWorkerTextTreeWalker';
 
 const createPolyfillDocument = (): Document =>
-  new Window().document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  new Window().document;
 
 describe('createWorkerTextTreeWalker', () => {
   it('should traverse nested text in DOM order without leaving the root', () => {

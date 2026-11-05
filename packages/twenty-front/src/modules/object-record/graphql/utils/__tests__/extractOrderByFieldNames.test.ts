@@ -31,9 +31,10 @@ describe('extractOrderByFieldNames', () => {
   });
 
   it('should ignore nested values that are not directions', () => {
-    const orderBy = [
+    const orderBy: RecordGqlOperationOrderBy = [
+      // @ts-expect-error order-by values are not validated at runtime
       { name: { firstName: 'AscNullsFirst', meta: 'Unknown' } },
-    ] as unknown as RecordGqlOperationOrderBy;
+    ];
 
     expect(extractOrderByFieldNames(orderBy)).toEqual({
       id: true,

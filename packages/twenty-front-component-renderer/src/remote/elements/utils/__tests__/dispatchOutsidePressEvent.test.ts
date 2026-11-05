@@ -11,7 +11,8 @@ describe('dispatchOutsidePressEvent', () => {
     installEventConstructorPolyfills({
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
-    const documentTarget = polyfillWindow.document as unknown as Document;
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    const documentTarget: Document = polyfillWindow.document;
     const popup = documentTarget.createElement('div');
     documentTarget.body.append(popup);
     const popupListener = jest.fn();
@@ -69,7 +70,8 @@ describe('dispatchOutsidePressEvent', () => {
     installEventConstructorPolyfills({
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
-    const documentTarget = polyfillWindow.document as unknown as Document;
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    const documentTarget: Document = polyfillWindow.document;
     const receivedPresses: { event: Event; windowEvent: Event | undefined }[] =
       [];
 

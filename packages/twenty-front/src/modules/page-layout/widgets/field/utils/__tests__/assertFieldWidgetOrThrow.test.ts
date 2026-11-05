@@ -27,8 +27,9 @@ describe('assertFieldWidgetOrThrow', () => {
       id: 'w1',
       type: WidgetType.FIELD,
       configuration: undefined,
-    } as unknown as PageLayoutWidget;
+    };
 
+    // @ts-expect-error the server decides what a widget configuration holds
     expect(() => assertFieldWidgetOrThrow(widget)).toThrow(
       'Widget configuration is required',
     );
@@ -41,8 +42,9 @@ describe('assertFieldWidgetOrThrow', () => {
       configuration: {
         __typename: 'WidgetConfiguration',
       },
-    } as unknown as PageLayoutWidget;
+    };
 
+    // @ts-expect-error the server decides what a widget configuration holds
     expect(() => assertFieldWidgetOrThrow(widget)).toThrow(
       'Expected FieldConfiguration but got WidgetConfiguration',
     );
@@ -55,8 +57,9 @@ describe('assertFieldWidgetOrThrow', () => {
       configuration: {
         __typename: '',
       },
-    } as unknown as PageLayoutWidget;
+    };
 
+    // @ts-expect-error the server decides what a widget configuration holds
     expect(() => assertFieldWidgetOrThrow(widget)).toThrow();
   });
 });

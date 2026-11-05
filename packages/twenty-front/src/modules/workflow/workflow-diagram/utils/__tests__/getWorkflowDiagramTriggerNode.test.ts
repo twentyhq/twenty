@@ -233,8 +233,9 @@ describe('getWorkflowDiagramTriggerNode', () => {
       const trigger = {
         type: 'UNSUPPORTED_TYPE',
         settings: {},
-      } as unknown as WorkflowTrigger;
+      };
 
+      // @ts-expect-error workflow versions are stored as JSON
       expect(() => getWorkflowDiagramTriggerNode({ trigger })).toThrow(
         'Expected the trigger "{"type":"UNSUPPORTED_TYPE","settings":{}}" to be supported.',
       );

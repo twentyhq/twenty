@@ -142,9 +142,10 @@ describe('evaluateWidgetVisibility', () => {
   });
 
   it('should throw error for invalid operator', () => {
-    const invalidConditionalDisplay = {
+    const invalidConditionalDisplay: RulesLogic = {
+      // @ts-expect-error conditional display rules are stored as JSON
       invalidOperator: 'test',
-    } as unknown as RulesLogic;
+    };
 
     expect(() => {
       evaluateWidgetVisibility({

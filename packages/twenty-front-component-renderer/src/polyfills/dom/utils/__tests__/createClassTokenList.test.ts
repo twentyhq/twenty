@@ -373,9 +373,8 @@ describe('createClassTokenList', () => {
       const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
 
-      expect(classTokenList.toggle('open', null as unknown as undefined)).toBe(
-        false,
-      );
+      // @ts-expect-error the DOM converts a null force coming from plain JS callers
+      expect(classTokenList.toggle('open', null)).toBe(false);
       expect(element.getAttribute('class')).toBeNull();
     });
 
@@ -440,9 +439,7 @@ describe('createClassTokenList', () => {
 
       const outOfRangeKey = String(2 ** 32);
 
-      expect(
-        (classTokenList as unknown as Record<string, unknown>)[outOfRangeKey],
-      ).toBeUndefined();
+      expect(Reflect.get(classTokenList, outOfRangeKey)).toBeUndefined();
       expect(outOfRangeKey in classTokenList).toBe(false);
     });
 
@@ -451,7 +448,8 @@ describe('createClassTokenList', () => {
       const classTokenList = createClassTokenList(element);
 
       expect(() => {
-        (classTokenList as unknown as Record<number, string>)[5] = 'expando';
+        // @ts-expect-error plain JS callers can write an index despite it being readonly
+        classTokenList[5] = 'expando';
       }).toThrow(TypeError);
 
       element.setAttribute('class', 'a b c d e f');

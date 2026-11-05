@@ -11,7 +11,8 @@ const createSandboxDocument = (polyfillWindow = new Window()): Document => {
     remoteElementPrototypes: [],
   });
 
-  return polyfillWindow.document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  return polyfillWindow.document;
 };
 
 describe('installClassAttributeAccessors', () => {
@@ -65,13 +66,8 @@ describe('installClassAttributeAccessors', () => {
       const polyfillWindow = new Window();
       createSandboxDocument(polyfillWindow);
 
-      expect(
-        () =>
-          (
-            polyfillWindow.Element.prototype as unknown as {
-              className: unknown;
-            }
-          ).className,
+      expect(() =>
+        Reflect.get(polyfillWindow.Element.prototype, 'className'),
       ).toThrow(TypeError);
     });
   });
@@ -91,13 +87,8 @@ describe('installClassAttributeAccessors', () => {
       const polyfillWindow = new Window();
       createSandboxDocument(polyfillWindow);
 
-      expect(
-        () =>
-          (
-            polyfillWindow.Element.prototype as unknown as {
-              classList: unknown;
-            }
-          ).classList,
+      expect(() =>
+        Reflect.get(polyfillWindow.Element.prototype, 'classList'),
       ).toThrow(TypeError);
     });
 

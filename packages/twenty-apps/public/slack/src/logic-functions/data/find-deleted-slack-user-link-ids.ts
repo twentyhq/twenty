@@ -7,7 +7,7 @@ const LINKS_PER_PAGE = 200;
 const MAX_PAGES_PER_QUERY = 5;
 
 export const findDeletedSlackUserLinkIds = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   {
     slackTeamId,
     slackUserIds,

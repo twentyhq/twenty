@@ -29,8 +29,8 @@ describe('definePageLayoutWidget', () => {
     const result = definePageLayoutWidget({
       ...WIDGET_CONFIG,
       pageLayoutTabUniversalIdentifier: '',
-      position:
-        undefined as unknown as StandalonePageLayoutWidgetManifest['position'],
+      // @ts-expect-error apps authored in plain JS can omit it
+      position: undefined,
     });
 
     expect(result.success).toBe(false);

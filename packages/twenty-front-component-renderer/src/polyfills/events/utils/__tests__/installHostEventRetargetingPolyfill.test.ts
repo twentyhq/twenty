@@ -7,15 +7,16 @@ import { installHostEventRetargetingPolyfill } from '../installHostEventRetarget
 const createNestedButton = () => {
   const polyfillWindow = new Window();
 
-  installHostEventRetargetingPolyfill(
-    polyfillWindow.Element.prototype as unknown as EventTarget,
-  );
+  // @ts-expect-error remote-dom's Element only implements part of the DOM Element
+  installHostEventRetargetingPolyfill(polyfillWindow.Element.prototype);
 
-  const document = polyfillWindow.document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const document: Document = polyfillWindow.document;
   const container = document.createElement('div');
   const button = document.createElement('button');
   const createEvent = (type: string, eventInit?: EventInit): Event =>
-    new polyfillWindow.Event(type, eventInit) as unknown as Event;
+    // @ts-expect-error remote-dom's Event only implements part of the DOM Event
+    new polyfillWindow.Event(type, eventInit);
 
   container.append(button);
   document.body.append(container);

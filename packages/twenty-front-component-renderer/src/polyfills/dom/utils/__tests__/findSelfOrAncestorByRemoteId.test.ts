@@ -4,7 +4,8 @@ import { Window } from '@remote-dom/polyfill';
 import { findSelfOrAncestorByRemoteId } from '@/polyfills/dom/utils/findSelfOrAncestorByRemoteId';
 
 const createRemoteTree = () => {
-  const document = new Window().document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  const document: Document = new Window().document;
   const rootElement = document.createElement('div');
   const scrollContainer = document.createElement('div');
   const listItem = document.createElement('div');

@@ -23,38 +23,62 @@ const createMockPoint = ({
   const fallbackValue = dataY ?? pointY ?? 0;
   return {
     id: `${seriesId}-${dataX}`,
+    indexInSeries: 0,
+    absIndex: 0,
+    seriesIndex: 0,
     seriesId,
-    x: dataX,
+    seriesColor: '#color',
+    color: '#color',
+    borderColor: '#color',
+    x: 0,
     y: pointY ?? Number(dataY ?? 0),
     data: {
       x: dataX,
+      // @ts-expect-error nivo hands a series gap over as a null or missing y
       y: dataY,
       xFormatted: String(dataX),
       yFormatted: String(fallbackValue),
     },
-  } as unknown as Point<LineSeries>;
+  };
 };
 
 const createMockSlice = (
   points: Point<LineSeries>[],
-): SliceTooltipProps<LineSeries>['slice'] =>
-  ({
-    id: 'slice-1',
-    points,
-  }) as unknown as SliceTooltipProps<LineSeries>['slice'];
+): SliceTooltipProps<LineSeries>['slice'] => ({
+  id: 'slice-1',
+  x0: 0,
+  x: 0,
+  y0: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  points,
+});
 
-const createSeries = (key: string): LineChartEnrichedSeries =>
-  ({
-    key,
-    label: key,
-    data: [],
-    colorScheme: {
-      name: 'test',
-      solid: '#solid',
-      variations: Array(12).fill('#v0'),
-    },
-    areaFillId: `area-${key}`,
-  }) as unknown as LineChartEnrichedSeries;
+const createSeries = (key: string): LineChartEnrichedSeries => ({
+  key,
+  label: key,
+  data: [],
+  colorScheme: {
+    name: 'test',
+    solid: '#solid',
+    variations: [
+      '#v0',
+      '#v1',
+      '#v2',
+      '#v3',
+      '#v4',
+      '#v5',
+      '#v6',
+      '#v7',
+      '#v8',
+      '#v9',
+      '#v10',
+      '#v11',
+    ],
+  },
+  areaFillId: `area-${key}`,
+});
 
 describe('getLineChartTooltipData', () => {
   const formatOptions: GraphValueFormatOptions = {};

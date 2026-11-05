@@ -37,7 +37,8 @@ describe('getFormMultiRecordPickerDraftValue', () => {
         '20202020-aaaa-4bbb-8ccc-111111111111',
         'not-a-uuid',
         '{{step1.companies}}',
-        123 as unknown as string,
+        // @ts-expect-error a workflow step stores this value as untyped JSON
+        123,
       ]),
     ).toEqual({
       type: 'static',

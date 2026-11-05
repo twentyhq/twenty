@@ -1,8 +1,10 @@
+import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { splitPulledTranslations } from '@/app/pull/split-pulled-translations';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { generateMessageId } from 'twenty-shared/i18n';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -10,40 +12,38 @@ const PET_LABEL_ID = generateMessageId('Pet', 'objectMetadata.labelSingular');
 const AGE_LABEL_ID = generateMessageId('Age', 'fieldMetadata.label');
 const VIEW_NAME_ID = generateMessageId('All pets', 'view.name');
 
-const buildManifest = (overrides: Record<string, unknown>): Manifest =>
-  ({
-    application: {},
-    objects: [
-      {
-        universalIdentifier: 'pet',
-        nameSingular: 'pet',
-        namePlural: 'pets',
-        labelSingular: 'Pet',
-        labelPlural: 'Pets',
-        description: 'A pet',
-        fields: [
-          {
-            universalIdentifier: 'age',
-            name: 'age',
-            label: 'Age',
-            description: '',
-            type: 'NUMBER',
-          },
-        ],
-      },
-    ],
-    fields: [],
-    indexes: [],
-    views: [
-      {
-        universalIdentifier: 'all-pets',
-        name: 'All pets',
-        objectUniversalIdentifier: 'pet',
-      },
-    ],
-    viewFields: [],
-    ...overrides,
-  }) as unknown as Manifest;
+const buildManifest = (overrides: Partial<Manifest>): Manifest => ({
+  ...EMPTY_MANIFEST,
+  objects: [
+    {
+      universalIdentifier: 'pet',
+      nameSingular: 'pet',
+      namePlural: 'pets',
+      labelSingular: 'Pet',
+      labelPlural: 'Pets',
+      description: 'A pet',
+      labelIdentifierFieldMetadataUniversalIdentifier: 'age',
+      fields: [
+        {
+          universalIdentifier: 'age',
+          name: 'age',
+          label: 'Age',
+          description: '',
+          type: FieldMetadataType.NUMBER,
+        },
+      ],
+    },
+  ],
+  indexes: [],
+  views: [
+    {
+      universalIdentifier: 'all-pets',
+      name: 'All pets',
+      objectUniversalIdentifier: 'pet',
+    },
+  ],
+  ...overrides,
+});
 
 const createdDirectories: string[] = [];
 
@@ -160,6 +160,7 @@ describe('splitPulledTranslations', () => {
       manifest: buildManifest({
         translations: {
           'fr-FR': { [PET_LABEL_ID]: 'Animal' },
+          // @ts-expect-error a server can export a locale this CLI does not know
           klingon: { [PET_LABEL_ID]: 'targh' },
           '../../escape': { [PET_LABEL_ID]: 'nope' },
         },
@@ -174,8 +175,11 @@ describe('splitPulledTranslations', () => {
     const catalogs = await splitPulledTranslations({
       manifest: buildManifest({
         translations: {
+          // @ts-expect-error a pulled catalog is unvalidated JSON
           'fr-FR': 'Animal',
+          // @ts-expect-error a pulled catalog is unvalidated JSON
           'de-DE': ['Haustier'],
+          // @ts-expect-error a pulled catalog is unvalidated JSON
           'es-ES': { [PET_LABEL_ID]: 7 },
           'it-IT': { [PET_LABEL_ID]: 'Animale' },
         },

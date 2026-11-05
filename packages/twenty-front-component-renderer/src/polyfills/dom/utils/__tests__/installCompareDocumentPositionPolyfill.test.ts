@@ -9,8 +9,8 @@ const createPolyfillDocument = (): {
   nodeConstructor: PolyfillNodeConstructor;
 } => {
   const polyfillWindow = new Window();
-  const nodeConstructor =
-    polyfillWindow.Node as unknown as PolyfillNodeConstructor;
+  // @ts-expect-error remote-dom's Node only implements part of the DOM Node
+  const nodeConstructor: PolyfillNodeConstructor = polyfillWindow.Node;
 
   installCompareDocumentPositionPolyfill({
     nodeConstructor,
@@ -18,7 +18,8 @@ const createPolyfillDocument = (): {
   });
 
   return {
-    document: polyfillWindow.document as unknown as Document,
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    document: polyfillWindow.document,
     nodeConstructor,
   };
 };
@@ -48,14 +49,14 @@ describe('installCompareDocumentPositionPolyfill', () => {
     const { document } = createPolyfillDocument();
     const element = document.createElement('div');
 
-    expect(() =>
-      element.compareDocumentPosition(null as unknown as Node),
-    ).toThrow(TypeError);
+    // @ts-expect-error plain JS callers can pass anything
+    expect(() => element.compareDocumentPosition(null)).toThrow(TypeError);
     expect(() => element.compareDocumentPosition({} as Node)).toThrow(
       TypeError,
     );
     expect(() =>
-      element.compareDocumentPosition({ parentNode: null } as unknown as Node),
+      // @ts-expect-error plain JS callers can pass anything
+      element.compareDocumentPosition({ parentNode: null }),
     ).toThrow(TypeError);
   });
 

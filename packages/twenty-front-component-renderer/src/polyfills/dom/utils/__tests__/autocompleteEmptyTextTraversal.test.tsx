@@ -38,7 +38,8 @@ describe('Autocomplete Empty text traversal', () => {
       globalScope: { window: polyfillWindow },
     });
 
-    remoteDocument = polyfillWindow.document as unknown as Document;
+    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+    remoteDocument = polyfillWindow.document;
     container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);

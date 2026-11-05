@@ -35,9 +35,9 @@ describe('createWorkerEventFromSerializedEvent', () => {
     'should use the existing worker %s constructor',
     (eventType, eventClassName) => {
       const polyfillWindow = new Window();
-      const listeningElement = polyfillWindow.document.createElement(
-        'input',
-      ) as unknown as Element;
+      // @ts-expect-error remote-dom's Element only implements part of the DOM Element
+      const listeningElement: Element =
+        polyfillWindow.document.createElement('input');
       const eventClassScope = toGlobalScopeRecord(polyfillWindow);
       const eventClass = eventClassScope[eventClassName];
 

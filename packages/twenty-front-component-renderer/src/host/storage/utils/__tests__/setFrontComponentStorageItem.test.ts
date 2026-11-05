@@ -20,7 +20,8 @@ describe('setFrontComponentStorageItem', () => {
         namespace: NAMESPACE,
         storageType: 'localStorage',
         key: 'draft',
-        serializedValue: ['value'] as unknown as string,
+        // @ts-expect-error the worker thread can send any value
+        serializedValue: ['value'],
       }),
     ).toThrow('Storage keys and values must be strings');
 
@@ -28,7 +29,8 @@ describe('setFrontComponentStorageItem', () => {
       setFrontComponentStorageItem({
         namespace: NAMESPACE,
         storageType: 'localStorage',
-        key: ['draft'] as unknown as string,
+        // @ts-expect-error the worker thread can send any value
+        key: ['draft'],
         serializedValue: 'value',
       }),
     ).toThrow('Storage keys and values must be strings');

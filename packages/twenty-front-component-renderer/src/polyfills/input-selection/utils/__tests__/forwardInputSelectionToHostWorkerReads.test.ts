@@ -114,7 +114,8 @@ describe('reading forwarded input selection in the worker', () => {
       shouldReadBeforeConnect: false,
     });
 
-    (remoteControl as unknown as { value: unknown }).value = 1234567;
+    // @ts-expect-error plain JS front components can assign a number
+    remoteControl.value = 1234567;
 
     expect(remoteControl.selectionStart).toBe(7);
     expect(remoteControl.selectionEnd).toBe(7);

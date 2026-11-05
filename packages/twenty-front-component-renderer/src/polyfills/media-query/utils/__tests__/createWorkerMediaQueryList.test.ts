@@ -100,9 +100,8 @@ describe('createWorkerMediaQueryList', () => {
     expect(subscribeToEnvironmentUpdates).not.toHaveBeenCalled();
 
     expect(() => {
-      mediaQueryList.addListener(
-        null as unknown as Parameters<typeof mediaQueryList.addListener>[0],
-      );
+      // @ts-expect-error plain JS callers can pass null
+      mediaQueryList.addListener(null);
       setMatches(true);
     }).not.toThrow();
   });
@@ -360,7 +359,8 @@ describe('createWorkerMediaQueryList', () => {
       mediaQueryList.addEventListener(
         'change',
         changeListener,
-        null as unknown as AddEventListenerOptions,
+        // @ts-expect-error plain JS callers can pass null
+        null,
       );
     }).not.toThrow();
 

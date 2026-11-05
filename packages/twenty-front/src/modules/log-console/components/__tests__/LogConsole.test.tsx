@@ -142,14 +142,13 @@ describe('LogConsole', () => {
   });
 
   it('opens a console still saved as closed by an earlier version when its bar is dragged', () => {
-    const displayModeSavedByEarlierVersion = 'closed' as unknown as 'collapsed';
-
     renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(
         logConsoleDisplayModeState.atom,
-        displayModeSavedByEarlierVersion,
+        // @ts-expect-error localStorage can still hold the mode of an earlier version
+        'closed',
       );
     });
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));

@@ -13,7 +13,8 @@ const createPolyfillDocument = (): Document => {
   });
   installElementClickMethodPolyfill(polyfillWindow.Element.prototype);
 
-  return polyfillWindow.document as unknown as Document;
+  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
+  return polyfillWindow.document;
 };
 
 describe('installElementClickMethodPolyfill', () => {

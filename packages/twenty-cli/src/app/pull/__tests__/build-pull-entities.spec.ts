@@ -1,3 +1,4 @@
+import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { buildPullEntities } from '@/app/pull/build-pull-entities';
 import {
   NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
@@ -15,8 +16,10 @@ import {
   getSystemViewUniversalIdentifier,
   type Manifest,
   type NavigationMenuItemManifest,
+  type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type ViewManifest,
@@ -29,9 +32,11 @@ import {
 } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
+  FieldMetadataType,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  RelationType,
   WidgetType,
   ViewSortDirection,
   ViewType,
@@ -72,47 +77,46 @@ const APPLICATION_WITH_SUPPORT_DEFAULT_ROLE = {
   defaultRoleUniversalIdentifier: SUPPORT_ROLE_UID,
 };
 
-const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
-  ({
-    application: {
-      universalIdentifier: APP_UID,
-      displayName: 'Pets',
-      description: 'Pet tracking',
-      defaultRoleUniversalIdentifier: 'role-uid',
-      packageJsonChecksum: 'package-checksum',
-      yarnLockChecksum: 'lock-checksum',
+const buildManifest = (overrides: Partial<Manifest> = {}): Manifest => ({
+  ...EMPTY_MANIFEST,
+  application: {
+    universalIdentifier: APP_UID,
+    displayName: 'Pets',
+    description: 'Pet tracking',
+    defaultRoleUniversalIdentifier: 'role-uid',
+    packageJsonChecksum: 'package-checksum',
+    yarnLockChecksum: 'lock-checksum',
+  },
+  objects: [
+    {
+      universalIdentifier: PET_UID,
+      nameSingular: 'pet',
+      namePlural: 'pets',
+      labelSingular: 'Pet',
+      labelPlural: 'Pets',
+      labelIdentifierFieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+      fields: [
+        {
+          universalIdentifier: PET_NAME_FIELD_UID,
+          name: 'name',
+          label: 'Name',
+          type: FieldMetadataType.TEXT,
+        },
+      ],
     },
-    objects: [
-      {
-        universalIdentifier: PET_UID,
-        nameSingular: 'pet',
-        namePlural: 'pets',
-        labelSingular: 'Pet',
-        labelPlural: 'Pets',
-        labelIdentifierFieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
-        fields: [
-          {
-            universalIdentifier: PET_NAME_FIELD_UID,
-            name: 'name',
-            label: 'Name',
-            type: 'TEXT',
-          },
-        ],
-      },
-    ],
-    fields: [
-      {
-        universalIdentifier: COMPANY_FIELD_UID,
-        name: 'caredForPets',
-        label: 'Cared for pets',
-        type: 'TEXT',
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-      },
-    ],
-    indexes: [],
-    ...overrides,
-  }) as unknown as Manifest;
+  ],
+  fields: [
+    {
+      universalIdentifier: COMPANY_FIELD_UID,
+      name: 'caredForPets',
+      label: 'Cared for pets',
+      type: FieldMetadataType.TEXT,
+      objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+    },
+  ],
+  indexes: [],
+  ...overrides,
+});
 
 const buildViewManifest = (
   overrides: Partial<ViewManifest> = {},
@@ -272,10 +276,15 @@ describe('buildPullEntities', () => {
           {
             universalIdentifier: INDEX_UID,
             objectUniversalIdentifier: PET_UID,
-            fields: [{ fieldUniversalIdentifier: PET_NAME_FIELD_UID }],
+            fields: [
+              {
+                universalIdentifier: 'pet-name-index-field',
+                fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+              },
+            ],
           },
         ],
-      } as unknown as Partial<Manifest>),
+      }),
     });
     const index = entities.find((entity) => entity.kind === 'index');
 
@@ -285,7 +294,7 @@ describe('buildPullEntities', () => {
   });
 
   it('should write an object whose label identifier names an engine-derived field, keeping the pointer', () => {
-    const junctionObject = {
+    const junctionObject: ObjectManifest = {
       universalIdentifier: JUNCTION_UID,
       nameSingular: 'petCareAgreement',
       namePlural: 'petCareAgreements',
@@ -297,7 +306,10 @@ describe('buildPullEntities', () => {
           universalIdentifier: 'relation-field-uid',
           name: 'pet',
           label: 'Pet',
-          type: 'RELATION',
+          type: FieldMetadataType.RELATION,
+          relationTargetFieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+          relationTargetObjectMetadataUniversalIdentifier: PET_UID,
+          universalSettings: { relationType: RelationType.MANY_TO_ONE },
         },
       ],
     };
@@ -305,7 +317,7 @@ describe('buildPullEntities', () => {
     const { entities, skipped } = buildPullEntities({
       manifest: buildManifest({
         objects: [junctionObject],
-      } as unknown as Partial<Manifest>),
+      }),
     });
     const object = entities.find((entity) => entity.kind === 'object');
 
@@ -321,10 +333,15 @@ describe('buildPullEntities', () => {
           {
             universalIdentifier: INDEX_UID,
             objectUniversalIdentifier: 'an-object-of-another-application',
-            fields: [{ fieldUniversalIdentifier: 'unknown-field' }],
+            fields: [
+              {
+                universalIdentifier: 'unknown-index-field',
+                fieldUniversalIdentifier: 'unknown-field',
+              },
+            ],
           },
         ],
-      } as unknown as Partial<Manifest>),
+      }),
     });
 
     expect(entities.some((entity) => entity.kind === 'index')).toBe(false);
@@ -480,11 +497,12 @@ describe('buildPullEntities', () => {
 
   it('should drop the GraphQL typename keys a widget configuration saved from the UI carries', () => {
     const pageLayoutManifest = buildPageLayoutManifest();
-    const widgetWithTypename = {
+    const widgetWithTypename: PageLayoutWidgetManifest = {
       ...pageLayoutManifest.tabs![0].widgets![0],
       configuration: {
         __typename: 'RecordTableConfiguration',
         configurationType: 'RECORD_TABLE',
+        // @ts-expect-error a widget saved from the UI stores a null limit
         recordLimit: null,
         viewUniversalIdentifier: VIEW_UID,
       },
@@ -498,11 +516,11 @@ describe('buildPullEntities', () => {
               { ...pageLayoutManifest.tabs![0], widgets: [widgetWithTypename] },
             ],
           },
-        ] as unknown as PageLayoutManifest[],
+        ],
         pageLayoutTabs: [
           buildPageLayoutTabManifest({
             widgets: [widgetWithTypename],
-          } as unknown as Partial<PageLayoutTabManifest>),
+          }),
         ],
       }),
     });
@@ -935,11 +953,12 @@ describe('buildPullEntities', () => {
             configuration: {
               configurationType: 'IFRAME',
               url: 'https://example.com/docs',
+              // @ts-expect-error a widget saved from the UI carries a GraphQL typename
               __typename: 'IframeConfiguration',
             },
           },
         ],
-      } as unknown as Partial<Manifest>),
+      }),
     });
     const widget = entities.find(
       (entity) => entity.kind === 'pageLayoutWidget',
@@ -1069,7 +1088,8 @@ describe('buildPullEntities', () => {
     });
 
     const { entities, skipped } = buildPullEntities({
-      manifest: manifestWithoutViews as unknown as Manifest,
+      // @ts-expect-error older servers export a manifest without these properties
+      manifest: manifestWithoutViews,
     });
 
     expect(skipped).toEqual([]);
@@ -1152,12 +1172,16 @@ describe('buildPullEntities', () => {
   it('should write the default role with defineApplicationRole and the other roles with defineRole into src/roles under the role enum bindings', () => {
     const { entities } = buildPullEntities({
       manifest: buildManifest({
-        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        application: {
+          ...APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+          packageJsonChecksum: 'package-checksum',
+          yarnLockChecksum: 'lock-checksum',
+        },
         roles: [
           { universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' },
           { universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' },
         ],
-      } as unknown as Partial<Manifest>),
+      }),
     });
 
     expect(
@@ -1185,9 +1209,13 @@ describe('buildPullEntities', () => {
   it('should drop the default role from the application config when that role is written', () => {
     const { entities } = buildPullEntities({
       manifest: buildManifest({
-        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        application: {
+          ...APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+          packageJsonChecksum: 'package-checksum',
+          yarnLockChecksum: 'lock-checksum',
+        },
         roles: [{ universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' }],
-      } as unknown as Partial<Manifest>),
+      }),
     });
 
     expect(
@@ -1202,9 +1230,13 @@ describe('buildPullEntities', () => {
   it('should keep a default role that is not one of the written roles on the application config', () => {
     const { entities } = buildPullEntities({
       manifest: buildManifest({
-        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        application: {
+          ...APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+          packageJsonChecksum: 'package-checksum',
+          yarnLockChecksum: 'lock-checksum',
+        },
         roles: [{ universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' }],
-      } as unknown as Partial<Manifest>),
+      }),
     });
 
     expect(
