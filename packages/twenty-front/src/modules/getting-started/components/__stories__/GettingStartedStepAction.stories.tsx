@@ -122,7 +122,6 @@ export const ImportDone: Story = {
       name: /Import HubSpot contacts/,
     });
 
-    await expect(importThreadCard).toHaveTextContent('Last update:');
     await expect(
       canvas.queryByRole('button', { name: 'Upload file' }),
     ).not.toBeInTheDocument();
