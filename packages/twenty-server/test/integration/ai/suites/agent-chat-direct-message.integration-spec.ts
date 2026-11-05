@@ -45,6 +45,12 @@ describe('Private text direct messages', () => {
       [threadId],
     );
 
+  const softDeleteThread = (threadId: string) =>
+    global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+      [threadId],
+    );
+
   afterEach(async () => {
     await context.cleanup();
   });
@@ -75,7 +81,7 @@ describe('Private text direct messages', () => {
     return threadId;
   };
 
-  it('reuses one private pair and restores it when the other member replies without running Ada', async () => {
+  it('reuses one private pair and restores it on reply or reopen without running Ada', async () => {
     const threadId = await openDirectMessage();
 
     expect(
@@ -93,10 +99,7 @@ describe('Private text direct messages', () => {
       ],
     });
 
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
-      [threadId],
-    );
+    await softDeleteThread(threadId);
 
     const reply = await sendChatParticipationMessage({
       threadId,
@@ -154,6 +157,13 @@ describe('Private text direct messages', () => {
         ].sort(),
       );
     }
+
+    await softDeleteThread(threadId);
+
+    expect(await openDirectMessage()).toBe(threadId);
+    expect(await context.readThread(threadId)).toMatchObject({
+      deletedAt: null,
+    });
   });
 
   it('denies an outside administrator access to another pair', async () => {
