@@ -82,28 +82,6 @@ export default defineCommandMenuItem({
   `RECORD_SELECTION` already implies a non-empty selection — use `numberOfSelectedRecords` only for specific counts (e.g. `>= 2`).
 </Note>
 
-### Pinning to one view
-
-Compare `currentView.universalIdentifier` with a view your app defines to show a quick-action button on that view only. `conditionalPinnedExpression` is written as a string:
-
-```ts src/command-menu-items/find-more-agencies.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
-
-import { AGENCIES_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/agencies.view';
-
-export default defineCommandMenuItem({
-  universalIdentifier: '...',
-  label: 'Find more agencies',
-  availabilityType: 'GLOBAL_OBJECT_CONTEXT',
-  availabilityObjectUniversalIdentifier: '...',
-  frontComponentUniversalIdentifier: '...',
-  isPinned: true,
-  conditionalPinnedExpression: `currentView.universalIdentifier == '${AGENCIES_VIEW_UNIVERSAL_IDENTIFIER}'`,
-});
-```
-
-On other views of the object the command stays in the command menu without a button.
-
 ### Context variables
 
 These represent the current state of the page:
