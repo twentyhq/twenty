@@ -27,14 +27,14 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
-import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
-const MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.message.fields.attachments.universalIdentifier;
+const ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
 
 type IngestArgs = {
   applicationId: string;
@@ -190,50 +190,54 @@ export class ApplicationMessageIngestionService {
       return new Set();
     }
 
-    const messageRepository =
-      transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
-        'message',
+    const attachmentRepository =
+      transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+        'attachment',
       );
 
-    const storedMessages = await messageRepository.find({
-      where: { id: In(messageIds) },
-      select: { id: true, attachments: true },
+    const storedAttachments = await attachmentRepository.find({
+      where: { targetMessageId: In(messageIds) },
+      select: { targetMessageId: true },
     });
 
     const messageIdsWithAttachments = new Set(
-      storedMessages
-        .filter((storedMessage) => isNonEmptyArray(storedMessage.attachments))
-        .map((storedMessage) => storedMessage.id),
+      storedAttachments
+        .map(({ targetMessageId }) => targetMessageId)
+        .filter(isDefined),
     );
 
-    const messagesToAttach = messages.flatMap((message) => {
+    const attachmentsToCreate = messages.flatMap((message) => {
       const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
-      return isDefined(messageId) &&
-        isNonEmptyArray(message.attachments) &&
-        !messageIdsWithAttachments.has(messageId)
-        ? [{ messageId, attachments: message.attachments }]
-        : [];
+      if (
+        !isDefined(messageId) ||
+        !isNonEmptyArray(message.attachments) ||
+        messageIdsWithAttachments.has(messageId)
+      ) {
+        return [];
+      }
+
+      return message.attachments.map(({ fileId, label }) => ({
+        name: label,
+        file: [{ fileId, label }],
+        targetMessageId: messageId,
+      }));
     });
 
-    // the files sync marks a file permanent outside this transaction, so every file is checked before any is attached
+    // checked up front so a bad file rejects the batch as invalid ingestion input, and no file is claimed twice
     await this.assertFilesAreAttachableOrThrow({
       workspaceId,
-      fileIds: messagesToAttach.flatMap(({ attachments }) =>
-        attachments.map(({ fileId }) => fileId),
+      fileIds: attachmentsToCreate.flatMap(({ file }) =>
+        file.map(({ fileId }) => fileId),
       ),
     });
 
-    for (const { messageId, attachments } of messagesToAttach) {
-      // one record per call: the files field sync refuses multi-record updates
-      await messageRepository.update(messageId, {
-        attachments: attachments.map(({ fileId, label }) => ({
-          fileId,
-          label,
-        })),
-      });
+    if (attachmentsToCreate.length > 0) {
+      await attachmentRepository.insert(attachmentsToCreate);
+    }
 
-      messageIdsWithAttachments.add(messageId);
+    for (const { targetMessageId } of attachmentsToCreate) {
+      messageIdsWithAttachments.add(targetMessageId);
     }
 
     return messageIdsWithAttachments;
@@ -274,13 +278,13 @@ export class ApplicationMessageIngestionService {
         !isDefined(file) ||
         file.status !== FILE_STATUS.UPLOADED ||
         file.settings?.isTemporaryFile !== true ||
-        !file.path.includes(MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER)
+        !file.path.includes(ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER)
       );
     });
 
     if (unattachableFileIds.length > 0) {
       throw new MessageChannelException(
-        `File(s) ${unattachableFileIds.join(', ')} cannot be attached: each must be a completed upload into the message attachments field that no record holds yet`,
+        `File(s) ${unattachableFileIds.join(', ')} cannot be attached: each must be a completed upload into the attachment file field that no record holds yet`,
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
