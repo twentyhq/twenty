@@ -6,6 +6,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -165,7 +166,9 @@ export class AgentChatActorService {
     }
     return {
       authContext,
-      isDirectMessage: thread.conversationType === 'DIRECT_MESSAGE',
+      isDirectMessage:
+        thread.conversationType ===
+        AgentChatThreadConversationType.DIRECT_MESSAGE,
     };
   }
 

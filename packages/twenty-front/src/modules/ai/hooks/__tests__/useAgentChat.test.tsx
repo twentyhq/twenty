@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
   AGENT_CHAT_ASSISTANT_NAME,
+  AgentChatThreadConversationType,
 } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
@@ -150,7 +151,7 @@ const renderAgentChat = ({
         store.set(recordStoreFamilyState.atomFamily(DIRECT_MESSAGE_THREAD_ID), {
           id: DIRECT_MESSAGE_THREAD_ID,
           __typename: 'AgentChatThread',
-          conversationType: 'DIRECT_MESSAGE',
+          conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
         });
       }
       store.set(currentWorkspaceState.atom, {

@@ -125,7 +125,9 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    if (thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE) {
+    if (
+      thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return (
         workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC
       );

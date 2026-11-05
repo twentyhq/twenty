@@ -92,7 +92,9 @@ export class AgentChatMemberMessageSenderService {
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
-    const isDirectMessage = thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE;
+    const isDirectMessage =
+      thread.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE;
     const messageAddressing = { ...addressing };
 
     if (isDirectMessage) {
