@@ -10,7 +10,7 @@ export const acquireAgentChatThreadParticipantLocks = async ({
 }: {
   executeQuery: (args: {
     query: string;
-    parameters: unknown[];
+    parameters: [string[]];
   }) => Promise<unknown>;
   participants: AgentChatThreadAccessArgs[];
 }): Promise<void> => {
