@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### Lo que el servidor hace por usted
 
-**Deduplicación.** `externalId` es la clave. Ingerir el mismo mensaje dos veces no crea ni cambia nada, por lo que se puede repetir de forma segura un webhook reenviado y una carga retroactiva puede solaparse con un flujo en tiempo real. El `messageId` devuelto se mantiene estable entre repeticiones. Las llamadas a un canal se serializan, por lo que una reentrega que llega mientras aún se escribe el original espera en lugar de competir con él.
+**Deduplicación.** `externalId` es la clave. Ingerir el mismo dos veces no crea ni cambia nada, salvo los [archivos adjuntos](#attaching-files) de un mensaje que no tenía ninguno, por lo que es seguro volver a reproducir un webhook reenviado y una reposición puede superponerse a una transmisión en directo. El `messageId` devuelto se mantiene estable entre repeticiones. Las llamadas a un canal se serializan, por lo que una reentrega que llega mientras aún se escribe el original espera en lugar de competir con él.
 
 **Agrupación en hilos.** Los mensajes que comparten un `threadExternalId` se incluyen en un Hilo de mensajes, que luego aparece en los registros de Persona, Empresa y Oportunidad de sus participantes.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 Un lote es de todo o nada, y se rechaza repetir un `externalId` dentro de un mismo lote; deduplique antes de enviar. El cuerpo de un mensaje está limitado a 256 KB.
+
+### Adjuntar archivos
+
+Las imágenes, los vídeos, las notas de voz y otros archivos se incluyen en los `attachments` de un mensaje. Primero carga cada archivo con `uploadMessageAttachment`, que necesita la marca de permiso `UPLOAD_FILE` en el rol de tu aplicación; después, pasa lo que devuelve:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Cada archivo se almacena como un registro de archivo adjunto en el mensaje. La extensión del nombre del archivo determina cómo la conversación muestra el archivo: las imágenes se muestran insertadas, los videos y el audio tienen un reproductor, y cualquier otra cosa es una ficha de archivo. Un mensaje admite como máximo 20 archivos adjuntos.
+
+Los archivos adjuntos se almacenan solo mientras el mensaje no tenga ninguno, por lo que una reentrega nunca los reemplaza. Cada mensaje incorporado informa `hasAttachments`: primero incorpora el texto, luego descarga y carga archivos solo para los mensajes que regresan sin ninguno, y vuelve a incorporar esos mensajes con sus `attachments`. Un archivo que cargas pero nunca adjuntas no se elimina, así que no cargues archivos para un mensaje que ya tiene archivos adjuntos.
+
+Los archivos adjuntos siguen la `visibility` del canal como el cuerpo: a menos que la conversación se comparta por completo, los demás miembros reciben una lista vacía.
 
 ### Vinculación de participantes con Personas
 
