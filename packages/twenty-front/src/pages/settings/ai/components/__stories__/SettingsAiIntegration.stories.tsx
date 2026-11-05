@@ -132,35 +132,35 @@ export const BehaviorPersistenceAndRetry: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const bodyQueries = within(canvasElement.ownerDocument.body);
-    const inbox = await canvas.findByRole('combobox', { name: 'Global inbox' });
-    expect(
-      canvas.queryByRole('combobox', { name: 'DMs' }),
-    ).not.toBeInTheDocument();
+    const directMessages = await canvas.findByRole('combobox', { name: 'DMs' });
+    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
 
     fixture.failNextBehaviorSave();
-    await userEvent.click(inbox);
+    await userEvent.click(directMessages);
     await userEvent.click(
       await bodyQueries.findByRole('option', { name: 'Never' }),
     );
     expect(await canvas.findByRole('alert')).toHaveTextContent(
       'You do not have permission to change this behavior.',
     );
+    expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
 
     fixture.pauseBehaviorSave();
-    await userEvent.click(inbox);
+    await userEvent.click(directMessages);
     await userEvent.click(
       await bodyQueries.findByRole('option', { name: 'Never' }),
     );
     await waitFor(() => expect(fixture.saveBehavior).toHaveBeenCalledTimes(2));
     expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
-      aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
     });
+    expect(directMessages).toHaveAttribute('data-disabled');
     expect(inbox).toHaveAttribute('data-disabled');
-    expect(inbox).toHaveTextContent('Auto');
+    expect(directMessages).toHaveTextContent('Only when mentioned');
 
     fixture.resumeBehaviorSave();
-    await waitFor(() => expect(inbox).toHaveTextContent('Never'));
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
     expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
     await userEvent.click(inbox);
     await userEvent.click(
@@ -175,11 +175,11 @@ export const BehaviorPersistenceAndRetry: Story = {
     await fixture.reloadWorkspace();
     await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
     expect(
-      await canvas.findByRole('combobox', { name: 'Global inbox' }),
-    ).toHaveTextContent('Only when mentioned');
+      await canvas.findByRole('combobox', { name: 'DMs' }),
+    ).toHaveTextContent('Never');
     expect(
-      canvas.queryByRole('combobox', { name: 'DMs' }),
-    ).not.toBeInTheDocument();
+      canvas.getByRole('combobox', { name: 'Global inbox' }),
+    ).toHaveTextContent('Only when mentioned');
   },
 };
 

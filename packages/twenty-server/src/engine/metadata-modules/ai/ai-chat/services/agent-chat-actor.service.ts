@@ -163,7 +163,10 @@ export class AgentChatActorService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
-    return { authContext };
+    return {
+      authContext,
+      isDirectMessage: thread.conversationType === 'DIRECT_MESSAGE',
+    };
   }
 
   // a member with no role left cannot act in the chat nor run the calls they approve

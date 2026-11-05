@@ -2,7 +2,7 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 import { isArray, isNull, isString } from '@sniptt/guards';
 import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
@@ -44,85 +44,95 @@ export class AgentHistoryTransactionService {
             >();
             const threadIdsByMessageId = new Map<string, string>();
 
+            const shareDirectMessageRecords = async ({
+              name,
+              values,
+              identifiers,
+            }: {
+              name: AgentHistoryObjectName;
+              values: ObjectLiteral | ObjectLiteral[];
+              identifiers: ObjectLiteral[];
+            }): Promise<void> => {
+              if (!shouldShareDirectMessageRecords) {
+                return;
+              }
+
+              const records = isArray(values) ? values : [values];
+
+              const missingMessageIds = [
+                ...new Set(
+                  records.map(({ messageId }) => messageId).filter(isString),
+                ),
+              ].filter((messageId) => !threadIdsByMessageId.has(messageId));
+
+              if (isNonEmptyArray(missingMessageIds)) {
+                const messages = await transactionScope
+                  .getRepositoryWithoutPermissionChecks<AgentMessageWorkspaceEntity>(
+                    'agentMessage',
+                    { shouldSkipEventEmission: true },
+                  )
+                  .find({
+                    where: { id: In(missingMessageIds) },
+                    select: ['id', 'threadId'],
+                    withDeleted: true,
+                  });
+
+                for (const message of messages) {
+                  threadIdsByMessageId.set(message.id, message.threadId);
+                }
+              }
+
+              const recordIdsByThreadId = new Map<string, string[]>();
+
+              for (const [index, record] of records.entries()) {
+                const recordId = identifiers[index]?.id;
+                let threadId = record.threadId;
+
+                if (name === 'agentChatThread') {
+                  threadId = recordId;
+                }
+
+                if (name === 'agentMessagePart' && isString(record.messageId)) {
+                  threadId = threadIdsByMessageId.get(record.messageId);
+                }
+
+                if (name === 'agentTurn' && isNull(threadId)) {
+                  continue;
+                }
+
+                if (!isString(recordId) || !isString(threadId)) {
+                  return throwAgentChatThreadNotFound();
+                }
+
+                if (name === 'agentMessage') {
+                  threadIdsByMessageId.set(recordId, threadId);
+                }
+
+                const recordIds = recordIdsByThreadId.get(threadId) ?? [];
+
+                recordIds.push(recordId);
+                recordIdsByThreadId.set(threadId, recordIds);
+              }
+
+              for (const [threadId, recordIds] of recordIdsByThreadId) {
+                await this.directMessageRecordsService.share({
+                  workspaceId,
+                  transactionScope,
+                  threadId,
+                  objectName: name,
+                  recordIds,
+                  directMessagePairsByThreadId,
+                });
+              }
+            };
+
             return work({
               executeRawQuery: transactionScope.executeRawQuery,
               insert: async (name, values) => {
                 const { identifiers } =
                   await getRepository(name).insert(values);
-                if (!shouldShareDirectMessageRecords) {
-                  return;
-                }
 
-                const records = isArray(values) ? values : [values];
-
-                const missingMessageIds = [
-                  ...new Set(
-                    records.map(({ messageId }) => messageId).filter(isString),
-                  ),
-                ].filter((messageId) => !threadIdsByMessageId.has(messageId));
-
-                if (isNonEmptyArray(missingMessageIds)) {
-                  const messages = await transactionScope
-                    .getRepositoryWithoutPermissionChecks<AgentMessageWorkspaceEntity>(
-                      'agentMessage',
-                      { shouldSkipEventEmission: true },
-                    )
-                    .find({
-                      where: { id: In(missingMessageIds) },
-                      select: ['id', 'threadId'],
-                      withDeleted: true,
-                    });
-
-                  for (const message of messages) {
-                    threadIdsByMessageId.set(message.id, message.threadId);
-                  }
-                }
-
-                const recordIdsByThreadId = new Map<string, string[]>();
-
-                for (const [index, record] of records.entries()) {
-                  const recordId = identifiers[index]?.id;
-                  let threadId = record.threadId;
-
-                  if (name === 'agentChatThread') {
-                    threadId = recordId;
-                  }
-
-                  if (
-                    name === 'agentMessagePart' &&
-                    isString(record.messageId)
-                  ) {
-                    threadId = threadIdsByMessageId.get(record.messageId);
-                  }
-
-                  if (name === 'agentTurn' && isNull(threadId)) {
-                    continue;
-                  }
-
-                  if (!isString(recordId) || !isString(threadId)) {
-                    return throwAgentChatThreadNotFound();
-                  }
-
-                  if (name === 'agentMessage') {
-                    threadIdsByMessageId.set(recordId, threadId);
-                  }
-
-                  const recordIds = recordIdsByThreadId.get(threadId) ?? [];
-
-                  recordIds.push(recordId);
-                  recordIdsByThreadId.set(threadId, recordIds);
-                }
-
-                for (const [threadId, recordIds] of recordIdsByThreadId) {
-                  await this.directMessageRecordsService.share({
-                    workspaceId,
-                    transactionScope,
-                    threadId,
-                    objectName: name,
-                    recordIds,
-                    directMessagePairsByThreadId,
-                  });
-                }
+                await shareDirectMessageRecords({ name, values, identifiers });
               },
               update: async (name, where, values) => {
                 const result = await getRepository(name).update(where, values);
@@ -141,7 +151,15 @@ export class AgentHistoryTransactionService {
                     `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
                   ],
                 );
-                await getRepository(name).upsert(values, conflictPaths);
+                const { identifiers } = await getRepository(name).upsert(
+                  values,
+                  conflictPaths,
+                );
+                await shareDirectMessageRecords({
+                  name,
+                  values,
+                  identifiers,
+                });
               },
               delete: async (name, where) => {
                 await getRepository(name).delete(where);

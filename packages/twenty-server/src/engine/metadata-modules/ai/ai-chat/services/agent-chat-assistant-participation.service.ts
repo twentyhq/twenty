@@ -1,4 +1,3 @@
-import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +8,6 @@ import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -46,16 +44,6 @@ export class AgentChatAssistantParticipationService {
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
   }): Promise<AgentChatAssistantParticipation> {
-    if (
-      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
-      return {
-        isAssistantParticipant: false,
-        replyDecision: AgentChatReplyDecision.SKIP,
-        isInitialMessage: false,
-      };
-    }
-
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
     const isInitialMessage =

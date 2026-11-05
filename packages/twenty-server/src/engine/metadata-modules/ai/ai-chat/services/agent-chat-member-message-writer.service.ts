@@ -145,9 +145,11 @@ export class AgentChatMemberMessageWriterService {
         ...threadAccess,
         messageId: persistedMessage.id,
         mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-        initialRecipientWorkspaceMemberIds: participation.isInitialMessage
-          ? addressing.initialRecipientWorkspaceMemberIds
-          : [],
+        initialRecipientWorkspaceMemberIds:
+          participation.isInitialMessage ||
+          thread.conversationType === 'DIRECT_MESSAGE'
+            ? addressing.initialRecipientWorkspaceMemberIds
+            : [],
       });
     }
 

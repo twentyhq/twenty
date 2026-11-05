@@ -125,11 +125,14 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    return thread.conversationType ===
-      AgentChatThreadConversationType.DIRECT_MESSAGE
-      ? (workspace.aiChatDirectMessageAssistantMode ??
-          AiChatAssistantMode.MENTION_ONLY)
-      : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
+    if (thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE) {
+      return (
+        workspace.aiChatDirectMessageAssistantMode ??
+        AiChatAssistantMode.MENTION_ONLY
+      );
+    }
+
+    return workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC;
   }
 
   private async resolveChatAudience({

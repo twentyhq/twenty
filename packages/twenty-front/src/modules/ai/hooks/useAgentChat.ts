@@ -282,7 +282,7 @@ export const useAgentChat = () => {
                 )
               : undefined,
           channelId,
-          shouldAssistantReply: !isDirectMessage && isNonEmptyArray(aiModels),
+          shouldAssistantReply: isNonEmptyArray(aiModels),
           isAssistantParticipant:
             newInboxChatRecipients?.isAssistantParticipant,
           isAssistantMentioned,

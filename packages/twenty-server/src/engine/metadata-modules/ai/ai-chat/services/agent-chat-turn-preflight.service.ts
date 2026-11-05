@@ -46,7 +46,9 @@ export class AgentChatTurnPreflightService {
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
       throw new AiException(
-        doNotTranslate('Direct messages do not run an assistant'),
+        doNotTranslate(
+          'Direct messages do not support standalone assistant turns',
+        ),
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }

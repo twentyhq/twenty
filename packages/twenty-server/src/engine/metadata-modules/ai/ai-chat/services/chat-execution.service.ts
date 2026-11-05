@@ -127,6 +127,7 @@ export class ChatExecutionService {
     conversationSizeTokens,
     onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
+    const { isDirectMessage } = authorization;
     const getAuthorization = createTurnAuthorizer({
       authorize: () =>
         this.chatActorService.authorize({
@@ -164,11 +165,12 @@ export class ChatExecutionService {
     };
 
     const isWorkspaceSetupConversation =
+      !isDirectMessage &&
       threadId ===
-      buildWorkspaceSetupChatThreadId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
+        buildWorkspaceSetupChatThreadId({
+          workspaceId: workspace.id,
+          userWorkspaceId,
+        });
 
     const isWorkspaceSetupThread =
       isWorkspaceSetupConversation &&
@@ -184,7 +186,7 @@ export class ChatExecutionService {
 
     // judged on the conversation, not setup status: onboarding continues here after setup completes
     const isInboxConversation =
-      !isWorkspaceSetupConversation && isAiChatInboxEnabled;
+      !isDirectMessage && !isWorkspaceSetupConversation && isAiChatInboxEnabled;
 
     const latestUserMessage = [...messages]
       .reverse()
@@ -196,13 +198,18 @@ export class ChatExecutionService {
       workspace,
       modelId: getChatModelId({ requestedModelId: modelId, workspace }),
       toolset: {
-        registryAccess: {
-          type: 'assistant',
-          toolContext,
-          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
-          preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
-        },
-        canAskHumans: true,
+        registryAccess: isDirectMessage
+          ? { type: 'none' }
+          : {
+              type: 'assistant',
+              toolContext,
+              excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
+              preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
+            },
+        nativeToolOptions: isDirectMessage
+          ? { webSearch: false, twitterSearch: false }
+          : undefined,
+        canAskHumans: !isDirectMessage,
         isWorkspaceSetupThread,
         extraTools: {
           ...(isWorkspaceSetupThread
@@ -221,7 +228,9 @@ export class ChatExecutionService {
                   }),
               }
             : {}),
-          ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
+          ...(!isDirectMessage &&
+          isAiChatInboxEnabled &&
+          isDefined(latestUserMessage)
             ? {
                 [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
                   reactToLatestMemberMessage: (emoji) =>
@@ -247,7 +256,7 @@ export class ChatExecutionService {
             workspace,
             messages,
             modelConfig,
-            browsingContext,
+            browsingContext: isDirectMessage ? null : browsingContext,
             workspaceMemberId: authorization.authContext.workspaceMemberId,
             timezone: userContext.timezone,
           },
@@ -282,14 +291,16 @@ export class ChatExecutionService {
         return {
           systemPrompt: buildFullSystemPrompt({
             toolCatalog: toolset.toolCatalog,
-            skillCatalog: await this.skillService.findAllFlatSkills(
-              workspace.id,
-            ),
+            skillCatalog: isDirectMessage
+              ? []
+              : await this.skillService.findAllFlatSkills(workspace.id),
             // inline tagged skills to save the model a load_skills round trip
-            referencedSkills: await this.skillService.findFlatSkillsByIds(
-              collectReferencedSkillIds(messages),
-              workspace.id,
-            ),
+            referencedSkills: isDirectMessage
+              ? []
+              : await this.skillService.findFlatSkillsByIds(
+                  collectReferencedSkillIds(messages),
+                  workspace.id,
+                ),
             preloadedTools: toolset.directToolNames,
             uploadedFilesContext: {
               uploadedFiles: collectUploadedFileReferences(messages),

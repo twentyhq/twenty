@@ -67,7 +67,9 @@ export const WithSections: Story = {
     ),
     behaviorSection: (
       <SettingsAiBehaviorExample
+        directMessageMode={AiChatAssistantMode.MENTION_ONLY}
         inboxMode={AiChatAssistantMode.AUTOMATIC}
+        onDirectMessageModeChange={fn()}
         onInboxModeChange={fn()}
       />
     ),
@@ -90,9 +92,9 @@ export const WithSections: Story = {
       'Workspace Instructions',
       'System Prompt',
     ]);
-    expect(
-      canvas.queryByRole('combobox', { name: 'DMs' }),
-    ).not.toBeInTheDocument();
+    expect(canvas.getByRole('combobox', { name: 'DMs' })).toHaveTextContent(
+      'Only when mentioned',
+    );
     expect(
       canvas.getByRole('combobox', { name: 'Global inbox' }),
     ).toHaveTextContent('Auto');

@@ -3,11 +3,13 @@ import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/Settin
 
 export const SettingsAiWorkspaceBehaviorSection = () => {
   const {
+    directMessageMode,
     inboxMode,
     isLoading,
     isSaving,
     isBehaviorVisible,
     errorMessage,
+    saveDirectMessageMode,
     saveInboxMode,
   } = useSettingsAiBehavior();
 
@@ -17,7 +19,9 @@ export const SettingsAiWorkspaceBehaviorSection = () => {
 
   return (
     <SettingsAiBehaviorSection
+      directMessageMode={directMessageMode}
       inboxMode={inboxMode}
+      onDirectMessageModeChange={saveDirectMessageMode}
       onInboxModeChange={saveInboxMode}
       isLoading={isLoading}
       disabled={isSaving}

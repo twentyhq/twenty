@@ -1,17 +1,19 @@
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { randomUUID } from 'node:crypto';
 
+import gql from 'graphql-tag';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -63,49 +65,107 @@ describe('Chat participation through the authenticated API', () => {
       }),
     );
 
-  it('keeps canonical DMs human-only despite automatic mode and client Ada selections', async () => {
-    models.enableEvaluation();
-    await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
-    });
-    const threadId = await createDirectMessage();
-    const response = await sendChatParticipationMessage({
-      threadId,
-      isAssistantParticipant: true,
-      shouldAssistantReply: true,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
-    expect(models.evaluate).not.toHaveBeenCalled();
-  });
-
-  it('rejects Ada mentions in a canonical DM without saving the message', async () => {
-    const threadId = await createDirectMessage();
-    const response = await sendChatParticipationMessage({
-      threadId,
+  it.each([
+    {
+      mode: AiChatAssistantMode.NEVER,
       isAssistantMentioned: true,
-      text: '@Ada please help',
-    });
+      shouldReply: false,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      isAssistantMentioned: false,
+      shouldReply: false,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      isAssistantMentioned: true,
+      shouldReply: true,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.AUTOMATIC,
+      isAssistantMentioned: false,
+      shouldReply: true,
+      evaluationCalls: 1,
+    },
+  ])(
+    'applies saved DM mode $mode when Ada mention is $isAssistantMentioned',
+    async ({ mode, isAssistantMentioned, shouldReply, evaluationCalls }) => {
+      models.enableEvaluation();
+      const saved = await makeMetadataApiRequest({
+        query: gql`
+          mutation SaveDirectMessageAssistantMode(
+            $data: UpdateWorkspaceInput!
+          ) {
+            updateWorkspace(data: $data) {
+              aiChatDirectMessageAssistantMode
+            }
+          }
+        `,
+        variables: { data: { aiChatDirectMessageAssistantMode: mode } },
+      });
 
-    expect(response.body.errors?.[0]?.extensions).toMatchObject({
-      code: 'BAD_USER_INPUT',
-      subCode: AiExceptionCode.INVALID_AGENT_INPUT,
-    });
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
-    expect(
-      await context.chatService.hasMessages({
-        workspaceId: context.workspaceId,
+      expect(saved.body.errors).toBeUndefined();
+      expect(
+        saved.body.data.updateWorkspace.aiChatDirectMessageAssistantMode,
+      ).toBe(mode);
+
+      const threadId = await createDirectMessage();
+      const response = await sendChatParticipationMessage({
         threadId,
-      }),
-    ).toBe(false);
-    expect(models.evaluate).not.toHaveBeenCalled();
-  });
+        isAssistantMentioned,
+        isAssistantParticipant: false,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(isDefined(response.body.data.sendChatMessage.streamId)).toBe(
+        shouldReply,
+      );
+      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+        shouldReply,
+      );
+      expect(models.evaluate).toHaveBeenCalledTimes(evaluationCalls);
+
+      if (mode !== AiChatAssistantMode.AUTOMATIC) {
+        return;
+      }
+
+      await waitForAllJobsToFinish();
+
+      const assistantRecords = await global.testDataSource.query<
+        { objectName: string; isPrivate: boolean; principalIds: string[] }[]
+      >(
+        `SELECT content."objectName", content."_isPrivate" AS "isPrivate",
+           ARRAY(SELECT "principalId" FROM "${context.schema}"."recordShare"
+             WHERE "recordId" = content.id ORDER BY "principalId") AS "principalIds"
+         FROM (
+           SELECT id, 'agentMessage' AS "objectName", "_isPrivate"
+             FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'assistant'
+           UNION ALL SELECT part.id, 'agentMessagePart', part."_isPrivate"
+             FROM "${context.schema}"."agentMessagePart" part
+             JOIN "${context.schema}"."agentMessage" message ON message.id = part."messageId"
+             WHERE message."threadId" = $1 AND message.role = 'assistant'
+         ) content`,
+        [threadId],
+      );
+
+      expect(assistantRecords.map(({ objectName }) => objectName)).toEqual(
+        expect.arrayContaining(['agentMessage', 'agentMessagePart']),
+      );
+
+      for (const record of assistantRecords) {
+        expect(record).toMatchObject({
+          isPrivate: true,
+          principalIds: [
+            context.workspaceMemberId,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          ].sort(),
+        });
+      }
+    },
+  );
 
   it('answers an Ada-only chat despite both Never settings and client opt-outs', async () => {
     await context.setAssistantModes({

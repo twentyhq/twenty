@@ -55,6 +55,7 @@ export class AgentChatReplyExecutionPolicyService {
     }
 
     if (
+      thread.conversationType !== 'DIRECT_MESSAGE' &&
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspaceId,
