@@ -66,7 +66,6 @@ export const useFilteredSelectOptionsFromValidationRules = ({
       });
 
     return {
-      // The current value stays listed, so the picker still shows what is selected
       filteredOptions: options.filter(
         (option) =>
           option.value === currentValue ||

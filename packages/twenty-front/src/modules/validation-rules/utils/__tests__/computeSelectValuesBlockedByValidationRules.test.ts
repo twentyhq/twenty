@@ -97,7 +97,7 @@ describe('computeSelectValuesBlockedByValidationRules', () => {
     ).toEqual({ blockedOptionValues: [], isEmptyValueBlocked: false });
   });
 
-  it('keeps a value whose rule blames another field, which the person completes after picking', () => {
+  it('keeps a value whose rule has another error field, which the person completes after picking', () => {
     const lostReasonRule = buildRule({
       id: 'lost-reason',
       errorFieldMetadataId: 'lost-reason-field',

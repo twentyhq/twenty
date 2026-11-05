@@ -5,7 +5,6 @@ import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/c
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { compileValidationRuleExpression } from 'twenty-shared/utils';
 
-// A rule blaming another field (a missing Lost reason) is completed after the pick, not prevented by it
 export const computeSelectValuesBlockedByValidationRules = ({
   validationRules,
   record,
@@ -26,8 +25,7 @@ export const computeSelectValuesBlockedByValidationRules = ({
   >[];
   now: string;
 }): { blockedOptionValues: string[]; isEmptyValueBlocked: boolean } => {
-  // A rule reading a value the record does not hold yet is left to the server
-  const evaluableRulesBlamingField = validationRules.filter(
+  const evaluableRulesForErrorField = validationRules.filter(
     (validationRule) => {
       if (
         !validationRule.isActive ||
@@ -52,13 +50,13 @@ export const computeSelectValuesBlockedByValidationRules = ({
     },
   );
 
-  if (evaluableRulesBlamingField.length === 0) {
+  if (evaluableRulesForErrorField.length === 0) {
     return { blockedOptionValues: [], isEmptyValueBlocked: false };
   }
 
   const isValueBlocked = (value: string | null) =>
     computeDraftValidationRuleViolations({
-      validationRules: evaluableRulesBlamingField,
+      validationRules: evaluableRulesForErrorField,
       draftRecord: { ...record, [fieldMetadataItem.name]: value },
       fields,
       fieldMetadataItems,
