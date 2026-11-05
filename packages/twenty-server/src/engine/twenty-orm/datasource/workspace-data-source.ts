@@ -36,7 +36,7 @@ const tableShapeCache = new WeakMap<
 
 export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
-  private readonly pool: Pool;
+  private readonly pool: Pick<Pool, 'connect' | 'query'>;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
   private permissionsPrincipals?: PermissionsPrincipalsWithRolesContext | null;
@@ -46,7 +46,7 @@ export class WorkspaceDataSource {
     internalContext,
     authContext,
   }: {
-    pool: Pool;
+    pool: Pick<Pool, 'connect' | 'query'>;
     internalContext: WorkspaceInternalContext;
     authContext: WorkspaceAuthContext;
   }) {

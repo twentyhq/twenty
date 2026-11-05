@@ -1,5 +1,3 @@
-import { type Pool, type PoolClient } from 'pg';
-
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 import {
@@ -12,10 +10,9 @@ const buildClient = () => ({
   release: jest.fn(),
 });
 
-const buildPool = (client: ReturnType<typeof buildClient>): Pool =>
-  ({
-    connect: jest.fn().mockResolvedValue(client as unknown as PoolClient),
-  }) as unknown as Pool;
+const buildPool = (client: ReturnType<typeof buildClient>) => ({
+  connect: jest.fn().mockResolvedValue(client),
+});
 
 describe('runInRollbackSafeTransaction', () => {
   it('should map a transient failure raised while acquiring the connection', async () => {
@@ -25,7 +22,7 @@ describe('runInRollbackSafeTransaction', () => {
     );
     const pool = {
       connect: jest.fn().mockRejectedValue(connectionError),
-    } as unknown as Pool;
+    };
 
     const error = await runInRollbackSafeTransaction({
       pool,

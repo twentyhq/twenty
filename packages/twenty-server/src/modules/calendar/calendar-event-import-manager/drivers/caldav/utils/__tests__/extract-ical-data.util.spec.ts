@@ -27,8 +27,6 @@ describe('extractICalData', () => {
   });
 
   it.each([null, undefined, ''])('returns null for empty input %s', (value) => {
-    expect(
-      extractICalData(value as unknown as string | Record<string, unknown>),
-    ).toBeNull();
+    expect(extractICalData(value)).toBeNull();
   });
 });

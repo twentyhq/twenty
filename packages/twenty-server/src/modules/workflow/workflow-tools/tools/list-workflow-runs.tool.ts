@@ -39,7 +39,12 @@ const listWorkflowRunsSchema = z.object({
 type ListWorkflowRunsInput = z.infer<typeof listWorkflowRunsSchema>;
 
 export const createListWorkflowRunsTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+  deps: {
+    workspaceOrmManager: Pick<
+      WorkflowToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'list_workflow_runs' as const,

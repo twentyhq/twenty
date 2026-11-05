@@ -1,4 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
@@ -7,13 +8,7 @@ const AUTH_CONTEXT = {
   workspace: { id: 'workspace-id' },
 } as WorkspaceAuthContext;
 
-const mockStep = {
-  id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-  name: 'Send email',
-  type: 'SEND_EMAIL',
-  valid: true,
-  settings: { input: {} },
-};
+const mockStep = createMockCodeStep('f47ac10b-58cc-4372-a567-0e02b2c3d479');
 
 const buildTool = () => {
   const coreWorkflowVersionMutationService = {
@@ -34,9 +29,7 @@ const buildTool = () => {
 const baseInput = {
   coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
   step: mockStep,
-} as unknown as Parameters<
-  ReturnType<typeof createUpdateWorkflowVersionStepTool>['execute']
->[0];
+};
 
 describe('createUpdateWorkflowVersionStepTool', () => {
   beforeEach(() => {

@@ -24,24 +24,24 @@ const userAuthContext = {
   type: 'user',
   workspace: { id: 'workspace-1' },
   workspaceMemberId: WORKSPACE_MEMBER_ID,
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const apiKeyAuthContext = {
   type: 'apiKey',
   workspace: { id: 'workspace-1' },
   apiKey: { id: API_KEY_ID },
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const applicationAuthContext = {
   type: 'application',
   workspace: { id: 'workspace-1' },
   application: { id: APPLICATION_ID, defaultRoleId: APPLICATION_ROLE_ID },
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const systemAuthContext = {
   type: 'system',
   workspace: { id: 'workspace-1' },
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
 
@@ -311,7 +311,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: {
             ...applicationAuthContext,
             application: { id: APPLICATION_ID, defaultRoleId: null },
-          } as unknown as WorkspaceAuthContext,
+          } as WorkspaceAuthContext,
           apiKeyRoleMap,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },

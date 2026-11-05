@@ -1,41 +1,59 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
+import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
+import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const NOTE_OBJECT_ID = 'note-object';
 
-const flatObjectMetadataMaps = {
-  byUniversalIdentifier: {
-    [NOTE_OBJECT_ID]: { id: NOTE_OBJECT_ID, fieldIds: ['field-body'] },
-  },
-  universalIdentifierById: { [NOTE_OBJECT_ID]: NOTE_OBJECT_ID },
-} as unknown as FlatEntityMaps<FlatObjectMetadata>;
+const flatObjectMetadataMaps = addAllFlatEntitiesToFlatEntityMaps({
+  flatEntities: [
+    getFlatObjectMetadataMock({
+      id: NOTE_OBJECT_ID,
+      universalIdentifier: NOTE_OBJECT_ID,
+      fieldIds: ['field-body'],
+    }),
+  ],
+  flatEntityMaps: createEmptyFlatEntityMaps(),
+});
 
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    'field-body': {
+const flatFieldMetadataMaps = addAllFlatEntitiesToFlatEntityMaps({
+  flatEntities: [
+    getFlatFieldMetadataMock({
       id: 'field-body',
+      universalIdentifier: 'field-body',
+      objectMetadataId: NOTE_OBJECT_ID,
       name: 'body',
       type: FieldMetadataType.RICH_TEXT,
-    },
-  },
-  universalIdentifierById: { 'field-body': 'field-body' },
-} as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    }),
+  ],
+  flatEntityMaps: createEmptyFlatEntityMaps(),
+});
 
 const objectIdByNameSingular = { note: NOTE_OBJECT_ID };
 
-const buildCreateStep = (input: unknown): WorkflowAction =>
-  ({
-    id: 'step-1',
-    name: 'Create Record',
-    type: WorkflowActionType.CREATE_RECORD,
-    settings: { input },
-  }) as unknown as WorkflowAction;
+const buildCreateStep = (
+  input: WorkflowCreateRecordActionInput,
+): WorkflowAction => ({
+  id: 'step-1',
+  name: 'Create Record',
+  type: WorkflowActionType.CREATE_RECORD,
+  valid: true,
+  settings: {
+    input,
+    outputSchema: {},
+    errorHandlingOptions: {
+      continueOnFailure: { value: false },
+      retryOnFailure: { value: 0 },
+    },
+  },
+});
 
 const getIssues = (steps: WorkflowAction[]) =>
   getWorkflowRecordStepMetadataIssues({
@@ -60,7 +78,11 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
 
   it('flags a non-string object name as OBJECT_NOT_FOUND', () => {
     const issues = getIssues([
-      buildCreateStep({ objectName: 123, objectRecord: {} }),
+      buildCreateStep({
+        // @ts-expect-error stored step inputs are unvalidated JSON
+        objectName: 123,
+        objectRecord: {},
+      }),
     ]);
 
     expect(issues).toHaveLength(1);
@@ -91,14 +113,7 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
   });
 
   it('ignores steps that do not target a record object', () => {
-    const issues = getIssues([
-      {
-        id: 'step-1',
-        name: 'Send email',
-        type: WorkflowActionType.SEND_EMAIL,
-        settings: { input: {} },
-      } as unknown as WorkflowAction,
-    ]);
+    const issues = getIssues([createMockCodeStep('step-1')]);
 
     expect(issues).toEqual([]);
   });

@@ -2,16 +2,19 @@ import {
   FieldMetadataType,
   RelationType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
-import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
-import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/rls/types/row-level-permission-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/rls/constants/unsatisfiable-record-filter.constant';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/build-row-level-permission-record-filter.util';
 
@@ -42,23 +45,21 @@ const MORPH_TARGET_ROLE_ID = 'morph-target-role-1';
 const MORPH_HEAD_ROLE_ID = 'morph-head-role-1';
 const OWNER_RECORD_ID = '11111111-1111-4111-8111-111111111111';
 
-const buildMaps = (
-  entities: ({ id: string; universalIdentifier: string } & Record<
-    string,
-    unknown
-  >)[],
+const buildMaps = <TFlatEntity extends SyncableFlatEntity>(
+  entities: TFlatEntity[],
 ) =>
-  entities.reduce(
+  entities.reduce<FlatEntityMaps<TFlatEntity>>(
     (maps, entity) =>
       addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: entity as never,
+        flatEntity: entity,
         flatEntityMaps: maps,
       }),
     createEmptyFlatEntityMaps(),
   );
 
-const flatObjectMetadata = {
+const flatObjectMetadata = getFlatObjectMetadataMock({
   id: OBJECT_ID,
+  universalIdentifier: OBJECT_ID,
   nameSingular: 'thing',
   namePlural: 'things',
   fieldIds: [
@@ -68,74 +69,99 @@ const flatObjectMetadata = {
     OWNER_COMPANY_FIELD_ID,
     OWNER_PERSON_FIELD_ID,
   ],
-} as unknown as FlatObjectMetadata;
+});
 
 const flatObjectMetadataMaps = buildMaps([
-  { ...flatObjectMetadata, universalIdentifier: OBJECT_ID },
-  {
+  flatObjectMetadata,
+  getFlatObjectMetadataMock({
     id: COMPANY_OBJECT_ID,
     universalIdentifier: COMPANY_OBJECT_ID,
     nameSingular: 'company',
     namePlural: 'companies',
-  },
-  {
+  }),
+  getFlatObjectMetadataMock({
     id: PERSON_OBJECT_ID,
     universalIdentifier: PERSON_OBJECT_ID,
     nameSingular: 'person',
     namePlural: 'people',
-  },
-]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+  }),
+]);
 
 const buildOwnerMorphField = (
-  field: { id: string; name: string } & Record<string, unknown>,
-) => ({
-  universalIdentifier: field.id,
-  type: FieldMetadataType.MORPH_RELATION,
-  objectMetadataId: OBJECT_ID,
-  morphId: OWNER_MORPH_ID,
-  relationTargetFieldMetadataId: null,
-  relationTargetObjectMetadataId: null,
-  settings: { relationType: RelationType.MANY_TO_ONE },
-  ...field,
-});
+  field: Pick<FlatFieldMetadata, 'id' | 'name'> & Partial<FlatFieldMetadata>,
+) =>
+  getFlatFieldMetadataMock({
+    universalIdentifier: field.id,
+    type: FieldMetadataType.MORPH_RELATION,
+    objectMetadataId: OBJECT_ID,
+    morphId: OWNER_MORPH_ID,
+    relationTargetFieldMetadataId: null,
+    relationTargetObjectMetadataId: null,
+    settings: { relationType: RelationType.MANY_TO_ONE },
+    ...field,
+  });
 
 const flatFieldMetadataMaps = buildMaps([
-  {
+  getFlatFieldMetadataMock({
     id: FIELD_ID,
     universalIdentifier: FIELD_ID,
     name: 'name',
     type: FieldMetadataType.TEXT,
     objectMetadataId: OBJECT_ID,
-  },
-  {
+  }),
+  getFlatFieldMetadataMock({
     id: STATUS_FIELD_ID,
     universalIdentifier: STATUS_FIELD_ID,
     name: 'status',
     type: FieldMetadataType.SELECT,
     objectMetadataId: OBJECT_ID,
     options: [
-      { value: 'OPEN', label: 'Open' },
-      { value: 'CLOSED', label: 'Closed' },
+      {
+        id: 'option-open',
+        value: 'OPEN',
+        label: 'Open',
+        position: 0,
+        color: 'green',
+      },
+      {
+        id: 'option-closed',
+        value: 'CLOSED',
+        label: 'Closed',
+        position: 1,
+        color: 'red',
+      },
     ],
-  },
-  {
+  }),
+  getFlatFieldMetadataMock({
     id: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
     universalIdentifier: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
     name: 'locale',
     type: FieldMetadataType.TEXT,
     objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
-  },
-  {
+  }),
+  getFlatFieldMetadataMock({
     id: WORKSPACE_MEMBER_TEAM_FIELD_ID,
     universalIdentifier: WORKSPACE_MEMBER_TEAM_FIELD_ID,
     name: 'team',
     type: FieldMetadataType.SELECT,
     objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
     options: [
-      { value: 'OPEN', label: 'Open' },
-      { value: 'SALES', label: 'Sales' },
+      {
+        id: 'option-open',
+        value: 'OPEN',
+        label: 'Open',
+        position: 0,
+        color: 'green',
+      },
+      {
+        id: 'option-sales',
+        value: 'SALES',
+        label: 'Sales',
+        position: 1,
+        color: 'blue',
+      },
     ],
-  },
+  }),
   buildOwnerMorphField({ id: OWNER_MORPH_ID, name: 'owner' }),
   buildOwnerMorphField({
     id: OWNER_COMPANY_FIELD_ID,
@@ -149,20 +175,35 @@ const flatFieldMetadataMaps = buildMaps([
     relationTargetFieldMetadataId: 'person-owned-things-field',
     relationTargetObjectMetadataId: PERSON_OBJECT_ID,
   }),
-]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+]);
+
+const FLAT_ENTITY_DEFAULTS = {
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  workspaceId: 'workspace-id',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+};
 
 const buildPredicate = (
   id: string,
   roleId: string,
-  predicate: Record<string, unknown>,
-) => ({
+  predicate: Partial<FlatRowLevelPermissionPredicate>,
+): FlatRowLevelPermissionPredicate => ({
   id,
   universalIdentifier: id,
+  ...FLAT_ENTITY_DEFAULTS,
   roleId,
   objectMetadataId: OBJECT_ID,
   fieldMetadataId: FIELD_ID,
   relationFieldMetadataId: null,
-  operand: 'CONTAINS',
+  fieldMetadataUniversalIdentifier: FIELD_ID,
+  relationFieldMetadataUniversalIdentifier: null,
+  objectMetadataUniversalIdentifier: OBJECT_ID,
+  roleUniversalIdentifier: roleId,
+  workspaceMemberFieldMetadataUniversalIdentifier: null,
+  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  operand: RowLevelPermissionPredicateOperand.CONTAINS,
   value: null,
   subFieldName: null,
   workspaceMemberFieldMetadataId: null,
@@ -183,7 +224,7 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
   }),
   buildPredicate('predicate-team', TEAM_BOUND_ROLE_ID, {
     fieldMetadataId: STATUS_FIELD_ID,
-    operand: 'IS',
+    operand: RowLevelPermissionPredicateOperand.IS,
     workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_TEAM_FIELD_ID,
   }),
   buildPredicate('predicate-or-static', OR_GROUP_ROLE_ID, {
@@ -224,37 +265,52 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
   }),
   buildPredicate('predicate-morph-target', MORPH_TARGET_ROLE_ID, {
     fieldMetadataId: OWNER_COMPANY_FIELD_ID,
-    operand: 'IS',
+    operand: RowLevelPermissionPredicateOperand.IS,
     value: { selectedRecordIds: [OWNER_RECORD_ID] },
   }),
   buildPredicate('predicate-morph-head', MORPH_HEAD_ROLE_ID, {
     fieldMetadataId: OWNER_MORPH_ID,
-    operand: 'IS',
+    operand: RowLevelPermissionPredicateOperand.IS,
     value: { selectedRecordIds: [OWNER_RECORD_ID] },
   }),
   buildPredicate('predicate-text-is', TEXT_IS_ROLE_ID, {
-    operand: 'IS',
+    operand: RowLevelPermissionPredicateOperand.IS,
     value: 'stale-value',
   }),
   buildPredicate('predicate-select-contains', SELECT_CONTAINS_ROLE_ID, {
     fieldMetadataId: STATUS_FIELD_ID,
-    operand: 'CONTAINS',
+    operand: RowLevelPermissionPredicateOperand.CONTAINS,
     value: 'OPEN',
   }),
   buildPredicate('predicate-relation-hop', RELATION_HOP_ROLE_ID, {
     relationFieldMetadataId: 'relation-field',
     value: 'reached-through-relation',
   }),
-]) as unknown as FlatRowLevelPermissionPredicateMaps;
+]);
 
 const buildPredicateGroup = (
   id: string,
   roleId: string,
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,
   parentRowLevelPermissionPredicateGroupId: string | null = null,
-) => ({
+): FlatRowLevelPermissionPredicateGroup => ({
   id,
   universalIdentifier: id,
+  ...FLAT_ENTITY_DEFAULTS,
+  objectMetadataId: OBJECT_ID,
+  positionInRowLevelPermissionPredicateGroup: null,
+  canReadRecords: true,
+  canUpdateRecords: true,
+  canSoftDeleteRecords: true,
+  canDestroyRecords: true,
+  childRowLevelPermissionPredicateGroupIds: [],
+  rowLevelPermissionPredicateIds: [],
+  childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+  rowLevelPermissionPredicateUniversalIdentifiers: [],
+  objectMetadataUniversalIdentifier: OBJECT_ID,
+  roleUniversalIdentifier: roleId,
+  parentRowLevelPermissionPredicateGroupUniversalIdentifier:
+    parentRowLevelPermissionPredicateGroupId,
   roleId,
   logicalOperator,
   parentRowLevelPermissionPredicateGroupId,
@@ -288,17 +344,16 @@ const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
     OR_GROUP_ONLY_MEMBER_ROLE_ID,
     RowLevelPermissionPredicateGroupLogicalOperator.OR,
   ),
-]) as unknown as FlatRowLevelPermissionPredicateGroupMaps;
+]);
 
-const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) =>
-  ({
-    id: 'workspace-member-1',
-    ...workspaceMember,
-  }) as unknown as UserWorkspaceAuthContext['workspaceMember'];
+const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
+  id: 'workspace-member-1',
+  ...workspaceMember,
+});
 
 const build = (
   roleIds: string[],
-  workspaceMember?: UserWorkspaceAuthContext['workspaceMember'],
+  workspaceMember?: RowLevelPermissionWorkspaceMember,
 ) =>
   buildRowLevelPermissionRecordFilter({
     flatRowLevelPermissionPredicateMaps,
