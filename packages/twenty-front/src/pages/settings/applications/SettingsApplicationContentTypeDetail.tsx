@@ -1,16 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { Navigate } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SettingsApplicationContentItemsTable } from '@/settings/applications/components/SettingsApplicationContentItemsTable';
+import { SettingsApplicationContentPageLayout } from '@/settings/applications/components/SettingsApplicationContentPageLayout';
 import { SettingsApplicationContentTypeIcon } from '@/settings/applications/components/SettingsApplicationContentTypeIcon';
 import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/constants/ApplicationContentTypeConfigs';
 import { useApplicationContentRoute } from '@/settings/applications/hooks/useApplicationContentRoute';
 import { isApplicationContentType } from '@/settings/applications/utils/isApplicationContentType';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 
 export const SettingsApplicationContentTypeDetail = () => {
   const { t } = useLingui();
@@ -31,38 +28,25 @@ export const SettingsApplicationContentTypeDetail = () => {
   const contentTypeLabel = t(
     APPLICATION_CONTENT_TYPE_CONFIGS[contentType].label,
   );
-  const displayName = name ?? t`Application`;
 
   return (
-    <SettingsPageLayout
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        {
-          children: t`Apps`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        { children: displayName, href: applicationPath },
-        { children: t`Content`, href: contentPath },
-        { children: contentTypeLabel },
-      ]}
+    <SettingsApplicationContentPageLayout
+      applicationName={name ?? t`Application`}
+      applicationPath={applicationPath}
+      contentPath={contentPath}
+      contentTypeLabel={contentTypeLabel}
       title={contentTypeLabel}
       icon={<SettingsApplicationContentTypeIcon contentType={contentType} />}
+      isLoading={!isDefined(content)}
     >
-      <SettingsPageContainer>
-        {isDefined(content) ? (
-          <SettingsApplicationContentItemsTable
-            contentType={contentType}
-            content={content}
-            location={location}
-            installedApplicationId={installedApplicationId}
-          />
-        ) : (
-          <SettingsSectionSkeletonLoader />
-        )}
-      </SettingsPageContainer>
-    </SettingsPageLayout>
+      {isDefined(content) && (
+        <SettingsApplicationContentItemsTable
+          contentType={contentType}
+          content={content}
+          location={location}
+          installedApplicationId={installedApplicationId}
+        />
+      )}
+    </SettingsApplicationContentPageLayout>
   );
 };

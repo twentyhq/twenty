@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { EMPTY_APPLICATION_CONTENT } from 'src/engine/core-modules/application/application-content/constants/empty-application-content.constant';
+import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -333,7 +333,7 @@ export class ApplicationResolver {
         workspaceCustomApplicationId,
       })
     ) {
-      return EMPTY_APPLICATION_CONTENT;
+      return buildApplicationContentFromManifest({});
     }
 
     return this.applicationContentService.getInstalledApplicationContent({

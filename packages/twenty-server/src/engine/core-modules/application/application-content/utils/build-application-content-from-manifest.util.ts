@@ -1,13 +1,13 @@
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationContentItemDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content-item.dto';
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { buildPublicAssetContentItem } from 'src/engine/core-modules/application/application-content/utils/build-public-asset-content-item.util';
+import { buildTranslationContentItems } from 'src/engine/core-modules/application/application-content/utils/build-translation-content-items.util';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
 import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
-import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
 
 const findByUniversalIdentifier = <TValue>({
   valueByUniversalIdentifier,
@@ -314,17 +314,9 @@ export const buildApplicationContentFromManifest = (
         tag: connectionProvider.type,
       }),
     ),
-    publicAssets: (manifest.publicAssets ?? []).map((publicAsset) => ({
-      universalIdentifier: publicAsset.filePath,
-      label: publicAsset.fileName,
-      tag: getPublicAssetTag(publicAsset.fileType),
-    })),
-    translations: Object.entries(manifest.translations ?? {}).map(
-      ([locale, messages]): ApplicationContentItemDTO => ({
-        universalIdentifier: locale,
-        label: locale,
-        count: Object.keys(messages ?? {}).length,
-      }),
+    publicAssets: (manifest.publicAssets ?? []).map(
+      buildPublicAssetContentItem,
     ),
+    translations: buildTranslationContentItems(manifest.translations ?? {}),
   };
 };

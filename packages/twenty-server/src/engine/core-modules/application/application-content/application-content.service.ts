@@ -11,7 +11,8 @@ import {
   APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS,
   buildApplicationContentFromFlatEntityMaps,
 } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-flat-entity-maps.util';
-import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
+import { buildPublicAssetContentItem } from 'src/engine/core-modules/application/application-content/utils/build-public-asset-content-item.util';
+import { buildTranslationContentItems } from 'src/engine/core-modules/application/application-content/utils/build-translation-content-items.util';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -59,19 +60,15 @@ export class ApplicationContentService {
         applicationId,
         flatEntityMaps,
       }),
-      publicAssets: publicAssetFiles.map((file) => ({
-        id: file.id,
-        universalIdentifier: file.path,
-        label: basename(file.path),
-        tag: getPublicAssetTag(extname(file.path).replace(/^\./, '')),
-      })),
-      translations: Object.entries(catalogsByLocale).map(
-        ([locale, messages]) => ({
-          universalIdentifier: locale,
-          label: locale,
-          count: Object.keys(messages ?? {}).length,
+      publicAssets: publicAssetFiles.map((file) =>
+        buildPublicAssetContentItem({
+          id: file.id,
+          filePath: file.path,
+          fileName: basename(file.path),
+          fileType: extname(file.path).replace(/^\./, ''),
         }),
       ),
+      translations: buildTranslationContentItems(catalogsByLocale),
     };
   }
 }

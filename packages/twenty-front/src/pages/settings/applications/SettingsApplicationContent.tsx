@@ -1,13 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsApplicationContentOverview } from '@/settings/applications/components/SettingsApplicationContentOverview';
+import { SettingsApplicationContentPageLayout } from '@/settings/applications/components/SettingsApplicationContentPageLayout';
 import { useApplicationContentRoute } from '@/settings/applications/hooks/useApplicationContentRoute';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 
 export const SettingsApplicationContent = () => {
   const { t } = useLingui();
@@ -17,25 +14,17 @@ export const SettingsApplicationContent = () => {
     installedApplicationId,
     content,
     applicationPath,
+    contentPath,
     location,
   } = useApplicationContentRoute();
 
   const displayName = name ?? t`Application`;
 
   return (
-    <SettingsPageLayout
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        {
-          children: t`Apps`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        { children: displayName, href: applicationPath },
-        { children: t`Content` },
-      ]}
+    <SettingsApplicationContentPageLayout
+      applicationName={displayName}
+      applicationPath={applicationPath}
+      contentPath={contentPath}
       title={displayName}
       icon={
         <AppChip
@@ -46,17 +35,14 @@ export const SettingsApplicationContent = () => {
           chipOnly
         />
       }
+      isLoading={!isDefined(content)}
     >
-      <SettingsPageContainer>
-        {isDefined(content) ? (
-          <SettingsApplicationContentOverview
-            content={content}
-            location={location}
-          />
-        ) : (
-          <SettingsSectionSkeletonLoader />
-        )}
-      </SettingsPageContainer>
-    </SettingsPageLayout>
+      {isDefined(content) && (
+        <SettingsApplicationContentOverview
+          content={content}
+          location={location}
+        />
+      )}
+    </SettingsApplicationContentPageLayout>
   );
 };

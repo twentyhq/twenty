@@ -2,27 +2,16 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
-import { SettingsApplicationContentTypeIcon } from '@/settings/applications/components/SettingsApplicationContentTypeIcon';
-import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/components/SettingsApplicationTableRowChevronIcon';
+import { SettingsApplicationContentTypeTable } from '@/settings/applications/components/SettingsApplicationContentTypeTable';
 import { APPLICATION_CONTENT_SECTIONS } from '@/settings/applications/constants/ApplicationContentSections';
 import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/constants/ApplicationContentTypeConfigs';
 import { useApplicationContentItemDisplay } from '@/settings/applications/hooks/useApplicationContentItemDisplay';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
 import { type ApplicationContentLocation } from '@/settings/applications/types/ApplicationContentLocation';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
-import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
-import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-
-const OVERVIEW_TABLE_GRID_TEMPLATE_COLUMNS =
-  'minmax(0, 200px) minmax(0, 1fr) 64px 36px';
+import { filterApplicationContentItemsBySearch } from '@/settings/applications/utils/filterApplicationContentItemsBySearch';
 
 type SettingsApplicationContentOverviewProps = {
   content: ApplicationContent;
@@ -36,21 +25,22 @@ export const SettingsApplicationContentOverview = ({
   const { t } = useLingui();
   const { getItemLabel } = useApplicationContentItemDisplay(content);
   const [searchTerm, setSearchTerm] = useState('');
-  const normalizedSearchTerm = normalizeSearchText(searchTerm);
 
   const getMatchingItemCount = (contentType: ApplicationContentType) => {
     const items = content[contentType];
     const typeLabel = t(APPLICATION_CONTENT_TYPE_CONFIGS[contentType].label);
 
-    if (normalizeSearchText(typeLabel).includes(normalizedSearchTerm)) {
+    if (
+      normalizeSearchText(typeLabel).includes(normalizeSearchText(searchTerm))
+    ) {
       return items.length;
     }
 
-    return items.filter((item) =>
-      normalizeSearchText(getItemLabel({ contentType, item })).includes(
-        normalizedSearchTerm,
-      ),
-    ).length;
+    return filterApplicationContentItemsBySearch({
+      items,
+      searchTerm,
+      getItemLabel: (item) => getItemLabel({ contentType, item }),
+    }).length;
   };
 
   const sections = APPLICATION_CONTENT_SECTIONS.map((section) => ({
@@ -78,57 +68,17 @@ export const SettingsApplicationContentOverview = ({
             title={t(section.title)}
             description={t(section.description)}
           />
-          <Table>
-            <TableRow
-              gridTemplateColumns={OVERVIEW_TABLE_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Description`}</TableHeader>
-              <TableHeader align="right">{t`Count`}</TableHeader>
-              <TableHeader />
-            </TableRow>
-            {section.rows.map(({ contentType, count }) => (
-              <TableRow
-                key={contentType}
-                gridTemplateColumns={OVERVIEW_TABLE_GRID_TEMPLATE_COLUMNS}
-                to={getApplicationContentPath({ location, contentType })}
-              >
-                <StyledNameTableCell minWidth="0" overflow="hidden">
-                  <SettingsApplicationContentTypeIcon
-                    contentType={contentType}
-                  />
-                  <OverflowingTextWithTooltip
-                    text={t(
-                      APPLICATION_CONTENT_TYPE_CONFIGS[contentType].label,
-                    )}
-                  />
-                </StyledNameTableCell>
-                <TableCell
-                  color={themeCssVariables.font.color.secondary}
-                  minWidth="0"
-                  overflow="hidden"
-                >
-                  <OverflowingTextWithTooltip
-                    text={t(
-                      APPLICATION_CONTENT_TYPE_CONFIGS[contentType].description,
-                    )}
-                  />
-                </TableCell>
-                <TableCell
-                  align="right"
-                  color={themeCssVariables.font.color.secondary}
-                >
-                  {count}
-                </TableCell>
-                <TableCell
-                  align="right"
-                  padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
-                >
-                  <SettingsApplicationTableRowChevronIcon />
-                </TableCell>
-              </TableRow>
-            ))}
-          </Table>
+          <SettingsApplicationContentTypeTable
+            rows={section.rows.map(({ contentType, count }) => ({
+              contentType,
+              count,
+              secondaryText: t(
+                APPLICATION_CONTENT_TYPE_CONFIGS[contentType].description,
+              ),
+            }))}
+            secondaryColumnLabel={t`Description`}
+            location={location}
+          />
         </Section.Root>
       ))}
     </>
