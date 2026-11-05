@@ -28,6 +28,7 @@ import { ResourceCreditService } from 'src/engine/core-modules/billing/services/
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { computeRolloverClosingAllowances } from 'src/engine/core-modules/billing/utils/compute-rollover-closing-allowances.util';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -155,7 +156,7 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    const [resourceCreditRolloverParameters, workspaceCreditAllowanceMicro] =
+    const [resourceCreditRolloverParameters, workspaceCreditAllowances] =
       await Promise.all([
         this.resourceCreditService.getResourceCreditRolloverParameters({
           workspaceId: subscription.workspaceId,
@@ -163,15 +164,18 @@ export class BillingWebhookInvoiceService {
           boundary,
           interval: closingPeriodInterval,
         }),
-        this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
-          {
-            workspaceId: subscription.workspaceId,
-            nowMs: closingPeriodEnd.getTime() - 1,
-            interval: closingPeriodInterval,
-            isTrialing: isFirstPeriodAfterTrial,
-          },
+        this.billingWorkspaceCreditAllowanceService.findAllWorkspaceCreditAllowances(
+          subscription.workspaceId,
         ),
       ]);
+
+    const workspaceCreditAllowanceMicro =
+      findActiveWorkspaceCreditAllowanceMicro({
+        workspaceCreditAllowances,
+        nowMs: closingPeriodEnd.getTime() - 1,
+        interval: closingPeriodInterval,
+        isTrialing: isFirstPeriodAfterTrial,
+      });
 
     const closingAllowances = computeRolloverClosingAllowances({
       planWorkspaceCredits: resourceCreditRolloverParameters,

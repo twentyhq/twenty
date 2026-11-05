@@ -7,9 +7,7 @@ import { type FindOptionsWhere, IsNull, MoreThan, Or } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type WorkspaceCreditAllowanceWindow } from 'src/engine/core-modules/billing/types/workspace-credit-allowance-window.type';
-import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -28,39 +26,17 @@ export class BillingWorkspaceCreditAllowanceService {
 
     return this.findWorkspaceCreditAllowances({
       workspaceId,
-      where: [
-        {
-          revokedAt: Or(IsNull(), MoreThan(now)),
-          endsAt: Or(IsNull(), MoreThan(now)),
-        },
-      ],
+      where: {
+        revokedAt: Or(IsNull(), MoreThan(now)),
+        endsAt: Or(IsNull(), MoreThan(now)),
+      },
     });
   }
 
   async findAllWorkspaceCreditAllowances(
     workspaceId: string,
   ): Promise<WorkspaceCreditAllowanceWindow[]> {
-    return this.findWorkspaceCreditAllowances({ workspaceId, where: [{}] });
-  }
-
-  async findActiveWorkspaceCreditAllowanceMicro({
-    workspaceId,
-    nowMs,
-    interval,
-    isTrialing,
-  }: {
-    workspaceId: string;
-    nowMs: number;
-    interval: SubscriptionInterval;
-    isTrialing: boolean;
-  }): Promise<number | null> {
-    return findActiveWorkspaceCreditAllowanceMicro({
-      workspaceCreditAllowances:
-        await this.findAllWorkspaceCreditAllowances(workspaceId),
-      nowMs,
-      interval,
-      isTrialing,
-    });
+    return this.findWorkspaceCreditAllowances({ workspaceId, where: {} });
   }
 
   private async findWorkspaceCreditAllowances({
@@ -68,15 +44,15 @@ export class BillingWorkspaceCreditAllowanceService {
     where,
   }: {
     workspaceId: string;
-    where: FindOptionsWhere<BillingArrangementEntity>[];
+    where: FindOptionsWhere<BillingArrangementEntity>;
   }): Promise<WorkspaceCreditAllowanceWindow[]> {
     const arrangements = await this.billingArrangementRepository.find(
       workspaceId,
       {
-        where: where.map((clause) => ({
-          ...clause,
+        where: {
+          ...where,
           type: BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
-        })),
+        },
       },
     );
 
