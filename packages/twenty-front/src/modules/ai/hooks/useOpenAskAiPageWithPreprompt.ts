@@ -43,8 +43,8 @@ export const useOpenAskAiPageWithPreprompt = () => {
     mode?: AgentChatPrepromptMode;
     model?: AgentChatModelPreselection;
     files?: File[];
-  }) => {
-    switchToNewChat();
+  }): Promise<string | null> => {
+    const newAiChatThreadId = switchToNewChat();
 
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
@@ -56,7 +56,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     if (!isNonEmptyArray(files)) {
       stageAiChatPreprompt({ serializedDocument, mode });
 
-      return;
+      return newAiChatThreadId;
     }
 
     const threadId = store.get(currentAiChatThreadState.atom);
@@ -70,13 +70,15 @@ export const useOpenAskAiPageWithPreprompt = () => {
         ),
       );
 
-      return;
+      return null;
     }
 
     stageAiChatPreprompt({
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',
     });
+
+    return newAiChatThreadId;
   };
 
   return { openAskAiPageWithPreprompt };

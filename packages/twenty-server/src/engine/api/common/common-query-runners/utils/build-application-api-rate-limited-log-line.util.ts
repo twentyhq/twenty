@@ -9,7 +9,13 @@ export const buildApplicationApiRateLimitedLogLine = ({
   authContext,
   exhaustedScope,
 }: {
-  authContext: ApplicationWorkspaceAuthContext;
+  authContext: {
+    application: Pick<
+      ApplicationWorkspaceAuthContext['application'],
+      'id' | 'name' | 'universalIdentifier'
+    >;
+    workspace: Pick<ApplicationWorkspaceAuthContext['workspace'], 'id'>;
+  };
   exhaustedScope: ExhaustedScope;
 }): string =>
   `Application API rate limit exceeded ${toLogfmt({

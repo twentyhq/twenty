@@ -46,7 +46,10 @@ export class FlatFieldMetadataOptionValidatorService {
   }: {
     universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: FieldMetadataOptionRelatedMaps;
-    finalFlatEntityMaps: MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>;
+    finalFlatEntityMaps: Pick<
+      MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>,
+      'byUniversalIdentifier'
+    >;
     buildOptions: WorkspaceMigrationValidationBuildOptions;
   }): FlatEntityValidationError[] {
     const { fieldMetadataUniversalIdentifier, value, label } =

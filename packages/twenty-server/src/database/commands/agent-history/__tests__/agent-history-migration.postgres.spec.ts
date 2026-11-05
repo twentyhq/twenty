@@ -235,6 +235,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       {} as never,
       {} as never,
       {} as never,
+      {} as never,
+      {} as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>

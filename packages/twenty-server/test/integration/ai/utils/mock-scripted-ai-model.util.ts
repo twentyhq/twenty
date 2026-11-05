@@ -3,10 +3,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { type ScriptedModelResponse } from 'test/utils/scripted-model-response.type';
 
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 export const SCRIPTED_MODEL_USAGE = {
   inputTokens: {
@@ -45,7 +42,7 @@ export const mockScriptedAiModel = (
       modelId: TEST_AI_MODEL_ID,
       sdkPackage: '@ai-sdk/openai',
       model,
-    } as unknown as RegisteredAiModel);
+    });
 
   return offeredToolNamesByCall;
 };

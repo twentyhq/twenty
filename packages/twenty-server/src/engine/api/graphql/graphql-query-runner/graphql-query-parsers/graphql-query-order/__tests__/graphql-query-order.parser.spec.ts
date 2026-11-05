@@ -4,6 +4,7 @@ import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-que
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('GraphqlQueryOrderFieldParser', () => {
   const workspaceId = 'workspace-id';
@@ -84,20 +85,21 @@ describe('GraphqlQueryOrderFieldParser', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const flatObjectMetadata = {
+  const flatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
+    universalIdentifier: objectMetadataId,
     workspaceId,
     nameSingular: 'opportunity',
     fieldIds: rootFields.map((field) => field.id),
-  } as unknown as FlatObjectMetadata;
+  });
 
-  const companyObjectMetadata = {
+  const companyObjectMetadata = getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
     fieldIds: ['company-name-id', 'company-contactname-id'],
-  } as unknown as FlatObjectMetadata;
+  });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {

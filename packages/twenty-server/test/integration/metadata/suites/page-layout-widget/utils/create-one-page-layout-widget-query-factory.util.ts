@@ -4,7 +4,10 @@ import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suite
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-export type CreateOnePageLayoutWidgetFactoryInput = CreatePageLayoutWidgetInput;
+export type CreateOnePageLayoutWidgetFactoryInput = Omit<
+  CreatePageLayoutWidgetInput,
+  'configuration'
+> & { configuration?: unknown };
 
 const DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   id

@@ -148,7 +148,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const flatFieldMetadata of Object.values(
       allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatFieldMetadata)) continue;
+      if (!isDefined(flatFieldMetadata)) {
+        continue;
+      }
 
       for (const universalFlatFieldMetadataOption of buildUniversalFlatFieldMetadataOptionsForField(
         {
