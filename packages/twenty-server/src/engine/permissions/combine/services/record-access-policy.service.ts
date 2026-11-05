@@ -120,7 +120,7 @@ export class RecordAccessPolicyService {
     return { principals, metadataMaps, flatObjectMetadata, operationType };
   }
 
-  async hasAccessToProposedRecord({
+  async hasAccessToUncommittedRecord({
     principals,
     objectMetadataId,
     operationType,

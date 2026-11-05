@@ -56,7 +56,7 @@ type RecordsQuestion = ObjectQuestion & {
   transactionScope?: WorkspaceTransactionScope;
 };
 
-type ProposedRecordQuestion = ObjectQuestion & {
+type UncommittedRecordQuestion = ObjectQuestion & {
   record: RowAccessRecord;
   privateRecordState: PrivateRecordState;
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
@@ -180,19 +180,19 @@ export class PermissionsService {
     return this.coversEveryRecord({ question, operationType: 'update' });
   }
 
-  public canReadProposedRecord(
-    question: ProposedRecordQuestion,
+  public canReadUncommittedRecord(
+    question: UncommittedRecordQuestion,
   ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToProposedRecord({
+    return this.recordAccessPolicyService.hasAccessToUncommittedRecord({
       ...question,
       operationType: 'select',
     });
   }
 
-  public canUpdateProposedRecord(
-    question: ProposedRecordQuestion,
+  public canUpdateUncommittedRecord(
+    question: UncommittedRecordQuestion,
   ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToProposedRecord({
+    return this.recordAccessPolicyService.hasAccessToUncommittedRecord({
       ...question,
       operationType: 'update',
     });

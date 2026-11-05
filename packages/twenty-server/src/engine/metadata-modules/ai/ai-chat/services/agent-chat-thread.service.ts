@@ -130,7 +130,7 @@ export class AgentChatThreadService {
     await this.assistantParticipationService.resolveAssistantParticipation({
       ...args,
       isInitialMessage: true,
-      isProposedThread: true,
+      isUncommittedThread: true,
     });
   }
 

@@ -52,7 +52,7 @@ export class AgentChatAssistantPolicyService {
     isInitialMessage,
     isReplyRequested = true,
     hasRequestedRecipients = false,
-    isProposedThread = false,
+    isUncommittedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
@@ -62,7 +62,7 @@ export class AgentChatAssistantPolicyService {
     isInitialMessage: boolean;
     isReplyRequested?: boolean;
     hasRequestedRecipients?: boolean;
-    isProposedThread?: boolean;
+    isUncommittedThread?: boolean;
   }): Promise<AgentChatAssistantDecision> {
     const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
       workspaceId,
@@ -72,7 +72,7 @@ export class AgentChatAssistantPolicyService {
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
-      isProposedThread,
+      isUncommittedThread,
     });
     const isAssistantOptOutLeftAlone =
       isInitialMessage &&
@@ -159,12 +159,12 @@ export class AgentChatAssistantPolicyService {
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
-    isProposedThread = false,
+    isUncommittedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds: string[];
-    isProposedThread?: boolean;
+    isUncommittedThread?: boolean;
   }): Promise<AgentChatAudience> {
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
@@ -181,7 +181,7 @@ export class AgentChatAssistantPolicyService {
       return AgentChatAudience.CONVERSATION;
     }
 
-    if (isProposedThread) {
+    if (isUncommittedThread) {
       const audienceMemberIds = new Set([
         thread.workspaceMemberId,
         ...candidateWorkspaceMemberIds,

@@ -58,7 +58,7 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { buildAgentChatProposedThreadAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-proposed-thread-access.util';
+import { buildAgentChatUncommittedThreadAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-uncommitted-thread-access.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -295,11 +295,11 @@ export class AgentChatSharingService {
     workspaceMemberId,
     threadId,
     shouldConsiderNewShares = true,
-    proposedThread,
+    uncommittedThread,
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
     shouldConsiderNewShares?: boolean;
-    proposedThread?: AgentChatThreadWorkspaceEntity;
+    uncommittedThread?: AgentChatThreadWorkspaceEntity;
   }): Promise<string[]> {
     const candidateMemberIds = [...new Set(memberIds)].filter(
       (memberId) => memberId !== workspaceMemberId,
@@ -328,7 +328,7 @@ export class AgentChatSharingService {
       workspaceId,
       threadId,
       authContext,
-      proposedThread,
+      uncommittedThread,
     });
 
     const hypotheticalRecordShareAccessLevel =
@@ -352,15 +352,17 @@ export class AgentChatSharingService {
               objectMetadataId: threadFlatObjectMetadata.id,
               hypotheticalRecordShareAccessLevel,
             };
-            const [canReadThread, canUpdateThread] = isDefined(proposedThread)
+            const [canReadThread, canUpdateThread] = isDefined(
+              uncommittedThread,
+            )
               ? await Promise.all([
-                  this.permissionsService.canReadProposedRecord({
+                  this.permissionsService.canReadUncommittedRecord({
                     ...objectQuestion,
-                    ...buildAgentChatProposedThreadAccess(proposedThread),
+                    ...buildAgentChatUncommittedThreadAccess(uncommittedThread),
                   }),
-                  this.permissionsService.canUpdateProposedRecord({
+                  this.permissionsService.canUpdateUncommittedRecord({
                     ...objectQuestion,
-                    ...buildAgentChatProposedThreadAccess(proposedThread),
+                    ...buildAgentChatUncommittedThreadAccess(uncommittedThread),
                   }),
                 ])
               : await Promise.all([
@@ -881,16 +883,16 @@ export class AgentChatSharingService {
     workspaceId,
     threadId,
     authContext,
-    proposedThread,
+    uncommittedThread,
   }: {
     workspaceId: string;
     threadId: string;
     authContext: UserWorkspaceAuthContext;
-    proposedThread?: AgentChatThreadWorkspaceEntity;
+    uncommittedThread?: AgentChatThreadWorkspaceEntity;
   }): Promise<boolean> {
     const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
 
-    if (isDefined(proposedThread)) {
+    if (isDefined(uncommittedThread)) {
       const { featureFlagsMap } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'featureFlagsMap',

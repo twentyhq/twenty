@@ -32,7 +32,7 @@ export class AgentChatAssistantParticipationService {
     workspaceMemberId,
     thread,
     isInitialMessage: providedIsInitialMessage,
-    isProposedThread = false,
+    isUncommittedThread = false,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     isReplyRequested = true,
@@ -44,7 +44,7 @@ export class AgentChatAssistantParticipationService {
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
-    isProposedThread?: boolean;
+    isUncommittedThread?: boolean;
   }): Promise<AgentChatAssistantParticipation> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
@@ -59,7 +59,7 @@ export class AgentChatAssistantParticipationService {
         workspaceId,
         workspaceMemberId,
         threadId: thread.id,
-        proposedThread: isProposedThread ? thread : undefined,
+        uncommittedThread: isUncommittedThread ? thread : undefined,
         memberIds: [
           ...mentionedWorkspaceMemberIds,
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
@@ -77,7 +77,7 @@ export class AgentChatAssistantParticipationService {
         isInitialAssistantParticipant,
         isInitialMessage,
         isReplyRequested,
-        isProposedThread,
+        isUncommittedThread,
         hasRequestedRecipients:
           isNonEmptyArray(recipientWorkspaceMemberIds) ||
           isNonEmptyArray(mentionedWorkspaceMemberIds),
