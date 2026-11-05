@@ -5,6 +5,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
@@ -31,6 +32,7 @@ export class AgentChatDirectMessageIdentityService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly directMessageConversationPrivacyService: AgentChatDirectMessageConversationPrivacyService,
+    private readonly chatThreadService: AgentChatThreadService,
   ) {}
 
   async open({
@@ -58,11 +60,23 @@ export class AgentChatDirectMessageIdentityService {
 
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
 
-    return this.getOrCreate({
+    const threadId = await this.getOrCreate({
       workspaceId,
       firstWorkspaceMemberId,
       secondWorkspaceMemberId,
     });
+    const thread = await this.threadRepository.findOneOrFail(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (isDefined(thread.deletedAt)) {
+      await this.chatThreadService.restoreDirectMessageThread({
+        workspaceId,
+        thread,
+      });
+    }
+
+    return threadId;
   }
 
   async getOrCreate({
