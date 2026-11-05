@@ -107,6 +107,10 @@ const buildRepository = ({
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
       flatRoleTargetByAgentIdMaps: {},
+      recordPermissionReadOrm: {
+        findRecordShares: jest.fn().mockResolvedValue([]),
+        findPrivateRecordStates: jest.fn().mockResolvedValue(new Map()),
+      },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),
