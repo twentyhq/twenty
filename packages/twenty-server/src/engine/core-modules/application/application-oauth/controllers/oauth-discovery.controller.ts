@@ -22,9 +22,7 @@ export class OAuthDiscoveryController {
 
   @Get('oauth-authorization-server')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async getAuthorizationServerMetadata(
-    @Req() request: Pick<Request, 'protocol' | 'get'>,
-  ) {
+  async getAuthorizationServerMetadata(@Req() request: Request) {
     const issuer = getRequestBaseUrl(request);
     // The API-only SERVER_URL has no frontend /authorize route
     const authorizeBase = this.isApiHost(request)
@@ -67,9 +65,7 @@ export class OAuthDiscoveryController {
   // RFC 9728 §3.2: `resource` must equal the identifier the well-known suffix was inserted into; strict clients reject a mismatch
   @Get('oauth-protected-resource')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  getProtectedResourceMetadataRoot(
-    @Req() request: Pick<Request, 'protocol' | 'get'>,
-  ) {
+  getProtectedResourceMetadataRoot(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
     return this.buildProtectedResourceMetadata(base, base);
@@ -77,9 +73,7 @@ export class OAuthDiscoveryController {
 
   @Get('oauth-protected-resource/mcp')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  getProtectedResourceMetadataMcp(
-    @Req() request: Pick<Request, 'protocol' | 'get'>,
-  ) {
+  getProtectedResourceMetadataMcp(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
     return this.buildProtectedResourceMetadata(base, `${base}/mcp`);
@@ -94,7 +88,7 @@ export class OAuthDiscoveryController {
     };
   }
 
-  private isApiHost(request: Pick<Request, 'get'>): boolean {
+  private isApiHost(request: Request): boolean {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     return request.get('host') === new URL(serverUrl).host;

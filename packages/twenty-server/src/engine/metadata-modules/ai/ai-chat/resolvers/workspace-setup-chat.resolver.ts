@@ -4,6 +4,10 @@ import { Args, Mutation } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -47,9 +51,9 @@ export class WorkspaceSetupChatResolver {
   @Mutation(() => StartWorkspaceSetupChatResultDTO)
   async startWorkspaceSetupChat(
     @Args('companyContext', { type: () => GraphQLJSON, nullable: true })
-    companyContext: unknown,
+    companyContext: WorkspaceCompanyEnrichment | null,
     @Args('personContext', { type: () => GraphQLJSON, nullable: true })
-    personContext: unknown,
+    personContext: WorkspacePersonEnrichment | null,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,

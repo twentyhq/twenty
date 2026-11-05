@@ -13,12 +13,6 @@ import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-module
 import { resolveSessionCookieAccess } from 'src/engine/core-modules/user-session/utils/resolve-session-cookie-access.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type SessionCookieRequest = Pick<Request, 'headers'>;
-
-type SessionCookieResponse = Pick<Response, 'cookie' | 'clearCookie'> & {
-  req: SessionCookieRequest;
-};
-
 const isHttpsUrl = (url: string | undefined): boolean => {
   if (!isNonEmptyString(url)) {
     return false;
@@ -44,9 +38,7 @@ export class UserSessionCookieService {
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
-  private isSessionCookieAccessAllowed(
-    request: SessionCookieRequest | undefined,
-  ): boolean {
+  private isSessionCookieAccessAllowed(request: Request | undefined): boolean {
     return (
       isDefined(request) && resolveSessionCookieAccess(request) !== 'denied'
     );
@@ -57,7 +49,7 @@ export class UserSessionCookieService {
     secureCookieName,
     insecureCookieName,
   }: {
-    request: SessionCookieRequest;
+    request: Request;
     secureCookieName: string;
     insecureCookieName: string;
   }): string | undefined {
@@ -72,9 +64,7 @@ export class UserSessionCookieService {
     });
   }
 
-  extractSessionTokenFromRequest(
-    request: SessionCookieRequest,
-  ): string | undefined {
+  extractSessionTokenFromRequest(request: Request): string | undefined {
     return this.extractAllowedSessionToken({
       request,
       secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
@@ -83,7 +73,7 @@ export class UserSessionCookieService {
   }
 
   extractImpersonatorSessionTokenFromRequest(
-    request: SessionCookieRequest,
+    request: Request,
   ): string | undefined {
     return this.extractAllowedSessionToken({
       request,
@@ -114,7 +104,7 @@ export class UserSessionCookieService {
   }
 
   attachSessionTokenToResponse(
-    response: SessionCookieResponse,
+    response: Response,
     sessionToken: string,
     expiresAt: Date,
   ): void {
@@ -131,7 +121,7 @@ export class UserSessionCookieService {
   }
 
   attachImpersonatorSessionTokenToResponse(
-    response: SessionCookieResponse,
+    response: Response,
     sessionToken: string,
   ): void {
     if (!this.isSessionCookieAccessAllowed(response.req)) {
@@ -147,7 +137,7 @@ export class UserSessionCookieService {
     );
   }
 
-  clearImpersonatorSessionCookie(response: SessionCookieResponse): void {
+  clearImpersonatorSessionCookie(response: Response): void {
     if (!this.isSessionCookieAccessAllowed(response.req)) {
       return;
     }
@@ -158,7 +148,7 @@ export class UserSessionCookieService {
     response.clearCookie(USER_SESSION_IMPERSONATOR_COOKIE_NAME, options);
   }
 
-  hasSessionCookie(request: SessionCookieRequest): boolean {
+  hasSessionCookie(request: Request): boolean {
     const cookieHeader = request.headers.cookie;
 
     if (
@@ -176,7 +166,7 @@ export class UserSessionCookieService {
     );
   }
 
-  clearSessionCookie(response: SessionCookieResponse): void {
+  clearSessionCookie(response: Response): void {
     if (!this.isSessionCookieAccessAllowed(response.req)) {
       return;
     }
