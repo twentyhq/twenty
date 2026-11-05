@@ -9,9 +9,10 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
   GettingStartedStepContent
 > = {
   [GettingStartedStepActionKey.CONNECT_MAILBOX]: {
-    title: msg`Connect your mailbox`,
+    title: msg`Import your contacts`,
     doneTitle: msg`Mailbox connected`,
-    description: msg`Companies and people fill in from your emails and meetings.`,
+    description: msg`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`,
+    doneDescription: msg`Companies and people fill in from your emails and meetings.`,
     icon: 'IconAt',
     iconColor: 'blue',
   },

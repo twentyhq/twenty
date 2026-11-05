@@ -41,7 +41,7 @@ export const buildGettingStartedStepDefinition = ({
     title: translate(title),
     doneTitle: translate(doneTitle),
     description: translate(description),
-    doneDescription: translate(doneDescription ?? description),
+    doneDescription: translate(doneDescription),
     icon,
     iconColor,
     promptLabel: isDefined(prompt) ? translate(prompt.label) : null,
