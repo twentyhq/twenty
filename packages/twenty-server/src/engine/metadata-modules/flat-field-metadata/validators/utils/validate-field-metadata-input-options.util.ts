@@ -5,6 +5,7 @@ import {
   type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
 } from 'twenty-shared/types';
+import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -30,6 +31,22 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: t`Option id is invalid`,
       userFriendlyMessage: msg`Option id is invalid`,
+      value: sanitizedId,
+    });
+
+    return errors;
+  }
+
+  // Option ids are option rows' universal identifiers.
+  if (
+    isDefined(sanitizedId) &&
+    (!isValidUniversalIdentifier(sanitizedId) ||
+      sanitizedId !== sanitizedId.toLowerCase())
+  ) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: t`Option id must be a lowercase UUID of version 4 or later`,
+      userFriendlyMessage: msg`Option id must be a lowercase UUID of version 4 or later`,
       value: sanitizedId,
     });
   }
