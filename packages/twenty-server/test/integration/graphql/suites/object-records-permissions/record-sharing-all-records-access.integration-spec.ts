@@ -342,12 +342,12 @@ describe('Access to all records and ownership transfer', () => {
     const chatThreadObjectMetadataId = objects.find(
       (object) => object.nameSingular === 'agentChatThread',
     )!.id;
-    const turnObjectMetadataId = objects.find(
+    const agentTurnObjectMetadataId = objects.find(
       (object) => object.nameSingular === 'agentTurn',
     )!.id;
     const privateChatThreadId = randomUUID();
-    const privateTurnId = randomUUID();
-    const turnTable = `${getWorkspaceSchemaName(workspaceId)}.agentTurn`;
+    const privateAgentTurnId = randomUUID();
+    const qualifiedAgentTurnTableName = `${getWorkspaceSchemaName(workspaceId)}.agentTurn`;
 
     await shares.insertMany({
       workspaceId,
@@ -368,9 +368,9 @@ describe('Access to all records and ownership transfer', () => {
       await global.testDataSource
         .createQueryBuilder()
         .insert()
-        .into(turnTable)
+        .into(qualifiedAgentTurnTableName)
         .values({
-          id: privateTurnId,
+          id: privateAgentTurnId,
           [IS_PRIVATE_COLUMN_NAME]: true,
           [CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME]:
             WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -380,13 +380,13 @@ describe('Access to all records and ownership transfer', () => {
         workspaceId,
         recordShares: [
           {
-            objectMetadataId: turnObjectMetadataId,
-            recordId: privateTurnId,
+            objectMetadataId: agentTurnObjectMetadataId,
+            recordId: privateAgentTurnId,
             principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
             principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
             accessLevel: RecordShareAccessLevel.FULL,
             rowCause: RecordShareRowCause.OWNER,
-            sourceId: privateTurnId,
+            sourceId: privateAgentTurnId,
           },
         ],
       });
@@ -427,13 +427,13 @@ describe('Access to all records and ownership transfer', () => {
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
-      const turnShares = await shares.findByRecordIds({
+      const agentTurnShares = await shares.findByRecordIds({
         workspaceId,
-        objectMetadataId: turnObjectMetadataId,
-        recordIds: [privateTurnId],
+        objectMetadataId: agentTurnObjectMetadataId,
+        recordIds: [privateAgentTurnId],
       });
 
-      expect(turnShares.map(({ principalId }) => principalId)).toEqual([
+      expect(agentTurnShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
 
@@ -458,14 +458,14 @@ describe('Access to all records and ownership transfer', () => {
       });
       await shares.deleteByRecordIds({
         workspaceId,
-        objectMetadataId: turnObjectMetadataId,
-        recordIds: [privateTurnId],
+        objectMetadataId: agentTurnObjectMetadataId,
+        recordIds: [privateAgentTurnId],
       });
       await global.testDataSource
         .createQueryBuilder()
         .delete()
-        .from(turnTable)
-        .where('id = :privateTurnId', { privateTurnId })
+        .from(qualifiedAgentTurnTableName)
+        .where('id = :privateAgentTurnId', { privateAgentTurnId })
         .execute();
     }
   });

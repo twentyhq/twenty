@@ -174,88 +174,97 @@ describe('Canonical direct message identity', () => {
   it('classifies stored content through deleted rows and transaction-local ancestry', async () => {
     const directMessageThreadId = await getOrCreate();
     const ordinaryThreadId = await context.createThread();
-    const message = await context.saveMessage({ threadId: ordinaryThreadId });
-    const authContext = await resolveWorkspaceMemberAuthContext({
+    const ordinaryThreadMessage = await context.saveMessage({
+      threadId: ordinaryThreadId,
+    });
+    const workspaceMemberAuthContext = await resolveWorkspaceMemberAuthContext({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
     });
-    const contentService =
+    const directMessageContentService =
       getAppProviderByClassName<DirectMessageContentService>(
         'DirectMessageContentService',
       );
-    const manager = getAppProviderByClassName<WorkspaceOrmManager>(
+    const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
 
-    await manager.executeInWorkspaceContext(async () => {
-      const messagePart = await manager
+    await workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const ordinaryThreadMessagePart = await workspaceOrmManager
         .getRepositoryWithoutPermissionChecks('agentMessagePart')
-        .findOneOrFail({ where: { messageId: message.id }, select: ['id'] });
-      const messagePartTarget = {
-        authContext,
+        .findOneOrFail({
+          where: { messageId: ordinaryThreadMessage.id },
+          select: ['id'],
+        });
+      const messagePartContentCheckArgs = {
+        authContext: workspaceMemberAuthContext,
         objectUniversalIdentifier:
           STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-        recordId: messagePart.id,
+        recordId: ordinaryThreadMessagePart.id,
       };
 
       expect(
-        await contentService.isDirectMessageContent(messagePartTarget),
+        await directMessageContentService.isRecordDirectMessageContent(
+          messagePartContentCheckArgs,
+        ),
       ).toBe(false);
 
-      await manager.runInWorkspaceTransaction(async (transactionScope) => {
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
-          [messagePart.id],
-        );
+      await workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+            [ordinaryThreadMessagePart.id],
+          );
 
-        expect(
-          await contentService.isDirectMessageContent({
-            ...messagePartTarget,
-            transactionScope,
-          }),
-        ).toBe(false);
+          expect(
+            await directMessageContentService.isRecordDirectMessageContent({
+              ...messagePartContentCheckArgs,
+              transactionScope,
+            }),
+          ).toBe(false);
 
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
-          [message.id, directMessageThreadId],
-        );
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
+            [ordinaryThreadMessage.id, directMessageThreadId],
+          );
 
-        expect(
-          await contentService.isDirectMessageContent({
-            ...messagePartTarget,
-            transactionScope,
-          }),
-        ).toBe(true);
+          expect(
+            await directMessageContentService.isRecordDirectMessageContent({
+              ...messagePartContentCheckArgs,
+              transactionScope,
+            }),
+          ).toBe(true);
 
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentTurn" SET "threadId" = NULL WHERE id = $1`,
-          [message.turnId],
-        );
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentTurn" SET "threadId" = NULL WHERE id = $1`,
+            [ordinaryThreadMessage.turnId],
+          );
 
-        expect(
-          await contentService.isDirectMessageContent({
-            authContext,
-            objectUniversalIdentifier:
-              STANDARD_OBJECTS.agentTurn.universalIdentifier,
-            recordId: message.turnId,
-            transactionScope,
-          }),
-        ).toBe(true);
+          expect(
+            await directMessageContentService.isRecordDirectMessageContent({
+              authContext: workspaceMemberAuthContext,
+              objectUniversalIdentifier:
+                STANDARD_OBJECTS.agentTurn.universalIdentifier,
+              recordId: ordinaryThreadMessage.turnId,
+              transactionScope,
+            }),
+          ).toBe(true);
 
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
-          [message.id, ordinaryThreadId],
-        );
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentTurn" SET "threadId" = $2 WHERE id = $1`,
-          [message.turnId, ordinaryThreadId],
-        );
-        await transactionScope.executeRawQuery(
-          `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = NULL WHERE id = $1`,
-          [messagePart.id],
-        );
-      });
-    }, authContext);
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
+            [ordinaryThreadMessage.id, ordinaryThreadId],
+          );
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentTurn" SET "threadId" = $2 WHERE id = $1`,
+            [ordinaryThreadMessage.turnId, ordinaryThreadId],
+          );
+          await transactionScope.executeRawQuery(
+            `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = NULL WHERE id = $1`,
+            [ordinaryThreadMessagePart.id],
+          );
+        },
+      );
+    }, workspaceMemberAuthContext);
   });
 
   it.each([
@@ -279,9 +288,14 @@ describe('Canonical direct message identity', () => {
   ] as const)(
     'prevents a full-access pair member from changing $objectName sharing',
     async ({ objectName, expectedSharingResponse }) => {
-      const threadId = await getOrCreate();
-      const message = await context.saveMessage({ threadId });
-      const recordId = objectName === 'agentChatThread' ? threadId : message.id;
+      const directMessageThreadId = await getOrCreate();
+      const directMessageThreadMessage = await context.saveMessage({
+        threadId: directMessageThreadId,
+      });
+      const directMessageRecordId =
+        objectName === 'agentChatThread'
+          ? directMessageThreadId
+          : directMessageThreadMessage.id;
       const { flatObjectMetadataMaps } =
         await getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
@@ -293,69 +307,79 @@ describe('Canonical direct message identity', () => {
 
       assertIsDefinedOrThrow(flatObjectMetadata);
 
-      const storage = getAppProviderByClassName<RecordShareStorageService>(
-        'RecordShareStorageService',
-      );
-      const privateRecords =
+      const recordShareStorageService =
+        getAppProviderByClassName<RecordShareStorageService>(
+          'RecordShareStorageService',
+        );
+      const privateRecordStorageService =
         getAppProviderByClassName<PrivateRecordStorageService>(
           'PrivateRecordStorageService',
         );
-      const manager = getAppProviderByClassName<WorkspaceOrmManager>(
-        'WorkspaceOrmManager',
-      );
-      const target = { objectMetadataId: flatObjectMetadata.id, recordId };
-      const storageTarget = {
+      const workspaceOrmManager =
+        getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+      const recordTarget = {
+        objectMetadataId: flatObjectMetadata.id,
+        recordId: directMessageRecordId,
+      };
+      const directMessageRecordSharesFilter = {
         workspaceId: context.workspaceId,
         objectMetadataId: flatObjectMetadata.id,
-        recordIds: [recordId],
+        recordIds: [directMessageRecordId],
       };
 
-      await manager.executeInWorkspaceContext(
+      await workspaceOrmManager.executeInWorkspaceContext(
         () =>
-          manager.runInWorkspaceTransaction(async (transactionScope) => {
-            await privateRecords.setPrivate({
-              workspaceId: context.workspaceId,
-              flatObjectMetadata,
-              recordIds: [recordId],
-              isPrivate: true,
-              transactionScope,
-            });
-            await storage.insertMany({
-              workspaceId: context.workspaceId,
-              transactionScope,
-              recordShares: [
-                WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-                WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-              ].map((principalId) => ({
-                ...target,
-                sourceId: recordId,
-                principalId,
-                principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-                accessLevel: RecordShareAccessLevel.FULL,
-                rowCause: RecordShareRowCause.OWNER,
-              })),
-            });
-          }),
+          workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              await privateRecordStorageService.setPrivate({
+                workspaceId: context.workspaceId,
+                flatObjectMetadata,
+                recordIds: [directMessageRecordId],
+                isPrivate: true,
+                transactionScope,
+              });
+              await recordShareStorageService.insertMany({
+                workspaceId: context.workspaceId,
+                transactionScope,
+                recordShares: [
+                  WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                  WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+                ].map((principalId) => ({
+                  ...recordTarget,
+                  sourceId: directMessageRecordId,
+                  principalId,
+                  principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                  accessLevel: RecordShareAccessLevel.FULL,
+                  rowCause: RecordShareRowCause.OWNER,
+                })),
+              });
+            },
+          ),
         buildSystemAuthContext(context.workspaceId),
       );
 
       try {
-        const sharesBefore = await storage.findByRecordIds(storageTarget);
-        const sharing = await makeMetadataApiRequest({
-          query: parse(`query Sharing($target: RecordTargetInput!) {
+        const recordSharesBeforeMutations =
+          await recordShareStorageService.findByRecordIds(
+            directMessageRecordSharesFilter,
+          );
+        const recordSharingResponse = await makeMetadataApiRequest({
+          query: parse(`query RecordSharing($target: RecordTargetInput!) {
             recordSharing(target: $target) { isPrivate canManageSharing }
           }`),
-          variables: { target },
+          variables: { target: recordTarget },
         });
 
-        expect(sharing.body).toMatchObject(expectedSharingResponse);
+        expect(recordSharingResponse.body).toMatchObject(
+          expectedSharingResponse,
+        );
 
-        const mutations = [
+        const sharingChangeMutations = [
           {
             query: parse(`mutation MakePublic($target: RecordTargetInput!) {
               setRecordPrivate(target: $target, isPrivate: false) { isPrivate }
             }`),
-            variables: { target },
+            variables: { target: recordTarget },
           },
           {
             query:
@@ -363,7 +387,7 @@ describe('Canonical direct message identity', () => {
               setRecordShare(target: $target, principal: $principal, accessLevel: FULL) { isPrivate }
             }`),
             variables: {
-              target,
+              target: recordTarget,
               principal: {
                 workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
               },
@@ -375,7 +399,7 @@ describe('Canonical direct message identity', () => {
               removeRecordShare(target: $target, principal: $principal) { isPrivate }
             }`),
             variables: {
-              target,
+              target: recordTarget,
               principal: {
                 workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               },
@@ -383,26 +407,40 @@ describe('Canonical direct message identity', () => {
           },
         ];
 
-        for (const mutation of mutations) {
-          const response = await makeMetadataApiRequest(mutation);
+        for (const sharingChangeMutation of sharingChangeMutations) {
+          const sharingChangeResponse = await makeMetadataApiRequest(
+            sharingChangeMutation,
+          );
 
-          expect(response.body.errors?.[0]?.extensions?.code).toBe(
+          expect(sharingChangeResponse.body.errors?.[0]?.extensions?.code).toBe(
             ErrorCode.NOT_FOUND,
           );
         }
 
-        const sharesAfter = await storage.findByRecordIds(storageTarget);
-        const privateStates = await privateRecords.findStates({
-          workspaceId: context.workspaceId,
-          flatObjectMetadata,
-          recordIds: [recordId],
-        });
+        const recordSharesAfterMutations =
+          await recordShareStorageService.findByRecordIds(
+            directMessageRecordSharesFilter,
+          );
+        const privateStatesByRecordId =
+          await privateRecordStorageService.findStates({
+            workspaceId: context.workspaceId,
+            flatObjectMetadata,
+            recordIds: [directMessageRecordId],
+          });
 
-        expect(sharesAfter).toHaveLength(sharesBefore.length);
-        expect(sharesAfter).toEqual(expect.arrayContaining(sharesBefore));
-        expect(privateStates.get(recordId)?.isPrivate).toBe(true);
+        expect(recordSharesAfterMutations).toHaveLength(
+          recordSharesBeforeMutations.length,
+        );
+        expect(recordSharesAfterMutations).toEqual(
+          expect.arrayContaining(recordSharesBeforeMutations),
+        );
+        expect(
+          privateStatesByRecordId.get(directMessageRecordId)?.isPrivate,
+        ).toBe(true);
       } finally {
-        await storage.deleteByRecordIds(storageTarget);
+        await recordShareStorageService.deleteByRecordIds(
+          directMessageRecordSharesFilter,
+        );
       }
     },
   );

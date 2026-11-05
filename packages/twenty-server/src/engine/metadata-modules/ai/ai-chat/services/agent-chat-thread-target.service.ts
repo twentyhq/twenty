@@ -79,7 +79,7 @@ export class AgentChatThreadTargetService {
     });
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const thread = await this.workspaceOrmManager
+      const agentChatThread = await this.workspaceOrmManager
         .getRepository<AgentChatThreadWorkspaceEntity>('agentChatThread')
         .findOne({
           where: { id: threadId },
@@ -87,11 +87,11 @@ export class AgentChatThreadTargetService {
           withDeleted: true,
         });
 
-      if (!isDefined(thread)) {
+      if (!isDefined(agentChatThread)) {
         return throwAgentChatThreadNotFound();
       }
 
-      if (thread.conversationType === 'DIRECT_MESSAGE') {
+      if (agentChatThread.conversationType === 'DIRECT_MESSAGE') {
         throw new AiException(
           doNotTranslate('Direct messages do not support linked records'),
           AiExceptionCode.INVALID_AGENT_INPUT,

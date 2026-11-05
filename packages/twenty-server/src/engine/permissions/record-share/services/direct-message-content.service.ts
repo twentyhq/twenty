@@ -8,7 +8,7 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-const DIRECT_MESSAGE_CONTENT_OBJECT_NAMES = [
+const AGENT_CHAT_THREAD_CONTENT_OBJECT_NAMES = [
   'agentChatThread',
   'agentChatThreadParticipant',
   'agentChatThreadTarget',
@@ -22,7 +22,7 @@ const DIRECT_MESSAGE_CONTENT_OBJECT_NAMES = [
 export class DirectMessageContentService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async isDirectMessageContent({
+  async isRecordDirectMessageContent({
     authContext,
     objectUniversalIdentifier,
     recordId,
@@ -33,84 +33,97 @@ export class DirectMessageContentService {
     recordId: string;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<boolean> {
-    const objectName = DIRECT_MESSAGE_CONTENT_OBJECT_NAMES.find(
-      (name) =>
-        STANDARD_OBJECTS[name].universalIdentifier ===
-        objectUniversalIdentifier,
-    );
+    const agentChatThreadContentObjectName =
+      AGENT_CHAT_THREAD_CONTENT_OBJECT_NAMES.find(
+        (objectName) =>
+          STANDARD_OBJECTS[objectName].universalIdentifier ===
+          objectUniversalIdentifier,
+      );
 
-    if (!isDefined(objectName)) {
+    if (!isDefined(agentChatThreadContentObjectName)) {
       return false;
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repositorySource = transactionScope ?? this.workspaceOrmManager;
-      const threadId = await this.findThreadId({
-        objectName,
-        recordId,
-        repositorySource,
-      });
+      const transactionScopeOrWorkspaceOrmManager =
+        transactionScope ?? this.workspaceOrmManager;
+      const agentChatThreadId =
+        await this.findAgentChatThreadIdContainingRecord({
+          agentChatThreadContentObjectName,
+          recordId,
+          transactionScopeOrWorkspaceOrmManager,
+        });
 
-      if (!isDefined(threadId)) {
+      if (!isDefined(agentChatThreadId)) {
         return true;
       }
 
-      const thread = await repositorySource
+      const agentChatThread = await transactionScopeOrWorkspaceOrmManager
         .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
           'agentChatThread',
         )
         .findOne({
-          where: { id: threadId },
+          where: { id: agentChatThreadId },
           select: ['conversationType'],
           withDeleted: true,
         });
 
-      return !isDefined(thread) || thread.conversationType === 'DIRECT_MESSAGE';
+      return (
+        !isDefined(agentChatThread) ||
+        agentChatThread.conversationType === 'DIRECT_MESSAGE'
+      );
     }, authContext);
   }
 
-  private async findThreadId({
-    objectName,
+  private async findAgentChatThreadIdContainingRecord({
+    agentChatThreadContentObjectName,
     recordId,
-    repositorySource,
+    transactionScopeOrWorkspaceOrmManager,
   }: {
-    objectName: (typeof DIRECT_MESSAGE_CONTENT_OBJECT_NAMES)[number];
+    agentChatThreadContentObjectName: (typeof AGENT_CHAT_THREAD_CONTENT_OBJECT_NAMES)[number];
     recordId: string;
-    repositorySource: WorkspaceTransactionScope | WorkspaceOrmManager;
+    transactionScopeOrWorkspaceOrmManager:
+      | WorkspaceTransactionScope
+      | WorkspaceOrmManager;
   }): Promise<string | undefined> {
-    if (objectName === 'agentChatThread') {
+    if (agentChatThreadContentObjectName === 'agentChatThread') {
       return recordId;
     }
 
-    const isMessageChild =
-      objectName === 'agentMessagePart' ||
-      objectName === 'agentMessageReaction';
-    const parentIdField = isMessageChild ? 'messageId' : 'threadId';
-    const record = await repositorySource
-      .getRepositoryWithoutPermissionChecks(objectName)
-      .findOne({
-        where: { id: recordId },
-        select: [parentIdField],
-        withDeleted: true,
-      });
-    const parentId = record?.[parentIdField];
+    const isAgentMessageChildObject =
+      agentChatThreadContentObjectName === 'agentMessagePart' ||
+      agentChatThreadContentObjectName === 'agentMessageReaction';
+    const parentIdFieldName = isAgentMessageChildObject
+      ? 'messageId'
+      : 'threadId';
+    const agentChatThreadContentRecord =
+      await transactionScopeOrWorkspaceOrmManager
+        .getRepositoryWithoutPermissionChecks(agentChatThreadContentObjectName)
+        .findOne({
+          where: { id: recordId },
+          select: [parentIdFieldName],
+          withDeleted: true,
+        });
+    const parentRecordId = agentChatThreadContentRecord?.[parentIdFieldName];
 
-    if (!isNonEmptyString(parentId)) {
+    if (!isNonEmptyString(parentRecordId)) {
       return undefined;
     }
 
-    if (!isMessageChild) {
-      return parentId;
+    if (!isAgentMessageChildObject) {
+      return parentRecordId;
     }
 
-    const message = await repositorySource
+    const parentAgentMessage = await transactionScopeOrWorkspaceOrmManager
       .getRepositoryWithoutPermissionChecks('agentMessage')
       .findOne({
-        where: { id: parentId },
+        where: { id: parentRecordId },
         select: ['threadId'],
         withDeleted: true,
       });
 
-    return isNonEmptyString(message?.threadId) ? message.threadId : undefined;
+    return isNonEmptyString(parentAgentMessage?.threadId)
+      ? parentAgentMessage.threadId
+      : undefined;
   }
 }

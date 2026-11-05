@@ -274,48 +274,49 @@ describe('Inbox thread mutations for members and applications', () => {
   });
 
   it('rejects attaching and detaching records on a deleted direct message', async () => {
-    const context = await createChatParticipationTestContext();
+    const chatParticipationTestContext =
+      await createChatParticipationTestContext();
 
     try {
-      const threadId = context.registerThread(
+      const directMessageThreadId = chatParticipationTestContext.registerThread(
         await getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
           'AgentChatDirectMessageIdentityService',
         ).getOrCreate({
-          workspaceId: context.workspaceId,
+          workspaceId: chatParticipationTestContext.workspaceId,
           firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         }),
       );
 
-      for (const workspaceMemberId of [
+      for (const directMessagePairWorkspaceMemberId of [
         WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
         WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       ]) {
-        await context.share({
-          threadId,
-          recipientWorkspaceMemberId: workspaceMemberId,
+        await chatParticipationTestContext.share({
+          threadId: directMessageThreadId,
+          recipientWorkspaceMemberId: directMessagePairWorkspaceMemberId,
           accessLevel: RecordShareAccessLevel.READ_WRITE,
         });
       }
 
       await global.testDataSource.query(
         `UPDATE ${SCHEMA}."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
-        [threadId],
+        [directMessageThreadId],
       );
 
-      for (const response of [
-        await attachRecord({ threadId }),
-        await detachRecord({ threadId }),
+      for (const recordLinkResponse of [
+        await attachRecord({ threadId: directMessageThreadId }),
+        await detachRecord({ threadId: directMessageThreadId }),
       ]) {
-        expect(response.body.errors?.[0]?.extensions).toMatchObject({
+        expect(recordLinkResponse.body.errors?.[0]?.extensions).toMatchObject({
           code: 'BAD_USER_INPUT',
           subCode: AiExceptionCode.INVALID_AGENT_INPUT,
         });
       }
 
-      expect(await readCompanyLinks(threadId)).toEqual([]);
+      expect(await readCompanyLinks(directMessageThreadId)).toEqual([]);
     } finally {
-      await context.cleanup();
+      await chatParticipationTestContext.cleanup();
     }
   });
 

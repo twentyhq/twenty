@@ -221,13 +221,15 @@ export class RecordSharingService {
             }
 
             if (
-              await this.directMessageContentService.isDirectMessageContent({
-                authContext: args.authContext,
-                recordId: args.recordId,
-                objectUniversalIdentifier:
-                  flatObjectMetadata.universalIdentifier,
-                transactionScope,
-              })
+              await this.directMessageContentService.isRecordDirectMessageContent(
+                {
+                  authContext: args.authContext,
+                  recordId: args.recordId,
+                  objectUniversalIdentifier:
+                    flatObjectMetadata.universalIdentifier,
+                  transactionScope,
+                },
+              )
             ) {
               throw new NotFoundError(doNotTranslate('Record not found'));
             }
@@ -356,7 +358,7 @@ export class RecordSharingService {
         authContext: args.authContext,
         flatObjectMetadata,
       })) &&
-      !(await this.directMessageContentService.isDirectMessageContent({
+      !(await this.directMessageContentService.isRecordDirectMessageContent({
         authContext: args.authContext,
         recordId: args.recordId,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
