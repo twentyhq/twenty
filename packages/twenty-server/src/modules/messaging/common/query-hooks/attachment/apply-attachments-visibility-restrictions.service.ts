@@ -52,7 +52,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
 
     const targetMessageIdByAttachmentId = await this.findTargetMessageIds({
       attachments: restrictableAttachments,
-      authContext,
+      workspaceId: authContext.workspace.id,
     });
 
     if (targetMessageIdByAttachmentId.size === 0) {
@@ -93,10 +93,10 @@ export class ApplyAttachmentsVisibilityRestrictionsService
 
   private async findTargetMessageIds({
     attachments,
-    authContext,
+    workspaceId,
   }: {
     attachments: ObjectRecord[];
-    authContext: WorkspaceAuthContext;
+    workspaceId: string;
   }): Promise<Map<string, string>> {
     const targetMessageIdByAttachmentId = new Map<string, string>();
     const attachmentIdsToLookUp: string[] = [];
@@ -131,7 +131,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
               select: { id: true, targetMessageId: true },
               withDeleted: true,
             }),
-        buildSystemAuthContext(authContext.workspace.id),
+        buildSystemAuthContext(workspaceId),
         { lite: true },
       );
 
