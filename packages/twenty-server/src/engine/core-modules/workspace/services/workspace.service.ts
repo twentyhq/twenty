@@ -4,12 +4,13 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   FeatureFlagKey,
   type IframeMediaPermission,
@@ -86,6 +87,7 @@ import {
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { upsertIframeMediaPermission } from 'src/engine/core-modules/workspace/utils/upsert-iframe-media-permission.util';
+import { parseWorkspaceAssistantProfileUpdateOrThrow } from 'src/engine/core-modules/workspace/utils/parse-workspace-assistant-profile-update-or-throw.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
@@ -159,6 +161,8 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
+    resetAiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -430,11 +434,13 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const isUpdatingAssistantModes =
+    const isUpdatingAssistantSettings =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
-      isDefined(payload.aiChatInboxAssistantMode);
+      isDefined(payload.aiChatInboxAssistantMode) ||
+      !isUndefined(payload.aiChatAssistantProfile) ||
+      !isUndefined(payload.resetAiChatAssistantProfile);
     const isInboxRequiredButDisabled =
-      isUpdatingAssistantModes &&
+      isUpdatingAssistantSettings &&
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
@@ -449,6 +455,16 @@ export class WorkspaceService {
         },
       );
     }
+
+    const {
+      aiChatAssistantProfile,
+      resetAiChatAssistantProfile,
+      ...workspaceUpdates
+    } = payload;
+    const assistantProfileUpdate = parseWorkspaceAssistantProfileUpdateOrThrow({
+      profile: aiChatAssistantProfile,
+      reset: resetAiChatAssistantProfile,
+    });
 
     if (
       isDefined(payload.subdomain) &&
@@ -563,13 +579,34 @@ export class WorkspaceService {
     let updatedWorkspace: WorkspaceEntity;
 
     try {
-      await this.workspaceRepository.update(workspace.id, {
-        ...payload,
-        ...(payload.customDomain === null
-          ? { isCustomDomainEnabled: false }
-          : {}),
-        ...(payload.logo === null ? { logoFileId: null } : {}),
-      });
+      await this.workspaceRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          ...workspaceUpdates,
+          ...(isDefined(assistantProfileUpdate)
+            ? {
+                aiChatAssistantProfile:
+                  assistantProfileUpdate.shouldReplaceProfile
+                    ? assistantProfileUpdate.profile
+                    : () =>
+                        doNotTranslate(
+                          '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
+                        ),
+              }
+            : {}),
+          ...(payload.customDomain === null
+            ? { isCustomDomainEnabled: false }
+            : {}),
+          ...(payload.logo === null ? { logoFileId: null } : {}),
+        })
+        .where({ id: workspace.id })
+        .setParameters({
+          assistantProfilePatch: JSON.stringify(
+            assistantProfileUpdate?.profile,
+          ),
+        })
+        .execute();
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
       });
@@ -1233,7 +1270,7 @@ export class WorkspaceService {
     agentId,
     workspaceActivationStatus,
   }: {
-    payload: Partial<WorkspaceEntity>;
+    payload: UpdateWorkspaceInput;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
@@ -1430,6 +1467,26 @@ export class WorkspaceService {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
+
+  async getAiChatAssistantProfile(workspace: WorkspaceEntity) {
+    if (isDefined(workspace.aiChatAssistantProfile)) {
+      return workspace.aiChatAssistantProfile;
+    }
+
+    await this.coreEntityCacheService.invalidateAndRecompute(
+      'workspaceEntity',
+      workspace.id,
+    );
+
+    const refreshedWorkspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspace.id,
+    );
+
+    assertIsDefinedOrThrow(refreshedWorkspace, WorkspaceNotFoundDefaultError);
+
+    return refreshedWorkspace.aiChatAssistantProfile;
   }
 
   async findOneWorkspaceById(id: string) {

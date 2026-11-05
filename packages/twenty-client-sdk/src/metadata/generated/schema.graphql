@@ -266,6 +266,22 @@ enum AiChatAssistantMode {
   NEVER
 }
 
+type AiChatAssistantProfile {
+  avatarColor: String!
+  avatarFace: String!
+  avatarShape: String!
+  displayName: String!
+  isAvatarAnimated: Boolean!
+}
+
+input AiChatAssistantProfileInput {
+  avatarColor: String
+  avatarFace: String
+  avatarShape: String
+  displayName: String
+  isAvatarAnimated: Boolean
+}
+
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
@@ -5622,6 +5638,7 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatAssistantProfile: AiChatAssistantProfileInput
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
@@ -5647,6 +5664,7 @@ input UpdateWorkspaceInput {
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
+  resetAiChatAssistantProfile: Boolean
   subdomain: String
   trashRetentionDays: Float
   workspaceDiscoverability: WorkspaceDiscoverability
@@ -6394,6 +6412,7 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatAssistantProfile: AiChatAssistantProfile!
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!

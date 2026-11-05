@@ -42,6 +42,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { AiChatAssistantProfileDTO } from 'src/engine/core-modules/workspace/dtos/ai-chat-assistant-profile.dto';
 import {
   type AuthProvidersDTO,
   PublicWorkspaceDataDTO,
@@ -135,6 +136,11 @@ export class WorkspaceResolver {
     assert(workspace, 'Workspace not found');
 
     return workspace;
+  }
+
+  @ResolveField(() => AiChatAssistantProfileDTO)
+  async aiChatAssistantProfile(@Parent() workspace: WorkspaceEntity) {
+    return this.workspaceService.getAiChatAssistantProfile(workspace);
   }
 
   @Mutation(() => WorkspaceEntity)

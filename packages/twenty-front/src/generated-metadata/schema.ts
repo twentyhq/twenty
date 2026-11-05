@@ -298,6 +298,23 @@ export enum AiChatAssistantMode {
   NEVER = 'NEVER'
 }
 
+export type AiChatAssistantProfile = {
+  __typename?: 'AiChatAssistantProfile';
+  avatarColor: Scalars['String']['output'];
+  avatarFace: Scalars['String']['output'];
+  avatarShape: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  isAvatarAnimated: Scalars['Boolean']['output'];
+};
+
+export type AiChatAssistantProfileInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarFace?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  isAvatarAnimated?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
@@ -7986,6 +8003,7 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
+  aiChatAssistantProfile?: InputMaybe<AiChatAssistantProfileInput>;
   aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
@@ -8011,6 +8029,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
+  resetAiChatAssistantProfile?: InputMaybe<Scalars['Boolean']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   workspaceDiscoverability?: InputMaybe<WorkspaceDiscoverability>;
@@ -8770,6 +8789,7 @@ export type Workspace = {
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
+  aiChatAssistantProfile: AiChatAssistantProfile;
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
   aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;

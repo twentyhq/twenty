@@ -48,6 +48,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
+import { AiChatAssistantProfileDTO } from 'src/engine/core-modules/workspace/dtos/ai-chat-assistant-profile.dto';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -416,6 +417,7 @@ export class WorkspaceEntity {
   })
   aiChatInboxAssistantMode: AiChatAssistantMode;
 
+  @Field(() => AiChatAssistantProfileDTO)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })

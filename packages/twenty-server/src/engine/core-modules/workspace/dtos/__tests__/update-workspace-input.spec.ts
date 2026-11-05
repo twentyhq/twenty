@@ -41,3 +41,18 @@ describe('workspace assistant mode updates', () => {
     },
   );
 });
+
+describe('workspace assistant profile inputs', () => {
+  it.each(['aiChatAssistantProfile', 'resetAiChatAssistantProfile'])(
+    'rejects explicit null for %s',
+    async (field) => {
+      const input = Object.assign(new UpdateWorkspaceInput(), {
+        [field]: null,
+      });
+
+      expect(await validate(input)).toEqual([
+        expect.objectContaining({ property: field }),
+      ]);
+    },
+  );
+});
