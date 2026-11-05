@@ -8,7 +8,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useRecordUpdateFormContextOrThrow } from '@/object-record/record-form/contexts/RecordUpdateFormContext';
 import { computeRecordUpdateFieldsToComplete } from '@/object-record/record-form/utils/computeRecordUpdateFieldsToComplete';
-import { isRecordPathLoaded } from '@/object-record/record-form/utils/isRecordPathLoaded';
+import { isRecordFieldValueLoaded } from '@/object-record/record-form/utils/isRecordFieldValueLoaded';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
@@ -106,7 +106,7 @@ export const useCompleteRecordUpdate = ({
           store.get(recordStoreFamilyState.atomFamily(recordId)) ??
           {};
 
-        const bindingPathsReadByRules = activeValidationRules.flatMap(
+        const fieldPathsReadByRules = activeValidationRules.flatMap(
           (validationRule) => {
             const compilationResult = compileValidationRuleExpression({
               expression: validationRule.expression,
@@ -119,34 +119,32 @@ export const useCompleteRecordUpdate = ({
           },
         );
 
-        const isEveryBindingPathLoadedIn = (record: Partial<ObjectRecord>) =>
-          bindingPathsReadByRules.every((path) => {
+        const isEveryFieldValueLoadedIn = (record: Partial<ObjectRecord>) =>
+          fieldPathsReadByRules.every((fieldPath) => {
             const previousValueFieldPath =
-              getValidationRulePreviousValueFieldPath(path);
+              getValidationRulePreviousValueFieldPath(fieldPath);
 
             // A previous value is read from the stored record alone, before the update
             if (isDefined(previousValueFieldPath)) {
-              return isRecordPathLoaded({
+              return isRecordFieldValueLoaded({
                 record,
-                path: previousValueFieldPath,
+                fieldPath: previousValueFieldPath,
               });
             }
 
-            return isRecordPathLoaded({
+            return isRecordFieldValueLoaded({
               record: { ...record, ...updateInput },
-              path,
+              fieldPath,
             });
           });
 
-        // Views load only the fields they show, so a rule may read one the store does not have yet
-        const currentRecord = isEveryBindingPathLoadedIn(storedRecord)
+        const currentRecord = isEveryFieldValueLoadedIn(storedRecord)
           ? storedRecord
           : await fetchRecordWithRelations(recordId);
 
-        // A value missing even from the fetched record cannot be checked here, so the server decides
         if (
           !isDefined(currentRecord) ||
-          !isEveryBindingPathLoadedIn(currentRecord)
+          !isEveryFieldValueLoadedIn(currentRecord)
         ) {
           return updateInput;
         }
@@ -180,7 +178,6 @@ export const useCompleteRecordUpdate = ({
           ? { ...updateInput, ...completedFields }
           : null;
       } catch {
-        // The server enforces the rules either way, so a failed check just sends the update as is
         return updateInput;
       }
     },
