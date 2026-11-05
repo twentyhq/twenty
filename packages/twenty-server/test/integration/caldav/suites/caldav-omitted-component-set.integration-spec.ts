@@ -13,8 +13,8 @@ import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calen
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 import {
   type CalDavProxy,
-  startCalDavProxyOmittingComponentSet,
-} from 'test/integration/utils/start-caldav-proxy-omitting-component-set.util';
+  startCalDavResponseRewritingProxy,
+} from 'test/integration/utils/start-caldav-response-rewriting-proxy.util';
 import {
   type RadicaleServer,
   startRadicaleContainer,
@@ -23,6 +23,10 @@ import {
 const HANDLE = `caldav-omitted-component-set-${randomUUID()}@acme.test`;
 const COLLECTION = 'personal';
 const PASSWORD = 'radicale-password';
+
+// Self-closing form matched separately so it cannot pair with a later closing tag.
+const COMPONENT_SET_ELEMENT =
+  /<(\w+:)?supported-calendar-component-set\b[^>]*\/>|<(\w+:)?supported-calendar-component-set\b[^>]*>[\s\S]*?<\/(\w+:)?supported-calendar-component-set>/g;
 
 const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
@@ -75,9 +79,10 @@ describe('CalDAV server omitting supported-calendar-component-set (integration)'
         </mkcol>`,
     });
 
-    proxy = await startCalDavProxyOmittingComponentSet({
+    proxy = await startCalDavResponseRewritingProxy({
       targetHost: radicale.host,
       targetPort: radicale.port,
+      rewriteResponseBody: (body) => body.replace(COMPONENT_SET_ELEMENT, ''),
     });
 
     const { data } = await saveImapSmtpCaldavAccount({
