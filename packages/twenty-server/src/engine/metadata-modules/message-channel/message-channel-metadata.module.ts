@@ -16,7 +16,6 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
@@ -32,7 +31,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       MessageChannelEntity,
       MessageFolderEntity,
       ConnectedAccountEntity,
-      FileEntity,
     ]),
     CacheLockModule,
     PermissionsModule,
@@ -56,7 +54,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationMessageSendService,
     ApplicationMessageSendResolver,
     provideWorkspaceScopedRepository(MessageFolderEntity),
-    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [MessageChannelMetadataService],
 })
