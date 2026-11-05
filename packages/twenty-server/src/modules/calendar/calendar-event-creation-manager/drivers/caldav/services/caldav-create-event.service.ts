@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import ical, { ICalCalendarMethod } from 'ical-generator';
+import ical from 'ical-generator';
 import { type DAVClient } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CalDavInvitationEmailService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation-email.service';
 import { pickCalDavOrganizerEmail } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/pick-caldav-organizer-email.util';
 import {
   CalendarEventCreationException,
@@ -22,16 +22,13 @@ import {
   type FetchedCalendarEvent,
   type FetchedCalendarEventParticipant,
 } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
-import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
-import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 
 @Injectable()
 export class CalDavCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly calDavClientProvider: CalDavClientProvider,
     private readonly calDavFetchEventsService: CalDavFetchEventsService,
-    private readonly smtpClientProvider: SmtpClientProvider,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly calDavInvitationEmailService: CalDavInvitationEmailService,
   ) {}
 
   async createCalendarEvent(
@@ -123,23 +120,14 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         // fall back to the reconstructed href rather than failing the create.
       }
 
-      if (
-        isDefined(organizer) &&
-        !organizer.isServerScheduling &&
-        invitees.length > 0 &&
-        isDefined(connectedAccount.connectionParameters?.SMTP)
-      ) {
-        calendar.method(ICalCalendarMethod.REQUEST);
-
-        await this.emailInvitation({
+      if (isDefined(organizer) && !organizer.isServerScheduling) {
+        await this.calDavInvitationEmailService.sendInvitationEmail({
           connectedAccount,
+          calendar,
           organizerEmail: organizer.email,
           inviteeEmails: invitees.map((invitee) => invitee.email),
           input,
-          iCalString: calendar.toString(),
-        }).catch((error) =>
-          this.exceptionHandlerService.captureExceptions([error]),
-        );
+        });
       }
 
       const now = new Date().toISOString();
@@ -226,40 +214,6 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       email: pickCalDavOrganizerEmail({ calendarUserAddresses, handle }),
       isServerScheduling,
     };
-  }
-
-  private async emailInvitation({
-    connectedAccount,
-    organizerEmail,
-    inviteeEmails,
-    input,
-    iCalString,
-  }: {
-    connectedAccount: Pick<
-      ConnectedAccountEntity,
-      'id' | 'connectionParameters'
-    >;
-    organizerEmail: string;
-    inviteeEmails: string[];
-    input: CalendarEventToCreate;
-    iCalString: string;
-  }): Promise<void> {
-    const smtpClient = await this.smtpClientProvider.getClient(
-      connectedAccount.id,
-    );
-
-    await smtpClient.sendMail({
-      from: formatMessageFromHeader({
-        fromEmail: organizerEmail,
-        fromName: connectedAccount.connectionParameters?.name,
-      }),
-      to: inviteeEmails,
-      subject: input.title,
-      text: [input.title, input.location, input.description]
-        .filter(isNonEmptyString)
-        .join('\n\n'),
-      icalEvent: { method: ICalCalendarMethod.REQUEST, content: iCalString },
-    });
   }
 
   private resolveCreatedEventUrl({

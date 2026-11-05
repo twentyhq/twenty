@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalDavCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-create-event.service';
+import { CalDavInvitationEmailService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation-email.service';
 import { GoogleCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/services/google-calendar-create-event.service';
 import { MicrosoftCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/microsoft-calendar/services/microsoft-calendar-create-event.service';
 import { CalendarEventComposerService } from 'src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service';
@@ -27,6 +28,7 @@ import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-
     GoogleCalendarCreateEventService,
     MicrosoftCalendarCreateEventService,
     CalDavCreateEventService,
+    CalDavInvitationEmailService,
   ],
   exports: [CalendarEventComposerService, CreateCalendarEventService],
 })
