@@ -168,6 +168,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
     } catch (error) {
       if (error instanceof NotFoundException) {
+        this.logger.log(
+          `Skipped DKIM retry for missing identity ${input.domain}, verifyDomain recreates it`,
+        );
+
         return;
       }
 
