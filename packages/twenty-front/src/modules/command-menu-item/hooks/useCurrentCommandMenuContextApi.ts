@@ -243,11 +243,13 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectMetadataItem: objectMetadataItem ?? {},
     objectMetadataLabel,
     coreObjectName: contextStoreCurrentCoreObjectName,
-    currentView: isDefined(currentView)
-      ? {
-          id: currentView.id,
-          universalIdentifier: currentView.universalIdentifier ?? null,
-        }
-      : null,
+    // Record pages keep the object's last visited view in the context store
+    currentView:
+      pageType === ContextStorePageType.Index && isDefined(currentView)
+        ? {
+            id: currentView.id,
+            universalIdentifier: currentView.universalIdentifier ?? null,
+          }
+        : null,
   };
 };
