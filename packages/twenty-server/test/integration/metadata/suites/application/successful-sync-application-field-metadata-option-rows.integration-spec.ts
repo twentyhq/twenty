@@ -227,4 +227,24 @@ describe('Sync application keeps field option rows in step with its manifest', (
       `Option id \\"${OPEN_OPTION_ID}\\" is already used by another field`,
     );
   }, 60000);
+
+  it('keeps syncing a manifest with legacy option ids, without rows for that field', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        options: [
+          {
+            id: OPEN_OPTION_ID.toUpperCase(),
+            value: 'OPEN',
+            label: 'Open',
+            color: 'green',
+            position: 0,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(await findOptionRowsOwnedByTestApp()).toEqual([]);
+  }, 60000);
 });
