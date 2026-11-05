@@ -31,7 +31,7 @@ const step: WorkflowAction = {
   settings: {
     outputSchema: {},
     errorHandlingOptions: {
-      retryOnFailure: { value: false },
+      retryOnFailure: { value: 0 },
       continueOnFailure: { value: false },
     },
     input: {
@@ -47,6 +47,7 @@ const setup = (server: FlatMcpServer = mcpServer) => {
   const workflowExecutionContextService = {
     getExecutionContext: jest.fn().mockResolvedValue({
       authContext: {
+        type: 'user',
         workspace: { id: WORKSPACE_ID },
         user: { id: 'user-id' },
         userWorkspaceId: 'user-workspace-id',
