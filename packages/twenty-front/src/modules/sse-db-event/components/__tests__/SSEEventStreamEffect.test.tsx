@@ -1,4 +1,5 @@
 import { act, render } from '@testing-library/react';
+import { GraphQLError, type ExecutionResult } from 'graphql';
 import { type Client, type Sink } from 'graphql-sse';
 import { createStore, Provider } from 'jotai';
 
@@ -38,33 +39,37 @@ jest.mock(
   }),
 );
 
-const UNAUTHENTICATED_RESULT = {
-  errors: [
-    {
-      message: 'Missing authentication token',
-      extensions: { code: 'UNAUTHENTICATED', subCode: 'UNAUTHENTICATED' },
-    },
-  ],
+type RespondToSubscription = <TData, TExtensions>(
+  sink: Sink<ExecutionResult<TData, TExtensions>>,
+) => void;
+
+const rejectSubscription: RespondToSubscription = (sink) => {
+  sink.next({
+    errors: [
+      new GraphQLError('Missing authentication token', {
+        extensions: { code: 'UNAUTHENTICATED', subCode: 'UNAUTHENTICATED' },
+      }),
+    ],
+  });
+  sink.complete();
 };
 
 const renderEffect = (
-  respondToSubscription: (sink: Sink<unknown>) => void = (sink) => {
-    sink.next(UNAUTHENTICATED_RESULT as never);
-    sink.complete();
-  },
+  respondToSubscription: RespondToSubscription = rejectSubscription,
 ) => {
   const store = createStore();
-  const subscribe = jest.fn((_request: unknown, sink: Sink<unknown>) => {
-    void Promise.resolve().then(() => respondToSubscription(sink));
+  const subscribe = jest.fn();
 
-    return () => {};
-  });
+  const sseClient: Client = {
+    subscribe: (_request, sink) => {
+      subscribe();
+      void Promise.resolve().then(() => respondToSubscription(sink));
 
-  const sseClient = {
-    subscribe,
-    iterate: jest.fn(),
+      return () => {};
+    },
+    iterate: async function* () {},
     dispose: jest.fn(),
-  } as unknown as Client;
+  };
 
   store.set(sseClientState.atom, sseClient);
   store.set(currentUserState.atom, mockedUserData);
@@ -142,7 +147,7 @@ describe('SSEEventStreamEffect', () => {
   it('should recreate a healthy stream without waiting', async () => {
     let endStream = () => {};
     const { subscribe } = renderEffect((sink) => {
-      sink.next({ data: { onEventSubscription: {} } } as never);
+      sink.next({});
       endStream = () => sink.complete();
     });
 

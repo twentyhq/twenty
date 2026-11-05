@@ -1,4 +1,3 @@
-import { SSE_EVENT_STREAM_HEALTHY_LIFETIME_IN_MS } from '@/sse-db-event/constants/SseEventStreamHealthyLifetimeInMs';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
@@ -9,12 +8,12 @@ import { sseEventStreamEarliestCreationTimestampState } from '@/sse-db-event/sta
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { sseEventStreamShortLivedCountState } from '@/sse-db-event/states/sseEventStreamShortLivedCountState';
+import { getNextSseEventStreamShortLivedCount } from '@/sse-db-event/utils/getNextSseEventStreamShortLivedCount';
 import { getSseEventStreamRecreationWaitTimeInMs } from '@/sse-db-event/utils/getSseEventStreamRecreationWaitTimeInMs';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerEventStreamDestroy = () => {
   const store = useStore();
@@ -47,15 +46,15 @@ export const useTriggerEventStreamDestroy = () => {
       disposeFunctionForEventStream?.dispose();
 
       const now = Date.now();
-      const createdAtTimestamp = store.get(
-        sseEventStreamCreatedAtTimestampState.atom,
-      );
-      const wasShortLived =
-        isDefined(createdAtTimestamp) &&
-        now - createdAtTimestamp < SSE_EVENT_STREAM_HEALTHY_LIFETIME_IN_MS;
-      const shortLivedStreamCount = wasShortLived
-        ? store.get(sseEventStreamShortLivedCountState.atom) + 1
-        : 0;
+      const shortLivedStreamCount = getNextSseEventStreamShortLivedCount({
+        shortLivedStreamCount: store.get(
+          sseEventStreamShortLivedCountState.atom,
+        ),
+        createdAtTimestamp: store.get(
+          sseEventStreamCreatedAtTimestampState.atom,
+        ),
+        destroyedAtTimestamp: now,
+      });
 
       store.set(sseEventStreamShortLivedCountState.atom, shortLivedStreamCount);
       store.set(

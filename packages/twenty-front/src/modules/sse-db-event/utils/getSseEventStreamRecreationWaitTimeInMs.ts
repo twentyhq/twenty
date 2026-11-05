@@ -14,6 +14,5 @@ export const getSseEventStreamRecreationWaitTimeInMs = (
     SSE_CONNECTION_RETRY_MAX_WAIT_TIME_IN_MS,
   );
 
-  // Half of the wait is random so tabs failing together don't retry together
   return maximumWaitTimeInMs / 2 + (Math.random() * maximumWaitTimeInMs) / 2;
 };
