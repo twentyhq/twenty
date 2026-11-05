@@ -8,7 +8,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useRecordUpdateFormContextOrThrow } from '@/object-record/record-form/contexts/RecordUpdateFormContext';
 import { computeRecordUpdateFieldsToComplete } from '@/object-record/record-form/utils/computeRecordUpdateFieldsToComplete';
-import { isRecordPathLoaded } from '@/object-record/record-form/utils/isRecordPathLoaded';
+import { isRecordFieldValueLoaded } from '@/object-record/record-form/utils/isRecordFieldValueLoaded';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
@@ -100,7 +100,7 @@ export const useCompleteRecordUpdate = ({
         const storedRecord =
           store.get(recordStoreFamilyState.atomFamily(recordId)) ?? {};
 
-        const bindingPathsReadByRules = activeValidationRules.flatMap(
+        const fieldPathsReadByRules = activeValidationRules.flatMap(
           (validationRule) => {
             const compilationResult = compileValidationRuleExpression({
               expression: validationRule.expression,
@@ -113,18 +113,21 @@ export const useCompleteRecordUpdate = ({
           },
         );
 
-        const isEveryBindingPathLoadedIn = (record: Partial<ObjectRecord>) =>
-          bindingPathsReadByRules.every((path) =>
-            isRecordPathLoaded({ record: { ...record, ...updateInput }, path }),
+        const isEveryFieldValueLoadedIn = (record: Partial<ObjectRecord>) =>
+          fieldPathsReadByRules.every((fieldPath) =>
+            isRecordFieldValueLoaded({
+              record: { ...record, ...updateInput },
+              fieldPath,
+            }),
           );
 
-        const currentRecord = isEveryBindingPathLoadedIn(storedRecord)
+        const currentRecord = isEveryFieldValueLoadedIn(storedRecord)
           ? storedRecord
           : await fetchRecordWithRelations(recordId);
 
         if (
           !isDefined(currentRecord) ||
-          !isEveryBindingPathLoadedIn(currentRecord)
+          !isEveryFieldValueLoadedIn(currentRecord)
         ) {
           return updateInput;
         }
