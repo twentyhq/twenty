@@ -14,9 +14,11 @@ export const NPM_APPLICATION: SettingsApplicationsTableApplication = {
   name: 'Acme Sync',
   description: 'Keeps Acme in sync',
   universalIdentifier: 'npm-application-universal-identifier',
+  sourceType: ApplicationRegistrationSourceType.NPM,
   applicationRegistration: {
     id: 'npm-registration-id',
     sourceType: ApplicationRegistrationSourceType.NPM,
+    oAuthIdentityUniversalIdentifier: null,
   },
 };
 
@@ -25,9 +27,11 @@ export const TARBALL_APPLICATION: SettingsApplicationsTableApplication = {
   name: 'Weather Widget',
   description: 'Shows local weather on company records',
   universalIdentifier: 'tarball-application-universal-identifier',
+  sourceType: ApplicationRegistrationSourceType.TARBALL,
   applicationRegistration: {
     id: 'tarball-registration-id',
     sourceType: ApplicationRegistrationSourceType.TARBALL,
+    oAuthIdentityUniversalIdentifier: null,
   },
 };
 
@@ -35,8 +39,10 @@ export const OAUTH_ONLY_APPLICATION: SettingsApplicationsTableApplication = {
   id: 'oauth-application-id',
   name: 'Zapier',
   universalIdentifier: 'oauth-application-universal-identifier',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
   applicationRegistration: {
     id: 'oauth-registration-id',
     sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    oAuthIdentityUniversalIdentifier: null,
   },
 };

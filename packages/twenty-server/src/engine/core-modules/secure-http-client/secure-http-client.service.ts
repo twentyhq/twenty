@@ -25,6 +25,8 @@ const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
 type SecureHttpClientConfig = CreateAxiosDefaults & {
   retries?: number;
   shouldResetTimeout?: boolean;
+  // For URLs chosen by unauthenticated callers: ignores the instance's internal-host exceptions
+  publicHostsOnly?: boolean;
 };
 
 @Injectable()
@@ -40,9 +42,11 @@ export class SecureHttpClientService {
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
   ): AxiosInstance {
-    const { retries, shouldResetTimeout, ...axiosConfig } = config ?? {};
+    const { retries, shouldResetTimeout, publicHostsOnly, ...axiosConfig } =
+      config ?? {};
 
-    const allowedInternalHosts = this.getAllowedInternalHosts();
+    const allowedInternalHosts =
+      publicHostsOnly === true ? [] : this.getAllowedInternalHosts();
     const isSafeModeEnabled = this.isSafeModeEnabled(allowedInternalHosts);
 
     const boundedAxiosConfig: CreateAxiosDefaults = {

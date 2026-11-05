@@ -107,6 +107,16 @@ my-app/
 
 `application-config.ts` is the app's entry point. It calls `defineApplication()` with the app's universal identifier, display name, description, default role, and marketplace metadata. Every entity references stable UUIDs from `constants/universal-identifiers.ts`.
 
+### OAuth identity apps
+
+An app that only lists an external OAuth client members connect themselves (an AI assistant such as Claude or ChatGPT) declares `oAuthIdentity` in `defineApplication()` instead of a default role:
+
+- `redirectUris`: the client's HTTPS callbacks; a `*` path segment matches any one segment.
+- `clientIdMetadataDocumentHostnames` (optional): hosts whose client ID metadata documents identify the client; each must be the host of a redirect URI.
+- `connectUrl`: where a member starts connecting; `{mcpServerUrl}` is replaced by the server's MCP endpoint.
+
+Such an app ships no entities (objects, fields, logic, front components, roles…) and declares no role: the manifest build fails otherwise, and the client acts with each connecting member's permissions. The server only honors an OAuth identity on an app Twenty publishes under `@twentyhq/`, so third-party apps should not declare one.
+
 ## Key Concepts
 
 - **Universal identifiers**: Stable UUIDs assigned to every entity. They survive renames, version bumps, and resyncs. Never change a universal identifier after first sync.

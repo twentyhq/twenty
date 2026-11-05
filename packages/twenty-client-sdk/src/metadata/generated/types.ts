@@ -1113,6 +1113,9 @@ export default {
             "settingsMenuItems": [
                 506
             ],
+            "sourceType": [
+                73
+            ],
             "universalIdentifier": [
                 1
             ],
@@ -1151,8 +1154,14 @@ export default {
             "lastUsedAt": [
                 219
             ],
+            "oAuthIdentityUniversalIdentifier": [
+                1
+            ],
             "scopes": [
                 1
+            ],
+            "userId": [
+                533
             ],
             "workspaceId": [
                 547
@@ -1709,6 +1718,9 @@ export default {
                 1
             ],
             "logoUrl": [
+                1
+            ],
+            "oAuthIdentityUniversalIdentifier": [
                 1
             ],
             "sourceType": [
@@ -6325,6 +6337,9 @@ export default {
             "category": [
                 1
             ],
+            "connectUrl": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -6358,6 +6373,9 @@ export default {
                 4
             ],
             "category": [
+                1
+            ],
+            "connectUrl": [
                 1
             ],
             "defaultRoleUniversalIdentifier": [
@@ -8715,6 +8733,19 @@ export default {
                     ]
                 }
             ],
+            "revokeWorkspaceApplicationMemberAccess": [
+                4,
+                {
+                    "applicationId": [
+                        533,
+                        "UUID!"
+                    ],
+                    "userId": [
+                        533,
+                        "UUID!"
+                    ]
+                }
+            ],
             "rotateApplicationRegistrationClientSecret": [
                 471,
                 {
@@ -10875,6 +10906,9 @@ export default {
             ]
         },
         "PublicApplicationRegistration": {
+            "claimsVerifiedClientName": [
+                4
+            ],
             "id": [
                 547
             ],
@@ -10882,6 +10916,9 @@ export default {
                 1
             ],
             "name": [
+                1
+            ],
+            "oAuthIdentityUniversalIdentifier": [
                 1
             ],
             "oAuthScopes": [
@@ -12174,6 +12211,15 @@ export default {
             ],
             "webhooks": [
                 675
+            ],
+            "workspaceApplicationAuthorizations": [
+                47,
+                {
+                    "applicationId": [
+                        533,
+                        "UUID!"
+                    ]
+                }
             ],
             "__typename": [
                 1

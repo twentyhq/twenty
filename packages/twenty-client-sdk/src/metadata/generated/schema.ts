@@ -386,6 +386,7 @@ export interface Application {
     runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
+    sourceType: ApplicationRegistrationSourceType
     universalIdentifier: Scalars['String']
     version?: Scalars['String']
     yarnLockChecksum?: Scalars['String']
@@ -401,7 +402,9 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -646,6 +649,7 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
     __typename: 'ApplicationRegistrationSummary'
 }
@@ -2079,6 +2083,7 @@ export interface LoginToken {
 export interface MarketplaceApp {
     author: Scalars['String']
     category: Scalars['String']
+    connectUrl?: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
@@ -2093,6 +2098,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    connectUrl?: Scalars['String']
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
     emailSupport?: Scalars['String']
@@ -2535,6 +2541,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -3032,9 +3039,11 @@ export interface PreviewMessageCampaignSendOutputDTO {
 }
 
 export interface PublicApplicationRegistration {
+    claimsVerifiedClientName: Scalars['Boolean']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
     name: Scalars['String']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     oAuthScopes: Scalars['String'][]
     websiteUrl?: Scalars['String']
     __typename: 'PublicApplicationRegistration'
@@ -3253,6 +3262,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -4800,6 +4810,7 @@ export interface ApplicationGenqlSelection{
     runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
+    sourceType?: boolean | number
     universalIdentifier?: boolean | number
     version?: boolean | number
     yarnLockChecksum?: boolean | number
@@ -4816,7 +4827,9 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5081,6 +5094,7 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     sourceType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6792,6 +6806,7 @@ export interface LoginTokenGenqlSelection{
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
@@ -6807,6 +6822,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
     emailSupport?: boolean | number
@@ -7240,6 +7256,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationMemberAccess?: { __args: {applicationId: Scalars['UUID'], userId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -7770,9 +7787,11 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 }
 
 export interface PublicApplicationRegistrationGenqlSelection{
+    claimsVerifiedClientName?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     oAuthScopes?: boolean | number
     websiteUrl?: boolean | number
     __typename?: boolean | number
@@ -8011,6 +8030,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: (ApplicationAuthorizationGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }

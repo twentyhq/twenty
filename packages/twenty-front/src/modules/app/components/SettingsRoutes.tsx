@@ -865,7 +865,6 @@ const createSettingsRouteElements = ({
     <Route
       element={
         <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
           requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
         />
       }
@@ -878,6 +877,15 @@ const createSettingsRouteElements = ({
         path={SettingsPath.AppPreferencesApp}
         element={<SettingsAppPreferencesApp />}
       />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
+          requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
+        />
+      }
+    >
       <Route
         path={SettingsPath.AppPreferencesAccountDetail}
         element={<SettingsAccountDetail />}

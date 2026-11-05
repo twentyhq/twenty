@@ -1,3 +1,5 @@
+import { useConnectableAppStatusesById } from '@/settings/app-preferences/hooks/useConnectableAppStatusesById';
+import { useConnectableApps } from '@/settings/app-preferences/hooks/useConnectableApps';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -30,6 +32,9 @@ export const SettingsAppPreferencesAppsSection = () => {
     error: accountGroupsError,
     refetch: refetchAccountGroups,
   } = useMyAccountGroups();
+  const { connectableApps } = useConnectableApps();
+  const connectableAppStatusesById =
+    useConnectableAppStatusesById(connectableApps);
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
   const isLoadingStatuses = accountGroupsLoading && !hasLoadedAccountGroups;
@@ -68,10 +73,11 @@ export const SettingsAppPreferencesAppsSection = () => {
       applications={applicationsWithPreferences.map(
         ({ application }) => application,
       )}
-      builtInAccountApps={enabledBuiltInAccountApps}
+      builtInApps={enabledBuiltInAccountApps}
+      connectableApps={connectableApps}
       linkTarget="applicationPreferences"
       middleColumn="status"
-      statusesById={statusesById}
+      statusesById={{ ...statusesById, ...connectableAppStatusesById }}
       isLoading={isLoadingApplications}
       isLoadingStatuses={isLoadingStatuses}
     />

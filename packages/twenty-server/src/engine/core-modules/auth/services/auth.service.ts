@@ -17,7 +17,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
@@ -53,6 +53,10 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
+import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
+import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
+import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -105,7 +109,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
     private readonly userSessionService: UserSessionService,
@@ -551,15 +555,20 @@ export class AuthService {
   }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+    const resolvedClient =
+      await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
+        clientId,
+      );
 
-    if (!applicationRegistration) {
+    if (!isDefined(resolvedClient)) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
+
+    const { registration: applicationRegistration, clientIdMetadataDocument } =
+      resolvedClient;
 
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
@@ -581,13 +590,20 @@ export class AuthService {
     // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
     // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
-      applicationRegistration.oAuthRedirectUris.length > 0;
+      applicationRegistration.oAuthRedirectUris.length > 0 ||
+      isDefined(getApplicationOAuthIdentity(applicationRegistration));
 
     if (hasRegisteredRedirectUris) {
       if (
-        !applicationRegistration.oAuthRedirectUris.includes(
-          authorizeAppInput.redirectUrl,
-        )
+        !isRedirectUriRegisteredForApplicationRegistration({
+          applicationRegistration,
+          redirectUri: authorizeAppInput.redirectUrl,
+        }) ||
+        (isDefined(clientIdMetadataDocument) &&
+          !isRedirectUriListedInClientIdMetadataDocument({
+            clientIdMetadataDocument,
+            redirectUri: authorizeAppInput.redirectUrl,
+          }))
       ) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
@@ -606,11 +622,7 @@ export class AuthService {
         );
       }
 
-      const isLoopback =
-        redirectUrl.hostname === 'localhost' ||
-        redirectUrl.hostname === '127.0.0.1';
-
-      if (!isLoopback) {
+      if (!isLoopbackHostname(redirectUrl.hostname)) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -659,7 +671,7 @@ export class AuthService {
 
     const authCodeContext = {
       redirectUri: authorizeAppInput.redirectUrl,
-      clientId: applicationRegistration.oAuthClientId,
+      clientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
     };

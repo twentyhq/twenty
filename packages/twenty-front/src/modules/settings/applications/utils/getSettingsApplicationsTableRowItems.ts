@@ -2,13 +2,14 @@ import { getApplicationDisplayName } from '@/applications/utils/getApplicationDi
 import { getResolvedApplicationDescription } from '@/applications/utils/getResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
+import { type ConnectableApp } from '@/settings/app-preferences/types/ConnectableApp';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
 import { type SettingsApplicationsTableRowItem } from '@/settings/applications/types/SettingsApplicationsTableRowItem';
 import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
 import { i18n } from '@lingui/core';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type RowItemsWorkspace = Pick<CurrentWorkspace, 'workspaceCustomApplication'>;
 
@@ -27,33 +28,51 @@ const getApplicationRowItem = ({
   }),
   logoUrl: application.logoUrl,
   universalIdentifier: application.universalIdentifier,
-  sourceType: application.applicationRegistration?.sourceType,
+  // An app without a registration ships with the server, so it reads as built-in
+  sourceType: isDefined(application.applicationRegistration)
+    ? application.sourceType
+    : undefined,
 });
 
-const getBuiltInAccountAppRowItem = (
-  builtInAccountApp: BuiltInAccountApp,
+const getBuiltInAppRowItem = (
+  builtInApp: BuiltInApp,
 ): SettingsApplicationsTableRowItem => ({
-  id: builtInAccountApp.id,
-  name: i18n._(builtInAccountApp.name),
-  description: i18n._(builtInAccountApp.description),
-  logoUrl: getBuiltInAccountAppLogoUrl(builtInAccountApp),
+  id: builtInApp.id,
+  name: i18n._(builtInApp.name),
+  description: i18n._(builtInApp.description),
+  logoUrl: getBuiltInAppLogoUrl(builtInApp),
+});
+
+const getConnectableAppRowItem = (
+  connectableApp: ConnectableApp,
+): SettingsApplicationsTableRowItem => ({
+  id: connectableApp.id,
+  name: connectableApp.name,
+  description: connectableApp.description,
+  logoUrl: connectableApp.logoUrl,
 });
 
 export const getSettingsApplicationsTableRowItems = ({
   applications,
-  builtInAccountApps,
+  builtInApps,
+  connectableApps = [],
   currentWorkspace,
 }: {
   applications: SettingsApplicationsTableApplication[];
-  builtInAccountApps: BuiltInAccountApp[];
+  builtInApps: BuiltInApp[];
+  connectableApps?: ConnectableApp[];
   currentWorkspace: RowItemsWorkspace | null | undefined;
 }): SettingsApplicationsTableRowItem[] => {
+  const builtInRowItems = [
+    ...builtInApps.map(getBuiltInAppRowItem),
+    ...connectableApps.map(getConnectableAppRowItem),
+  ];
   const sortedApplications = sortApplicationsWithOAuthOnlyLast(applications);
   const toApplicationRowItem = (
     application: SettingsApplicationsTableApplication,
   ) => getApplicationRowItem({ application, currentWorkspace });
 
-  if (!isNonEmptyArray(builtInAccountApps)) {
+  if (!isNonEmptyArray(builtInRowItems)) {
     return sortedApplications.map(toApplicationRowItem);
   }
 
@@ -61,7 +80,7 @@ export const getSettingsApplicationsTableRowItems = ({
     ...sortedApplications
       .filter(isTwentyStandardApplication)
       .map(toApplicationRowItem),
-    ...builtInAccountApps.map(getBuiltInAccountAppRowItem),
+    ...builtInRowItems,
     ...sortedApplications
       .filter((application) => !isTwentyStandardApplication(application))
       .map(toApplicationRowItem),

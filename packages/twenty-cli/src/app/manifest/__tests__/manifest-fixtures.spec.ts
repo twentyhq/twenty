@@ -58,6 +58,7 @@ const FIXTURES = [
   'function-execute-app',
   'shared-dependencies-app',
   'invalid-app',
+  'oauth-identity-app',
 ];
 
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
@@ -321,6 +322,22 @@ describe('CLI manifest fixtures and worker transport', () => {
     await writeFile(join(appPath, 'locales/de-DE.json'), '{');
     await writeFile(join(appPath, 'locales/klingon.json'), '{}');
     await compareManifest(appPath);
+  }, 60000);
+
+  it('rejects an app with an OAuth identity that ships entities', async () => {
+    const appPath = await copyFixture('oauth-identity-app');
+
+    await cp(
+      join(FIXTURES_DIRECTORY, 'minimal-app', 'my.role.ts'),
+      join(appPath, 'my.role.ts'),
+    );
+    const result = await compareManifest(appPath);
+
+    expect(result.success).toBe(false);
+    if (!result.success)
+      expect(result.errors).toContain(
+        "An application with an OAuth identity acts with the connecting member's permissions, so it cannot ship roles",
+      );
   }, 60000);
 
   it('matches duplicate identifier diagnostics and empty lockfile failures', async () => {

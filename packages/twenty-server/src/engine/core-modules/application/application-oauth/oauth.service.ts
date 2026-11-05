@@ -13,8 +13,12 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
+import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { isOAuthOnlyApplicationRegistration } from 'src/engine/core-modules/application/application-oauth-identity/utils/is-oauth-only-application-registration.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -22,6 +26,7 @@ import { OAuthErrorResponse } from 'src/engine/core-modules/application/applicat
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -45,6 +50,7 @@ export class OAuthService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationAuthorizationService: ApplicationAuthorizationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -248,13 +254,14 @@ export class OAuthService {
       applicationRegistration.oAuthScopes.join(' ');
 
     // Recorded first so a refresh token never exists without a revocable grant
-    await this.applicationAuthorizationService.recordAuthorization({
-      userId: authCodeToken.userId,
-      workspaceId: authCodeToken.workspaceId,
-      userWorkspaceId: userWorkspace.id,
-      applicationId: application.id,
-      scopes: this.parseScopes(grantedScope),
-    });
+    const consentId =
+      await this.applicationAuthorizationService.recordAuthorization({
+        userId: authCodeToken.userId,
+        workspaceId: authCodeToken.workspaceId,
+        userWorkspaceId: userWorkspace.id,
+        applicationId: application.id,
+        scopes: this.parseScopes(grantedScope),
+      });
 
     const { applicationAccessToken, applicationRefreshToken } =
       await this.applicationTokenService.generateApplicationTokenPair({
@@ -262,6 +269,7 @@ export class OAuthService {
         applicationId: application.id,
         userId: authCodeToken.userId,
         userWorkspaceId: userWorkspace.id,
+        consentId,
       });
 
     this.logger.log(
@@ -402,6 +410,7 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
+          refreshToken: payload,
         });
 
         if (authorizationError) {
@@ -558,9 +567,10 @@ export class OAuthService {
 
       if (
         isDefined(decoded.userId) &&
-        (await this.isAuthorizationRevoked({
+        !(await this.isRefreshTokenAuthorized({
           userId: decoded.userId,
           applicationId: decoded.applicationId,
+          refreshToken: decoded,
         }))
       ) {
         return { active: false };
@@ -617,7 +627,9 @@ export class OAuthService {
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+      await this.oAuthClientRegistrationResolverService.findByClientId(
+        clientId,
+      );
 
     if (!applicationRegistration) {
       return this.errorResponse('invalid_client', 'Client not found');
@@ -648,10 +660,12 @@ export class OAuthService {
     userId,
     workspaceId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat' | 'consentId'>;
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -659,10 +673,18 @@ export class OAuthService {
         applicationId,
       });
 
-    if (isDefined(authorization?.revokedAt)) {
+    if (
+      isDefined(authorization) &&
+      !isRefreshTokenCoveredByAuthorization({
+        authorization,
+        refreshToken,
+      })
+    ) {
       return this.errorResponse(
         'invalid_grant',
-        'The user revoked this application access',
+        isDefined(authorization.revokedAt)
+          ? 'The user revoked this application access'
+          : 'Refresh token was issued for an earlier authorization',
       );
     }
 
@@ -731,12 +753,14 @@ export class OAuthService {
     );
   }
 
-  private async isAuthorizationRevoked({
+  private async isRefreshTokenAuthorized({
     userId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat' | 'consentId'>;
   }): Promise<boolean> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -744,7 +768,13 @@ export class OAuthService {
         applicationId,
       });
 
-    return isDefined(authorization?.revokedAt);
+    return (
+      !isDefined(authorization) ||
+      isRefreshTokenCoveredByAuthorization({
+        authorization,
+        refreshToken,
+      })
+    );
   }
 
   // RFC 6749 §3.3: an empty scope means no scopes, not one blank one
@@ -752,62 +782,91 @@ export class OAuthService {
     return scope.split(' ').filter((entry) => entry.length > 0);
   }
 
+  private findInstalledApplication({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    return this.applicationRepository.findOne(workspaceId, {
+      where: { applicationRegistrationId },
+    });
+  }
+
   private async findOrInstallApplication(
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
-    const existingApplication = await this.applicationRepository.findOne(
+    const existingApplication = await this.findInstalledApplication({
+      applicationRegistrationId: applicationRegistration.id,
       workspaceId,
-      {
-        where: {
-          applicationRegistrationId: applicationRegistration.id,
-        },
-      },
-    );
+    });
 
     if (existingApplication) {
       return existingApplication;
     }
 
-    try {
-      await this.applicationInstallService.installApplication({
-        appRegistrationId: applicationRegistration.id,
-        workspaceId,
-      });
+    const isOAuthOnly = isOAuthOnlyApplicationRegistration(
+      applicationRegistration,
+    );
 
-      const installedApplication = await this.applicationRepository.findOne(
-        workspaceId,
-        {
-          where: {
-            applicationRegistrationId: applicationRegistration.id,
-          },
-        },
-      );
+    if (!isOAuthOnly) {
+      try {
+        await this.applicationInstallService.installApplication({
+          appRegistrationId: applicationRegistration.id,
+          workspaceId,
+        });
 
-      if (installedApplication) {
-        return installedApplication;
+        const installedApplication = await this.findInstalledApplication({
+          applicationRegistrationId: applicationRegistration.id,
+          workspaceId,
+        });
+
+        if (installedApplication) {
+          return installedApplication;
+        }
+
+        this.logger.warn(
+          `Install succeeded but application not found in workspace, falling back to bare creation`,
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Auto-install failed for ${applicationRegistration.name}, falling back to bare creation`,
+          error,
+        );
       }
-
-      this.logger.warn(
-        `Install succeeded but application not found in workspace, falling back to bare creation`,
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Auto-install failed for ${applicationRegistration.name}, falling back to bare creation`,
-        error,
-      );
     }
 
-    return this.applicationService.create({
-      universalIdentifier: applicationRegistration.universalIdentifier,
-      name: applicationRegistration.name,
-      description: `OAuth application registered as "${applicationRegistration.name}"`,
-      version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
-      sourcePath: 'oauth-install',
-      sourceType: applicationRegistration.sourceType,
-      applicationRegistrationId: applicationRegistration.id,
-      workspaceId,
-    });
+    try {
+      return await this.applicationService.create({
+        universalIdentifier: applicationRegistration.universalIdentifier,
+        name: applicationRegistration.name,
+        description:
+          applicationRegistration.description ??
+          `OAuth application registered as "${applicationRegistration.name}"`,
+        version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
+        sourcePath: 'oauth-install',
+        sourceType: isOAuthOnly
+          ? ApplicationRegistrationSourceType.OAUTH_ONLY
+          : applicationRegistration.sourceType,
+        applicationRegistrationId: applicationRegistration.id,
+        workspaceId,
+      });
+    } catch (error) {
+      // First connections race to create the install; the loser reuses it since its authorization code is already spent
+      const concurrentlyInstalledApplication =
+        await this.findInstalledApplication({
+          applicationRegistrationId: applicationRegistration.id,
+          workspaceId,
+        });
+
+      if (isDefined(concurrentlyInstalledApplication)) {
+        return concurrentlyInstalledApplication;
+      }
+
+      throw error;
+    }
   }
 
   // OAuth RFC 6749 requires expires_in as seconds
