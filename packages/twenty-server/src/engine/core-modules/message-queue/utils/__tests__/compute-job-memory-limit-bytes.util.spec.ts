@@ -1,8 +1,6 @@
-import {
-  computeJobMemoryAvailableBytes,
-  computeJobMemoryCapacityBytes,
-  computeJobMemoryLimitBytes,
-} from 'src/engine/core-modules/message-queue/utils/compute-job-memory-limit.util';
+import { computeJobMemoryAvailableBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-available-bytes.util';
+import { computeJobMemoryCapacityBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-capacity-bytes.util';
+import { computeJobMemoryLimitBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-limit-bytes.util';
 
 describe('computeJobMemoryCapacityBytes', () => {
   it('removes the reserve from maxmemory', () => {
@@ -41,7 +39,6 @@ describe('computeJobMemoryLimitBytes', () => {
     const tenantCount = 20;
     const usedBytes = Array.from({ length: tenantCount }, () => 0);
 
-    // Each tenant in turn fills up to its limit given what the others hold
     for (let round = 0; round < 200; round += 1) {
       for (let index = 0; index < tenantCount; index += 1) {
         usedBytes[index] = computeJobMemoryLimitBytes({

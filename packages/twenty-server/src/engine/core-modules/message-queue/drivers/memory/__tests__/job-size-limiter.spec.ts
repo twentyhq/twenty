@@ -21,9 +21,9 @@ const buildLimiter = (mode: JobQueueMemoryLimitMode) => {
 };
 
 const JOBS = [
-  { groupKey: 'workspace:ws-1', sizeBytes: 50 },
-  { groupKey: 'workspace:ws-1', sizeBytes: 150 },
-  { groupKey: 'workspace:ws-2', sizeBytes: 200 },
+  { index: 0, groupKey: 'workspace:ws-1', sizeBytes: 50 },
+  { index: 3, groupKey: 'workspace:ws-1', sizeBytes: 150 },
+  { index: 4, groupKey: 'workspace:ws-2', sizeBytes: 200 },
 ];
 
 describe('JobSizeLimiter', () => {
@@ -78,7 +78,7 @@ describe('JobSizeLimiter', () => {
     expect(thrownError).toMatchObject({
       code: MessageQueueExceptionCode.JOB_TOO_LARGE,
       statusCode: 413,
-      details: { index: 1, sizeBytes: 150, maxBytes: MAX_JOB_SIZE_BYTES },
+      details: { index: 3, sizeBytes: 150, maxBytes: MAX_JOB_SIZE_BYTES },
     });
   });
 
@@ -88,7 +88,7 @@ describe('JobSizeLimiter', () => {
     expect(() =>
       limiter.checkJobSizes({
         queueName: MessageQueue.workspaceQueue,
-        jobs: [{ groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
+        jobs: [{ index: 0, groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
       }),
     ).not.toThrow();
   });

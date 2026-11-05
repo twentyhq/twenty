@@ -19,6 +19,7 @@ jest.mock('bullmq', () => ({
     get client() {
       return Promise.resolve(mockQueueClient.current);
     },
+    toKey: (jobId: string) => `bull:logic-function-queue:${jobId}`,
     add: mockAdd,
     addBulk: mockAddBulk,
     getJob: mockGetJob,
@@ -42,7 +43,13 @@ jest.mock(
   }),
 );
 
-const buildApplicationJob = (workspaceId: string, payload = 'x') => ({
+const buildApplicationJob = ({
+  workspaceId,
+  payload = 'x',
+}: {
+  workspaceId: string;
+  payload?: string;
+}) => ({
   data: { workspaceId, payload },
   workspaceId,
   applicationUniversalIdentifier: 'app-1',
@@ -92,7 +99,7 @@ const createDriver = async (mode: string) => {
   const readUsedBytes = async (groupKey: string) =>
     Number((await redis.get(`${KEY_PREFIX}:jobmem:used:${groupKey}`)) ?? 0);
 
-  return { driver, readUsedBytes };
+  return { driver, redis, readUsedBytes };
 };
 
 describe('BullMQDriver job memory', () => {
@@ -117,8 +124,8 @@ describe('BullMQDriver job memory', () => {
     const { driver, readUsedBytes } = await createDriver('observe');
 
     const report = await driver.bulkAddWithReport(QUEUE, 'job', [
-      buildApplicationJob('ws-1'),
-      buildApplicationJob('ws-1'),
+      buildApplicationJob({ workspaceId: 'ws-1' }),
+      buildApplicationJob({ workspaceId: 'ws-1' }),
     ]);
 
     expect(report.jobs).toHaveLength(2);
@@ -143,11 +150,36 @@ describe('BullMQDriver job memory', () => {
     const { driver, readUsedBytes } = await createDriver('off');
 
     const report = await driver.bulkAddWithReport(QUEUE, 'job', [
-      { ...buildApplicationJob('ws-1'), jobId: 'job-1' },
+      { ...buildApplicationJob({ workspaceId: 'ws-1' }), jobId: 'job-1' },
     ]);
 
     expect(report.availableBytes).toBeNull();
     expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+  });
+
+  it('does not charge a job id that BullMQ still holds', async () => {
+    const { driver, redis, readUsedBytes } = await createDriver('observe');
+
+    await redis.hset(`${KEY_PREFIX}:${QUEUE}:finished-job`, 'name', 'job');
+
+    const report = await driver.bulkAddWithReport(QUEUE, 'job', [
+      {
+        ...buildApplicationJob({ workspaceId: 'ws-1' }),
+        jobId: 'finished-job',
+      },
+      { ...buildApplicationJob({ workspaceId: 'ws-1' }), jobId: 'new-job' },
+    ]);
+
+    const [finishedJob, newJob] = mockAddBulk.mock.calls[0][0];
+
+    expect(finishedJob.opts.memoryGroupKeys).toBeUndefined();
+    expect(newJob.opts.memoryGroupKeys).toEqual([
+      'workspace:ws-1',
+      'application:app-1',
+    ]);
+    expect(await readUsedBytes('workspace:ws-1')).toBe(
+      report.jobs[1].sizeBytes,
+    );
   });
 
   it('releases the charge of a job deduplicated into another one', async () => {
@@ -176,7 +208,9 @@ describe('BullMQDriver job memory', () => {
     mockGetJob.mockResolvedValue(undefined);
 
     await expect(
-      driver.bulkAdd(QUEUE, 'job', [buildApplicationJob('ws-1')]),
+      driver.bulkAdd(QUEUE, 'job', [
+        buildApplicationJob({ workspaceId: 'ws-1' }),
+      ]),
     ).rejects.toThrow('connection lost');
     expect(await readUsedBytes('workspace:ws-1')).toBe(0);
   });
@@ -188,7 +222,9 @@ describe('BullMQDriver job memory', () => {
     mockGetJob.mockRejectedValue(new Error('connection lost'));
 
     await expect(
-      driver.bulkAdd(QUEUE, 'job', [buildApplicationJob('ws-1')]),
+      driver.bulkAdd(QUEUE, 'job', [
+        buildApplicationJob({ workspaceId: 'ws-1' }),
+      ]),
     ).rejects.toThrow('connection lost');
     expect(await readUsedBytes('workspace:ws-1')).toBeGreaterThan(0);
   });
@@ -196,7 +232,9 @@ describe('BullMQDriver job memory', () => {
   it('follows payload updates and releases on completion or final failure only', async () => {
     const { driver, readUsedBytes } = await createDriver('observe');
 
-    await driver.bulkAdd(QUEUE, 'job', [buildApplicationJob('ws-1')]);
+    await driver.bulkAdd(QUEUE, 'job', [
+      buildApplicationJob({ workspaceId: 'ws-1' }),
+    ]);
 
     const [{ opts }] = mockAddBulk.mock.calls[0][0];
     const initialUsedBytes = await readUsedBytes('workspace:ws-1');

@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { type Job, Queue } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import {
   bullMQToJobStateEnum,
@@ -68,10 +69,10 @@ export class AdminPanelQueueService {
 
     jobSizeLimiter.checkJobSizes({
       queueName,
-      jobs: [{ groupKey: groupKeys[0] ?? 'unknown', sizeBytes }],
+      jobs: [{ index: 0, groupKey: groupKeys[0] ?? 'unknown', sizeBytes }],
     });
 
-    if (groupKeys.length === 0 || !job.id) {
+    if (!isNonEmptyArray(groupKeys) || !isNonEmptyString(job.id)) {
       await job.retry();
 
       return;
@@ -295,7 +296,7 @@ export class AdminPanelQueueService {
 
           const groupKeys = this.getMemoryGroupKeys(job);
 
-          if (job.id && groupKeys.length > 0) {
+          if (isNonEmptyString(job.id) && isNonEmptyArray(groupKeys)) {
             await this.buildJobMemoryLimiters(queue).jobMemoryLimiter.release({
               queueName,
               jobId: job.id,

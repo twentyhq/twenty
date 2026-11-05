@@ -18,10 +18,8 @@ import {
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
-import {
-  computeJobMemoryAvailableBytes,
-  computeJobMemoryCapacityBytes,
-} from 'src/engine/core-modules/message-queue/utils/compute-job-memory-limit.util';
+import { computeJobMemoryAvailableBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-available-bytes.util';
+import { computeJobMemoryCapacityBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-capacity-bytes.util';
 import {
   parseRedisMemoryInfo,
   type RedisMemoryInfo,

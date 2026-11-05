@@ -1,7 +1,6 @@
-// KEYS: (used, jobs) per group key. Charges each job once per group key and refuses the batch
-// when a key would exceed share * (capacity - memory used by everything else)
+// KEYS: (used, jobs) per group key; see compute-job-memory-limit-bytes.util for the limit
 export const JOB_MEMORY_ADMIT_SCRIPT = `
-local chargeOnRefusal = ARGV[1] == '1'
+local shouldChargeOnRefusal = ARGV[1] == '1'
 local capacity = tonumber(ARGV[2])
 local usedMemory = tonumber(ARGV[3])
 local share = tonumber(ARGV[4])
@@ -59,7 +58,7 @@ for keyIndex = 1, keyCount do
   usedAfter[keyIndex] = used[keyIndex]
 end
 
-if refused == 0 or chargeOnRefusal then
+if refused == 0 or shouldChargeOnRefusal then
   for _, job in ipairs(jobs) do
     for _, keyIndex in ipairs(job[3]) do
       if redis.call('HSETNX', KEYS[2 * keyIndex], job[1], job[2]) == 1 then
