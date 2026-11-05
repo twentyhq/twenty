@@ -22,6 +22,7 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
+import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -29,6 +30,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
@@ -352,9 +354,43 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const MEMBER_MENTION = `[[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]]`;
+const ESCAPED_MEMBER_MENTION = MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(
+  ']',
+  '\\]',
+);
+const ENCODED_PROTECTED_CHAT_REFERENCE_MARKER = `&#x${PROTECTED_CHAT_REFERENCE_MARKER.charCodeAt(0).toString(16)};`;
+
+const mockMentionMessage: ExtendedUIMessage = {
+  id: 'msg-mentions',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'text',
+      text: `Can you review the pipeline, ${MEMBER_MENTION}?
+
+Write \`${MEMBER_MENTION}\` to mention a member:
+
+- In a code block:
+
+  \`\`\`
+  ${MEMBER_MENTION}
+  \`\`\`
+
+${ESCAPED_MEMBER_MENTION}
+
+${ENCODED_PROTECTED_CHAT_REFERENCE_MARKER}${ESCAPED_MEMBER_MENTION}`,
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+  },
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockLongUserMessage,
+  mockMentionMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -518,6 +554,17 @@ export const LongUserMessage: Story = {
 
 export const AssistantTextResponse: Story = {
   render: () => <AiChatMessage messageId={mockSimpleTextResponse.id} />,
+};
+
+export const MessageWithMentions: Story = {
+  decorators: [MemoryRouterDecorator],
+  render: () => <AiChatMessage messageId={mockMentionMessage.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findAllByText('Charles Test')).toHaveLength(1);
+    await expect(canvas.getAllByText(MEMBER_MENTION)).toHaveLength(3);
+  },
 };
 
 export const AssistantStreaming: Story = {

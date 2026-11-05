@@ -1,16 +1,16 @@
 import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
-import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
+import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 
 type TextWithChatReferencesProps = {
-  text: string;
+  segments: Array<string | ChatReferenceMatch>;
 };
 
 export const TextWithChatReferences = ({
-  text,
+  segments,
 }: TextWithChatReferencesProps) => {
   return (
     <>
-      {getChatReferenceSegments(text).map((segment) =>
+      {segments.map((segment) =>
         typeof segment === 'string' ? (
           segment
         ) : (
