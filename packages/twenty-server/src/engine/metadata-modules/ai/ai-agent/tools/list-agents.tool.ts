@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -15,7 +16,10 @@ const listAgentsInputSchema = z.object({});
 @DefineTool({
   name: 'list_agents',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_READ_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_READ_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `List the AI agents of the workspace with their prompt, model, role and triggers. System agents, such as those backing workflow AI steps, and archived agents are not included. Agents installed by an application are listed, but only that application can change them.`,
 })
 export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {

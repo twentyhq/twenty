@@ -2,6 +2,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   ToolCategory,
 } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -46,7 +47,10 @@ const createAgentInputSchema = z.object({
 @DefineTool({
   name: 'create_agent',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Create an AI agent that works on its own: it wakes up on its triggers (record events or a schedule) and acts with the tools its role allows, for example posting a note, updating records or sending a summary.
 
 Before creating it, present the plan to the user (prompt, role, triggers) and get their confirmation, since the agent keeps running after this conversation.
