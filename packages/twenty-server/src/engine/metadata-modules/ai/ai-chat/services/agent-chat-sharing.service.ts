@@ -24,7 +24,6 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -53,11 +52,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 
-const AGENT_CHAT_REPLY_OPERATION_TYPES = [
-  'select',
-  'update',
-] as const satisfies ObjectRecordsOperationType[];
-
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
   RecordShareAccessLevel.FULL,
@@ -76,7 +70,6 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -320,23 +313,26 @@ export class AgentChatSharingService {
       (
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
-            const grants = await Promise.all(
-              AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                this.recordAccessPolicyService.hasAccessToRecords({
-                  authContext: {
-                    type: 'user',
-                    workspace: { id: workspaceId },
-                    workspaceMemberId: memberId,
-                  },
-                  flatObjectMetadata: threadFlatObjectMetadata,
-                  recordIds: [threadId],
-                  operationType,
-                  hypotheticalRecordShareAccessLevel,
-                }),
-              ),
-            );
+            const principals =
+              await this.permissionsService.buildPermissionsPrincipals({
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: memberId,
+                },
+              });
+            const question = {
+              principals,
+              objectMetadataId: threadFlatObjectMetadata.id,
+              recordIds: [threadId],
+              hypotheticalRecordShareAccessLevel,
+            };
+            const [canReadThread, canUpdateThread] = await Promise.all([
+              this.permissionsService.canReadRecords(question),
+              this.permissionsService.canUpdateRecords(question),
+            ]);
 
-            return grants.every(Boolean) ? memberId : undefined;
+            return canReadThread && canUpdateThread ? memberId : undefined;
           }),
         )
       ).filter(isDefined),

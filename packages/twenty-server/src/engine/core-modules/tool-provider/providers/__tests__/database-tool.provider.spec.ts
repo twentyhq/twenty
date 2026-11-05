@@ -16,8 +16,7 @@ import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const workspaceId = 'workspace-id';
 
@@ -59,6 +58,7 @@ const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
   >
 > = {
   select: 'canReadAllRecords',
+  insert: 'canUpdateAllRecords',
   update: 'canUpdateAllRecords',
   'soft-delete': 'canSoftDeleteAllRecords',
   delete: 'canDestroyAllRecords',
@@ -82,15 +82,6 @@ describe('DatabaseToolProvider', () => {
     const objectRecordsPermissions = {
       ...allObjectRecordsPermissions,
       ...options?.composedObjectRecordsPermissions,
-    };
-    const composedRecordsPermissions: RoleRecordsPermissions = {
-      canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
-      canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
-      canSoftDeleteAllRecords: objectRecordsPermissions.canSoftDeleteAllRecords,
-      canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
-      objects: Object.fromEntries(
-        objects.map((object) => [object.id, objectRecordsPermissions]),
-      ),
     };
 
     const flatEntityMapsCacheService = {
@@ -122,33 +113,45 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
-    const scopedRecordAccessPolicy = {
-      findRecordsPermissions: jest
-        .fn()
-        .mockResolvedValue(composedRecordsPermissions),
-      hasAccessToSomeRecords: jest.fn(
-        async ({
-          operationType,
-        }: {
-          operationType: ObjectRecordsOperationType;
-        }) => {
-          const objectPermission =
-            OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
+    const canOperateOnSomeRecords = (
+      operationType: ObjectRecordsOperationType,
+    ) =>
+      jest.fn(async () => {
+        const objectPermission =
+          OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
 
-          return (
-            (options?.sharedOperationTypes ?? []).includes(operationType) ||
-            (isDefined(objectPermission) &&
-              objectRecordsPermissions[objectPermission])
-          );
+        return (
+          (options?.sharedOperationTypes ?? []).includes(operationType) ||
+          (isDefined(objectPermission) &&
+            objectRecordsPermissions[objectPermission])
+        );
+      });
+
+    const permissionsService = {
+      buildPermissionsPrincipals: jest.fn().mockResolvedValue({
+        workspaceId,
+        mainPrincipal: {
+          type: 'apiKey',
+          apiKeyId: 'api-key-id',
+          roleId: 'role-id',
         },
-      ),
-    };
-    const recordAccessPolicyService = {
-      forAuthContext: jest.fn(() => scopedRecordAccessPolicy),
-    } as unknown as RecordAccessPolicyService;
+        applicationPrincipal: { type: 'customApplication' },
+      }),
+      canCreateSomeRecords: canOperateOnSomeRecords('insert'),
+      canReadSomeRecords: canOperateOnSomeRecords('select'),
+      canUpdateSomeRecords: canOperateOnSomeRecords('update'),
+      canSoftDeleteSomeRecords: canOperateOnSomeRecords('soft-delete'),
+      canDestroySomeRecords: canOperateOnSomeRecords('delete'),
+      findUnreadableFieldMetadataIdsOrThrow: jest
+        .fn()
+        .mockResolvedValue(new Set()),
+      findNonUpdatableFieldMetadataIdsOrThrow: jest
+        .fn()
+        .mockResolvedValue(new Set()),
+    } as unknown as PermissionsService;
 
     const provider = new DatabaseToolProvider(
-      recordAccessPolicyService,
+      permissionsService,
       flatEntityMapsCacheService,
       i18nService,
       applicationTranslationCatalogService,
