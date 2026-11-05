@@ -5,10 +5,7 @@ import {
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
-import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 jest.mock(
   'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util',
