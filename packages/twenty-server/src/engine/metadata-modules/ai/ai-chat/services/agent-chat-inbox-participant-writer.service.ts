@@ -12,7 +12,6 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
-import { acquireAgentChatThreadParticipantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-thread-participant-locks.util';
 import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-last-mentioned-at.util';
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
@@ -134,16 +133,6 @@ export class AgentChatInboxParticipantWriterService {
     reason: AgentChatInboxDeliveryReason;
     participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
-    await acquireAgentChatThreadParticipantLocks({
-      executeQuery: ({ query, parameters }) =>
-        scope.executeRawQuery(query, parameters),
-      participants: participantWorkspaceMemberIds.map((workspaceMemberId) => ({
-        workspaceId,
-        threadId,
-        workspaceMemberId,
-      })),
-    });
-
     const participantRepository =
       scope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
         'agentChatThreadParticipant',
