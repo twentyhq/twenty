@@ -2,8 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -11,6 +13,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/internal/principal/utils/can-auth-context-hold-roles.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -34,6 +37,43 @@ export class PrincipalPermissionsService {
     }
 
     return principals;
+  }
+
+  async buildUserWorkspacePermissionsPrincipalsOrThrow({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<PermissionsPrincipalsWithRolesContext> {
+    const { userWorkspaceRoleMap, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatRoleMaps',
+      ]);
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    const flatRole = isDefined(roleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
+
+    if (!isDefined(flatRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
+        },
+      );
+    }
+
+    return buildRolePermissionsPrincipals({
+      workspaceId,
+      roleId: flatRole.id,
+    });
   }
 
   async buildPermissionsPrincipals({

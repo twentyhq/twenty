@@ -49,13 +49,13 @@ export class MessageListResolver {
   )
   async duplicateMessageList(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    // Rejects tokens that are not bound to a user workspace, such as API keys
-    @AuthUserWorkspaceId() _userWorkspaceId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<DuplicatedMessageListDTO> {
     const authContext = getWorkspaceAuthContext();
 
     return this.messageListDuplicationService.duplicateMessageList({
       messageListId: id,
+      userWorkspaceId,
       authContext,
     });
   }

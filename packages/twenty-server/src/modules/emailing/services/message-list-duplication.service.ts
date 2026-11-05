@@ -42,12 +42,19 @@ export class MessageListDuplicationService {
 
   async duplicateMessageList({
     messageListId,
+    userWorkspaceId,
     authContext,
   }: {
     messageListId: string;
+    userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
   }): Promise<DuplicatedMessageListDTO> {
-    await this.assertCanReadAndUpdateDuplicatedObjects({ authContext });
+    const workspaceId = authContext.workspace.id;
+
+    await this.assertCanReadAndUpdateDuplicatedObjects({
+      workspaceId,
+      userWorkspaceId,
+    });
 
     // One transaction so a failed member insert never leaves a list copy without its members
     return this.workspaceOrmManager.executeInWorkspaceContext(
@@ -65,15 +72,17 @@ export class MessageListDuplicationService {
 
   // Repositories skip role checks on system objects, so the role is checked here
   private async assertCanReadAndUpdateDuplicatedObjects({
-    authContext,
+    workspaceId,
+    userWorkspaceId,
   }: {
-    authContext: WorkspaceAuthContext;
+    workspaceId: string;
+    userWorkspaceId: string;
   }): Promise<void> {
     const [principals, { flatObjectMetadataMaps }] = await Promise.all([
-      this.principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
-      this.workspaceCacheService.getOrRecompute(authContext.workspace.id, [
+      this.principalPermissionsService.buildUserWorkspacePermissionsPrincipalsOrThrow(
+        { workspaceId, userWorkspaceId },
+      ),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]),
     ]);
