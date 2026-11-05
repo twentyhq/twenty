@@ -104,7 +104,7 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability({
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
         aiDataPolicy: workspace,
       });
@@ -134,7 +134,7 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability({
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
         aiDataPolicy: workspace,
       });

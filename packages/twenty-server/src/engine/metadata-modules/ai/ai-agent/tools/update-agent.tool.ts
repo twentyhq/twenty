@@ -68,7 +68,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     });
 
     if (isDefined(parameters.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability({
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: parameters.modelId,
         aiDataPolicy:
           await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(

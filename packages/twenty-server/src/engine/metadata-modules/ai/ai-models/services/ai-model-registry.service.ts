@@ -51,7 +51,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
-import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.const';
+import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export interface RegisteredAiModel {
@@ -569,7 +569,6 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  // borrow the nearest tier's chain before falling back to any allowed model, never a disabled or non-compliant one
   findDefaultModelForTier({
     tier,
     aiDataPolicy,
@@ -770,7 +769,7 @@ export class AiModelRegistryService {
   }
 
   // catalog membership, not registration: a provider key added later makes the stored id work
-  validateModelAvailability({
+  validateModelAvailabilityOrThrow({
     modelId,
     aiDataPolicy,
   }: {

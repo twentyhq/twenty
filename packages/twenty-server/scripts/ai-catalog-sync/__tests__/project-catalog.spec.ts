@@ -291,13 +291,13 @@ describe('projectCatalog', () => {
   });
 
   it('refuses an inference profile that routes outside its provider residency', () => {
-    const specWithProfile = (as: string): CatalogSpec => ({
+    const specWithProfile = (servedName: string): CatalogSpec => ({
       providers: [
         {
           name: 'amazon-bedrock-eu',
           npm: '@ai-sdk/amazon-bedrock',
           dataResidency: 'eu',
-          models: [{ model: 'claude-opus-4-7', as }],
+          models: [{ model: 'claude-opus-4-7', as: servedName }],
         },
       ],
     });

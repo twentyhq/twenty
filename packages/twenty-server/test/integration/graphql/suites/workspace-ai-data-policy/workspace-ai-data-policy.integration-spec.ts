@@ -1,36 +1,7 @@
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { gql } from 'graphql-tag';
-
-const UPDATE_WORKSPACE_AI_DATA_POLICY = gql`
-  mutation UpdateWorkspaceAiDataPolicy($data: UpdateWorkspaceInput!) {
-    updateWorkspace(data: $data) {
-      aiDataResidency
-      isAiZeroDataRetentionRequired
-    }
-  }
-`;
-
-const CREATE_AGENT = gql`
-  mutation CreateExcludedModelAgent($input: CreateAgentInput!) {
-    createOneAgent(input: $input) {
-      id
-    }
-  }
-`;
+import { updateAiDataPolicy } from 'test/integration/graphql/suites/workspace-ai-data-policy/utils/update-ai-data-policy.util';
+import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
-
-const updateAiDataPolicy = ({
-  data,
-  token,
-}: {
-  data: Record<string, unknown>;
-  token: string;
-}) =>
-  makeMetadataApiRequest(
-    { query: UPDATE_WORKSPACE_AI_DATA_POLICY, variables: { data } },
-    token,
-  );
 
 describe('workspace AI data policy', () => {
   afterEach(async () => {
@@ -113,21 +84,18 @@ describe('workspace AI data policy', () => {
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    const response = await makeMetadataApiRequest(
-      {
-        query: CREATE_AGENT,
-        variables: {
-          input: {
-            label: 'Excluded model agent',
-            prompt: 'Answer.',
-            modelId: UNLABELED_CATALOG_MODEL_ID,
-          },
-        },
+    const { errors } = await createOneAgent({
+      input: {
+        label: 'Excluded model agent',
+        prompt: 'Answer.',
+        modelId: UNLABELED_CATALOG_MODEL_ID,
       },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
+      gqlFields: 'id',
+      expectToFail: true,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
 
-    expect(response.body.errors[0].extensions.subCode).toBe(
+    expect(errors[0].extensions.subCode).toBe(
       'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
     );
   });

@@ -8,8 +8,11 @@ export const assertModelNumbersAreUsable = ({
   provider,
   specModel,
 }: {
-  provider: CatalogSpecProvider;
-  specModel: CatalogSpecModel;
+  provider: Pick<CatalogSpecProvider, 'name'>;
+  specModel: Pick<
+    CatalogSpecModel,
+    'model' | (typeof NUMERIC_MODEL_FIELDS)[number]
+  >;
 }): void => {
   for (const field of NUMERIC_MODEL_FIELDS) {
     const value = specModel[field];

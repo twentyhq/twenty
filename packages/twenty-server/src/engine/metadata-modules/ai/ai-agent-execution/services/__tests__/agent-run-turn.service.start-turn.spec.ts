@@ -1,7 +1,15 @@
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { type AgentResponseFormat, ToolCategory } from 'twenty-shared/ai';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
+import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 
 const JSON_RESPONSE_FORMAT: AgentResponseFormat = {
   type: 'json',
@@ -30,19 +38,34 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
     stream: { stream: new ReadableStream() },
     modelConfig: {},
   });
-  const service = new AgentRunTurnService(
-    { start: startAgentTurn } as never,
-    {
-      assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
-    } as never,
-    {
-      resolveRunAuthContext: jest
-        .fn()
-        .mockResolvedValue({ type: 'application' }),
-    } as never,
-    {} as never,
-    { findOneBy: jest.fn().mockResolvedValue({ id: 'workspace-id' }) } as never,
-  );
+  const moduleRef = await Test.createTestingModule({
+    providers: [
+      AgentRunTurnService,
+      { provide: AgentTurnService, useValue: { start: startAgentTurn } },
+      {
+        provide: AiBillingService,
+        useValue: {
+          assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
+        },
+      },
+      {
+        provide: AgentRunPersonaService,
+        useValue: {
+          resolveRunAuthContext: jest
+            .fn()
+            .mockResolvedValue({ type: 'application' }),
+        },
+      },
+      { provide: RunAgentAttachmentService, useValue: {} },
+      {
+        provide: getRepositoryToken(WorkspaceEntity),
+        useValue: {
+          findOneBy: jest.fn().mockResolvedValue({ id: 'workspace-id' }),
+        },
+      },
+    ],
+  }).compile();
+  const service = moduleRef.get(AgentRunTurnService);
 
   const started = await service.startTurn({
     persona,

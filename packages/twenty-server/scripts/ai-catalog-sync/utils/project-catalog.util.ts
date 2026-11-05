@@ -21,7 +21,7 @@ export const projectCatalog = ({
     assertProviderIsUsable({
       provider,
       seenNames,
-      requireDataPolicyOnEveryRoute:
+      shouldRequireDataPolicyOnEveryRoute:
         spec.requireDataPolicyOnEveryRoute ?? false,
     });
     seenNames.add(provider.name);

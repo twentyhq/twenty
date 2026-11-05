@@ -7,11 +7,14 @@ import { type CatalogSpecProvider } from '../types/catalog-spec.type';
 export const assertProviderIsUsable = ({
   provider,
   seenNames,
-  requireDataPolicyOnEveryRoute,
+  shouldRequireDataPolicyOnEveryRoute,
 }: {
-  provider: CatalogSpecProvider;
+  provider: Pick<
+    CatalogSpecProvider,
+    'name' | 'npm' | 'dataResidency' | 'zeroDataRetention'
+  >;
   seenNames: Set<string>;
-  requireDataPolicyOnEveryRoute: boolean;
+  shouldRequireDataPolicyOnEveryRoute: boolean;
 }): void => {
   // Providers key an object, so a repeat would drop the first one's credentials and models, and `__proto__` its own
   if (seenNames.has(provider.name) || provider.name === '__proto__') {
@@ -34,7 +37,7 @@ export const assertProviderIsUsable = ({
   }
 
   if (
-    requireDataPolicyOnEveryRoute &&
+    shouldRequireDataPolicyOnEveryRoute &&
     (provider.dataResidency === undefined ||
       provider.zeroDataRetention === undefined)
   ) {

@@ -1,4 +1,10 @@
-import { extraErrorDataIntegration, type ErrorEvent } from '@sentry/node';
+import {
+  defaultStackParser,
+  extraErrorDataIntegration,
+  makeNodeTransport,
+  NodeClient,
+  type ErrorEvent,
+} from '@sentry/node';
 import { APICallError } from 'ai';
 
 import { removeAiContentFromSentryEvent } from 'src/engine/core-modules/exception-handler/utils/remove-ai-content-from-sentry-event.util';
@@ -18,10 +24,14 @@ const buildEventFromProviderError = async (): Promise<ErrorEvent> => {
   const event = await extraErrorDataIntegration().processEvent?.(
     { type: undefined, exception: { values: [] } },
     { originalException: providerError },
-    { getOptions: () => ({ maxValueLength: 8192 }) } as never,
+    new NodeClient({
+      integrations: [],
+      stackParser: defaultStackParser,
+      transport: makeNodeTransport,
+    }),
   );
 
-  return event as ErrorEvent;
+  return { ...event, type: undefined };
 };
 
 describe('removeAiContentFromSentryEvent', () => {

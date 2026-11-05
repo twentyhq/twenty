@@ -91,7 +91,7 @@ export class AgentTurnService {
     const aiDataPolicy = pickAiDataPolicy(workspace);
     const isContentRecordingAllowed = !isAiDataPolicyActive(aiDataPolicy);
 
-    this.aiModelRegistryService.validateModelAvailability({
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId,
       aiDataPolicy,
     });

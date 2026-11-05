@@ -12,7 +12,10 @@ export const applySpecToCanonicalModel = ({
 }: {
   canonicalModel: CanonicalModel;
   specModel: CatalogSpecModel;
-  provider: CatalogSpecProvider;
+  provider: Pick<
+    CatalogSpecProvider,
+    'dataResidency' | 'zeroDataRetention' | 'labelSuffix'
+  >;
 }): CanonicalModel => {
   const overrides = Object.fromEntries(
     OVERRIDABLE_MODEL_FIELDS.filter(
@@ -34,7 +37,6 @@ export const applySpecToCanonicalModel = ({
     ...routeFields,
     ...overrides,
     name: specModel.as ?? canonicalModel.name,
-    // The suffix marks the route, so it applies to whichever name the model ends up with
     label: `${specModel.label ?? canonicalModel.label ?? canonicalModel.name}${provider.labelSuffix ?? ''}`,
   };
 };

@@ -100,7 +100,7 @@ export class AiGenerateTextController {
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
 
-    this.aiModelRegistryService.validateModelAvailability({
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: resolvedModelId,
       aiDataPolicy: workspace,
     });
