@@ -150,7 +150,7 @@ await ingestMessages({
 });
 ```
 
-The file name's extension decides how the conversation shows the file: images show inline, videos and audio get a player, anything else is a file chip. A message holds at most 20 attachments.
+Each file is stored as an attachment record on the message. The file name's extension decides how the conversation shows the file: images show inline, videos and audio get a player, anything else is a file chip. A message holds at most 20 attachments.
 
 Attachments are stored only while the message has none, so a redelivery never replaces them. Each ingested message reports `hasAttachments`: ingest the text first, then download and upload files only for messages that come back without any, and ingest those messages again with their `attachments`. A file you upload but never attach is not cleaned up, so don't upload for a message that already has attachments.
 
