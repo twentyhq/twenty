@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { SettingsAiAssistantAvatarOptionPreview } from '~/pages/settings/ai/components/SettingsAiAssistantAvatarOptionPreview';
 import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantColorLabels';
 import { SETTINGS_AI_ASSISTANT_FACE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantFaceLabels';
 import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantShapeLabels';
@@ -60,19 +59,10 @@ export const SettingsAiAssistantAvatarMenuPage = ({
             closeOnSelect={false}
             onSelect={() => onChange(option.profile)}
             startIcon={
-              attribute === 'avatarColor' ? (
-                <ColorSample
-                  colorName={option.profile.avatarColor}
-                  variant="circle"
-                />
-              ) : (
-                <AssistantAvatar
-                  shape={option.profile.avatarShape}
-                  color={option.profile.avatarColor}
-                  face={option.profile.avatarFace}
-                  size={16}
-                />
-              )
+              <SettingsAiAssistantAvatarOptionPreview
+                value={option.profile}
+                isColorPreview={attribute === 'avatarColor'}
+              />
             }
           >
             {option.label}
