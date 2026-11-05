@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { MessageParticipantRole } from 'twenty-shared/types';
+import { FeatureFlagKey, MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -48,6 +49,7 @@ export class ApplicationMessageIngestionService {
     private readonly personHandleFieldService: PersonHandleFieldService,
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async ingest({
@@ -165,6 +167,16 @@ export class ApplicationMessageIngestionService {
     messageIds: string[];
   }): Promise<Set<string>> {
     if (messageIds.length === 0) {
+      return new Set();
+    }
+
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isMessageAttachmentEnabled) {
       return new Set();
     }
 
