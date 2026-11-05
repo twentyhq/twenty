@@ -16,6 +16,7 @@ const TEST_OBJECT_ID = 'd1b2c3d4-0003-4000-a000-0000000000f3';
 const NAME_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f1';
 const SELECT_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f2';
 const REPLACEMENT_SELECT_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f3';
+const SECOND_SELECT_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f4';
 
 const OPEN_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000f1';
 const CLOSED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000f2';
@@ -28,9 +29,11 @@ type SelectFieldOptions = NonNullable<
 const buildManifest = ({
   options,
   selectFieldUniversalIdentifier = SELECT_FIELD_ID,
+  extraFields = [],
 }: {
   options: SelectFieldOptions;
   selectFieldUniversalIdentifier?: string;
+  extraFields?: FieldManifest[];
 }) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
@@ -53,6 +56,7 @@ const buildManifest = ({
         type: FieldMetadataType.SELECT,
         options,
       },
+      ...extraFields,
     ],
   };
 
@@ -170,6 +174,36 @@ describe('Sync application keeps field option rows in step with its manifest', (
         position: 1,
       },
     ]);
+  }, 60000);
+
+  it('rejects two fields of one manifest that share an option id', async () => {
+    const sharedOption = {
+      id: OPEN_OPTION_ID,
+      value: 'OPEN',
+      label: 'Open',
+      color: 'green',
+      position: 0,
+    } as const;
+
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        options: [sharedOption],
+        extraFields: [
+          {
+            universalIdentifier: SECOND_SELECT_FIELD_ID,
+            name: 'priority',
+            label: 'Priority',
+            type: FieldMetadataType.SELECT,
+            options: [sharedOption],
+          },
+        ],
+      }),
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      `Option id \\"${OPEN_OPTION_ID}\\" is already used by another field`,
+    );
   }, 60000);
 
   it('rejects a replacement field that reuses the option ids', async () => {
