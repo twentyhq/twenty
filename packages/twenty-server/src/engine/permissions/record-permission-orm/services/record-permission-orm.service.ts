@@ -23,15 +23,17 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
 export class RecordPermissionOrmService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
+  ) {}
 
   async findRecordShares({
     workspaceId,
@@ -176,7 +178,7 @@ export class RecordPermissionOrmService {
     const statement = compileNamedParameters(query.sql, query.parameters);
 
     if (!isDefined(transactionScope)) {
-      return this.workspaceOrmManager
+      return this.workspaceQueryExecutorService
         .getPrimaryQueryExecutorOrThrow()
         .execute<TRow>(statement);
     }

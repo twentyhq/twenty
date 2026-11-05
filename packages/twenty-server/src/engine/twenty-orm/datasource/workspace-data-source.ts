@@ -14,9 +14,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type WorkspaceRepositoryOptions } from 'src/engine/twenty-orm/types/workspace-repository-options.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
-import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
+import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,

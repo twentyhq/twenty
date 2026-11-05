@@ -1,5 +1,5 @@
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 describe('compileNamedParameters', () => {
   it('should turn a named parameter into a positional placeholder', () => {

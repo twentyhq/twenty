@@ -61,7 +61,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   buildInsertStatement,
   type InsertRowValue,
@@ -98,7 +98,7 @@ import {
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
