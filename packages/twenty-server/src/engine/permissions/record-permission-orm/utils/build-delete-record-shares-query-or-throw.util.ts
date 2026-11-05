@@ -9,7 +9,7 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 
-export const buildDeleteRecordSharesQuery = ({
+export const buildDeleteRecordSharesQueryOrThrow = ({
   recordShareTableExpression,
   criteria: {
     ids,

@@ -122,23 +122,41 @@ export class RecordShareStorageService {
     });
   }
 
-  transferMemberGrants(args: {
+  transferMemberGrants({
+    workspaceId,
+    objectMetadataIds,
+    fromWorkspaceMemberId,
+    toWorkspaceMemberId,
+  }: {
     workspaceId: string;
     objectMetadataIds: string[];
     fromWorkspaceMemberId: string;
     toWorkspaceMemberId: string | undefined;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.transferMemberRecordShares(args);
+    return this.recordShareWriteOrmService.transferMemberRecordShares({
+      workspaceId,
+      objectMetadataIds,
+      fromWorkspaceMemberId,
+      toWorkspaceMemberId,
+    });
   }
 
-  insertOwnerGrantsFromSelect(args: {
+  insertOwnerGrantsFromSelect({
+    workspaceId,
+    recordSelect,
+    parameters,
+    granteeWorkspaceMemberId,
+  }: {
     workspaceId: string;
     recordSelect: string;
     parameters: Record<string, unknown>;
     granteeWorkspaceMemberId: string;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.insertOwnerRecordSharesFromSelect(
-      args,
-    );
+    return this.recordShareWriteOrmService.insertOwnerRecordSharesFromSelect({
+      workspaceId,
+      recordSelect,
+      parameters,
+      granteeWorkspaceMemberId,
+    });
   }
 }

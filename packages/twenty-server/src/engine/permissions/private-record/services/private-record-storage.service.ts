@@ -72,14 +72,26 @@ export class PrivateRecordStorageService {
     });
   }
 
-  setPrivate(args: {
+  setPrivate({
+    workspaceId,
+    flatObjectMetadata,
+    recordIds,
+    isPrivate,
+    transactionScope,
+  }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
     isPrivate: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    return this.recordPrivacyWriteOrmService.setRecordsPrivate(args);
+    return this.recordPrivacyWriteOrmService.setRecordsPrivate({
+      workspaceId,
+      flatObjectMetadata,
+      recordIds,
+      isPrivate,
+      transactionScope,
+    });
   }
 }
 

@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RecordPermissionQueryService } from 'src/engine/permissions/record-permission-orm/services/record-permission-query.service';
 import { type RecordShareCriteria } from 'src/engine/permissions/record-permission-orm/types/record-share-criteria.type';
-import { buildDeleteRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-delete-record-shares-query.util';
+import { buildDeleteRecordSharesQueryOrThrow } from 'src/engine/permissions/record-permission-orm/utils/build-delete-record-shares-query-or-throw.util';
 import { buildInsertRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-insert-record-shares-query.util';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
@@ -69,7 +69,7 @@ export class RecordShareWriteOrmService {
     await this.recordPermissionQueryService.execute({
       workspaceId,
       transactionScope,
-      query: buildDeleteRecordSharesQuery({
+      query: buildDeleteRecordSharesQueryOrThrow({
         recordShareTableExpression: buildRecordShareTableExpression({
           workspaceId,
         }),
@@ -140,8 +140,7 @@ export class RecordShareWriteOrmService {
             ),
           );
 
-          // The insert skips the rows the custodian already holds on these
-          // records, which are raised to full access instead
+          // The insert skips rows the custodian already holds, so raise those
           await executor.execute(
             compileNamedParameters(
               `UPDATE ${recordShareTable} AS custodian
