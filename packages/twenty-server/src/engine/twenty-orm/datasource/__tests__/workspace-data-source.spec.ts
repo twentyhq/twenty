@@ -1,3 +1,5 @@
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
@@ -82,21 +84,13 @@ const sumPetColumn = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       objectIdByNameSingular: { pet: PET_OBJECT_METADATA_ID },
       featureFlagsMap: DISABLED_FEATURE_FLAGS_MAP,
       billingEntitlements: {},
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: {},
-      flatRoleTargetByAgentIdMaps: {},
-      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-      rolesPermissions: {},
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
-      recordPermissionReadOrm: {
-        findRecordShares: jest.fn().mockResolvedValue([]),
-        findPrivateRecordStates: jest.fn().mockResolvedValue(new Map()),
-      },
+      permissionsPrincipals: undefined,
+      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

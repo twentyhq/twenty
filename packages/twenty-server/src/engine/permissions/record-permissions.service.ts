@@ -2,12 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  type ObjectRecord,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  RecordAccessDecisionService,
+  type RecordOperationQuestion,
+} from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -72,6 +79,72 @@ export class RecordPermissionsService {
           canSoftDelete: isAllowed(recordId, 'soft-delete'),
         },
       ]),
+    );
+  }
+
+  public findRecordsPermissionsOfPrincipals(question: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<RoleRecordsPermissions> {
+    return this.recordAccessDecisionService.findRecordsPermissionsOfPrincipals(
+      question,
+    );
+  }
+
+  public isOperationDisabled(
+    question: RecordOperationQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessDecisionService.isOperationDisabled(question);
+  }
+
+  public assertObjectOperationAccessibleOrThrow(
+    question: RecordOperationQuestion,
+  ): Promise<void> {
+    return this.recordAccessDecisionService.assertObjectOperationAccessibleOrThrow(
+      question,
+    );
+  }
+
+  public assertColumnsPermittedOrThrow(
+    question: RecordOperationQuestion & {
+      selectedColumns: string[];
+      updatedColumns: string[];
+    },
+  ): Promise<void> {
+    return this.recordAccessDecisionService.assertColumnsPermittedOrThrow(
+      question,
+    );
+  }
+
+  public buildRecordsAccessCondition(
+    question: RecordOperationQuestion & { tableAlias: string },
+  ): Promise<SqlCondition | boolean> {
+    return this.recordAccessDecisionService.buildRecordsAccessCondition(
+      question,
+    );
+  }
+
+  public assertCreatedRecordsMatchRowLevelPermissionsOrThrow(question: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    flatObjectMetadata: FlatObjectMetadata;
+    records: ObjectRecord[];
+  }): Promise<void> {
+    return this.recordAccessDecisionService.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
+      question,
+    );
+  }
+
+  public assertUpdatesStayGrantedOrThrow(question: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    flatObjectMetadata: FlatObjectMetadata;
+    updates: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[];
+    formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    return this.recordAccessDecisionService.assertUpdatesStayGrantedOrThrow(
+      question,
     );
   }
 
