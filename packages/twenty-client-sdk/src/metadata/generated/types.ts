@@ -2840,11 +2840,20 @@ export default {
             "sdkPackage": [
                 1
             ],
+            "zeroDataRetention": [
+                4
+            ],
             "__typename": [
                 1
             ]
         },
         "ClientAiModelTierConfig": {
+            "dataResidency": [
+                1
+            ],
+            "isZeroDataRetentionRequired": [
+                4
+            ],
             "modelId": [
                 1
             ],
@@ -15009,6 +15018,9 @@ export default {
             "isPasswordAuthEnabled": [
                 4
             ],
+            "isProductImprovementDataSharingEnabled": [
+                4
+            ],
             "isPublicInviteLinkEnabled": [
                 4
             ],
@@ -16533,6 +16545,9 @@ export default {
                 4
             ],
             "isPasswordAuthEnabled": [
+                4
+            ],
+            "isProductImprovementDataSharingEnabled": [
                 4
             ],
             "isPublicInviteLinkEnabled": [

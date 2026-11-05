@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AiDataPolicy } from 'twenty-shared/ai';
+import { isAiDataPolicyActive, type AiDataPolicy } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +20,55 @@ export class WorkspaceAiDataPolicyService {
   ) {}
 
   async getAiDataPolicyOrThrow(workspaceId: string): Promise<AiDataPolicy> {
+    return this.getEffectiveAiDataPolicy(
+      await this.getWorkspaceOrThrow(workspaceId),
+    );
+  }
+
+  async getEffectiveAiDataPolicy(workspace: {
+    id: string;
+    aiDataPolicy?: AiDataPolicy;
+  }): Promise<AiDataPolicy> {
+    const isAiDataPolicyEnabled = await this.isAiDataPolicyEnabled(
+      workspace.id,
+    );
+
+    return isAiDataPolicyEnabled
+      ? (workspace.aiDataPolicy ?? NO_AI_DATA_POLICY)
+      : NO_AI_DATA_POLICY;
+  }
+
+  async isContentRecordingAllowedOrThrow(
+    workspaceId: string,
+  ): Promise<boolean> {
+    return this.isContentRecordingAllowed(
+      await this.getWorkspaceOrThrow(workspaceId),
+    );
+  }
+
+  async isContentRecordingAllowed(workspace: {
+    id: string;
+    aiDataPolicy?: AiDataPolicy;
+    isProductImprovementDataSharingEnabled?: boolean;
+  }): Promise<boolean> {
+    if (!(await this.isAiDataPolicyEnabled(workspace.id))) {
+      return true;
+    }
+
+    return (
+      !isAiDataPolicyActive(workspace.aiDataPolicy ?? NO_AI_DATA_POLICY) &&
+      (workspace.isProductImprovementDataSharingEnabled ?? true)
+    );
+  }
+
+  private isAiDataPolicyEnabled(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+      workspaceId,
+    );
+  }
+
+  private async getWorkspaceOrThrow(workspaceId: string) {
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       workspaceId,
@@ -32,21 +81,6 @@ export class WorkspaceAiDataPolicyService {
       );
     }
 
-    return this.getEffectiveAiDataPolicy(workspace);
-  }
-
-  async getEffectiveAiDataPolicy(workspace: {
-    id: string;
-    aiDataPolicy?: AiDataPolicy;
-  }): Promise<AiDataPolicy> {
-    const isAiDataPolicyEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
-        workspace.id,
-      );
-
-    return isAiDataPolicyEnabled
-      ? (workspace.aiDataPolicy ?? NO_AI_DATA_POLICY)
-      : NO_AI_DATA_POLICY;
+    return workspace;
   }
 }

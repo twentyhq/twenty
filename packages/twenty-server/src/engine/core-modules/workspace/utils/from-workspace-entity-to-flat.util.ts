@@ -42,6 +42,8 @@ export const fromWorkspaceEntityToFlat = (
   aiChatInboxAssistantMode: entity.aiChatInboxAssistantMode,
   aiAdditionalInstructions: entity.aiAdditionalInstructions,
   aiDataPolicy: entity.aiDataPolicy,
+  isProductImprovementDataSharingEnabled:
+    entity.isProductImprovementDataSharingEnabled,
   isInternalMessagesImportEnabled: entity.isInternalMessagesImportEnabled,
   workspaceCustomApplicationId: entity.workspaceCustomApplicationId,
   createdAt: entity.createdAt.toISOString(),

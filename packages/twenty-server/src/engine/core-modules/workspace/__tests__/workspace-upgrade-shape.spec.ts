@@ -1,5 +1,6 @@
 import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-ai-data-policy-to-workspace-upgrade-command-name.constant';
+import { ADD_PRODUCT_IMPROVEMENT_DATA_SHARING_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-product-improvement-data-sharing-to-workspace-upgrade-command-name.constant';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -23,15 +24,22 @@ describe('WorkspaceEntity AI data policy upgrade shape', () => {
       currentTableName: 'workspace',
       currentColumns: [
         { propertyName: 'aiDataPolicy', databaseName: 'aiDataPolicy' },
+        {
+          propertyName: 'isProductImprovementDataSharingEnabled',
+          databaseName: 'isProductImprovementDataSharingEnabled',
+        },
       ],
       isStepApplied: (stepName) => appliedSteps.includes(stepName),
     }).hiddenPropertyNames;
 
   it('hides the policy column until its upgrade command has run', () => {
-    expect(resolveHiddenPropertyNames([])).toEqual(new Set(['aiDataPolicy']));
+    expect(resolveHiddenPropertyNames([])).toEqual(
+      new Set(['aiDataPolicy', 'isProductImprovementDataSharingEnabled']),
+    );
     expect(
       resolveHiddenPropertyNames([
         ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+        ADD_PRODUCT_IMPROVEMENT_DATA_SHARING_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
       ]),
     ).toEqual(new Set());
   });

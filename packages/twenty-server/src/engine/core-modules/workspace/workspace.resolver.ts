@@ -294,6 +294,21 @@ export class WorkspaceResolver {
     return isAiDataPolicyEnabled ? (workspace.aiDataPolicy ?? null) : null;
   }
 
+  @ResolveField(() => Boolean)
+  async isProductImprovementDataSharingEnabled(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    const isAiDataPolicyEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspace.id,
+      );
+
+    return isAiDataPolicyEnabled
+      ? (workspace.isProductImprovementDataSharingEnabled ?? true)
+      : true;
+  }
+
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
     AccessPolicyGuard({

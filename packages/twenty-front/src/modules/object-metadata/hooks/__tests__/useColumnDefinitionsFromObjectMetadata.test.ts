@@ -30,6 +30,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       },
       installedApplications: [],
       id: '1',
+      isProductImprovementDataSharingEnabled: true,
       featureFlags: [],
       allowImpersonation: false,
       subdomain: 'test',

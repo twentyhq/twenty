@@ -1325,9 +1325,12 @@ type ClientAiModelConfig {
   providerLabel: String
   providerName: String
   sdkPackage: String
+  zeroDataRetention: Boolean
 }
 
 type ClientAiModelTierConfig {
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
   modelId: String!
   tier: AiModelTier!
 }
@@ -5657,6 +5660,7 @@ input UpdateWorkspaceInput {
   isMicrosoftAuthEnabled: Boolean
   isPasswordAuthBypassEnabled: Boolean
   isPasswordAuthEnabled: Boolean
+  isProductImprovementDataSharingEnabled: Boolean
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
@@ -6445,6 +6449,7 @@ type Workspace {
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!
   isPasswordAuthEnabled: Boolean!
+  isProductImprovementDataSharingEnabled: Boolean!
   isPublicInviteLinkEnabled: Boolean!
   isTrialAvailable: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!

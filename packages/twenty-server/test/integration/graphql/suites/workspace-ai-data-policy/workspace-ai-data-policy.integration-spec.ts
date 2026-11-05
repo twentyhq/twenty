@@ -43,6 +43,27 @@ const createAgentOnUnlabeledModel = ({
     token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
   });
 
+const updateDataSharing = ({
+  isProductImprovementDataSharingEnabled,
+  token,
+}: {
+  isProductImprovementDataSharingEnabled: boolean;
+  token: string;
+}) =>
+  makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation UpdateWorkspaceDataSharing($data: UpdateWorkspaceInput!) {
+          updateWorkspace(data: $data) {
+            isProductImprovementDataSharingEnabled
+          }
+        }
+      `,
+      variables: { data: { isProductImprovementDataSharingEnabled } },
+    },
+    token,
+  );
+
 const readAiDataPolicy = () =>
   makeMetadataApiRequest(
     {
@@ -147,6 +168,73 @@ describe('workspace AI data policy', () => {
     expect(errors[0].extensions.subCode).toBe(
       'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
     );
+  });
+
+  describe('product improvement data sharing', () => {
+    afterEach(async () => {
+      await updateDataSharing({
+        isProductImprovementDataSharingEnabled: true,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+    });
+
+    it('lets a workspace admin turn it off', async () => {
+      const response = await updateDataSharing({
+        isProductImprovementDataSharingEnabled: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.updateWorkspace
+          .isProductImprovementDataSharingEnabled,
+      ).toBe(false);
+    });
+
+    it('refuses a member without the security permission', async () => {
+      const response = await updateDataSharing({
+        isProductImprovementDataSharingEnabled: false,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors[0].extensions.subCode).toBe(
+        'PERMISSION_DENIED',
+      );
+    });
+
+    it('refuses a change and reads as on while the flag is off', async () => {
+      await updateDataSharing({
+        isProductImprovementDataSharingEnabled: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+      await setAiDataPolicyFlag(false);
+
+      const update = await updateDataSharing({
+        isProductImprovementDataSharingEnabled: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(update.body.errors[0].extensions.subCode).toBe(
+        'PERMISSION_DENIED',
+      );
+
+      const read = await makeMetadataApiRequest(
+        {
+          query: gql`
+            query {
+              currentWorkspace {
+                isProductImprovementDataSharingEnabled
+              }
+            }
+          `,
+        },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(
+        read.body.data.currentWorkspace.isProductImprovementDataSharingEnabled,
+      ).toBe(true);
+    });
   });
 
   describe('with the feature flag off', () => {

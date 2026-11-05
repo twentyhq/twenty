@@ -137,6 +137,11 @@ export const USER_QUERY_FRAGMENT = gql`
       isAutoModelSelectionEnabled
       aiModelIdByTier
       aiAdditionalInstructions
+      aiDataPolicy {
+        dataResidency
+        isZeroDataRetentionRequired
+      }
+      isProductImprovementDataSharingEnabled
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

@@ -34,6 +34,7 @@ import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/c
 import { ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-workspace-chat-assistant-modes-upgrade-command-name.constant';
 import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-ai-data-policy-to-workspace-upgrade-command-name.constant';
+import { ADD_PRODUCT_IMPROVEMENT_DATA_SHARING_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-product-improvement-data-sharing-to-workspace-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -438,6 +439,13 @@ export class WorkspaceEntity {
   })
   @Column({ type: 'jsonb', nullable: false, default: NO_AI_DATA_POLICY })
   aiDataPolicy: AiDataPolicy;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_PRODUCT_IMPROVEMENT_DATA_SHARING_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', nullable: false, default: true })
+  isProductImprovementDataSharingEnabled: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
