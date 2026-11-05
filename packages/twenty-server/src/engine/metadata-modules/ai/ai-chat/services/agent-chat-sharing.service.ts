@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -207,31 +206,11 @@ export class AgentChatSharingService {
   // Members join as editors so they can reply. Sharing is left to whoever may
   // manage it, so only the members who can reply afterwards are returned
   async shareThreadWithMembers({
-    memberIds: providedMemberIds,
+    memberIds,
     ...args
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
   }): Promise<string[]> {
-    const thread = await this.getThreadWithAccess({
-      ...args,
-      operationType: 'update',
-    });
-    const memberIds = providedMemberIds.map((memberId) =>
-      memberId.toLowerCase(),
-    );
-    const pair = [
-      thread.directMessageFirstWorkspaceMemberId,
-      thread.directMessageSecondWorkspaceMemberId,
-    ];
-
-    if (
-      thread.conversationType ===
-        AgentChatThreadConversationType.DIRECT_MESSAGE &&
-      memberIds.some((memberId) => !pair.includes(memberId))
-    ) {
-      return throwAgentChatThreadNotFound();
-    }
-
     const chatMemberIds = await this.filterMemberIds(memberIds, (memberId) =>
       this.getAuthContext({
         workspaceId: args.workspaceId,
