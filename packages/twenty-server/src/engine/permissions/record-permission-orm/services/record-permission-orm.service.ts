@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isObject } from '@sniptt/guards';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,39 +11,29 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type SqlCondition } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { RECORD_SHARE_OBJECT_METADATA_NAME } from 'src/engine/permissions/record-permission-orm/constants/record-share-object-metadata-name.constant';
+import { type PrivateRecordStateRow } from 'src/engine/permissions/record-permission-orm/types/private-record-state-row.type';
+import { type RecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/types/record-permission-query.type';
+import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-private-record-states-query.util';
+import { buildFindRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-record-shares-query.util';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
-import { executeRecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/utils/execute-record-permission-query.util';
-import { findPrivateRecordStates } from 'src/engine/permissions/record-permission-orm/utils/find-private-record-states.util';
-import { findRecordIdsMatchingCondition } from 'src/engine/permissions/record-permission-orm/utils/find-record-ids-matching-condition.util';
-import { findRecordShares } from 'src/engine/permissions/record-permission-orm/utils/find-record-shares.util';
+import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/record-permission-orm/utils/index-private-record-states-by-record-id.util';
 import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
 export class RecordPermissionOrmService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  buildRecordShareTableExpression({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): string {
-    return buildWorkspaceTableExpression({
-      workspaceId,
-      tableName: RECORD_SHARE_OBJECT_METADATA_NAME,
-    });
-  }
-
-  findRecordShares({
+  async findRecordShares({
     workspaceId,
     objectMetadataId,
     recordIds,
@@ -53,13 +44,20 @@ export class RecordPermissionOrmService {
     recordIds: string[];
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<RecordShare[]> {
-    return findRecordShares({
-      executor: this.resolveQueryExecutor({ workspaceId, transactionScope }),
-      recordShareTableExpression: this.buildRecordShareTableExpression({
-        workspaceId,
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    return this.executeQuery<RecordShare>({
+      workspaceId,
+      transactionScope,
+      query: buildFindRecordSharesQuery({
+        recordShareTableExpression: buildRecordShareTableExpression({
+          workspaceId,
+        }),
+        objectMetadataId,
+        recordIds,
       }),
-      objectMetadataId,
-      recordIds,
     });
   }
 
@@ -74,13 +72,15 @@ export class RecordPermissionOrmService {
       return new Map();
     }
 
-    const rows = await executeRecordPermissionQuery<{
+    const rows = await this.executeQuery<{
       objectMetadataId: string;
       accessLevel: RecordShareAccessLevel;
     }>({
-      executor: this.resolveQueryExecutor({ workspaceId }),
-      sql: `SELECT DISTINCT "objectMetadataId", "accessLevel" FROM ${this.buildRecordShareTableExpression({ workspaceId })} WHERE "principalId" = ANY(:principalIds) AND "deletedAt" IS NULL`,
-      parameters: { principalIds },
+      workspaceId,
+      query: {
+        sql: `SELECT DISTINCT "objectMetadataId", "accessLevel" FROM ${buildRecordShareTableExpression({ workspaceId })} WHERE "principalId" = ANY(:principalIds) AND "deletedAt" IS NULL`,
+        parameters: { principalIds },
+      },
     });
 
     return rows.reduce((accessLevelsByObjectMetadataId, row) => {
@@ -93,7 +93,7 @@ export class RecordPermissionOrmService {
     }, new Map<string, RecordShareAccessLevel[]>());
   }
 
-  findPrivateRecordStates({
+  async findPrivateRecordStates({
     workspaceId,
     flatObjectMetadata,
     flatFieldMetadataMaps,
@@ -106,19 +106,28 @@ export class RecordPermissionOrmService {
     recordIds: string[];
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<Map<string, PrivateRecordState>> {
-    return findPrivateRecordStates({
-      executor: this.resolveQueryExecutor({ workspaceId, transactionScope }),
-      tableExpression: buildWorkspaceTableExpression({
-        workspaceId,
-        tableName: computeObjectTargetTable(flatObjectMetadata),
+    if (recordIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.executeQuery<PrivateRecordStateRow>({
+      workspaceId,
+      transactionScope,
+      query: buildFindPrivateRecordStatesQuery({
+        tableExpression: buildWorkspaceTableExpression({
+          workspaceId,
+          tableName: computeObjectTargetTable(flatObjectMetadata),
+        }),
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        recordIds,
       }),
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      recordIds,
     });
+
+    return indexPrivateRecordStatesByRecordId(rows);
   }
 
-  findRecordIdsMatchingCondition({
+  async findRecordIdsMatchingCondition({
     workspaceId,
     flatObjectMetadata,
     recordIds,
@@ -131,27 +140,45 @@ export class RecordPermissionOrmService {
     condition: SqlCondition | true;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<Set<string>> {
-    return findRecordIdsMatchingCondition({
-      executor: this.resolveQueryExecutor({ workspaceId, transactionScope }),
-      tableExpression: buildWorkspaceTableExpression({
-        workspaceId,
-        tableName: computeObjectTargetTable(flatObjectMetadata),
-      }),
-      tableAlias: flatObjectMetadata.nameSingular,
-      recordIds,
-      condition,
+    const tableExpression = buildWorkspaceTableExpression({
+      workspaceId,
+      tableName: computeObjectTargetTable(flatObjectMetadata),
     });
+    const tableAlias = escapeIdentifier(flatObjectMetadata.nameSingular);
+    const conditionClause = isObject(condition)
+      ? ` AND (${condition.sql})`
+      : '';
+
+    const rows = await this.executeQuery<{ id: string }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT ${tableAlias}."id" FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)${conditionClause}`,
+        parameters: {
+          ...(isObject(condition) ? condition.parameters : {}),
+          candidateRecordIds: recordIds,
+        },
+      },
+    });
+
+    return new Set(rows.map(({ id }) => id));
   }
 
-  private resolveQueryExecutor({
+  private executeQuery<TRow extends Record<string, unknown>>({
     workspaceId,
     transactionScope,
+    query,
   }: {
     workspaceId: string;
     transactionScope?: WorkspaceTransactionScope;
-  }): QueryExecutor {
+    query: RecordPermissionQuery;
+  }): Promise<TRow[]> {
+    const statement = compileNamedParameters(query.sql, query.parameters);
+
     if (!isDefined(transactionScope)) {
-      return this.workspaceOrmManager.getPrimaryQueryExecutorOrThrow();
+      return this.workspaceOrmManager
+        .getPrimaryQueryExecutorOrThrow()
+        .execute<TRow>(statement);
     }
 
     if (transactionScope.workspaceId !== workspaceId) {
@@ -161,14 +188,9 @@ export class RecordPermissionOrmService {
       );
     }
 
-    return {
-      execute: <
-        TRow extends Record<string, unknown> = Record<string, unknown>,
-      >({
-        text,
-        values,
-      }: CompiledStatement) =>
-        transactionScope.executeRawQuery<TRow>(text, values),
-    };
+    return transactionScope.executeRawQuery<TRow>(
+      statement.text,
+      statement.values,
+    );
   }
 }

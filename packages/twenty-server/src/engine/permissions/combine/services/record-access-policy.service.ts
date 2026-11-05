@@ -17,6 +17,7 @@ import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/s
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import {
   type PermissionsMetadataMaps,
@@ -211,10 +212,9 @@ export class RecordAccessPolicyService {
       metadataMaps: request.metadataMaps,
       flatObjectMetadata: request.flatObjectMetadata,
       operationType: request.operationType,
-      recordShareTableExpression:
-        this.recordPermissionOrmService.buildRecordShareTableExpression({
-          workspaceId: principals.workspaceId,
-        }),
+      recordShareTableExpression: buildRecordShareTableExpression({
+        workspaceId: principals.workspaceId,
+      }),
       hypotheticalRecordShareAccessLevel,
     });
 

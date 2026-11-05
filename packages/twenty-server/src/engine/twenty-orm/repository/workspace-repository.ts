@@ -16,8 +16,10 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { findPrivateRecordStates } from 'src/engine/permissions/record-permission-orm/utils/find-private-record-states.util';
-import { findRecordShares } from 'src/engine/permissions/record-permission-orm/utils/find-record-shares.util';
+import { type PrivateRecordStateRow } from 'src/engine/permissions/record-permission-orm/types/private-record-state-row.type';
+import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-private-record-states-query.util';
+import { buildFindRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-record-shares-query.util';
+import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/record-permission-orm/utils/index-private-record-states-by-record-id.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -1820,12 +1822,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
-          findRecordShares({
-            executor: this.options.executor,
-            recordShareTableExpression: this.getRecordShareTableExpression(),
-            objectMetadataId,
-            recordIds,
-          });
+          this.selectRecordShareGrants({ objectMetadataId, recordIds });
 
         recordShareGrantsByObjectMetadataId.set(
           objectMetadataId,
@@ -1843,11 +1840,34 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
+  private async selectRecordShareGrants({
+    objectMetadataId,
+    recordIds,
+  }: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<RecordShareGrant[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    const { sql, parameters } = buildFindRecordSharesQuery({
+      recordShareTableExpression: this.getRecordShareTableExpression(),
+      objectMetadataId,
+      recordIds,
+    });
+
+    return this.executeRaw<RecordShareGrant>(sql, parameters);
+  }
+
   private async selectPrivateRecordStates(
     recordIds: string[],
   ): Promise<Map<string, PrivateRecordState>> {
-    return findPrivateRecordStates({
-      executor: this.options.executor,
+    if (recordIds.length === 0) {
+      return new Map();
+    }
+
+    const { sql, parameters } = buildFindPrivateRecordStatesQuery({
       tableExpression: this.getTableExpression(
         this.options.flatObjectMetadata.id,
       ),
@@ -1855,6 +1875,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       recordIds,
     });
+
+    return indexPrivateRecordStatesByRecordId(
+      await this.executeRaw<PrivateRecordStateRow>(sql, parameters),
+    );
   }
 
   private emitMutationEvent({
