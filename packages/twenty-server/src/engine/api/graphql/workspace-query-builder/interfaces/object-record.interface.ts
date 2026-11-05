@@ -2,6 +2,7 @@ import {
   type ObjectRecord,
   type ObjectRecordGroupByDateGranularity,
   type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
   type ObjectRecordOrderByForScalarField,
   type FirstDayOfTheWeek,
 } from 'twenty-shared/types';
@@ -33,14 +34,10 @@ export type ObjectRecordGroupByForDateField = Partial<{
   };
 }>;
 
-export type ObjectRecordOrderByForRelationCompositeField = {
-  [Property in keyof ObjectRecord]?: ObjectRecordOrderByForCompositeField;
-};
-
 export type ObjectRecordOrderBy = Array<
   | ObjectRecordOrderByForScalarField
   | ObjectRecordOrderByForCompositeField
-  | ObjectRecordOrderByForRelationCompositeField
+  | ObjectRecordOrderByForRelationField
 >;
 
 export type ObjectRecordCursorLeafScalarValue =

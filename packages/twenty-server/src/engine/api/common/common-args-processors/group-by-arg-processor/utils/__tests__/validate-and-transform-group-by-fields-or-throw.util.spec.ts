@@ -5,6 +5,7 @@ import {
 
 import { validateAndTransformGroupByFieldsOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-and-transform-group-by-fields-or-throw.util';
 import { CommonQueryRunnerExceptionCode } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -56,7 +57,7 @@ describe('validateAndTransformGroupByFieldsOrThrow unnest', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const validateGroupBy = (groupBy: Record<string, unknown>[]) =>
+  const validateGroupBy = (groupBy: ObjectRecordGroupBy) =>
     validateAndTransformGroupByFieldsOrThrow({
       groupBy,
       flatObjectMetadata,
@@ -124,7 +125,10 @@ describe('validateAndTransformGroupByFieldsOrThrow unnest', () => {
     { unnest: undefined },
     { unnest: true, extra: true },
   ])('rejects invalid runtime unnest input %j', (definition) => {
-    expect(() => validateGroupBy([{ tags: definition }])).toThrow(
+    expect(() =>
+      // @ts-expect-error runtime API input the types forbid
+      validateGroupBy([{ tags: definition }]),
+    ).toThrow(
       expect.objectContaining({
         code: CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         message: expect.stringContaining('{"tags": {"unnest": true}}'),
