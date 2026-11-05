@@ -35,6 +35,9 @@ const CALENDAR_USER_ADDRESS_HREF =
 
 const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
+const unfoldICalendarLines = (content: string) =>
+  content.replace(/\r\n[ \t]/g, '');
+
 type CalendarEventWithParticipants = {
   calendarEventParticipants: {
     edges: { node: { handle: string; isOrganizer: boolean } }[];
@@ -79,7 +82,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       },
     );
 
-    return (await response.text()).replace(/\r\n[ \t]/g, '');
+    return unfoldICalendarLines(await response.text());
   };
 
   const readOrganizer = (unfoldedICalendar: string) =>
@@ -113,7 +116,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       })) {
         if (message.envelope?.subject === subject) {
           sources.push(
-            (message.source?.toString('utf-8') ?? '').replace(/\r\n[ \t]/g, ''),
+            unfoldICalendarLines(message.source?.toString('utf-8') ?? ''),
           );
         }
       }

@@ -44,7 +44,11 @@ export class CalDavInvitationService {
     const calendarUserAddresses = isDefined(client.account)
       ? await client
           .fetchCalendarUserAddresses({ account: client.account })
-          .catch(() => [])
+          .catch((error) => {
+            this.exceptionHandlerService.captureExceptions([error]);
+
+            return [];
+          })
       : [];
 
     return {
