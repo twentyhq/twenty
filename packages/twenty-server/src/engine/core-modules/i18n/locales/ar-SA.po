@@ -1201,7 +1201,7 @@ msgstr "يوجد تصدير قيد التشغيل بالفعل في مساحة �
 #. js-lingui-id: M71yE1
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
-msgstr ""
+msgstr "استغرقت خدمة خارجية وقتًا طويلًا للاستجابة."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
