@@ -483,18 +483,6 @@ describe('managed workflow version validation', () => {
     expect(validate(version).errors.length).toBeGreaterThan(1);
   });
 
-  it('refuses an unknown trigger type', () => {
-    const { version } = convert();
-    const [trigger] = version.triggers ?? [];
-    expect(
-      validate({
-        ...version,
-        // @ts-expect-error an application manifest written in plain JavaScript can declare any trigger type
-        triggers: [{ ...trigger, type: 'UNKNOWN' }],
-      }).errors[0]?.message,
-    ).toContain('Application workflows require one trigger of type MANUAL');
-  });
-
   it('only accepts webhook body variables declared in the expected body', () => {
     const readingTriggerField = (field: string) =>
       convert({

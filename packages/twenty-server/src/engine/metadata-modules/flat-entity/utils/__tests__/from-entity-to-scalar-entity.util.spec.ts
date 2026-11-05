@@ -1,13 +1,20 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
+import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 const buildArgs = <T extends AllMetadataName>(
   metadataName: T,
   entity: Record<string, unknown>,
-) => ({
+): {
+  metadataName: T;
+  entity: EntityWithRegroupedOneToManyRelations<MetadataEntity<T>>;
+} => ({
   metadataName,
-  entity,
+  entity: entity as unknown as EntityWithRegroupedOneToManyRelations<
+    MetadataEntity<T>
+  >,
 });
 
 describe('fromEntityToScalarEntity', () => {

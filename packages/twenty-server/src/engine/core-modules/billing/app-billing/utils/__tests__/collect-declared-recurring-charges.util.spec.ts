@@ -8,7 +8,12 @@ const APPLICATION_ID = '20202020-1111-0000-0000-000000000001';
 const OTHER_APPLICATION_ID = '20202020-1111-0000-0000-000000000002';
 
 const buildFlatApplicationMaps = (
-  applications: Array<Partial<FlatApplication> & { id: string }>,
+  applications: Array<
+    Omit<Partial<FlatApplication>, 'billing'> & {
+      id: string;
+      billing?: unknown;
+    }
+  >,
 ): FlatApplicationCacheMaps => ({
   byId: Object.fromEntries(
     applications.map((application) => [
@@ -36,7 +41,6 @@ const SEAT_FEE = {
 const collectOne = (charge: unknown) =>
   collectDeclaredRecurringCharges({
     flatApplicationMaps: buildFlatApplicationMaps([
-      // @ts-expect-error billing is untrusted jsonb, so any shape can reach the collector
       { id: APPLICATION_ID, billing: { recurring: { fee: charge } } },
     ]),
   });
@@ -194,7 +198,6 @@ describe('collectDeclaredRecurringCharges', () => {
     const { declaredCharges, rejectedCharges } =
       collectDeclaredRecurringCharges({
         flatApplicationMaps: buildFlatApplicationMaps([
-          // @ts-expect-error billing is untrusted jsonb, so any shape can reach the collector
           { id: APPLICATION_ID, billing: { recurring: [PLATFORM_FEE] } },
         ]),
       });

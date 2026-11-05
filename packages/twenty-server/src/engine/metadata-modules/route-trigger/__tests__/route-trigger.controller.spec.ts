@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 
+import { type Response } from 'express';
 import { HTTPMethod } from 'twenty-shared/types';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
@@ -17,7 +18,7 @@ const createResponseMock = () => {
     getHeader: jest.fn((key: string) => headers[key.toLowerCase()]),
     send: jest.fn(),
     json: jest.fn(),
-  };
+  } as unknown as Response;
 };
 
 describe('RouteTriggerController', () => {

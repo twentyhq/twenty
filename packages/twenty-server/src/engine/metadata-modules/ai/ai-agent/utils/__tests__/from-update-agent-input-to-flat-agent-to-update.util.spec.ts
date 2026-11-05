@@ -140,7 +140,6 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     const { flatAgentToUpdate } = updateAsWorkspace({
       id: appAgent.id,
       label: 'Market researcher',
-      // @ts-expect-error GraphQL accepts an explicit null for any optional input
       isActive: null,
     });
 

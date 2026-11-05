@@ -1,3 +1,4 @@
+import { type Response } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -5,14 +6,6 @@ export type RouteTriggerResponse = {
   statusCode: number;
   headers: Record<string, string>;
   body: unknown;
-};
-
-export type RouteTriggerResponseWriter = {
-  status: (statusCode: number) => unknown;
-  setHeader: (name: string, value: string) => unknown;
-  getHeader: (name: string) => unknown;
-  send: (body?: unknown) => unknown;
-  json: (body: unknown) => unknown;
 };
 
 const ALLOWED_RESPONSE_HEADERS = new Set([
@@ -38,7 +31,7 @@ export const buildRouteTriggerResponse = (
 };
 
 export const sendRouteTriggerResponse = (
-  response: RouteTriggerResponseWriter,
+  response: Response,
   { statusCode, headers, body }: RouteTriggerResponse,
   { allowAllHeaders = false }: { allowAllHeaders?: boolean } = {},
 ) => {

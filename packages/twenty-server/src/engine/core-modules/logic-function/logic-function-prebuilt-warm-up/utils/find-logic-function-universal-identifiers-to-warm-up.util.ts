@@ -1,33 +1,11 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
-
 import { type LogicFunctionPrebuiltStateFields } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 const LOGIC_FUNCTION_PREBUILT_STATE_KEYS: (keyof LogicFunctionPrebuiltStateFields)[] =
   ['executionMode', 'isBuildUpToDate', 'checksum'];
 
-type WarmUpCandidateAction =
-  | {
-      metadataName: 'logicFunction';
-      type: 'create';
-      flatEntity: { universalIdentifier: string };
-    }
-  | {
-      metadataName: 'logicFunction';
-      type: 'update';
-      universalIdentifier: string;
-      update: object;
-    }
-  | {
-      metadataName: 'logicFunction';
-      type: 'delete';
-      universalIdentifier: string;
-    }
-  | { metadataName: Exclude<AllMetadataName, 'logicFunction'> };
-
-type WarmUpCandidateMigration = { actions: WarmUpCandidateAction[] };
-
 export const findLogicFunctionUniversalIdentifiersToWarmUp = (
-  workspaceMigration: WarmUpCandidateMigration,
+  workspaceMigration: WorkspaceMigration,
 ): string[] =>
   workspaceMigration.actions.flatMap((action) => {
     if (action.metadataName !== 'logicFunction') {
