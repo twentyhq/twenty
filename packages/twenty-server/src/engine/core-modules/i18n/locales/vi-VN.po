@@ -1066,12 +1066,12 @@ msgstr "Trình tạo thành phần AI đã bị vô hiệu hóa."
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "Chính sách dữ liệu AI không khả dụng cho đến khi quá trình nâng cấp hoàn tất."
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "Chính sách dữ liệu AI chưa được bật cho không gian làm việc này."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "Tính năng yêu cầu quyền sở hữu chưa được cấu hình tr�
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "Phân loại không khả dụng với cài đặt quyền riêng tư của không gian làm việc này."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9357,7 +9357,7 @@ msgstr "Không"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "Không có mô hình AI nào đáp ứng cài đặt quyền riêng tư của không gian làm việc này."
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14200,7 +14200,7 @@ msgstr "Mô hình đã chọn đã bị quản trị viên vô hiệu hóa."
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "Mô hình đã chọn không được cho phép theo cài đặt quyền riêng tư của không gian làm việc này."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

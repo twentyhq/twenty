@@ -3009,7 +3009,7 @@ msgstr "AI 크레딧이 {0, plural, other {#일 후}} 갱신됩니다."
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "AI 데이터 정책"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "{host}에서 마이크와 카메라를 사용하도록 허용"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "관리자가 데이터 레지던시 또는 데이터 보존 없음 정책을 충족하는 모델로 AI를 제한할 수 있습니다. 인스턴스 업그레이드가 완료된 후 활성화하세요."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

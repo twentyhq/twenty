@@ -3009,7 +3009,7 @@ msgstr "AI-krediitit uusiutuvat {0, plural, one {# päivän kuluttua} other {# p
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Tekoälyn datakäytäntö"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Salli kohteen {host} käyttää mikrofoniasi ja kameraasi"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Anna ylläpitäjien rajoittaa tekoäly malleihin, jotka täyttävät tietojen säilytyspaikkaa tai tietojen nollasäilytystä koskevan käytännön vaatimukset. Ota käyttöön, kun esiintymän päivitys on valmis."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

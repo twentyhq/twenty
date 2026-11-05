@@ -1066,12 +1066,12 @@ msgstr "AI-komponentbyggaren är inaktiverad."
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "AI-datapolicyn är inte tillgänglig förrän uppgraderingen har slutförts."
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "AI-datapolicyn är inte aktiverad för denna arbetsyta."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "Anspråksfunktionen är inte konfigurerad på den här servern. Be en ad
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "Classify är inte tillgängligt med den här arbetsytans sekretessinställningar."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9359,7 +9359,7 @@ msgstr "Nej"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "Ingen AI-modell uppfyller den här arbetsytans sekretessinställningar."
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14206,7 +14206,7 @@ msgstr "Den valda modellen har inaktiverats av administratören."
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "Den valda modellen tillåts inte av den här arbetsytans sekretessinställningar."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

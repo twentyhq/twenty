@@ -3009,7 +3009,7 @@ msgstr "ԱԲ կրեդիտները կթարմացվեն {0, plural, one {# օրի
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "AI տվյալների քաղաքականություն"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Թույլատրել {host}-ին օգտագործել ձեր խոսափ�
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Թույլ տվեք ադմինիստրատորներին սահմանափակել AI-ը տվյալների տեղակայման կամ տվյալների զրոյական պահպանման քաղաքականությանը համապատասխանող մոդելներով։ Միացրեք այն instance-ի թարմացման ավարտից հետո։"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

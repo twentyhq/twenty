@@ -1066,12 +1066,12 @@ msgstr "Το εργαλείο δημιουργίας στοιχείων AI εί�
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "Η πολιτική δεδομένων AI δεν είναι διαθέσιμη μέχρι να ολοκληρωθεί η αναβάθμιση."
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "Η πολιτική δεδομένων AI δεν είναι ενεργοποιημένη για αυτόν τον χώρο εργασίας."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "Η δυνατότητα διεκδίκησης δεν έχει ρυθμ�
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "Η ταξινόμηση δεν είναι διαθέσιμη με τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9357,7 +9357,7 @@ msgstr "Όχι"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "Κανένα μοντέλο AI δεν πληροί τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14200,7 +14200,7 @@ msgstr "Το επιλεγμένο μοντέλο έχει απενεργοποι
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "Το επιλεγμένο μοντέλο δεν επιτρέπεται από τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

@@ -1066,12 +1066,12 @@ msgstr "AI 元件建構工具已停用。"
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "升級完成前，AI 資料政策無法使用。"
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "此工作區未啟用 AI 資料政策。"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "此伺服器尚未設定認領功能。請要求管理員設定 GitHub O
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "分類功能無法搭配此工作區的隱私設定使用。"
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9357,7 +9357,7 @@ msgstr "否"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "沒有任何 AI 模型符合此工作區的隱私設定。"
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14200,7 +14200,7 @@ msgstr "所選模型已被管理員停用。"
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "此工作區的隱私設定不允許所選模型。"
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

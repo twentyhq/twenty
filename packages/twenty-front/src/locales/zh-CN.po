@@ -3009,7 +3009,7 @@ msgstr "AI 积分将在 {0, plural, other {# 天}}后续期。"
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "AI 数据政策"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "允许 {host} 使用您的麦克风和摄像头"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "允许管理员将 AI 限制为符合数据驻留或零数据保留政策的模型。请在实例升级完成后启用。"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

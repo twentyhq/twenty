@@ -3009,7 +3009,7 @@ msgstr "קרדיטי AI יתחדשו בעוד {0, plural, one {יום אחד} tw
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "מדיניות נתוני AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "לאפשר ל-{host} להשתמש במיקרופון ובמצלמה של
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "אפשרו למנהלים להגביל את AI למודלים שעומדים במדיניות תושבות נתונים או שמירת נתונים אפסית. הפעילו לאחר שהשדרוג של המופע יושלם."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

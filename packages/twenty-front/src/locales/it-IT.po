@@ -3009,7 +3009,7 @@ msgstr "I crediti IA si rinnovano tra {0, plural, one {# giorno} other {# giorni
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Politica dei dati dell'IA"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Consenti a {host} di usare il tuo microfono e la tua fotocamera"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Consenti agli amministratori di limitare l'IA ai modelli che soddisfano una politica di residenza dei dati o di conservazione zero dei dati. Abilita dopo il completamento dell'aggiornamento dell'istanza."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

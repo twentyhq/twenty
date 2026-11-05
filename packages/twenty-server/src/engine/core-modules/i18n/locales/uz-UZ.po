@@ -1066,12 +1066,12 @@ msgstr "AI komponent yaratuvchisi o‘chirilgan."
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "Yangilash yakunlanmaguncha AI ma’lumotlar siyosati mavjud emas."
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "Ushbu ish maydoni uchun AI ma’lumotlar siyosati yoqilmagan."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "Bu serverda egalikni tasdiqlash sozlanmagan. Administratordan GitHub OAu
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "Ushbu ish maydonining maxfiylik sozlamalari bilan Tasniflash mavjud emas."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9357,7 +9357,7 @@ msgstr "Yo‘q"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "Hech bir AI modeli ushbu ish maydonining maxfiylik sozlamalariga javob bermaydi."
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14200,7 +14200,7 @@ msgstr "Tanlangan model administrator tomonidan o‘chirilgan."
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "Tanlangan modelga ushbu ish maydonining maxfiylik sozlamalari tomonidan ruxsat berilmagan."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

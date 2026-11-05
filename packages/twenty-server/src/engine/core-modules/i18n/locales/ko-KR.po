@@ -1066,12 +1066,12 @@ msgstr "AI 컴포넌트 빌더가 비활성화되어 있습니다."
 #. js-lingui-id: 1G2GHA
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
+msgstr "업그레이드가 완료될 때까지 AI 데이터 정책을 사용할 수 없습니다."
 
 #. js-lingui-id: gt0M4i
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "AI data policy is not enabled for this workspace."
-msgstr ""
+msgstr "이 워크스페이스에서는 AI 데이터 정책이 활성화되어 있지 않습니다."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3039,7 +3039,7 @@ msgstr "이 서버에서는 소유권 등록 기능이 설정되어 있지 않�
 #. js-lingui-id: FuoMjJ
 #: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
 msgid "Classify is not available with this workspace's privacy settings."
-msgstr ""
+msgstr "이 워크스페이스의 개인정보 보호 설정에서는 분류를 사용할 수 없습니다."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9357,7 +9357,7 @@ msgstr "아니요"
 #. js-lingui-id: gl3oHj
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No AI model meets this workspace's privacy settings."
-msgstr ""
+msgstr "이 워크스페이스의 개인정보 보호 설정을 충족하는 AI 모델이 없습니다."
 
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14200,7 +14200,7 @@ msgstr "선택한 모델은 관리자가 비활성화했습니다."
 #. js-lingui-id: equ0KI
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model is not allowed by this workspace's privacy settings."
-msgstr ""
+msgstr "선택한 모델은 이 워크스페이스의 개인정보 보호 설정에서 허용되지 않습니다."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts

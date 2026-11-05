@@ -3009,7 +3009,7 @@ msgstr "AI krediti se obnavljaju za {0, plural, one {# dan} few {# dana} other {
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Politika podataka za AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Dozvolite da {host} koristi vaš mikrofon i kameru"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Omogućite administratorima da ograniče AI na modele koji ispunjavaju politiku rezidentnosti podataka ili nultog zadržavanja podataka. Omogućite nakon što se nadogradnja instance završi."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

@@ -3009,7 +3009,7 @@ msgstr "AI-kreditter fornyes om {0, plural, one {# dag} other {# dage}}."
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "AI-datapolitik"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Lad {host} bruge din mikrofon og dit kamera"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Lad administratorer begrænse AI til modeller, der opfylder en politik for dataopbevaringssted eller ingen dataopbevaring. Aktivér, når instansopgraderingen er fuldført."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

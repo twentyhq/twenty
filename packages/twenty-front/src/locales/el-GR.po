@@ -3009,7 +3009,7 @@ msgstr "Οι πιστώσεις AI ανανεώνονται σε {0, plural, one
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Πολιτική δεδομένων AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Να επιτραπεί στο {host} να χρησιμοποιεί το
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Επιτρέπει στους διαχειριστές να περιορίζουν το AI σε μοντέλα που συμμορφώνονται με πολιτική κατοικίας δεδομένων ή μη διατήρησης δεδομένων. Ενεργοποιήστε το αφού ολοκληρωθεί η αναβάθμιση του στιγμιότυπου."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

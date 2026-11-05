@@ -3009,7 +3009,7 @@ msgstr "Creditele AI se reînnoiesc în {0, plural, one {# zi} few {# zile} othe
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Politica privind datele AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Permiteți-i lui {host} să vă folosească microfonul și camera"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Permiteți administratorilor să limiteze AI la modele care respectă o politică de rezidență a datelor sau de păstrare zero a datelor. Activați după finalizarea actualizării instanței."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

@@ -3009,7 +3009,7 @@ msgstr "تتجدد أرصدة الذكاء الاصطناعي خلال {0, plura
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "سياسة بيانات الذكاء الاصطناعي"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "السماح لـ {host} باستخدام الميكروفون والك�
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "اسمح للمسؤولين بتقييد الذكاء الاصطناعي بالنماذج التي تفي بسياسة إقامة البيانات أو عدم الاحتفاظ بالبيانات. فعّل ذلك بعد اكتمال ترقية المثيل."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx

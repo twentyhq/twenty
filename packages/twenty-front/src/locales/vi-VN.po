@@ -3009,7 +3009,7 @@ msgstr "Tín dụng AI sẽ được gia hạn sau {0, plural, other {# ngày}}.
 #. js-lingui-id: FiB0jU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy"
-msgstr ""
+msgstr "Chính sách dữ liệu AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -16466,7 +16466,7 @@ msgstr "Cho phép {host} sử dụng micrô và camera của bạn"
 #. js-lingui-id: lW/fsz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Cho phép quản trị viên giới hạn AI ở các mô hình đáp ứng chính sách lưu trữ dữ liệu tại chỗ hoặc không lưu giữ dữ liệu. Bật sau khi hoàn tất nâng cấp phiên bản."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
