@@ -6,7 +6,10 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAiAssistantChoiceContentProps = {
-  value: AiChatAssistantProfile;
+  value: Pick<
+    AiChatAssistantProfile,
+    'avatarShape' | 'avatarColor' | 'avatarFace'
+  >;
   title: string;
   description: string;
   isCustomize?: boolean;
