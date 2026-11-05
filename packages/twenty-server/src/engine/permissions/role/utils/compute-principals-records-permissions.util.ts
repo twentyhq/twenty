@@ -15,6 +15,67 @@ import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissi
 import { restrictRecordsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-records-permissions-to-scope.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
+const addInsertFieldExemptions = ({
+  recordsPermissions,
+  recordsPermissionsPerRole,
+  scopeRecordsPermissions,
+}: {
+  recordsPermissions: RoleRecordsPermissions;
+  recordsPermissionsPerRole: RoleRecordsPermissions[];
+  scopeRecordsPermissions: RoleRecordsPermissions | undefined;
+}): RoleRecordsPermissions => {
+  let objects: RoleRecordsPermissions['objects'] | undefined;
+
+  for (const [objectMetadataId, objectPermissions] of Object.entries(
+    recordsPermissions.objects,
+  )) {
+    if (
+      !isDefined(objectPermissions) ||
+      !isDefined(objectPermissions.rowLevelRecordsPermissions)
+    ) {
+      continue;
+    }
+
+    const objectPermissionsPerRole = recordsPermissionsPerRole.map(
+      (permissions) => permissions.objects[objectMetadataId],
+    );
+    const scopeRestrictedFields =
+      scopeRecordsPermissions?.objects[objectMetadataId]?.restrictedFields;
+
+    // A role's RLS may exempt its own deny, but cannot override the run scope.
+    const insertFieldExemptionIds = Object.entries(
+      objectPermissions.restrictedFields,
+    )
+      .filter(
+        ([fieldMetadataId, fieldPermissions]) =>
+          fieldPermissions.canUpdate === false &&
+          scopeRestrictedFields?.[fieldMetadataId]?.canUpdate !== false &&
+          objectPermissionsPerRole.every(
+            (rolePermissions) =>
+              isDefined(rolePermissions) &&
+              (rolePermissions.restrictedFields[fieldMetadataId]?.canUpdate !==
+                false ||
+                rolePermissions.rowLevelRecordsPermissions?.predicates.some(
+                  (predicate) => predicate.fieldMetadataId === fieldMetadataId,
+                ) === true),
+          ),
+      )
+      .map(([fieldMetadataId]) => fieldMetadataId);
+
+    if (isNonEmptyArray(insertFieldExemptionIds)) {
+      objects ??= { ...recordsPermissions.objects };
+      objects[objectMetadataId] = {
+        ...objectPermissions,
+        insertFieldExemptionIds,
+      };
+    }
+  }
+
+  return isDefined(objects)
+    ? { ...recordsPermissions, objects }
+    : recordsPermissions;
+};
+
 export const computePrincipalsRecordsPermissions = ({
   principals,
   rolesPermissions,
@@ -72,10 +133,16 @@ export const computePrincipalsRecordsPermissions = ({
     recordsPermissionsPerRole,
   );
 
-  return isDefined(principals.aiRunScope)
+  const scopedRecordsPermissions = isDefined(principals.aiRunScope)
     ? restrictRecordsPermissionsToScope({
         recordsPermissions,
         aiRunScope: principals.aiRunScope,
       })
     : recordsPermissions;
+
+  return addInsertFieldExemptions({
+    recordsPermissions: scopedRecordsPermissions,
+    recordsPermissionsPerRole,
+    scopeRecordsPermissions: principals.aiRunScope?.recordsPermissions,
+  });
 };

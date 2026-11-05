@@ -147,6 +147,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private readonly options: WorkspaceRepositoryOptions<TEntity>;
+  private cachedRecordsPermissions?: RoleRecordsPermissions;
 
   private _filesFieldSync?: FilesFieldSync;
 
@@ -162,10 +163,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return NO_ROLE_RECORDS_PERMISSIONS;
     }
 
-    return getPermissionsPrincipalsRecordsPermissions({
-      principals: permissionsPrincipals,
-      metadataMaps: this.options.internalContext,
-    });
+    return (this.cachedRecordsPermissions ??=
+      getPermissionsPrincipalsRecordsPermissions({
+        principals: permissionsPrincipals,
+        metadataMaps: this.options.internalContext,
+      }));
   }
 
   private get filesFieldSync(): FilesFieldSync {
@@ -1706,7 +1708,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    // Inserts skip the row access policy, so disabled actions are checked here
+    // Inserts check the new rows separately, so enforce disabled actions here.
     if (this.isOperationDisabled({ operationType })) {
       throw new PermissionsException(
         `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${this.options.flatObjectMetadata.nameSingular}" are not writable through the API`,

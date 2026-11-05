@@ -4,7 +4,6 @@ import { type AiRunPermissionScope } from 'src/engine/permissions/principal/type
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-// the roles' predicates keep their insert-guard field exemption, except on fields the scope denies writing
 export const restrictRecordsPermissionsToScope = ({
   recordsPermissions,
   aiRunScope,
@@ -26,9 +25,6 @@ export const restrictRecordsPermissionsToScope = ({
             ?.rowLevelRecordsPermissions;
         const intersectedObjectRecordsPermissions =
           intersectedRecordsPermissions.objects[objectMetadataId];
-        const scopeRestrictedFields =
-          aiRunScope.recordsPermissions.objects[objectMetadataId]
-            ?.restrictedFields ?? {};
 
         if (
           !isDefined(
@@ -45,10 +41,7 @@ export const restrictRecordsPermissionsToScope = ({
             ...intersectedObjectRecordsPermissions,
             rowLevelRecordsPermissions: {
               ...intersectedObjectRecordsPermissions.rowLevelRecordsPermissions,
-              predicates: roleRowLevelRecordsPermissions.predicates.filter(
-                ({ fieldMetadataId }) =>
-                  scopeRestrictedFields[fieldMetadataId]?.canUpdate !== false,
-              ),
+              predicates: roleRowLevelRecordsPermissions.predicates,
               predicateGroups: roleRowLevelRecordsPermissions.predicateGroups,
             },
           },

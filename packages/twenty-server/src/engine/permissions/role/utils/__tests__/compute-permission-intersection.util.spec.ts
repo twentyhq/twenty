@@ -324,9 +324,9 @@ describe('computePermissionIntersection', () => {
               objectMetadataId: objectMetadataId1,
               fieldMetadataId,
               operand: RowLevelPermissionPredicateOperand.IS,
-              value: null,
+              value: roleId,
               subFieldName: null,
-              rowLevelPermissionPredicateGroupId: null,
+              rowLevelPermissionPredicateGroupId: `${roleId}-group`,
               workspaceMemberFieldMetadataId: null,
               workspaceMemberSubFieldName: null,
             })),
@@ -350,52 +350,15 @@ describe('computePermissionIntersection', () => {
       });
     };
 
-    const constrainedFieldMetadataIdsOf = (
-      permissions: RoleRecordsPermissions,
-    ) =>
-      permissions.objects[
-        objectMetadataId1
-      ]?.rowLevelRecordsPermissions?.predicates.map(
-        (predicate) => predicate.fieldMetadataId,
-      );
-
-    it('should keep a field every role constrains', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', ['field-1']),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual(['field-1']);
-    });
-
-    it('should drop a field only one role constrains', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1', 'field-2']),
-        buildPermissions('application-role-id', ['field-1']),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual(['field-1']);
-    });
-
-    it('should drop every field when a role constrains none', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', []),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual([]);
-    });
-
-    it('should not expose a combined predicate group tree', () => {
+    it('should not expose a partial predicate tree for multiple roles', () => {
       const result = computePermissionIntersection([
         buildPermissions('user-role-id', ['field-1']),
         buildPermissions('application-role-id', ['field-1']),
       ]);
 
       expect(
-        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions
-          ?.predicateGroups,
-      ).toEqual([]);
+        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions,
+      ).toMatchObject({ predicates: [], predicateGroups: [] });
     });
 
     it('should reach records through row-level permissions only when every role reaches some', () => {

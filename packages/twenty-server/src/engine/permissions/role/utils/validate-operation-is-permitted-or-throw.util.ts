@@ -94,21 +94,21 @@ export const validateOperationIsPermittedOrThrow = ({
       });
 
       if (updatedColumns.length > 0) {
-        const rlsFieldMetadataIds = new Set(
-          (
-            permissionsForEntity?.rowLevelRecordsPermissions?.predicates ?? []
-          ).map((predicate) => predicate.fieldMetadataId),
+        const insertFieldExemptionIds = new Set(
+          permissionsForEntity?.insertFieldExemptionIds,
         );
 
-        const updatedColumnsWithoutRlsFields = updatedColumns.filter(
+        const updatedColumnsWithoutExemptions = updatedColumns.filter(
           (column) =>
-            !rlsFieldMetadataIds.has(columnNameToFieldMetadataIdMap[column]),
+            !insertFieldExemptionIds.has(
+              columnNameToFieldMetadataIdMap[column],
+            ),
         );
 
-        if (updatedColumnsWithoutRlsFields.length > 0) {
+        if (updatedColumnsWithoutExemptions.length > 0) {
           validateUpdateFieldPermissionOrThrow({
             restrictedFields,
-            updatedColumns: updatedColumnsWithoutRlsFields,
+            updatedColumns: updatedColumnsWithoutExemptions,
             columnNameToFieldMetadataIdMap,
             entityName,
             flatFieldMetadataMaps,

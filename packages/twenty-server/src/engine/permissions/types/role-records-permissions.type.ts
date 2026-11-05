@@ -5,6 +5,11 @@ export type RoleRecordsPermissions = {
   canUpdateAllRecords: boolean;
   canSoftDeleteAllRecords: boolean;
   canDestroyAllRecords: boolean;
-  objects: Partial<Record<ObjectMetadataId, ObjectRecordsPermissions>>;
+  objects: Partial<
+    Record<
+      ObjectMetadataId,
+      ObjectRecordsPermissions & { insertFieldExemptionIds?: string[] }
+    >
+  >;
 };
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';

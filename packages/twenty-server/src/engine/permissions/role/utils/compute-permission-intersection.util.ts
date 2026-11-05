@@ -1,32 +1,12 @@
 import {
   type ObjectRecordsPermissions,
   type RestrictedFieldPermissions,
-  type RowLevelPermissionPredicate,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-
-// Keeping a field constrained by one role alone would let it cancel another role's deny in the insert guard
-const intersectRowLevelPermissionPredicates = (
-  rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][],
-): RowLevelPermissionPredicate[] => {
-  const [firstRolePredicates = [], ...otherRolesPredicates] =
-    rowLevelPermissionPredicatesPerRole;
-
-  const constrainedFieldMetadataIdsPerOtherRole = otherRolesPredicates.map(
-    (predicates) =>
-      new Set(predicates.map((predicate) => predicate.fieldMetadataId)),
-  );
-
-  return firstRolePredicates.filter((predicate) =>
-    constrainedFieldMetadataIdsPerOtherRole.every((fieldMetadataIds) =>
-      fieldMetadataIds.has(predicate.fieldMetadataId),
-    ),
-  );
-};
 
 const denyIfAnyDenies = (values: (boolean | null | undefined)[]) =>
   values.some((value) => value === false) ? false : null;
@@ -110,13 +90,8 @@ const intersectObjectRecordsPermissions = (
       canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
       canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('soft-delete'),
       canDestroyRecords: isReachingSomeRecordsForEveryRole('delete'),
-      predicates: intersectRowLevelPermissionPredicates(
-        objectRecordsPermissionsPerRole.map(
-          (objectRecordsPermissions) =>
-            objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates ??
-            [],
-        ),
-      ),
+      // The effective row filter is compiled from each role's original tree.
+      predicates: [],
       predicateGroups: [],
     },
   };

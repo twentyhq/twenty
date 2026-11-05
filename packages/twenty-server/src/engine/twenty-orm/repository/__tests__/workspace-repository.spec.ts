@@ -1,10 +1,14 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { TwentyOrmExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -85,15 +89,46 @@ const EMPTY_FLAT_ENTITY_MAPS = {
 };
 const API_KEY_ID = 'api-key-id';
 const ROLE_ID = 'role-id';
+const AGENT_ROLE_ID = 'agent-role-id';
 
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  withInsertPolicy = false,
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  withInsertPolicy?: boolean;
 }) => {
   const executedStatements: CompiledStatement[] = [];
+  const allRecordsAccess = {
+    canReadAllRecords: true,
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: true,
+  };
+  const unrestrictedRolePermissions = {
+    ...allRecordsAccess,
+    objects: {
+      [OBJECT_METADATA_ID]: { ...allRecordsAccess, restrictedFields: {} },
+    },
+  };
+  const predicate = {
+    id: 'state-predicate',
+    universalIdentifier: 'state-predicate',
+    roleId: ROLE_ID,
+    objectMetadataId: OBJECT_METADATA_ID,
+    fieldMetadataId: 'field-state',
+    operand: RowLevelPermissionPredicateOperand.IS,
+    value: 'SENT',
+    relationFieldMetadataId: null,
+    subFieldName: null,
+    workspaceMemberFieldMetadataId: null,
+    workspaceMemberSubFieldName: null,
+    rowLevelPermissionPredicateGroupId: null,
+    positionInRowLevelPermissionPredicateGroup: null,
+    deletedAt: null,
+  };
 
   const repository = new WorkspaceRepository({
     tableShape,
@@ -108,26 +143,45 @@ const buildRepository = ({
       coreDataSource: { getRepository: () => ({}) },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
-      roleIdsWithAllRecordsAccess: [ROLE_ID],
+      roleIdsWithAllRecordsAccess: [withInsertPolicy ? AGENT_ROLE_ID : ROLE_ID],
       rolesPermissions: {
-        [ROLE_ID]: {
-          canReadAllRecords: true,
-          canUpdateAllRecords: true,
-          canSoftDeleteAllRecords: true,
-          canDestroyAllRecords: true,
-          objects: {
-            [OBJECT_METADATA_ID]: {
-              canReadAllRecords: true,
-              canUpdateAllRecords: true,
-              canSoftDeleteAllRecords: true,
-              canDestroyAllRecords: true,
-              restrictedFields: {},
-            },
-          },
-        },
+        [ROLE_ID]: withInsertPolicy
+          ? {
+              ...allRecordsAccess,
+              canReadAllRecords: false,
+              canUpdateAllRecords: false,
+              objects: {
+                [OBJECT_METADATA_ID]: {
+                  ...allRecordsAccess,
+                  canReadAllRecords: false,
+                  canUpdateAllRecords: false,
+                  restrictedFields: { 'field-state': { canUpdate: false } },
+                  rowLevelRecordsPermissions: {
+                    canReadRecords: true,
+                    canUpdateRecords: true,
+                    canSoftDeleteRecords: true,
+                    canDestroyRecords: true,
+                    predicates: [predicate],
+                    predicateGroups: [],
+                  },
+                },
+              },
+            }
+          : unrestrictedRolePermissions,
+        [AGENT_ROLE_ID]: unrestrictedRolePermissions,
       },
       flatApplicationMaps: { byId: {} },
-      flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
+      flatRowLevelPermissionPredicateMaps: withInsertPolicy
+        ? {
+            ...EMPTY_FLAT_ENTITY_MAPS,
+            byUniversalIdentifier: {
+              [predicate.universalIdentifier]: predicate,
+            },
+            universalIdentifierById: {
+              [predicate.id]: predicate.universalIdentifier,
+            },
+          }
+        : EMPTY_FLAT_ENTITY_MAPS,
       flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
     authContext: {
@@ -149,6 +203,13 @@ const buildRepository = ({
         apiKeyId: 'api-key-id',
         roleId: ROLE_ID,
       },
+      ...(withInsertPolicy && {
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: AGENT_ROLE_ID,
+        },
+      }),
       applicationPrincipal: { type: 'customApplication' },
     },
     shouldBypassPermissionChecks,
@@ -231,6 +292,33 @@ describe('WorkspaceRepository mutations', () => {
   });
 
   describe('on a permission-scoped repository that skips events', () => {
+    it('should insert a record when its exempt field satisfies the role policy', async () => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldBypassPermissionChecks: false,
+        shouldSkipEventEmission: true,
+        withInsertPolicy: true,
+      });
+
+      await repository.insert({ state: 'SENT' });
+
+      expect(getExecutedStatementKinds()).toEqual(['INSERT']);
+    });
+
+    it('should reject a record when its exempt field violates the role policy', async () => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldBypassPermissionChecks: false,
+        shouldSkipEventEmission: true,
+        withInsertPolicy: true,
+      });
+
+      await expect(repository.insert({ state: 'DRAFT' })).rejects.toMatchObject(
+        {
+          code: TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
+        },
+      );
+      expect(getExecutedStatementKinds()).toEqual([]);
+    });
+
     it('should read the before-image before an update', async () => {
       const { repository, getExecutedStatementKinds } = buildRepository({
         shouldBypassPermissionChecks: false,
