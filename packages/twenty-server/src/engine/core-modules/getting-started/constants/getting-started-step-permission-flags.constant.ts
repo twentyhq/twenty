@@ -9,7 +9,10 @@ export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
   [GettingStartedStepActionKey.CONNECT_MAILBOX]: [
     PermissionFlagType.CONNECTED_ACCOUNTS,
   ],
-  [GettingStartedStepActionKey.IMPORT_DATA]: [PermissionFlagType.IMPORT_CSV],
+  [GettingStartedStepActionKey.IMPORT_DATA]: [
+    PermissionFlagType.IMPORT_CSV,
+    PermissionFlagType.AI,
+  ],
   [GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL]: [
     PermissionFlagType.DATA_MODEL,
     PermissionFlagType.AI,

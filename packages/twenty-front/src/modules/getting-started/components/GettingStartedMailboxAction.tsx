@@ -1,10 +1,8 @@
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
+import { GettingStartedConnectedAccountsTable } from '@/getting-started/components/GettingStartedConnectedAccountsTable';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
-import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -45,7 +43,7 @@ export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { accounts, loading } = useMyConnectedAccounts();
+  const { accounts, hasLoaded } = useMyConnectedAccounts();
   const activeAccounts = accounts.filter(
     (account) => !isDefined(account.archivedAt),
   );
@@ -64,22 +62,12 @@ export const GettingStartedMailboxAction = () => {
       skipMessageChannelConfiguration: true,
     });
 
-  if (loading) {
+  if (!hasLoaded) {
     return null;
   }
 
   if (activeAccounts.length > 0) {
-    return (
-      <Table>
-        <SettingsConnectedAccountsTableHeader />
-        {activeAccounts.map((account) => (
-          <SettingsConnectedAccountsTableRow
-            key={account.id}
-            account={account}
-          />
-        ))}
-      </Table>
-    );
+    return <GettingStartedConnectedAccountsTable accounts={activeAccounts} />;
   }
 
   return (
