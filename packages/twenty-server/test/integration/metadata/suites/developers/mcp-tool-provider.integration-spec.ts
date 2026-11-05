@@ -11,11 +11,14 @@ import {
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import gql from 'graphql-tag';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -136,6 +139,26 @@ describe('MCP tools in the tool registry (e2e)', () => {
       success: true,
       message: `MCP tool ${toolName} executed`,
       result: { content: [{ type: 'text', text: 'deleted page-1' }] },
+    });
+  });
+
+  it('fills the tool list of a server that was never synced', async () => {
+    await getCoreRepository<McpServerEntity>(McpServerEntity).update(
+      { id: mcpServerId },
+      { tools: [], toolsSyncedAt: null, toolsSyncError: null },
+    );
+    await getAppProviderByClassName<WorkspaceManyOrAllFlatEntityMapsCacheService>(
+      'WorkspaceManyOrAllFlatEntityMapsCacheService',
+    ).invalidateFlatEntityMaps({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      flatMapsKeys: ['flatMcpServerMaps'],
+    });
+
+    const { data } = await getToolIndex({});
+
+    expect(data.getToolIndex).toContainEqual({
+      name: `mcp_${mcpServerName}_search_docs`,
+      category: 'MCP',
     });
   });
 
