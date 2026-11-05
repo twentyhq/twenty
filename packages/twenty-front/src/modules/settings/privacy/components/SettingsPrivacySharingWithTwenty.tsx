@@ -36,10 +36,10 @@ export const SettingsPrivacySharingWithTwenty = () => {
                 .isProductImprovementDataSharingEnabled
             }
             onChange={(checked) =>
-              updateWorkspaceAiDataPolicyField(
-                'isProductImprovementDataSharingEnabled',
-                checked,
-              )
+              updateWorkspaceAiDataPolicyField({
+                field: 'isProductImprovementDataSharingEnabled',
+                value: checked,
+              })
             }
           />
         )}

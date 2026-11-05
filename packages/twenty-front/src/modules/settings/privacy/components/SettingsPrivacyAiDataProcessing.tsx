@@ -77,10 +77,10 @@ export const SettingsPrivacyAiDataProcessing = () => {
               dropdownId="settings-privacy-ai-data-residency"
               value={aiDataPolicy.dataResidency ?? WORLDWIDE_OPTION_VALUE}
               onChange={(value) =>
-                updateWorkspaceAiDataPolicyField(
-                  'dataResidency',
-                  value === WORLDWIDE_OPTION_VALUE ? null : value,
-                )
+                updateWorkspaceAiDataPolicyField({
+                  field: 'dataResidency',
+                  value: value === WORLDWIDE_OPTION_VALUE ? null : value,
+                })
               }
               options={aiDataResidencyOptions}
               selectSizeVariant="small"
@@ -94,10 +94,10 @@ export const SettingsPrivacyAiDataProcessing = () => {
             description={t`Only use providers that keep no copy of your prompts and responses`}
             checked={aiDataPolicy.isZeroDataRetentionRequired}
             onChange={(checked) =>
-              updateWorkspaceAiDataPolicyField(
-                'isZeroDataRetentionRequired',
-                checked,
-              )
+              updateWorkspaceAiDataPolicyField({
+                field: 'isZeroDataRetentionRequired',
+                value: checked,
+              })
             }
           />
         )}

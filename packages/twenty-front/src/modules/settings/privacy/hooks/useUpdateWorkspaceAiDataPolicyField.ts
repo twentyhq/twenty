@@ -25,10 +25,13 @@ export const useUpdateWorkspaceAiDataPolicyField = () => {
   const readStoredAiDataPolicy = () =>
     getWorkspaceAiDataPolicy(store.get(currentWorkspaceState.atom));
 
-  const updateWorkspaceAiDataPolicyField = <TField extends keyof AiDataPolicy>(
-    field: TField,
-    value: AiDataPolicy[TField],
-  ) => {
+  const updateWorkspaceAiDataPolicyField = <TField extends keyof AiDataPolicy>({
+    field,
+    value,
+  }: {
+    field: TField;
+    value: AiDataPolicy[TField];
+  }) => {
     const previousValue = readStoredAiDataPolicy()[field];
 
     setStoredAiDataPolicy({ ...readStoredAiDataPolicy(), [field]: value });
