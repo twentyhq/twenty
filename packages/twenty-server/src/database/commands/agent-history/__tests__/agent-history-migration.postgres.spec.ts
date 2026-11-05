@@ -209,7 +209,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const conversationWriter = new AgentConversationWriterService(
-      turns as never,
       new AgentHistoryTransactionService(orm as never, {
         isEnabled: jest.fn().mockResolvedValue(false),
         share: jest

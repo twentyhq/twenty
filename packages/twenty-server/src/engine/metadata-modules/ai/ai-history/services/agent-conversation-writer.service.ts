@@ -10,10 +10,7 @@ import { IsNull } from 'typeorm';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
-import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { isAgentTurnStatusFinal } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-status-final.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -25,8 +22,6 @@ import {
 @Injectable()
 export class AgentConversationWriterService {
   constructor(
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly transactionService: AgentHistoryTransactionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -101,20 +96,17 @@ export class AgentConversationWriterService {
       ...(isDefined(createdBy) ? { createdBy } : {}),
     };
 
+    const turnId = id ?? randomUUID();
+    const write = (transactionScope: AgentHistoryTransactionScope) =>
+      transactionScope.insert('agentTurn', { id: turnId, ...values });
+
     if (isDefined(scope)) {
-      const turnId = id ?? randomUUID();
-
-      await scope.insert('agentTurn', { id: turnId, ...values });
-
-      return turnId;
+      await write(scope);
+    } else {
+      await this.transactionService.run(workspaceId, write);
     }
 
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
-      ...(isDefined(id) ? { id } : {}),
-      ...values,
-    });
-
-    return (id ?? turnInsertResult.identifiers[0].id) as string;
+    return turnId;
   }
 
   // A turn the agent opens has no user message: a system message gives the
