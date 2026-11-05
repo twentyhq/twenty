@@ -10,7 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -33,26 +34,20 @@ export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
-    private readonly settingPermissionsService: SettingPermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
   async duplicateMessageList({
     messageListId,
-    userWorkspaceId,
     authContext,
   }: {
     messageListId: string;
-    userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
   }): Promise<DuplicatedMessageListDTO> {
-    const workspaceId = authContext.workspace.id;
-
-    await this.assertCanReadAndUpdateDuplicatedObjects({
-      workspaceId,
-      userWorkspaceId,
-    });
+    await this.assertCanReadAndUpdateDuplicatedObjects({ authContext });
 
     // One transaction so a failed member insert never leaves a list copy without its members
     return this.workspaceOrmManager.executeInWorkspaceContext(
@@ -70,32 +65,42 @@ export class MessageListDuplicationService {
 
   // Repositories skip role checks on system objects, so the role is checked here
   private async assertCanReadAndUpdateDuplicatedObjects({
-    workspaceId,
-    userWorkspaceId,
+    authContext,
   }: {
-    workspaceId: string;
-    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
   }): Promise<void> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+    const [principals, { flatObjectMetadataMaps }] = await Promise.all([
+      this.principalPermissionsService.buildPermissionsPrincipals({
+        authContext,
+      }),
+      this.workspaceCacheService.getOrRecompute(authContext.workspace.id, [
         'flatObjectMetadataMaps',
-      ]);
+      ]),
+    ]);
 
     const duplicatedObjects = DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS.map(
       (objectUniversalIdentifier) =>
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
     );
 
-    if (
-      !duplicatedObjects.every(isDefined) ||
-      !(await this.settingPermissionsService.canUserWorkspaceReadAndUpdateSomeRecords(
-        {
-          workspaceId,
-          userWorkspaceId,
-          objectMetadataIds: duplicatedObjects.map(({ id }) => id),
-        },
-      ))
-    ) {
+    const canReadAndUpdateDuplicatedObjects =
+      duplicatedObjects.every(isDefined) &&
+      (
+        await Promise.all(
+          duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
+            this.recordPermissionsService.canRoleReadSomeRecords({
+              principals,
+              objectMetadataId,
+            }),
+            this.recordPermissionsService.canRoleUpdateSomeRecords({
+              principals,
+              objectMetadataId,
+            }),
+          ]),
+        )
+      ).every((isGranted) => isGranted);
+
+    if (!canReadAndUpdateDuplicatedObjects) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,

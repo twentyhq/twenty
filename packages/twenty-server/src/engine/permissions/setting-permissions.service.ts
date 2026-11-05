@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/compute-principals-records-permissions.util';
 import {
@@ -96,37 +96,6 @@ export class SettingPermissionsService {
         flatApplicationMaps,
       }),
     };
-  }
-
-  public async canUserWorkspaceReadAndUpdateSomeRecords({
-    workspaceId,
-    userWorkspaceId,
-    objectMetadataIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    objectMetadataIds: string[];
-  }): Promise<boolean> {
-    const { recordsPermissions } = await this.getUserWorkspacePermissions({
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    return objectMetadataIds.every((objectMetadataId) => {
-      const objectRecordsPermissions =
-        recordsPermissions.objects[objectMetadataId];
-
-      return (
-        canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'select',
-        }) &&
-        canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'update',
-        })
-      );
-    });
   }
 
   public getDefaultUserWorkspacePermissions = (): UserWorkspacePermissions => ({

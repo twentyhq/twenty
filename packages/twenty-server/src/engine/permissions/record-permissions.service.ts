@@ -285,6 +285,17 @@ export class RecordPermissionsService {
     });
   }
 
+  public canRoleReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
   public canRoleUpdateSomeRecords({
     principals,
     objectMetadataId,
