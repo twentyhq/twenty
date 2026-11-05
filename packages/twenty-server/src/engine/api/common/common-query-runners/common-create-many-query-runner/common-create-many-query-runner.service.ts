@@ -477,7 +477,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const restrictedFields =
-      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+      repository.recordsPermissions.objects[flatObjectMetadata.id]
         ?.restrictedFields;
 
     const selectOptions = getAllSelectableColumnNames({

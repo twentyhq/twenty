@@ -311,6 +311,7 @@ enum AllMetadataName {
   commandMenuItem
   connectionProvider
   fieldMetadata
+  fieldMetadataOption
   fieldPermission
   frontComponent
   index
@@ -975,6 +976,11 @@ type BillingMeteredProduct implements BillingProductDTO {
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceMetered!]
+}
+
+type BillingPartnerCode {
+  isEditable: Boolean!
+  partnerCode: String
 }
 
 type BillingPaymentIntent {
@@ -3536,6 +3542,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
@@ -3842,6 +3849,16 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
+}
+
+type ObjectRecordsPermissions {
+  canDestroyAllRecords: Boolean!
+  canReadAllRecords: Boolean!
+  canSoftDeleteAllRecords: Boolean!
+  canUpdateAllRecords: Boolean!
+  objectMetadataId: UUID!
+  restrictedFields: JSON!
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions
 }
 
 """Onboarding status"""
@@ -4172,6 +4189,7 @@ type Query {
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
@@ -4581,6 +4599,15 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   LESS_THAN_OR_EQUAL
   VECTOR_SEARCH
+}
+
+type RowLevelRecordsPermissions {
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
+  predicates: [RowLevelPermissionPredicate!]!
 }
 
 input RunAgentInput {
@@ -5992,8 +6019,7 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!]
-  objectsPermissions: [ObjectPermission!]
+  objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!

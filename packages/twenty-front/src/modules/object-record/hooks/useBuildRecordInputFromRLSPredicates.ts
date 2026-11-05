@@ -126,7 +126,9 @@ export const useBuildRecordInputFromRLSPredicates = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     );
-    const rlsPredicates = objectPermissions.rowLevelPermissionPredicates.filter(
+    const rlsPredicates = (
+      objectPermissions.rowLevelRecordsPermissions?.predicates ?? []
+    ).filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     );
 

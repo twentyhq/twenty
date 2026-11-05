@@ -2038,16 +2038,14 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
-        objectsPermissions: [
+        objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
-            canReadObjectRecords: false,
-            canUpdateObjectRecords: false,
-            canSoftDeleteObjectRecords: false,
-            canDestroyObjectRecords: false,
+            canReadAllRecords: false,
+            canUpdateAllRecords: false,
+            canSoftDeleteAllRecords: false,
+            canDestroyAllRecords: false,
             restrictedFields: {},
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
           },
         ],
       });
@@ -2055,16 +2053,14 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
-        objectsPermissions: [
+        objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: true,
+            canReadAllRecords: true,
+            canUpdateAllRecords: true,
+            canSoftDeleteAllRecords: true,
+            canDestroyAllRecords: true,
             restrictedFields: {},
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
           },
         ],
       });

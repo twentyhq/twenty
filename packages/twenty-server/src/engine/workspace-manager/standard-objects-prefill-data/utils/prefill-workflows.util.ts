@@ -13,7 +13,11 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { buildPersonSyncSourceFilter } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/build-person-sync-source-filter.util';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
-import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
+import {
+  EXTRACT_DOMAIN_CODE_STEP_SOURCE,
+  FIND_MATCHING_COMPANY_BY_DOMAIN_CODE_STEP_SOURCE,
+  IS_PERSONAL_EMAIL_CODE_STEP_SOURCE,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/constants/prefill-workflow-code-step-sources.constant';
 
 const WORKFLOW_PREFILL_ID_NAMESPACE = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 
@@ -86,12 +90,6 @@ export const prefillWorkflows = async (
       `Workspace custom application not found for workspace ${workspaceId}`,
     );
   }
-
-  const {
-    extractDomainLogicFunctionId,
-    findMatchingCompanyByDomainLogicFunctionId,
-    isPersonalEmailLogicFunctionId,
-  } = getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds(workspaceId);
 
   const { idByNameSingular: objectIdByNameSingular } = buildObjectIdByNameMaps(
     flatObjectMetadataMaps,
@@ -396,7 +394,7 @@ export const prefillWorkflows = async (
       },
       settings: {
         input: {
-          logicFunctionId: isPersonalEmailLogicFunctionId,
+          code: IS_PERSONAL_EMAIL_CODE_STEP_SOURCE,
           logicFunctionInput: {
             primaryEmail: '{{trigger.properties.after.emails.primaryEmail}}',
           },
@@ -476,7 +474,7 @@ export const prefillWorkflows = async (
       },
       settings: {
         input: {
-          logicFunctionId: extractDomainLogicFunctionId,
+          code: EXTRACT_DOMAIN_CODE_STEP_SOURCE,
           logicFunctionInput: {
             email: '{{trigger.properties.after.emails.primaryEmail}}',
           },
@@ -565,7 +563,7 @@ export const prefillWorkflows = async (
       },
       settings: {
         input: {
-          logicFunctionId: findMatchingCompanyByDomainLogicFunctionId,
+          code: FIND_MATCHING_COMPANY_BY_DOMAIN_CODE_STEP_SOURCE,
           logicFunctionInput: {
             companies: '{{becb3acf-79bb-4672-8a42-3696e94957b5.all}}',
             domain: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
