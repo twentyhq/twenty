@@ -28,11 +28,15 @@ export class UnsubscribeHostnameService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private async register(
-    emailingDomain: EmailingDomainEntity,
-    hostname: string,
-    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
-  ): Promise<void> {
+  private async register({
+    emailingDomain,
+    hostname,
+    unsubscribeHostnameStatus,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus;
+  }): Promise<void> {
     const unsubscribeHostnameId = await this.registerOrAdoptHostname(hostname);
 
     await this.emailingDomainRepository.update(
@@ -80,59 +84,67 @@ export class UnsubscribeHostnameService {
 
     switch (validationState) {
       case 'active':
-        return this.saveExistingHostnameStatus(
+        return this.saveExistingHostnameStatus({
           emailingDomain,
           hostname,
-          UnsubscribeHostnameStatus.ACTIVE,
-        );
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
+        });
       case 'pending':
-        return this.saveExistingHostnameStatus(
+        return this.saveExistingHostnameStatus({
           emailingDomain,
           hostname,
-          UnsubscribeHostnameStatus.PENDING,
-        );
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+        });
       case 'missing':
-        if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
-          return this.register(
+        if (await this.isRestartAllowed({ hostname, isUserTriggered })) {
+          return this.register({
             emailingDomain,
             hostname,
-            UnsubscribeHostnameStatus.PENDING,
-          );
+            unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+          });
         }
 
-        return this.updateStatus(
+        return this.updateStatus({
           emailingDomain,
-          UnsubscribeHostnameStatus.FAILED,
-        );
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.FAILED,
+        });
       case 'given_up':
-        if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
+        if (await this.isRestartAllowed({ hostname, isUserTriggered })) {
           await this.dnsManagerService.refreshHostname(hostname);
 
-          return this.saveExistingHostnameStatus(
+          return this.saveExistingHostnameStatus({
             emailingDomain,
             hostname,
-            UnsubscribeHostnameStatus.PENDING,
-          );
+            unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+          });
         }
 
-        return this.saveExistingHostnameStatus(
+        return this.saveExistingHostnameStatus({
           emailingDomain,
           hostname,
-          UnsubscribeHostnameStatus.FAILED,
-        );
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.FAILED,
+        });
     }
   }
 
-  private async saveExistingHostnameStatus(
-    emailingDomain: EmailingDomainEntity,
-    hostname: string,
-    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
-  ): Promise<void> {
+  private async saveExistingHostnameStatus({
+    emailingDomain,
+    hostname,
+    unsubscribeHostnameStatus,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus;
+  }): Promise<void> {
     if (!isNonEmptyString(emailingDomain.unsubscribeHostnameId)) {
-      return this.register(emailingDomain, hostname, unsubscribeHostnameStatus);
+      return this.register({
+        emailingDomain,
+        hostname,
+        unsubscribeHostnameStatus,
+      });
     }
 
-    return this.updateStatus(emailingDomain, unsubscribeHostnameStatus);
+    return this.updateStatus({ emailingDomain, unsubscribeHostnameStatus });
   }
 
   private getRegisteredOrNewHostname(
@@ -148,10 +160,13 @@ export class UnsubscribeHostnameService {
     return this.buildHostname(emailingDomain.domain);
   }
 
-  private async isRestartAllowed(
-    hostname: string,
-    { isUserTriggered }: { isUserTriggered: boolean },
-  ): Promise<boolean> {
+  private async isRestartAllowed({
+    hostname,
+    isUserTriggered,
+  }: {
+    hostname: string;
+    isUserTriggered: boolean;
+  }): Promise<boolean> {
     if (isUserTriggered) {
       return true;
     }
@@ -162,10 +177,13 @@ export class UnsubscribeHostnameService {
     );
   }
 
-  private async updateStatus(
-    emailingDomain: EmailingDomainEntity,
-    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
-  ): Promise<void> {
+  private async updateStatus({
+    emailingDomain,
+    unsubscribeHostnameStatus,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus;
+  }): Promise<void> {
     if (
       emailingDomain.unsubscribeHostnameStatus === unsubscribeHostnameStatus
     ) {

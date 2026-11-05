@@ -67,14 +67,14 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       const tenantName = this.buildTenantName(input.workspaceId);
 
-      const identity = await this.findOrCreateEmailIdentity(
-        input.domain,
+      const identity = await this.findOrCreateEmailIdentity({
+        domain: input.domain,
         tenantName,
-      );
+      });
 
       await this.associateResourceWithTenant(input.domain, tenantName);
 
-      if (identity.VerifiedForSendingStatus === true) {
+      if (identity.VerifiedForSendingStatus) {
         await this.enableDkimSigning(input.domain);
       }
 
@@ -98,7 +98,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       return {
         status,
         verificationRecords: this.withRecordStatus(verificationRecords, status),
-        givenUpChecks: this.findGivenUpChecks(identity, verificationRecords),
+        givenUpChecks: this.findGivenUpChecks({
+          identity,
+          verificationRecords,
+        }),
       };
     } catch (error) {
       if (error instanceof EmailingDomainDriverException) {
@@ -124,28 +127,28 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     );
   }
 
-  async restartVerification(
-    input: EmailingDomainResourceInput,
-    check: EmailingDomainVerificationCheck,
-  ): Promise<void> {
+  async restartVerification({
+    domain,
+    check,
+  }: EmailingDomainResourceInput & {
+    check: EmailingDomainVerificationCheck;
+  }): Promise<void> {
     switch (check.name) {
       case 'DKIM':
-        this.logger.log(
-          `Restarting DKIM verification for domain: ${input.domain}`,
-        );
+        this.logger.log(`Restarting DKIM verification for domain: ${domain}`);
 
         await this.awsSesClientProvider.getSESClient().send(
           new PutEmailIdentityDkimSigningAttributesCommand({
-            EmailIdentity: input.domain,
+            EmailIdentity: domain,
             SigningAttributesOrigin: 'AWS_SES',
           }),
         );
 
         return;
       case 'MAIL_FROM':
-        this.logger.log(`Restarting MAIL FROM setup for: ${input.domain}`);
+        this.logger.log(`Restarting MAIL FROM setup for: ${domain}`);
 
-        await this.awsSesRegisterDomainService.registerDomain(input.domain);
+        await this.awsSesRegisterDomainService.registerDomain(domain);
 
         return;
     }
@@ -289,17 +292,22 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
   }
 
-  private async findOrCreateEmailIdentity(
-    domain: string,
-    tenantName: string,
-  ): Promise<GetEmailIdentityCommandOutput> {
+  private async findOrCreateEmailIdentity({
+    domain,
+    tenantName,
+  }: {
+    domain: string;
+    tenantName: string;
+  }): Promise<GetEmailIdentityCommandOutput> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
     const getEmailIdentity = () =>
       sesClient.send(new GetEmailIdentityCommand({ EmailIdentity: domain }));
 
     return getEmailIdentity().catch(async (error) => {
-      if (!(error instanceof NotFoundException)) throw error;
+      if (!(error instanceof NotFoundException)) {
+        throw error;
+      }
 
       await sesClient.send(
         new CreateEmailIdentityCommand({
@@ -312,10 +320,16 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     });
   }
 
-  private findGivenUpChecks(
-    identity: GetEmailIdentityCommandOutput,
-    verificationRecords: VerificationRecord[],
-  ): EmailingDomainVerificationCheck[] {
+  private findGivenUpChecks({
+    identity,
+    verificationRecords,
+  }: {
+    identity: Pick<
+      GetEmailIdentityCommandOutput,
+      'DkimAttributes' | 'MailFromAttributes'
+    >;
+    verificationRecords: VerificationRecord[];
+  }): EmailingDomainVerificationCheck[] {
     const givenUpChecks: EmailingDomainVerificationCheck[] = [];
 
     const dkimStatus = identity.DkimAttributes?.Status;

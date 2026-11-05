@@ -7,10 +7,13 @@ import { isMissingDnsRecordError } from 'src/engine/core-modules/dns-manager/uti
 import { normalizeDnsText } from 'src/engine/core-modules/dns-manager/utils/normalize-dns-text.util';
 import { resolveDnsRecordValues } from 'src/engine/core-modules/dns-manager/utils/resolve-dns-record-values.util';
 
-const isMatchingRecord = (
-  record: ExpectedDnsRecord,
-  foundValues: string[],
-): boolean => {
+const isMatchingRecord = ({
+  record,
+  foundValues,
+}: {
+  record: ExpectedDnsRecord;
+  foundValues: string[];
+}): boolean => {
   switch (record.type) {
     case 'TXT':
       return foundValues
@@ -25,14 +28,17 @@ const isMatchingRecord = (
   }
 };
 
-const lookupDnsRecordState = async (
-  resolver: Resolver,
-  record: ExpectedDnsRecord,
-): Promise<DnsRecordLookupState> => {
+const lookupDnsRecordState = async ({
+  resolver,
+  record,
+}: {
+  resolver: Resolver;
+  record: ExpectedDnsRecord;
+}): Promise<DnsRecordLookupState> => {
   try {
-    const foundValues = await resolveDnsRecordValues(resolver, record);
+    const foundValues = await resolveDnsRecordValues({ resolver, record });
 
-    return isMatchingRecord(record, foundValues) ? 'found' : 'missing';
+    return isMatchingRecord({ record, foundValues }) ? 'found' : 'missing';
   } catch (error) {
     return isMissingDnsRecordError(error) ? 'missing' : 'unknown';
   }
@@ -48,7 +54,7 @@ export const lookupDnsRecordsState = async (
   const resolver = new Resolver(DNS_LOOKUP_RESOLVER_OPTIONS);
 
   const states = await Promise.all(
-    records.map((record) => lookupDnsRecordState(resolver, record)),
+    records.map((record) => lookupDnsRecordState({ resolver, record })),
   );
 
   if (states.includes('missing')) {

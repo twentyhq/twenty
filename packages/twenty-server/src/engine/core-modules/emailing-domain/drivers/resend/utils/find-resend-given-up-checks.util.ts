@@ -14,11 +14,15 @@ const isGivenUpRecordStatus = (status: string | undefined): boolean => {
   }
 };
 
-const findGivenUpCheck = (
-  records: ResendDomainRecord[],
-  recordLabel: string,
-  name: EmailingDomainVerificationCheck['name'],
-): EmailingDomainVerificationCheck[] => {
+const findGivenUpCheck = ({
+  records,
+  recordLabel,
+  name,
+}: {
+  records: ResendDomainRecord[];
+  recordLabel: string;
+  name: EmailingDomainVerificationCheck['name'];
+}): EmailingDomainVerificationCheck[] => {
   const labelledRecords = records.filter(
     (record) => record.record.toUpperCase() === recordLabel,
   );
@@ -36,7 +40,7 @@ export const findResendGivenUpChecks = (
   const records = domain.records ?? [];
 
   return [
-    ...findGivenUpCheck(records, 'DKIM', 'DKIM'),
-    ...findGivenUpCheck(records, 'SPF', 'MAIL_FROM'),
+    ...findGivenUpCheck({ records, recordLabel: 'DKIM', name: 'DKIM' }),
+    ...findGivenUpCheck({ records, recordLabel: 'SPF', name: 'MAIL_FROM' }),
   ];
 };

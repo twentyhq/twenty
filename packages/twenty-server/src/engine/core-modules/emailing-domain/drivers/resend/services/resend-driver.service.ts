@@ -72,7 +72,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     const domain = await this.findDomainByName(input.domain);
 
     if (!isDefined(domain)) {
-      return;
+      throw new EmailingDomainDriverException(
+        `Resend domain ${input.domain} not found`,
+        EmailingDomainDriverExceptionCode.NOT_FOUND,
+      );
     }
 
     await this.resendApiClientService.verifyDomain(domain.id);

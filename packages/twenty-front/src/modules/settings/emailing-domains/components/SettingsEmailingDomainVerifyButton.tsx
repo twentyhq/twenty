@@ -39,7 +39,8 @@ export const SettingsEmailingDomainVerifyButton = ({
             children: t`We can't find your DNS records yet. Check them at your DNS provider and try again.`,
           });
           break;
-        default:
+        case EmailingDomainStatus.PENDING:
+        case EmailingDomainStatus.TEMPORARY_FAILURE:
           enqueueToast({
             status: 'info',
             children: t`Your records are being checked. This can take a few minutes.`,

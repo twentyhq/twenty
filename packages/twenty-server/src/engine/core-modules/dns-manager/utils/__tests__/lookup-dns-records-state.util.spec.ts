@@ -1,16 +1,10 @@
+import { Resolver } from 'dns/promises';
+
 import { lookupDnsRecordsState } from 'src/engine/core-modules/dns-manager/utils/lookup-dns-records-state.util';
 
-const mockResolveCname = jest.fn();
-const mockResolveMx = jest.fn();
-const mockResolveTxt = jest.fn();
-
-jest.mock('dns/promises', () => ({
-  Resolver: jest.fn().mockImplementation(() => ({
-    resolveCname: mockResolveCname,
-    resolveMx: mockResolveMx,
-    resolveTxt: mockResolveTxt,
-  })),
-}));
+const mockResolveCname = jest.spyOn(Resolver.prototype, 'resolveCname');
+const mockResolveMx = jest.spyOn(Resolver.prototype, 'resolveMx');
+const mockResolveTxt = jest.spyOn(Resolver.prototype, 'resolveTxt');
 
 const buildDnsError = (code: string): Error =>
   Object.assign(new Error(`query ${code}`), { code });
@@ -35,9 +29,9 @@ const MAIL_FROM_SPF_RECORD = {
 
 describe('lookupDnsRecordsState', () => {
   beforeEach(() => {
-    mockResolveCname.mockReset();
-    mockResolveMx.mockReset();
-    mockResolveTxt.mockReset();
+    mockResolveCname.mockRejectedValue(buildDnsError('ENOTFOUND'));
+    mockResolveMx.mockRejectedValue(buildDnsError('ENOTFOUND'));
+    mockResolveTxt.mockRejectedValue(buildDnsError('ENOTFOUND'));
   });
 
   it('should report found when every record resolves to its expected value, ignoring hostname case and trailing dots', async () => {

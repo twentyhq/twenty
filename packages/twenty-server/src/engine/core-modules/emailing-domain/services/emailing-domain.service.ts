@@ -63,12 +63,17 @@ export class EmailingDomainService {
     domain: string,
     workspaceId: string,
   ): Promise<EmailingDomainEntity> {
-    const emailingDomain = await this.insertEmailingDomain(domain, workspaceId);
+    const emailingDomain = await this.insertEmailingDomain({
+      domain,
+      workspaceId,
+    });
 
     await this.setUpEmailingDomain(emailingDomain).catch(async (error) => {
-      await this.emailingDomainRepository.delete(workspaceId, {
-        id: emailingDomain.id,
-      });
+      await this.removeEmailingDomain(emailingDomain).catch((removalError) =>
+        this.logger.error(
+          `Could not roll back emailing domain ${domain} of workspace ${workspaceId}: ${removalError}`,
+        ),
+      );
 
       throw error;
     });
@@ -80,10 +85,13 @@ export class EmailingDomainService {
     );
   }
 
-  private async insertEmailingDomain(
-    domain: string,
-    workspaceId: string,
-  ): Promise<EmailingDomainEntity> {
+  private async insertEmailingDomain({
+    domain,
+    workspaceId,
+  }: {
+    domain: string;
+    workspaceId: string;
+  }): Promise<EmailingDomainEntity> {
     const existingEmailingDomain =
       await this.globalEmailingDomainRepository.findOne({
         where: { domain },
@@ -134,7 +142,10 @@ export class EmailingDomainService {
       return;
     }
 
-    const emailingDomain = await this.insertEmailingDomain(domain, workspaceId);
+    const emailingDomain = await this.insertEmailingDomain({
+      domain,
+      workspaceId,
+    });
 
     await this.setUpEmailingDomain(emailingDomain).catch((error) =>
       this.logger.error(
@@ -156,11 +167,7 @@ export class EmailingDomainService {
       return;
     }
 
-    await this.unsubscribeHostnameService.deprovision(emailingDomain);
-    await this.deleteRemoteEmailingDomain(emailingDomain);
-    await this.emailingDomainRepository.delete(workspaceId, {
-      id: emailingDomain.id,
-    });
+    await this.removeEmailingDomain(emailingDomain);
   }
 
   async deleteEmailingDomain(
@@ -174,9 +181,15 @@ export class EmailingDomainService {
 
     await this.validateNoCampaignSendingOrThrow(workspace.id);
 
+    await this.removeEmailingDomain(emailingDomain);
+  }
+
+  private async removeEmailingDomain(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<void> {
     await this.unsubscribeHostnameService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
-    await this.emailingDomainRepository.delete(workspace.id, {
+    await this.emailingDomainRepository.delete(emailingDomain.workspaceId, {
       id: emailingDomain.id,
     });
   }
@@ -351,10 +364,10 @@ export class EmailingDomainService {
 
     const checksToRestart = isUserTriggered
       ? verificationResult.givenUpChecks
-      : await this.findChecksWithRecordsInPlace(
-          emailingDomain.domain,
-          verificationResult.givenUpChecks,
-        );
+      : await this.findChecksWithRecordsInPlace({
+          domain: emailingDomain.domain,
+          checks: verificationResult.givenUpChecks,
+        });
 
     if (!isNonEmptyArray(checksToRestart)) {
       return verificationResult;
@@ -362,10 +375,10 @@ export class EmailingDomainService {
 
     for (const check of checksToRestart) {
       await emailingDomainDriver
-        .restartVerification(resourceInput, check)
+        .restartVerification({ ...resourceInput, check })
         .catch((error) => {
           this.logger.warn(
-            `Could not restart ${check.name} verification of emailing domain ${emailingDomain.domain}: ${error}`,
+            `Could not restart ${check.name} verification of emailing domain ${emailingDomain.domain} of workspace ${emailingDomain.workspaceId}: ${error}`,
           );
         });
     }
@@ -373,17 +386,20 @@ export class EmailingDomainService {
     return emailingDomainDriver.verifyDomain(resourceInput);
   }
 
-  private async findChecksWithRecordsInPlace(
-    domain: string,
-    checks: EmailingDomainVerificationCheck[],
-  ): Promise<EmailingDomainVerificationCheck[]> {
+  private async findChecksWithRecordsInPlace({
+    domain,
+    checks,
+  }: {
+    domain: string;
+    checks: EmailingDomainVerificationCheck[];
+  }): Promise<EmailingDomainVerificationCheck[]> {
     const checksWithDnsState = await Promise.all(
       checks.map(async (check) => ({
         check,
         dnsState: await lookupDnsRecordsState(
           check.records.map((record) => ({
             ...record,
-            key: qualifyDnsRecordName(record.key, domain),
+            key: qualifyDnsRecordName({ name: record.key, domain }),
           })),
         ),
       })),

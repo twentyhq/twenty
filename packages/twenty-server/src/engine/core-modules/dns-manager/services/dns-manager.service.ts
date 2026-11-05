@@ -179,13 +179,13 @@ export class DnsManagerService {
     customHostname: CustomHostnameListResponse | undefined,
   ): ExpectedDnsRecord {
     // @ts-expect-error - type definition doesn't reflect the real API
-    const dcvRecords = customHostname?.ssl?.dcv_delegation_records?.[0];
+    const sslDelegation = customHostname?.ssl?.dcv_delegation_records?.[0];
 
     return {
       type: 'CNAME',
-      key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
+      key: sslDelegation?.cname ?? `_acme-challenge.${hostname}`,
       value:
-        dcvRecords?.cname_target ??
+        sslDelegation?.cname_target ??
         `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
     };
   }

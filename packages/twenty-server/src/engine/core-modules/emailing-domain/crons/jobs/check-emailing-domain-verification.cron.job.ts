@@ -2,7 +2,7 @@ import { CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN } from 'src/engine/core
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Not, Or, Raw, Repository } from 'typeorm';
+import { FindOperator, IsNull, Not, Or, Raw, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { EMAILING_DOMAIN_HOURLY_CHECK_PERIOD } from 'src/engine/core-modules/emailing-domain/constants/emailing-domain-hourly-check-period.constant';
@@ -41,13 +41,15 @@ export class CheckEmailingDomainVerificationCronJob {
     await this.reprovisionWorkspacesOfTheHour();
   }
 
+  private isInCurrentHourOfDay(): FindOperator<Date> {
+    return Raw(
+      (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
+    );
+  }
+
   private async reprovisionWorkspacesOfTheHour(): Promise<void> {
     const emailingDomainsOfTheHour = await this.emailingDomainRepository.find({
-      where: {
-        createdAt: Raw(
-          (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
-        ),
-      },
+      where: { createdAt: this.isInCurrentHourOfDay() },
       select: ['workspaceId'],
     });
 
@@ -77,11 +79,7 @@ export class CheckEmailingDomainVerificationCronJob {
 
     const dueDomains = await this.emailingDomainRepository.find({
       where: [
-        {
-          createdAt: Raw(
-            (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
-          ),
-        },
+        { createdAt: this.isInCurrentHourOfDay() },
         {
           status: Not(EmailingDomainStatus.VERIFIED),
           createdAt: isRecent,
