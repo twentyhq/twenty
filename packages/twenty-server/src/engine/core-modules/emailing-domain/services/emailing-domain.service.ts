@@ -2,18 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 
+import isEqual from 'lodash.isequal';
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { In, Repository } from 'typeorm';
 
+import { lookupDnsRecordsState } from 'src/engine/core-modules/dns-manager/utils/lookup-dns-records-state.util';
+import { qualifyDnsRecordName } from 'src/engine/core-modules/dns-manager/utils/qualify-dns-record-name.util';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
+import { type EmailingDomainVerificationResult } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainVerificationCheck } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-verification-check.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainException,
@@ -58,6 +63,27 @@ export class EmailingDomainService {
     domain: string,
     workspaceId: string,
   ): Promise<EmailingDomainEntity> {
+    const emailingDomain = await this.insertEmailingDomain(domain, workspaceId);
+
+    await this.setUpEmailingDomain(emailingDomain).catch(async (error) => {
+      await this.emailingDomainRepository.delete(workspaceId, {
+        id: emailingDomain.id,
+      });
+
+      throw error;
+    });
+
+    return this.withDnsRecords(
+      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
+        where: { id: emailingDomain.id },
+      }),
+    );
+  }
+
+  private async insertEmailingDomain(
+    domain: string,
+    workspaceId: string,
+  ): Promise<EmailingDomainEntity> {
     const existingEmailingDomain =
       await this.globalEmailingDomainRepository.findOne({
         where: { domain },
@@ -75,41 +101,24 @@ export class EmailingDomainService {
       );
     }
 
-    const emailingDomainDriver =
-      this.emailingDomainDriverFactory.getCurrentDriver();
-
-    await emailingDomainDriver.provisionWorkspace(workspaceId);
-
-    const verificationResult = await emailingDomainDriver.verifyDomain({
+    return this.emailingDomainRepository.insertAndReturnOne(workspaceId, {
       domain,
-      workspaceId,
+      status: EmailingDomainStatus.PENDING,
     });
+  }
 
-    await emailingDomainDriver.registerDomain({
-      domain,
-      workspaceId,
+  private async setUpEmailingDomain(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<void> {
+    await this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .provisionWorkspace(emailingDomain.workspaceId);
+
+    await this.refreshEmailingDomain({
+      workspaceId: emailingDomain.workspaceId,
+      emailingDomainId: emailingDomain.id,
+      isUserTriggered: true,
     });
-
-    const isVerifiedOnCreation =
-      verificationResult.status === EmailingDomainStatus.VERIFIED;
-
-    const emailingDomain =
-      await this.emailingDomainRepository.insertAndReturnOne(workspaceId, {
-        domain,
-        status: verificationResult.status,
-        verificationRecords: verificationResult.verificationRecords,
-        verifiedAt: isVerifiedOnCreation ? new Date() : null,
-      });
-
-    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
-      provision: true,
-    });
-
-    return this.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
-        where: { id: emailingDomain.id },
-      }),
-    );
   }
 
   async ensureEmailingDomain(
@@ -125,7 +134,13 @@ export class EmailingDomainService {
       return;
     }
 
-    await this.createEmailingDomain(domain, workspaceId);
+    const emailingDomain = await this.insertEmailingDomain(domain, workspaceId);
+
+    await this.setUpEmailingDomain(emailingDomain).catch((error) =>
+      this.logger.error(
+        `Could not set up emailing domain ${domain} of workspace ${workspaceId}, the verification cron retries it: ${error}`,
+      ),
+    );
   }
 
   async deleteEmailingDomainByDomainIfExists(
@@ -247,25 +262,69 @@ export class EmailingDomainService {
     workspaceId: string;
     emailingDomainId: string;
   }): Promise<EmailingDomainEntity> {
+    await this.refreshEmailingDomain({
+      workspaceId,
+      emailingDomainId,
+      isUserTriggered: true,
+    });
+
+    return this.withDnsRecords(
+      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
+        where: { id: emailingDomainId },
+      }),
+    );
+  }
+
+  async refreshEmailingDomain({
+    workspaceId,
+    emailingDomainId,
+    isUserTriggered,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+    isUserTriggered: boolean;
+  }): Promise<void> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
       workspaceId,
       emailingDomainId,
     );
 
-    const emailingDomainDriver =
-      this.emailingDomainDriverFactory.getCurrentDriver();
+    try {
+      await this.refreshAuthentication(emailingDomain, { isUserTriggered });
+    } finally {
+      await this.unsubscribeHostnameService.sync(
+        workspaceId,
+        emailingDomain.id,
+        { isUserTriggered },
+      );
+    }
+  }
 
-    const verificationResult = await emailingDomainDriver.verifyDomain({
-      domain: emailingDomain.domain,
-      workspaceId: emailingDomain.workspaceId,
-    });
+  private async refreshAuthentication(
+    emailingDomain: EmailingDomainEntity,
+    { isUserTriggered }: { isUserTriggered: boolean },
+  ): Promise<void> {
+    const verificationResult = await this.verifyAndRestartGivenUpChecks(
+      emailingDomain,
+      { isUserTriggered },
+    );
+
+    if (
+      emailingDomain.status === verificationResult.status &&
+      isEqual(
+        emailingDomain.verificationRecords,
+        verificationResult.verificationRecords,
+      )
+    ) {
+      return;
+    }
 
     const hasJustBecomeVerified =
       emailingDomain.status !== EmailingDomainStatus.VERIFIED &&
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
     await this.emailingDomainRepository.update(
-      workspaceId,
+      emailingDomain.workspaceId,
       { id: emailingDomain.id },
       {
         status: verificationResult.status,
@@ -273,16 +332,67 @@ export class EmailingDomainService {
         ...(hasJustBecomeVerified ? { verifiedAt: new Date() } : {}),
       },
     );
+  }
 
-    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
-      provision: true,
-    });
+  private async verifyAndRestartGivenUpChecks(
+    emailingDomain: EmailingDomainEntity,
+    { isUserTriggered }: { isUserTriggered: boolean },
+  ): Promise<EmailingDomainVerificationResult> {
+    const emailingDomainDriver =
+      this.emailingDomainDriverFactory.getCurrentDriver();
 
-    return this.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
-        where: { id: emailingDomain.id },
-      }),
+    const resourceInput = {
+      domain: emailingDomain.domain,
+      workspaceId: emailingDomain.workspaceId,
+    };
+
+    const verificationResult =
+      await emailingDomainDriver.verifyDomain(resourceInput);
+
+    const checksToRestart = isUserTriggered
+      ? verificationResult.givenUpChecks
+      : await this.findChecksWithRecordsInPlace(
+          emailingDomain.domain,
+          verificationResult.givenUpChecks,
+        );
+
+    if (!isNonEmptyArray(checksToRestart)) {
+      return verificationResult;
+    }
+
+    return emailingDomainDriver
+      .restartVerification(resourceInput, checksToRestart)
+      .then(
+        () => emailingDomainDriver.verifyDomain(resourceInput),
+        (error) => {
+          this.logger.warn(
+            `Could not restart verification of emailing domain ${emailingDomain.domain}: ${error}`,
+          );
+
+          return verificationResult;
+        },
+      );
+  }
+
+  private async findChecksWithRecordsInPlace(
+    domain: string,
+    checks: EmailingDomainVerificationCheck[],
+  ): Promise<EmailingDomainVerificationCheck[]> {
+    const checksWithDnsState = await Promise.all(
+      checks.map(async (check) => ({
+        check,
+        dnsState: await lookupDnsRecordsState(
+          check.records.map((record) => ({
+            ...record,
+            key: qualifyDnsRecordName(record.key, domain),
+          })),
+        ),
+      })),
     );
+
+    return checksWithDnsState
+      .filter(({ dnsState }) => dnsState === 'found')
+      .map(({ check }) => check);
   }
 
   private async findEmailingDomainByIdOrThrow(

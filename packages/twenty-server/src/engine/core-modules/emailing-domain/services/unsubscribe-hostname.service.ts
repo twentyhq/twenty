@@ -28,13 +28,10 @@ export class UnsubscribeHostnameService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async provision(emailingDomain: EmailingDomainEntity): Promise<void> {
-    if (isNonEmptyString(emailingDomain.unsubscribeHostnameId)) {
-      return;
-    }
-
-    const hostname = this.buildHostname(emailingDomain.domain);
-
+  private async register(
+    emailingDomain: EmailingDomainEntity,
+    hostname: string,
+  ): Promise<void> {
     const unsubscribeHostnameId = await this.registerOrAdoptHostname(hostname);
 
     await this.emailingDomainRepository.update(
@@ -71,23 +68,93 @@ export class UnsubscribeHostnameService {
     }
   }
 
-  async refreshStatus(emailingDomain: EmailingDomainEntity): Promise<void> {
-    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
-      return;
+  private async refreshStatus(
+    emailingDomain: EmailingDomainEntity,
+    { isUserTriggered }: { isUserTriggered: boolean },
+  ): Promise<void> {
+    const hostname = this.getRegisteredOrNewHostname(emailingDomain);
+
+    const validationState =
+      await this.dnsManagerService.getHostnameValidationState(hostname);
+
+    switch (validationState) {
+      case 'active':
+        return this.updateStatus(
+          emailingDomain,
+          UnsubscribeHostnameStatus.ACTIVE,
+        );
+      case 'pending':
+        return this.updateStatus(
+          emailingDomain,
+          UnsubscribeHostnameStatus.PENDING,
+        );
+      case 'missing':
+        if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
+          return this.register(emailingDomain, hostname);
+        }
+
+        return this.updateStatus(
+          emailingDomain,
+          UnsubscribeHostnameStatus.FAILED,
+        );
+      case 'given_up':
+        if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
+          await this.dnsManagerService.refreshHostname(hostname);
+
+          return this.updateStatus(
+            emailingDomain,
+            UnsubscribeHostnameStatus.PENDING,
+          );
+        }
+
+        return this.updateStatus(
+          emailingDomain,
+          UnsubscribeHostnameStatus.FAILED,
+        );
+    }
+  }
+
+  private getRegisteredOrNewHostname(
+    emailingDomain: EmailingDomainEntity,
+  ): string {
+    if (
+      isNonEmptyString(emailingDomain.unsubscribeHostnameId) &&
+      isNonEmptyString(emailingDomain.unsubscribeHostname)
+    ) {
+      return emailingDomain.unsubscribeHostname;
     }
 
-    const isWorking = await this.dnsManagerService.isHostnameWorking(
-      emailingDomain.unsubscribeHostname,
+    return this.buildHostname(emailingDomain.domain);
+  }
+
+  private async isRestartAllowed(
+    hostname: string,
+    { isUserTriggered }: { isUserTriggered: boolean },
+  ): Promise<boolean> {
+    if (isUserTriggered) {
+      return true;
+    }
+
+    return (
+      (await this.dnsManagerService.lookupHostnameDnsState(hostname)) ===
+      'found'
     );
+  }
+
+  private async updateStatus(
+    emailingDomain: EmailingDomainEntity,
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
+  ): Promise<void> {
+    if (
+      emailingDomain.unsubscribeHostnameStatus === unsubscribeHostnameStatus
+    ) {
+      return;
+    }
 
     await this.emailingDomainRepository.update(
       emailingDomain.workspaceId,
       { id: emailingDomain.id },
-      {
-        unsubscribeHostnameStatus: isWorking
-          ? UnsubscribeHostnameStatus.ACTIVE
-          : UnsubscribeHostnameStatus.PENDING,
-      },
+      { unsubscribeHostnameStatus },
     );
   }
 
@@ -107,7 +174,7 @@ export class UnsubscribeHostnameService {
   async sync(
     workspaceId: string,
     emailingDomainId: string,
-    { provision }: { provision: boolean },
+    { isUserTriggered }: { isUserTriggered: boolean },
   ): Promise<void> {
     try {
       if (!this.dnsManagerService.isConfigured()) {
@@ -116,19 +183,11 @@ export class UnsubscribeHostnameService {
         return;
       }
 
-      const emailingDomain = await this.emailingDomainRepository.findOneOrFail(
-        workspaceId,
-        { where: { id: emailingDomainId } },
-      );
-
-      if (provision) {
-        await this.provision(emailingDomain);
-      }
-
       await this.refreshStatus(
         await this.emailingDomainRepository.findOneOrFail(workspaceId, {
           where: { id: emailingDomainId },
         }),
+        { isUserTriggered },
       );
     } catch (error) {
       this.logger.warn(

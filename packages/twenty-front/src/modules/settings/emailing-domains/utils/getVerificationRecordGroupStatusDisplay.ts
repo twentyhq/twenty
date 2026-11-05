@@ -14,6 +14,19 @@ type VerificationRecordGroupStatusDisplay = {
   color: ThemeColor;
 };
 
+const getUnsubscribeHostnameDisplayStatus = (
+  unsubscribeHostnameStatus: EmailingDomain['unsubscribeHostnameStatus'],
+): EmailingDomainStatus => {
+  switch (unsubscribeHostnameStatus) {
+    case UnsubscribeHostnameStatus.ACTIVE:
+      return EmailingDomainStatus.VERIFIED;
+    case UnsubscribeHostnameStatus.FAILED:
+      return EmailingDomainStatus.FAILED;
+    default:
+      return EmailingDomainStatus.PENDING;
+  }
+};
+
 export const getVerificationRecordGroupStatusDisplay = ({
   groupKey,
   emailingDomain,
@@ -28,10 +41,9 @@ export const getVerificationRecordGroupStatusDisplay = ({
       return { label: t`Not set`, color: 'gray' };
     case 'UNSUBSCRIBE':
       return getEmailingDomainStatusDisplay(
-        emailingDomain.unsubscribeHostnameStatus ===
-          UnsubscribeHostnameStatus.ACTIVE
-          ? EmailingDomainStatus.VERIFIED
-          : EmailingDomainStatus.PENDING,
+        getUnsubscribeHostnameDisplayStatus(
+          emailingDomain.unsubscribeHostnameStatus,
+        ),
       );
   }
 };

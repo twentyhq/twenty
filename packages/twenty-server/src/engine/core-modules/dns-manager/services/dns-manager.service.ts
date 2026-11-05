@@ -14,6 +14,10 @@ import {
   DnsManagerException,
   DnsManagerExceptionCode,
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
+import { type DnsRecordLookupState } from 'src/engine/core-modules/dns-manager/types/dns-record-lookup-state.type';
+import { type ExpectedDnsRecord } from 'src/engine/core-modules/dns-manager/types/expected-dns-record.type';
+import { type HostnameValidationState } from 'src/engine/core-modules/dns-manager/types/hostname-validation-state.type';
+import { lookupDnsRecordsState } from 'src/engine/core-modules/dns-manager/utils/lookup-dns-records-state.util';
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -82,12 +86,12 @@ export class DnsManagerService {
       return undefined;
     }
 
-    const { hostname, id, ssl } = customHostname;
+    const { hostname, id } = customHostname;
 
     const statuses = this.getHostnameStatuses(customHostname);
 
-    // @ts-expect-error - type definition doesn't reflect the real API
-    const dcvRecords = ssl?.dcv_delegation_records?.[0];
+    const redirectionRecord = this.buildRedirectionRecord(hostname, options);
+    const sslRecord = this.buildSslValidationRecord(hostname, customHostname);
 
     return {
       id: id,
@@ -97,21 +101,92 @@ export class DnsManagerService {
           validationType: 'redirection' as const,
           type: 'cname',
           status: statuses.redirection,
-          key: hostname,
-          value: options?.isPublicDomain
-            ? this.domainServerConfigService.getPublicDomainUrl().hostname
-            : this.domainServerConfigService.getBaseUrl().hostname,
+          key: redirectionRecord.key,
+          value: redirectionRecord.value,
         },
         {
           validationType: 'ssl' as const,
           type: 'cname',
           status: statuses.ssl,
-          key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
-          value:
-            dcvRecords?.cname_target ??
-            `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
+          key: sslRecord.key,
+          value: sslRecord.value,
         },
       ],
+    };
+  }
+
+  async getHostnameValidationState(
+    hostname: string,
+    options?: DnsManagerOptions,
+  ): Promise<HostnameValidationState> {
+    const customHostname = await this.getHostnameDetails(hostname, options);
+
+    if (!isDefined(customHostname)) {
+      return 'missing';
+    }
+
+    if (
+      customHostname.status === 'moved' ||
+      customHostname.status === 'deleted'
+    ) {
+      return 'given_up';
+    }
+
+    switch (customHostname.ssl.status) {
+      case 'initializing_timed_out':
+      case 'validation_timed_out':
+      case 'issuance_timed_out':
+      case 'deployment_timed_out':
+      case 'expired':
+        return 'given_up';
+      case 'active':
+        return this.getHostnameStatuses(customHostname).redirection ===
+          'success'
+          ? 'active'
+          : 'pending';
+      default:
+        return 'pending';
+    }
+  }
+
+  async lookupHostnameDnsState(
+    hostname: string,
+    options?: DnsManagerOptions,
+  ): Promise<DnsRecordLookupState> {
+    const customHostname = await this.getHostnameDetails(hostname, options);
+
+    return lookupDnsRecordsState([
+      this.buildRedirectionRecord(hostname, options),
+      this.buildSslValidationRecord(hostname, customHostname),
+    ]);
+  }
+
+  private buildRedirectionRecord(
+    hostname: string,
+    options?: DnsManagerOptions,
+  ): ExpectedDnsRecord {
+    return {
+      type: 'CNAME',
+      key: hostname,
+      value: options?.isPublicDomain
+        ? this.domainServerConfigService.getPublicDomainUrl().hostname
+        : this.domainServerConfigService.getBaseUrl().hostname,
+    };
+  }
+
+  private buildSslValidationRecord(
+    hostname: string,
+    customHostname: CustomHostnameListResponse | undefined,
+  ): ExpectedDnsRecord {
+    // @ts-expect-error - type definition doesn't reflect the real API
+    const dcvRecords = customHostname?.ssl?.dcv_delegation_records?.[0];
+
+    return {
+      type: 'CNAME',
+      key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
+      value:
+        dcvRecords?.cname_target ??
+        `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
     };
   }
 

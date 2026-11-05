@@ -1,0 +1,1 @@
+export const EMAILING_DOMAIN_HOURLY_CHECK_PERIOD = '3 days';

@@ -3,6 +3,7 @@ import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { type EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainVerificationCheck } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-verification-check.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 export type EmailingDomainResourceInput = {
@@ -13,6 +14,7 @@ export type EmailingDomainResourceInput = {
 export type EmailingDomainVerificationResult = {
   status: EmailingDomainStatus;
   verificationRecords: VerificationRecord[];
+  givenUpChecks: EmailingDomainVerificationCheck[];
 };
 
 export interface EmailingDomainDriverInterface {
@@ -21,10 +23,10 @@ export interface EmailingDomainDriverInterface {
   verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult>;
-  getDomainStatus(
+  restartVerification(
     input: EmailingDomainResourceInput,
-  ): Promise<EmailingDomainVerificationResult>;
-  registerDomain(input: EmailingDomainResourceInput): Promise<void>;
+    checks: EmailingDomainVerificationCheck[],
+  ): Promise<void>;
   cleanupDomain(input: EmailingDomainResourceInput): Promise<void>;
   sendEmail(
     input: EmailingDomainSendEmailRequest,

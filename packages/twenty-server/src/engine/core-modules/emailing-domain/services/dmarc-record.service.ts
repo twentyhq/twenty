@@ -8,7 +8,7 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { buildDmarcVerificationRecord } from 'src/engine/core-modules/emailing-domain/utils/build-dmarc-verification-record.util';
 import { containsDmarcPolicy } from 'src/engine/core-modules/emailing-domain/utils/contains-dmarc-policy.util';
 import { getDmarcLookupDomains } from 'src/engine/core-modules/emailing-domain/utils/get-dmarc-lookup-domains.util';
-import { isMissingDnsRecordError } from 'src/engine/core-modules/emailing-domain/utils/is-missing-dns-record-error.util';
+import { isMissingDnsRecordError } from 'src/engine/core-modules/dns-manager/utils/is-missing-dns-record-error.util';
 
 @Injectable()
 export class DmarcRecordService {

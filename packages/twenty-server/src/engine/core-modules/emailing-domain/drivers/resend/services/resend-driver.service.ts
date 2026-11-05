@@ -16,10 +16,10 @@ import { type ResendDriverConfig } from 'src/engine/core-modules/emailing-domain
 import { type ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { type ResendDomain } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-domain.type';
 import { type ResendSendEmailPayload } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-send-email-payload.type';
+import { findResendGivenUpChecks } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/find-resend-given-up-checks.util';
 import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-records.util';
 import { mapResendSendingStatus } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-sending-status.util';
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
-import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailBatchRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-request.type';
 import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
@@ -52,10 +52,6 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     );
   }
 
-  async registerDomain(_input: EmailingDomainResourceInput): Promise<void> {
-    // the return-path subdomain is configured by Resend at domain creation
-  }
-
   async verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {
@@ -65,38 +61,21 @@ export class ResendDriver implements EmailingDomainDriverInterface {
       domain.id,
     );
 
-    if (
-      mapResendSendingStatus(currentDomain) === EmailingDomainStatus.VERIFIED
-    ) {
-      return this.toVerificationResult(currentDomain);
-    }
-
-    await this.resendApiClientService.verifyDomain(domain.id);
-
-    const refreshedDomain = await this.resendApiClientService.getDomain(
-      domain.id,
-    );
-
-    return this.toVerificationResult(refreshedDomain);
+    return {
+      status: mapResendSendingStatus(currentDomain),
+      verificationRecords: mapResendDomainRecords(currentDomain.records),
+      givenUpChecks: findResendGivenUpChecks(currentDomain),
+    };
   }
 
-  async getDomainStatus(
-    input: EmailingDomainResourceInput,
-  ): Promise<EmailingDomainVerificationResult> {
+  async restartVerification(input: EmailingDomainResourceInput): Promise<void> {
     const domain = await this.findDomainByName(input.domain);
 
     if (!isDefined(domain)) {
-      return {
-        status: EmailingDomainStatus.FAILED,
-        verificationRecords: [],
-      };
+      return;
     }
 
-    const detailedDomain = await this.resendApiClientService.getDomain(
-      domain.id,
-    );
-
-    return this.toVerificationResult(detailedDomain);
+    await this.resendApiClientService.verifyDomain(domain.id);
   }
 
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {
@@ -281,14 +260,5 @@ export class ResendDriver implements EmailingDomainDriverInterface {
         (domain) => domain.name.toLowerCase() === domainName.toLowerCase(),
       ) ?? null
     );
-  }
-
-  private toVerificationResult(
-    domain: ResendDomain,
-  ): EmailingDomainVerificationResult {
-    return {
-      status: mapResendSendingStatus(domain),
-      verificationRecords: mapResendDomainRecords(domain.records),
-    };
   }
 }

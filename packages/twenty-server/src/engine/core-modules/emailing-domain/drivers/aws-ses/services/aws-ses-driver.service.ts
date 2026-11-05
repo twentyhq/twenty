@@ -10,9 +10,12 @@ import {
   DeleteTenantCommand,
   DeleteTenantResourceAssociationCommand,
   GetEmailIdentityCommand,
+  type GetEmailIdentityCommandOutput,
   NotFoundException,
   PutEmailIdentityDkimAttributesCommand,
+  PutEmailIdentityDkimSigningAttributesCommand,
 } from '@aws-sdk/client-sesv2';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import {
@@ -40,6 +43,7 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainVerificationCheck } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-verification-check.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 
 export class AwsSesDriver implements EmailingDomainDriverInterface {
@@ -63,20 +67,38 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       const tenantName = this.buildTenantName(input.workspaceId);
 
-      const { isVerified, status, verificationRecords } =
-        await this.createOrUpdateEmailIdentity(input.domain, tenantName);
+      const identity = await this.findOrCreateEmailIdentity(
+        input.domain,
+        tenantName,
+      );
 
-      if (isVerified) {
+      await this.associateResourceWithTenant(input.domain, tenantName);
+
+      if (identity.VerifiedForSendingStatus === true) {
         await this.enableDkimSigning(input.domain);
       }
+
+      const status = this.determineVerificationStatus(identity);
 
       if (status === EmailingDomainStatus.VERIFIED) {
         await this.assertProductionAccessOrThrow();
       }
 
+      const mailFromDomain = identity.MailFromAttributes?.MailFromDomain;
+
+      const verificationRecords = buildAwsSesVerificationRecords({
+        domain: input.domain,
+        dkimTokens: identity.DkimAttributes?.Tokens ?? [],
+        mailFromDomain: isNonEmptyString(mailFromDomain)
+          ? mailFromDomain
+          : undefined,
+        region: this.config.region,
+      });
+
       return {
         status,
         verificationRecords: this.withRecordStatus(verificationRecords, status),
+        givenUpChecks: this.findGivenUpChecks(identity, verificationRecords),
       };
     } catch (error) {
       if (error instanceof EmailingDomainDriverException) {
@@ -85,55 +107,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       this.logger.error(`Failed to verify domain ${input.domain}: ${error}`);
       this.awsSesHandleErrorService.handleAwsSesError(error, 'verifyDomain');
-    }
-  }
-
-  async getDomainStatus(
-    input: EmailingDomainResourceInput,
-  ): Promise<EmailingDomainVerificationResult> {
-    try {
-      this.logger.log(`Getting domain status for: ${input.domain}`);
-
-      const sesClient = this.awsSesClientProvider.getSESClient();
-
-      const getIdentityCommand = new GetEmailIdentityCommand({
-        EmailIdentity: input.domain,
-      });
-
-      const identityResponse = await sesClient.send(getIdentityCommand);
-
-      const status = this.determineVerificationStatus(identityResponse);
-      const verificationRecords = buildAwsSesVerificationRecords({
-        domain: input.domain,
-        dkimTokens: identityResponse.DkimAttributes?.Tokens ?? [],
-        mailFromDomain: identityResponse.MailFromAttributes?.MailFromDomain,
-        region: this.config.region,
-      });
-
-      if (status === EmailingDomainStatus.VERIFIED) {
-        await this.assertProductionAccessOrThrow();
-      }
-
-      return {
-        status,
-        verificationRecords: this.withRecordStatus(verificationRecords, status),
-      };
-    } catch (error) {
-      if (error instanceof EmailingDomainDriverException) {
-        throw error;
-      }
-
-      if (error instanceof NotFoundException) {
-        return {
-          status: EmailingDomainStatus.FAILED,
-          verificationRecords: [],
-        };
-      }
-
-      this.logger.error(
-        `Failed to get domain status ${input.domain}: ${error}`,
-      );
-      this.awsSesHandleErrorService.handleAwsSesError(error, 'getDomainStatus');
     }
   }
 
@@ -151,8 +124,33 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     );
   }
 
-  async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
-    await this.awsSesRegisterDomainService.registerDomain(input.domain);
+  async restartVerification(
+    input: EmailingDomainResourceInput,
+    checks: EmailingDomainVerificationCheck[],
+  ): Promise<void> {
+    const sesClient = this.awsSesClientProvider.getSESClient();
+
+    for (const check of checks) {
+      switch (check.name) {
+        case 'DKIM':
+          this.logger.log(
+            `Restarting DKIM verification for domain: ${input.domain}`,
+          );
+
+          await sesClient.send(
+            new PutEmailIdentityDkimSigningAttributesCommand({
+              EmailIdentity: input.domain,
+              SigningAttributesOrigin: 'AWS_SES',
+            }),
+          );
+          break;
+        case 'MAIL_FROM':
+          this.logger.log(`Restarting MAIL FROM setup for: ${input.domain}`);
+
+          await this.awsSesRegisterDomainService.registerDomain(input.domain);
+          break;
+      }
+    }
   }
 
   async sendEmail(
@@ -293,73 +291,57 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
   }
 
-  private async createOrUpdateEmailIdentity(
+  private async findOrCreateEmailIdentity(
     domain: string,
     tenantName: string,
-  ): Promise<{
-    isVerified: boolean;
-    status: EmailingDomainStatus;
-    verificationRecords: VerificationRecord[];
-  }> {
+  ): Promise<GetEmailIdentityCommandOutput> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
-    try {
-      const getIdentityCommand = new GetEmailIdentityCommand({
-        EmailIdentity: domain,
-      });
-      const existingIdentity = await sesClient.send(getIdentityCommand);
+    const getEmailIdentity = () =>
+      sesClient.send(new GetEmailIdentityCommand({ EmailIdentity: domain }));
 
-      const isVerified = existingIdentity.VerifiedForSendingStatus === true;
-      const status = this.determineVerificationStatus(existingIdentity);
-      const verificationRecords = buildAwsSesVerificationRecords({
-        domain,
-        dkimTokens: existingIdentity.DkimAttributes?.Tokens ?? [],
-        mailFromDomain: existingIdentity.MailFromAttributes?.MailFromDomain,
-        region: this.config.region,
-      });
+    return getEmailIdentity().catch(async (error) => {
+      if (!(error instanceof NotFoundException)) throw error;
 
-      await this.associateResourceWithTenant(domain, tenantName);
+      await sesClient.send(
+        new CreateEmailIdentityCommand({
+          EmailIdentity: domain,
+          Tags: [{ Key: AWS_SES_TENANT_TAG_KEY, Value: tenantName }],
+        }),
+      );
 
-      return { isVerified, status, verificationRecords };
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return await this.createNewEmailIdentity(domain, tenantName);
-      }
-      throw error;
-    }
+      return getEmailIdentity();
+    });
   }
 
-  private async createNewEmailIdentity(
-    domain: string,
-    tenantName: string,
-  ): Promise<{
-    isVerified: boolean;
-    status: EmailingDomainStatus;
-    verificationRecords: VerificationRecord[];
-  }> {
-    const sesClient = this.awsSesClientProvider.getSESClient();
+  private findGivenUpChecks(
+    identity: GetEmailIdentityCommandOutput,
+    verificationRecords: VerificationRecord[],
+  ): EmailingDomainVerificationCheck[] {
+    const givenUpChecks: EmailingDomainVerificationCheck[] = [];
 
-    const createCommand = new CreateEmailIdentityCommand({
-      EmailIdentity: domain,
-      Tags: [{ Key: AWS_SES_TENANT_TAG_KEY, Value: tenantName }],
-    });
+    const dkimStatus = identity.DkimAttributes?.Status;
 
-    const createResponse = await sesClient.send(createCommand);
-    const dkimTokens = createResponse.DkimAttributes?.Tokens ?? [];
+    if (dkimStatus === 'FAILED' || dkimStatus === 'NOT_STARTED') {
+      givenUpChecks.push({
+        name: 'DKIM',
+        records: verificationRecords.filter(({ type }) => type === 'CNAME'),
+      });
+    }
 
-    await this.associateResourceWithTenant(domain, tenantName);
+    const mailFromAttributes = identity.MailFromAttributes;
 
-    const verificationRecords = buildAwsSesVerificationRecords({
-      domain,
-      dkimTokens,
-      region: this.config.region,
-    });
+    if (
+      !isNonEmptyString(mailFromAttributes?.MailFromDomain) ||
+      mailFromAttributes?.MailFromDomainStatus === 'FAILED'
+    ) {
+      givenUpChecks.push({
+        name: 'MAIL_FROM',
+        records: verificationRecords.filter(({ type }) => type === 'MX'),
+      });
+    }
 
-    return {
-      isVerified: false,
-      status: EmailingDomainStatus.PENDING,
-      verificationRecords,
-    };
+    return givenUpChecks;
   }
 
   private async associateResourceWithTenant(

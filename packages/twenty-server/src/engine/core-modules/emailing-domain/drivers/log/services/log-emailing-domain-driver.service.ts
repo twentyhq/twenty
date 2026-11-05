@@ -53,10 +53,8 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     return this.alwaysVerified('verifyDomain', input.domain);
   }
 
-  async getDomainStatus(
-    input: EmailingDomainResourceInput,
-  ): Promise<EmailingDomainVerificationResult> {
-    return this.alwaysVerified('getDomainStatus', input.domain);
+  async restartVerification(input: EmailingDomainResourceInput): Promise<void> {
+    this.logger.log(`[log-driver] restartVerification(${input.domain})`);
   }
 
   private alwaysVerified(
@@ -68,6 +66,7 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     return {
       status: EmailingDomainStatus.VERIFIED,
       verificationRecords: this.buildSyntheticVerificationRecords(domain),
+      givenUpChecks: [],
     };
   }
 
@@ -106,10 +105,6 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
         status: 'error',
       },
     ];
-  }
-
-  async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
-    this.logger.log(`[log-driver] registerDomain(${input.domain})`);
   }
 
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {

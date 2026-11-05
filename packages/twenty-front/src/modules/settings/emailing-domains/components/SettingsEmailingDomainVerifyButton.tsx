@@ -2,7 +2,10 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
+import {
+  EmailingDomainStatus,
+  VerifyEmailingDomainDocument,
+} from '~/generated-metadata/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -22,11 +25,26 @@ export const SettingsEmailingDomainVerifyButton = ({
 
   const handleVerify = async () => {
     try {
-      await verifyEmailingDomain({ variables: { id: emailingDomainId } });
-      enqueueToast({
-        status: 'success',
-        children: t`Started verification process`,
+      const { data } = await verifyEmailingDomain({
+        variables: { id: emailingDomainId },
       });
+
+      switch (data?.verifyEmailingDomain.status) {
+        case EmailingDomainStatus.VERIFIED:
+          enqueueToast({ status: 'success', children: t`Domain verified` });
+          break;
+        case EmailingDomainStatus.FAILED:
+          enqueueToast({
+            status: 'error',
+            children: t`We can't find your DNS records yet. Check them at your DNS provider and try again.`,
+          });
+          break;
+        default:
+          enqueueToast({
+            status: 'info',
+            children: t`Your records are being checked. This can take a few minutes.`,
+          });
+      }
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

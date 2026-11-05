@@ -1,4 +1,4 @@
-import { isMissingDnsRecordError } from 'src/engine/core-modules/emailing-domain/utils/is-missing-dns-record-error.util';
+import { isMissingDnsRecordError } from 'src/engine/core-modules/dns-manager/utils/is-missing-dns-record-error.util';
 
 const buildDnsError = (code: string): Error =>
   Object.assign(new Error(`queryTxt ${code}`), { code });
