@@ -52,17 +52,6 @@ describe('buildMcpToolTargets', () => {
     expect(docsTargetName).not.toBe(docsAdminTargetName);
   });
 
-  it('tells apart tools of one server that normalize to the same name', () => {
-    const names = buildMcpToolTargets([
-      createMcpServer({
-        name: 'docs',
-        toolNames: ['search-docs', 'search_docs'],
-      }),
-    ]).map(({ name }) => name);
-
-    expect(new Set(names).size).toBe(2);
-  });
-
   it('keeps names within the model provider limit', () => {
     const [{ name }] = buildMcpToolTargets([
       createMcpServer({

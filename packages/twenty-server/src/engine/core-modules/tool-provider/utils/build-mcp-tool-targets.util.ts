@@ -1,11 +1,16 @@
 import { createHash } from 'crypto';
 
 import { type McpToolTarget } from 'src/engine/core-modules/tool-provider/types/mcp-tool-target.type';
-import { buildMcpToolName } from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-name.util';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 
 const MODEL_PROVIDER_TOOL_NAME_MAX_LENGTH = 64;
 const NAME_HASH_LENGTH = 8;
+
+const toSnakeCase = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
 
 const buildHashedMcpToolName = ({
   readableName,
@@ -31,10 +36,7 @@ export const buildMcpToolTargets = (
     mcpServer.tools.map((tool) => ({
       mcpServer,
       tool,
-      readableName: buildMcpToolName({
-        mcpServerName: mcpServer.name,
-        toolName: tool.name,
-      }),
+      readableName: `mcp_${toSnakeCase(mcpServer.name)}_${toSnakeCase(tool.name)}`,
     })),
   );
   const candidateCountByReadableName = candidates.reduce(

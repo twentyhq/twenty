@@ -9,8 +9,7 @@ type ToolOutputContentItem =
   | { type: 'resource'; uri: string; text?: string }
   | { type: 'resource_link'; uri: string; name: string };
 
-// Binary payloads are dropped: the model only reads text, and base64 blobs would flood the context.
-const toContentItem = (
+const toContentItemWithoutBinaryPayload = (
   item: CallToolResult['content'][number],
 ): ToolOutputContentItem => {
   switch (item.type) {
@@ -37,7 +36,7 @@ export const fromCallToolResultToToolOutput = ({
   toolName: string;
   result: CallToolResult;
 }): ToolOutput => {
-  const content = result.content.map(toContentItem);
+  const content = result.content.map(toContentItemWithoutBinaryPayload);
 
   if (result.isError) {
     const errorText = content
