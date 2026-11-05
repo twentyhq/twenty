@@ -4,6 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -55,7 +56,9 @@ export class DirectMessageContentService {
       }
 
       const thread = await repositorySource
-        .getRepositoryWithoutPermissionChecks('agentChatThread')
+        .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+          'agentChatThread',
+        )
         .findOne({
           where: { id: threadId },
           select: ['conversationType'],
