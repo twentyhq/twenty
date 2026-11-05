@@ -9,7 +9,7 @@ import {
   type MockInstance,
 } from 'vitest';
 
-import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
+import { ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/attachment-file-field-universal-identifier.constant';
 import { uploadMessageAttachment } from '@/sdk/logic-function/messaging/upload-message-attachment';
 
 const UPLOAD_URL = 'https://storage.test/upload/pending-file';
@@ -23,10 +23,10 @@ const readBodyBytes = async (body: BodyInit | null | undefined) =>
 const readGraphqlVariables = async (body: BodyInit | null | undefined) =>
   JSON.parse(await new Response(body).text()).variables;
 
-describe('MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER', () => {
+describe('ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER', () => {
   it('matches the standard message attachments field', () => {
-    expect(MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER).toBe(
-      STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+    expect(ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER).toBe(
+      STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
     );
   });
 });
@@ -75,7 +75,7 @@ describe('uploadMessageAttachment', () => {
       filename: 'photo.png',
       size: 3,
       fieldMetadataUniversalIdentifier:
-        STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
     });
 
     const [uploadUrl, uploadInit] = fetchSpy.mock.calls[1];

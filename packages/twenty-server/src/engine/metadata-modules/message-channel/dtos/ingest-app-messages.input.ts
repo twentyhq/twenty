@@ -17,7 +17,6 @@ import {
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
 
 // the role is a SELECT on messageParticipant, so this is the first surface exposing it as a GraphQL enum
 registerEnumType(MessageParticipantRole, { name: 'MessageParticipantRole' });
@@ -29,6 +28,8 @@ export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
 export const MAX_APP_MESSAGE_TEXT_LENGTH = 262_144;
 
 export const MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE = 32;
+
+export const MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE = 20;
 
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {
@@ -130,7 +131,7 @@ export class AppMessageInput {
   @Field(() => [AppMessageAttachmentInput], { nullable: true })
   @IsOptional()
   @IsArray()
-  @ArrayMaxSize(MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES)
+  @ArrayMaxSize(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE)
   @ValidateNested({ each: true })
   @Type(() => AppMessageAttachmentInput)
   attachments?: AppMessageAttachmentInput[];

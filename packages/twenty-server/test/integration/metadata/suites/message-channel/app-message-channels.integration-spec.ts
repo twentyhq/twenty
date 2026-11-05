@@ -1204,7 +1204,7 @@ describe('app message channels API (e2e)', () => {
            WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
         [
           SEED_APPLE_WORKSPACE_ID,
-          STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+          STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
         ],
       );
       const uploadedFile = await uploadFileWithDirectUpload({
@@ -1222,13 +1222,16 @@ describe('app message channels API (e2e)', () => {
     const findStoredAttachmentFileIds = async (
       messageId: string,
     ): Promise<string[]> => {
-      const [message] = await globalThis.testDataSource.query(
-        `SELECT attachments FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1`,
-        [messageId],
-      );
+      const attachments: { file: { fileId: string }[] | null }[] =
+        await globalThis.testDataSource.query(
+          `SELECT file FROM "${WORKSPACE_SCHEMA}"."attachment"
+             WHERE "targetMessageId" = $1 AND "deletedAt" IS NULL
+             ORDER BY "createdAt"`,
+          [messageId],
+        );
 
-      return (message.attachments ?? []).map(
-        (attachment: { fileId: string }) => attachment.fileId,
+      return attachments.flatMap(({ file }) =>
+        (file ?? []).map(({ fileId }) => fileId),
       );
     };
 

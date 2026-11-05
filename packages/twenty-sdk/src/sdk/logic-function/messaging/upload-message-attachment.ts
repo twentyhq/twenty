@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
+import { ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/attachment-file-field-universal-identifier.constant';
 import { type IngestMessageAttachment } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
 
@@ -44,7 +44,7 @@ export const uploadMessageAttachment = async ({
     fileBuffer: Buffer.from(content),
     filename,
     fieldMetadataUniversalIdentifier:
-      MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+      ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   });
 
   return { fileId: uploadedFile.id, label: filename };

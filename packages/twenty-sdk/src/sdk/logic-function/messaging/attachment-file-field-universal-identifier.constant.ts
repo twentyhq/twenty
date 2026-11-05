@@ -1,0 +1,3 @@
+// Not read from twenty-shared/metadata: that catalog would ship inside every logic function bundle
+export const ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-15db-460e-8166-c7b5d87ad4be';
