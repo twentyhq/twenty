@@ -1,4 +1,4 @@
-import { resolveViewChildEntityViewIds } from 'src/engine/permissions/view/utils/resolve-view-child-entity-view-ids.util';
+import { resolveViewChildEntityViewIds } from 'src/engine/metadata-modules/view/utils/resolve-view-child-entity-view-ids.util';
 
 describe('resolveViewChildEntityViewIds', () => {
   it('reads the view named by the input', () => {

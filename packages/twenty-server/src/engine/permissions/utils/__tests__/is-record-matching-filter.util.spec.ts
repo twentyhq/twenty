@@ -11,9 +11,9 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/internal/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
+describe('isRecordMatchingFilter', () => {
   const createMockFlatObjectMetadata = (
     fieldIds: string[],
   ): FlatObjectMetadata => ({
@@ -174,7 +174,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   } as ObjectRecord;
 
   it('returns true for an empty filter on non-deleted record', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: baseRecord,
       filter: {},
       flatObjectMetadata,
@@ -185,7 +185,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   });
 
   it('never matches the unsatisfiable filter', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: baseRecord,
       filter: UNSATISFIABLE_RECORD_FILTER,
       flatObjectMetadata,
@@ -196,7 +196,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   });
 
   it('returns false for deleted records without deletedAt filter', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: { ...baseRecord, deletedAt: new Date().toISOString() },
       filter: {
         jobTitle: {
@@ -211,7 +211,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   });
 
   it('treats multiple filter keys as an implicit and', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: baseRecord,
       filter: {
         jobTitle: {
@@ -231,7 +231,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   });
 
   it('treats "or" with object as an "and"', () => {
-    const matchingResult = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const matchingResult = isRecordMatchingFilter({
       record: baseRecord,
       filter: {
         or: {
@@ -249,7 +249,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       flatFieldMetadataMaps,
     });
 
-    const nonMatchingResult = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const nonMatchingResult = isRecordMatchingFilter({
       record: {
         ...baseRecord,
         name: {
@@ -278,7 +278,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   });
 
   it('supports "not" filter negation', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: baseRecord,
       filter: {
         not: {
@@ -301,7 +301,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     'requires every composite sub-field to match, as SQL does (city %s)',
     (addressCity, expected) => {
       expect(
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingFilter({
           record: baseRecord,
           filter: {
             address: {
@@ -318,7 +318,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('never matches a composite sub-field it cannot read', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: baseRecord,
         filter: {
           address: {
@@ -339,7 +339,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     'matches an actor on its workspace member, for %s',
     (_, workspaceMemberId, expected) => {
       expect(
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingFilter({
           record: baseRecord,
           filter: {
             createdBy: { workspaceMemberId: { eq: workspaceMemberId } },
@@ -353,7 +353,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('treats a null actor source as no constraint', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: baseRecord,
         filter: {
           createdBy: { source: null, name: { eq: 'Jane Doe' } },
@@ -369,7 +369,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     ['%john%', false],
   ])('matches additional emails like %s', (like, expected) => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: baseRecord,
         filter: { emails: { additionalEmails: { like } } },
         flatObjectMetadata,
@@ -380,7 +380,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('never lets a null JSON sub-field match a like pattern', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: {
           ...baseRecord,
           emails: { primaryEmail: 'jane@acme.com', additionalEmails: null },
@@ -394,7 +394,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('matches address coordinates', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: {
           ...baseRecord,
           address: { ...baseRecord.address, addressLat: 48.85 },
@@ -410,7 +410,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('treats null and empty sub-field filters as no constraint', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: baseRecord,
         filter: {
           name: { firstName: null, lastName: { eq: 'Doe' } },
@@ -432,7 +432,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     'reads a null %s as null sub-fields for %j',
     (fieldName, subFieldFilter, expected) => {
       expect(
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingFilter({
           record: { ...baseRecord, [fieldName]: null },
           filter: { [fieldName]: subFieldFilter } as RecordGqlOperationFilter,
           flatObjectMetadata,
@@ -443,7 +443,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   );
 
   it('supports relation join column filters', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const result = isRecordMatchingFilter({
       record: baseRecord,
       filter: {
         companyId: {
@@ -459,7 +459,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('matches "is not empty" on a relation field by its related record id', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
         filter: { company: { is: 'NOT_NULL' } },
         flatObjectMetadata,
@@ -468,7 +468,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     ).toBe(true);
 
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: { ...baseRecord, company: null } as ObjectRecord,
         filter: { company: { is: 'NOT_NULL' } },
         flatObjectMetadata,
@@ -479,7 +479,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   it('matches "is empty" on a relation field by its related record id', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: { ...baseRecord, company: null } as ObjectRecord,
         filter: { company: { is: 'NULL' } },
         flatObjectMetadata,
@@ -488,7 +488,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     ).toBe(true);
 
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
         filter: { company: { is: 'NULL' } },
         flatObjectMetadata,
@@ -536,7 +536,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     'evaluates array RLS filter $filter as $expected',
     ({ filter, expected }) => {
       expect(
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingFilter({
           record: baseRecord,
           filter,
           flatObjectMetadata,

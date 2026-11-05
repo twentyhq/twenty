@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/internal/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
 export const findRowLevelPermissionMatchingRecordIds = ({
   records,
@@ -22,7 +22,7 @@ export const findRowLevelPermissionMatchingRecordIds = ({
 
   return records
     .filter((record) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record,
         filter: rowLevelPermissionFilter.recordFilter,
         flatObjectMetadata: request.flatObjectMetadata,

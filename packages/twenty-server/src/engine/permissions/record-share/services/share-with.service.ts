@@ -62,7 +62,6 @@ export class ShareWithService {
     flatObjectMetadata,
     objectSharing,
     recordIds,
-    apiKeyRoleMap,
     createdRecordSharing: { shareWith, isPrivate },
     transactionScope,
   }: {
@@ -70,7 +69,6 @@ export class ShareWithService {
     flatObjectMetadata: FlatObjectMetadata;
     objectSharing: ObjectSharing;
     recordIds: string[];
-    apiKeyRoleMap: Record<string, string>;
     createdRecordSharing: CreatedRecordSharing;
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
@@ -83,6 +81,11 @@ export class ShareWithService {
       recordIds,
       transactionScope,
     });
+
+    const { apiKeyRoleMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['apiKeyRoleMap'],
+    );
 
     await this.recordShareStorageService.insertMany({
       workspaceId,
