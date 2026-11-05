@@ -60,9 +60,8 @@ type FieldQuestion = ObjectQuestion & {
 };
 
 // An empty denied set means every field is allowed, so it cannot answer for a missing principal
-type FieldsQuestion = {
+type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
   principals: PermissionsPrincipalsWithRolesContext;
-  objectMetadataId: string;
 };
 
 @Injectable()
