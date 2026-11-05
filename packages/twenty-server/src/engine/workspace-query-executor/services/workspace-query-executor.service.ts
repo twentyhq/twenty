@@ -17,8 +17,10 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
+import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 
 // Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
 const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
@@ -92,6 +94,15 @@ export class WorkspaceQueryExecutorService
   getPrimaryQueryExecutorOrThrow(): QueryExecutor {
     return new PoolQueryExecutor({
       pool: this.getPoolOrThrow({ useReplica: false }),
+    });
+  }
+
+  runInTransaction<TResult>(
+    work: (executor: QueryExecutor) => Promise<TResult>,
+  ): Promise<TResult> {
+    return runInRollbackSafeTransaction({
+      pool: this.getPoolOrThrow({ useReplica: false }),
+      work: (client) => work(new ClientQueryExecutor({ client })),
     });
   }
 

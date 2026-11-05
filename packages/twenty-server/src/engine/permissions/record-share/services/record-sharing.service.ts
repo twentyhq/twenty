@@ -280,7 +280,7 @@ export class RecordSharingService {
         criteria: [
           {
             objectMetadataId: args.objectMetadataId,
-            recordId: args.recordId,
+            recordIds: [args.recordId],
             rowCause: RecordShareRowCause.OWNER,
           },
         ],
@@ -295,7 +295,7 @@ export class RecordSharingService {
       criteria: [
         {
           objectMetadataId: args.objectMetadataId,
-          recordId: args.recordId,
+          recordIds: [args.recordId],
           principalType: RecordSharePrincipalType.EVERYONE,
           rowCause: RecordShareRowCause.MANUAL,
         },
