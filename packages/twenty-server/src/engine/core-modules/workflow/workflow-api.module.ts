@@ -14,10 +14,8 @@ import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/re
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -30,7 +28,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
@@ -55,7 +53,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowRunResolver,
-    provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })
 export class WorkflowApiModule {}
