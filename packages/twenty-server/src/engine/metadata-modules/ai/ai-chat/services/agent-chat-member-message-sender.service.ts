@@ -32,6 +32,7 @@ import { type AgentChatAssistantParticipation } from 'src/engine/metadata-module
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
+import { isAgentChatDirectMessageAddressedWithinPair } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-direct-message-addressed-within-pair.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -108,16 +109,16 @@ export class AgentChatMemberMessageSenderService {
         return throwAgentChatThreadNotFound();
       }
 
-      const pair = [
-        thread.directMessageFirstWorkspaceMemberId,
-        thread.directMessageSecondWorkspaceMemberId,
-      ];
-      const hasOutsideRecipient = [
-        ...addressing.mentionedWorkspaceMemberIds,
-        ...addressing.initialRecipientWorkspaceMemberIds,
-      ].some((memberId) => !pair.includes(memberId.toLowerCase()));
-
-      if (!pair.includes(actor.workspaceMemberId) || hasOutsideRecipient) {
+      if (
+        !isAgentChatDirectMessageAddressedWithinPair({
+          thread,
+          senderWorkspaceMemberId: actor.workspaceMemberId,
+          addressedWorkspaceMemberIds: [
+            ...addressing.mentionedWorkspaceMemberIds,
+            ...addressing.initialRecipientWorkspaceMemberIds,
+          ],
+        })
+      ) {
         return throwAgentChatThreadNotFound();
       }
 
@@ -128,7 +129,10 @@ export class AgentChatMemberMessageSenderService {
         );
       }
 
-      messageAddressing.initialRecipientWorkspaceMemberIds = pair
+      messageAddressing.initialRecipientWorkspaceMemberIds = [
+        thread.directMessageFirstWorkspaceMemberId,
+        thread.directMessageSecondWorkspaceMemberId,
+      ]
         .filter(isDefined)
         .filter((memberId) => memberId !== actor.workspaceMemberId);
     }
