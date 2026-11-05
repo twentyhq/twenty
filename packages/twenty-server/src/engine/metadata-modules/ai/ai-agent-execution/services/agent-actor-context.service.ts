@@ -26,7 +26,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -51,7 +51,7 @@ export type AgentActorContext = {
 export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly aiAgentRoleService: AiAgentRoleService,
@@ -134,12 +134,11 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.permissionsService.findUserWorkspaceRoleIdOrThrow(
-      {
+    const roleId =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
         userWorkspaceId,
         workspaceId,
-      },
-    );
+      });
 
     const actorContext = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
@@ -231,7 +230,7 @@ export class AgentActorContextService {
     workspaceMemberId: string;
   }): Promise<string> {
     try {
-      return await this.permissionsService.findUserWorkspaceRoleIdOrThrow({
+      return await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
         userWorkspaceId,
         workspaceId,
       });

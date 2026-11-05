@@ -11,23 +11,20 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
 export class UserRoleService {
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   public async assignRoleToWorkspaceMember({
@@ -41,10 +38,10 @@ export class UserRoleService {
     roleId: string;
     actingUserWorkspaceId?: string;
   }): Promise<{
-    workspaceMember: WorkspaceMemberWorkspaceEntity;
+    workspaceMember: FlatWorkspaceMember;
     userWorkspaceId: string;
   }> {
-    const workspaceMember = await this.getWorkspaceMemberByIdOrThrow({
+    const workspaceMember = await this.findWorkspaceMemberByIdOrThrow({
       workspaceMemberId,
       workspaceId,
     });
@@ -156,36 +153,27 @@ export class UserRoleService {
     }
   }
 
-  private async getWorkspaceMemberByIdOrThrow({
+  private async findWorkspaceMemberByIdOrThrow({
     workspaceMemberId,
     workspaceId,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<WorkspaceMemberWorkspaceEntity> {
-    const authContext = buildSystemAuthContext(workspaceId);
+  }): Promise<FlatWorkspaceMember> {
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
+    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
+      throw new PermissionsException(
+        'Workspace member not found',
+        PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
+      );
+    }
 
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: {
-          id: workspaceMemberId,
-        },
-      });
-
-      if (!isDefined(workspaceMember)) {
-        throw new PermissionsException(
-          'Workspace member not found',
-          PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
-        );
-      }
-
-      return workspaceMember;
-    }, authContext);
+    return workspaceMember;
   }
 
   private async validateAssignRoleInputsAndGetUserWorkspaceIdsToAssign({
@@ -222,7 +210,7 @@ export class UserRoleService {
     }
 
     const rolesByUserWorkspaces =
-      await this.permissionsService.findRolesByUserWorkspaceIds({
+      await this.rolePermissionsService.findRolesByUserWorkspaceIds({
         userWorkspaceIds,
         workspaceId,
       });
@@ -265,7 +253,7 @@ export class UserRoleService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const roleOfUserWorkspace = await this.permissionsService
+    const roleOfUserWorkspace = await this.rolePermissionsService
       .findRolesByUserWorkspaceIds({
         userWorkspaceIds: [userWorkspaceId],
         workspaceId,
@@ -303,7 +291,7 @@ export class UserRoleService {
     workspaceId: string;
   }) {
     const workspaceMembersWithAdminRole =
-      await this.permissionsService.findWorkspaceMembersWithRole({
+      await this.rolePermissionsService.findWorkspaceMembersWithRole({
         roleId: adminRoleId,
         workspaceId,
       });

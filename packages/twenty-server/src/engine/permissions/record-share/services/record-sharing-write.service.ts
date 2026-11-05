@@ -8,12 +8,12 @@ import {
   type RecordSharePrincipalInput,
   type RecordSharingDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { RecordSharingChangeService } from 'src/engine/permissions/record-share/services/record-sharing-change.service';
-import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordSharingChangeService } from 'src/engine/permissions/internal/record-share/services/record-sharing-change.service';
+import { RecordSharePrincipalService } from 'src/engine/permissions/internal/record-share/services/record-share-principal.service';
+import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
-import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
-import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
+import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util';
+import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()

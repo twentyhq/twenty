@@ -1,52 +1,42 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
+import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
-import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
-import { UserRoleReadService } from 'src/engine/permissions/role-assignment/user-role-read.service';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
+import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RecordPermissionOrmModule } from 'src/engine/permissions/record-permission-orm/record-permission-orm.module';
+import { RecordPermissionOrmModule } from 'src/engine/permissions/internal/record-permission-orm/record-permission-orm.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      RoleEntity,
-      RoleTargetEntity,
-      ApiKeyEntity,
-      UserWorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([RoleTargetEntity, UserWorkspaceEntity]),
     WorkspaceCacheModule,
-    RoleTargetModule,
     RecordPermissionOrmModule,
   ],
   providers: [
-    ApiKeyRoleService,
-    PermissionsService,
+    SettingPermissionsService,
     PermissionsMetadataMapsService,
-    PermissionsPrincipalsService,
-    RecordAccessPolicyService,
+    PrincipalPermissionsService,
+    RecordAccessDecisionService,
     RecordPermissionsService,
-    RecordSharingReadService,
-    UserRoleReadService,
-    provideWorkspaceScopedRepository(ApiKeyEntity),
-    provideWorkspaceScopedRepository(RoleEntity),
+    RecordSharingPermissionsService,
+    RolePermissionsService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
     PermissionsMetadataMapsService,
-    PermissionsService,
-    ApiKeyRoleService,
+    PrincipalPermissionsService,
+    RecordPermissionsService,
+    RecordSharingPermissionsService,
+    RolePermissionsService,
+    SettingPermissionsService,
   ],
 })
 export class PermissionsModule {}

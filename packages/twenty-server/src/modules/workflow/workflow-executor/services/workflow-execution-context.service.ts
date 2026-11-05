@@ -15,7 +15,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -35,7 +35,7 @@ export class WorkflowExecutionContextService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   async getExecutionContext(
@@ -134,7 +134,7 @@ export class WorkflowExecutionContextService {
         })
       : buildApplicationAuthContext({ workspace, application });
 
-    if (!(await this.permissionsService.hasAnyRole({ authContext }))) {
+    if (!(await this.rolePermissionsService.hasAnyRole({ authContext }))) {
       throw new WorkflowStepExecutorException(
         'No role is left to run this step with',
         WorkflowStepExecutorExceptionCode.FORBIDDEN,

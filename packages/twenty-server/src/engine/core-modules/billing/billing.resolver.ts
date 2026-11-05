@@ -50,7 +50,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -131,7 +131,7 @@ export class BillingResolver {
     private readonly billingService: BillingService,
     private readonly billingPartnerCodeService: BillingPartnerCodeService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -558,7 +558,7 @@ export class BillingResolver {
     }
 
     const userHasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.BILLING,

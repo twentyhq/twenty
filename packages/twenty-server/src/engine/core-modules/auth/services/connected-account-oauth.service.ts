@@ -11,12 +11,12 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class ConnectedAccountOAuthService {
   constructor(
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -48,7 +48,7 @@ export class ConnectedAccountOAuthService {
     }
 
     const canConnectAccount =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId: userWorkspace.id,
         workspaceId,
         setting: PermissionFlagType.CONNECTED_ACCOUNTS,

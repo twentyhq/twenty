@@ -33,7 +33,7 @@ import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -85,7 +85,7 @@ export class AgentChatChannelResolver {
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
     private readonly channelThreadsService: AgentChatChannelThreadsService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -156,7 +156,7 @@ export class AgentChatChannelResolver {
     callingApplication: FlatApplication | undefined,
   ): Promise<AgentChatChannelDTO[]> {
     const canManageChannels =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         workspaceId,
         userWorkspaceId,
         setting: PermissionFlagType.AI_SETTINGS,
