@@ -1,12 +1,13 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddMessageAttachmentsFieldCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793820013982-add-message-attachments-field.command';
+import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793876432369-add-message-attachment-target.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -18,38 +19,53 @@ const RUN_ON_WORKSPACE_ARGS = {
   index: 0,
   total: 1,
 };
-const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-const ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.message.fields.attachments.universalIdentifier;
 
-describe('2-56 workspace command - add message attachments field (integration)', () => {
-  let command: AddMessageAttachmentsFieldCommand;
+const MESSAGE_ATTACHMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier,
+  STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+];
+
+const MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.attachment.indexes.messageIdIndex.universalIdentifier;
+
+describe('2-56 workspace command - add message attachment target (integration)', () => {
+  let command: AddMessageAttachmentTargetCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
-  const findAttachmentsField = async () => {
-    const { flatFieldMetadataMaps } =
+  const findMessageAttachmentTarget = async () => {
+    const { flatFieldMetadataMaps, flatIndexMaps } =
       await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
         'flatFieldMetadataMaps',
+        'flatIndexMaps',
       ]);
-    // queryRunner.getTable chokes on the generated searchVector column of message
     const columns: unknown[] = await global.testDataSource.query(
       `SELECT 1 FROM information_schema.columns
-         WHERE table_schema = $1 AND table_name = 'message' AND column_name = 'attachments'`,
-      [SCHEMA],
+         WHERE table_schema = $1 AND table_name = 'attachment' AND column_name = 'targetMessageId'`,
+      [getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)],
     );
 
     return {
-      type: flatFieldMetadataMaps.byUniversalIdentifier[
-        ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER
-      ]?.type,
+      fieldCount: MESSAGE_ATTACHMENT_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+        (universalIdentifier) =>
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatFieldMetadataMaps,
+            universalIdentifier,
+          }) !== undefined,
+      ).length,
+      hasIndex:
+        findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatIndexMaps,
+          universalIdentifier: MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER,
+        }) !== undefined,
       hasColumn: columns.length > 0,
     };
   };
 
-  const removeAttachmentsField = async () => {
-    const { flatFieldMetadataMaps } =
+  const removeMessageAttachmentTarget = async () => {
+    const { flatFieldMetadataMaps, flatIndexMaps } =
       await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
         'flatFieldMetadataMaps',
+        'flatIndexMaps',
       ]);
     const { twentyStandardFlatApplication } =
       await getAppProviderByClassName<ApplicationService>(
@@ -69,10 +85,24 @@ describe('2-56 workspace command - add message attachments field (integration)',
         allFlatEntityOperationByMetadataName: {
           fieldMetadata: {
             flatEntityToCreate: [],
+            flatEntityToDelete:
+              MESSAGE_ATTACHMENT_FIELD_UNIVERSAL_IDENTIFIERS.map(
+                (universalIdentifier) =>
+                  findFlatEntityByUniversalIdentifierOrThrow<FlatFieldMetadata>(
+                    {
+                      flatEntityMaps: flatFieldMetadataMaps,
+                      universalIdentifier,
+                    },
+                  ),
+              ),
+            flatEntityToUpdate: [],
+          },
+          index: {
+            flatEntityToCreate: [],
             flatEntityToDelete: [
-              findFlatEntityByUniversalIdentifierOrThrow<FlatFieldMetadata>({
-                flatEntityMaps: flatFieldMetadataMaps,
-                universalIdentifier: ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+              findFlatEntityByUniversalIdentifierOrThrow<FlatIndexMetadata>({
+                flatEntityMaps: flatIndexMaps,
+                universalIdentifier: MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER,
               }),
             ],
             flatEntityToUpdate: [],
@@ -84,14 +114,14 @@ describe('2-56 workspace command - add message attachments field (integration)',
   };
 
   beforeAll(async () => {
-    command = getAppProviderByClassName<AddMessageAttachmentsFieldCommand>(
-      'AddMessageAttachmentsFieldCommand',
+    command = getAppProviderByClassName<AddMessageAttachmentTargetCommand>(
+      'AddMessageAttachmentTargetCommand',
     );
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
 
-    await removeAttachmentsField();
+    await removeMessageAttachmentTarget();
   });
 
   afterAll(async () => {
@@ -104,24 +134,27 @@ describe('2-56 workspace command - add message attachments field (integration)',
       options: { dryRun: true },
     });
 
-    expect(await findAttachmentsField()).toEqual({
-      type: undefined,
+    expect(await findMessageAttachmentTarget()).toEqual({
+      fieldCount: 0,
+      hasIndex: false,
       hasColumn: false,
     });
   });
 
-  it('adds the files field and its column, and is a no-op when run again', async () => {
+  it('adds both relation fields, the index and the column, and is a no-op when run again', async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
-    expect(await findAttachmentsField()).toEqual({
-      type: FieldMetadataType.FILES,
+    expect(await findMessageAttachmentTarget()).toEqual({
+      fieldCount: 2,
+      hasIndex: true,
       hasColumn: true,
     });
 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
-    expect(await findAttachmentsField()).toEqual({
-      type: FieldMetadataType.FILES,
+    expect(await findMessageAttachmentTarget()).toEqual({
+      fieldCount: 2,
+      hasIndex: true,
       hasColumn: true,
     });
   });
