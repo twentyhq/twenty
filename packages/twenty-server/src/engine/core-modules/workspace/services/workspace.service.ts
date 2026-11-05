@@ -35,6 +35,7 @@ import {
   QueryRunner,
   Repository,
 } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -579,34 +580,17 @@ export class WorkspaceService {
     let updatedWorkspace: WorkspaceEntity;
 
     try {
-      await this.workspaceRepository
-        .createQueryBuilder()
-        .update()
-        .set({
+      await this.persistWorkspaceUpdate({
+        workspaceId: workspace.id,
+        values: {
           ...workspaceUpdates,
-          ...(isDefined(assistantProfileUpdate)
-            ? {
-                aiChatAssistantProfile:
-                  assistantProfileUpdate.shouldReplaceProfile
-                    ? assistantProfileUpdate.profile
-                    : () =>
-                        doNotTranslate(
-                          '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
-                        ),
-              }
-            : {}),
           ...(payload.customDomain === null
             ? { isCustomDomainEnabled: false }
             : {}),
           ...(payload.logo === null ? { logoFileId: null } : {}),
-        })
-        .where({ id: workspace.id })
-        .setParameters({
-          assistantProfilePatch: JSON.stringify(
-            assistantProfileUpdate?.profile,
-          ),
-        })
-        .execute();
+        },
+        assistantProfileUpdate,
+      });
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
       });
@@ -1376,6 +1360,42 @@ export class WorkspaceService {
         );
       }
     }
+  }
+
+  private async persistWorkspaceUpdate({
+    workspaceId,
+    values,
+    assistantProfileUpdate,
+  }: {
+    workspaceId: string;
+    values: QueryDeepPartialEntity<WorkspaceEntity>;
+    assistantProfileUpdate: ReturnType<
+      typeof parseWorkspaceAssistantProfileUpdateOrThrow
+    >;
+  }) {
+    if (!isDefined(assistantProfileUpdate)) {
+      await this.workspaceRepository.update(workspaceId, values);
+
+      return;
+    }
+
+    await this.workspaceRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        ...values,
+        aiChatAssistantProfile: assistantProfileUpdate.shouldReplaceProfile
+          ? assistantProfileUpdate.profile
+          : () =>
+              doNotTranslate(
+                '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
+              ),
+      })
+      .where({ id: workspaceId })
+      .setParameters({
+        assistantProfilePatch: JSON.stringify(assistantProfileUpdate.profile),
+      })
+      .execute();
   }
 
   private async prefillCreatedWorkspaceRecords({
