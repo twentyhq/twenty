@@ -38,8 +38,11 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.FOLDER`      | يجمع العناصر المتداخلة تحت تسمية      | `name` (وتشير العناصر الفرعية إلى المجلّد عبر `folderUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | يفتح صفحة الفهرس الافتراضية لكائنٍ ما | `targetObjectUniversalIdentifier`                                          |
   | `NavigationMenuItemType.PAGE_LAYOUT` | يفتح مخطّط صفحة مستقلًا               | `pageLayoutUniversalIdentifier`                                            |
+  | `NavigationMenuItemType.NATIVE_PAGE` | يفتح صفحة مضمنة                       | `nativePageKey`: `'workflows'` أو `'agents'`                               |
 
 * `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
+
+* يُخفى عنصر `NATIVE_PAGE` عن الأعضاء الذين لا يملكون إذن الصفحة (سير العمل لـ `'workflows'`، والذكاء الاصطناعي لـ `'agents'`).
 
 * يحتوي التعداد أيضًا على `NavigationMenuItemType.RECORD`، ويُستخدم داخليًا لمفضّلات السجلات التي ينشئها المستخدم، وعلى `NavigationMenuItemType.AGENT_CHAT_CHANNEL`، ويُستخدم لقنوات الدردشة المثبّتة في المفضّلات. لا يمكن استخدام أيٍّ منهما من بيان التطبيق (إذ لا يوجد حقل للإشارة إلى سجل أو قناة).
 

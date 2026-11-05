@@ -88,7 +88,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      restrictedFields: {},
+      unreadableFieldMetadataIds: new Set<string>(),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -117,9 +117,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      restrictedFields: {
-        'field-2': { canRead: false },
-      },
+      unreadableFieldMetadataIds: new Set(['field-2']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -160,7 +158,7 @@ describe('buildFieldSelection', () => {
     ]);
 
     const result = buildFieldSelection({
-      restrictedFields: {},
+      unreadableFieldMetadataIds: new Set<string>(),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -197,9 +195,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      restrictedFields: {
-        'field-2': { canRead: false },
-      },
+      unreadableFieldMetadataIds: new Set(['field-2']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -247,10 +243,7 @@ describe('buildFieldSelection', () => {
     ]);
 
     const result = buildFieldSelection({
-      restrictedFields: {
-        'field-2': { canRead: false },
-        'field-4': { canRead: false },
-      },
+      unreadableFieldMetadataIds: new Set(['field-2', 'field-4']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -308,7 +301,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -368,7 +361,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -416,9 +409,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        restrictedFields: {
-          'field-1': { canRead: false },
-        },
+        unreadableFieldMetadataIds: new Set(['field-1']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -462,7 +453,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -502,9 +493,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {
-          'field-2': { canRead: false },
-        },
+        unreadableFieldMetadataIds: new Set(['field-2']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -542,7 +531,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -581,7 +570,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -602,7 +591,7 @@ describe('buildFieldSelection', () => {
       const flatObjectMetadata = buildFlatObjectMetadata([]);
 
       const result = buildFieldSelection({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -635,10 +624,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {
-          'field-1': { canRead: false },
-          'field-2': { canRead: false },
-        },
+        unreadableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -649,7 +635,7 @@ describe('buildFieldSelection', () => {
       expect(result).toEqual({});
     });
 
-    it('should handle canRead: true in restrictedFields', () => {
+    it('should keep fields readable despite an update restriction', () => {
       const field1 = createMockField({
         id: 'field-1',
         name: 'name',
@@ -671,10 +657,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        restrictedFields: {
-          'field-1': { canRead: true, canUpdate: false },
-          'field-2': { canRead: false, canUpdate: false },
-        },
+        unreadableFieldMetadataIds: new Set(['field-2']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,

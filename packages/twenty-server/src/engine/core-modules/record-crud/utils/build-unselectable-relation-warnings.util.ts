@@ -1,4 +1,3 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
@@ -16,7 +15,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   selectableRelationFields,
-  objectsPermissions,
+  unreadableFieldMetadataIds,
 }: {
   objectName: string;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
@@ -44,10 +43,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
     >
   >;
   selectableRelationFields: CommonSelectedFields;
-  objectsPermissions: Record<
-    string,
-    Pick<ObjectPermissions, 'restrictedFields'>
-  >;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();
 
@@ -69,11 +65,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       continue;
     }
 
-    const isSourceFieldRestricted =
-      objectsPermissions[flatObjectMetadata.id]?.restrictedFields[field.id]
-        ?.canRead === false;
-
-    if (isSourceFieldRestricted) {
+    if (unreadableFieldMetadataIds.has(field.id)) {
       warningsByFieldName.set(
         field.name,
         `Field '${field.name}' on ${objectName} cannot be selected because your role restricts access to this field.`,

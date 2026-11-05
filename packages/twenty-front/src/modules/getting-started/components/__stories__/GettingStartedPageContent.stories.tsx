@@ -9,19 +9,24 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   FeatureFlagKey,
+  FindManyMarketplaceAppsDocument,
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
+  GetWorkspaceInvitationsDocument,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
   type UpdateGettingStartedMutationVariables,
@@ -35,6 +40,7 @@ import {
   mockGettingStartedStepDefinitions,
   mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -209,6 +215,165 @@ export const AllDone: Story = {
     await expect(
       await within(canvasElement).findByText('All steps done'),
     ).toBeVisible();
+  },
+};
+
+const TWO_HOURS_BEFORE_MOCKED_DATE = new Date(
+  new Date(MOCKED_DATE).getTime() - 2 * 60 * 60 * 1000,
+).toISOString();
+
+const DONE_STEP_CHAT_THREADS = [
+  {
+    actionKey: GettingStartedStepActionKey.IMPORT_DATA,
+    chatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+    title: 'Import HubSpot contacts',
+  },
+  {
+    actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    chatThreadId: '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47',
+    title: 'Weekly deal follow-ups',
+  },
+];
+
+const WORKSPACE_INVITATIONS_MOCK: MockedResponse = {
+  request: { query: GetWorkspaceInvitationsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      findWorkspaceInvitations: ['marc@acme.com', 'sam@acme.com'].map(
+        (email, index) => ({
+          __typename: 'WorkspaceInvitation',
+          id: `20202020-0000-4000-8000-00000000010${index}`,
+          email,
+          roleId: null,
+          expiresAt: '2024-03-20T12:00:00.000Z',
+        }),
+      ),
+    },
+  },
+};
+
+let doneStepsProgress: GettingStartedProgressQuery['gettingStartedProgress'] =
+  TRIAL_PROGRESS;
+
+const createDoneStepsProgress =
+  (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
+    ...TRIAL_PROGRESS,
+    steps: mockGettingStartedStepDefinitions.map((stepDefinition) => ({
+      ...stepDefinition,
+      doneChatThreadId:
+        DONE_STEP_CHAT_THREADS.find(
+          ({ actionKey }) => actionKey === stepDefinition.actionKey,
+        )?.chatThreadId ?? null,
+    })),
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.IMPORT_DATA,
+      GettingStartedStepActionKey.INSTALL_APP,
+      GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  });
+
+const FEATURED_MARKETPLACE_APPS_MOCK: MockedResponse = {
+  request: { query: FindManyMarketplaceAppsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      findManyMarketplaceApps: [
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+          name: 'Slack',
+          description: 'Get notified in Slack.',
+        },
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM,
+          name: 'Fathom',
+          description: 'Log your meeting notes.',
+        },
+      ].map((marketplaceApp) => ({
+        __typename: 'MarketplaceApp',
+        ...marketplaceApp,
+        author: 'Twenty',
+        category: 'Communication',
+        logoUrl: null,
+        sourcePackage: null,
+        isListed: true,
+      })),
+    },
+  },
+};
+
+export const DoneSteps: Story = {
+  beforeEach: () => {
+    doneStepsProgress = createDoneStepsProgress();
+    DONE_STEP_CHAT_THREADS.forEach(({ chatThreadId, title }) =>
+      jotaiStore.set(recordStoreFamilyState.atomFamily(chatThreadId), {
+        __typename: 'AgentChatThread',
+        id: chatThreadId,
+        title,
+        lastActivityAt: TWO_HOURS_BEFORE_MOCKED_DATE,
+      }),
+    );
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...TRIALING_WORKSPACE,
+      installedApplications: [
+        {
+          ...CUSTOM_WORKSPACE_APPLICATION_MOCK,
+          name: 'Slack',
+          universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+        },
+      ],
+    });
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      FEATURED_MARKETPLACE_APPS_MOCK,
+      WORKSPACE_INVITATIONS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: () => ({
+          data: { gettingStartedProgress: doneStepsProgress },
+        }),
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => {
+          doneStepsProgress = {
+            ...doneStepsProgress,
+            selectedStepActionKey:
+              input.selectedStepActionKey ??
+              doneStepsProgress.selectedStepActionKey,
+          };
+
+          return { data: { updateGettingStarted: doneStepsProgress } };
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: '2 invitations sent' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Deal follow-ups on track' }),
+    );
+
+    const openThreadButton = await canvas.findByRole('button', {
+      name: /Weekly deal follow-ups/,
+    });
+
+    await waitFor(() => expect(openThreadButton).toBeVisible());
   },
 };
 

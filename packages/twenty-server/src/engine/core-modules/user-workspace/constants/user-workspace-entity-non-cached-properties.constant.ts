@@ -5,6 +5,7 @@ export const USER_WORKSPACE_ENTITY_NON_CACHED_PROPERTIES = [
   'user',
   'twoFactorAuthenticationMethods',
   'permissionFlags',
+  'objectRecordsPermissions',
   'objectPermissions',
   'objectsPermissions',
   'twoFactorAuthenticationMethodSummary',

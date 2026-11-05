@@ -1198,6 +1198,11 @@ msgstr "このワークスペースではすでにエクスポートが実行中
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "このワークスペースではすでにエクスポートが実行中です。完了するまでお待ちください。"
 
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "外部サービスからの応答に時間がかかりすぎました。"
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
@@ -5591,6 +5596,23 @@ msgstr "フィールド名がラベルと同期されていません。"
 msgid "Field not found."
 msgstr "フィールドが見つかりません。"
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "フィールドオプションのフィールドが見つかりません"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "フィールドオプションが見つかりません"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "フィールドオプションが見つかりません。"
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -6947,6 +6969,11 @@ msgstr "無効な機能フラグキーです。"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "無効なフィールド入力です。"
+
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "無効なフィールドオプション入力です。"
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10130,6 +10157,12 @@ msgstr "オプションラベルは少なくとも1文字の文字列である�
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "オプション値 \"{sanitizedValue}\" は1文字未満です"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "オプション値 \"{value}\" はこのフィールドにすでに存在します"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10189,12 @@ msgstr "オプション値は少なくとも1文字の文字列である必要�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "列挙フィールドにはオプションが必要です"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "オプションは選択、複数選択、または評価フィールドにのみ属することができます"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10383,6 +10422,11 @@ msgstr "参加者"
 msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr "参加者"
+
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr "パートナーコードは、新規のTwenty顧客にのみ適用されます。"
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13994,6 +14038,11 @@ msgstr "商談名"
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr "パッケージのプロベナンスを検証するためのパッケージレジストリに接続できませんでした。時間をおいてから、もう一度お試しください。"
 
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr "パートナーコードは追加または変更できなくなりました。サポートにお問い合わせください。"
+
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14863,6 +14912,11 @@ msgstr "この操作は、存在しない、または既存のリレーション
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
 msgstr "この組織キーは、すでに別のサーバーインスタンスで使用されています。そのサーバーで解放するか、このサーバーに移行してください。"
+
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
+msgstr "このパートナーコードは無効です。"
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts

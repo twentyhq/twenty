@@ -1,7 +1,6 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
-  type ObjectsPermissions,
   RelationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -11,6 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'company-object-id';
 const SALARY_FIELD_ID = 'salary-field-id';
@@ -75,22 +75,22 @@ const updateEvent = {
   },
 } as unknown as ObjectRecordUpdateEvent;
 
-const buildObjectsPermissions = (
+const buildRecordsPermissions = (
   restrictedFields: RestrictedFieldsPermissions | undefined,
-): ObjectsPermissions => {
+): Pick<RoleRecordsPermissions, 'objects'> => {
   if (!isDefined(restrictedFields)) {
-    return {};
+    return { objects: {} };
   }
 
   return {
-    [OBJECT_METADATA_ID]: {
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
-      restrictedFields,
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
+    objects: {
+      [OBJECT_METADATA_ID]: {
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
+        restrictedFields,
+      },
     },
   };
 };
@@ -105,7 +105,7 @@ const omit = ({
   omitRestrictedFieldsFromEvent({
     event,
     objectMetadata: { id: OBJECT_METADATA_ID, nameSingular: 'company' },
-    objectsPermissions: buildObjectsPermissions(restrictedFields),
+    recordsPermissions: buildRecordsPermissions(restrictedFields),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataMaps,
   });

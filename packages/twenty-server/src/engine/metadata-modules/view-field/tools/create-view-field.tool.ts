@@ -6,13 +6,13 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { createViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/create-view-field-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { VIEW_FIELD_ACCESS_POLICY } from 'src/engine/metadata-modules/view-field/constants/view-field-access-policy.constant';
 
 @DefineTool({
   name: 'create_view_field',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:
     'Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_field_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.',
 })
@@ -23,20 +23,18 @@ export class CreateViewFieldTool extends BaseTool<
 
   constructor(
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewFieldInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableViewOrThrow({
       viewId: input.viewId,
-      workspaceId,
-      userWorkspaceId,
-      operation: 'update',
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const viewField = await this.viewFieldService.createOne({

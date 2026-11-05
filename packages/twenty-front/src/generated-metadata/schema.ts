@@ -348,6 +348,7 @@ export enum AllMetadataName {
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',
+  fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
@@ -1058,6 +1059,12 @@ export type BillingMeteredProduct = BillingProductDto & {
   metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
   prices?: Maybe<Array<BillingPriceMetered>>;
+};
+
+export type BillingPartnerCode = {
+  __typename?: 'BillingPartnerCode';
+  isEditable: Scalars['Boolean']['output'];
+  partnerCode?: Maybe<Scalars['String']['output']>;
 };
 
 export type BillingPaymentIntent = {
@@ -2797,7 +2804,10 @@ export type GettingStartedStepDefinition = {
   __typename?: 'GettingStartedStepDefinition';
   actionKey: GettingStartedStepActionKey;
   description: Scalars['String']['output'];
+  doneChatThreadId?: Maybe<Scalars['String']['output']>;
+  doneDescription: Scalars['String']['output'];
   doneTitle: Scalars['String']['output'];
+  doneWorkflowId?: Maybe<Scalars['String']['output']>;
   icon: Scalars['String']['output'];
   iconColor: Scalars['String']['output'];
   kind: GettingStartedStepKind;
@@ -3726,6 +3736,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
@@ -4816,6 +4827,11 @@ export type MutationSetAppKeyValueArgs = {
 };
 
 
+export type MutationSetBillingPartnerCodeArgs = {
+  partnerCode: Scalars['String']['input'];
+};
+
+
 export type MutationSetEnterpriseKeyArgs = {
   enterpriseKey: Scalars['String']['input'];
 };
@@ -5574,6 +5590,17 @@ export enum ObjectRecordGroupByDateGranularity {
   YEAR = 'YEAR'
 }
 
+export type ObjectRecordsPermissions = {
+  __typename?: 'ObjectRecordsPermissions';
+  canDestroyAllRecords: Scalars['Boolean']['output'];
+  canReadAllRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllRecords: Scalars['Boolean']['output'];
+  canUpdateAllRecords: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  restrictedFields: Scalars['JSON']['output'];
+  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_CALL = 'BOOK_CALL',
@@ -5927,6 +5954,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
+  billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -6886,6 +6914,16 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RowLevelRecordsPermissions = {
+  __typename?: 'RowLevelRecordsPermissions';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  predicateGroups: Array<RowLevelPermissionPredicateGroup>;
+  predicates: Array<RowLevelPermissionPredicate>;
+};
+
 export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
@@ -7567,6 +7605,7 @@ export type UpdateFrontComponentInputUpdates = {
 
 export type UpdateGettingStartedInput = {
   completedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
+  completedStepChatThreadId?: InputMaybe<Scalars['String']['input']>;
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
@@ -8335,7 +8374,10 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
+  /** @deprecated Use objectRecordsPermissions */
   objectPermissions?: Maybe<Array<ObjectPermission>>;
+  objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
+  /** @deprecated Use objectRecordsPermissions */
   objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;

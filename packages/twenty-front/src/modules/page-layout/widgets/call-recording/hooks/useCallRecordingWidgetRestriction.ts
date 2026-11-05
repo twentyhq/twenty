@@ -4,7 +4,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isNonEmptyString } from '@sniptt/guards';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 export const useCallRecordingWidgetRestriction = ({
   requiredFieldNames,
@@ -40,7 +40,12 @@ export const useCallRecordingWidgetRestriction = ({
     );
   };
 
-  if (!callRecordingObjectPermissions.canReadObjectRecords) {
+  if (
+    !canReachSomeRecords({
+      objectRecordsPermissions: callRecordingObjectPermissions,
+      operationType: 'select',
+    })
+  ) {
     return {
       restriction: {
         type: 'object',

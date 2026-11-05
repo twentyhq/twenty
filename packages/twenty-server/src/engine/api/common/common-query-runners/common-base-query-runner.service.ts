@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  type ObjectRecord,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -75,7 +71,7 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
-import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -289,10 +285,8 @@ export abstract class CommonBaseQueryRunnerService<
           select: addTimelineActivityObjectColumnsToSelect({
             select: processedArgs.selectedFieldsResult.select,
             flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            objectsPermissions: fromRoleRecordsPermissionsToObjectsPermissions({
-              roleRecordsPermissions:
-                extendedQueryRunnerContext.repository.recordsPermissions,
-            }),
+            recordsPermissions:
+              extendedQueryRunnerContext.repository.recordsPermissions,
             flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
             flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
           }),
@@ -312,10 +306,8 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       transactionScope: queryRunnerContext.transactionScope,
-      objectsPermissions: fromRoleRecordsPermissionsToObjectsPermissions({
-        roleRecordsPermissions:
-          extendedQueryRunnerContext.repository.recordsPermissions,
-      }),
+      recordsPermissions:
+        extendedQueryRunnerContext.repository.recordsPermissions,
     });
   }
 
@@ -327,7 +319,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     transactionScope,
-    objectsPermissions,
+    recordsPermissions,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -336,7 +328,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
-    objectsPermissions: ObjectsPermissions;
+    recordsPermissions: RoleRecordsPermissions;
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -352,7 +344,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
-      objectsPermissions,
+      recordsPermissions,
     });
 
     const executePostQueryHooks = () =>

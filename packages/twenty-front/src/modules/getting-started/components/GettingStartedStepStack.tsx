@@ -3,11 +3,13 @@ import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/c
 import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { getGettingStartedStackedSteps } from '@/getting-started/utils/getGettingStartedStackedSteps';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { IconCircleCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
@@ -55,7 +57,7 @@ const StyledTick = styled.button`
   }
 
   &[data-completed] {
-    background: ${themeCssVariables.font.color.tertiary};
+    background: ${themeCssVariables.color.green};
   }
 
   &[aria-current='step'] {
@@ -94,6 +96,11 @@ const StyledStackedStepBase = styled.button<{ depth: number }>`
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+
+  &[data-completed] {
+    background: ${themeCssVariables.color.green2};
+    border-color: ${themeCssVariables.color.green4};
   }
 
   &:hover {
@@ -138,19 +145,22 @@ export const GettingStartedStepStack = ({
     ({ actionKey }) => actionKey === selectedStepActionKey,
   );
   const selectedStepDefinition = steps[selectedStepIndex];
-  const stackedSteps = [3, 2, 1]
-    .filter((depth) => depth < steps.length)
-    .map((depth) => ({
-      depth,
-      stepDefinition: steps[(selectedStepIndex + depth) % steps.length],
-    }));
+  const stackedSteps = getGettingStartedStackedSteps({
+    steps,
+    completedStepActionKeys,
+    selectedStepActionKey,
+  })
+    .map((stepDefinition, index) => ({ depth: index + 1, stepDefinition }))
+    .reverse();
 
   return (
     <div>
       <AnimatePresence initial={false} mode="popLayout">
         {stackedSteps.map(({ depth, stepDefinition }) => {
-          const { actionKey, icon, iconColor, title } = stepDefinition;
+          const { actionKey, icon, iconColor, title, doneTitle } =
+            stepDefinition;
           const StepIcon = getIcon(icon);
+          const isCompleted = completedStepActionKeys.includes(actionKey);
 
           return (
             <StyledStackedStep
@@ -162,14 +172,24 @@ export const GettingStartedStepStack = ({
               transition={stepTransition}
               type="button"
               depth={depth}
+              data-completed={isCompleted || undefined}
               disabled={isSaving}
               onClick={() => selectGettingStartedStep(actionKey)}
             >
-              <StepIcon
-                size={theme.icon.size.md}
-                color={themeCssVariables.tag.text[parseThemeColor(iconColor)]}
-              />
-              <StyledStackedStepTitle>{title}</StyledStackedStepTitle>
+              {isCompleted ? (
+                <IconCircleCheck
+                  size={theme.icon.size.md}
+                  color={themeCssVariables.tag.text.green}
+                />
+              ) : (
+                <StepIcon
+                  size={theme.icon.size.md}
+                  color={themeCssVariables.tag.text[parseThemeColor(iconColor)]}
+                />
+              )}
+              <StyledStackedStepTitle>
+                {isCompleted ? doneTitle : title}
+              </StyledStackedStepTitle>
             </StyledStackedStep>
           );
         })}
