@@ -81,6 +81,23 @@ export class PermissionsService {
     );
   }
 
+  public async buildPermissionsPrincipalsOrThrow({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext> {
+    const principals = await this.buildPermissionsPrincipals({ authContext });
+
+    if (!isDefined(principals)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return principals;
+  }
+
   public canReadAllRecords({
     principals,
     objectMetadataId,

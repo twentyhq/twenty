@@ -155,12 +155,14 @@ export class FindRecordsService {
   > &
     Pick<FindRecordsParams, 'authContext'>): Promise<CommonSelectedFields> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
-        authContext,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        shouldIncludeRelationTargets: true,
-      });
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: true,
+        },
+      );
 
     return buildRelationSelectionFromDepth({
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({

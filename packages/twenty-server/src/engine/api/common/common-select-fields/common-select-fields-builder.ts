@@ -13,11 +13,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
@@ -26,30 +21,24 @@ export class CommonSelectFieldsBuilder {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
-  async findReadableMetadataIdsOrThrow({
+  async findObjectSelectionMetadataIdsOrThrow({
     authContext,
-    flatObjectMetadata,
+    objectMetadataId,
     flatObjectMetadataMaps,
     shouldIncludeRelationTargets,
   }: {
     authContext: PermissionsAuthContext;
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
+    objectMetadataId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldIncludeRelationTargets: boolean;
   }): Promise<{
     readableObjectMetadataIds: Set<string>;
     unreadableFieldMetadataIds: Set<string>;
   }> {
-    const principals = await this.permissionsService.buildPermissionsPrincipals(
-      { authContext },
-    );
-
-    if (!isDefined(principals)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
+    const principals =
+      await this.permissionsService.buildPermissionsPrincipalsOrThrow({
+        authContext,
+      });
 
     const flatObjectMetadatas = shouldIncludeRelationTargets
       ? Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
@@ -71,11 +60,11 @@ export class CommonSelectFieldsBuilder {
     );
 
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
-      [...new Set([flatObjectMetadata.id, ...readableObjectMetadataIds])].map(
-        (objectMetadataId) =>
+      [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
+        (selectedObjectMetadataId) =>
           this.permissionsService.findUnreadableFieldMetadataIdsOrThrow({
             principals,
-            objectMetadataId,
+            objectMetadataId: selectedObjectMetadataId,
           }),
       ),
     );

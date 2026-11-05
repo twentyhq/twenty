@@ -83,12 +83,14 @@ export abstract class RestApiBaseHandler {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
-        authContext,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
-      });
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
+        },
+      );
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds,
@@ -120,12 +122,14 @@ export abstract class RestApiBaseHandler {
     selectedFields: CommonSelectedFields;
   }> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
-        authContext,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
-      });
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
+        },
+      );
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds,

@@ -17,11 +17,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 export type CommonApiContext = {
@@ -92,16 +87,10 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const principals = await this.permissionsService.buildPermissionsPrincipals(
-      { authContext },
-    );
-
-    if (!isDefined(principals)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
+    const principals =
+      await this.permissionsService.buildPermissionsPrincipalsOrThrow({
+        authContext,
+      });
 
     const unreadableFieldMetadataIds =
       await this.permissionsService.findUnreadableFieldMetadataIdsOrThrow({

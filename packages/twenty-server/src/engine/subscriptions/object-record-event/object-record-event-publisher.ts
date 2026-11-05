@@ -295,12 +295,14 @@ export class ObjectRecordEventPublisher {
     }
 
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
-        authContext: permissionsAuthContext,
-        flatObjectMetadata: objectMetadata,
-        flatObjectMetadataMaps,
-        shouldIncludeRelationTargets: true,
-      });
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext: permissionsAuthContext,
+          objectMetadataId: objectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: true,
+        },
+      );
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds,
