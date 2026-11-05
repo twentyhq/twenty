@@ -352,7 +352,7 @@ export class PermissionsService {
     workspaceId: string;
     workspaceMemberIds: string[];
   }): Promise<(string | undefined)[]> {
-    return this.recordSharingReadService.findWorkspaceMemberRoleIds(question);
+    return this.userRoleReadService.findWorkspaceMemberRoleIds(question);
   }
 
   public findUserWorkspaceRoleIdOrThrow(question: {
@@ -376,36 +376,11 @@ export class PermissionsService {
     return this.userRoleReadService.findWorkspaceMembersWithRole(question);
   }
 
-  public findUserWorkspaceIdsWithRole(question: {
-    roleId: string;
-    workspaceId: string;
-  }): Promise<string[]> {
-    return this.userRoleReadService.findUserWorkspaceIdsWithRole(question);
-  }
-
   public findSuccessorUserWorkspace(question: {
-    removedUserWorkspace: UserWorkspaceEntity;
+    removedUserWorkspace: Pick<UserWorkspaceEntity, 'id' | 'workspaceId'>;
     actingUserWorkspaceId?: string;
   }): Promise<UserWorkspaceEntity | undefined> {
     return this.userRoleReadService.findSuccessorUserWorkspace(question);
-  }
-
-  public validateUserWorkspaceIsNotUniqueAdminOrThrow(question: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    return this.userRoleReadService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
-      question,
-    );
-  }
-
-  public validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow(question: {
-    adminRoleId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    return this.userRoleReadService.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow(
-      question,
-    );
   }
 
   public async userHasWorkspaceSettingPermission({

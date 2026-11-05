@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
@@ -30,6 +31,7 @@ export class AgentChatInboxParticipantWriterService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
   ) {}
 
   async writeParticipantInboxState({
@@ -178,7 +180,7 @@ export class AgentChatInboxParticipantWriterService {
         insertedParticipantIds.add(id);
       }
 
-      await this.recordSharingWriteService.setRecordsPrivate({
+      await this.privateRecordWriteService.setPrivate({
         workspaceId,
         flatObjectMetadata: participantObjectMetadata,
         recordIds: identifiers.map(({ id }) => id),

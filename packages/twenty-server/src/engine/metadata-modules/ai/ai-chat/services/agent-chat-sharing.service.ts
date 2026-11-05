@@ -24,6 +24,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -68,6 +69,7 @@ export class AgentChatSharingService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -403,7 +405,7 @@ export class AgentChatSharingService {
                 ? { channelId: args.channelId }
                 : {}),
             });
-            await this.recordSharingWriteService.setRecordsPrivate({
+            await this.privateRecordWriteService.setPrivate({
               workspaceId: args.workspaceId,
               flatObjectMetadata: objectMetadata,
               recordIds: [threadId],
@@ -615,7 +617,7 @@ export class AgentChatSharingService {
       ({ id }) => id,
     );
 
-    await this.recordSharingWriteService.setRecordsPrivate({
+    await this.privateRecordWriteService.setPrivate({
       workspaceId,
       flatObjectMetadata: participantObjectMetadata,
       recordIds: insertedParticipantIds,

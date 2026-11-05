@@ -150,29 +150,6 @@ export class RecordSharingReadService {
     );
   }
 
-  async findWorkspaceMemberRoleIds({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<(string | undefined)[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-      ]);
-
-    return resolveRecordSharePrincipalRoleIds({
-      principals: workspaceMemberIds.map((principalId) => ({
-        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        principalId,
-      })),
-      flatWorkspaceMemberMaps,
-      userWorkspaceRoleMap,
-    });
-  }
-
   private async buildSharingResponse({
     args,
     sharingObject,

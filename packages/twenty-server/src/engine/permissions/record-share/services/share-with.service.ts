@@ -6,7 +6,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/permissions/record-share/utils/build-record-share-inputs-for-created-records.util';
@@ -23,7 +23,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ShareWithService {
   constructor(
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -99,7 +99,7 @@ export class ShareWithService {
     });
 
     if (isPrivate) {
-      await this.privateRecordStorageService.setPrivate({
+      await this.privateRecordWriteService.setPrivate({
         workspaceId,
         flatObjectMetadata,
         recordIds,

@@ -18,7 +18,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
-export class PrivateRecordStorageService {
+export class PrivateRecordWriteService {
   constructor(
     private readonly recordPrivacyWriteOrmService: RecordPrivacyWriteOrmService,
     private readonly workspaceCacheService: WorkspaceCacheService,

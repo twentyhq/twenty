@@ -10,16 +10,16 @@ import {
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import {
   type RecordSharePrincipalInput,
   type RecordSharingDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { RecordShareWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-share-write-orm.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
-import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import {
   type RecordSharingObject,
@@ -28,10 +28,7 @@ import {
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type RecordSharingChange = {
   workspaceId: string;
@@ -46,7 +43,8 @@ export class RecordSharingWriteService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly permissionsService: PermissionsService,
   ) {}
@@ -54,9 +52,10 @@ export class RecordSharingWriteService {
   async setPrivate(
     args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
-    return this.changeSharing(args, (change) =>
-      this.writeRecordPrivacy({ ...change, args }),
-    );
+    return this.changeSharing({
+      args,
+      write: (change) => this.writeRecordPrivacy({ ...change, args }),
+    });
   }
 
   async setShare(
@@ -74,9 +73,9 @@ export class RecordSharingWriteService {
       ...maps,
     });
 
-    return this.changeSharing(
+    return this.changeSharing({
       args,
-      async ({ workspaceId, transactionScope, sharingObject }) => {
+      write: async ({ workspaceId, transactionScope, sharingObject }) => {
         await this.recordShareStorageService.setManualShare({
           workspaceId,
           transactionScope,
@@ -99,7 +98,7 @@ export class RecordSharingWriteService {
           },
         );
       },
-    );
+    });
   }
 
   async removeShare(
@@ -107,20 +106,22 @@ export class RecordSharingWriteService {
   ): Promise<RecordSharingDTO> {
     const principal = resolveRecordSharePrincipalOrThrow(args.principal);
 
-    return this.changeSharing(args, ({ workspaceId, transactionScope }) =>
-      this.recordShareStorageService.setManualShare({
-        workspaceId,
-        transactionScope,
-        enabled: false,
-        share: {
-          ...principal,
-          accessLevel: RecordShareAccessLevel.READ,
-          objectMetadataId: args.objectMetadataId,
-          recordId: args.recordId,
-          sourceId: args.recordId,
-        },
-      }),
-    );
+    return this.changeSharing({
+      args,
+      write: ({ workspaceId, transactionScope }) =>
+        this.recordShareStorageService.setManualShare({
+          workspaceId,
+          transactionScope,
+          enabled: false,
+          share: {
+            ...principal,
+            accessLevel: RecordShareAccessLevel.READ,
+            objectMetadataId: args.objectMetadataId,
+            recordId: args.recordId,
+            sourceId: args.recordId,
+          },
+        }),
+    });
   }
 
   insertRecordShares(
@@ -141,16 +142,13 @@ export class RecordSharingWriteService {
     return this.recordShareStorageService.deleteMatching(args);
   }
 
-  setRecordsPrivate(
-    args: Parameters<PrivateRecordStorageService['setPrivate']>[0],
-  ): Promise<void> {
-    return this.privateRecordStorageService.setPrivate(args);
-  }
-
-  private async changeSharing(
-    args: RecordSharingArgs,
-    write: (change: RecordSharingChange) => Promise<void>,
-  ): Promise<RecordSharingDTO> {
+  private async changeSharing({
+    args,
+    write,
+  }: {
+    args: RecordSharingArgs;
+    write: (change: RecordSharingChange) => Promise<void>;
+  }): Promise<RecordSharingDTO> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
         args.authContext.workspace.id,
@@ -172,21 +170,12 @@ export class RecordSharingWriteService {
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
-            await transactionScope.executeRawQuery(
-              'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-              [
-                buildRecordShareLockKey({
-                  workspaceId,
-                  objectMetadataId: args.objectMetadataId,
-                  recordId: args.recordId,
-                }),
-              ],
-            );
-            // Lock the target as well as its grants, so deletion cannot leave an orphan grant.
-            await transactionScope.executeRawQuery(
-              `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 FOR UPDATE`,
-              [args.recordId],
-            );
+            await this.recordShareWriteOrmService.lockRecordForSharingChange({
+              workspaceId,
+              flatObjectMetadata,
+              recordId: args.recordId,
+              transactionScope,
+            });
             const repository = transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
             );
@@ -196,8 +185,7 @@ export class RecordSharingWriteService {
                 operationType: 'update',
                 withDeleted: true,
               });
-            // A grant may let someone edit a record beyond their role, never
-            // decide who else gets it
+            // A grant may extend editing beyond a role, never decide who else gets it
             if (
               writableIds.length !== 1 ||
               !repository.isObjectOperationPermittedByRole('update')
@@ -241,7 +229,7 @@ export class RecordSharingWriteService {
         'flatFieldMetadataMaps',
       ]);
 
-    await this.privateRecordStorageService.setPrivate({
+    await this.privateRecordWriteService.setPrivate({
       workspaceId,
       flatObjectMetadata,
       recordIds: [args.recordId],

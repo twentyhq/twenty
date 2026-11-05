@@ -249,14 +249,74 @@ export class UserRoleService {
     }
 
     if (isDefined(adminRoleIdToValidate)) {
-      await this.permissionsService.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow(
+      await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+        workspaceId,
+        adminRoleId: adminRoleIdToValidate,
+      });
+    }
+
+    return userWorkspaceIdsToAssign;
+  }
+
+  public async validateUserWorkspaceIsNotUniqueAdminOrThrow({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }) {
+    const roleOfUserWorkspace = await this.permissionsService
+      .findRolesByUserWorkspaceIds({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then((roles) => roles.get(userWorkspaceId)?.[0]);
+
+    if (!isDefined(roleOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          workspaceId,
-          adminRoleId: adminRoleIdToValidate,
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
 
-    return userWorkspaceIdsToAssign;
+    if (
+      isDefined(roleOfUserWorkspace) &&
+      roleOfUserWorkspace.universalIdentifier ===
+        STANDARD_ROLE.admin.universalIdentifier
+    ) {
+      const adminRole = roleOfUserWorkspace;
+
+      await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+        adminRoleId: adminRole.id,
+        workspaceId,
+      });
+    }
+  }
+
+  private async validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+    adminRoleId,
+    workspaceId,
+  }: {
+    adminRoleId: string;
+    workspaceId: string;
+  }) {
+    const workspaceMembersWithAdminRole =
+      await this.permissionsService.findWorkspaceMembersWithRole({
+        roleId: adminRoleId,
+        workspaceId,
+      });
+
+    if (workspaceMembersWithAdminRole.length === 1) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
+        PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
+        {
+          userFriendlyMessage: msg`You cannot remove the admin role from the last administrator. Please assign another administrator first.`,
+        },
+      );
+    }
   }
 }
