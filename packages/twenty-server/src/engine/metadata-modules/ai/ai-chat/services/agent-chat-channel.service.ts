@@ -209,7 +209,7 @@ export class AgentChatChannelService {
       .sort((left, right) => left.label.localeCompare(right.label));
   }
 
-  async moveChannelThreadsToGeneral({
+  async moveChannelThreadsToGeneralOrThrow({
     workspaceId,
     channelIds,
   }: {
@@ -228,7 +228,10 @@ export class AgentChatChannelService {
       });
 
     if (!isDefined(generalChannel)) {
-      return;
+      throw new AiException(
+        'General channel not found',
+        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+      );
     }
 
     for (const channelId of channelIds) {

@@ -435,7 +435,7 @@ export class ApplicationSyncService {
 
     await progressReporter.reportStepCompleted('COMPUTE_METADATA_TO_DELETE');
 
-    await this.agentChatChannelService.moveChannelThreadsToGeneral({
+    await this.agentChatChannelService.moveChannelThreadsToGeneralOrThrow({
       workspaceId,
       channelIds: Object.keys(
         allFlatEntityOperationRecordByMetadataName.agentChatChannel
