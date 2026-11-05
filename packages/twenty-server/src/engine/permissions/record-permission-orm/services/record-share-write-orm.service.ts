@@ -19,7 +19,7 @@ import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-per
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import {
   compileNamedParameters,
@@ -42,7 +42,7 @@ export class RecordShareWriteOrmService {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordId: string;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     await this.recordPermissionQueryService.execute({
       workspaceId,
@@ -80,7 +80,7 @@ export class RecordShareWriteOrmService {
     workspaceId: string;
     recordShares: RecordShareInput[];
     shouldIgnoreConflicts: boolean;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     if (recordShares.length === 0) {
       return;
@@ -106,7 +106,7 @@ export class RecordShareWriteOrmService {
   }: {
     workspaceId: string;
     criteria: RecordShareCriteria;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     await this.recordPermissionQueryService.execute({
       workspaceId,

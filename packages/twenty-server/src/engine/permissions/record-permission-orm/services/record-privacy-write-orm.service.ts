@@ -6,7 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/record-permission-orm/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -27,7 +27,7 @@ export class RecordPrivacyWriteOrmService {
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
     isPrivate: boolean;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     if (recordIds.length === 0) {
       return;

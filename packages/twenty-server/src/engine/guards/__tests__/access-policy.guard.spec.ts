@@ -10,7 +10,6 @@ import {
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -993,7 +992,6 @@ describe('AccessPolicyGuard', () => {
         providers: [
           PermissionsService,
           PermissionsPrincipalsService,
-          { provide: ApiKeyRoleService, useValue: {} },
           { provide: RecordAccessPolicyService, useValue: {} },
           { provide: RecordPermissionsService, useValue: {} },
           { provide: RecordSharingReadService, useValue: {} },
@@ -1048,6 +1046,7 @@ describe('AccessPolicyGuard', () => {
         'workspace-id',
         [
           'userWorkspaceRoleMap',
+          'apiKeyRoleMap',
           'flatApplicationMaps',
           'flatRoleMaps',
           'flatRolePermissionFlagMaps',

@@ -123,6 +123,64 @@ export class RecordPermissionReadOrmService {
     return indexPrivateRecordStatesByRecordId(rows);
   }
 
+  async findRecordIdsMatchingConditions({
+    workspaceId,
+    flatObjectMetadata,
+    recordIds,
+    conditions,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    recordIds: string[];
+    conditions: (SqlCondition | boolean)[];
+  }): Promise<Set<string>[]> {
+    if (conditions.every((condition) => condition === false)) {
+      return conditions.map(() => new Set());
+    }
+
+    const tableExpression = buildWorkspaceTableExpression({
+      workspaceId,
+      tableName: computeObjectTargetTable(flatObjectMetadata),
+    });
+    const tableAlias = escapeIdentifier(flatObjectMetadata.nameSingular);
+    const conditionColumns = conditions.flatMap((condition, index) =>
+      isObject(condition)
+        ? [
+            `CASE WHEN ${condition.sql} THEN TRUE ELSE FALSE END AS "matches_${index}"`,
+          ]
+        : [],
+    );
+
+    const rows = await this.recordPermissionQueryService.execute<
+      { id: string } & Record<string, unknown>
+    >({
+      workspaceId,
+      query: {
+        sql: `SELECT ${[`${tableAlias}."id" AS "id"`, ...conditionColumns].join(', ')} FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)`,
+        parameters: {
+          ...Object.assign(
+            {},
+            ...conditions.map((condition) =>
+              isObject(condition) ? condition.parameters : {},
+            ),
+          ),
+          candidateRecordIds: recordIds,
+        },
+      },
+    });
+
+    return conditions.map(
+      (condition, index) =>
+        new Set(
+          rows
+            .filter(
+              (row) => condition === true || row[`matches_${index}`] === true,
+            )
+            .map(({ id }) => id),
+        ),
+    );
+  }
+
   async findRecordIdsMatchingCondition({
     workspaceId,
     flatObjectMetadata,

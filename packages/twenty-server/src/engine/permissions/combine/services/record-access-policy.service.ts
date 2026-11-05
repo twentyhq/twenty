@@ -5,11 +5,15 @@ import { Injectable } from '@nestjs/common';
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
   type RestrictedFieldPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
@@ -22,6 +26,7 @@ import { type RecordShareGrant } from 'src/engine/permissions/record-share/types
 import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
+  type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
@@ -30,7 +35,7 @@ import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-shar
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
@@ -55,7 +60,7 @@ type PrincipalsObjectAccessRequest = Pick<
 type PrincipalsRecordsAccessRequest = PrincipalsObjectAccessRequest & {
   recordIds: string[];
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  transactionScope?: WorkspaceTransactionScope;
+  transactionScope?: RecordPermissionTransactionScope;
 };
 
 type EventBatchAccessLoaders = {
@@ -206,6 +211,136 @@ export class RecordAccessPolicyService {
       recordIds: uniqueRecordIds,
       condition,
       transactionScope,
+    });
+  }
+
+  async isOperationPermittedByRole({
+    principals,
+    objectMetadataId,
+    operationType,
+  }: PrincipalsObjectAccessRequest): Promise<boolean> {
+    if (!isDefined(principals)) {
+      return false;
+    }
+
+    const { objects } = await this.findPrincipalsRecordsPermissions(principals);
+
+    return canReachSomeRecords({
+      objectRecordsPermissions: objects[objectMetadataId],
+      operationType,
+    });
+  }
+
+  async findGrantedRecordIdsByOperationType({
+    authContext,
+    objectNameSingular,
+    recordIds,
+    operationTypes,
+  }: {
+    authContext: WorkspaceAuthContext;
+    objectNameSingular: string;
+    recordIds: string[];
+    operationTypes: ObjectRecordsOperationType[];
+  }): Promise<Map<ObjectRecordsOperationType, Set<string>>> {
+    const workspaceId = authContext.workspace.id;
+    const isSystem = isSystemAuthContext(authContext);
+    const principals = isSystem
+      ? undefined
+      : await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+          authContext,
+        );
+
+    if (recordIds.length === 0 || (!isSystem && !isDefined(principals))) {
+      return new Map();
+    }
+
+    const metadataMaps = isDefined(principals)
+      ? await this.findPrincipalsMetadataMaps(principals)
+      : await this.permissionsMetadataMapsService.load({ workspaceId });
+    const flatObjectMetadata = Object.values(
+      metadataMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .find(({ nameSingular }) => nameSingular === objectNameSingular);
+
+    if (!isDefined(flatObjectMetadata)) {
+      return new Map();
+    }
+
+    const conditions = operationTypes.map((operationType) =>
+      isDefined(principals)
+        ? this.buildSelectableRecordsCondition({
+            principals,
+            metadataMaps,
+            flatObjectMetadata,
+            operationType,
+          })
+        : true,
+    );
+    const recordIdsByCondition =
+      await this.recordPermissionReadOrmService.findRecordIdsMatchingConditions(
+        {
+          workspaceId,
+          flatObjectMetadata,
+          recordIds,
+          conditions,
+        },
+      );
+
+    return new Map(
+      operationTypes.map((operationType, index) => [
+        operationType,
+        recordIdsByCondition[index],
+      ]),
+    );
+  }
+
+  private buildSelectableRecordsCondition({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    operationType,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    metadataMaps: PermissionsMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: ObjectRecordsOperationType;
+  }): SqlCondition | boolean {
+    try {
+      validateOperationIsPermittedOrThrow({
+        entityName: flatObjectMetadata.nameSingular,
+        operationType,
+        recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+          principals,
+          metadataMaps,
+        }),
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        objectIdByNameSingular: {
+          [flatObjectMetadata.nameSingular]: flatObjectMetadata.id,
+        },
+        selectedColumns: ['id'],
+        updatedColumns: [],
+      });
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return false;
+      }
+
+      throw error;
+    }
+
+    return buildPermissionsCondition({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      operationType,
+      recordShareTableExpression: buildRecordShareTableExpression({
+        workspaceId: principals.workspaceId,
+      }),
     });
   }
 

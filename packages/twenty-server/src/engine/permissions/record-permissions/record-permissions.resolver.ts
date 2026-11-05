@@ -82,7 +82,7 @@ export class RecordPermissionsResolver {
         ? new Map<string, RecordPermissionsDTO>()
         : await this.permissionsService.findRecordsPermissions({
             authContext,
-            flatObjectMetadata: objectMetadata,
+            objectNameSingular: objectMetadata.nameSingular,
             recordIds: [...recordIds],
           });
       for (const recordId of recordIds) {

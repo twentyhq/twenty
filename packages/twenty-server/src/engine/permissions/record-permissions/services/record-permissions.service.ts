@@ -1,46 +1,47 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordsOperationType } from 'twenty-shared/types';
+
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 @Injectable()
 export class RecordPermissionsService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+  ) {}
 
   async getPermissionsForRecords({
     authContext,
-    flatObjectMetadata,
+    objectNameSingular,
     recordIds,
   }: {
     authContext: WorkspaceAuthContext;
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+    objectNameSingular: string;
     recordIds: string[];
   }): Promise<Map<string, RecordPermissionsDTO>> {
     const allowedRecordIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository(flatObjectMetadata.nameSingular)
-            .findRecordIdsAllowedForOperations({
-              recordIds,
-              operationTypes: ['select', 'update', 'delete', 'soft-delete'],
-            }),
+      await this.recordAccessPolicyService.findGrantedRecordIdsByOperationType({
         authContext,
-      );
+        objectNameSingular,
+        recordIds,
+        operationTypes: ['select', 'update', 'delete', 'soft-delete'],
+      });
+    const isGranted = (
+      recordId: string,
+      operationType: ObjectRecordsOperationType,
+    ) => allowedRecordIds.get(operationType)?.has(recordId) ?? false;
     const isAllowed = (
       recordId: string,
-      operationType: 'update' | 'delete' | 'soft-delete',
-    ) =>
-      allowedRecordIds.select.has(recordId) &&
-      allowedRecordIds[operationType].has(recordId);
+      operationType: ObjectRecordsOperationType,
+    ) => isGranted(recordId, 'select') && isGranted(recordId, operationType);
 
     return new Map(
       recordIds.map((recordId) => [
         recordId,
         {
-          canRead: allowedRecordIds.select.has(recordId),
+          canRead: isGranted(recordId, 'select'),
           canUpdate: isAllowed(recordId, 'update'),
           canDelete: isAllowed(recordId, 'delete'),
           canSoftDelete: isAllowed(recordId, 'soft-delete'),

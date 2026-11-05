@@ -7,7 +7,7 @@ import { RecordShareRowCause } from 'twenty-shared/types';
 import { RecordShareWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-share-write-orm.service';
 import { type RecordShareCriteria } from 'src/engine/permissions/record-permission-orm/types/record-share-criteria.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 
 @Injectable()
 export class RecordShareStorageService {
@@ -25,7 +25,7 @@ export class RecordShareStorageService {
     workspaceId: string;
     share: Omit<RecordShareInput, 'rowCause'>;
     enabled: boolean;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     await this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,
@@ -56,7 +56,7 @@ export class RecordShareStorageService {
   }: {
     workspaceId: string;
     recordShares: RecordShareInput[];
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     return this.recordShareWriteOrmService.insertRecordShares({
       workspaceId,
@@ -75,7 +75,7 @@ export class RecordShareStorageService {
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     if (recordIds.length === 0) {
       return;
@@ -95,7 +95,7 @@ export class RecordShareStorageService {
   }: {
     workspaceId: string;
     criteria: RecordShareCriteria;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     return this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,
@@ -111,7 +111,7 @@ export class RecordShareStorageService {
   }: {
     workspaceId: string;
     sourceId: string;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     return this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,

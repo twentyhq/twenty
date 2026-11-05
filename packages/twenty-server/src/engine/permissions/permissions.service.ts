@@ -11,7 +11,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -39,11 +42,10 @@ import { RecordAccessPolicyService } from 'src/engine/permissions/combine/servic
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
@@ -64,7 +66,7 @@ type ObjectQuestion = {
 type RecordsQuestion = ObjectQuestion & {
   recordIds: string[];
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  transactionScope?: WorkspaceTransactionScope;
+  transactionScope?: RecordPermissionTransactionScope;
 };
 
 type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
@@ -75,7 +77,6 @@ type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
 export class PermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -293,9 +294,20 @@ export class PermissionsService {
     return (await this.findPrincipalRoleIds(authContext)).length > 0;
   }
 
+  public isUpdatePermittedByRole({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.isOperationPermittedByRole({
+      principals,
+      objectMetadataId,
+      operationType: 'update',
+    });
+  }
+
   public findRecordsPermissions(question: {
     authContext: WorkspaceAuthContext;
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+    objectNameSingular: string;
     recordIds: string[];
   }): Promise<Map<string, RecordPermissionsDTO>> {
     return this.recordPermissionsService.getPermissionsForRecords(question);
@@ -324,7 +336,7 @@ export class PermissionsService {
 
   public findViewerRecordAccess(
     question: RecordSharingArgs & {
-      transactionScope: WorkspaceTransactionScope;
+      transactionScope: RecordPermissionTransactionScope;
     },
   ): Promise<ViewerRecordAccess> {
     return this.recordSharingReadService.findViewerRecordAccess(question);
@@ -400,24 +412,26 @@ export class PermissionsService {
   }): Promise<boolean> {
     const {
       userWorkspaceRoleMap,
+      apiKeyRoleMap,
       flatApplicationMaps,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       flatRoleTargetByAgentIdMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
       'flatApplicationMaps',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'flatRoleTargetByAgentIdMaps',
     ]);
 
-    const callerRoleIds = await this.resolveCallerRoleIdsOrThrow({
-      workspaceId,
+    const callerRoleIds = this.resolveCallerRoleIdsOrThrow({
       userWorkspaceId,
       apiKeyId,
       applicationId,
       userWorkspaceRoleMap,
+      apiKeyRoleMap,
       flatApplicationMaps,
       flatRoleMaps,
     });
@@ -572,28 +586,32 @@ export class PermissionsService {
   }
 
   // undefined entries are roles a caller should have but does not, which deny
-  private async resolveCallerRoleIdsOrThrow({
-    workspaceId,
+  private resolveCallerRoleIdsOrThrow({
     userWorkspaceId,
     apiKeyId,
     applicationId,
     userWorkspaceRoleMap,
+    apiKeyRoleMap,
     flatApplicationMaps,
     flatRoleMaps,
   }: {
-    workspaceId: string;
     userWorkspaceId: string | undefined;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
     userWorkspaceRoleMap: UserWorkspaceRoleMap;
+    apiKeyRoleMap: Record<string, string>;
     flatApplicationMaps: FlatApplicationCacheMaps;
     flatRoleMaps: FlatRoleMaps;
-  }): Promise<(string | undefined)[]> {
+  }): (string | undefined)[] {
     if (isDefined(apiKeyId)) {
-      const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
-        apiKeyId,
-        workspaceId,
-      );
+      const apiKeyRoleId = apiKeyRoleMap[apiKeyId];
+
+      if (!isDefined(apiKeyRoleId)) {
+        throw new ApiKeyException(
+          `API key ${apiKeyId} has no role assigned`,
+          ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+        );
+      }
 
       const apiKeyFlatRole = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: apiKeyRoleId,
