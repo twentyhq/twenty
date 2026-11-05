@@ -5,7 +5,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
-import { getTargetOptionColumnsByUniversalIdentifier } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -32,26 +32,21 @@ export const buildStandardFlatFieldMetadataOptionMaps = ({
       continue;
     }
 
-    for (const [
-      universalIdentifier,
-      optionColumns,
-    ] of getTargetOptionColumnsByUniversalIdentifier(flatFieldMetadata)) {
+    for (const universalFlatFieldMetadataOption of buildUniversalFlatFieldMetadataOptionsForField(
+      {
+        universalFlatFieldMetadata: flatFieldMetadata,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        now,
+      },
+    )) {
       flatFieldMetadataOptionMaps = addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: {
+          ...universalFlatFieldMetadataOption,
           id: v4(),
           workspaceId,
-          universalIdentifier,
           applicationId: twentyStandardApplicationId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION.universalIdentifier,
           fieldMetadataId: flatFieldMetadata.id,
-          fieldMetadataUniversalIdentifier:
-            flatFieldMetadata.universalIdentifier,
-          ...optionColumns,
-          isActive: true,
-          overrides: null,
-          createdAt: now,
-          updatedAt: now,
         },
         flatEntityMaps: flatFieldMetadataOptionMaps,
       });

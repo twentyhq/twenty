@@ -57,7 +57,6 @@ const computeOperations = ({
   applicationUniversalIdentifier: string;
 }) =>
   computeFieldMetadataOptionOperationsForField({
-    fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
     targetUniversalFlatFieldMetadata: targetField,
     existingOptions,
     isUniversalIdentifierUsedByOtherField: () => false,

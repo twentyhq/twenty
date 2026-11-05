@@ -71,7 +71,6 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     targetUniversalFlatFieldMetadata,
   } of fieldsWithTarget) {
     const fieldOperations = computeFieldMetadataOptionOperationsForField({
-      fieldMetadataUniversalIdentifier,
       targetUniversalFlatFieldMetadata,
       existingOptions:
         existingOptionsByFieldMetadataUniversalIdentifier.get(
