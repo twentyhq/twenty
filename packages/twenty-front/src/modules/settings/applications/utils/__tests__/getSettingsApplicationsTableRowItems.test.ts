@@ -1,5 +1,8 @@
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
-import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import {
+  CHATGPT_CONNECTABLE_APP,
+  CLAUDE_CONNECTABLE_APP,
+} from '@/settings/app-preferences/testing/connectableAppFixtures';
 import {
   NPM_APPLICATION,
   OAUTH_ONLY_APPLICATION,
@@ -9,14 +12,15 @@ import { getSettingsApplicationsTableRowItems } from '@/settings/applications/ut
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 describe('getSettingsApplicationsTableRowItems', () => {
-  it('lists the standard app, then built-in apps, then the other apps with OAuth-only apps last', () => {
+  it('lists the standard app, then built-in and connectable apps, then the other apps with OAuth-only apps last', () => {
     const rowItems = getSettingsApplicationsTableRowItems({
       applications: [
         OAUTH_ONLY_APPLICATION,
         NPM_APPLICATION,
         STANDARD_APPLICATION,
       ],
-      builtInApps: [...BUILT_IN_ACCOUNT_APPS, ...BUILT_IN_MCP_CLIENT_APPS],
+      builtInApps: BUILT_IN_ACCOUNT_APPS,
+      connectableApps: [CHATGPT_CONNECTABLE_APP, CLAUDE_CONNECTABLE_APP],
       currentWorkspace: null,
     });
 
@@ -25,8 +29,8 @@ describe('getSettingsApplicationsTableRowItems', () => {
       'google',
       'outlook',
       'imap',
-      'chatgpt',
-      'claude',
+      CHATGPT_CONNECTABLE_APP.id,
+      CLAUDE_CONNECTABLE_APP.id,
       NPM_APPLICATION.id,
       OAUTH_ONLY_APPLICATION.id,
     ]);
@@ -69,6 +73,36 @@ describe('getSettingsApplicationsTableRowItems', () => {
       description: 'Sync emails and calendar events from your Google accounts.',
     });
     expect(googleRowItem.sourceType).toBeUndefined();
+  });
+
+  it('labels an install by how it was installed, and one without a registration as built-in', () => {
+    const [standardRowItem, claudeRowItem] =
+      getSettingsApplicationsTableRowItems({
+        applications: [
+          {
+            ...STANDARD_APPLICATION,
+            sourceType: ApplicationRegistrationSourceType.LOCAL,
+          },
+          {
+            id: 'claude-application-id',
+            name: 'Claude',
+            universalIdentifier: 'claude-universal-identifier',
+            sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+            applicationRegistration: {
+              id: 'claude-registration-id',
+              sourceType: ApplicationRegistrationSourceType.NPM,
+              oAuthIdentityUniversalIdentifier: 'claude-universal-identifier',
+            },
+          },
+        ],
+        builtInApps: [],
+        currentWorkspace: null,
+      });
+
+    expect(standardRowItem.sourceType).toBeUndefined();
+    expect(claudeRowItem.sourceType).toBe(
+      ApplicationRegistrationSourceType.OAUTH_ONLY,
+    );
   });
 
   it('gives the standard and custom apps the name and description their rows show', () => {

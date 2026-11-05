@@ -8,7 +8,7 @@ export type ResolvedOAuthClient =
       clientIdMetadataDocument: null;
     }
   | {
-      kind: 'wellKnownClientIdMetadataDocument';
+      kind: 'oAuthIdentityClientIdMetadataDocument';
       registration: ApplicationRegistrationEntity;
       clientIdMetadataDocument: ClientIdMetadataDocument;
     }

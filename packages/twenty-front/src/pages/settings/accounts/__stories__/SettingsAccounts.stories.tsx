@@ -16,6 +16,7 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CLAUDE_CONNECTABLE_APP } from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -688,7 +689,9 @@ export const AppPreferencesListInstalledApps: Story = {
 export const ListsOnlyChatGptAndClaudeWithoutAccountsPermission: Story = {
   ...accountGroupsStory,
   args: {
-    additionalRoutes: ['/settings/app-preferences/claude'],
+    additionalRoutes: [
+      `/settings/app-preferences/${CLAUDE_CONNECTABLE_APP.id}`,
+    ],
   },
   beforeEach: async () => {
     await seedAccountGroupsStory();
@@ -708,7 +711,9 @@ export const ListsOnlyChatGptAndClaudeWithoutAccountsPermission: Story = {
     await userEvent.click(canvas.getByRole('link', { name: /Claude/ }));
 
     expect(
-      await canvas.findByText('Navigated to /settings/app-preferences/claude'),
+      await canvas.findByText(
+        `Navigated to /settings/app-preferences/${CLAUDE_CONNECTABLE_APP.id}`,
+      ),
     ).toBeVisible();
   },
 };

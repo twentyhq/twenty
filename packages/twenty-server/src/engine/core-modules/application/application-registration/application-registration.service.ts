@@ -26,6 +26,7 @@ import { v4 } from 'uuid';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
   ApplicationRegistrationVersionService,
@@ -112,7 +113,17 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  connectUrl: string | null;
 };
+
+// An app with an OAuth identity acts for the member, so it asks for what the member can grant
+const getCatalogOAuthScopes = (
+  params: Pick<
+    UpsertApplicationRegistrationFromCatalogParams,
+    'sourceType' | 'sourcePackage' | 'manifest'
+  >,
+): string[] =>
+  isDefined(getApplicationOAuthIdentity(params)) ? [...ALL_OAUTH_SCOPES] : [];
 
 @Injectable()
 export class ApplicationRegistrationService {
@@ -242,7 +253,7 @@ export class ApplicationRegistrationService {
   }
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
-    await this.applicationRegistrationSeedingService.invalidateMarketplaceCatalog();
+    await this.applicationRegistrationSeedingService.invalidateCatalogCaches();
   }
 
   emitRegistrationPublishMetric({
@@ -625,6 +636,7 @@ export class ApplicationRegistrationService {
         | 'tarballFileId'
         | 'isListed'
         | 'ownerWorkspaceId'
+        | 'oAuthScopes'
       >
     >;
   }): Promise<{
@@ -948,6 +960,7 @@ export class ApplicationRegistrationService {
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
+        oAuthScopes: getCatalogOAuthScopes(params),
       },
     });
 
@@ -985,7 +998,7 @@ export class ApplicationRegistrationService {
       ...fromManifestApplicationToDisplayFields(params.manifest.application),
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
-      oAuthScopes: [],
+      oAuthScopes: getCatalogOAuthScopes(params),
       ownerWorkspaceId: null,
     });
 
@@ -1036,13 +1049,9 @@ export class ApplicationRegistrationService {
         'category',
         'manifest',
       ],
-      where: [
-        { sourceType: ApplicationRegistrationSourceType.NPM },
-        {
-          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-          isListed: true,
-        },
-      ],
+      where: {
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
     });
 
     return registrations.map((registration) => ({
@@ -1058,6 +1067,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      connectUrl: getApplicationOAuthIdentity(registration)?.connectUrl ?? null,
     }));
   }
 

@@ -9,12 +9,13 @@ export const FIND_MANY_APPLICATIONS = gql`
       logoUrl
       version
       universalIdentifier
+      sourceType
       applicationRegistrationId
       applicationRegistration {
         id
         latestAvailableVersion
         sourceType
-        wellKnownOAuthClient
+        oAuthIdentityUniversalIdentifier
       }
       defaultRoleId
     }

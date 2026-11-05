@@ -2,7 +2,7 @@ import { SettingsAccountsLegacySections } from '@/settings/accounts/components/S
 import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsAppPreferencesAccountsTab } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountsTab';
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
-import { SettingsBuiltInMcpClientAppsSection } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppsSection';
+import { SettingsConnectableAppsSection } from '@/settings/app-preferences/components/SettingsConnectableAppsSection';
 import { SETTINGS_APP_PREFERENCES_TAB_IDS } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabIds';
 import { SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabListComponentId';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -55,7 +55,7 @@ export const SettingsAccounts = () => {
     }
 
     if (!hasConnectedAccountsPermission) {
-      return <SettingsBuiltInMcpClientAppsSection />;
+      return <SettingsConnectableAppsSection />;
     }
 
     return (

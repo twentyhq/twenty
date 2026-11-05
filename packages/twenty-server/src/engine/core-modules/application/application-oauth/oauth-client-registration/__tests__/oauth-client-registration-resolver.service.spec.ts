@@ -5,12 +5,11 @@ import { randomUUID } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
-import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 const CLAUDE_CODE_DOCUMENT = {
@@ -25,7 +24,7 @@ describe('OAuthClientRegistrationResolverService', () => {
   let findDocument: jest.Mock;
   let isFetchDue: jest.Mock;
   let tokenBucketThrottleOrThrow: jest.Mock;
-  let findOrCreateRegistration: jest.Mock;
+  let findRegistrationByClientIdMetadataDocument: jest.Mock;
   let insertedValues: jest.Mock;
   let applicationRegistrationRepository: {
     findOne: jest.Mock;
@@ -37,7 +36,9 @@ describe('OAuthClientRegistrationResolverService', () => {
     findDocument = jest.fn();
     isFetchDue = jest.fn();
     tokenBucketThrottleOrThrow = jest.fn();
-    findOrCreateRegistration = jest.fn();
+    findRegistrationByClientIdMetadataDocument = jest
+      .fn()
+      .mockResolvedValue(null);
     insertedValues = jest.fn();
 
     const insertQueryBuilder = {
@@ -70,8 +71,8 @@ describe('OAuthClientRegistrationResolverService', () => {
           useValue: { findDocument, isFetchDue },
         },
         {
-          provide: WellKnownOAuthClientRegistrationService,
-          useValue: { findOrCreateRegistration },
+          provide: ApplicationOAuthIdentityService,
+          useValue: { findRegistrationByClientIdMetadataDocument },
         },
         {
           provide: ThrottlerService,
@@ -94,28 +95,8 @@ describe('OAuthClientRegistrationResolverService', () => {
     expect(findDocument).not.toHaveBeenCalled();
   });
 
-  it('resolves a well-known client document to its seeded registration', async () => {
-    const seededRegistration = { id: 'seeded-chatgpt' };
-
-    findDocument.mockResolvedValue({
-      clientId: 'https://chatgpt.com/oauth/client.json',
-      clientName: 'ChatGPT',
-      logoUri: null,
-      redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
-    });
-    findOrCreateRegistration.mockResolvedValue(seededRegistration);
-
-    await expect(
-      service.findByClientId('https://chatgpt.com/oauth/client.json'),
-    ).resolves.toBe(seededRegistration);
-    expect(findOrCreateRegistration).toHaveBeenCalledWith(
-      expect.objectContaining({ client: WellKnownOAuthClient.CHATGPT }),
-    );
-    expect(insertedValues).not.toHaveBeenCalled();
-  });
-
-  it('keeps the document of a well-known client to restrict its callbacks', async () => {
-    const seededRegistration = { id: 'seeded-chatgpt' };
+  it("resolves the document of an app's OAuth identity to that app's registration", async () => {
+    const chatGptAppRegistration = { id: 'chatgpt-app' };
     const chatGptDocument = {
       clientId: 'https://chatgpt.com/oauth/client.json',
       clientName: 'ChatGPT',
@@ -124,13 +105,38 @@ describe('OAuthClientRegistrationResolverService', () => {
     };
 
     findDocument.mockResolvedValue(chatGptDocument);
-    findOrCreateRegistration.mockResolvedValue(seededRegistration);
+    findRegistrationByClientIdMetadataDocument.mockResolvedValue(
+      chatGptAppRegistration,
+    );
+
+    await expect(
+      service.findByClientId(chatGptDocument.clientId),
+    ).resolves.toBe(chatGptAppRegistration);
+    expect(findRegistrationByClientIdMetadataDocument).toHaveBeenCalledWith(
+      chatGptDocument,
+    );
+    expect(insertedValues).not.toHaveBeenCalled();
+  });
+
+  it("keeps the document of an app's OAuth identity to restrict its callbacks", async () => {
+    const chatGptAppRegistration = { id: 'chatgpt-app' };
+    const chatGptDocument = {
+      clientId: 'https://chatgpt.com/oauth/client.json',
+      clientName: 'ChatGPT',
+      logoUri: null,
+      redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
+    };
+
+    findDocument.mockResolvedValue(chatGptDocument);
+    findRegistrationByClientIdMetadataDocument.mockResolvedValue(
+      chatGptAppRegistration,
+    );
 
     await expect(
       service.findOrRegisterByClientId(chatGptDocument.clientId),
     ).resolves.toEqual({
-      kind: 'wellKnownClientIdMetadataDocument',
-      registration: seededRegistration,
+      kind: 'oAuthIdentityClientIdMetadataDocument',
+      registration: chatGptAppRegistration,
       clientIdMetadataDocument: chatGptDocument,
     });
     expect(insertedValues).not.toHaveBeenCalled();

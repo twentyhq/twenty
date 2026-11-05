@@ -5,6 +5,7 @@ import { type SettingsFrontComponentApplicationManifest } from '@/application/se
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
 import { type ApplicationCapability } from '@/application/applicationCapabilityType';
+import { type ApplicationOAuthIdentity } from '@/application/applicationOAuthIdentityType';
 import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -12,7 +13,8 @@ import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
 export type ApplicationManifest = SyncableEntityOptions & {
-  defaultRoleUniversalIdentifier: string;
+  // Absent only with an OAuth identity, whose tokens act with the connecting member's permissions
+  defaultRoleUniversalIdentifier?: string;
   displayName: string;
   description: string;
   requestedCapabilities?: ApplicationCapability[];
@@ -36,6 +38,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   termsUrl?: string;
   emailSupport?: string;
   issueReportUrl?: string;
+  oAuthIdentity?: ApplicationOAuthIdentity;
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;

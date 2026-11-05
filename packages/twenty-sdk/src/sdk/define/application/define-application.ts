@@ -11,6 +11,7 @@ import {
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
+  validateApplicationOAuthIdentity,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -170,6 +171,10 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     warnings.push(
       '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
     );
+  }
+
+  if (isDefined(config.oAuthIdentity)) {
+    errors.push(...validateApplicationOAuthIdentity(config.oAuthIdentity));
   }
 
   const { category } = config;

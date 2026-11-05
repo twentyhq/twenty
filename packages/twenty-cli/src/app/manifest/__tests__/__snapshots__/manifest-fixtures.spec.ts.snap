@@ -294,6 +294,89 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
 }
 `;
 
+exports[`CLI manifest fixtures and worker transport > matches the manifest, file paths, errors and warnings for oauth-identity-app 1`] = `
+{
+  "filePaths": {
+    "agents": [],
+    "application": [
+      "application.config.ts",
+    ],
+    "commandMenuItems": [],
+    "connectionProviders": [],
+    "fields": [],
+    "frontComponents": [],
+    "indexes": [],
+    "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
+    "navigationMenuItems": [],
+    "objects": [],
+    "pageLayoutTabs": [],
+    "pageLayoutWidgets": [],
+    "pageLayouts": [],
+    "permissionFlags": [],
+    "publicAssets": [],
+    "relatedRecordPaths": [],
+    "roles": [],
+    "settingsMenuItems": [],
+    "skills": [],
+    "timelineActivityTypes": [],
+    "viewFields": [],
+    "views": [],
+    "workflows": [],
+  },
+  "manifest": {
+    "agents": [],
+    "application": {
+      "description": "An external client members connect to Twenty",
+      "displayName": "Assistant",
+      "galleryImages": [],
+      "oAuthIdentity": {
+        "clientIdMetadataDocumentHostnames": [
+          "assistant.example.com",
+        ],
+        "connectUrl": "https://assistant.example.com/connectors/new?url={mcpServerUrl}",
+        "redirectUris": [
+          "https://assistant.example.com/oauth/*",
+        ],
+      },
+      "packageJsonChecksum": "",
+      "requiredServerVersionRange": null,
+      "universalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000101",
+      "yarnLockChecksum": null,
+    },
+    "commandMenuItems": [],
+    "connectionProviders": [],
+    "fields": [],
+    "frontComponents": [],
+    "indexes": [],
+    "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
+    "navigationMenuItems": [],
+    "objects": [],
+    "pageLayoutTabs": [],
+    "pageLayoutWidgets": [],
+    "pageLayouts": [],
+    "permissionFlags": [],
+    "publicAssets": [],
+    "relatedRecordPaths": [],
+    "roles": [],
+    "settingsMenuItems": [],
+    "skills": [],
+    "timelineActivityTypes": [],
+    "viewFields": [],
+    "views": [],
+    "workflows": [],
+  },
+  "success": true,
+  "warnings": [
+    ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
+    ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
+  ],
+}
+`;
+
 exports[`CLI manifest fixtures and worker transport > matches the manifest, file paths, errors and warnings for rich-app 1`] = `
 {
   "filePaths": {

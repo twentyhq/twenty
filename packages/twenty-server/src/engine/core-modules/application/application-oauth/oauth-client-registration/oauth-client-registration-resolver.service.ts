@@ -16,10 +16,9 @@ import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/applicati
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/resolved-oauth-client.type';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
-import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 @Injectable()
@@ -28,7 +27,7 @@ export class OAuthClientRegistrationResolverService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
-    private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
+    private readonly applicationOAuthIdentityService: ApplicationOAuthIdentityService,
     private readonly throttlerService: ThrottlerService,
   ) {}
 
@@ -105,18 +104,15 @@ export class OAuthClientRegistrationResolverService {
       return null;
     }
 
-    const wellKnownOAuthClient =
-      findWellKnownOAuthClientByClientIdMetadataDocument(
+    const oAuthIdentityRegistration =
+      await this.applicationOAuthIdentityService.findRegistrationByClientIdMetadataDocument(
         clientIdMetadataDocument,
       );
 
-    if (isDefined(wellKnownOAuthClient)) {
+    if (isDefined(oAuthIdentityRegistration)) {
       return {
-        kind: 'wellKnownClientIdMetadataDocument',
-        registration:
-          await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
-            wellKnownOAuthClient,
-          ),
+        kind: 'oAuthIdentityClientIdMetadataDocument',
+        registration: oAuthIdentityRegistration,
         clientIdMetadataDocument,
       };
     }

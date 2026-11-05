@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, within } from 'storybook/test';
-import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 
 import {
   PageDecorator,
@@ -17,12 +16,11 @@ import {
   ApplicationRegistrationSourceType,
   FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
-  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
+import { CLAUDE_CONNECTABLE_APP } from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { SettingsAvailableApplicationDetails } from '~/pages/settings/applications/SettingsAvailableApplicationDetails';
 
-const CLAUDE_UNIVERSAL_IDENTIFIER =
-  WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE;
+const CLAUDE_UNIVERSAL_IDENTIFIER = CLAUDE_CONNECTABLE_APP.id;
 
 const CLAUDE_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] =
   {
@@ -30,10 +28,10 @@ const CLAUDE_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketpl
     id: 'claude-registration-id',
     universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
     name: 'Claude',
-    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
-    sourcePackage: null,
-    latestAvailableVersion: null,
+    sourceType: ApplicationRegistrationSourceType.NPM,
+    connectUrl: CLAUDE_CONNECTABLE_APP.connectUrl,
+    sourcePackage: '@twentyhq/claude',
+    latestAvailableVersion: '0.1.0',
     isListed: true,
     description:
       'Work with your Twenty workspace from Claude through the Twenty connector.',
@@ -107,7 +105,7 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsAvailableApplicationDetails>;
 
-export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
+export const AppWithOAuthIdentityOffersToConnectInsteadOfInstall: Story = {
   beforeEach: () => seedAppPreferencesFlag({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -126,7 +124,7 @@ export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
   },
 };
 
-export const WellKnownOAuthClientOffersNoActionWhenFeatureFlagIsOff: Story = {
+export const AppWithOAuthIdentityOffersNoActionWhenFeatureFlagIsOff: Story = {
   beforeEach: () => seedAppPreferencesFlag({ isAppPreferencesEnabled: false }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

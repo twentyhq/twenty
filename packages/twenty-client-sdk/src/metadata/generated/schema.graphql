@@ -452,6 +452,7 @@ type Application {
   runOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
+  sourceType: ApplicationRegistrationSourceType!
   universalIdentifier: String!
   version: String
   yarnLockChecksum: String
@@ -466,9 +467,9 @@ type ApplicationAuthorization {
   id: UUID!
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
+  oAuthIdentityUniversalIdentifier: String
   scopes: [String!]
   userId: UUID!
-  wellKnownOAuthClient: WellKnownOAuthClient
   workspaceId: UUID!
 }
 
@@ -712,8 +713,8 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   logoUrl: String
+  oAuthIdentityUniversalIdentifier: String
   sourceType: ApplicationRegistrationSourceType!
-  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type ApplicationRegistrationVariable {
@@ -2975,6 +2976,7 @@ type LoginToken {
 type MarketplaceApp {
   author: String!
   category: String!
+  connectUrl: String
   description: String!
   id: String!
   isListed: Boolean!
@@ -2988,6 +2990,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  connectUrl: String
   defaultRoleUniversalIdentifier: String
   description: String
   emailSupport: String
@@ -3010,7 +3013,6 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
-  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type MarketplaceAppObject {
@@ -4040,12 +4042,13 @@ type PreviewMessageCampaignSendOutputDTO {
 }
 
 type PublicApplicationRegistration {
+  claimsVerifiedClientName: Boolean!
   id: UUID!
   logoUrl: String
   name: String!
+  oAuthIdentityUniversalIdentifier: String
   oAuthScopes: [String!]!
   websiteUrl: String
-  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type PublicConnectionParametersOutput {
@@ -6181,11 +6184,6 @@ type Webhook {
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
-}
-
-enum WellKnownOAuthClient {
-  CHATGPT
-  CLAUDE
 }
 
 union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration

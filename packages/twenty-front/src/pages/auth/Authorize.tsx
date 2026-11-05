@@ -303,7 +303,12 @@ export const Authorize = () => {
           </StyledOAuthTitle>
           <AuthorizeClientIdentityNotice
             appName={appName}
-            wellKnownOAuthClient={applicationRegistration.wellKnownOAuthClient}
+            isVerified={isDefined(
+              applicationRegistration.oAuthIdentityUniversalIdentifier,
+            )}
+            claimsVerifiedClientName={
+              applicationRegistration.claimsVerifiedClientName
+            }
           />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>

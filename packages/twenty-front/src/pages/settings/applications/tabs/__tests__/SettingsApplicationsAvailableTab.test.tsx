@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -42,14 +41,15 @@ jest.mock('@/marketplace/hooks/useMarketplaceApps', () => ({
       },
       {
         __typename: 'MarketplaceApp',
-        id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+        id: '6e58bb83-49dc-4d4d-ae82-662890eda505',
         name: 'ChatGPT',
         description: '',
         author: 'OpenAI',
         category: '',
         logoUrl: null,
-        sourcePackage: null,
+        sourcePackage: '@twentyhq/chatgpt',
         isListed: true,
+        connectUrl: 'https://chatgpt.com/apps/twenty',
       },
     ],
     isLoading: false,

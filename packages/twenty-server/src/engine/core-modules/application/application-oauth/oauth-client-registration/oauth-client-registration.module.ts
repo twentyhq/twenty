@@ -6,7 +6,7 @@ import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/
 import { OAuthClientResolver } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client.resolver';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
+import { ApplicationOAuthIdentityModule } from 'src/engine/core-modules/application/application-oauth-identity/application-oauth-identity.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Module({
@@ -15,7 +15,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
     ApplicationRegistrationModule,
     ClientIdMetadataDocumentModule,
     ThrottlerModule,
-    WellKnownOAuthClientModule,
+    ApplicationOAuthIdentityModule,
   ],
   providers: [OAuthClientRegistrationResolverService, OAuthClientResolver],
   exports: [OAuthClientRegistrationResolverService],

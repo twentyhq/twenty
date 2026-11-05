@@ -13,7 +13,7 @@ import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/applic
 import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
-import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -29,7 +29,7 @@ export class ApplicationUninstallRunnerService {
     private readonly metricsService: MetricsService,
     private readonly cacheLockService: CacheLockService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
+    private readonly applicationOAuthIdentityInstallService: ApplicationOAuthIdentityInstallService,
   ) {}
 
   async uninstallApplication({
@@ -42,7 +42,7 @@ export class ApplicationUninstallRunnerService {
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<void> {
     const foldedInstallUniversalIdentifiers =
-      await this.wellKnownOAuthClientInstallService.findFoldedInstallUniversalIdentifiers(
+      await this.applicationOAuthIdentityInstallService.findFoldedInstallUniversalIdentifiers(
         { workspaceId, universalIdentifier },
       );
 

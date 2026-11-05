@@ -21,10 +21,10 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { findWellKnownOAuthClientByUniversalIdentifier } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-universal-identifier.util';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -111,10 +111,7 @@ export class MarketplaceQueryService {
       universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourceType: registration.sourceType,
-      wellKnownOAuthClient:
-        findWellKnownOAuthClientByUniversalIdentifier(
-          registration.universalIdentifier,
-        )?.client ?? null,
+      connectUrl: getApplicationOAuthIdentity(registration)?.connectUrl,
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,

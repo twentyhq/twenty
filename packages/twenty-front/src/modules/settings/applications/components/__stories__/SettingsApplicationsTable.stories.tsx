@@ -2,7 +2,10 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
-import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import {
+  CHATGPT_CONNECTABLE_APP,
+  CLAUDE_CONNECTABLE_APP,
+} from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
 import {
@@ -205,7 +208,8 @@ export const MemberRowsLinkToTheirPreferences: Story = {
     description:
       'Choose your preferences for the apps installed on your workspace by the admin',
     applications: [OAUTH_ONLY_APPLICATION, NPM_APPLICATION],
-    builtInApps: [...BUILT_IN_ACCOUNT_APPS, ...BUILT_IN_MCP_CLIENT_APPS],
+    builtInApps: BUILT_IN_ACCOUNT_APPS,
+    connectableApps: [CHATGPT_CONNECTABLE_APP, CLAUDE_CONNECTABLE_APP],
     linkTarget: 'applicationPreferences',
     middleColumn: 'status',
     statusesById: {
@@ -224,8 +228,8 @@ export const MemberRowsLinkToTheirPreferences: Story = {
       '/settings/app-preferences/google',
       '/settings/app-preferences/outlook',
       '/settings/app-preferences/imap',
-      '/settings/app-preferences/chatgpt',
-      '/settings/app-preferences/claude',
+      `/settings/app-preferences/${CHATGPT_CONNECTABLE_APP.id}`,
+      `/settings/app-preferences/${CLAUDE_CONNECTABLE_APP.id}`,
       '/settings/app-preferences/npm-application-id',
       '/settings/app-preferences/oauth-application-id',
     ]);

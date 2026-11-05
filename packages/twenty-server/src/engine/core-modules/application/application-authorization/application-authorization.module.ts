@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { ApplicationAuthorizationResolver } from 'src/engine/core-modules/application/application-authorization/application-authorization.resolver';
 import { WorkspaceApplicationAuthorizationResolver } from 'src/engine/core-modules/application/application-authorization/workspace-application-authorization.resolver';
-import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
+import { ApplicationOAuthIdentityModule } from 'src/engine/core-modules/application/application-oauth-identity/application-oauth-identity.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 
@@ -12,7 +12,7 @@ import { ApplicationAuthorizationService } from 'src/engine/core-modules/applica
   imports: [
     TypeOrmModule.forFeature([ApplicationAuthorizationEntity]),
     PermissionsModule,
-    WellKnownOAuthClientModule,
+    ApplicationOAuthIdentityModule,
   ],
   providers: [
     ApplicationAuthorizationService,

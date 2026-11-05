@@ -6,15 +6,35 @@ import { type FindOperator, In, IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
-import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
+import { toApplicationAuthorizationDto } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
+import { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
-    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
+    private readonly applicationOAuthIdentityInstallService: ApplicationOAuthIdentityInstallService,
+    private readonly applicationOAuthIdentityService: ApplicationOAuthIdentityService,
   ) {}
+
+  toApplicationAuthorizationDtos(
+    authorizations: ApplicationAuthorizationEntity[],
+  ): Promise<ApplicationAuthorizationDTO[]> {
+    return Promise.all(
+      authorizations.map(async (authorization) =>
+        toApplicationAuthorizationDto({
+          authorization,
+          oAuthIdentityUniversalIdentifier:
+            await this.applicationOAuthIdentityService.findOAuthIdentityUniversalIdentifier(
+              authorization.application.applicationRegistration,
+            ),
+        }),
+      ),
+    );
+  }
 
   async recordAuthorization({
     userId,
@@ -117,10 +137,12 @@ export class ApplicationAuthorizationService {
     applicationId: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
     const applicationIds =
-      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
-        workspaceId,
-        applicationId,
-      });
+      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds(
+        {
+          workspaceId,
+          applicationId,
+        },
+      );
 
     return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
       .andWhere(
@@ -166,10 +188,12 @@ export class ApplicationAuthorizationService {
     userId: string;
   }): Promise<boolean> {
     const applicationIds =
-      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
-        workspaceId,
-        applicationId,
-      });
+      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds(
+        {
+          workspaceId,
+          applicationId,
+        },
+      );
 
     return await this.revokeMatching({
       workspaceId,

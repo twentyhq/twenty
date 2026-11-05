@@ -16,7 +16,6 @@ import {
 import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('MarketplaceAppDetail')
 export class MarketplaceAppDetailDTO {
@@ -38,8 +37,11 @@ export class MarketplaceAppDetailDTO {
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
 
-  @Field(() => WellKnownOAuthClient, { nullable: true })
-  wellKnownOAuthClient: WellKnownOAuthClient | null;
+  // Set only for an app with an OAuth identity; `{mcpServerUrl}` is left for the client to fill
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  connectUrl?: string;
 
   @IsOptional()
   @IsString()

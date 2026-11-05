@@ -15,7 +15,9 @@ import {
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { isOAuthOnlyApplicationRegistration } from 'src/engine/core-modules/application/application-oauth-identity/utils/is-oauth-only-application-registration.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -805,29 +807,35 @@ export class OAuthService {
       return existingApplication;
     }
 
-    try {
-      await this.applicationInstallService.installApplication({
-        appRegistrationId: applicationRegistration.id,
-        workspaceId,
-      });
+    const isOAuthOnly = isOAuthOnlyApplicationRegistration(
+      applicationRegistration,
+    );
 
-      const installedApplication = await this.findInstalledApplication({
-        applicationRegistrationId: applicationRegistration.id,
-        workspaceId,
-      });
+    if (!isOAuthOnly) {
+      try {
+        await this.applicationInstallService.installApplication({
+          appRegistrationId: applicationRegistration.id,
+          workspaceId,
+        });
 
-      if (installedApplication) {
-        return installedApplication;
+        const installedApplication = await this.findInstalledApplication({
+          applicationRegistrationId: applicationRegistration.id,
+          workspaceId,
+        });
+
+        if (installedApplication) {
+          return installedApplication;
+        }
+
+        this.logger.warn(
+          `Install succeeded but application not found in workspace, falling back to bare creation`,
+        );
+      } catch (error) {
+        this.logger.warn(
+          `Auto-install failed for ${applicationRegistration.name}, falling back to bare creation`,
+          error,
+        );
       }
-
-      this.logger.warn(
-        `Install succeeded but application not found in workspace, falling back to bare creation`,
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Auto-install failed for ${applicationRegistration.name}, falling back to bare creation`,
-        error,
-      );
     }
 
     try {
@@ -839,7 +847,9 @@ export class OAuthService {
           `OAuth application registered as "${applicationRegistration.name}"`,
         version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
         sourcePath: 'oauth-install',
-        sourceType: applicationRegistration.sourceType,
+        sourceType: isOAuthOnly
+          ? ApplicationRegistrationSourceType.OAUTH_ONLY
+          : applicationRegistration.sourceType,
         applicationRegistrationId: applicationRegistration.id,
         workspaceId,
       });

@@ -5,7 +5,7 @@ export const CURRENT_USER_APPLICATION_AUTHORIZATIONS = gql`
     currentUserApplicationAuthorizations {
       id
       scopes
-      wellKnownOAuthClient
+      oAuthIdentityUniversalIdentifier
       lastUsedAt
     }
   }

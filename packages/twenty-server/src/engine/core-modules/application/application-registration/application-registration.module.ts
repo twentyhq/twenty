@@ -9,6 +9,7 @@ import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/app
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationOAuthIdentityModule } from 'src/engine/core-modules/application/application-oauth-identity/application-oauth-identity.module';
 import { ApplicationRegistrationSummaryResolver } from 'src/engine/core-modules/application/application-registration/application-registration-summary.resolver';
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
@@ -48,6 +49,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationSeedingModule,
+    ApplicationOAuthIdentityModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,

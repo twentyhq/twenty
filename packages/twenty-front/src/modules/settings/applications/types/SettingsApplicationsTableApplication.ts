@@ -9,4 +9,5 @@ export type SettingsApplicationsTableApplication = Pick<
   | 'universalIdentifier'
   | 'version'
   | 'applicationRegistration'
+  | 'sourceType'
 >;

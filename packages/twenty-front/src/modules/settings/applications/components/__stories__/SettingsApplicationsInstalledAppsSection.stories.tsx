@@ -7,13 +7,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
   FeatureFlagKey,
-  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
+import { CLAUDE_CONNECTABLE_APP } from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -45,16 +44,18 @@ const buildApplication = ({
   description,
   latestAvailableVersion,
   sourceType = ApplicationRegistrationSourceType.NPM,
-  wellKnownOAuthClient = null,
+  oAuthIdentityUniversalIdentifier = null,
   universalIdentifier = `${id}-universal-identifier`,
+  installSourceType = sourceType,
 }: {
   id: string;
   name: string;
   description: string;
   latestAvailableVersion: string;
   sourceType?: ApplicationRegistrationSourceType;
-  wellKnownOAuthClient?: WellKnownOAuthClient | null;
+  oAuthIdentityUniversalIdentifier?: string | null;
   universalIdentifier?: string;
+  installSourceType?: ApplicationRegistrationSourceType;
 }) => ({
   __typename: 'Application',
   id,
@@ -63,13 +64,14 @@ const buildApplication = ({
   logoUrl: null,
   version: '1.0.0',
   universalIdentifier,
+  sourceType: installSourceType,
   applicationRegistrationId: `${id}-registration-id`,
   applicationRegistration: {
     __typename: 'ApplicationRegistrationSummary',
     id: `${id}-registration-id`,
     latestAvailableVersion,
     sourceType,
-    wellKnownOAuthClient,
+    oAuthIdentityUniversalIdentifier,
   },
   defaultRoleId: null,
 });
@@ -101,7 +103,7 @@ const EARLIER_CLAUDE_CONNECTION_APPLICATION = buildApplication({
   description: 'OAuth application registered as Claude',
   latestAvailableVersion: '1.0.0',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+  oAuthIdentityUniversalIdentifier: CLAUDE_CONNECTABLE_APP.id,
 });
 
 const CLAUDE_APPLICATION = buildApplication({
@@ -110,9 +112,10 @@ const CLAUDE_APPLICATION = buildApplication({
   description:
     'Work with your Twenty workspace from Claude through the Twenty connector.',
   latestAvailableVersion: '1.0.0',
-  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
-  universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+  sourceType: ApplicationRegistrationSourceType.NPM,
+  installSourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  oAuthIdentityUniversalIdentifier: CLAUDE_CONNECTABLE_APP.id,
+  universalIdentifier: CLAUDE_CONNECTABLE_APP.id,
 });
 
 const ZAPIER_APPLICATION = buildApplication({

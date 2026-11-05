@@ -1,6 +1,7 @@
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
+import { CONNECTABLE_APPS_GRAPHQL_HANDLER } from '@/settings/app-preferences/testing/connectableAppsGraphqlHandler';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -230,6 +231,7 @@ export const disconnectConnectedAccount = fn();
 export const myApplicationPreferencesRequested = fn();
 
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
+  CONNECTABLE_APPS_GRAPHQL_HANDLER,
   graphql.query('MyConnectedAccounts', () =>
     HttpResponse.json({
       data: {

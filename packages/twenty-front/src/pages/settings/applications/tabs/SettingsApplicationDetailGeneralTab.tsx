@@ -29,6 +29,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     Application,
     | 'id'
     | 'logoUrl'
+    | 'sourceType'
     | 'autoUpgrade'
     | 'canBeUninstalled'
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
@@ -67,8 +68,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const isOAuthOnlyApplication =
-    application.applicationRegistration?.sourceType ===
-    ApplicationRegistrationSourceType.OAUTH_ONLY;
+    application.sourceType === ApplicationRegistrationSourceType.OAUTH_ONLY;
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(
@@ -79,7 +79,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   );
 
   const isUpgradable = isUpgradableApplicationSourceType(
-    application.applicationRegistration?.sourceType,
+    application.sourceType,
   );
 
   const displayedUpgradeProgress = formatQueueJobProgressLabel(
