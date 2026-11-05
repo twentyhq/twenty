@@ -65,7 +65,6 @@ export class AppMessageParticipantInput {
 
 @InputType('AppMessageAttachmentInput')
 export class AppMessageAttachmentInput {
-  // from completeFileUpload on the message attachments field
   @Field(() => UUIDScalarType)
   @IsUUID()
   fileId: string;
@@ -127,7 +126,6 @@ export class AppMessageInput {
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
 
-  // stored only while the message has none, so a later delivery can add files without replacing them
   @Field(() => [AppMessageAttachmentInput], { nullable: true })
   @IsOptional()
   @IsArray()

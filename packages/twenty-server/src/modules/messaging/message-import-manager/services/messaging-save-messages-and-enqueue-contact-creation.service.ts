@@ -59,7 +59,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
     personHandleField?: PersonHandleField;
-    // runs before the batch commits, so a failure here saves none of the batch
     withinTransaction?: (args: {
       transactionScope: WorkspaceTransactionScope;
       messageExternalIdsAndIdsMap: Map<string, string>;
