@@ -7,7 +7,7 @@ import {
 } from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
 import { deleteBlocklistEntryThroughMcp } from 'test/integration/graphql/suites/application-role-intersection/utils/delete-blocklist-entry-through-mcp.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   cleanupDelegatedApplications,
   type DelegatedApplications,

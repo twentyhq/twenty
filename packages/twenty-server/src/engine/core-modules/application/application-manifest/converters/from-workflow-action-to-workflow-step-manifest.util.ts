@@ -1,7 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  getWorkflowAiAgentStepConfigIssues,
+  isWorkflowAiAgentGenerateStep,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
@@ -176,17 +182,32 @@ const fromActionInput = ({
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }): unknown => {
   const input: unknown = action.settings.input;
+  // stored versions can hold a step type this server no longer knows
+  const storedType: string = action.type;
 
   switch (action.type) {
     case WorkflowActionType.LOGIC_FUNCTION:
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
+      // defineWorkflow refuses these, so the export would not apply
+      for (const issueCode of getWorkflowAiAgentStepConfigIssues(
+        action.settings.input,
+      )) {
+        resolvers.markUnsupported(
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
+        );
+      }
 
-      return {
-        ...rest,
-        agentUniversalIdentifier: resolvers.agentUniversalIdentifier(agentId),
-      };
+      resolvers.checkAiRunScopeReferences(action.settings.input.scope);
+
+      return isWorkflowAiAgentGenerateStep(action.settings.input)
+        ? rest
+        : {
+            ...rest,
+            agentUniversalIdentifier:
+              resolvers.agentUniversalIdentifier(agentId),
+          };
     }
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
@@ -228,6 +249,18 @@ const fromActionInput = ({
         }),
       };
     }
+    case WorkflowActionType.CODE: {
+      const { code, logicFunctionInput } = toRecord(input);
+
+      // the 2.56 upgrade backfills code but keeps logicFunctionId until 2.57, so the id is dropped here
+      if (!isNonEmptyString(code)) {
+        return resolvers.markUnsupported(
+          'code step not yet migrated to inline source; edit it once or run the 2.56 upgrade',
+        );
+      }
+
+      return { code, logicFunctionInput };
+    }
     case WorkflowActionType.HTTP_REQUEST:
     case WorkflowActionType.SEND_CHAT_MESSAGE:
     case WorkflowActionType.CLASSIFY:
@@ -238,7 +271,7 @@ const fromActionInput = ({
       return input;
     default:
       return resolvers.markUnsupported(
-        `${action.type} steps are not supported in application workflows`,
+        `${storedType} steps are not supported in application workflows`,
       );
   }
 };

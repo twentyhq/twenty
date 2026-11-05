@@ -6,7 +6,6 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createValidationRule,
   deleteValidationRule,
@@ -16,7 +15,7 @@ import {
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -33,12 +32,6 @@ describe('Validation rules should follow the fields they read', () => {
     );
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const {
       data: {
         createOneObject: { id },

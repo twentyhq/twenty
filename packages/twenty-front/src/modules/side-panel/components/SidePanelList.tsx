@@ -9,8 +9,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelListProps = {
   selectableItemIds: string[];
@@ -55,6 +55,7 @@ export const SidePanelList = ({
   noResults = false,
   noResultsText,
 }: SidePanelListProps) => {
+  const { t } = useLingui();
   const setHasUserSelectedSidePanelListItem = useSetAtomState(
     hasUserSelectedSidePanelListItemState,
   );

@@ -8,6 +8,21 @@ jest.mock('crypto', () => ({
 }));
 
 describe('computeWhereConditionParts', () => {
+  it('should keep a hostile key and object name inside quoted identifiers and out of the parameter name', () => {
+    expect(
+      computeWhereConditionParts({
+        operator: 'eq',
+        objectNameSingular: 'pe"rson',
+        key: 'name" OR 1=1 --',
+        value: 'Ada',
+        fieldMetadataType: FieldMetadataType.TEXT,
+      }),
+    ).toEqual({
+      sql: `"pe""rson"."name"" OR 1=1 --" = :nameOR110000000000`,
+      params: { nameOR110000000000: 'Ada' },
+    });
+  });
+
   describe('isEmptyArray', () => {
     it.each([FieldMetadataType.ARRAY, FieldMetadataType.MULTI_SELECT])(
       'should match NULL and empty %s values when true',

@@ -1,3 +1,5 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import {
   SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
@@ -5,13 +7,13 @@ import {
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileIndexViewUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-workspace-command-1785255689000-reconcile-index-view-universal-identifier.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -28,13 +30,15 @@ const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cc';
 
 const DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
     viewKey: SYSTEM_VIEW_KEYS.INDEX,
   });
 const DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   getSystemViewFieldUniversalIdentifier({
-    fieldMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    fieldMetadataApplicationUniversalIdentifier:
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     viewUniversalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
     fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
   });
@@ -127,7 +131,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   let viewUpdateMock: jest.Mock;
   let viewFieldUpdateMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -156,28 +160,45 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       },
     };
 
-    command = new ReconcileIndexViewUniversalIdentifierCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        invalidateCache: invalidateCacheMock,
-      } as unknown as WorkspaceMigrationRunnerService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-            workspaceCustomFlatApplication: {
-              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      viewRepositoryMock as never,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ReconcileIndexViewUniversalIdentifierCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: {
+            invalidateCache: invalidateCacheMock,
+          },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  universalIdentifier:
+                    STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+                workspaceCustomFlatApplication: {
+                  universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+              }),
+          },
+        },
+        {
+          provide: getRepositoryToken(ViewEntity),
+          useValue: viewRepositoryMock,
+        },
+      ],
+    }).compile();
+    command = module.get(ReconcileIndexViewUniversalIdentifierCommand);
   });
 
   const mockWorkspaceCache = ({
@@ -260,7 +281,8 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   it('re-owns a custom object INDEX view onto the workspace-custom derivation', async () => {
     const derivedCustomViewUniversalIdentifier =
       getSystemViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectMetadataApplicationUniversalIdentifier:
+          CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
         viewKey: SYSTEM_VIEW_KEYS.INDEX,
       });
@@ -343,7 +365,8 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
           id: 'drifted-view-id',
           universalIdentifier: 'drifted-view-uid',
           key: ViewKey.INDEX,
-          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+          objectMetadataUniversalIdentifier:
+            EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
         }),
       ],
     });
@@ -366,7 +389,8 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
           universalIdentifier: 'stamped-drifted-view-uid',
           key: ViewKey.INDEX,
           isSystemSideEffect: true,
-          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+          objectMetadataUniversalIdentifier:
+            EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
         }),
       ],
     });
@@ -395,7 +419,8 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
           id: 'legacy-caller-view-id',
           universalIdentifier: 'legacy-caller-view-uid',
           key: ViewKey.INDEX,
-          applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ],
     });

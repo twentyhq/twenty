@@ -24,7 +24,7 @@ const isSettingSet = ({
   arrangement,
   setting,
 }: {
-  arrangement: BillingArrangementDraft;
+  arrangement: Pick<BillingArrangementDraft, BillingArrangementSettingKey>;
   setting: BillingArrangementSettingKey;
 }): boolean => {
   const value = arrangement[setting];

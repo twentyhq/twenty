@@ -30,6 +30,7 @@ const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
 
 const StyledErrorHelper = styled.div`
   position: absolute;
+  top: 100%;
 `;
 
 const StyledInputContainer = styled.div`

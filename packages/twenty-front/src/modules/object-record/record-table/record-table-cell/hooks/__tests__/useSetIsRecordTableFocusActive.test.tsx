@@ -9,10 +9,7 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const mockClassList = {
-  add: jest.fn(),
-  remove: jest.fn(),
-};
+const cellElement = document.createElement('div');
 
 const mockGetElementById = jest.spyOn(document, 'getElementById');
 
@@ -62,9 +59,7 @@ describe('useSetIsRecordTableFocusActive', () => {
       { column: 1, row: 0 },
     );
 
-    mockGetElementById.mockReturnValue({
-      classList: mockClassList,
-    } as unknown as HTMLElement);
+    mockGetElementById.mockReturnValue(cellElement);
   });
 
   it('should set focus active state and add class to cell element when focus is activated', () => {

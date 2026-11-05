@@ -2,9 +2,9 @@ import { AttachmentFileInput } from '@/activities/files/components/AttachmentFil
 import { useCanUploadAttachmentFiles } from '@/activities/files/hooks/useCanUploadAttachmentFiles';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
-import { t } from '@lingui/core/macro';
 import { useRef } from 'react';
 import { IconPaperclip } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type UseAttachFileRelatedRecordActionParams = {
   targetRecord: ActivityTargetableObject;
@@ -15,6 +15,7 @@ export const useAttachFileRelatedRecordAction = ({
   targetRecord,
   onUploadComplete,
 }: UseAttachFileRelatedRecordActionParams): RelatedRecordActionBinding => {
+  const { t } = useLingui();
   const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
   const inputFileRef = useRef<HTMLInputElement>(null);
 

@@ -1,7 +1,6 @@
-import { QueryFailedError } from 'typeorm';
-
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
+import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const FIRST_CHANNEL_ID = '20202020-0000-4000-8000-00000000000a';
@@ -10,15 +9,15 @@ const SECOND_CHANNEL_ID = '20202020-0000-4000-8000-00000000000b';
 const SHARED_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))';
 
-const buildQueryFailedError = (code: string) =>
-  Object.assign(new QueryFailedError('SELECT', [], new Error(code)), { code });
+const buildWorkspaceQueryError = (code: string) =>
+  computeTwentyOrmException(Object.assign(new Error(code), { code }));
 
 describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
   it('bounds the wait before taking the shared locks', async () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelIds: [SECOND_CHANNEL_ID, null, FIRST_CHANNEL_ID],
     });
@@ -40,7 +39,7 @@ describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelIds: [null, undefined],
     });
@@ -52,11 +51,11 @@ describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
     const query = jest
       .fn()
       .mockResolvedValueOnce([])
-      .mockRejectedValueOnce(buildQueryFailedError('55P03'));
+      .mockRejectedValueOnce(buildWorkspaceQueryError('55P03'));
 
     await expect(
       acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-        manager: { query },
+        transactionScope: { executeRawQuery: query },
         workspaceId: WORKSPACE_ID,
         channelIds: [FIRST_CHANNEL_ID],
       }),
@@ -66,7 +65,7 @@ describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
   });
 
   it('rethrows other failures', async () => {
-    const connectionError = buildQueryFailedError('57P01');
+    const connectionError = buildWorkspaceQueryError('57P01');
     const query = jest
       .fn()
       .mockResolvedValueOnce([])
@@ -74,7 +73,7 @@ describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
 
     await expect(
       acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-        manager: { query },
+        transactionScope: { executeRawQuery: query },
         workspaceId: WORKSPACE_ID,
         channelIds: [FIRST_CHANNEL_ID],
       }),

@@ -1,23 +1,13 @@
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
 import { createGetLogicFunctionSourceTool } from '../get-logic-function-source.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const LOGIC_FUNCTION_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 
-const buildDeps = (getSourceCode: jest.Mock) =>
-  ({
-    logicFunctionFromSourceService: { getSourceCode },
-  }) as unknown as Pick<
-    WorkflowToolDependencies,
-    'logicFunctionFromSourceService'
-  >;
+const buildDeps = (getSourceCode: jest.Mock) => ({
+  logicFunctionFromSourceService: { getSourceCode },
+});
 
-const buildContext = () =>
-  ({ workspaceId: WORKSPACE_ID }) as unknown as WorkflowToolContext;
+const buildContext = () => ({ workspaceId: WORKSPACE_ID });
 
 describe('get_logic_function_source tool', () => {
   it('returns the source code from the service', async () => {

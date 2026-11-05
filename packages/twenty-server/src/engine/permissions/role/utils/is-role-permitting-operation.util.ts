@@ -1,20 +1,19 @@
 /* @license Enterprise */
 
+import { canReachSomeRecords } from 'twenty-shared/utils';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
-import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
+import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 
 export const isRolePermittingOperation = ({
-  principal,
+  principals,
   metadataMaps,
   flatObjectMetadata,
   operationType,
 }: PermissionsObjectAccessRequest): boolean =>
-  isObjectOperationPermitted({
-    objectMetadata: flatObjectMetadata,
-    operationType,
-    objectsPermissions: getPermissionsPrincipalObjectsPermissions({
-      principal,
+  canReachSomeRecords({
+    objectRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+      principals,
       metadataMaps,
-    }),
+    }).objects[flatObjectMetadata.id],
+    operationType,
   });

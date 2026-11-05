@@ -21,10 +21,16 @@ type GetWorkflowCurrentVersionInput = z.infer<
 >;
 
 export const createGetWorkflowCurrentVersionTool = (
-  deps: Pick<
-    WorkflowToolDependencies,
-    'coreWorkflowListService' | 'coreWorkflowVersionListService'
-  >,
+  deps: {
+    coreWorkflowListService: Pick<
+      WorkflowToolDependencies['coreWorkflowListService'],
+      'findOneById'
+    >;
+    coreWorkflowVersionListService: Pick<
+      WorkflowToolDependencies['coreWorkflowVersionListService'],
+      'findManyByCoreWorkflowId' | 'findOneByCoreWorkflowVersionId'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_current_version' as const,
@@ -39,6 +45,7 @@ export const createGetWorkflowCurrentVersionTool = (
       const coreWorkflow = await deps.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
+        callerApplication: undefined,
         coreWorkflowId,
       });
 
@@ -53,6 +60,7 @@ export const createGetWorkflowCurrentVersionTool = (
         await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,
+          callerApplication: undefined,
           coreWorkflowId,
         });
 
@@ -79,6 +87,7 @@ export const createGetWorkflowCurrentVersionTool = (
           {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
+            callerApplication: undefined,
             coreWorkflowVersionId: currentVersion.id,
           },
         );

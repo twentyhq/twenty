@@ -10,9 +10,9 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
@@ -27,10 +27,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 }) => {
   cache.modify<StoreObject>({
     fields: {

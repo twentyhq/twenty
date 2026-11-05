@@ -15,21 +15,24 @@ import {
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [],
   }),
   CustomPermissionGuard,
 )

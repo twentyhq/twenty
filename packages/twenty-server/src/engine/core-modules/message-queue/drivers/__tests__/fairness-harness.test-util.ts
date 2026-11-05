@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { type Job, PRIORITY_LIMIT } from 'bullmq';
+import { PRIORITY_LIMIT } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,7 +57,7 @@ type BullMQDouble = {
   jobs: StoredJob[];
   schedulers: SchedulerTemplate[];
   nextInsertionIndex: number;
-  processor: ((job: Job) => Promise<void>) | undefined;
+  processor: ((job: object) => Promise<void>) | undefined;
   client: RedisClientDouble | undefined;
   redis: Redis | undefined;
   store: (jobToStore: JobToStore) => Promise<{ id: string }>;
@@ -71,7 +71,6 @@ const QUEUE = MessageQueue.logicFunctionQueue;
 const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const JOB_NAME = 'scenario-job';
-const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
@@ -253,7 +252,7 @@ jest.mock('bullmq', () => ({
   Worker: jest
     .fn()
     .mockImplementation(
-      (_queueName: string, processor: (job: Job) => Promise<void>) => {
+      (_queueName: string, processor: (job: object) => Promise<void>) => {
         mockBullMQ.processor = processor;
 
         return { on: () => undefined };
@@ -334,17 +333,12 @@ const buildScenarioJobScope = ({
   return { workspaceId, applicationUniversalIdentifier };
 };
 
-export const createFairnessHarness = async ({
-  isFairnessEnabled: initialFairnessEnabled,
-}: {
-  isFairnessEnabled: boolean;
-}) => {
+export const createFairnessHarness = async () => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
   mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
 
-  let isFairnessEnabled = initialFairnessEnabled;
   const metricsService = {
     recordHistogram: jest.fn(),
     incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
@@ -352,10 +346,7 @@ export const createFairnessHarness = async ({
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    {
-      get: (key: string) =>
-        key === FAIRNESS_FLAG ? isFairnessEnabled : undefined,
-    } as never,
+    { get: () => undefined } as never,
     { emit: jest.fn() } as never,
   );
 
@@ -391,7 +382,7 @@ export const createFairnessHarness = async ({
         attemptsStarted: job.attemptsMade + 1,
         updateData: jest.fn(),
         updateProgress: jest.fn(),
-      } as unknown as Job);
+      });
     } catch {
       if (job.attemptsMade + 1 < (job.options.attempts ?? 1)) {
         await flushAsyncWork();
@@ -512,9 +503,6 @@ export const createFairnessHarness = async ({
     },
     advanceTime: ({ milliseconds }: { milliseconds: number }) => {
       mockBullMQ.now += milliseconds;
-    },
-    setFairnessEnabled: (value: boolean) => {
-      isFairnessEnabled = value;
     },
     failNextAttempts: ({ label, count }: { label: string; count: number }) => {
       remainingFailures.set(label, count);

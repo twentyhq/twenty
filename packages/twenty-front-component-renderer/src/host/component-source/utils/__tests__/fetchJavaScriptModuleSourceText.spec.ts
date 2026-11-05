@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { fetchJavaScriptModuleSourceText } from '@/host/component-source/utils/fetchJavaScriptModuleSourceText';
 
 const originalFetch = globalThis.fetch;
@@ -8,10 +11,7 @@ describe('fetchJavaScriptModuleSourceText', () => {
   });
 
   it('should return the response text when the response is ok', async () => {
-    globalThis.fetch = jest.fn(async () => ({
-      ok: true,
-      text: async () => 'module source',
-    })) as unknown as typeof fetch;
+    globalThis.fetch = jest.fn(async () => new Response('module source'));
 
     await expect(
       fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),
@@ -19,11 +19,8 @@ describe('fetchJavaScriptModuleSourceText', () => {
   });
 
   it('should forward headers and send same-origin credentials', async () => {
-    const fetchSpy = jest.fn(async () => ({
-      ok: true,
-      text: async () => '',
-    }));
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    const fetchSpy = jest.fn(async () => new Response(''));
+    globalThis.fetch = fetchSpy;
 
     await fetchJavaScriptModuleSourceText(
       'https://api.twenty.test/core/abc.js',
@@ -40,11 +37,9 @@ describe('fetchJavaScriptModuleSourceText', () => {
   });
 
   it('should reject with a coded error when the response is not ok', async () => {
-    globalThis.fetch = jest.fn(async () => ({
-      ok: false,
-      status: 404,
-      statusText: 'Not Found',
-    })) as unknown as typeof fetch;
+    globalThis.fetch = jest.fn(
+      async () => new Response(null, { status: 404, statusText: 'Not Found' }),
+    );
 
     await expect(
       fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),
@@ -54,7 +49,7 @@ describe('fetchJavaScriptModuleSourceText', () => {
   it('should wrap fetch rejections in a coded error', async () => {
     globalThis.fetch = jest.fn(async () => {
       throw new TypeError('Failed to fetch');
-    }) as unknown as typeof fetch;
+    });
 
     await expect(
       fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),

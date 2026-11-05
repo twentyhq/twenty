@@ -4,7 +4,8 @@ import { RecordSharingResolver } from 'src/engine/permissions/record-share/resol
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { Module } from '@nestjs/common';
 
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordPermissionOrmModule } from 'src/engine/permissions/record-permission-orm/record-permission-orm.module';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
@@ -14,12 +15,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceCacheModule,
+    RecordPermissionOrmModule,
     RecordShareStorageModule,
     RecordPermissionsModule,
+    PermissionsModule,
   ],
   providers: [
     ShareWithService,
-    RecordAccessPolicyService,
     RecordSharePrincipalService,
     RecordSharingService,
     RecordSharingResolver,
@@ -27,7 +29,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     RecordShareStorageModule,
     ShareWithService,
-    RecordAccessPolicyService,
     RecordSharePrincipalService,
     RecordSharingService,
   ],

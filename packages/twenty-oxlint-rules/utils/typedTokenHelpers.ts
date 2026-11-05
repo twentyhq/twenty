@@ -6,42 +6,47 @@ const AUTH_GUARD_NAMES = [
   'FileUploadTokenGuard',
 ];
 
-const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';
+const ACCESS_POLICY_GUARD_NAME = 'AccessPolicyGuard';
 
-// They put the principal on the request, which AuthPrincipalGuard then reads.
+// A named constant when several entry points share the operation, else an inline policy
+const ACCESS_POLICY_CONSTANT_NAME_PATTERN = /^[A-Z][A-Z0-9_]*_ACCESS_POLICY$/;
+
+// They put the principal on the request, which AccessPolicyGuard then reads.
 export const AUTHENTICATING_GUARD_NAMES = ['JwtAuthGuard', 'McpAuthGuard'];
 
-const getUseGuardsArgumentLists = (node: any): any[][] => {
-  if (!node.decorators) {
-    return [];
-  }
+const getUseGuardsDecorators = (node: any): any[] =>
+  (node.decorators ?? []).filter(
+    (decorator: any) =>
+      decorator.expression.type === 'CallExpression' &&
+      decorator.expression.callee.type === 'Identifier' &&
+      decorator.expression.callee.name === 'UseGuards',
+  );
 
-  return node.decorators
-    .filter(
-      (decorator: any) =>
-        decorator.expression.type === 'CallExpression' &&
-        decorator.expression.callee.type === 'Identifier' &&
-        decorator.expression.callee.name === 'UseGuards',
-    )
-    .map((decorator: any) => decorator.expression.arguments);
-};
+const getUseGuardsArgumentLists = (node: any): any[][] =>
+  getUseGuardsDecorators(node).map(
+    (decorator: any) => decorator.expression.arguments,
+  );
 
 const getUseGuardsArguments = (node: any): any[] =>
   getUseGuardsArgumentLists(node).flat();
 
-const isAuthPrincipalGuardCall = (node: any): boolean =>
+const isAccessPolicyGuardCall = (node: any): boolean =>
   node.type === 'CallExpression' &&
   node.callee.type === 'Identifier' &&
-  node.callee.name === AUTH_PRINCIPAL_GUARD_NAME;
+  node.callee.name === ACCESS_POLICY_GUARD_NAME;
+
+const isAccessPolicyConstant = (node: any): boolean =>
+  node.type === 'Identifier' &&
+  ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.name);
+
+const isAuthenticatingGuard = (node: any): boolean =>
+  node.type === 'Identifier' && AUTHENTICATING_GUARD_NAMES.includes(node.name);
 
 const isBooleanLiteral = (node: any): boolean =>
   node.type === 'Literal' && typeof node.value === 'boolean';
 
-const isTrueLiteral = (node: any): boolean =>
-  node?.type === 'Literal' && node.value === true;
-
 // Only literals, so the principals an endpoint accepts can be read at the endpoint.
-const isInlineAuthPrincipalGuardConfig = (node: any): boolean =>
+const isInlineAuthPrincipals = (node: any): boolean =>
   node.type === 'ObjectExpression' &&
   node.properties.every(
     (property: any) =>
@@ -49,13 +54,8 @@ const isInlineAuthPrincipalGuardConfig = (node: any): boolean =>
       !property.computed &&
       !property.shorthand &&
       (isBooleanLiteral(property.value) ||
-        isInlineAuthPrincipalGuardConfig(property.value)),
+        isInlineAuthPrincipals(property.value)),
   );
-
-const isAuthPrincipalGuardWithInlineConfig = (node: any): boolean =>
-  isAuthPrincipalGuardCall(node) &&
-  node.arguments.length === 1 &&
-  isInlineAuthPrincipalGuardConfig(node.arguments[0]);
 
 const getPropertyName = (property: any): string =>
   property.key.name ?? property.key.value;
@@ -65,58 +65,32 @@ const getPropertyValue = (objectNode: any, propertyName: string): any =>
     (property: any) => getPropertyName(property) === propertyName,
   )?.value;
 
-const isVariantsConfig = (kindConfig: any): boolean =>
-  kindConfig?.type === 'ObjectExpression';
+const isArrayWithoutSpread = (node: any): boolean =>
+  node.type === 'ArrayExpression' &&
+  node.elements.every((element: any) => element?.type !== 'SpreadElement');
 
-// Kinds and variants are read from the two configs rather than listed here,
-// so this cannot drift from AuthPrincipalGuardConfig.
-const getPrincipalsRefusedByClassGuard = (
-  methodGuard: any,
-  classGuard: any,
-): string[] => {
-  const classConfig = classGuard.arguments[0];
+const isInlineAccessPolicy = (node: any): boolean =>
+  node.type === 'ObjectExpression' &&
+  node.properties.every(
+    (property: any) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      !property.shorthand &&
+      (getPropertyName(property) === 'authPrincipals'
+        ? isInlineAuthPrincipals(property.value)
+        : isArrayWithoutSpread(property.value)),
+  ) &&
+  getPropertyValue(node, 'authPrincipals')?.properties.length > 0 &&
+  getPropertyValue(node, 'requiredPermissionFlags') !== undefined;
 
-  return methodGuard.arguments[0].properties.flatMap((property: any) => {
-    const kind = getPropertyName(property);
-    const methodKindConfig = property.value;
-    const classKindConfig = getPropertyValue(classConfig, kind);
-
-    if (isTrueLiteral(classKindConfig)) {
-      return [];
-    }
-
-    if (isTrueLiteral(methodKindConfig)) {
-      return isVariantsConfig(classKindConfig)
-        ? classKindConfig.properties
-            .filter((variant: any) => !isTrueLiteral(variant.value))
-            .map((variant: any) => `${kind}.${getPropertyName(variant)}`)
-        : [kind];
-    }
-
-    if (!isVariantsConfig(methodKindConfig)) {
-      return [];
-    }
-
-    return methodKindConfig.properties
-      .filter(
-        (variant: any) =>
-          isTrueLiteral(variant.value) &&
-          !(
-            isVariantsConfig(classKindConfig) &&
-            isTrueLiteral(
-              getPropertyValue(classKindConfig, getPropertyName(variant)),
-            )
-          ),
-      )
-      .map((variant: any) => `${kind}.${getPropertyName(variant)}`);
-  });
-};
+const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
+  isAccessPolicyGuardCall(node) &&
+  node.arguments.length === 1 &&
+  (isAccessPolicyConstant(node.arguments[0]) ||
+    isInlineAccessPolicy(node.arguments[0]));
 
 const isPlacedFirst = (guardArguments: any[], index: number): boolean =>
-  index === 0 ||
-  (index === 1 &&
-    guardArguments[0].type === 'Identifier' &&
-    AUTHENTICATING_GUARD_NAMES.includes(guardArguments[0].name));
+  index === 0 || (index === 1 && isAuthenticatingGuard(guardArguments[0]));
 
 export const typedTokenHelpers = {
   nodeHasDecoratorsNamed: (node: any, decoratorNames: string[]): boolean => {
@@ -144,29 +118,35 @@ export const typedTokenHelpers = {
     getUseGuardsArguments(node).some(
       (arg: any) =>
         (arg.type === 'Identifier' && AUTH_GUARD_NAMES.includes(arg.name)) ||
-        isAuthPrincipalGuardWithInlineConfig(arg),
+        isAccessPolicyGuardWithPolicy(arg),
     ),
 
-  getAuthPrincipalGuardsWithoutInlineConfig: (node: any): any[] =>
+  getAccessPolicyGuardsWithoutPolicy: (node: any): any[] =>
     getUseGuardsArguments(node).filter(
       (arg: any) =>
-        isAuthPrincipalGuardCall(arg) &&
-        !isAuthPrincipalGuardWithInlineConfig(arg),
+        isAccessPolicyGuardCall(arg) && !isAccessPolicyGuardWithPolicy(arg),
     ),
 
-  getMisplacedAuthPrincipalGuards: (node: any): any[] =>
+  getAccessPolicyGuards: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(isAccessPolicyGuardCall),
+
+  getMisplacedAccessPolicyGuards: (node: any): any[] =>
     getUseGuardsArgumentLists(node).flatMap((guardArguments) =>
       guardArguments.filter(
         (arg: any, index: number) =>
-          isAuthPrincipalGuardCall(arg) &&
-          !isPlacedFirst(guardArguments, index),
+          isAccessPolicyGuardCall(arg) && !isPlacedFirst(guardArguments, index),
       ),
     ),
 
-  getInlineAuthPrincipalGuards: (node: any): any[] =>
-    getUseGuardsArguments(node).filter(isAuthPrincipalGuardWithInlineConfig),
+  // Class guards run before method guards, so only those setting the principal may precede a method policy
+  getClassGuardsRunningBeforeAccessPolicy: (classNode: any): any[] =>
+    getUseGuardsArguments(classNode).filter(
+      (arg: any) => !isAuthenticatingGuard(arg),
+    ),
 
-  getPrincipalsRefusedByClassGuard,
+  // Nest applies decorators bottom-up, so stacked lists run against their reading order
+  getStackedUseGuardsDecorators: (node: any): any[] =>
+    getUseGuardsDecorators(node).slice(1),
 
   nodeHasPermissionsGuard: (node: any): boolean => {
     if (!node.decorators) {
@@ -180,6 +160,9 @@ export const typedTokenHelpers = {
         decorator.expression.callee.name === 'UseGuards'
       ) {
         return decorator.expression.arguments.some((arg: any) => {
+          if (isAccessPolicyGuardWithPolicy(arg)) {
+            return true;
+          }
           if (arg.type === 'CallExpression') {
             const callee = arg.callee;
             if (callee.type === 'Identifier') {

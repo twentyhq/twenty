@@ -2,8 +2,8 @@ import { type ObjectLiteral } from 'typeorm';
 
 import {
   type FeatureFlagKey,
-  type ObjectsPermissionsByRoleId,
   type RecordShareAccessLevel,
+  type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -16,7 +16,7 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principa
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
@@ -24,7 +24,7 @@ export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-  rolesPermissions: ObjectsPermissionsByRoleId;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
@@ -32,16 +32,16 @@ export type PermissionsMetadataMaps = {
 };
 
 export type PermissionsRowAccessRequest = {
-  principal: PermissionsPrincipalsWithRolesContext;
+  principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
-  operationType: OperationType;
+  operationType: ObjectRecordsOperationType;
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
 };
 
 export type PermissionsObjectAccessRequest = Pick<
   PermissionsRowAccessRequest,
-  'principal' | 'metadataMaps' | 'flatObjectMetadata' | 'operationType'
+  'principals' | 'metadataMaps' | 'flatObjectMetadata' | 'operationType'
 >;
 
 export type RowAccessRecord = { id: string } & Record<string, unknown>;

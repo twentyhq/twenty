@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -10,12 +10,12 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const EMPTY_ACTOR_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -31,6 +31,7 @@ type ObjectFilterDropdownActorSelectProps = {
 export const ObjectFilterDropdownActorSelect = ({
   dropdownId,
 }: ObjectFilterDropdownActorSelectProps) => {
+  const { t } = useLingui();
   const { objectFilterDropdownFilterValue } =
     useObjectFilterDropdownFilterValue();
 
@@ -55,7 +56,7 @@ export const ObjectFilterDropdownActorSelect = ({
     useRecordsForSelect({
       searchFilterText: objectFilterDropdownSearchInput,
       selectedIds: selectedRecordIds,
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       limit: 10,
       allowRequestsToTwentyIcons: false,
     });

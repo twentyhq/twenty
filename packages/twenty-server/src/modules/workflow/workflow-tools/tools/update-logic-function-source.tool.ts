@@ -24,9 +24,9 @@ export const createUpdateLogicFunctionSourceTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'update_logic_function_source' as const,
-  description: `Update the TypeScript source code of a logic function used in a workflow code step.
+  description: `Update the TypeScript source code of a logic function used in a legacy workflow CODE step.
 
-Use this tool to modify the actual code that runs when a CODE step executes.
+Only for CODE steps that have settings.input.logicFunctionId and no settings.input.code. For other CODE steps, set settings.input.code with update_workflow_version_step instead.
 
 The code must:
 - Export a 'main' function as the entry point

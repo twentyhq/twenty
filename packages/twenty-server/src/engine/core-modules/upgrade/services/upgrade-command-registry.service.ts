@@ -18,8 +18,8 @@ import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkspaceCommand =
-  | WorkspaceCommandRunner
-  | ProvisionedWorkspaceCommandRunner;
+  | Pick<WorkspaceCommandRunner, 'runOnWorkspace'>
+  | Pick<ProvisionedWorkspaceCommandRunner, 'runOnWorkspace'>;
 
 export type RegisteredFastInstanceCommand = {
   name: string;

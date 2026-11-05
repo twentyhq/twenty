@@ -4,7 +4,7 @@ import { type CallRecordingRecord } from 'src/logic-functions/types/call-recordi
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 
 export const findCallRecordingsByCalendarEventIds = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   calendarEventIds: string[],
 ): Promise<CallRecordingRecord[]> => {
   if (calendarEventIds.length === 0) {

@@ -43,6 +43,7 @@ const buildCommandMenuItem = ({
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   conditionalAvailabilityExpression,
   conditionalPinnedExpression: null,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,

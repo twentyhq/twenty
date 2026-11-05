@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   type WorkflowToolContext,
@@ -21,7 +20,12 @@ const FAILED_STEP_STATUSES: StepStatus[] = [
 ];
 
 export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+  deps: {
+    workspaceOrmManager: Pick<
+      WorkflowToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
@@ -30,14 +34,11 @@ export const createGetWorkflowRunTool = (
   inputSchema: getWorkflowRunSchema,
   execute: async (parameters: GetWorkflowRunInput) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
-
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
             deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
-              context.rolePermissionConfig,
             );
 
           const workflowRun = await workflowRunRepository.findOne({
@@ -94,7 +95,7 @@ export const createGetWorkflowRunTool = (
             },
           };
         },
-        authContext,
+        context.authContext,
       );
     } catch (error) {
       return {

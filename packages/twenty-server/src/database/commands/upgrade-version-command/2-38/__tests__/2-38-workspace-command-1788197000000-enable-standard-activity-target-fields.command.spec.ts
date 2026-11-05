@@ -1,9 +1,10 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { EnableStandardActivityTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788197000000-enable-standard-activity-target-fields.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
@@ -16,22 +17,30 @@ const EXPECTED_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.opportunity.fields.noteTargets.universalIdentifier,
 ];
 
-const buildCommand = ({
+const buildCommand = async ({
   invalidateAndRecompute,
 }: {
   invalidateAndRecompute: ReturnType<typeof jest.fn>;
-}) =>
-  new EnableStandardActivityTargetFieldsCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-        }),
-    } as unknown as ApplicationService,
-    { invalidateAndRecompute } as unknown as WorkspaceCacheService,
-  );
+}) => {
+  const module = await Test.createTestingModule({
+    providers: [
+      EnableStandardActivityTargetFieldsCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+            }),
+        },
+      },
+      { provide: WorkspaceCacheService, useValue: { invalidateAndRecompute } },
+    ],
+  }).compile();
+  return module.get(EnableStandardActivityTargetFieldsCommand);
+};
 
 const runCommand = async ({
   command,
@@ -54,7 +63,7 @@ describe('EnableStandardActivityTargetFieldsCommand', () => {
   it('updates only the six standard inverse fields in the workspace standard application', async () => {
     const query = jest.fn().mockResolvedValue([[], 6]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     await runCommand({ command, query });
 
@@ -75,7 +84,7 @@ describe('EnableStandardActivityTargetFieldsCommand', () => {
       .mockResolvedValueOnce([[], 6])
       .mockResolvedValueOnce([[], 0]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
 
@@ -93,7 +102,7 @@ describe('EnableStandardActivityTargetFieldsCommand', () => {
   it('does not read or write metadata during a dry run', async () => {
     const query = jest.fn();
     const invalidateAndRecompute = jest.fn();
-    const command = buildCommand({ invalidateAndRecompute });
+    const command = await buildCommand({ invalidateAndRecompute });
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
 

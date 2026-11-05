@@ -1,5 +1,5 @@
 import {
-  type CoreObjectNameSingular,
+  type StandardObjectNameSingular,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 
@@ -21,7 +21,9 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables,
   limit,
 }: {
-  objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
+  objectNameSingular:
+    | StandardObjectNameSingular.Note
+    | StandardObjectNameSingular.Task;
   targetableObjects: Pick<
     ActivityTargetableObject,
     'id' | 'targetObjectNameSingular'

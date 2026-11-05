@@ -265,9 +265,8 @@ export class UserRoleService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({
@@ -427,7 +426,7 @@ export class UserRoleService {
     }
   }
 
-  async resolveCustodianUserWorkspace({
+  async resolveSuccessorUserWorkspace({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {

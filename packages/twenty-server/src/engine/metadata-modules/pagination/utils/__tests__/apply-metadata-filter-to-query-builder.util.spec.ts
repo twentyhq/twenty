@@ -1,28 +1,49 @@
-import { Brackets, type WhereExpressionBuilder } from 'typeorm';
+import {
+  Brackets,
+  type ObjectLiteral,
+  type WhereExpressionBuilder,
+} from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 
-class FakeWhereBuilder {
+type WhereCondition =
+  | string
+  | Brackets
+  | ObjectLiteral
+  | ObjectLiteral[]
+  | ((queryBuilder: WhereExpressionBuilder) => string);
+
+class FakeWhereBuilder implements WhereExpressionBuilder {
   conditions: string[] = [];
   parameters: Record<string, unknown> = {};
 
-  andWhere(
-    condition: string | Brackets,
-    parameters?: Record<string, unknown>,
-  ): this {
+  where(): this {
+    throw new Error('Not used by applyMetadataFilterToQueryBuilder');
+  }
+
+  andWhere(condition: WhereCondition, parameters?: ObjectLiteral): this {
     this.append('AND', condition, parameters);
 
     return this;
   }
 
-  orWhere(
-    condition: string | Brackets,
-    parameters?: Record<string, unknown>,
-  ): this {
+  orWhere(condition: WhereCondition, parameters?: ObjectLiteral): this {
     this.append('OR', condition, parameters);
 
     return this;
+  }
+
+  whereInIds(): this {
+    throw new Error('Not used by applyMetadataFilterToQueryBuilder');
+  }
+
+  andWhereInIds(): this {
+    throw new Error('Not used by applyMetadataFilterToQueryBuilder');
+  }
+
+  orWhereInIds(): this {
+    throw new Error('Not used by applyMetadataFilterToQueryBuilder');
   }
 
   render(): string {
@@ -35,15 +56,13 @@ class FakeWhereBuilder {
 
   private append(
     operator: 'AND' | 'OR',
-    condition: string | Brackets,
-    parameters?: Record<string, unknown>,
+    condition: WhereCondition,
+    parameters?: ObjectLiteral,
   ): void {
     if (condition instanceof Brackets) {
       const nestedBuilder = new FakeWhereBuilder();
 
-      condition.whereFactory(
-        nestedBuilder as unknown as WhereExpressionBuilder,
-      );
+      condition.whereFactory(nestedBuilder);
       this.conditions.push(`${operator} (${nestedBuilder.render()})`);
       Object.assign(this.parameters, nestedBuilder.parameters);
     } else {
@@ -65,7 +84,7 @@ const applyFilter = (
   const whereBuilder = new FakeWhereBuilder();
 
   applyMetadataFilterToQueryBuilder({
-    whereBuilder: whereBuilder as unknown as WhereExpressionBuilder,
+    whereBuilder,
     alias: 'entity',
     filter,
     columnByFilterField,

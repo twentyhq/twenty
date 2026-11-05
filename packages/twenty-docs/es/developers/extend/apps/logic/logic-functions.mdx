@@ -621,7 +621,7 @@ Comprueba `context.workspaceMemberId` cuando una función se comporta de forma d
 
 </Note>
 
-Las utilidades del SDK que acceden a los recursos propios de tu aplicación siempre usan su acceso e ignoran `runAs`: el [almacén de clave-valor](/es/developers/extend/apps/logic/key-value-store), las [conexiones](/es/developers/extend/apps/logic/connections), los [canales de mensajería](/es/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` y el [cargo de créditos](/es/developers/extend/apps/logic/credits).
+Las utilidades del SDK que acceden a los recursos propios de tu aplicación siempre usan su acceso e ignoran `runAs`: el [almacén de clave-valor](/es/developers/extend/apps/logic/key-value-store), las [conexiones](/es/developers/extend/apps/logic/connections), los [canales de mensajería](/es/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` y el [cargo de créditos](/es/developers/extend/apps/logic/credits). En cambio, `ai.generate` sigue a los clientes predeterminados: actúa como la persona que desencadenó la ejecución, dentro del rol de tu aplicación, o como tu aplicación cuando nadie lo hizo.
 
 #### Exponer una función como herramienta de IA o acción de flujo de trabajo
 

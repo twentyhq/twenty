@@ -25,16 +25,16 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 const OBJECT_NAME = 'beyondRoleRecord';
 const OBJECT_PLURAL = 'beyondRoleRecords';
@@ -238,10 +238,8 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should answer access questions for the member from their shares', async () => {
-    const recordAccessPolicyService =
-      getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      );
+    const permissionsService =
+      getAppProviderByClassName<PermissionsService>('PermissionsService');
     const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
@@ -255,53 +253,61 @@ describe('Records shared beyond the role that can access their object', () => {
       throw new Error('The object under test is not cached');
     }
 
-    const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
-      workspaceId,
-      mainPrincipal: {
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      },
-      applicationPrincipal: { isCustomApp: true },
-    });
+    const buildJonyPrincipals = async () =>
+      permissionsService.buildPermissionsPrincipals({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      });
 
     expect(
-      await recordAccessPolicyService.hasAccessToSomeRecords({
-        principals: buildJonyPrincipal(),
-        flatObjectMetadata,
-        operationType: 'select',
+      await permissionsService.canReadSomeRecords({
+        principals: await buildJonyPrincipals(),
+        objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
 
     await setShare({ principal: JONY });
 
-    const principals = buildJonyPrincipal();
+    const principals = await buildJonyPrincipals();
 
     expect(
-      await recordAccessPolicyService.hasAccessToSomeRecords({
+      await permissionsService.canReadSomeRecords({
         principals,
-        flatObjectMetadata,
-        operationType: 'select',
+        objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await recordAccessPolicyService.hasAccessToSomeRecords({
+      await permissionsService.canReadAllRecords({
         principals,
-        flatObjectMetadata,
-        operationType: 'update',
+        objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await recordAccessPolicyService.hasAccessToRecords({
+      await permissionsService.canUpdateSomeRecords({
         principals,
-        flatObjectMetadata,
-        operationType: 'select',
+        objectMetadataId: flatObjectMetadata.id,
+      }),
+    ).toBe(false);
+    expect(
+      await permissionsService.findReadableRecordIds({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+      }),
+    ).toEqual([SHARED_RECORD_ID]);
+    expect(
+      await permissionsService.canReadRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID],
       }),
     ).toBe(true);
     expect(
-      await recordAccessPolicyService.hasAccessToRecords({
+      await permissionsService.canReadRecords({
         principals,
-        flatObjectMetadata,
-        operationType: 'select',
+        objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
       }),
     ).toBe(false);
@@ -495,7 +501,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should deliver events of the records named for the member only', async () => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
-    const resolveAdmittedRecordIds = async () => {
+    const resolveReadableRecordIds = async () => {
       const { flatObjectMetadataMaps } =
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
@@ -509,10 +515,14 @@ describe('Records shared beyond the role that can access their object', () => {
         throw new Error('Test object metadata is missing');
       }
 
-      return getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      )
-        .buildEventRecordAccessGate({
+      return getAppProviderByClassName<PermissionsService>(
+        'PermissionsService',
+      ).findReadableEventRecordIds({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+        eventBatch: {
           name: `${OBJECT_NAME}.updated`,
           workspaceId,
           objectMetadata,
@@ -520,23 +530,17 @@ describe('Records shared beyond the role that can access their object', () => {
             recordId,
             properties: { after: { id: recordId } },
           })) as ObjectRecordEvent[],
-        })
-        .resolveAdmittedRecordIds({
-          workspaceId: workspaceId,
-          mainPrincipal: {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
-          applicationPrincipal: { isCustomApp: true },
-        });
+        },
+      });
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([SHARED_RECORD_ID]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {

@@ -181,6 +181,12 @@ msgstr "Bộ lọc biểu đồ không có trường nào cả"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "Bộ lọc biểu đồ của tiện ích \"{widgetTitle}\" không có định danh toàn cục cho siêu dữ liệu của trường"
 
+#. js-lingui-id: aFbjy7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "A command menu item cannot target both an object and a core object"
+msgstr "Một mục trình đơn lệnh không thể nhắm mục tiêu đồng thời cả một đối tượng và một đối tượng cốt lõi"
+
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -202,6 +208,11 @@ msgstr "Một nhà cung cấp kết nối với tên này đã tồn tại cho �
 msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Một bảng điều khiển"
+
+#. js-lingui-id: Fypv4q
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "A deal is won"
+msgstr "Một thương vụ đã thắng"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -487,6 +498,12 @@ msgstr "agentChatChannelUniversalIdentifier hợp lệ là bắt buộc đối v
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid link is required for LINK type"
 msgstr "Liên kết hợp lệ là bắt buộc đối với loại LINK"
+
+#. js-lingui-id: SdzwAi
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid nativePageKey is required for NATIVE_PAGE type"
+msgstr "Cần có nativePageKey hợp lệ cho loại NATIVE_PAGE"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -781,6 +798,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
 msgstr "Thêm vào danh sách"
 
+#. js-lingui-id: BBzZ81
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Add tools to your workspace."
+msgstr "Thêm công cụ vào không gian làm việc của bạn."
+
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -815,8 +837,13 @@ msgstr "Bảng Điều Khiển Admin"
 msgid "Admin role not found."
 msgstr "Không tìm thấy vai trò quản trị."
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr "Tác nhân \"{label}\" đã được lưu trữ hoặc thuộc về một bước Quy trình làm việc khác, vì vậy một bước mới không thể chạy tác nhân đó."
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "Tác tử \"{label}\" đã được lưu trữ."
 
@@ -1074,10 +1101,20 @@ msgstr "Số tiền"
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "Một tác nhân không thể có nhiều hơn {maxTriggers} trình kích hoạt"
 
+#. js-lingui-id: KfRVdE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent drafts a follow-up for every deal about to close."
+msgstr "Một trợ lý soạn thư theo dõi cho mọi thương vụ sắp chốt."
+
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
 msgstr "Không thể đổi tên tác tử được cài đặt bởi một ứng dụng."
+
+#. js-lingui-id: 3tWubk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent shapes your objects and fields around how you work."
+msgstr "Một trợ lý định hình các đối tượng và trường của bạn theo cách bạn làm việc."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1098,6 +1135,11 @@ msgstr "Một tác nhân có tên này đã tồn tại."
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
 msgstr "Một ứng dụng chỉ có thể khởi động các quy trình làm việc của riêng ứng dụng đó."
+
+#. js-lingui-id: T/ZKXs
+#: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
+msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
+msgstr "Một ứng dụng có thể yêu cầu quyền truy cập phương tiện iframe cho tối đa {MAX_ALLOWED_IFRAME_ORIGINS} nguồn gốc"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1155,6 +1197,11 @@ msgstr "Một lượt xuất đang chạy cho workspace này."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Một bản xuất khác đang chạy trong không gian làm việc này. Vui lòng chờ hoàn tất."
+
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Một dịch vụ bên ngoài mất quá nhiều thời gian để phản hồi."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1274,12 +1321,23 @@ msgstr "Một mục menu cài đặt khác đã sử dụng vị trí {0}"
 msgid "Another settings menu item already uses position {nextPosition}"
 msgstr "Một mục menu cài đặt khác đã sử dụng vị trí {nextPosition}"
 
+#. js-lingui-id: b2UKvQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item already uses slug \"{slug}\""
+msgstr "Một mục menu cài đặt khác đã sử dụng slug \"{slug}\""
+
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
 msgstr "Một mục menu cài đặt khác của ứng dụng này đã sử dụng vị trí này."
+
+#. js-lingui-id: Dswht3
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item of this application already uses this slug."
+msgstr "Một mục menu cài đặt khác của ứng dụng này đã sử dụng slug này."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1312,11 +1370,32 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Dấu nháy đơn và dấu chấm"
 
+#. js-lingui-id: oABUXG
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "App installed"
+msgstr "Đã cài đặt ứng dụng"
+
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Ứng dụng"
+
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr "Không thể gán vai trò cho ứng dụng \"{applicationName}\""
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr "Không thể gán vai trò cho ứng dụng \"{applicationName}\": chỉ có thể gán cho các ứng dụng đã cài đặt"
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr "Ứng dụng đã được gán một vai trò"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1589,6 +1668,7 @@ msgstr "đã đính kèm một tập tin"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Được đính kèm vào"
@@ -1636,6 +1716,7 @@ msgid "Attachment record position"
 msgstr "Vị trí bản ghi tập tin đính kèm"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1953,6 +2034,16 @@ msgstr "Bị trả lại lúc"
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
 msgstr "Bị trả lại lúc"
+
+#. js-lingui-id: 7piJZ+
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your companies, contacts and deals from any CRM export."
+msgstr "Mang các công ty, liên hệ và thương vụ của bạn từ bất kỳ dữ liệu xuất CRM nào."
+
+#. js-lingui-id: YYQkoU
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your team into Twenty."
+msgstr "Đưa đội ngũ của bạn vào Twenty."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3025,6 +3116,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Companies"
 msgstr "Công ty"
 
+#. js-lingui-id: UcnBjr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Companies and people fill in from your emails and meetings."
+msgstr "Các công ty và cá nhân được điền tự động từ email và cuộc họp của bạn."
+
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -3244,10 +3340,20 @@ msgstr "Mã gọi điện thoại bị xung đột."
 msgid "Conflicting phone country code."
 msgstr "Mã quốc gia điện thoại bị xung đột."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Trước tiên, hãy kết nối một tài khoản cho máy chủ MCP này."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Không được phép kết nối cho {connectFieldName} trên {objectMetadataNameSingular}."
+
+#. js-lingui-id: oduBE8
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr ""
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3613,6 +3719,11 @@ msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
 msgstr "Tạo {objectLabelSingular}"
 
+#. js-lingui-id: Y8ye8i
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Create a kickoff task"
+msgstr "Tạo nhiệm vụ khởi động"
+
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Create Calendar Event"
@@ -3953,6 +4064,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "Bảng điều khiển"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr ""
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -4063,6 +4179,11 @@ msgstr "Thương vụ"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "Thương vụ"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr ""
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4394,11 +4515,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "Đã giao lúc"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "Bị từ chối"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4634,6 +4750,11 @@ msgstr "Mỗi trường đường dẫn bản ghi liên quan phải thuộc về
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Mỗi mục shareWith phải nhắm chính xác đến một trong các giá trị workspaceMemberId, roleId hoặc everyone"
 
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr ""
+
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -4812,6 +4933,11 @@ msgctxt "fieldMetadata.description"
 msgid "Email subject line"
 msgstr "Dòng tiêu đề email"
 
+#. js-lingui-id: 4VrNsb
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Email the account owner"
+msgstr "Gửi email cho chủ sở hữu khách hàng"
+
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
@@ -4844,14 +4970,12 @@ msgstr "Emails"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "Emails"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "Emails"
@@ -5146,6 +5270,11 @@ msgstr "Các sự kiện liên kết với cá nhân"
 msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Các sự kiện liên kết với thành viên không gian làm việc"
+
+#. js-lingui-id: idSfue
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
+msgstr "Mỗi Thứ Hai, soạn email theo dõi cho từng thương vụ sẽ chốt trong 30 ngày tới."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5479,6 +5608,23 @@ msgstr "Tên trường không đồng bộ với nhãn."
 msgid "Field not found."
 msgstr "Không tìm thấy trường."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Không tìm thấy trường tùy chọn trường"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Không tìm thấy tùy chọn trường"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Không tìm thấy tùy chọn trường."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -5695,6 +5841,7 @@ msgstr "Tập tin"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Tệp {fileId} đã được liên kết với một trường tệp vĩnh viễn. Vui lòng tải lên lại tệp."
 
@@ -5784,6 +5931,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Tập tin"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr ""
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -5825,6 +5978,12 @@ msgstr "Tìm"
 msgid "Find Connected Accounts"
 msgstr "Tìm tài khoản được kết nối"
 
+#. js-lingui-id: HEpRJM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "First direct message member ID"
+msgstr "ID thành viên tin nhắn trực tiếp thứ nhất"
+
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "First friendly message"
@@ -5851,6 +6010,16 @@ msgstr "Luồng"
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
 msgstr "Đường dẫn thư mục không được chứa phần mở rộng tệp — hãy dùng deleteFile cho đường dẫn tệp"
+
+#. js-lingui-id: 9J7Yxo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow up on closing deals"
+msgstr "Theo dõi các thương vụ sắp chốt"
+
+#. js-lingui-id: Y2RyNo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up instructions"
+msgstr "Hướng dẫn theo dõi"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6236,6 +6405,11 @@ msgctxt "fieldMetadata.label"
 msgid "Group hash"
 msgstr "Hàm băm nhóm"
 
+#. js-lingui-id: cGqZJs
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Hand over won deals"
+msgstr "Bàn giao các thương vụ đã thắng"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6268,6 +6442,11 @@ msgstr "Tên handler không hợp lệ"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "handlerName phải là một định danh JavaScript hợp lệ hoặc một đường dẫn có dấu chấm"
+
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr ""
 
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -6454,11 +6633,26 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "Nhập {objectLabelPlural}"
 
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr ""
+
+#. js-lingui-id: gQ9//i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your data"
+msgstr "Nhập Dữ liệu của Bạn"
+
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "In progress"
 msgstr "Đang thực hiện"
+
+#. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Inbox is not enabled for this workspace."
+msgstr "Hộp thư đến chưa được bật cho không gian làm việc này."
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -6541,6 +6735,11 @@ msgstr "Mã thông báo đầu vào"
 msgctxt "fieldMetadata.label"
 msgid "Input Tokens"
 msgstr "Mã thông báo đầu vào"
+
+#. js-lingui-id: 5u6qKW
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Install an app"
+msgstr "Cài đặt ứng dụng"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6794,6 +6993,11 @@ msgstr "Khóa cờ tính năng không hợp lệ."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "Đầu vào trường không hợp lệ."
+
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Đầu vào tùy chọn trường không hợp lệ."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -7531,6 +7735,21 @@ msgstr "Phiên bản quy trình làm việc không hợp lệ."
 msgid "Invitation not found"
 msgstr "Không tìm thấy lời mời"
 
+#. js-lingui-id: ZMCmkn
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invitations sent"
+msgstr "Đã gửi lời mời"
+
+#. js-lingui-id: d+Y+rP
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invite your team"
+msgstr "Mời đội của bạn"
+
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr ""
+
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8145,6 +8364,16 @@ msgstr "Không tìm thấy hàm logic."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Hàm logic có cùng định danh phổ quát đã tồn tại"
 
+#. js-lingui-id: y5Ysbs
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
+msgstr "Hãy xem dữ liệu tôi đã nhập và đề xuất các đối tượng, trường và chế độ xem tôi cần để điều hành doanh nghiệp. Hãy hỏi tôi muốn theo dõi những gì trước khi tạo bất cứ thứ gì."
+
+#. js-lingui-id: AgKpIa
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Mailbox connected"
+msgstr "Hộp thư đã kết nối"
+
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8156,6 +8385,11 @@ msgstr "Đặt thành riêng tư"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Đặt quy trình làm việc thành riêng tư"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr ""
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -8731,6 +8965,20 @@ msgstr "Tin nhắn"
 #. js-lingui-id: I+2uUa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. js-lingui-id: x+60lt
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. js-lingui-id: JJTyHZ
+#: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
 msgid "Messages"
 msgstr "Tin nhắn"
 
@@ -9627,6 +9875,11 @@ msgstr "ObjectMetadataId là cần thiết để tạo một xem."
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "ObjectMetadataId là bắt buộc khi tạo một chế độ xem"
 
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr ""
+
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
@@ -9667,6 +9920,11 @@ msgstr "Một hoặc nhiều phạm vi được yêu cầu không hợp lệ."
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Chỉ có thể gửi chiến dịch ở trạng thái bản nháp hoặc đã lên lịch."
+
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Chỉ nhóm mệnh đề phân quyền cấp hàng gốc mới có thể cấp các thao tác"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9724,10 +9982,25 @@ msgstr "Chỉ ứng dụng sở hữu tác nhân này mới có thể thay đổ
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Chỉ người đã tạo quy trình làm việc này mới có thể thay đổi người được xem quy trình đó"
 
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Chỉ nhóm cấp cao nhất của quy tắc cấp bản ghi mới có thể cấp các thao tác"
+
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Chỉ có thể thay đổi các giá trị của biểu mẫu này."
+
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr "Chỉ không gian làm việc mới có thể gán vai trò cho các ứng dụng"
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr "Chỉ ứng dụng tùy chỉnh của không gian làm việc mới có thể gán vai trò cho các ứng dụng"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9923,6 +10196,12 @@ msgstr "Tên tuỳ chọn phải là một chuỗi có ít nhất một ký tự
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Giá trị tùy chọn \"{sanitizedValue}\" dưới 1 ký tự"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Giá trị tùy chọn \"{value}\" đã tồn tại trong trường này"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -9949,6 +10228,12 @@ msgstr "Giá trị tuỳ chọn phải là một chuỗi có ít nhất một k�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Cần các tùy chọn cho trường enum"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Tùy chọn chỉ có thể thuộc về các trường chọn, chọn nhiều hoặc đánh giá"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10176,6 +10461,11 @@ msgstr "Người tham gia"
 msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr "Người tham gia"
+
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr "Mã đối tác chỉ áp dụng cho khách hàng mới của Twenty."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10688,11 +10978,6 @@ msgstr "ID chủ thể"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Loại chủ thể"
-
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Bản ghi riêng tư chưa khả dụng trong không gian làm việc này."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -11501,6 +11786,13 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr ""
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr "Không thể gán vai trò \"{roleLabel}\" cho các ứng dụng"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11517,6 +11809,11 @@ msgstr "Không thể gán vai trò \"{roleLabel}\" cho webhook"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Không thể gán vai trò \"{roleLabel}\": các vai trò tùy chỉnh yêu cầu Gói Tổ chức"
+
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr "Vai trò \"{roleLabel}\" phải thuộc sở hữu của ứng dụng tùy chỉnh của không gian làm việc để được gán cho một ứng dụng"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11615,11 +11912,11 @@ msgstr "Mục tiêu vai trò đã tồn tại"
 msgid "Role target is missing identifier."
 msgstr "Mục tiêu vai trò thiếu định danh."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr "Mục tiêu vai trò phải có đúng một trong các thuộc tính sau: apiKeyId, userWorkspaceId, agentUniversalIdentifier hoặc webhookUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr "Mục tiêu vai trò phải có chính xác một trong các giá trị sau: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier hoặc targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11797,6 +12094,11 @@ msgstr "Lượt chạy"
 msgid "Sample records exceed 100 KB."
 msgstr "Các bản ghi mẫu vượt quá 100 KB."
 
+#. js-lingui-id: P79LWT
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must include every selected field."
+msgstr "Bản ghi mẫu phải bao gồm mọi trường đã chọn."
+
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
@@ -11967,6 +12269,12 @@ msgstr "Trường vector tìm kiếm phải thuộc về cùng một đối tư�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 msgid "Search vector field not found"
 msgstr "Không tìm thấy trường vector tìm kiếm"
+
+#. js-lingui-id: pMB33L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Second direct message member ID"
+msgstr "ID thành viên tin nhắn trực tiếp thứ hai"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -12250,6 +12558,16 @@ msgstr "Phạm vi mục menu cài đặt \"{0}\" không hợp lệ"
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
 msgstr "Phạm vi mục menu cài đặt \"{nextScope}\" không hợp lệ"
 
+#. js-lingui-id: nI9Ltr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" is reserved"
+msgstr "Slug mục menu cài đặt \"{slug}\" đã được dành riêng"
+
+#. js-lingui-id: x515yK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
+msgstr "Slug mục menu cài đặt \"{slug}\" phải ở dạng kebab-case viết thường và có tối đa {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} ký tự"
+
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -12268,6 +12586,11 @@ msgstr "Tiêu đề mục menu cài đặt \"{updatedTitle}\" được dành ri�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Tiêu đề mục menu cài đặt là bắt buộc"
+
+#. js-lingui-id: x4ZiTl
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup instructions"
+msgstr "Hướng Dẫn Thiết Lập"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12684,6 +13007,11 @@ msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "Đầu tuần"
 
+#. js-lingui-id: wcXsug
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Start the handover when a deal is won."
+msgstr "Bắt đầu bàn giao khi một giao dịch được thắng."
+
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12955,10 +13283,21 @@ msgstr "Tab 1"
 msgid "Tab not found for widget duplication."
 msgstr "Không tìm thấy tab cho việc nhân bản tiện ích."
 
+#. js-lingui-id: xRgQRi
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Tailor your workspace"
+msgstr "Tùy chỉnh không gian làm việc của bạn"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Không tìm thấy bản tải lên tarball."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr "Không tìm thấy ứng dụng mục tiêu"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -13259,6 +13598,11 @@ msgstr "Khóa chế độ xem {reservedViewKey} được dành riêng cho chế 
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "Khóa chế độ xem {reservedViewKey} được dành riêng cho chế độ xem mặc định do engine sở hữu; hãy xóa khóa khỏi định nghĩa chế độ xem"
 
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr "Không tìm thấy tác nhân mà bước này cần chạy."
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -13301,6 +13645,11 @@ msgstr "Định nghĩa quy trình làm việc của ứng dụng không hợp l�
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Các phụ thuộc ở môi trường production của ứng dụng quá lớn để cài đặt. Hãy chuyển các gói không được các logic function của nó import (thư viện UI, công cụ phát triển) ra khỏi \"dependencies\"."
+
+#. js-lingui-id: 2a7bjg
+#: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
+msgid "The application's requested permissions have changed. Review them again before approving."
+msgstr "Các quyền mà ứng dụng yêu cầu đã thay đổi. Hãy xem lại trước khi phê duyệt."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -13546,6 +13895,12 @@ msgstr "Tệp trống hoặc vượt quá kích thước tối đa cho phép."
 msgid "The file upload has not been completed. Please retry the upload."
 msgstr "Việc tải tệp lên chưa hoàn tất. Vui lòng thử tải lên lại."
 
+#. js-lingui-id: 2T6q1O
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The first member in the fixed direct message pair"
+msgstr "Thành viên thứ nhất trong cặp tin nhắn trực tiếp cố định"
+
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -13632,6 +13987,11 @@ msgstr "Không tìm thấy hàm logic cần chạy khi ngắt kết nối."
 msgid "The MCP request parameters are invalid."
 msgstr "Các tham số yêu cầu MCP không hợp lệ."
 
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Máy chủ MCP có quá nhiều công cụ để đồng bộ hóa."
+
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
@@ -13706,6 +14066,11 @@ msgstr "Tên cơ hội"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr "Không thể truy cập registry gói để xác minh nguồn gốc của gói. Hãy thử lại sau."
+
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr "Không thể thêm hoặc thay đổi mã đối tác nữa. Vui lòng liên hệ bộ phận hỗ trợ."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13800,6 +14165,12 @@ msgstr "Cùng một cột không thể xuất hiện hai lần trong một chỉ
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
 msgstr "Thành phần đã lưu khác với bản nháp này."
+
+#. js-lingui-id: i+FcdU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The second member in the fixed direct message pair"
+msgstr "Thành viên thứ hai trong cặp tin nhắn trực tiếp cố định"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14571,6 +14942,11 @@ msgstr "Thao tác này tham chiếu đến một bản ghi không tồn tại ho
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
 msgstr "Khóa Tổ chức này đã được sử dụng trên một phiên bản máy chủ khác. Hãy giải phóng khóa đó khỏi máy chủ đó hoặc chuyển khóa đó sang máy chủ này."
 
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
+msgstr "Mã đối tác này không hợp lệ."
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -14718,12 +15094,24 @@ msgstr "Khóa máy chủ này đã được một không gian làm việc khác 
 msgid "This settings menu item scope is not supported."
 msgstr "Phạm vi của mục menu cài đặt này không được hỗ trợ."
 
+#. js-lingui-id: jzBAe4
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "This settings menu item slug is invalid or reserved."
+msgstr "Slug của mục menu cài đặt này không hợp lệ hoặc được dành riêng."
+
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
 msgstr "Tiêu đề của mục menu cài đặt này được dành riêng."
+
+#. js-lingui-id: ukriVV
+#: src/engine/core-modules/getting-started/getting-started.exception.ts
+msgid "This step has no workflow."
+msgstr "Bước này không có quy trình làm việc."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -15381,6 +15769,11 @@ msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Lượt"
 
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr ""
+
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15474,6 +15867,16 @@ msgstr "Mã định danh chung được dành riêng cho siêu dữ liệu do h�
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Không rõ"
+
+#. js-lingui-id: jR10dh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Unknown availabilityCoreObjectName {availabilityCoreObjectName}"
+msgstr "Không xác định availabilityCoreObjectName {availabilityCoreObjectName}"
+
+#. js-lingui-id: U1gpBt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Unknown core object for this command menu item"
+msgstr "Không xác định đối tượng cốt lõi cho mục trình đơn lệnh này"
 
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
@@ -16583,6 +16986,11 @@ msgstr "Chúng tôi không thể đăng nhập vào tài khoản email của b�
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Chúng tôi đã gặp sự cố khi kết nối với tài khoản email của bạn. Vui lòng kiểm tra cài đặt của bạn và thử lại."
 
+#. js-lingui-id: b6WVV+
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
+msgstr "Chúng tôi là {companyName}, một công ty trong ngành {industry}. Hãy xem dữ liệu tôi đã nhập và đề xuất các đối tượng, trường và chế độ xem chúng tôi cần để điều hành doanh nghiệp. Hãy hỏi tôi trước khi tạo bất cứ thứ gì."
+
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17213,6 +17621,11 @@ msgstr "Tạo dữ liệu minh họa cho không gian làm việc"
 msgid "Workspace does not exist."
 msgstr "Không gian làm việc không tồn tại."
 
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr ""
+
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
@@ -17624,9 +18037,8 @@ msgid "You do not have access to this message folder."
 msgstr "Bạn không có quyền truy cập vào thư mục tin nhắn này."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền truy cập vào tính năng này. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
 
@@ -17809,6 +18221,11 @@ msgstr "Phương thức thanh toán của bạn đã bị từ chối. Vui lòng
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Không thể thêm tín dụng bạn đã mua. Vui lòng liên hệ bộ phận hỗ trợ."
+
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr ""
 
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

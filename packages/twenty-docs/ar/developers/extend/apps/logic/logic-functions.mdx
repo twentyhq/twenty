@@ -619,7 +619,7 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 
 </Note>
 
-تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة دائمًا صلاحيات الوصول الخاصة بها وتتجاهل `runAs`: [مخزن المفتاح-القيمة](/ar/developers/extend/apps/logic/key-value-store)، و[الاتصالات](/ar/developers/extend/apps/logic/connections)، و[قنوات المراسلة](/ar/developers/extend/apps/logic/messaging-channels)، و`runAgent`، و`getPublicAssetUrl`، و[تحصيل الأرصدة](/ar/developers/extend/apps/logic/credits).
+تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة دائمًا صلاحيات الوصول الخاصة بها وتتجاهل `runAs`: [مخزن المفتاح-القيمة](/ar/developers/extend/apps/logic/key-value-store)، و[الاتصالات](/ar/developers/extend/apps/logic/connections)، و[قنوات المراسلة](/ar/developers/extend/apps/logic/messaging-channels)، و`runAgent`، و`getPublicAssetUrl`، و[تحصيل الأرصدة](/ar/developers/extend/apps/logic/credits). يتبع `ai.generate` العملاء الافتراضيين بدلاً من ذلك: إذ يتصرف بصفته الشخص الذي بدأ التشغيل، ضمن دور تطبيقك، أو بصفته تطبيقك عندما لا يكون هناك من فعل ذلك.
 
 #### إتاحة دالة كأداة ذكاء اصطناعي أو كإجراء ضمن سير العمل
 

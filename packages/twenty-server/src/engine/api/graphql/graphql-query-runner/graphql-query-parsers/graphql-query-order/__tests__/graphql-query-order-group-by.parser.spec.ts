@@ -57,7 +57,7 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
     fieldIds: [NAME_FIELD_ID, DATE_FIELD_ID],
   });
 
-  const flatFieldMetadataMaps = {
+  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: {
       [NAME_FIELD_UNIVERSAL_ID]: nameField,
       [DATE_FIELD_UNIVERSAL_ID]: launchedAtField,
@@ -67,9 +67,9 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
       [DATE_FIELD_ID]: DATE_FIELD_UNIVERSAL_ID,
     },
     universalIdentifiersByApplicationId: {},
-  } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  };
 
-  const flatObjectMetadataMaps = {
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
       [OBJECT_UNIVERSAL_ID]: flatObjectMetadata,
     },
@@ -77,7 +77,7 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
       [OBJECT_ID]: OBJECT_UNIVERSAL_ID,
     },
     universalIdentifiersByApplicationId: {},
-  } as unknown as FlatEntityMaps<FlatObjectMetadata>;
+  };
 
   const objectAlias = getObjectAlias(flatObjectMetadata);
   const physicalTableName = computeObjectTargetTable(flatObjectMetadata);
@@ -266,7 +266,7 @@ describe('GraphqlQueryOrderGroupByParser - relation order-by under target primar
     fieldIds: [MEMBER_ID_FIELD_ID, MEMBER_NAME_FIELD_ID],
   });
 
-  const flatFieldMetadataMaps = {
+  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: {
       [COMPANY_RELATION_FIELD_UNIVERSAL_ID]: companyRelationField,
       [MEMBER_RELATION_FIELD_UNIVERSAL_ID]: memberRelationField,
@@ -286,9 +286,9 @@ describe('GraphqlQueryOrderGroupByParser - relation order-by under target primar
       [MEMBER_NAME_FIELD_ID]: MEMBER_NAME_FIELD_UNIVERSAL_ID,
     },
     universalIdentifiersByApplicationId: {},
-  } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  };
 
-  const flatObjectMetadataMaps = {
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
       [SOURCE_OBJECT_UNIVERSAL_ID]: sourceObjectMetadata,
       [COMPANY_OBJECT_UNIVERSAL_ID]: companyObjectMetadata,
@@ -300,7 +300,7 @@ describe('GraphqlQueryOrderGroupByParser - relation order-by under target primar
       [MEMBER_OBJECT_ID]: MEMBER_OBJECT_UNIVERSAL_ID,
     },
     universalIdentifiersByApplicationId: {},
-  } as unknown as FlatEntityMaps<FlatObjectMetadata>;
+  };
 
   const groupByCompanyId: GroupByRelationField = {
     fieldMetadata: companyRelationField,

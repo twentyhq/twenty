@@ -1,11 +1,13 @@
 import {
   FieldMetadataType,
   ObjectOpenRecordIn,
+  RelationType,
   type ObjectRecord,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/rls/constants/unsatisfiable-record-filter.constant';
@@ -71,27 +73,17 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     id: string,
     name: string,
     type: FieldMetadataType,
-    settings?: Record<string, unknown>,
+    settings: FlatFieldMetadata['settings'] = null,
   ): FlatFieldMetadata =>
-    ({
+    getFlatFieldMetadataMock({
       id,
       name,
       type,
       label: name,
       objectMetadataId: 'test-object-id',
-      isLabelSyncedWithName: true,
-      isNullable: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       universalIdentifier: id,
-      viewFieldIds: [],
-      viewFilterIds: [],
-      kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
-      mainGroupByFieldMetadataViewIds: [],
-      applicationId: null,
       settings,
-    }) as unknown as FlatFieldMetadata;
+    });
 
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
@@ -132,6 +124,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       'company',
       FieldMetadataType.RELATION,
       {
+        relationType: RelationType.MANY_TO_ONE,
         joinColumnName: 'companyId',
       },
     ),

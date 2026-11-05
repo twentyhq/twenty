@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -16,19 +15,21 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   type DeleteCoreWorkflowsMutation,
   type DeleteCoreWorkflowsMutationVariables,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDeleteSelectedCoreWorkflows = () => {
+  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
+    objectNameSingular: StandardObjectNameSingular.Workflow,
   });
 
   const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);

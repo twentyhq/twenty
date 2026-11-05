@@ -3,15 +3,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SITE_URLS } from '@/platform/site-urls';
 
-import { PARTNER_STORAGE_KEY } from './partner-storage-key';
+import { readSavedPartner } from './read-saved-partner';
 
 const APP_HOSTNAME = new URL(SITE_URLS.appWelcome).hostname;
 
 const subscribe = () => () => {};
 
-const readSavedPartner = (): string | null => {
+const readSavedPartnerSafely = (): string | null => {
   try {
-    return sessionStorage.getItem(PARTNER_STORAGE_KEY);
+    return readSavedPartner({ storage: localStorage, now: Date.now() });
   } catch {
     return null;
   }
@@ -25,7 +25,7 @@ const setPartnerOnAppUrl = (href: string, partner: string): string => {
       return href;
     }
 
-    url.searchParams.set('partner', partner);
+    url.searchParams.set('via', partner);
 
     return url.toString();
   } catch {
@@ -36,7 +36,11 @@ const setPartnerOnAppUrl = (href: string, partner: string): string => {
 export const usePartnerOnAppUrl = (
   href: string | undefined,
 ): string | undefined => {
-  const partner = useSyncExternalStore(subscribe, readSavedPartner, () => null);
+  const partner = useSyncExternalStore(
+    subscribe,
+    readSavedPartnerSafely,
+    () => null,
+  );
 
   return isDefined(href) && isDefined(partner)
     ? setPartnerOnAppUrl(href, partner)

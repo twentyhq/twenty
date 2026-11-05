@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -24,24 +23,6 @@ export class CodeStepBuildService {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
   ) {}
-
-  async createCodeStepLogicFunction({
-    logicFunctionId,
-    workspaceId,
-  }: {
-    logicFunctionId: string;
-    workspaceId: string;
-  }) {
-    return await this.logicFunctionFromSourceService.createOneFromSource({
-      input: {
-        id: logicFunctionId,
-        name: 'A Code Step',
-        description: '',
-        workflowActionTriggerSettings: SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
-      },
-      workspaceId,
-    });
-  }
 
   async duplicateCodeStepLogicFunction({
     existingLogicFunctionId,

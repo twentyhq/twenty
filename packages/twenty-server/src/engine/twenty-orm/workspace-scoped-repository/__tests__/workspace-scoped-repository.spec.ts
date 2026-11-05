@@ -1,4 +1,4 @@
-import { Not, type Repository } from 'typeorm';
+import { DataSource, EntityManager, Not, Repository } from 'typeorm';
 
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 type FakeEntity = {
@@ -11,30 +11,39 @@ type FakeEntity = {
 const WORKSPACE_ID = 'workspace-1';
 const OTHER_WORKSPACE_ID = 'workspace-2';
 
-const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
-  ({
-    findOne: jest.fn().mockResolvedValue(null),
-    findOneOrFail: jest.fn(),
-    findOneBy: jest.fn().mockResolvedValue(null),
-    find: jest.fn().mockResolvedValue([]),
-    count: jest.fn().mockResolvedValue(0),
-    findAndCount: jest.fn().mockResolvedValue([[], 0]),
-    exists: jest.fn().mockResolvedValue(false),
-    existsBy: jest.fn().mockResolvedValue(false),
-    maximum: jest.fn().mockResolvedValue(null),
-    update: jest.fn(),
-    increment: jest.fn(),
-    decrement: jest.fn(),
-    delete: jest.fn(),
-    softDelete: jest.fn(),
-    insert: jest.fn(),
-    upsert: jest.fn(),
-    create: jest.fn(),
-    createQueryBuilder: jest.fn(),
-  }) as unknown as jest.Mocked<Repository<FakeEntity>>;
+const buildEntityManager = () =>
+  new EntityManager(new DataSource({ type: 'postgres' }));
+
+const createMockRepository = () => {
+  const repository = new Repository<FakeEntity>(
+    'FakeEntity',
+    buildEntityManager(),
+  );
+
+  jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+  jest.spyOn(repository, 'findOneOrFail').mockImplementation();
+  jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+  jest.spyOn(repository, 'find').mockResolvedValue([]);
+  jest.spyOn(repository, 'count').mockResolvedValue(0);
+  jest.spyOn(repository, 'findAndCount').mockResolvedValue([[], 0]);
+  jest.spyOn(repository, 'exists').mockResolvedValue(false);
+  jest.spyOn(repository, 'existsBy').mockResolvedValue(false);
+  jest.spyOn(repository, 'maximum').mockResolvedValue(null);
+  jest.spyOn(repository, 'update').mockImplementation();
+  jest.spyOn(repository, 'increment').mockImplementation();
+  jest.spyOn(repository, 'decrement').mockImplementation();
+  jest.spyOn(repository, 'delete').mockImplementation();
+  jest.spyOn(repository, 'softDelete').mockImplementation();
+  jest.spyOn(repository, 'insert').mockImplementation();
+  jest.spyOn(repository, 'upsert').mockImplementation();
+  jest.spyOn(repository, 'create').mockImplementation();
+  jest.spyOn(repository, 'createQueryBuilder').mockImplementation();
+
+  return jest.mocked(repository);
+};
 
 describe('WorkspaceScopedRepository', () => {
-  let repository: jest.Mocked<Repository<FakeEntity>>;
+  let repository: ReturnType<typeof createMockRepository>;
   let scoped: WorkspaceScopedRepository<FakeEntity>;
 
   beforeEach(() => {
@@ -605,10 +614,9 @@ describe('WorkspaceScopedRepository', () => {
   describe('withManager', () => {
     it('returns a new wrapper bound to the manager-provided repository', async () => {
       const txRepository = createMockRepository();
-      const manager = {
-        getRepository: jest.fn().mockReturnValue(txRepository),
-      } as unknown as import('typeorm').EntityManager;
-      (repository as unknown as { target: unknown }).target = 'FakeEntity';
+      const manager = buildEntityManager();
+
+      jest.spyOn(manager, 'getRepository').mockReturnValue(txRepository);
 
       const tx = scoped.withManager(manager);
 

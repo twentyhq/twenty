@@ -1,5 +1,5 @@
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -23,16 +23,16 @@ export const useAttachChatThreadToRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   });
 
   const { findManyRecordsQuery: findExistingLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: EXISTING_LINK_GQL_FIELDS,
     });
   const { createManyRecords: createLinks } = useCreateManyRecords({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
     shouldRefetchAggregateQueries: false,
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();

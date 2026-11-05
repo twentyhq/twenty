@@ -1,3 +1,4 @@
+import { type CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
 import { type ContextStorePageType } from './ContextStorePageType';
 import { type ObjectPermissions } from './ObjectPermissions';
 import { type ObjectRecord } from './ObjectRecord';
@@ -21,4 +22,5 @@ export type CommandMenuContextApi = {
   canAccessFullAdminPanel: boolean;
   objectMetadataItem: Record<string, unknown>;
   objectMetadataLabel: string;
+  coreObjectName: CommandMenuCoreObjectName | null;
 };

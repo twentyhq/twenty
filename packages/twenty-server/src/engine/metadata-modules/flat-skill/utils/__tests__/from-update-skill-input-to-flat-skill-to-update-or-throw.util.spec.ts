@@ -93,7 +93,7 @@ describe('fromUpdateSkillInputToFlatSkillToUpdateOrThrow', () => {
     const result = updateAsWorkspace({
       id: appSkill.id,
       label: 'Summarize briefly',
-      isActive: null as unknown as boolean,
+      isActive: null,
     });
 
     expect(result.isActive).toBe(true);

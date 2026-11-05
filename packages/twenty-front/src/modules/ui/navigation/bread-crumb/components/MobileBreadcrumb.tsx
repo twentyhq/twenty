@@ -1,8 +1,7 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { getBreadcrumbItems } from '@/ui/navigation/bread-crumb/utils/getBreadcrumbItems';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
@@ -51,6 +50,7 @@ const StyledText = styled.span`
 `;
 
 export const MobileBreadcrumb = ({ links }: MobileBreadcrumbProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
 

@@ -1,10 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JSONSchema7 } from 'json-schema';
-import {
-  FieldMetadataType,
-  NumberDataType,
-  type RestrictedFieldsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { filesFieldSchema } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
@@ -158,12 +154,12 @@ const getPropertyJsonSchema = ({
 
 export const generateRecordPropertiesJsonSchema = ({
   objectMetadata,
-  restrictedFields,
+  nonUpdatableFieldMetadataIds,
   definitions,
   isPartial = false,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  nonUpdatableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
   isPartial?: boolean;
 }): { properties: Record<string, JSONSchema7>; required: string[] } => {
@@ -174,7 +170,7 @@ export const generateRecordPropertiesJsonSchema = ({
     if (
       SYSTEM_MANAGED_FIELD_NAMES.has(field.name) ||
       field.type === FieldMetadataType.TS_VECTOR ||
-      restrictedFields?.[field.id]?.canUpdate === false
+      nonUpdatableFieldMetadataIds?.has(field.id)
     ) {
       continue;
     }

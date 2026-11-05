@@ -6,9 +6,9 @@ import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SidePanelAskAiInfo = () => {
+  const { t } = useLingui();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const currentAiChatThreadTitle = useAtomFamilySelectorValue(

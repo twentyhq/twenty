@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { FileFolder } from '~/generated-metadata/graphql';
 
@@ -9,8 +8,10 @@ import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useToast } from 'twenty-ui/components/feedback';
 import { logError } from '~/utils/logError';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 export const useUploadEmailImage = () => {
+  const { t } = useLingui();
   const { uploadFile } = useDirectFileUpload();
   const { enqueueToast } = useToast();
 

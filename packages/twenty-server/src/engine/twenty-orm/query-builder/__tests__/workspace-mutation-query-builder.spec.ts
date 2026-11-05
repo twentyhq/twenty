@@ -2,9 +2,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 
 const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -83,7 +84,7 @@ const buildBuilders = ({
         return rows;
       },
     },
-    objectRecordsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
@@ -259,7 +260,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
     const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
       tableShape: shapeWithoutDeletedAt,
       executor: { execute: async () => [] },
-      objectRecordsPermissions: {},
+      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
@@ -320,7 +321,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
     const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
       tableShape: shapeWithoutUpdatedAt,
       executor: { execute: async () => [] },
-      objectRecordsPermissions: {},
+      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,

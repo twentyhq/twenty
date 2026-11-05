@@ -11,7 +11,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type NativePageKey } from 'twenty-shared/types';
+
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-native-page-navigation-menu-item-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -61,7 +64,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'LINK' AND "link" IS NOT NULL)
   OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)
-  OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL)`,
+  OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL)
+  OR ("type" = 'NATIVE_PAGE' AND "nativePageKey" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -155,6 +159,13 @@ export class NavigationMenuItemEntity
   })
   @Column({ nullable: true, type: 'uuid' })
   agentChatChannelId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text' })
+  nativePageKey: NativePageKey | null;
 
   @Column({ nullable: false, type: 'double precision' })
   position: number;

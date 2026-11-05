@@ -2,9 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordsOperationType,
+  type RecordShareAccessLevel,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -24,21 +30,223 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import {
-  type RoleIdsBySource,
-  type RolePermissionConfig,
-} from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { buildAgentRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-agent-role-ids-by-source.util';
-import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
+import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+
+type ObjectQuestion = {
+  principals: PermissionsPrincipalsWithRolesContext | undefined;
+  objectMetadataId: string;
+};
+
+type RecordsQuestion = ObjectQuestion & {
+  recordIds: string[];
+  hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  transactionScope?: WorkspaceTransactionScope;
+};
+
+type FieldQuestion = ObjectQuestion & {
+  fieldMetadataId: string;
+};
+
+type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
+  principals: PermissionsPrincipalsWithRolesContext;
+};
 
 @Injectable()
 export class PermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
+
+  public buildPermissionsPrincipals({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    return this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      authContext,
+    );
+  }
+
+  public async buildPermissionsPrincipalsOrThrow({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext> {
+    const principals = await this.buildPermissionsPrincipals({ authContext });
+
+    if (!isDefined(principals)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return principals;
+  }
+
+  public canReadAllRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToAllRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public canReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public canCreateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'insert',
+    });
+  }
+
+  public canUpdateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'update',
+    });
+  }
+
+  public canSoftDeleteSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'soft-delete',
+    });
+  }
+
+  public canDestroySomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'delete',
+    });
+  }
+
+  public canReadRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.coversEveryRecord({ question, operationType: 'select' });
+  }
+
+  public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.coversEveryRecord({ question, operationType: 'update' });
+  }
+
+  public async findReadableRecordIds(
+    question: RecordsQuestion,
+  ): Promise<string[]> {
+    const readableRecordIds = await this.findGrantedRecordIds({
+      question,
+      operationType: 'select',
+    });
+
+    return [...new Set(question.recordIds)].filter((recordId) =>
+      readableRecordIds.has(recordId.toLowerCase()),
+    );
+  }
+
+  public canReadField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canRead',
+    });
+  }
+
+  public canUpdateField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canUpdate',
+    });
+  }
+
+  public findUnreadableFieldMetadataIdsOrThrow({
+    principals,
+    objectMetadataId,
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canRead',
+    });
+  }
+
+  public findNonUpdatableFieldMetadataIdsOrThrow({
+    principals,
+    objectMetadataId,
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canUpdate',
+    });
+  }
+
+  public findReadableEventRecordIds(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findReadableEventRecordIds(question);
+  }
+
+  public findReadableEvents<TEvent extends ObjectRecordEvent>(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<TEvent>;
+    events?: TEvent[];
+  }): Promise<TEvent[]> {
+    return this.recordAccessPolicyService.findReadableEvents(question);
+  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
@@ -84,11 +292,11 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: computeObjectsPermissionsForRoles({
-        principal: {
-          mainPrincipal: { roleId: flatRole.id, isDeprecatedRoleOnly: true },
-          applicationPrincipal: { isCustomApp: true },
-        },
+      recordsPermissions: computePrincipalsRecordsPermissions({
+        principals: buildRolePermissionsPrincipals({
+          workspaceId,
+          roleId: flatRole.id,
+        }),
         rolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -104,7 +312,7 @@ export class PermissionsService {
         false,
       ]),
     ) as Record<PermissionFlagType, boolean>,
-    objectsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
   });
 
   public async userHasWorkspaceSettingPermission({
@@ -136,75 +344,152 @@ export class PermissionsService {
       'flatRoleTargetByAgentIdMaps',
     ]);
 
-    const callerRoleIdsBySource =
-      await this.resolveCallerRoleIdsBySourceOrThrow({
-        workspaceId,
-        userWorkspaceId,
-        apiKeyId,
-        applicationId,
-        userWorkspaceRoleMap,
-        flatApplicationMaps,
-        flatRoleMaps,
-      });
+    const callerRoleIds = await this.resolveCallerRoleIdsOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      apiKeyId,
+      applicationId,
+      userWorkspaceRoleMap,
+      flatApplicationMaps,
+      flatRoleMaps,
+    });
 
     return this.isPermissionFlagGrantedToRoles({
-      roleIdsBySource: {
-        ...callerRoleIdsBySource,
-        ...buildAgentRoleIdsBySource({
-          agentId,
-          flatRoleTargetByAgentIdMaps,
-        }),
-      },
+      roleIds: isDefined(agentId)
+        ? [...callerRoleIds, flatRoleTargetByAgentIdMaps[agentId]?.roleId]
+        : callerRoleIds,
       setting,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
     });
   }
 
-  public async checkRolesPermissions(
-    rolePermissionConfig: RolePermissionConfig,
-    workspaceId: string,
-    setting: PermissionFlagType,
-  ): Promise<boolean> {
-    if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+  public async hasPermissionFlag({
+    authContext,
+    setting,
+  }: {
+    authContext: WorkspaceAuthContext | undefined;
+    setting: PermissionFlagType;
+  }): Promise<boolean> {
+    if (!isDefined(authContext)) {
+      return false;
+    }
+
+    if (isSystemAuthContext(authContext)) {
       return true;
     }
 
+    const principals =
+      await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+        authContext,
+      );
+
+    if (!isDefined(principals)) {
+      return false;
+    }
+
     const { flatRoleMaps, flatRolePermissionFlagMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      await this.workspaceCacheService.getOrRecompute(principals.workspaceId, [
         'flatRoleMaps',
         'flatRolePermissionFlagMaps',
       ]);
 
-    return this.isPermissionFlagGrantedToRoles({
-      roleIdsBySource: rolePermissionConfig.intersectionOf,
-      setting,
-      flatRoleMaps,
-      flatRolePermissionFlagMaps,
+    const { aiRunScope } = principals;
+
+    return (
+      (!isDefined(aiRunScope) ||
+        (aiRunScope.permissionFlags[setting] ?? false)) &&
+      this.isPermissionFlagGrantedToRoles({
+        roleIds: getPermissionsPrincipalsRoleIds(principals),
+        setting,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
+      })
+    );
+  }
+
+  // Empty for the system, which acts with no role
+  public async getRoleIds(
+    authContext: WorkspaceAuthContext | undefined,
+  ): Promise<string[]> {
+    if (!isDefined(authContext) || isSystemAuthContext(authContext)) {
+      return [];
+    }
+
+    const principals =
+      await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+        authContext,
+      );
+
+    return isDefined(principals)
+      ? getPermissionsPrincipalsRoleIds(principals)
+      : [];
+  }
+
+  private async coversEveryRecord({
+    question,
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<boolean> {
+    const grantedRecordIds = await this.findGrantedRecordIds({
+      question,
+      operationType,
+    });
+
+    return (
+      question.recordIds.length > 0 &&
+      question.recordIds.every((recordId) =>
+        grantedRecordIds.has(recordId.toLowerCase()),
+      )
+    );
+  }
+
+  private findGrantedRecordIds({
+    question: {
+      principals,
+      objectMetadataId,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
+    },
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findGrantedRecordIds({
+      principals,
+      objectMetadataId,
+      operationType,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
     });
   }
 
-  // Like the ORM, a role missing from the cache grants nothing
+  // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag
   private isPermissionFlagGrantedToRoles({
-    roleIdsBySource,
+    roleIds,
     setting,
     flatRoleMaps,
     flatRolePermissionFlagMaps,
   }: {
-    roleIdsBySource: RoleIdsBySource;
+    roleIds: (string | undefined)[];
     setting: PermissionFlagType;
     flatRoleMaps: FlatRoleMaps;
     flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
   }): boolean {
-    const roleIds = getRoleIdsToIntersect(roleIdsBySource);
-
     return (
-      isDefined(roleIds) &&
+      roleIds.length > 0 &&
       roleIds.every((roleId) => {
-        const flatRole = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: roleId,
-          flatEntityMaps: flatRoleMaps,
-        });
+        const flatRole = isDefined(roleId)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: roleId,
+              flatEntityMaps: flatRoleMaps,
+            })
+          : undefined;
 
         return (
           isDefined(flatRole) &&
@@ -218,7 +503,8 @@ export class PermissionsService {
     );
   }
 
-  private async resolveCallerRoleIdsBySourceOrThrow({
+  // undefined entries are roles a caller should have but does not, which deny
+  private async resolveCallerRoleIdsOrThrow({
     workspaceId,
     userWorkspaceId,
     apiKeyId,
@@ -234,7 +520,7 @@ export class PermissionsService {
     userWorkspaceRoleMap: UserWorkspaceRoleMap;
     flatApplicationMaps: FlatApplicationCacheMaps;
     flatRoleMaps: FlatRoleMaps;
-  }): Promise<RoleIdsBySource> {
+  }): Promise<(string | undefined)[]> {
     if (isDefined(apiKeyId)) {
       const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKeyId,
@@ -256,7 +542,7 @@ export class PermissionsService {
         );
       }
 
-      return { apiKeyRoleId: apiKeyFlatRole.id };
+      return [apiKeyFlatRole.id];
     }
 
     if (isDefined(userWorkspaceId)) {
@@ -267,7 +553,7 @@ export class PermissionsService {
       });
 
       if (!isDefined(applicationId)) {
-        return { userWorkspaceRoleId: userFlatRole.id };
+        return [userFlatRole.id];
       }
 
       const application = this.findActiveApplication({
@@ -283,16 +569,19 @@ export class PermissionsService {
         );
       }
 
-      return buildUserRoleIdsBySource({
-        userRoleId: userFlatRole.id,
-        application: {
-          defaultRoleId: this.findApplicationRoleIdOrThrow({
-            application,
-            flatRoleMaps,
-          }),
-          sourceType: application.sourceType,
-        },
-      });
+      return [
+        userFlatRole.id,
+        resolveApplicationRoleId({
+          application: {
+            defaultRoleId: this.findApplicationRoleIdOrThrow({
+              application,
+              flatRoleMaps,
+            }),
+            sourceType: application.sourceType,
+          },
+          userRoleId: userFlatRole.id,
+        }),
+      ];
     }
 
     if (isDefined(applicationId)) {
@@ -308,12 +597,10 @@ export class PermissionsService {
         );
       }
 
-      return {
-        applicationRoleId: this.findApplicationRoleIdOrThrow({
-          application,
-          flatRoleMaps,
-        }),
-      };
+      return [
+        this.findApplicationRoleIdOrThrow({ application, flatRoleMaps }) ??
+          undefined,
+      ];
     }
 
     throw new PermissionsException(

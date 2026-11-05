@@ -11,26 +11,27 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
 import { AgentRunsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-runs.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
   }),
-  SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentRunDTO)

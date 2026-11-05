@@ -318,11 +318,11 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Gmail and Calendar', undefined, {
+      await canvas.findByText('Connect with Google', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByText('Connect with Outlook')).toBeVisible();
+    expect(canvas.getByText('Connect with Microsoft')).toBeVisible();
     const linearCard = await canvas.findByText(
       'Connect with Linear',
       undefined,
