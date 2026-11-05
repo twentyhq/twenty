@@ -196,7 +196,9 @@ export class McpServerClientService {
   private async resolveAccessToken(
     target: McpServerTarget,
   ): Promise<string | null> {
-    if (!isDefined(target.connectionProviderId)) {
+    const { connectionProviderId, workspaceId } = target;
+
+    if (!isDefined(connectionProviderId)) {
       return null;
     }
 
@@ -204,7 +206,7 @@ export class McpServerClientService {
 
     if (!isDefined(connectedAccount)) {
       throw new McpServerException(
-        `No connected account usable by the caller for provider ${target.connectionProviderId} in workspace ${target.workspaceId}`,
+        `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
         McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
       );
     }
@@ -212,12 +214,12 @@ export class McpServerClientService {
     const { accessToken } =
       await this.connectedAccountRefreshTokensService.resolveTokens(
         connectedAccount,
-        target.workspaceId,
+        workspaceId,
       );
 
     return this.connectedAccountTokenEncryptionService.decrypt({
       ciphertext: accessToken,
-      workspaceId: target.workspaceId,
+      workspaceId,
     });
   }
 }
