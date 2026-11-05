@@ -142,11 +142,13 @@ export const useAiChatEditor = () => {
       ? async () => []
       : searchMentionRecords;
     mentionStorage.searchWorkspaceMembers = (query) => {
-      if (!isAiChatInboxEnabled || isDirectMessage) {
+      if (!isAiChatInboxEnabled) {
         return [];
       }
 
-      const matchingWorkspaceMembers = searchWorkspaceMembers(query);
+      const matchingWorkspaceMembers = isDirectMessage
+        ? []
+        : searchWorkspaceMembers(query);
 
       if (!isNonEmptyArray(aiModels)) {
         return matchingWorkspaceMembers;

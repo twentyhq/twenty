@@ -14,7 +14,6 @@ export const SettingsAiBehaviorExample = ({
   onDirectMessageModeChange,
   onInboxModeChange,
   isLoading,
-  isDirectMessageModeVisible,
   disabled,
   errorMessage,
   shouldRejectChanges = false,
@@ -49,7 +48,6 @@ export const SettingsAiBehaviorExample = ({
           }
         }}
         isLoading={isLoading}
-        isDirectMessageModeVisible={isDirectMessageModeVisible}
         disabled={disabled}
         errorMessage={errorMessage}
       />
