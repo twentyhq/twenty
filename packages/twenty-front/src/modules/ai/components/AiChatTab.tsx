@@ -11,7 +11,8 @@ import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChat
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -32,7 +33,10 @@ export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isDirectMessage = useIsCurrentDirectMessage();
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread ?? '',
+  );
 
   const { uploadFiles } = useAiChatFileUpload();
 

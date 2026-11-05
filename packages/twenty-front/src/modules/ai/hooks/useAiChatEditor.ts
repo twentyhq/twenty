@@ -8,7 +8,8 @@ import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -46,7 +47,10 @@ export const useAiChatEditor = () => {
   );
   const { searchSkills } = useSkillSuggestionSearch();
   const { uploadFiles } = useAiChatFileUpload();
-  const isDirectMessage = useIsCurrentDirectMessage();
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread ?? '',
+  );
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();

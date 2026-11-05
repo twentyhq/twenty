@@ -2,7 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -250,7 +251,11 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const isDirectMessage = useIsCurrentDirectMessage();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread ?? '',
+  );
 
   if (
     !isDefined(agentChatMessage) ||

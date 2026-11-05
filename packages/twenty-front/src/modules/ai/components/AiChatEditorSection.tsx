@@ -35,7 +35,9 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
@@ -168,7 +170,11 @@ const EditableAiChatEditorSection = () => {
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
-  const isDirectMessage = useIsCurrentDirectMessage();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread ?? '',
+  );
 
   const { editor } = useAiChatEditor();
 

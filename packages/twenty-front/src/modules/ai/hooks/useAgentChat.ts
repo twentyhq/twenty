@@ -22,7 +22,6 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -34,6 +33,7 @@ import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesS
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
@@ -72,7 +72,6 @@ export const useAgentChat = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const isDirectMessage = useIsCurrentDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -101,6 +100,9 @@ export const useAgentChat = () => {
     const threadId =
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
     const isNewChat = threadId === newAiChatThreadId;
+    const isDirectMessage = store.get(
+      agentChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
+    );
     const isSendingMessageAtom =
       agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
 
@@ -390,7 +392,6 @@ export const useAgentChat = () => {
     aiModels,
     canSendAgentChatMessage,
     isAiChatInboxEnabled,
-    isDirectMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,
