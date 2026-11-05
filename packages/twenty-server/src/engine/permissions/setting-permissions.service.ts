@@ -101,29 +101,32 @@ export class SettingPermissionsService {
   public async canUserWorkspaceReadAndUpdateSomeRecords({
     workspaceId,
     userWorkspaceId,
-    objectMetadataId,
+    objectMetadataIds,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    objectMetadataId: string;
+    objectMetadataIds: string[];
   }): Promise<boolean> {
     const { recordsPermissions } = await this.getUserWorkspacePermissions({
       workspaceId,
       userWorkspaceId,
     });
-    const objectRecordsPermissions =
-      recordsPermissions.objects[objectMetadataId];
 
-    return (
-      canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'select',
-      }) &&
-      canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'update',
-      })
-    );
+    return objectMetadataIds.every((objectMetadataId) => {
+      const objectRecordsPermissions =
+        recordsPermissions.objects[objectMetadataId];
+
+      return (
+        canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'select',
+        }) &&
+        canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'update',
+        })
+      );
+    });
   }
 
   public getDefaultUserWorkspacePermissions = (): UserWorkspacePermissions => ({

@@ -15,8 +15,11 @@ const resolveTimelineActivityObjectColumnNames = ({
   recordReadRestrictions,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
-  recordReadRestrictions: RecordReadRestrictions;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
+  recordReadRestrictions: Pick<
+    RecordReadRestrictions,
+    'unreadableFieldMetadataIds'
+  >;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string[] => {
   return flatObjectMetadata.fieldIds.flatMap((fieldId) => {
@@ -63,11 +66,11 @@ export const addTimelineActivityObjectColumnsToSelect = ({
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
-  flatObjectMetadata: Pick<
-    FlatObjectMetadata,
-    'id' | 'nameSingular' | 'fieldIds'
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'fieldIds'>;
+  recordReadRestrictions: Pick<
+    RecordReadRestrictions,
+    'unreadableFieldMetadataIds'
   >;
-  recordReadRestrictions: RecordReadRestrictions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): CommonSelectedFields => {

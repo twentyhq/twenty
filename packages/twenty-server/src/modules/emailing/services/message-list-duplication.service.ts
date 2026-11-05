@@ -81,25 +81,25 @@ export class MessageListDuplicationService {
         'flatObjectMetadataMaps',
       ]);
 
-    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
-      const objectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
+    const duplicatedObjects = DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+      (objectUniversalIdentifier) =>
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
+    );
 
-      if (
-        !isDefined(objectMetadata) ||
-        !(await this.settingPermissionsService.canUserWorkspaceReadAndUpdateSomeRecords(
-          {
-            workspaceId,
-            userWorkspaceId,
-            objectMetadataId: objectMetadata.id,
-          },
-        ))
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    if (
+      !duplicatedObjects.every(isDefined) ||
+      !(await this.settingPermissionsService.canUserWorkspaceReadAndUpdateSomeRecords(
+        {
+          workspaceId,
+          userWorkspaceId,
+          objectMetadataIds: duplicatedObjects.map(({ id }) => id),
+        },
+      ))
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 
