@@ -19,6 +19,24 @@ describe('qualifyDnsRecordName', () => {
     ).toBe('resend._domainkey.example.com');
   });
 
+  it('should append only the parent zone to a subdomain record given relative to that zone', () => {
+    expect(
+      qualifyDnsRecordName({
+        name: 'resend._domainkey.mail',
+        domain: 'mail.example.com',
+      }),
+    ).toBe('resend._domainkey.mail.example.com');
+  });
+
+  it('should append the full subdomain to a record given relative to it', () => {
+    expect(
+      qualifyDnsRecordName({
+        name: 'send',
+        domain: 'mail.example.com',
+      }),
+    ).toBe('send.mail.example.com');
+  });
+
   it('should not treat a lookalike suffix as the domain', () => {
     expect(
       qualifyDnsRecordName({
