@@ -427,11 +427,12 @@ describe('Access to all records and ownership transfer', () => {
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
-      const agentTurnShares = await shares.findByRecordIds({
-        workspaceId,
-        objectMetadataId: agentTurnObjectMetadataId,
-        recordIds: [privateAgentTurnId],
-      });
+      const agentTurnShares =
+        await recordPermissionReadOrmService.findRecordShares({
+          workspaceId,
+          objectMetadataId: agentTurnObjectMetadataId,
+          recordIds: [privateAgentTurnId],
+        });
 
       expect(agentTurnShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
