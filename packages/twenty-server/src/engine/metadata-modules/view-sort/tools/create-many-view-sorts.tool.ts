@@ -7,8 +7,8 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { createViewSortInputSchema } from 'src/engine/metadata-modules/view-sort/tools/schemas/create-view-sort-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 const createManyViewSortsInputSchema = z.object({
   sorts: z
@@ -21,7 +21,7 @@ const createManyViewSortsInputSchema = z.object({
 @DefineTool({
   name: 'create_many_view_sorts',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:
     'Add multiple sorts to a view in one call. Use get_field_metadata to get fieldMetadataId values.',
 })
@@ -32,24 +32,22 @@ export class CreateManyViewSortsTool extends BaseTool<
 
   constructor(
     private readonly viewSortService: ViewSortService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof createManyViewSortsInputSchema
   >): Promise<ToolOutput> {
     await Promise.all(
       input.sorts.map(({ viewId }) =>
-        this.viewToolAccessService.findViewEditableByUserOrThrow({
+        this.viewAccessService.findModifiableViewOrThrow({
           viewId,
-          workspaceId,
-          userWorkspaceId,
-          operation: 'update',
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         }),
       ),
     );
