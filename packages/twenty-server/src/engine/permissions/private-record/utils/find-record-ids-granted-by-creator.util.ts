@@ -6,7 +6,7 @@ import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissio
 import { resolvePermissionsCreatorWorkspaceMemberId } from 'src/engine/permissions/private-record/utils/resolve-permissions-creator-workspace-member-id.util';
 import { resolvePrivateRecordState } from 'src/engine/permissions/private-record/utils/resolve-private-record-state.util';
 
-export const findPermissionsCreatorAdmittedRecordIds = async ({
+export const findRecordIdsGrantedByCreator = async ({
   records,
   context,
   ...request

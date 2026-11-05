@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { RecordPermissionOrmModule } from 'src/engine/permissions/record-permission-orm/record-permission-orm.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -45,6 +46,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentHistoryModule,
     CoreEntityCacheModule,
     PermissionsModule,
+    RecordPermissionOrmModule,
     RecordShareModule,
     RecordShareStorageModule,
     TypeORMModule,

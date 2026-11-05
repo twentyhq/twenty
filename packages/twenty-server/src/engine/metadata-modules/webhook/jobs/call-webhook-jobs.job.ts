@@ -73,7 +73,7 @@ export class CallWebhookJobsJob {
       objectMetadata: flatObjectMetadata,
     };
     const webhookEvents: CallWebhookJobData[] = [];
-    const admittedRecordIdsByRoleId = new Map<string, Promise<Set<string>>>();
+    const readableRecordIdsByRoleId = new Map<string, Promise<Set<string>>>();
 
     for (const webhook of webhooks) {
       const webhookRoleId = findFlatRoleTargetFromForeignKey({
@@ -90,8 +90,8 @@ export class CallWebhookJobsJob {
         continue;
       }
 
-      const admittedRecordIds =
-        admittedRecordIdsByRoleId.get(webhookRoleId) ??
+      const readableRecordIds =
+        readableRecordIdsByRoleId.get(webhookRoleId) ??
         this.permissionsService.findReadableEventRecordIds({
           authContext: {
             type: 'webhook',
@@ -101,13 +101,13 @@ export class CallWebhookJobsJob {
           eventBatch,
         });
 
-      admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
+      readableRecordIdsByRoleId.set(webhookRoleId, readableRecordIds);
 
       webhookEvents.push(
         ...transformEventBatchToWebhookEvents({
           workspaceEventBatch,
           webhooks: [webhook],
-          admittedRecordIds: await admittedRecordIds,
+          readableRecordIds: await readableRecordIds,
         }),
       );
     }

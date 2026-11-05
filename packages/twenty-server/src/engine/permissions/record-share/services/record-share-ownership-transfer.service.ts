@@ -25,7 +25,7 @@ export class RecordShareOwnershipTransferService {
   // Records a departing member could manage would otherwise only stay
   // manageable through roles with access to all records. Every path that
   // removes a member from a workspace that stays active must call this.
-  async transferRecordSharesToCustodian({
+  async transferRecordSharesToSuccessor({
     removedUserWorkspace,
     removedWorkspaceMemberId,
     actingUserWorkspaceId,
@@ -41,7 +41,7 @@ export class RecordShareOwnershipTransferService {
       return;
     }
 
-    const toWorkspaceMemberId = await this.resolveCustodianWorkspaceMemberId({
+    const toWorkspaceMemberId = await this.resolveSuccessorWorkspaceMemberId({
       removedUserWorkspace,
       actingUserWorkspaceId,
     });
@@ -75,7 +75,7 @@ export class RecordShareOwnershipTransferService {
     return (
       Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
         .filter(isDefined)
-        // Rows written while sharing was enabled still need a custodian
+        // Rows written while sharing was enabled still need a successor
         .filter((flatObjectMetadata) => {
           const { isShareable, isPrivateByDefault } = resolveObjectSharing({
             flatObjectMetadata,
@@ -89,20 +89,20 @@ export class RecordShareOwnershipTransferService {
     );
   }
 
-  private async resolveCustodianWorkspaceMemberId({
+  private async resolveSuccessorWorkspaceMemberId({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
     removedUserWorkspace: UserWorkspaceEntity;
     actingUserWorkspaceId?: string;
   }): Promise<string | undefined> {
-    const custodianUserWorkspace =
-      await this.userRoleService.resolveCustodianUserWorkspace({
+    const successorUserWorkspace =
+      await this.userRoleService.resolveSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });
 
-    if (!isDefined(custodianUserWorkspace)) {
+    if (!isDefined(successorUserWorkspace)) {
       return undefined;
     }
 
@@ -113,15 +113,15 @@ export class RecordShareOwnershipTransferService {
       );
 
     // The cache keeps soft-deleted members, so idByUserId may point at one
-    const custodianWorkspaceMember = Object.values(
+    const successorWorkspaceMember = Object.values(
       flatWorkspaceMemberMaps.byId,
     ).find(
       (workspaceMember) =>
         isDefined(workspaceMember) &&
-        workspaceMember.userId === custodianUserWorkspace.userId &&
+        workspaceMember.userId === successorUserWorkspace.userId &&
         !isDefined(workspaceMember.deletedAt),
     );
 
-    return custodianWorkspaceMember?.id;
+    return successorWorkspaceMember?.id;
   }
 }

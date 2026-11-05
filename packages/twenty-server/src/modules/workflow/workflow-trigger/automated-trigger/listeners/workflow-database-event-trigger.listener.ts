@@ -388,7 +388,7 @@ export class WorkflowDatabaseEventTriggerListener {
       ? await this.buildEnrichedPayload({ payload, enrichPayload })
       : payload;
 
-    const admittedEventsByApplicationId = new Map<
+    const readableEventsByApplicationId = new Map<
       string,
       ObjectRecordEvent[]
     >();
@@ -396,10 +396,10 @@ export class WorkflowDatabaseEventTriggerListener {
     for (const eventListener of eventListeners) {
       const { applicationId } = eventListener;
 
-      if (!admittedEventsByApplicationId.has(applicationId)) {
-        admittedEventsByApplicationId.set(
+      if (!readableEventsByApplicationId.has(applicationId)) {
+        readableEventsByApplicationId.set(
           applicationId,
-          await this.resolveAdmittedEvents({
+          await this.resolveReadableEvents({
             workspaceEventBatch: standardAndCustomApplicationIds.has(
               applicationId,
             )
@@ -410,7 +410,7 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      for (const eventPayload of admittedEventsByApplicationId.get(
+      for (const eventPayload of readableEventsByApplicationId.get(
         applicationId,
       ) ?? []) {
         const shouldTriggerJob = this.shouldTriggerJob({
@@ -491,7 +491,7 @@ export class WorkflowDatabaseEventTriggerListener {
     return enrichedPayload;
   }
 
-  private async resolveAdmittedEvents({
+  private async resolveReadableEvents({
     workspaceEventBatch,
     applicationId,
   }: {

@@ -4,7 +4,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -35,7 +35,7 @@ export class AgentChatAssistantPolicyService {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
   ) {}
 
   async resolveAssistantMessageDecision({
@@ -166,7 +166,7 @@ export class AgentChatAssistantPolicyService {
     }
 
     const [threadShares, audienceMemberCount] = await Promise.all([
-      this.recordShareStorageService.findByRecordIds({
+      this.recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
         recordIds: [thread.id],

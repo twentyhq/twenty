@@ -7,7 +7,7 @@ import { findRecordIdsByPrivacy } from 'src/engine/permissions/private-record/ut
 import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/role/utils/are-role-grants-limited-to-public-records.util';
 import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/rls/utils/find-row-level-permission-matching-record-ids.util';
 
-export const findPermissionsRlsAdmittedRecordIds = async (
+export const findRecordIdsGrantedByRls = async (
   request: PermissionsRowAccessEvaluationRequest,
 ): Promise<string[]> => {
   const matchingRecordIds = findRowLevelPermissionMatchingRecordIds(request);

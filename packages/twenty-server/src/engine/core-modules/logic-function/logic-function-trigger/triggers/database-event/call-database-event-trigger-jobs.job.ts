@@ -90,7 +90,7 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const admittedEvents = await this.permissionsService.findReadableEvents({
+      const readableEvents = await this.permissionsService.findReadableEvents({
         authContext: {
           type: 'application',
           workspace: { id: workspaceEventBatch.workspaceId },
@@ -102,7 +102,7 @@ export class CallDatabaseEventTriggerJobsJob {
         logicFunctions,
         workspaceEventBatch: {
           ...workspaceEventBatch,
-          events: admittedEvents,
+          events: readableEvents,
         },
       });
 
