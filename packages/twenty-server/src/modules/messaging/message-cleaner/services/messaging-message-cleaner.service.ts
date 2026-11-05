@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -21,6 +23,7 @@ export class MessagingMessageCleanerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -33,6 +36,11 @@ export class MessagingMessageCleanerService {
     messageChannelId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -102,9 +110,11 @@ export class MessagingMessageCleanerService {
                 where: { id: In(orphanMessageIds) },
               });
 
-              await attachmentRepository.delete({
-                targetMessageId: In(orphanMessageIds),
-              });
+              if (isMessageAttachmentEnabled) {
+                await attachmentRepository.delete({
+                  targetMessageId: In(orphanMessageIds),
+                });
+              }
               await messageRepository.delete(orphanMessageIds);
 
               const candidateThreadIds = [
@@ -190,6 +200,11 @@ export class MessagingMessageCleanerService {
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -236,9 +251,11 @@ export class MessagingMessageCleanerService {
                   ),
                 ];
 
-                await attachmentRepository.delete({
-                  targetMessageId: In(ids),
-                });
+                if (isMessageAttachmentEnabled) {
+                  await attachmentRepository.delete({
+                    targetMessageId: In(ids),
+                  });
+                }
                 await messageRepository.delete(ids);
 
                 const survivingThreadIds = await this.findReferencedThreadIds(

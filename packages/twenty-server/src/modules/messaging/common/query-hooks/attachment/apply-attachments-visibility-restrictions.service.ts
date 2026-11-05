@@ -1,12 +1,13 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -24,6 +25,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     private readonly applyMessagesVisibilityRestrictionsService: ApplyMessagesVisibilityRestrictionsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   onModuleInit() {
@@ -47,6 +49,17 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     );
 
     if (restrictableAttachments.length === 0) {
+      return;
+    }
+
+    // targetMessageId only exists once the workspace upgrade has run
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        authContext.workspace.id,
+      );
+
+    if (!isMessageAttachmentEnabled) {
       return;
     }
 
