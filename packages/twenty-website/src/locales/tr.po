@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -654,7 +654,7 @@ msgstr "30 gün"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "Tıklamadan 30 gün sonra. Ziyaretçi bu süre içinde çalışma alanını oluşturur ve daha sonra ücretli bir Cloud Organization veya Enterprise müşterisi olursa komisyon sizin olur. Çalışma alanını oluşturmadan önce başka bir iş ortağının bağlantısına tıklarsa krediyi o iş ortağı alır. Çalışma alanı oluşturulduktan sonra kredi kesindir."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4726,7 +4726,7 @@ msgstr "Macaristan 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "<0>Satış Ortaklığı Programı Koşulları</0>'nı kabul ediyorum"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4752,7 +4752,7 @@ msgstr "Kimlik"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "Bu, ilk Twenty çalışma alanlarıysa ve üzerinde henüz bir iş ortağı kodu ayarlanmamışsa ücretsiz deneme süreleri boyunca Ayarlar → Faturalandırma bölümünden sizinkini girebilirler. İlk ödemeden itibaren 30 gün içinde, eklememizi de isteyebilirler. Bir çalışma alanına kod kaydedildikten sonra değiştirilemez."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9761,7 +9761,7 @@ msgstr "Twenty'nin maliyeti nedir?"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "Ya bir müşteri bağlantım olmadan kaydolursa?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

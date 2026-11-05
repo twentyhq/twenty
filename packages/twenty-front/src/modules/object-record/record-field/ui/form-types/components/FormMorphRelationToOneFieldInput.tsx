@@ -16,7 +16,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { isString } from '@sniptt/guards';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useLingui } from '@lingui/react/macro';
@@ -71,11 +71,14 @@ export const FormMorphRelationToOneFieldInput = ({
   const readableObjectNameSingulars = [
     ...new Set(
       morphRelations
-        .filter(
-          (morphRelation) =>
-            objectPermissionsByObjectMetadataId[
-              morphRelation.targetObjectMetadata.id
-            ]?.canReadObjectRecords === true,
+        .filter((morphRelation) =>
+          canReachSomeRecords({
+            objectRecordsPermissions:
+              objectPermissionsByObjectMetadataId[
+                morphRelation.targetObjectMetadata.id
+              ],
+            operationType: 'select',
+          }),
         )
         .map(
           (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
@@ -96,9 +99,13 @@ export const FormMorphRelationToOneFieldInput = ({
 
   const selectedTargetIsReadable =
     !isDefined(selectedMorphValue) ||
-    objectPermissionsByObjectMetadataId[
-      selectedMorphValue.targetObjectMetadataId
-    ]?.canReadObjectRecords === true;
+    canReachSomeRecords({
+      objectRecordsPermissions:
+        objectPermissionsByObjectMetadataId[
+          selectedMorphValue.targetObjectMetadataId
+        ],
+      operationType: 'select',
+    });
 
   const hasForbiddenSelectedRecord =
     isDefined(selectedMorphValue) && !selectedTargetIsReadable;

@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -652,7 +652,7 @@ msgstr "30일"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "클릭 후 30일입니다. 그 기간 내에 방문자가 워크스페이스를 만들고 나중에 유료 Cloud Organization 또는 Enterprise 고객이 되면 커미션은 귀하의 것입니다. 워크스페이스를 만들기 전에 다른 파트너의 링크를 클릭하면 해당 파트너에게 크레딧이 돌아갑니다. 워크스페이스가 생성되면 크레딧은 최종 확정됩니다."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4724,7 +4724,7 @@ msgstr "Hungary 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "<0>제휴 프로그램 약관</0>에 동의합니다"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4750,7 +4750,7 @@ msgstr "아이덴티티"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "첫 번째 Twenty 워크스페이스이고 아직 파트너 코드가 설정되지 않은 경우, 무료 체험 기간 동안 설정 → 청구에서 귀하의 코드를 입력할 수 있습니다. 첫 결제 후 30일 이내에 추가해 달라고 요청할 수도 있습니다. 워크스페이스에 코드가 저장되면 변경할 수 없습니다."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9759,7 +9759,7 @@ msgstr "Twenty 비용은 얼마인가요?"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "고객이 내 링크 없이 가입하면 어떻게 되나요?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

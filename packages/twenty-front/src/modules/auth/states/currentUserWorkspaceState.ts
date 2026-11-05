@@ -1,12 +1,14 @@
-import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 import { type UserWorkspace } from '~/generated-metadata/graphql';
 
 export type CurrentUserWorkspace = Pick<
   UserWorkspace,
   'permissionFlags' | 'twoFactorAuthenticationMethodSummary' | 'isImpersonating'
 > & {
-  objectRecordsPermissions: CurrentUserWorkspaceObjectRecordsPermissions[];
+  objectRecordsPermissions: (ObjectRecordsPermissions & {
+    objectMetadataId: string;
+  })[];
 };
 
 export const currentUserWorkspaceState =

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -654,7 +654,7 @@ msgstr "30 天"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "点击后 30 天内。如果访客在此期间创建其工作区，之后成为付费的 Cloud Organization 或 Enterprise 客户，佣金就归您所有。如果他们在创建工作区前点击了另一位合作伙伴的链接，则该合作伙伴获得归属。一旦工作区创建完成，归属即为最终结果。"
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4726,7 +4726,7 @@ msgstr "匈牙利 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "我同意<0>联盟计划条款</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4752,7 +4752,7 @@ msgstr "身份信息"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "如果这是他们的第一个 Twenty 工作区，且尚未设置合作伙伴代码，他们可以在免费试用期间前往“设置”→“账单”输入您的代码。在首次付款后的 30 天内，他们也可以请求我们添加该代码。代码一旦保存到工作区，就无法更改。"
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9771,7 +9771,7 @@ msgstr "Twenty 的价格是多少？"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "如果客户未通过我的链接注册怎么办？"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
