@@ -252,13 +252,13 @@ export class RecordPermissionsService {
     return this.recordAccessDecisionService.findReadableEvents(question);
   }
 
-  public canRoleReadSomeRecords({
-    principals,
-    objectMetadataId,
-  }: ObjectQuestion): Promise<boolean> {
-    return this.recordAccessDecisionService.canRoleReachSomeRecords({
-      principals,
-      objectMetadataId,
+  public findRoleIdsUnableToReadObject(question: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findRoleIdsUnableToReachObject({
+      ...question,
       operationType: 'select',
     });
   }

@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -74,6 +73,12 @@ export class RecordSharePrincipalService {
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
     });
+    const roleIdsUnableToReadObject =
+      await this.recordPermissionsService.findRoleIdsUnableToReadObject({
+        workspaceId,
+        roleIds: roleIds.filter(isDefined),
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
@@ -82,13 +87,7 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const canRoleReadObject =
-        await this.recordPermissionsService.canRoleReadSomeRecords({
-          principals: buildRolePermissionsPrincipals({ workspaceId, roleId }),
-          objectMetadataId: flatObjectMetadata.id,
-        });
-
-      if (!canRoleReadObject) {
+      if (roleIdsUnableToReadObject.has(roleId)) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,
