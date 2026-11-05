@@ -10,7 +10,10 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 // Option ids become option rows' universal identifiers; malformed ids are reported by the input validator.
 export const validateOptionIdsAreUniversalIdentifiers = ({
   options,
-}: UniversalFlatFieldMetadata<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] =>
+}: Pick<
+  UniversalFlatFieldMetadata<EnumFieldMetadataType>,
+  'options'
+>): FlatFieldMetadataValidationError[] =>
   (options ?? [])
     .filter(
       ({ id }) =>
