@@ -23,3 +23,9 @@
 .face {
   background-color: var(--assistant-avatar-face-color);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-animated='true'] > .face {
+    display: none;
+  }
+}

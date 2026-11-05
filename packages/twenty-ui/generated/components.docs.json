@@ -14191,7 +14191,14 @@
         "type": "\"default\" | \"happy\" | \"love\" | \"sleepy\" | \"surprised\" | \"wink\"",
         "required": false,
         "defaultValue": "default",
-        "description": "Static expression displayed over the body."
+        "description": "Expression displayed over the body."
+      },
+      {
+        "name": "isAnimated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Plays the selected expression's idle loop. Displays the static expression when the browser prefers reduced motion."
       },
       {
         "name": "shape",

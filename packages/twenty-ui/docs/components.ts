@@ -996,6 +996,7 @@ export const DOCUMENTED_COMPONENTS = [
       color: 'blue',
       face: 'default',
       size: '24',
+      isAnimated: 'false',
     },
   },
   {
