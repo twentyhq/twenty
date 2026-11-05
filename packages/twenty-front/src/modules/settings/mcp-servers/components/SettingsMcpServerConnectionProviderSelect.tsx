@@ -1,22 +1,21 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { Controller, useFormContext } from 'react-hook-form';
 
+import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
 import { Select } from '@/ui/input/components/Select';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ApplicationConnectionProvidersDocument } from '~/generated-metadata/graphql';
 
 type SettingsMcpServerConnectionProviderSelectProps = {
   applicationId: string;
-  value: string | null;
-  onChange: (value: string | null) => void;
 };
 
 export const SettingsMcpServerConnectionProviderSelect = ({
   applicationId,
-  value,
-  onChange,
 }: SettingsMcpServerConnectionProviderSelectProps) => {
   const { t } = useLingui();
+  const { control } = useFormContext<McpServerFormValues>();
   const { data, loading } = useQuery(ApplicationConnectionProvidersDocument, {
     variables: { applicationId },
   });
@@ -32,13 +31,19 @@ export const SettingsMcpServerConnectionProviderSelect = ({
   ];
 
   return (
-    <Select<string | null>
-      dropdownId="mcp-server-connection-provider-select"
-      options={options}
-      value={value}
-      onChange={onChange}
-      disabled={loading}
-      fullWidth
+    <Controller
+      name="connectionProviderId"
+      control={control}
+      render={({ field: { onChange, value } }) => (
+        <Select<string | null>
+          dropdownId="mcp-server-connection-provider-select"
+          options={options}
+          value={value}
+          onChange={onChange}
+          disabled={loading}
+          fullWidth
+        />
+      )}
     />
   );
 };

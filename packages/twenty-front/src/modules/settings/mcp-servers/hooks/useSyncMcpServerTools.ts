@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react';
-import { plural } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -20,6 +20,7 @@ export const useSyncMcpServerTools = () => {
       });
 
       if (!isDefined(data)) {
+        enqueueToast({ status: 'error', children: t`Failed to sync tools` });
         return;
       }
 

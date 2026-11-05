@@ -61,16 +61,8 @@ export const SettingsMcpServerFormFields = ({
             title={t`Connection provider`}
             description={t`Optional provider whose connected account authenticates calls to this server.`}
           />
-          <Controller
-            name="connectionProviderId"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <SettingsMcpServerConnectionProviderSelect
-                applicationId={connectionProviderApplicationId}
-                value={value}
-                onChange={onChange}
-              />
-            )}
+          <SettingsMcpServerConnectionProviderSelect
+            applicationId={connectionProviderApplicationId}
           />
         </Section.Root>
       )}

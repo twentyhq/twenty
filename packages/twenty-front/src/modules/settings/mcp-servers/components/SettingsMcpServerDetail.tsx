@@ -1,8 +1,8 @@
-import { useQuery } from '@apollo/client/react';
+import { skipToken, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -10,16 +10,22 @@ import { SettingsMcpServerEditForm } from '@/settings/mcp-servers/components/Set
 import { FindOneMcpServerDocument } from '~/generated-metadata/graphql';
 
 type SettingsMcpServerDetailProps = {
-  mcpServerId: string;
+  mcpServerId: string | undefined;
 };
 
 export const SettingsMcpServerDetail = ({
   mcpServerId,
 }: SettingsMcpServerDetailProps) => {
   const { t } = useLingui();
-  const { data, error } = useQuery(FindOneMcpServerDocument, {
-    variables: { id: mcpServerId },
-  });
+  const isMcpServerIdValid = isDefined(mcpServerId) && isValidUuid(mcpServerId);
+  const { data, error } = useQuery(
+    FindOneMcpServerDocument,
+    isMcpServerIdValid ? { variables: { id: mcpServerId } } : skipToken,
+  );
+
+  if (!isMcpServerIdValid) {
+    return <Navigate to={AppPath.NotFound} replace />;
+  }
 
   if (!isDefined(data)) {
     return (
