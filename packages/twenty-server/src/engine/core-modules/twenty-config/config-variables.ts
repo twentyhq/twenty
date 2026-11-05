@@ -46,6 +46,8 @@ import {
 } from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { MeterTemporality } from 'src/engine/core-modules/metrics/types/meter-temporality.type';
+import { JOB_QUEUE_MEMORY_LIMIT_MODE } from 'src/engine/core-modules/message-queue/constants/job-queue-memory-limit-mode.constant';
+import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
@@ -1626,6 +1628,28 @@ export class ConfigVariables {
   })
   @IsOptional()
   WORKER_EXCLUDED_QUEUES: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Job queue memory limiting: off, observe (count and log refusals but still enqueue) or enforce (refuse jobs over the limits)',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(JOB_QUEUE_MEMORY_LIMIT_MODE),
+  })
+  @IsOptional()
+  @IsIn(Object.values(JOB_QUEUE_MEMORY_LIMIT_MODE))
+  JOB_QUEUE_MEMORY_LIMIT_MODE: JobQueueMemoryLimitMode =
+    JOB_QUEUE_MEMORY_LIMIT_MODE.OFF;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Maximum size in bytes of a single job (serialized data and options) when job queue memory limiting is on',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 1_048_576;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
