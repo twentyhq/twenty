@@ -106,7 +106,6 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      // The card can move while a side panel is open, so look up its column again
       const initialRecordGroupId = findRecordGroupIdContainingRecord();
 
       if (!isDefined(initialRecordGroupId)) {

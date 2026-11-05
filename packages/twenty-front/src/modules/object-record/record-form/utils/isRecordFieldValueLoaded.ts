@@ -1,15 +1,15 @@
 import { isPlainObject } from 'twenty-shared/utils';
 
-export const isRecordPathLoaded = ({
+export const isRecordFieldValueLoaded = ({
   record,
-  path,
+  fieldPath,
 }: {
   record: Record<string, unknown>;
-  path: string;
+  fieldPath: string;
 }): boolean => {
   let value: unknown = record;
 
-  for (const segment of path.split('.')) {
+  for (const segment of fieldPath.split('.')) {
     if (!isPlainObject(value) || !(segment in value)) {
       return false;
     }
