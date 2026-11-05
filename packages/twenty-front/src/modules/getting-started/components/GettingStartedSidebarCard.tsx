@@ -40,11 +40,7 @@ const StyledCardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
-
-  &[data-countdown] {
-    padding: ${themeCssVariables.spacing[2]};
-  }
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHeader = styled.div`
@@ -58,6 +54,7 @@ const StyledHeader = styled.div`
 
   &[data-countdown] {
     color: ${themeCssVariables.font.color.secondary};
+    font-weight: ${themeCssVariables.font.weight.regular};
     height: ${themeCssVariables.spacing[8]};
     padding: 0 ${themeCssVariables.spacing[1]};
   }
@@ -66,11 +63,13 @@ const StyledHeader = styled.div`
 const StyledStepCount = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   flex: 1;
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   text-align: end;
 
   &[data-countdown] {
-    color: ${themeCssVariables.font.color.tertiary};
+    color: ${themeCssVariables.font.color.light};
+    font-size: ${themeCssVariables.font.size.md};
   }
 `;
 
@@ -107,7 +106,7 @@ export const GettingStartedSidebarCard = () => {
     <NavigationDrawerSection>
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
-          <StyledCardBody data-countdown={isCountdownVisible || undefined}>
+          <StyledCardBody>
             <StyledHeader data-countdown={isCountdownVisible || undefined}>
               <IconRocket
                 size={theme.icon.size.md}
@@ -121,7 +120,7 @@ export const GettingStartedSidebarCard = () => {
               <StyledStepCount data-countdown={isCountdownVisible || undefined}>
                 {`${progress.completedStepActionKeys.length}/${progress.steps.length}`}
               </StyledStepCount>
-              {!isGettingStartedPageOpen && (
+              {isCountdownVisible && !isGettingStartedPageOpen && (
                 <IconChevronRight
                   size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
@@ -138,7 +137,7 @@ export const GettingStartedSidebarCard = () => {
                 aria-label={t`Getting started progress`}
                 value={progress.completedStepActionKeys.length}
                 max={progress.steps.length}
-                size="sm"
+                size="xs"
                 backgroundColor={
                   themeCssVariables.background.transparent.medium
                 }

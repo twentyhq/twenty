@@ -24,7 +24,7 @@ const StyledTrialRow = styled.div`
 const StyledDaysLeft = styled.span`
   color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledTrialLabel = styled.span`
@@ -37,14 +37,14 @@ const StyledTrialDays = styled.div`
 `;
 
 const StyledTrialDay = styled.span`
-  background: ${themeCssVariables.background.transparent.medium};
+  background: ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   corner-shape: round;
   flex: 1;
   height: ${themeCssVariables.spacing['1.5']};
 
   &[data-remaining] {
-    background: ${themeCssVariables.color.amber10};
+    background: ${themeCssVariables.color.amber9};
   }
 `;
 
