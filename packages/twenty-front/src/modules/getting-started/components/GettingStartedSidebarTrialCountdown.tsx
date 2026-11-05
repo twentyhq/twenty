@@ -1,10 +1,16 @@
 import { styled } from '@linaria/react';
 import { Plural, useLingui } from '@lingui/react/macro';
-import { IconHourglassHigh } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
+`;
+
+const StyledTrial = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  padding: 0 ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTrialRow = styled.div`
@@ -12,6 +18,7 @@ const StyledTrialRow = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  height: 17px;
 `;
 
 const StyledDaysLeft = styled.span`
@@ -51,26 +58,26 @@ export const GettingStartedSidebarTrialCountdown = ({
   trialDays,
 }: GettingStartedSidebarTrialCountdownProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
     <>
       <StyledDivider />
-      <StyledTrialRow>
-        <IconHourglassHigh size={theme.icon.size.md} />
-        <StyledDaysLeft>
-          <Plural value={daysLeft} one="# day left" other="# days left" />
-        </StyledDaysLeft>
-        <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
-      </StyledTrialRow>
-      <StyledTrialDays aria-hidden>
-        {Array.from({ length: trialDays }, (_, index) => (
-          <StyledTrialDay
-            key={index}
-            data-remaining={index >= trialDays - daysLeft || undefined}
-          />
-        ))}
-      </StyledTrialDays>
+      <StyledTrial>
+        <StyledTrialRow>
+          <StyledDaysLeft>
+            <Plural value={daysLeft} one="# day left" other="# days left" />
+          </StyledDaysLeft>
+          <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
+        </StyledTrialRow>
+        <StyledTrialDays aria-hidden>
+          {Array.from({ length: trialDays }, (_, index) => (
+            <StyledTrialDay
+              key={index}
+              data-remaining={index >= trialDays - daysLeft || undefined}
+            />
+          ))}
+        </StyledTrialDays>
+      </StyledTrial>
     </>
   );
 };

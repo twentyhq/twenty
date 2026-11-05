@@ -41,6 +41,10 @@ const StyledCardBody = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]};
+
+  &[data-countdown] {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -66,8 +70,7 @@ const StyledStepCount = styled.span`
   text-align: end;
 
   &[data-countdown] {
-    color: ${themeCssVariables.font.color.light};
-    text-align: start;
+    color: ${themeCssVariables.font.color.tertiary};
   }
 `;
 
@@ -104,7 +107,7 @@ export const GettingStartedSidebarCard = () => {
     <NavigationDrawerSection>
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
-          <StyledCardBody>
+          <StyledCardBody data-countdown={isCountdownVisible || undefined}>
             <StyledHeader data-countdown={isCountdownVisible || undefined}>
               <IconRocket
                 size={theme.icon.size.md}
