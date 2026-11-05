@@ -13,4 +13,5 @@ export type AssistantAvatarProps = Omit<
   color?: AssistantAvatarColor;
   face?: AssistantAvatarFace;
   size?: AssistantAvatarSize;
+  isAnimated?: boolean;
 };

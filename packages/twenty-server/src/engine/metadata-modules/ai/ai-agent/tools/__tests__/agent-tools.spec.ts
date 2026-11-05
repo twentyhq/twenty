@@ -69,9 +69,14 @@ const context: ToolProviderContext = {
 
 // Runs the tools through the registry, which applies their declared gates and parses their input
 const buildAgentTools = async (options?: {
-  hasAiSettingsPermission?: boolean;
+  grantedPermissionFlags?: PermissionFlagType[];
   isAiChatInboxEnabled?: boolean;
 }) => {
+  const grantedPermissionFlags = options?.grantedPermissionFlags ?? [
+    PermissionFlagType.AI,
+    PermissionFlagType.AI_SETTINGS,
+  ];
+
   const agentService = {
     findManyAgents: jest.fn().mockResolvedValue([]),
     findOneAgentById: jest.fn().mockResolvedValue(buildAgent()),
@@ -101,7 +106,9 @@ const buildAgentTools = async (options?: {
   const permissionsService = {
     hasPermissionFlag: jest
       .fn()
-      .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
+      .mockImplementation(async ({ setting }) =>
+        grantedPermissionFlags.includes(setting),
+      ),
   };
   const featureFlagService = {
     getWorkspaceFeatureFlagsMap: jest.fn().mockResolvedValue({
@@ -185,7 +192,7 @@ const buildAgentTools = async (options?: {
 
 describe('Agent tools', () => {
   describe('availability', () => {
-    it('is available when the caller has the AI settings permission', async () => {
+    it('is available when the caller has the AI and AI settings permissions', async () => {
       const { listToolNames, permissionsService } = await buildAgentTools();
 
       await expect(listToolNames()).resolves.toHaveLength(4);
@@ -195,11 +202,28 @@ describe('Agent tools', () => {
       });
     });
 
-    it('is not available without the AI settings permission', async () => {
-      const { listToolNames, executeTool, agentService } =
-        await buildAgentTools({
-          hasAiSettingsPermission: false,
-        });
+    it('only offers list_agents without the AI settings permission', async () => {
+      const { listToolNames, executeTool, agentService } = await buildAgentTools({
+        grantedPermissionFlags: [PermissionFlagType.AI],
+      });
+
+      await expect(listToolNames()).resolves.toEqual(['list_agents']);
+      await expect(
+        executeTool({ toolName: 'list_agents', args: {} }),
+      ).resolves.toMatchObject({ success: true });
+      await expect(
+        executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
+      ).resolves.toMatchObject({
+        success: false,
+        message: 'Tool "delete_agent" is not available',
+      });
+      expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
+    });
+
+    it('is not available without the AI permission', async () => {
+      const { listToolNames, executeTool, agentService } = await buildAgentTools({
+        grantedPermissionFlags: [PermissionFlagType.AI_SETTINGS],
+      });
 
       await expect(listToolNames()).resolves.toEqual([]);
       await expect(
