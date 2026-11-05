@@ -71,11 +71,11 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       // import keys on, so a later sync reconciles this event instead of
       // duplicating it. Reconstructing the href locally risks a format mismatch
       // (full URL vs the server-relative path the provider returns).
-      const reconstructedUrl = this.resolveCreatedEventUrl(
-        createResponse.headers.get('location'),
+      const reconstructedUrl = this.resolveCreatedEventUrl({
+        location: createResponse.headers.get('location'),
         filename,
-        targetCalendar.url,
-      );
+        calendarUrl: targetCalendar.url,
+      });
 
       let id = reconstructedUrl.pathname;
 
@@ -130,11 +130,15 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
     }
   }
 
-  private resolveCreatedEventUrl(
-    location: string | null,
-    filename: string,
-    calendarUrl: string,
-  ): URL {
+  private resolveCreatedEventUrl({
+    location,
+    filename,
+    calendarUrl,
+  }: {
+    location: string | null;
+    filename: string;
+    calendarUrl: string;
+  }): URL {
     const locationUrl = isNonEmptyString(location)
       ? URL.parse(location, calendarUrl)
       : null;
