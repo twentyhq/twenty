@@ -24,6 +24,10 @@ describe('getMarkdownTextChatReferences', () => {
     ['text after an escaped backslash', `C:\\\\${MIA_MENTION}`],
     ['text followed by a link target', `${MIA_MENTION}(https://example.com)`],
     [
+      'text after a code block with CRLF line breaks',
+      `\`\`\`\r\nconst stage = 'won';\r\n\`\`\`\r\n${MIA_MENTION} owns it`,
+    ],
+    [
       'text matching a link definition',
       `${MIA_MENTION}\n\n[${MIA_MENTION.slice(2, -2)}]: https://example.com`,
     ],

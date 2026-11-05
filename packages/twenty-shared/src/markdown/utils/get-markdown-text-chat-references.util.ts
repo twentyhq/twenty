@@ -34,6 +34,8 @@ const LINK_OR_HTML_SYNTAX_PATTERN = /<|\]\(/;
 
 const BACKTICK_RUN_OR_LINE_BREAK_PATTERN = /`+|\n/g;
 
+const CARRIAGE_RETURN_PATTERN = /\r\n?/g;
+
 const isBackslashEscaped = ({
   text,
   index,
@@ -188,7 +190,7 @@ export const getMarkdownTextChatReferences = (
   const textWithPlaceholders = replaceReferencesWithPlaceholders({
     text,
     references,
-  });
+  }).replace(CARRIAGE_RETURN_PATTERN, '\n');
 
   if (!mayHidePlaceholders(textWithPlaceholders)) {
     return references;
