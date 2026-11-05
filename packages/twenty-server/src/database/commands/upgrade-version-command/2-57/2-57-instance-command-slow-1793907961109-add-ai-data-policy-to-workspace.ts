@@ -9,7 +9,7 @@ export class AddAiDataPolicyToWorkspaceSlowInstanceCommand implements SlowInstan
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" ADD "aiDataPolicy" jsonb NOT NULL DEFAULT \'{"aiDataResidency":null,"isAiZeroDataRetentionRequired":false}\'',
+      'ALTER TABLE "core"."workspace" ADD "aiDataPolicy" jsonb NOT NULL DEFAULT \'{"dataResidency":null,"isZeroDataRetentionRequired":false}\'',
     );
   }
 

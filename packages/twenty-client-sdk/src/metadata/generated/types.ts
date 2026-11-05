@@ -719,10 +719,10 @@ export default {
             ]
         },
         "AiDataPolicy": {
-            "aiDataResidency": [
+            "dataResidency": [
                 1
             ],
-            "isAiZeroDataRetentionRequired": [
+            "isZeroDataRetentionRequired": [
                 4
             ],
             "__typename": [
@@ -730,10 +730,10 @@ export default {
             ]
         },
         "AiDataPolicyInput": {
-            "aiDataResidency": [
+            "dataResidency": [
                 1
             ],
-            "isAiZeroDataRetentionRequired": [
+            "isZeroDataRetentionRequired": [
                 4
             ],
             "__typename": [

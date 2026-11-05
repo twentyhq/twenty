@@ -252,8 +252,8 @@ export interface AiChatUserCreditsUsage {
 }
 
 export interface AiDataPolicy {
-    aiDataResidency?: Scalars['String']
-    isAiZeroDataRetentionRequired: Scalars['Boolean']
+    dataResidency?: Scalars['String']
+    isZeroDataRetentionRequired: Scalars['Boolean']
     __typename: 'AiDataPolicy'
 }
 
@@ -4636,13 +4636,13 @@ export interface AiChatUserCreditsUsageGenqlSelection{
 }
 
 export interface AiDataPolicyGenqlSelection{
-    aiDataResidency?: boolean | number
-    isAiZeroDataRetentionRequired?: boolean | number
+    dataResidency?: boolean | number
+    isZeroDataRetentionRequired?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface AiDataPolicyInput {aiDataResidency?: (Scalars['String'] | null),isAiZeroDataRetentionRequired: Scalars['Boolean']}
+export interface AiDataPolicyInput {dataResidency?: (Scalars['String'] | null),isZeroDataRetentionRequired: Scalars['Boolean']}
 
 export interface AiRunUsageGenqlSelection{
     inputTokens?: boolean | number

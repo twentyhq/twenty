@@ -315,13 +315,13 @@ export type AiChatUserCreditsUsage = {
 
 export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
-  aiDataResidency?: Maybe<Scalars['String']['output']>;
-  isAiZeroDataRetentionRequired: Scalars['Boolean']['output'];
+  dataResidency?: Maybe<Scalars['String']['output']>;
+  isZeroDataRetentionRequired: Scalars['Boolean']['output'];
 };
 
 export type AiDataPolicyInput = {
-  aiDataResidency?: InputMaybe<Scalars['String']['input']>;
-  isAiZeroDataRetentionRequired: Scalars['Boolean']['input'];
+  dataResidency?: InputMaybe<Scalars['String']['input']>;
+  isZeroDataRetentionRequired: Scalars['Boolean']['input'];
 };
 
 export enum AiModelTier {

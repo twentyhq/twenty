@@ -1,23 +1,23 @@
 import { isAiModelCompliantWithDataPolicy } from '../is-ai-model-compliant-with-data-policy.util';
 
 const WORLDWIDE = {
-  aiDataResidency: null,
-  isAiZeroDataRetentionRequired: false,
+  dataResidency: null,
+  isZeroDataRetentionRequired: false,
 };
 
 const EU_ONLY = {
-  aiDataResidency: 'eu' as const,
-  isAiZeroDataRetentionRequired: false,
+  dataResidency: 'eu' as const,
+  isZeroDataRetentionRequired: false,
 };
 
 const ZERO_DATA_RETENTION_ONLY = {
-  aiDataResidency: null,
-  isAiZeroDataRetentionRequired: true,
+  dataResidency: null,
+  isZeroDataRetentionRequired: true,
 };
 
 const EU_AND_ZERO_DATA_RETENTION = {
-  aiDataResidency: 'eu' as const,
-  isAiZeroDataRetentionRequired: true,
+  dataResidency: 'eu' as const,
+  isZeroDataRetentionRequired: true,
 };
 
 describe('isAiModelCompliantWithDataPolicy', () => {

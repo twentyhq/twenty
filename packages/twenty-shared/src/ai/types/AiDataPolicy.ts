@@ -1,6 +1,6 @@
-import { type AiDataResidencyPolicy } from '../constants/ai-data-residency-policy.const';
+import { type AiDataResidencyPolicy } from '../constants/data-residencies-by-ai-data-residency-policy.const';
 
 export type AiDataPolicy = {
-  aiDataResidency: AiDataResidencyPolicy | null;
-  isAiZeroDataRetentionRequired: boolean;
+  dataResidency: AiDataResidencyPolicy | null;
+  isZeroDataRetentionRequired: boolean;
 };

@@ -6,6 +6,7 @@ import assert from 'assert';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
@@ -218,6 +219,29 @@ export class WorkspaceService {
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
+  private async assertFeatureIsEnabledOrThrow({
+    featureFlagKey,
+    workspaceId,
+    userFriendlyMessage,
+  }: {
+    featureFlagKey: FeatureFlagKey;
+    workspaceId: string;
+    userFriendlyMessage: MessageDescriptor;
+  }): Promise<void> {
+    const isFeatureEnabled = await this.featureFlagService.isFeatureEnabled(
+      featureFlagKey,
+      workspaceId,
+    );
+
+    if (!isFeatureEnabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        { userFriendlyMessage },
+      );
+    }
+  }
+
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
@@ -453,38 +477,21 @@ export class WorkspaceService {
     const isUpdatingAssistantModes =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode);
-    const isInboxRequiredButDisabled =
-      isUpdatingAssistantModes &&
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-        workspace.id,
-      ));
 
-    if (isInboxRequiredButDisabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
-        },
-      );
+    if (isUpdatingAssistantModes) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+      });
     }
 
-    const isAiDataPolicyRequiredButDisabled =
-      isDefined(payload.aiDataPolicy) &&
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
-        workspace.id,
-      ));
-
-    if (isAiDataPolicyRequiredButDisabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
-        },
-      );
+    if (isDefined(payload.aiDataPolicy)) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
+      });
     }
 
     if (

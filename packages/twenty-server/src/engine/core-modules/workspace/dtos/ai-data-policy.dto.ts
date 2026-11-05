@@ -1,12 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { type AiDataResidencyPolicy } from 'twenty-shared/ai';
+import {
+  type AiDataPolicy,
+  type AiDataResidencyPolicy,
+} from 'twenty-shared/ai';
 
 @ObjectType('AiDataPolicy')
-export class AiDataPolicyDTO {
+export class AiDataPolicyDTO implements AiDataPolicy {
   @Field(() => String, { nullable: true })
-  aiDataResidency: AiDataResidencyPolicy | null;
+  dataResidency: AiDataResidencyPolicy | null;
 
   @Field(() => Boolean)
-  isAiZeroDataRetentionRequired: boolean;
+  isZeroDataRetentionRequired: boolean;
 }

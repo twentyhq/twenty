@@ -280,13 +280,13 @@ type AiChatUserCreditsUsage {
 }
 
 type AiDataPolicy {
-  aiDataResidency: String
-  isAiZeroDataRetentionRequired: Boolean!
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
 }
 
 input AiDataPolicyInput {
-  aiDataResidency: String
-  isAiZeroDataRetentionRequired: Boolean!
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
 }
 
 enum AiModelTier {

@@ -6,16 +6,16 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 
 const NO_POLICY = {
-  aiDataResidency: null,
-  isAiZeroDataRetentionRequired: false,
+  dataResidency: null,
+  isZeroDataRetentionRequired: false,
 };
 const EU_ZERO_RETENTION_POLICY = {
-  aiDataResidency: 'eu',
-  isAiZeroDataRetentionRequired: true,
+  dataResidency: 'eu',
+  isZeroDataRetentionRequired: true,
 };
 const ZERO_RETENTION_POLICY = {
-  aiDataResidency: null,
-  isAiZeroDataRetentionRequired: true,
+  dataResidency: null,
+  isZeroDataRetentionRequired: true,
 };
 
 const setAiDataPolicyFlag = (value: boolean) =>
@@ -82,11 +82,11 @@ describe('workspace AI data policy', () => {
   });
 
   it.each([
-    ['an unknown residency', { ...NO_POLICY, aiDataResidency: 'us' }],
-    ['a missing residency', { isAiZeroDataRetentionRequired: true }],
+    ['an unknown residency', { ...NO_POLICY, dataResidency: 'us' }],
+    ['a missing residency', { isZeroDataRetentionRequired: true }],
     [
       'a null retention requirement',
-      { aiDataResidency: 'eu', isAiZeroDataRetentionRequired: null },
+      { dataResidency: 'eu', isZeroDataRetentionRequired: null },
     ],
     ['a null policy', null],
   ])('refuses %s', async (_label, aiDataPolicy) => {

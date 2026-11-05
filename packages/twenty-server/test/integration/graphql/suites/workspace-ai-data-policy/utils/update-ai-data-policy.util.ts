@@ -5,8 +5,8 @@ const UPDATE_WORKSPACE_AI_DATA_POLICY = gql`
   mutation UpdateWorkspaceAiDataPolicy($data: UpdateWorkspaceInput!) {
     updateWorkspace(data: $data) {
       aiDataPolicy {
-        aiDataResidency
-        isAiZeroDataRetentionRequired
+        dataResidency
+        isZeroDataRetentionRequired
       }
     }
   }
