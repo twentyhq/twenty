@@ -167,10 +167,7 @@ export class AgentChatChannelMetadataService {
     channelId: string;
     changes: ChannelChanges;
     roleIds?: string[];
-  }): Promise<{
-    channel: FlatAgentChatChannelWithRoleIds;
-    haveChannelRolesChanged: boolean;
-  }> {
+  }): Promise<FlatAgentChatChannelWithRoleIds> {
     const channelMaps = await this.getChannelMaps(workspaceId);
     const channel = findFlatAgentChatChannelOrThrow({
       flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
@@ -234,18 +231,16 @@ export class AgentChatChannelMetadataService {
     });
 
     const isChannelChanged = Object.keys(definedChanges).length > 0;
-    const haveChannelRolesChanged =
-      channelRolesToCreate.length > 0 || channelRolesToDelete.length > 0;
 
-    if (!isChannelChanged && !haveChannelRolesChanged) {
-      return {
-        channel: addRoleIdsToFlatAgentChatChannel({
-          channel,
-          flatAgentChatChannelRoleMaps:
-            channelMaps.flatAgentChatChannelRoleMaps,
-        }),
-        haveChannelRolesChanged,
-      };
+    if (
+      !isChannelChanged &&
+      channelRolesToCreate.length === 0 &&
+      channelRolesToDelete.length === 0
+    ) {
+      return addRoleIdsToFlatAgentChatChannel({
+        channel,
+        flatAgentChatChannelRoleMaps: channelMaps.flatAgentChatChannelRoleMaps,
+      });
     }
 
     await this.runMigration({
@@ -258,10 +253,7 @@ export class AgentChatChannelMetadataService {
       channelRolesToDelete,
     });
 
-    return {
-      channel: await this.findChannelOrThrow({ workspaceId, channelId }),
-      haveChannelRolesChanged,
-    };
+    return this.findChannelOrThrow({ workspaceId, channelId });
   }
 
   async deleteChannel({

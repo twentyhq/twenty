@@ -99,16 +99,15 @@ export class AgentChatChannelService {
     changes: ChannelChanges;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
     const workspaceId = authContext.workspace.id;
-    const { channel, haveChannelRolesChanged } =
-      await this.channelMetadataService.updateChannel({
-        workspaceId,
-        callingApplication: authContext.application,
-        channelId,
-        changes,
-        roleIds,
-      });
+    const channel = await this.channelMetadataService.updateChannel({
+      workspaceId,
+      callingApplication: authContext.application,
+      channelId,
+      changes,
+      roleIds,
+    });
 
-    if (haveChannelRolesChanged) {
+    if (isDefined(roleIds)) {
       await this.channelGrantService
         .rewriteChannelGrants({ workspaceId, channelId })
         .catch(async (error: unknown) => {
