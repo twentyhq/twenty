@@ -6,14 +6,13 @@ import {
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -25,6 +24,7 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
+import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
@@ -43,31 +43,26 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
+    private readonly messageAttachmentService: MessagingMessageAttachmentService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async saveMessagesAndEnqueueContactCreation<TWithinTransactionResult = void>({
+  async saveMessagesAndEnqueueContactCreation({
     messagesToSave,
     messageChannel,
     connectedAccount,
     workspaceId,
     personHandleField,
-    withinTransaction,
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
     personHandleField?: PersonHandleField;
-    withinTransaction?: (args: {
-      transactionScope: WorkspaceTransactionScope;
-      messageExternalIdsAndIdsMap: Map<string, string>;
-    }) => Promise<TWithinTransactionResult>;
   }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
         messageExternalIdToMessageThreadIdMap: Map<string, string>;
-        withinTransactionResult: TWithinTransactionResult | undefined;
       }
     | undefined
   > {
@@ -184,9 +179,19 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 transactionScope,
               );
 
-              const withinTransactionResult = await withinTransaction?.({
+              await this.messageAttachmentService.saveMessageAttachments({
+                messageAttachmentFiles: messagesToSave.flatMap((message) => {
+                  const messageId = messageExternalIdsAndIdsMap.get(
+                    message.externalId,
+                  );
+
+                  return isDefined(messageId) &&
+                    isNonEmptyArray(message.attachmentFiles)
+                    ? [{ messageId, attachmentFiles: message.attachmentFiles }]
+                    : [];
+                }),
+                workspaceId,
                 transactionScope,
-                messageExternalIdsAndIdsMap,
               });
 
               return {
@@ -194,7 +199,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 savedMessageParticipants,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageThreadIdMap,
-                withinTransactionResult,
               };
             },
           );
@@ -256,7 +260,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         savedMessagesResult.messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap:
         savedMessagesResult.messageExternalIdToMessageThreadIdMap,
-      withinTransactionResult: savedMessagesResult.withinTransactionResult,
     };
   }
 
