@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 
-import { SettingsMcpServerDeleteSection } from '@/settings/mcp-servers/components/SettingsMcpServerDeleteSection';
+import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
 import { SettingsMcpServerToolsSection } from '@/settings/mcp-servers/components/SettingsMcpServerToolsSection';
@@ -50,7 +50,7 @@ export const SettingsMcpServerEditForm = ({
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
-        <SettingsMcpServerDeleteSection mcpServerId={mcpServer.id} />
+        <SettingsMcpServerDangerZone mcpServer={mcpServer} />
       </SettingsMcpServerFormLayout>
     </FormProvider>
   );

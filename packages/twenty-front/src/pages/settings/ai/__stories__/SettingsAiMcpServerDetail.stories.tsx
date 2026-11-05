@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { SettingsDevelopersMcpServerDetail } from '~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerDetail';
+import { SettingsAiMcpServerDetail } from '~/pages/settings/ai/SettingsAiMcpServerDetail';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -11,11 +11,11 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedMcpServer } from '~/testing/mock-data/mcp-servers';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/McpServers/SettingsDevelopersMcpServerDetail',
-  component: SettingsDevelopersMcpServerDetail,
+  title: 'Pages/Settings/McpServers/SettingsAiMcpServerDetail',
+  component: SettingsAiMcpServerDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/developers/mcp-servers/:mcpServerId',
+    routePath: '/settings/ai/mcp-servers/:mcpServerId',
     routeParams: { ':mcpServerId': mockedMcpServer.id },
   },
   parameters: {
@@ -54,7 +54,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersMcpServerDetail>;
+export type Story = StoryObj<typeof SettingsAiMcpServerDetail>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
@@ -67,7 +67,7 @@ export const Default: Story = {
     await canvas.findByText('search_issues');
     await canvas.findByText('Read-only');
     await canvas.findByText('Destructive');
-    await canvas.findByText('Delete this MCP server');
+    await canvas.findByRole('button', { name: 'Deactivate' });
   },
 };
 

@@ -1,5 +1,5 @@
 import { SettingsMcpServerNewForm } from '@/settings/mcp-servers/components/SettingsMcpServerNewForm';
 
-export const SettingsDevelopersMcpServerNew = () => {
+export const SettingsAiMcpServerNew = () => {
   return <SettingsMcpServerNewForm />;
 };

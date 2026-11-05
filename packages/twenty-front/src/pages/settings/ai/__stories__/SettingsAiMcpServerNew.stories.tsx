@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { SettingsDevelopersMcpServerNew } from '~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerNew';
+import { SettingsAiMcpServerNew } from '~/pages/settings/ai/SettingsAiMcpServerNew';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -10,11 +10,11 @@ import {
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/McpServers/SettingsDevelopersMcpServerNew',
-  component: SettingsDevelopersMcpServerNew,
+  title: 'Pages/Settings/McpServers/SettingsAiMcpServerNew',
+  component: SettingsAiMcpServerNew,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/developers/mcp-servers/new',
+    routePath: '/settings/ai/new-mcp-server',
   },
   parameters: {
     msw: {
@@ -30,7 +30,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersMcpServerNew>;
+export type Story = StoryObj<typeof SettingsAiMcpServerNew>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

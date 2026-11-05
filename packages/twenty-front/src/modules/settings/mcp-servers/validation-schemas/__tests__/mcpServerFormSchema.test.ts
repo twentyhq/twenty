@@ -9,7 +9,6 @@ describe('getMcpServerFormSchema', () => {
     name: 'linear_tools',
     url: 'https://mcp.linear.app/mcp',
     connectionProviderId: null,
-    isActive: true,
   };
 
   it.each([

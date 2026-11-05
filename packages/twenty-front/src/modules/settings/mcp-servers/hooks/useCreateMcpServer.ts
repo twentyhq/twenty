@@ -37,7 +37,7 @@ export const useCreateMcpServer = () => {
         children: t`MCP server ${label} created successfully`,
       });
 
-      navigateSettings(SettingsPath.McpServerDetail, { mcpServerId: id });
+      navigateSettings(SettingsPath.AiMcpServerDetail, { mcpServerId: id });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

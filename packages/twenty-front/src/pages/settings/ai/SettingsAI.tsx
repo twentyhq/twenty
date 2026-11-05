@@ -21,6 +21,7 @@ import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
 import { SettingsMcpSetup } from '@/settings/mcp/components/SettingsMcpSetup';
+import { SettingsMcpServersSection } from '@/settings/mcp-servers/components/SettingsMcpServersSection';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
 import { SettingsAiWorkspaceBehaviorSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceBehaviorSection';
@@ -148,6 +149,7 @@ export const SettingsAI = () => {
         )}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
+        {isToolsTab && <SettingsMcpServersSection />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>

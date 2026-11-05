@@ -48,7 +48,7 @@ export const SettingsMcpServersTable = () => {
               <SettingsMcpServerTableRow
                 key={mcpServer.id}
                 mcpServer={mcpServer}
-                to={getSettingsPath(SettingsPath.McpServerDetail, {
+                to={getSettingsPath(SettingsPath.AiMcpServerDetail, {
                   mcpServerId: mcpServer.id,
                 })}
               />

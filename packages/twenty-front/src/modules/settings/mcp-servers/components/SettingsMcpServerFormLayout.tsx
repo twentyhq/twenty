@@ -7,8 +7,8 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
-import { useNavigateToMcpServersTab } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersTab';
+import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
+import { useNavigateToMcpServersList } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersList';
 import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
 
 type SettingsMcpServerFormLayoutProps = {
@@ -25,7 +25,7 @@ export const SettingsMcpServerFormLayout = ({
   children,
 }: SettingsMcpServerFormLayoutProps) => {
   const { t } = useLingui();
-  const { navigateToMcpServersTab } = useNavigateToMcpServersTab();
+  const { navigateToMcpServersList } = useNavigateToMcpServersList();
   const {
     handleSubmit,
     formState: { isDirty, isValid, isSubmitting },
@@ -40,12 +40,12 @@ export const SettingsMcpServerFormLayout = ({
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Developers`,
+          children: t`AI`,
           href: getSettingsPath(
-            SettingsPath.Developers,
+            SettingsPath.AI,
             undefined,
             undefined,
-            SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS,
+            SETTINGS_AI_TABS.TABS_IDS.TOOLS,
           ),
         },
         { children: breadcrumbTitle },
@@ -54,7 +54,7 @@ export const SettingsMcpServerFormLayout = ({
         <SaveAndCancelButtons
           isSaveDisabled={!isDirty || !isValid || isSubmitting}
           isCancelDisabled={isSubmitting}
-          onCancel={navigateToMcpServersTab}
+          onCancel={navigateToMcpServersList}
           onSave={handleSubmit(onSave)}
         />
       }

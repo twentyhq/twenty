@@ -556,20 +556,16 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
   ),
 );
 
-const SettingsDevelopersMcpServerNew = lazy(() =>
-  import('~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerNew').then(
-    (module) => ({
-      default: module.SettingsDevelopersMcpServerNew,
-    }),
-  ),
+const SettingsAiMcpServerNew = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerNew').then((module) => ({
+    default: module.SettingsAiMcpServerNew,
+  })),
 );
 
-const SettingsDevelopersMcpServerDetail = lazy(() =>
-  import('~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerDetail').then(
-    (module) => ({
-      default: module.SettingsDevelopersMcpServerDetail,
-    }),
-  ),
+const SettingsAiMcpServerDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerDetail').then((module) => ({
+    default: module.SettingsAiMcpServerDetail,
+  })),
 );
 
 const SettingsObjectNewFieldSelect = lazy(() =>
@@ -1228,12 +1224,12 @@ const createSettingsRouteElements = ({
       }
     >
       <Route
-        path={SettingsPath.NewMcpServer}
-        element={<SettingsDevelopersMcpServerNew />}
+        path={SettingsPath.AiNewMcpServer}
+        element={<SettingsAiMcpServerNew />}
       />
       <Route
-        path={SettingsPath.McpServerDetail}
-        element={<SettingsDevelopersMcpServerDetail />}
+        path={SettingsPath.AiMcpServerDetail}
+        element={<SettingsAiMcpServerDetail />}
       />
     </Route>
 

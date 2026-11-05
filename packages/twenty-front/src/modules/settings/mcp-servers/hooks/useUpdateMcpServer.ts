@@ -14,7 +14,7 @@ export const useUpdateMcpServer = () => {
 
   const updateMcpServer = async ({
     mcpServerId,
-    formValues: { label, url, connectionProviderId, isActive },
+    formValues: { label, url, connectionProviderId },
   }: {
     mcpServerId: string;
     formValues: McpServerFormValues;
@@ -24,7 +24,7 @@ export const useUpdateMcpServer = () => {
         variables: {
           input: {
             id: mcpServerId,
-            update: { label, url, connectionProviderId, isActive },
+            update: { label, url, connectionProviderId },
           },
         },
       });

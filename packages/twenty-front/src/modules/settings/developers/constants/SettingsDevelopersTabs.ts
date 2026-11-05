@@ -3,7 +3,6 @@ export const SETTINGS_DEVELOPERS_TABS = {
   TABS_IDS: {
     API: 'api',
     WEBHOOKS: 'webhooks',
-    MCP_SERVERS: 'mcp-servers',
     APPS: 'apps',
     CLI: 'cli',
   },

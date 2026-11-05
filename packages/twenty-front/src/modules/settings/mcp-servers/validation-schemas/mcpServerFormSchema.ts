@@ -31,7 +31,6 @@ export const getMcpServerFormSchema = () =>
         error: () => t`Please enter a valid http(s) URL`,
       }),
     connectionProviderId: z.string().nullable(),
-    isActive: z.boolean(),
   });
 
 export type McpServerFormValues = z.infer<

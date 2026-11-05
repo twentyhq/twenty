@@ -3,13 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useNavigateToMcpServersTab } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersTab';
+import { useNavigateToMcpServersList } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersList';
 import { DeleteMcpServerDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteMcpServer = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { navigateToMcpServersTab } = useNavigateToMcpServersTab();
+  const { navigateToMcpServersList } = useNavigateToMcpServersList();
 
   const [deleteMcpServerMutation] = useMutation(DeleteMcpServerDocument, {
     update: (cache) => {
@@ -26,7 +26,7 @@ export const useDeleteMcpServer = () => {
         children: t`MCP server deleted successfully`,
       });
 
-      navigateToMcpServersTab();
+      navigateToMcpServersList();
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

@@ -5,5 +5,4 @@ export const MCP_SERVER_FORM_DEFAULT_VALUES: McpServerFormValues = {
   name: '',
   url: '',
   connectionProviderId: null,
-  isActive: true,
 };
