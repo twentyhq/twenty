@@ -139,7 +139,10 @@ export class AgentChatMemberMessageSenderService {
       }
 
       if (isDefined(thread.deletedAt)) {
-        await this.chatThreadService.restoreThread(threadAccess);
+        await this.chatThreadService.restoreDirectMessageThread({
+          workspaceId: actor.workspaceId,
+          thread,
+        });
       }
 
       const persistedMessage =

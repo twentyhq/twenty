@@ -182,6 +182,10 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     });
   }
 
+  restore(workspaceId: string, where: FindOptionsWhere<TRecord>) {
+    return this.run(workspaceId, (repository) => repository.restore(where));
+  }
+
   query<TResult>(
     workspaceId: string,
     work: (context: AgentHistoryStorageContext) => Promise<TResult>,
