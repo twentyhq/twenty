@@ -54,7 +54,7 @@ describe('resolveRecordIdsSharedWithPrincipals', () => {
     ).toEqual(new Set(['record-2', 'record-3']));
   });
 
-  it('should admit nothing to a principal without a share row', () => {
+  it('should grant nothing to a principal without a share row', () => {
     expect(
       resolveRecordIdsSharedWithPrincipals({
         recordShares,

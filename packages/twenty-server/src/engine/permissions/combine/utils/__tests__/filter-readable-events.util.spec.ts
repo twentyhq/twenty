@@ -82,7 +82,7 @@ const filter = ({
 }) =>
   filterReadableEvents({
     events,
-    admittedRecordIds: new Set(['record-1', 'record-2']),
+    readableRecordIds: new Set(['record-1', 'record-2']),
     objectMetadata: invoice,
     recordsPermissions,
     metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
@@ -100,7 +100,7 @@ const SECRET_HIDDEN: Pick<RoleRecordsPermissions, 'objects'> = {
 };
 
 describe('filterReadableEvents', () => {
-  it('should drop events on records that were not admitted', () => {
+  it('should drop events on records that are not readable', () => {
     const events = filter({
       events: [
         buildUpdateEvent({ recordId: 'record-1', updatedFields: ['name'] }),

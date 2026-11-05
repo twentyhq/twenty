@@ -557,7 +557,7 @@ describe('buildPermissionsCondition', () => {
         operationType: 'select',
       });
 
-    it('admits a private record to its creator next to its shares and the role', () => {
+    it('grants a private record to its creator next to its shares and the role', () => {
       const policy = buildForCreator(readEverything);
 
       if (policy.kind !== 'gated') {

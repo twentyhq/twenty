@@ -4,6 +4,7 @@ import { installEventConstructorPolyfills } from '@/polyfills/events/utils/insta
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { dispatchOutsidePressEvent } from '@/remote/elements/utils/dispatchOutsidePressEvent';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 describe('dispatchOutsidePressEvent', () => {
   it('dispatches through document capture and the body target without visiting owned descendants', () => {
@@ -11,7 +12,7 @@ describe('dispatchOutsidePressEvent', () => {
     installEventConstructorPolyfills({
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
-    const documentTarget = polyfillWindow.document as unknown as Document;
+    const documentTarget = toDomWindow(polyfillWindow).document;
     const popup = documentTarget.createElement('div');
     documentTarget.body.append(popup);
     const popupListener = jest.fn();
@@ -69,7 +70,7 @@ describe('dispatchOutsidePressEvent', () => {
     installEventConstructorPolyfills({
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
-    const documentTarget = polyfillWindow.document as unknown as Document;
+    const documentTarget = toDomWindow(polyfillWindow).document;
     const receivedPresses: { event: Event; windowEvent: Event | undefined }[] =
       [];
 

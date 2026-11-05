@@ -29,7 +29,7 @@ describe('getHeadersFromFetchRequestArguments', () => {
     const request = {
       url: 'https://api.twenty.test',
       headers: new Headers({ authorization: 'Bearer request-token' }),
-    } as unknown as Request;
+    };
 
     expect(
       getHeadersFromFetchRequestArguments(request, {
@@ -42,7 +42,7 @@ describe('getHeadersFromFetchRequestArguments', () => {
     const request = {
       url: 'https://api.twenty.test',
       headers: new Headers({ authorization: 'Bearer request-token' }),
-    } as unknown as Request;
+    };
 
     expect(getHeadersFromFetchRequestArguments(request, undefined)).toEqual({
       authorization: 'Bearer request-token',

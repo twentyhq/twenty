@@ -76,13 +76,10 @@ describe('installClassAttributeAccessors on remote elements', () => {
   });
 
   it('should forward class writes to the host as the className property', () => {
-    const element = createHtmlDivElement();
-    const updateRemoteProperty = jest.spyOn(
-      element as unknown as {
-        updateRemoteProperty: (propertyName: string, value?: unknown) => void;
-      },
-      'updateRemoteProperty',
-    );
+    const element: HTMLElement & {
+      updateRemoteProperty: (propertyName: string, value?: unknown) => void;
+    } = document.createElement('html-div');
+    const updateRemoteProperty = jest.spyOn(element, 'updateRemoteProperty');
 
     element.classList.add('first');
     element.removeAttribute('class');

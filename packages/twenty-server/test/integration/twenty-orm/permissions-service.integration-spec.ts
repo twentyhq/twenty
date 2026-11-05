@@ -82,7 +82,7 @@ describe('PermissionsService', () => {
     question,
     authContext,
   }: {
-    question: 'canReadAllRecords' | 'canReadSomeRecords';
+    question: 'canReadSomeRecords';
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
     permissionsService[question]({
@@ -110,7 +110,7 @@ describe('PermissionsService', () => {
     });
 
   describe('canReadRecords and canUpdateRecords', () => {
-    it('grants a role reading and updating an existing record it permits', async () => {
+    it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
           authContext: adminAuthContext,
@@ -145,39 +145,45 @@ describe('PermissionsService', () => {
     });
   });
 
-  describe('findReadableRecordIds', () => {
-    it('keeps only the records the principal is admitted to', async () => {
+  describe('canReadSomeRecords', () => {
+    it('follows the role when it permits the operation', async () => {
       expect(
-        await permissionsService.findReadableRecordIds({
-          principals: await permissionsService.buildPermissionsPrincipals({
-            authContext: adminAuthContext,
-          }),
-          objectMetadataId: personFlatObjectMetadata.id,
-          recordIds: [recordId, randomUUID()],
+        await askObjectQuestion({
+          question: 'canReadSomeRecords',
+          authContext: adminAuthContext,
         }),
-      ).toEqual([recordId]);
+      ).toBe(true);
+    });
+
+    it('denies an API key with no role', async () => {
+      expect(
+        await askObjectQuestion({
+          question: 'canReadSomeRecords',
+          authContext: missingRoleAuthContext,
+        }),
+      ).toBe(false);
     });
   });
 
-  describe.each(['canReadAllRecords', 'canReadSomeRecords'] as const)(
-    '%s',
-    (question) => {
-      it('follows the role when it permits the operation', async () => {
-        expect(
-          await askObjectQuestion({ question, authContext: adminAuthContext }),
-        ).toBe(true);
-      });
+  describe('role questions', () => {
+    it('finds the roles of a principal', async () => {
+      expect(
+        await permissionsService.hasAnyRole({ authContext: adminAuthContext }),
+      ).toBe(true);
+      expect(
+        await permissionsService.findRoleIds({ authContext: adminAuthContext }),
+      ).not.toHaveLength(0);
+    });
 
-      it('denies an API key with no role', async () => {
-        expect(
-          await askObjectQuestion({
-            question,
-            authContext: missingRoleAuthContext,
-          }),
-        ).toBe(false);
-      });
-    },
-  );
+    it('finds no role for an API key without one', async () => {
+      expect(
+        await permissionsService.hasAnyRole({
+          authContext: missingRoleAuthContext,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('field questions', () => {
     let readRestricted: ApiKeyWithObjectRecordGrants;
     let updateRestricted: ApiKeyWithObjectRecordGrants;
@@ -234,15 +240,6 @@ describe('PermissionsService', () => {
 
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
-      const question = {
-        principals,
-        objectMetadataId: personFlatObjectMetadata.id,
-        fieldMetadataId: introFieldMetadataId,
-      };
-
-      expect(await permissionsService.canReadField(question)).toBe(false);
-      expect(await permissionsService.canUpdateField(question)).toBe(false);
-
       const unreadableFieldMetadataIds =
         await permissionsService.findUnreadableFieldMetadataIdsOrThrow({
           principals,
@@ -261,15 +258,6 @@ describe('PermissionsService', () => {
 
     it('keeps a read-only field readable but not updatable', async () => {
       const principals = await buildApiKeyPrincipals(updateRestricted);
-      const question = {
-        principals,
-        objectMetadataId: personFlatObjectMetadata.id,
-        fieldMetadataId: introFieldMetadataId,
-      };
-
-      expect(await permissionsService.canReadField(question)).toBe(true);
-      expect(await permissionsService.canUpdateField(question)).toBe(false);
-
       const objectQuestion = {
         principals,
         objectMetadataId: personFlatObjectMetadata.id,
@@ -288,29 +276,6 @@ describe('PermissionsService', () => {
           objectQuestion,
         ),
       ).not.toContain(introFieldMetadataId);
-    });
-
-    it('denies every field to an API key with no role', async () => {
-      const question = {
-        principals: await permissionsService.buildPermissionsPrincipals({
-          authContext: missingRoleAuthContext,
-        }),
-        objectMetadataId: personFlatObjectMetadata.id,
-        fieldMetadataId: jobTitleFieldMetadataId,
-      };
-
-      expect(await permissionsService.canReadField(question)).toBe(false);
-      expect(await permissionsService.canUpdateField(question)).toBe(false);
-    });
-
-    it('denies a field the object does not have', async () => {
-      expect(
-        await permissionsService.canReadField({
-          principals: await buildApiKeyPrincipals(updateRestricted),
-          objectMetadataId: personFlatObjectMetadata.id,
-          fieldMetadataId: randomUUID(),
-        }),
-      ).toBe(false);
     });
   });
 });

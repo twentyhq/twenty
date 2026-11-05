@@ -1,38 +1,19 @@
 /* @license Enterprise */
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
+import { RecordShareRowCause } from 'twenty-shared/types';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-import { In, Not, type FindOptionsWhere } from 'typeorm';
-import {
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
-
-import {
-  RecordShareException,
-  RecordShareExceptionCode,
-} from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-share-write-orm.service';
+import { type RecordShareCriteria } from 'src/engine/permissions/record-permission-orm/types/record-share-criteria.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
-import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-
-const RECORD_SHARE_OBJECT_METADATA_NAME = 'recordShare';
-
-type RecordShareRepository = WorkspaceRepository<RecordShare>;
 
 @Injectable()
 export class RecordShareStorageService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
+  ) {}
 
   // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
@@ -46,27 +27,29 @@ export class RecordShareStorageService {
     enabled: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    await this.withRepository(
-      { workspaceId, transactionScope },
-      async (repository) => {
-        await repository.delete({
-          objectMetadataId: share.objectMetadataId,
-          recordId: share.recordId,
-          principalId: share.principalId,
-          principalType: share.principalType,
-          rowCause: RecordShareRowCause.MANUAL,
-        });
-        if (enabled) {
-          await repository.insert({
-            ...share,
-            rowCause: RecordShareRowCause.MANUAL,
-          });
-        }
+    await this.recordShareWriteOrmService.deleteRecordShares({
+      workspaceId,
+      transactionScope,
+      criteria: {
+        objectMetadataId: share.objectMetadataId,
+        recordIds: [share.recordId],
+        principalId: share.principalId,
+        principalType: share.principalType,
+        rowCause: RecordShareRowCause.MANUAL,
       },
-    );
+    });
+
+    if (enabled) {
+      await this.recordShareWriteOrmService.insertRecordShares({
+        workspaceId,
+        transactionScope,
+        recordShares: [{ ...share, rowCause: RecordShareRowCause.MANUAL }],
+        shouldIgnoreConflicts: false,
+      });
+    }
   }
 
-  async insertMany({
+  insertMany({
     workspaceId,
     recordShares,
     transactionScope,
@@ -75,13 +58,12 @@ export class RecordShareStorageService {
     recordShares: RecordShareInput[];
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    if (recordShares.length === 0) {
-      return;
-    }
-
-    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
-      repository.insert(recordShares, { onConflictDoNothing: true }),
-    );
+    return this.recordShareWriteOrmService.insertRecordShares({
+      workspaceId,
+      recordShares,
+      shouldIgnoreConflicts: true,
+      transactionScope,
+    });
   }
 
   async deleteByRecordIds({
@@ -99,31 +81,30 @@ export class RecordShareStorageService {
       return;
     }
 
-    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
-      repository.delete({ objectMetadataId, recordId: In(recordIds) }),
-    );
+    await this.recordShareWriteOrmService.deleteRecordShares({
+      workspaceId,
+      transactionScope,
+      criteria: { objectMetadataId, recordIds },
+    });
   }
 
-  async deleteMatching({
+  deleteMatching({
     workspaceId,
     criteria,
     transactionScope,
   }: {
     workspaceId: string;
-    criteria: FindOptionsWhere<RecordShare>[];
+    criteria: RecordShareCriteria;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    await this.withRepository(
-      { workspaceId, transactionScope },
-      async (repository) => {
-        for (const criterion of criteria) {
-          await repository.delete(criterion);
-        }
-      },
-    );
+    return this.recordShareWriteOrmService.deleteRecordShares({
+      workspaceId,
+      transactionScope,
+      criteria,
+    });
   }
 
-  async deleteBySourceId({
+  deleteBySourceId({
     workspaceId,
     sourceId,
     transactionScope,
@@ -132,13 +113,14 @@ export class RecordShareStorageService {
     sourceId: string;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
-      repository.delete({ sourceId }),
-    );
+    return this.recordShareWriteOrmService.deleteRecordShares({
+      workspaceId,
+      transactionScope,
+      criteria: { sourceId },
+    });
   }
 
-  // Without a custodian the departing member's grants are only dropped
-  async transferMemberGrants({
+  transferMemberGrants({
     workspaceId,
     objectMetadataIds,
     fromWorkspaceMemberId,
@@ -149,93 +131,15 @@ export class RecordShareStorageService {
     fromWorkspaceMemberId: string;
     toWorkspaceMemberId: string | undefined;
   }): Promise<void> {
-    const transferableRowCauses = In([
-      RecordShareRowCause.OWNER,
-      RecordShareRowCause.MANUAL,
-    ]);
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
-          this.withRepository(
-            { workspaceId, transactionScope },
-            async (repository) => {
-              const fromMember = {
-                objectMetadataId: In(objectMetadataIds),
-                principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-                principalId: fromWorkspaceMemberId,
-                rowCause: transferableRowCauses,
-              };
-
-              if (isDefined(toWorkspaceMemberId)) {
-                const fullGrants = await repository.find({
-                  where: {
-                    ...fromMember,
-                    accessLevel: RecordShareAccessLevel.FULL,
-                  },
-                });
-                const fullGrantKeys = new Set(
-                  fullGrants.map(buildRecordShareRowKey),
-                );
-
-                for (const fullGrantsChunk of chunk(
-                  fullGrants,
-                  QUERY_MAX_RECORDS,
-                )) {
-                  await repository.insert(
-                    fullGrantsChunk.map((grant) => ({
-                      objectMetadataId: grant.objectMetadataId,
-                      recordId: grant.recordId,
-                      principalType: grant.principalType,
-                      principalId: toWorkspaceMemberId,
-                      accessLevel: grant.accessLevel,
-                      rowCause: grant.rowCause,
-                      sourceId: grant.sourceId,
-                    })),
-                    { onConflictDoNothing: true },
-                  );
-
-                  // The insert skips the rows the custodian already holds on
-                  // these records, which are raised to full access instead
-                  const custodianGrantIdsToRaise = (
-                    await repository.find({
-                      where: {
-                        principalType:
-                          RecordSharePrincipalType.WORKSPACE_MEMBER,
-                        principalId: toWorkspaceMemberId,
-                        recordId: In(
-                          fullGrantsChunk.map(
-                            (fullGrant) => fullGrant.recordId,
-                          ),
-                        ),
-                        rowCause: transferableRowCauses,
-                        accessLevel: Not(RecordShareAccessLevel.FULL),
-                      },
-                    })
-                  )
-                    .filter((grant) =>
-                      fullGrantKeys.has(buildRecordShareRowKey(grant)),
-                    )
-                    .map((grant) => grant.id);
-
-                  if (custodianGrantIdsToRaise.length > 0) {
-                    await repository.update(
-                      { id: In(custodianGrantIdsToRaise) },
-                      { accessLevel: RecordShareAccessLevel.FULL },
-                    );
-                  }
-                }
-              }
-
-              await repository.delete(fromMember);
-            },
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-    );
+    return this.recordShareWriteOrmService.transferMemberRecordShares({
+      workspaceId,
+      objectMetadataIds,
+      fromWorkspaceMemberId,
+      toWorkspaceMemberId,
+    });
   }
 
-  async insertOwnerGrantsFromSelect({
+  insertOwnerGrantsFromSelect({
     workspaceId,
     recordSelect,
     parameters,
@@ -246,113 +150,11 @@ export class RecordShareStorageService {
     parameters: Record<string, unknown>;
     granteeWorkspaceMemberId: string;
   }): Promise<void> {
-    await this.withRepository({ workspaceId }, (repository) =>
-      repository.executeRaw(
-        `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)}
-           ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-         SELECT granted_record."objectMetadataId", granted_record."recordId", :granteeWorkspaceMemberId, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', granted_record."recordId"
-         FROM (${recordSelect}) AS granted_record
-         ON CONFLICT DO NOTHING`,
-        { ...parameters, granteeWorkspaceMemberId },
-      ),
-    );
-  }
-
-  async findAccessLevelsByObjectMetadataId({
-    workspaceId,
-    principalIds,
-  }: {
-    workspaceId: string;
-    principalIds: string[];
-  }): Promise<Map<string, RecordShareAccessLevel[]>> {
-    if (principalIds.length === 0) {
-      return new Map();
-    }
-
-    const rows = await this.withRepository({ workspaceId }, (repository) =>
-      repository.executeRaw<{
-        objectMetadataId: string;
-        accessLevel: RecordShareAccessLevel;
-      }>(
-        `SELECT DISTINCT "objectMetadataId", "accessLevel" FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "principalId" = ANY(:principalIds) AND "deletedAt" IS NULL`,
-        { principalIds },
-      ),
-    );
-
-    return rows.reduce((accessLevelsByObjectMetadataId, row) => {
-      accessLevelsByObjectMetadataId.set(row.objectMetadataId, [
-        ...(accessLevelsByObjectMetadataId.get(row.objectMetadataId) ?? []),
-        row.accessLevel,
-      ]);
-
-      return accessLevelsByObjectMetadataId;
-    }, new Map<string, RecordShareAccessLevel[]>());
-  }
-
-  async findByRecordIds({
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
-  }): Promise<RecordShare[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-
-    return this.withRepository(
-      { workspaceId, transactionScope },
-      (repository) =>
-        repository.find({
-          where: { objectMetadataId, recordId: In(recordIds) },
-        }),
-    );
-  }
-
-  private async withRepository<TResult>(
-    {
+    return this.recordShareWriteOrmService.insertOwnerRecordSharesFromSelect({
       workspaceId,
-      transactionScope,
-    }: {
-      workspaceId: string;
-      transactionScope?: WorkspaceTransactionScope;
-    },
-    work: (repository: RecordShareRepository) => Promise<TResult>,
-  ): Promise<TResult> {
-    if (isDefined(transactionScope)) {
-      if (transactionScope.workspaceId !== workspaceId) {
-        throw new RecordShareException(
-          `Transaction scope of workspace ${transactionScope.workspaceId} cannot write record shares of workspace ${workspaceId}`,
-          RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
-        );
-      }
-
-      return work(
-        transactionScope.getRepositoryWithoutPermissionChecks<RecordShare>(
-          RECORD_SHARE_OBJECT_METADATA_NAME,
-          { shouldSkipEventEmission: true },
-        ),
-      );
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        work(
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<RecordShare>(
-            RECORD_SHARE_OBJECT_METADATA_NAME,
-            { shouldSkipEventEmission: true },
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-    );
+      recordSelect,
+      parameters,
+      granteeWorkspaceMemberId,
+    });
   }
 }
-
-const buildRecordShareRowKey = (
-  recordShare: Pick<RecordShare, 'objectMetadataId' | 'recordId' | 'rowCause'>,
-) =>
-  `${recordShare.objectMetadataId}:${recordShare.recordId}:${recordShare.rowCause}`;

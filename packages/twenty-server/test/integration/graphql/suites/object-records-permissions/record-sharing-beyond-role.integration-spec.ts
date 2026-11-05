@@ -279,24 +279,18 @@ describe('Records shared beyond the role that can access their object', () => {
       }),
     ).toBe(true);
     expect(
-      await permissionsService.canReadAllRecords({
-        principals,
-        objectMetadataId: flatObjectMetadata.id,
-      }),
-    ).toBe(false);
-    expect(
       await permissionsService.canUpdateSomeRecords({
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await permissionsService.findReadableRecordIds({
+      await permissionsService.canReadRecords({
         principals,
         objectMetadataId: flatObjectMetadata.id,
-        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+        recordIds: [OTHER_RECORD_ID],
       }),
-    ).toEqual([SHARED_RECORD_ID]);
+    ).toBe(false);
     expect(
       await permissionsService.canReadRecords({
         principals,
@@ -501,7 +495,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should deliver events of the records named for the member only', async () => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
-    const resolveAdmittedRecordIds = async () => {
+    const resolveReadableRecordIds = async () => {
       const { flatObjectMetadataMaps } =
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
@@ -535,12 +529,12 @@ describe('Records shared beyond the role that can access their object', () => {
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([SHARED_RECORD_ID]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {

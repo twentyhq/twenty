@@ -414,6 +414,11 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageAttachmentInput {
+  fileId: UUID!
+  label: String!
+}
+
 input AppMessageFolderInput {
   externalId: String!
   isSynced: Boolean
@@ -421,6 +426,7 @@ input AppMessageFolderInput {
 }
 
 input AppMessageInput {
+  attachments: [AppMessageAttachmentInput!]
   externalId: String!
   folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
@@ -2819,6 +2825,7 @@ type IngestAppMessagesOutput {
 
 type IngestedAppMessage {
   externalId: String!
+  hasAttachments: Boolean!
   messageId: UUID!
   messageThreadId: UUID!
 }

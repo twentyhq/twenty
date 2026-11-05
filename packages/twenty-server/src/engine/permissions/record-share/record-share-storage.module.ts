@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { RecordPermissionOrmModule } from 'src/engine/permissions/record-permission-orm/record-permission-orm.module';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [WorkspaceCacheModule],
-  providers: [RecordShareStorageService, PrivateRecordStorageService],
-  exports: [RecordShareStorageService, PrivateRecordStorageService],
+  imports: [WorkspaceCacheModule, RecordPermissionOrmModule],
+  providers: [RecordShareStorageService],
+  exports: [RecordShareStorageService],
 })
 export class RecordShareStorageModule {}

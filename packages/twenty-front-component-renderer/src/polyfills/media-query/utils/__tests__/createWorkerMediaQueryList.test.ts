@@ -100,9 +100,7 @@ describe('createWorkerMediaQueryList', () => {
     expect(subscribeToEnvironmentUpdates).not.toHaveBeenCalled();
 
     expect(() => {
-      mediaQueryList.addListener(
-        null as unknown as Parameters<typeof mediaQueryList.addListener>[0],
-      );
+      mediaQueryList.addListener(null);
       setMatches(true);
     }).not.toThrow();
   });
@@ -357,11 +355,7 @@ describe('createWorkerMediaQueryList', () => {
     const changeListener = jest.fn();
 
     expect(() => {
-      mediaQueryList.addEventListener(
-        'change',
-        changeListener,
-        null as unknown as AddEventListenerOptions,
-      );
+      mediaQueryList.addEventListener('change', changeListener, null);
     }).not.toThrow();
 
     setMatches(true);

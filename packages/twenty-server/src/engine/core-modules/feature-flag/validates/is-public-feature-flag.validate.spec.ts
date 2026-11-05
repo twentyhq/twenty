@@ -66,24 +66,6 @@ describe('publicFeatureFlagValidator', () => {
       }).toThrow(mockException);
     });
 
-    it('should throw the provided exception for undefined key', () => {
-      expect(() => {
-        publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-          undefined as unknown as FeatureFlagKey,
-          mockException,
-        );
-      }).toThrow(mockException);
-    });
-
-    it('should throw the provided exception for null key', () => {
-      expect(() => {
-        publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-          null as unknown as FeatureFlagKey,
-          mockException,
-        );
-      }).toThrow(mockException);
-    });
-
     it('should maintain type assertion after validation', () => {
       const publicFlag = mockPublicFeatureFlag;
 

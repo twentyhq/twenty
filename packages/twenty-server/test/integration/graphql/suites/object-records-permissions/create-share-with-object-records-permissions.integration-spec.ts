@@ -27,7 +27,7 @@ import {
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -62,7 +62,7 @@ const findManyOperation = (recordId: string) =>
   });
 
 describe('createShareWithObjectRecordsPermissions', () => {
-  let recordShareStorageService: RecordShareStorageService;
+  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
   let objectMetadataId: string;
   let personRelationFieldMetadataId: string;
 
@@ -70,7 +70,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordShareStorageService.findByRecordIds({
+    recordPermissionReadOrmService.findRecordShares({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       recordIds: [recordId],
@@ -85,9 +85,9 @@ describe('createShareWithObjectRecordsPermissions', () => {
   };
 
   beforeAll(async () => {
-    recordShareStorageService =
-      getAppProviderByClassName<RecordShareStorageService>(
-        'RecordShareStorageService',
+    recordPermissionReadOrmService =
+      getAppProviderByClassName<RecordPermissionReadOrmService>(
+        'RecordPermissionReadOrmService',
       );
 
     const { data } = await createOneObjectMetadata({

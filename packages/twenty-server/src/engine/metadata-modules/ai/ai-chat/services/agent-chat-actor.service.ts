@@ -168,9 +168,7 @@ export class AgentChatActorService {
 
   // a member with no role left cannot act in the chat nor run the calls they approve
   async hasRole(authContext: WorkspaceAuthContext): Promise<boolean> {
-    const roleIds = await this.permissionsService.getRoleIds(authContext);
-
-    return roleIds.length > 0;
+    return this.permissionsService.hasAnyRole({ authContext });
   }
 
   // resolved from the application context of the turn that made the call
