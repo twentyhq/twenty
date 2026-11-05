@@ -18,6 +18,7 @@ import {
   WORKSPACE_ID,
 } from 'src/engine/permissions/__tests__/record-access-matrix/record-access-matrix.world';
 import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
 
 const RECORD = { id: 'record-id', status: 'active', deletedAt: null };
@@ -88,11 +89,13 @@ const findGranted = async ({
   authContext,
   operationType,
   hypotheticalRecordShareAccessLevel,
+  isRecordPrivate = false,
   ...options
 }: Parameters<typeof buildCacheValues>[0] & {
   authContext: WorkspaceAuthContext;
   operationType: ObjectRecordsOperationType;
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  isRecordPrivate?: boolean;
 }) => {
   const { cacheValues, flatObjectMetadata } = buildCacheValues(options);
   const services = buildMatrixServices(cacheValues);
@@ -114,7 +117,10 @@ const findGranted = async ({
       fetchRecordShares: async () => [],
       findPrivateRecordStates: async () =>
         new Map([
-          [RECORD.id, { isPrivate: true, createdByWorkspaceMemberId: null }],
+          [
+            RECORD.id,
+            { isPrivate: isRecordPrivate, createdByWorkspaceMemberId: null },
+          ],
         ]),
     },
   });
@@ -135,6 +141,12 @@ describe('record access object rules', () => {
           await findGranted({
             authContext: MEMBER_AUTH_CONTEXT,
             operationType,
+          }),
+        ).toEqual(new Set([RECORD.id]));
+        expect(
+          await findGranted({
+            authContext: MEMBER_AUTH_CONTEXT,
+            operationType,
             disabledObjectPermissionActions: [action],
           }),
         ).toEqual(new Set());
@@ -147,7 +159,6 @@ describe('record access object rules', () => {
           authContext: MEMBER_AUTH_CONTEXT,
           operationType: 'select',
           disabledObjectPermissionActions: ['canDestroyObjectRecords'],
-          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
         }),
       ).toEqual(new Set([RECORD.id]));
     });
@@ -159,7 +170,6 @@ describe('record access object rules', () => {
           operationType: 'select',
           disabledObjectPermissionActions: ['canReadObjectRecords'],
           objectApplicationId: MAIN_APPLICATION_ID,
-          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
         }),
       ).toEqual(new Set([RECORD.id]));
     });
@@ -172,6 +182,46 @@ describe('record access object rules', () => {
           disabledObjectPermissionActions: ['canReadObjectRecords'],
         }),
       ).toEqual(new Set());
+    });
+  });
+
+  describe('AI run scope', () => {
+    const buildScopeAuthContext = (grant: 'none' | 'allRecords') =>
+      ({
+        ...USER_AUTH_CONTEXT,
+        aiRunScope: {
+          permissionFlags: {},
+          recordsPermissions: {
+            ...NO_ROLE_RECORDS_PERMISSIONS,
+            objects: {
+              [OBJECT_ID]: {
+                canReadAllRecords: grant === 'allRecords',
+                canUpdateAllRecords: grant === 'allRecords',
+                canSoftDeleteAllRecords: grant === 'allRecords',
+                canDestroyAllRecords: grant === 'allRecords',
+                restrictedFields: {},
+              },
+            },
+          },
+        },
+      }) as unknown as WorkspaceAuthContext;
+
+    it('takes away what the role grants when the scope grants nothing', async () => {
+      expect(
+        await findGranted({
+          authContext: buildScopeAuthContext('none'),
+          operationType: 'select',
+        }),
+      ).toEqual(new Set());
+    });
+
+    it('keeps what both the role and the scope grant', async () => {
+      expect(
+        await findGranted({
+          authContext: buildScopeAuthContext('allRecords'),
+          operationType: 'select',
+        }),
+      ).toEqual(new Set([RECORD.id]));
     });
   });
 
@@ -275,6 +325,7 @@ describe('record access object rules', () => {
         authContext: MEMBER_AUTH_CONTEXT,
         operationType,
         hypotheticalRecordShareAccessLevel: level,
+        isRecordPrivate: true,
         isSharingEnabled: true,
       });
 

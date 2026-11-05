@@ -36,7 +36,13 @@ const FLAG = PermissionFlagType.WORKSPACE;
 const DELETED_APPLICATION_ID = 'deleted-application-id';
 const ROLELESS_APPLICATION_ID = 'roleless-application-id';
 
-const buildRole = (id: string, roleSetting: RoleSetting) => ({
+const buildRole = ({
+  id,
+  roleSetting,
+}: {
+  id: string;
+  roleSetting: RoleSetting;
+}) => ({
   id,
   canUpdateAllSettings: roleSetting === 'all settings',
   rolePermissionFlagIds: roleSetting === 'flag assigned' ? [`flag-${id}`] : [],
@@ -78,7 +84,10 @@ const buildService = ({
     },
     flatRoleMaps: {
       byUniversalIdentifier: Object.fromEntries(
-        roles.map(({ id, roleSetting }) => [id, buildRole(id, roleSetting)]),
+        roles.map(({ id, roleSetting }) => [
+          id,
+          buildRole({ id, roleSetting }),
+        ]),
       ),
       universalIdentifierById: Object.fromEntries(
         roles.map(({ id }) => [id, id]),

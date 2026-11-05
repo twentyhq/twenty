@@ -7,6 +7,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
@@ -15,6 +16,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -27,12 +29,14 @@ import {
   type RoleGrant,
   WORKSPACE_MEMBER_ID,
 } from 'src/engine/permissions/__tests__/record-access-matrix/record-access-matrix.model';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const WORKSPACE_ID = 'workspace-id';
 export const OBJECT_ID = 'object-id';
 const STATUS_FIELD_ID = 'status-field-id';
+const CATEGORY_FIELD_ID = 'category-field-id';
 const CREATED_BY_FIELD_ID = 'created-by-field-id';
 export const USER_ID = 'user-id';
 export const USER_WORKSPACE_ID = 'user-workspace-id';
@@ -42,6 +46,7 @@ export const APPLICATION_ID = 'application-id';
 export const OAUTH_APPLICATION_ID = 'oauth-application-id';
 export const MAIN_APPLICATION_ID = 'main-application-id';
 const MATCHING_STATUS = 'active';
+const MATCHING_CATEGORY = 'core';
 
 const FLAT_ENTITY_DEFAULTS = {
   applicationId: 'object-owner-application-id',
@@ -60,13 +65,13 @@ const buildMaps = <TFlatEntity extends SyncableFlatEntity>(
     createEmptyFlatEntityMaps(),
   );
 
-export const FLAT_OBJECT_METADATA = {
+export const FLAT_OBJECT_METADATA: FlatObjectMetadata = {
   ...getFlatObjectMetadataMock({
     id: OBJECT_ID,
     universalIdentifier: OBJECT_ID,
     nameSingular: 'thing',
     namePlural: 'things',
-    fieldIds: [STATUS_FIELD_ID, CREATED_BY_FIELD_ID],
+    fieldIds: [STATUS_FIELD_ID, CATEGORY_FIELD_ID, CREATED_BY_FIELD_ID],
   }),
   ...FLAT_ENTITY_DEFAULTS,
   isSystem: false,
@@ -78,6 +83,13 @@ const FLAT_FIELD_METADATA_MAPS = buildMaps([
     id: STATUS_FIELD_ID,
     universalIdentifier: STATUS_FIELD_ID,
     name: 'status',
+    type: FieldMetadataType.TEXT,
+    objectMetadataId: OBJECT_ID,
+  }),
+  getFlatFieldMetadataMock({
+    id: CATEGORY_FIELD_ID,
+    universalIdentifier: CATEGORY_FIELD_ID,
+    name: 'category',
     type: FieldMetadataType.TEXT,
     objectMetadataId: OBJECT_ID,
   }),
@@ -117,6 +129,17 @@ const buildRoleRecordsPermissions = (
   objects: { [OBJECT_ID]: buildObjectPermissions(grant) },
 });
 
+const ROW_LEVEL_FILTER_BY_ROLE_ID: Record<
+  string,
+  { fieldMetadataId: string; value: string }
+> = {
+  [MAIN_ROLE_ID]: { fieldMetadataId: STATUS_FIELD_ID, value: MATCHING_STATUS },
+  [LIMITING_ROLE_ID]: {
+    fieldMetadataId: CATEGORY_FIELD_ID,
+    value: MATCHING_CATEGORY,
+  },
+};
+
 const buildRowLevelFixtures = (roleIds: string[]) => ({
   predicateGroups: roleIds.map(
     (roleId): FlatRowLevelPermissionPredicateGroup =>
@@ -145,8 +168,9 @@ const buildRowLevelFixtures = (roleIds: string[]) => ({
         roleUniversalIdentifier: roleId,
         objectMetadataId: OBJECT_ID,
         objectMetadataUniversalIdentifier: OBJECT_ID,
-        fieldMetadataId: STATUS_FIELD_ID,
-        fieldMetadataUniversalIdentifier: STATUS_FIELD_ID,
+        fieldMetadataId: ROW_LEVEL_FILTER_BY_ROLE_ID[roleId].fieldMetadataId,
+        fieldMetadataUniversalIdentifier:
+          ROW_LEVEL_FILTER_BY_ROLE_ID[roleId].fieldMetadataId,
         relationFieldMetadataId: null,
         relationFieldMetadataUniversalIdentifier: null,
         workspaceMemberFieldMetadataId: null,
@@ -154,7 +178,7 @@ const buildRowLevelFixtures = (roleIds: string[]) => ({
         workspaceMemberSubFieldName: null,
         subFieldName: null,
         operand: RowLevelPermissionPredicateOperand.IS,
-        value: MATCHING_STATUS,
+        value: ROW_LEVEL_FILTER_BY_ROLE_ID[roleId].value,
         rowLevelPermissionPredicateGroupId: `group-${roleId}`,
         rowLevelPermissionPredicateGroupUniversalIdentifier: `group-${roleId}`,
         positionInRowLevelPermissionPredicateGroup: 0,
@@ -162,6 +186,21 @@ const buildRowLevelFixtures = (roleIds: string[]) => ({
       }) as FlatRowLevelPermissionPredicate,
   ),
 });
+
+type MatrixCacheValues = Omit<
+  PermissionsMetadataMaps,
+  'flatFieldMetadataMaps' | 'flatWorkspaceMemberMaps' | 'flatApplicationMaps'
+> & {
+  flatFieldMetadataMapsOrm: PermissionsMetadataMaps['flatFieldMetadataMaps'];
+  flatApplicationMaps: {
+    byId: Record<string, object>;
+    idByUniversalIdentifier: Record<string, string>;
+  };
+  userWorkspaceRoleMap: Record<string, string>;
+  apiKeyRoleMap: Record<string, string>;
+  flatRoleTargetByAgentIdMaps: Record<string, { roleId: string }>;
+  flatWorkspaceMemberMaps: object;
+};
 
 export const buildMatrixCacheValues = ({
   mainRoleGrant,
@@ -171,7 +210,7 @@ export const buildMatrixCacheValues = ({
   mainRoleGrant: RoleGrant;
   limitingRoleGrant: RoleGrant;
   isSharingEnabled: boolean;
-}) => {
+}): MatrixCacheValues => {
   const rowLevelRoleIds = [
     ...(mainRoleGrant === 'rowLevel' ? [MAIN_ROLE_ID] : []),
     ...(limitingRoleGrant === 'rowLevel' ? [LIMITING_ROLE_ID] : []),
@@ -248,11 +287,15 @@ export const API_KEY_AUTH_CONTEXT = {
   apiKey: { id: API_KEY_ID },
 };
 
-const buildActor = (
-  name: string,
-  authContext: object,
-  traits: Partial<MatrixActor> = {},
-): { actor: MatrixActor; authContext: WorkspaceAuthContext } => ({
+const buildActor = ({
+  name,
+  authContext,
+  traits = {},
+}: {
+  name: string;
+  authContext: object;
+  traits?: Partial<MatrixActor>;
+}): { actor: MatrixActor; authContext: WorkspaceAuthContext } => ({
   actor: {
     name,
     isWorkspaceMember: false,
@@ -264,37 +307,50 @@ const buildActor = (
 });
 
 export const MATRIX_ACTORS = [
-  buildActor('member', USER_AUTH_CONTEXT, { isWorkspaceMember: true }),
-  buildActor(
-    'member acting through an agent',
-    { ...USER_AUTH_CONTEXT, agentId: AGENT_ID },
-    { isWorkspaceMember: true, hasLimitingRole: true },
-  ),
-  buildActor(
-    'member acting through an application',
-    { ...USER_AUTH_CONTEXT, application: { id: APPLICATION_ID } },
-    { isWorkspaceMember: true, hasLimitingRole: true },
-  ),
-  buildActor(
-    'member acting through an OAuth application',
-    { ...USER_AUTH_CONTEXT, application: { id: OAUTH_APPLICATION_ID } },
-    { isWorkspaceMember: true },
-  ),
-  buildActor(
-    'member in an AI run',
-    { ...USER_AUTH_CONTEXT, aiRunScope: UNRESTRICTED_AI_RUN_SCOPE },
-    { isWorkspaceMember: true, hasAiRunScope: true },
-  ),
-  buildActor('API key', API_KEY_AUTH_CONTEXT),
-  buildActor(
-    'API key running an agent',
-    { ...API_KEY_AUTH_CONTEXT, agentId: AGENT_ID },
-    { hasLimitingRole: true },
-  ),
-  buildActor('application', {
-    type: 'application',
-    workspace: { id: WORKSPACE_ID },
-    application: { id: MAIN_APPLICATION_ID },
+  buildActor({
+    name: 'member',
+    authContext: USER_AUTH_CONTEXT,
+    traits: { isWorkspaceMember: true },
+  }),
+  buildActor({
+    name: 'member acting through an agent',
+    authContext: { ...USER_AUTH_CONTEXT, agentId: AGENT_ID },
+    traits: { isWorkspaceMember: true, hasLimitingRole: true },
+  }),
+  buildActor({
+    name: 'member acting through an application',
+    authContext: { ...USER_AUTH_CONTEXT, application: { id: APPLICATION_ID } },
+    traits: { isWorkspaceMember: true, hasLimitingRole: true },
+  }),
+  buildActor({
+    name: 'member acting through an OAuth application',
+    authContext: {
+      ...USER_AUTH_CONTEXT,
+      application: { id: OAUTH_APPLICATION_ID },
+    },
+    traits: { isWorkspaceMember: true },
+  }),
+  buildActor({
+    name: 'member in an AI run',
+    authContext: {
+      ...USER_AUTH_CONTEXT,
+      aiRunScope: UNRESTRICTED_AI_RUN_SCOPE,
+    },
+    traits: { isWorkspaceMember: true, hasAiRunScope: true },
+  }),
+  buildActor({ name: 'API key', authContext: API_KEY_AUTH_CONTEXT }),
+  buildActor({
+    name: 'API key running an agent',
+    authContext: { ...API_KEY_AUTH_CONTEXT, agentId: AGENT_ID },
+    traits: { hasLimitingRole: true },
+  }),
+  buildActor({
+    name: 'application',
+    authContext: {
+      type: 'application',
+      workspace: { id: WORKSPACE_ID },
+      application: { id: MAIN_APPLICATION_ID },
+    },
   }),
 ];
 
@@ -316,28 +372,54 @@ const buildShares = () => [
   ),
 ];
 
+const toRowId = ({
+  isPrivate,
+  isCreatedByActor,
+  matchesMainRoleFilter,
+  matchesLimitingRoleFilter,
+  sharePrincipalId,
+  shareAccessLevel,
+}: Omit<MatrixRow, 'id'>) =>
+  [
+    isPrivate ? 'private' : 'public',
+    isCreatedByActor ? 'mine' : 'theirs',
+    matchesMainRoleFilter ? 'main-match' : 'main-miss',
+    matchesLimitingRoleFilter ? 'limiting-match' : 'limiting-miss',
+    sharePrincipalId ?? 'unshared',
+    shareAccessLevel ?? 'none',
+  ]
+    .join('-')
+    .toLowerCase();
+
 export const MATRIX_ROWS: MatrixRow[] = [true, false].flatMap((isPrivate) =>
   [true, false].flatMap((isCreatedByActor) =>
-    [true, false].flatMap((matchesRowLevelFilter) =>
-      buildShares().map((share, shareIndex) => ({
-        id: `${isPrivate ? 'private' : 'public'}-${isCreatedByActor ? 'mine' : 'theirs'}-${matchesRowLevelFilter ? 'match' : 'miss'}-${shareIndex === 0 ? 'unshared' : `${share.sharePrincipalId}-${share.shareAccessLevel}`}`.toLowerCase(),
-        isPrivate,
-        isCreatedByActor,
-        matchesRowLevelFilter,
-        ...share,
-      })),
+    [true, false].flatMap((matchesMainRoleFilter) =>
+      [true, false].flatMap((matchesLimitingRoleFilter) =>
+        buildShares().map((share) => {
+          const row = {
+            isPrivate,
+            isCreatedByActor,
+            matchesMainRoleFilter,
+            matchesLimitingRoleFilter,
+            ...share,
+          };
+
+          return { ...row, id: toRowId(row) };
+        }),
+      ),
     ),
   ),
 );
 
 export const toRecord = (row: MatrixRow) => ({
   id: row.id,
-  status: row.matchesRowLevelFilter ? MATCHING_STATUS : 'archived',
+  status: row.matchesMainRoleFilter ? MATCHING_STATUS : 'archived',
+  category: row.matchesLimitingRoleFilter ? MATCHING_CATEGORY : 'other',
   deletedAt: null,
 });
 
 export const MATRIX_RECORD_SHARES = MATRIX_ROWS.flatMap((row) =>
-  row.sharePrincipalId !== undefined && row.shareAccessLevel !== undefined
+  isDefined(row.sharePrincipalId) && isDefined(row.shareAccessLevel)
     ? [
         {
           recordId: row.id,

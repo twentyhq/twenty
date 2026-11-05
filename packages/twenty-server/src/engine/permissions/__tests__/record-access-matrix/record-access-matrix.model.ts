@@ -3,6 +3,7 @@ import {
   type ObjectRecordsOperationType,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type RoleGrant = 'none' | 'rowLevel' | 'allRecords';
 
@@ -17,7 +18,8 @@ export type MatrixRow = {
   id: string;
   isPrivate: boolean;
   isCreatedByActor: boolean;
-  matchesRowLevelFilter: boolean;
+  matchesMainRoleFilter: boolean;
+  matchesLimitingRoleFilter: boolean;
   sharePrincipalId: string | undefined;
   shareAccessLevel: RecordShareAccessLevel | undefined;
 };
@@ -52,24 +54,23 @@ export const ACCESS_LEVELS_BY_OPERATION: Record<
   insert: [],
 };
 
-// Each flag names a point where the code differs from the stated permission
-// rules. Flip it in CURRENT_RULES once the code is fixed.
+// Each flag is a point where the code differs from the stated rules: flip it once fixed
 export type MatrixRules = {
-  everyoneShareGrantsAccess: boolean;
-  limitingRoleBoundsRecordGrants: boolean;
-  limitingRoleShareReachesActor: boolean;
+  canEveryoneShareGrantAccess: boolean;
+  shouldLimitingRoleBoundRecordGrants: boolean;
+  canLimitingRoleShareReachActor: boolean;
 };
 
 export const STATED_RULES: MatrixRules = {
-  everyoneShareGrantsAccess: true,
-  limitingRoleBoundsRecordGrants: true,
-  limitingRoleShareReachesActor: false,
+  canEveryoneShareGrantAccess: true,
+  shouldLimitingRoleBoundRecordGrants: true,
+  canLimitingRoleShareReachActor: false,
 };
 
 export const CURRENT_RULES: MatrixRules = {
-  everyoneShareGrantsAccess: false,
-  limitingRoleBoundsRecordGrants: false,
-  limitingRoleShareReachesActor: true,
+  canEveryoneShareGrantAccess: false,
+  shouldLimitingRoleBoundRecordGrants: false,
+  canLimitingRoleShareReachActor: true,
 };
 
 const isShareHeldByActor = ({
@@ -79,11 +80,11 @@ const isShareHeldByActor = ({
   scenario: MatrixScenario;
   rules: MatrixRules;
 }): boolean =>
-  (rules.everyoneShareGrantsAccess &&
+  (rules.canEveryoneShareGrantAccess &&
     row.sharePrincipalId === EVERYONE_PRINCIPAL_ID) ||
   row.sharePrincipalId === MAIN_ROLE_ID ||
   (actor.isWorkspaceMember && row.sharePrincipalId === WORKSPACE_MEMBER_ID) ||
-  (rules.limitingRoleShareReachesActor &&
+  (rules.canLimitingRoleShareReachActor &&
     actor.hasLimitingRole &&
     row.sharePrincipalId === LIMITING_ROLE_ID);
 
@@ -99,10 +100,13 @@ export type MatrixDecision = {
     | 'no grant';
 };
 
-export const decideRecordAccess = (
-  scenario: MatrixScenario,
-  rules: MatrixRules = CURRENT_RULES,
-): MatrixDecision => {
+export const decideRecordAccess = ({
+  scenario,
+  rules = CURRENT_RULES,
+}: {
+  scenario: MatrixScenario;
+  rules?: MatrixRules;
+}): MatrixDecision => {
   const {
     actor,
     operationType,
@@ -125,7 +129,7 @@ export const decideRecordAccess = (
   }
 
   if (
-    rules.limitingRoleBoundsRecordGrants &&
+    rules.shouldLimitingRoleBoundRecordGrants &&
     actor.hasLimitingRole &&
     limitingRoleGrant === 'none'
   ) {
@@ -134,8 +138,10 @@ export const decideRecordAccess = (
 
   const isWithinRowLevelFilter =
     !isReachedByRoles ||
-    !roleGrants.includes('rowLevel') ||
-    row.matchesRowLevelFilter;
+    ((mainRoleGrant !== 'rowLevel' || row.matchesMainRoleFilter) &&
+      (!actor.hasLimitingRole ||
+        limitingRoleGrant !== 'rowLevel' ||
+        row.matchesLimitingRoleFilter));
 
   if (isReachedByRoles && isWithinRowLevelFilter && !row.isPrivate) {
     return { isGranted: true, reason: 'role' };
@@ -150,7 +156,7 @@ export const decideRecordAccess = (
   }
 
   const isShareSufficient =
-    row.shareAccessLevel !== undefined &&
+    isDefined(row.shareAccessLevel) &&
     ACCESS_LEVELS_BY_OPERATION[operationType].includes(row.shareAccessLevel) &&
     isShareHeldByActor({ scenario, rules });
 

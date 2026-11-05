@@ -4,6 +4,7 @@ import {
   type ObjectRecordsOperationType,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ACCESS_LEVELS_BY_OPERATION,
@@ -171,24 +172,28 @@ const findRow = (row: Partial<MatrixRow>): MatrixRow => {
     Object.entries({
       isPrivate: false,
       isCreatedByActor: false,
-      matchesRowLevelFilter: true,
+      matchesMainRoleFilter: true,
+      matchesLimitingRoleFilter: true,
       sharePrincipalId: undefined,
       shareAccessLevel: undefined,
       ...row,
     }).every(([key, value]) => candidate[key as keyof MatrixRow] === value),
   );
 
-  if (foundRow === undefined) {
+  if (!isDefined(foundRow)) {
     throw new Error(`No matrix row for ${JSON.stringify(row)}`);
   }
 
   return foundRow;
 };
 
-const shareWith = (
-  sharePrincipalId: string,
-  shareAccessLevel: RecordShareAccessLevel,
-) => ({ sharePrincipalId, shareAccessLevel });
+const shareWith = ({
+  principalId,
+  accessLevel,
+}: {
+  principalId: string;
+  accessLevel: RecordShareAccessLevel;
+}) => ({ sharePrincipalId: principalId, shareAccessLevel: accessLevel });
 
 const MEMBER = 'member';
 const MEMBER_THROUGH_AGENT = 'member acting through an agent';
@@ -256,7 +261,7 @@ const READ_BY_HAND: [
     'off',
     'rowLevel',
     'none',
-    { matchesRowLevelFilter: false },
+    { matchesMainRoleFilter: false },
     false,
   ],
   [
@@ -326,7 +331,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     true,
   ],
   [
@@ -336,7 +344,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     false,
   ],
   [
@@ -346,7 +357,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ_WRITE),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+    }),
     true,
   ],
   [
@@ -356,7 +370,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.FULL),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.FULL,
+    }),
     false,
   ],
   [
@@ -366,7 +383,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.NONE),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.NONE,
+    }),
     false,
   ],
   [
@@ -376,7 +396,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith('other-workspace-member-id', RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: 'other-workspace-member-id',
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     false,
   ],
   [
@@ -386,7 +409,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(MAIN_ROLE_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: MAIN_ROLE_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     true,
   ],
   [
@@ -396,7 +422,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(MAIN_ROLE_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: MAIN_ROLE_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     true,
   ],
   [
@@ -406,7 +435,10 @@ const READ_BY_HAND: [
     'off',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     false,
   ],
   [
@@ -418,7 +450,10 @@ const READ_BY_HAND: [
     'none',
     {
       isPrivate: true,
-      ...shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+      ...shareWith({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.READ,
+      }),
     },
     true,
   ],
@@ -431,7 +466,10 @@ const READ_BY_HAND: [
     'none',
     {
       isPrivate: true,
-      ...shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.FULL),
+      ...shareWith({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.FULL,
+      }),
     },
     true,
   ],
@@ -444,7 +482,10 @@ const READ_BY_HAND: [
     'none',
     {
       isPrivate: true,
-      ...shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ_WRITE),
+      ...shareWith({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      }),
     },
     false,
   ],
@@ -457,8 +498,11 @@ const READ_BY_HAND: [
     'none',
     {
       isPrivate: true,
-      matchesRowLevelFilter: false,
-      ...shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.FULL),
+      matchesMainRoleFilter: false,
+      ...shareWith({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.FULL,
+      }),
     },
     false,
   ],
@@ -470,8 +514,11 @@ const READ_BY_HAND: [
     'rowLevel',
     'none',
     {
-      matchesRowLevelFilter: false,
-      ...shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+      matchesMainRoleFilter: false,
+      ...shareWith({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.READ,
+      }),
     },
     true,
   ],
@@ -482,7 +529,10 @@ const READ_BY_HAND: [
     'on',
     'none',
     'none',
-    shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+    shareWith({
+      principalId: WORKSPACE_MEMBER_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+    }),
     false,
   ],
   [
@@ -522,7 +572,7 @@ const READ_BY_HAND: [
     'off',
     'allRecords',
     'rowLevel',
-    { matchesRowLevelFilter: false },
+    { matchesLimitingRoleFilter: false },
     false,
   ],
   [
@@ -532,7 +582,7 @@ const READ_BY_HAND: [
     'off',
     'rowLevel',
     'allRecords',
-    { matchesRowLevelFilter: false },
+    { matchesMainRoleFilter: false },
     false,
   ],
   [
@@ -542,6 +592,36 @@ const READ_BY_HAND: [
     'off',
     'allRecords',
     'allRecords',
+    {},
+    true,
+  ],
+  [
+    'both row level filters must match: limiting filter missed',
+    MEMBER_THROUGH_AGENT,
+    'select',
+    'off',
+    'rowLevel',
+    'rowLevel',
+    { matchesLimitingRoleFilter: false },
+    false,
+  ],
+  [
+    'both row level filters must match: main filter missed',
+    MEMBER_THROUGH_AGENT,
+    'select',
+    'off',
+    'rowLevel',
+    'rowLevel',
+    { matchesMainRoleFilter: false },
+    false,
+  ],
+  [
+    'both row level filters matched',
+    MEMBER_THROUGH_AGENT,
+    'select',
+    'off',
+    'rowLevel',
+    'rowLevel',
     {},
     true,
   ],
@@ -573,16 +653,19 @@ describe('record access matrix', () => {
   }) =>
     MATRIX_ROWS.filter(
       (row) =>
-        decideRecordAccess({ ...entry, row }, rules).isGranted !==
+        decideRecordAccess({ scenario: { ...entry, row }, rules }).isGranted !==
         entry.grantedRecordIds.has(row.id),
     ).map((row) => {
-      const { reason } = decideRecordAccess({ ...entry, row }, rules);
+      const { reason } = decideRecordAccess({
+        scenario: { ...entry, row },
+        rules,
+      });
 
       return `${describeEntry(entry)} / ${row.id}: expected ${entry.grantedRecordIds.has(row.id) ? 'deny' : 'grant'} (${reason})`;
     });
 
   it('covers every combination', () => {
-    expect(entries.length * MATRIX_ROWS.length).toBeGreaterThan(50000);
+    expect(entries.length * MATRIX_ROWS.length).toBeGreaterThan(100000);
   });
 
   it('decides every combination as the rules say', () => {
@@ -629,24 +712,33 @@ describe('record access matrix', () => {
     it.each<[string, Partial<MatrixRules>, string, Partial<MatrixRow>]>([
       [
         'an everyone share row grants nothing',
-        { everyoneShareGrantsAccess: true },
+        { canEveryoneShareGrantAccess: true },
         MEMBER,
-        shareWith(EVERYONE_PRINCIPAL_ID, RecordShareAccessLevel.READ),
+        shareWith({
+          principalId: EVERYONE_PRINCIPAL_ID,
+          accessLevel: RecordShareAccessLevel.READ,
+        }),
       ],
       [
         'a limiting role with no access does not stop a share',
-        { limitingRoleBoundsRecordGrants: true },
+        { shouldLimitingRoleBoundRecordGrants: true },
         MEMBER_THROUGH_AGENT,
-        shareWith(WORKSPACE_MEMBER_ID, RecordShareAccessLevel.READ),
+        shareWith({
+          principalId: WORKSPACE_MEMBER_ID,
+          accessLevel: RecordShareAccessLevel.READ,
+        }),
       ],
       [
         'a share to the limiting role reaches the member',
         {
-          limitingRoleShareReachesActor: false,
-          limitingRoleBoundsRecordGrants: true,
+          canLimitingRoleShareReachActor: false,
+          shouldLimitingRoleBoundRecordGrants: true,
         },
         MEMBER_THROUGH_AGENT,
-        shareWith(LIMITING_ROLE_ID, RecordShareAccessLevel.READ),
+        shareWith({
+          principalId: LIMITING_ROLE_ID,
+          accessLevel: RecordShareAccessLevel.READ,
+        }),
       ],
     ])('%s', (_name, statedRule, actorName, rowFields) => {
       const entry = entries.find(
@@ -660,8 +752,10 @@ describe('record access matrix', () => {
       const row = findRow(rowFields);
 
       expect(
-        decideRecordAccess({ ...entry, row }, buildScenarioRules(statedRule))
-          .isGranted,
+        decideRecordAccess({
+          scenario: { ...entry, row },
+          rules: buildScenarioRules(statedRule),
+        }).isGranted,
       ).not.toBe(entry.grantedRecordIds.has(row.id));
     });
 
@@ -671,22 +765,18 @@ describe('record access matrix', () => {
   });
 
   describe('invariants', () => {
-    const groupKey = (entry: MatrixEntry, ...omitted: (keyof MatrixEntry)[]) =>
-      JSON.stringify(
-        [
-          'actor',
-          'operationType',
-          'isSharingEnabled',
-          'mainRoleGrant',
-          'limitingRoleGrant',
-        ].map((key) =>
-          omitted.includes(key as keyof MatrixEntry)
-            ? undefined
-            : key === 'actor'
-              ? entry.actor.name
-              : entry[key as keyof MatrixEntry],
-        ),
-      );
+    const groupKey = (
+      entry: MatrixEntry,
+      omittedGrant: 'mainRoleGrant' | 'limitingRoleGrant',
+    ) =>
+      JSON.stringify({
+        actorName: entry.actor.name,
+        operationType: entry.operationType,
+        isSharingEnabled: entry.isSharingEnabled,
+        mainRoleGrant: entry.mainRoleGrant,
+        limitingRoleGrant: entry.limitingRoleGrant,
+        [omittedGrant]: undefined,
+      });
 
     const findMissingFromWiderGrant = (
       grantKey: 'mainRoleGrant' | 'limitingRoleGrant',
@@ -711,7 +801,7 @@ describe('record access matrix', () => {
           const narrowerEntry = byGrant(narrower);
           const widerEntry = byGrant(wider);
 
-          if (narrowerEntry === undefined || widerEntry === undefined) {
+          if (!isDefined(narrowerEntry) || !isDefined(widerEntry)) {
             continue;
           }
 
@@ -753,7 +843,7 @@ describe('record access matrix', () => {
             candidate.mainRoleGrant === entry.mainRoleGrant,
         );
 
-        return unlimited === undefined
+        return !isDefined(unlimited)
           ? []
           : [...entry.grantedRecordIds]
               .filter(
@@ -793,7 +883,7 @@ describe('record access matrix', () => {
           JSON.stringify(value),
         );
         const decisions = MATRIX_ROWS.map((row) =>
-          decideRecordAccess({ ...entry, row }),
+          decideRecordAccess({ scenario: { ...entry, row } }),
         );
         const hasReason = (reason: string) =>
           decisions.some((decision) => decision.reason === reason);
@@ -803,8 +893,13 @@ describe('record access matrix', () => {
         const roleGrants = entry.actor.hasLimitingRole
           ? [entry.mainRoleGrant, entry.limitingRoleGrant]
           : [entry.mainRoleGrant];
-        const isHeldToRowLevelFilter =
-          roleGrants.includes('rowLevel') && !roleGrants.includes('none');
+        const isReachedByRoles = !roleGrants.includes('none');
+        const isHeldToMainFilter =
+          isReachedByRoles && entry.mainRoleGrant === 'rowLevel';
+        const isHeldToLimitingFilter =
+          isReachedByRoles &&
+          entry.actor.hasLimitingRole &&
+          entry.limitingRoleGrant === 'rowLevel';
 
         return [
           hasReason('share') &&
@@ -815,11 +910,11 @@ describe('record access matrix', () => {
           hasReason('creator') && isMissing(WORKSPACE_MEMBER_ID)
             ? `${label}: creator clause lacks the member`
             : undefined,
-          isHeldToRowLevelFilter && !sql.includes('"status"')
-            ? `${label}: row level filter missing`
+          isHeldToMainFilter !== sql.includes('"status"')
+            ? `${label}: main role filter ${isHeldToMainFilter ? 'missing' : 'unexpected'}`
             : undefined,
-          !isHeldToRowLevelFilter && sql.includes('"status"')
-            ? `${label}: unexpected row level filter`
+          isHeldToLimitingFilter !== sql.includes('"category"')
+            ? `${label}: limiting role filter ${isHeldToLimitingFilter ? 'missing' : 'unexpected'}`
             : undefined,
         ].filter((violation) => violation !== undefined);
       });
