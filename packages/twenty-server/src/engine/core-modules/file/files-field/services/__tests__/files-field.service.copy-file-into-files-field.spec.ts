@@ -1,34 +1,24 @@
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { Test } from '@nestjs/testing';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 describe('FilesFieldService.copyFileIntoFilesField', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
   const chatFileId = '20202020-0000-4000-8000-000000000002';
   const fieldMetadataId = '20202020-0000-4000-8000-000000000004';
 
-  let fileStorageService: jest.Mocked<FileStorageService>;
-  let applicationRepository: jest.Mocked<
-    WorkspaceScopedRepository<ApplicationEntity>
-  >;
-  let fieldMetadataRepository: jest.Mocked<
-    WorkspaceScopedRepository<FieldMetadataEntity>
-  >;
-  let fileRepository: jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
-
-  const buildService = () =>
-    new FilesFieldService(
-      fileStorageService,
-      applicationRepository,
-      fieldMetadataRepository,
-      fileRepository,
-      {} as FileUrlService,
-    );
+  let fileStorageService: { copyFile: jest.Mock };
+  let applicationRepository: { findOneOrFail: jest.Mock };
+  let fieldMetadataRepository: { findOneOrFail: jest.Mock };
+  let fileRepository: { findOne: jest.Mock };
+  let filesFieldService: FilesFieldService;
 
   const buildChatFile = (overrides: Partial<FileEntity> = {}) =>
     ({
@@ -41,12 +31,12 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       ...overrides,
     }) as FileEntity;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fileStorageService = {
       copyFile: jest
         .fn()
         .mockImplementation(async ({ fileId }) => ({ id: fileId })),
-    } as unknown as jest.Mocked<FileStorageService>;
+    };
 
     applicationRepository = {
       findOneOrFail: jest
@@ -54,18 +44,40 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
         .mockImplementation(async (_workspaceId, { where }) => ({
           universalIdentifier: `${where.id}-universal-identifier`,
         })),
-    } as unknown as jest.Mocked<WorkspaceScopedRepository<ApplicationEntity>>;
+    };
 
     fieldMetadataRepository = {
       findOneOrFail: jest.fn().mockResolvedValue({
         applicationId: 'field-application-id',
         universalIdentifier: 'field-universal-identifier',
       }),
-    } as unknown as jest.Mocked<WorkspaceScopedRepository<FieldMetadataEntity>>;
+    };
 
     fileRepository = {
       findOne: jest.fn().mockResolvedValue(null),
-    } as unknown as jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
+    };
+
+    const module = await Test.createTestingModule({
+      providers: [
+        FilesFieldService,
+        { provide: FileStorageService, useValue: fileStorageService },
+        {
+          provide: getWorkspaceScopedRepositoryToken(ApplicationEntity),
+          useValue: applicationRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(FieldMetadataEntity),
+          useValue: fieldMetadataRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(FileEntity),
+          useValue: fileRepository,
+        },
+        { provide: FileUrlService, useValue: {} },
+      ],
+    }).compile();
+
+    filesFieldService = module.get(FilesFieldService);
   });
 
   afterEach(() => {
@@ -74,7 +86,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
   it('should throw when the file does not exist', async () => {
     await expect(
-      buildService().copyFileIntoFilesField({
+      filesFieldService.copyFileIntoFilesField({
         fileId: chatFileId,
         workspaceId,
         fieldMetadataId,
@@ -90,7 +102,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
     );
 
     await expect(
-      buildService().copyFileIntoFilesField({
+      filesFieldService.copyFileIntoFilesField({
         fileId: chatFileId,
         workspaceId,
         fieldMetadataId,
@@ -103,7 +115,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
   it('should copy an agent-chat file into the files field partition', async () => {
     fileRepository.findOne.mockResolvedValue(buildChatFile());
 
-    const result = await buildService().copyFileIntoFilesField({
+    const result = await filesFieldService.copyFileIntoFilesField({
       fileId: chatFileId,
       workspaceId,
       fieldMetadataId,
@@ -143,7 +155,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       buildChatFile({ path: `agent-chat/${chatFileId}.csv` }),
     );
 
-    await buildService().copyFileIntoFilesField({
+    await filesFieldService.copyFileIntoFilesField({
       fileId: chatFileId,
       workspaceId,
       fieldMetadataId,

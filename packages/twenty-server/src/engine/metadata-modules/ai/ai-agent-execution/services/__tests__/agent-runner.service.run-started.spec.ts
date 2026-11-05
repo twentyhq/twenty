@@ -7,18 +7,24 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
-const JOB_DATA = {
+const JOB_DATA: RunAgentJobData = {
   workspaceId: 'workspace-id',
   conversation: { threadId: 'thread-id', isCreated: true },
   caller: { type: 'AGENT_API_RUN', ref: { runId: 'run-id' } },
-  spec: { agentId: 'agent-id', title: 'Follow up' },
+  spec: {
+    agentId: 'agent-id',
+    title: 'Follow up',
+    baseSystemPrompt: '',
+    instructions: null,
+    capabilities: { canAskHumans: false },
+  },
   turnId: 'run-id',
   prompt: {
     messages: [{ role: 'user', content: 'Follow up tomorrow' }],
     senderUserWorkspaceId: null,
     senderApplicationId: 'application-id',
   },
-} as unknown as RunAgentJobData;
+};
 
 const buildRunner = (recordedTurn: { status: AgentTurnStatus } | null) => {
   const handler = {

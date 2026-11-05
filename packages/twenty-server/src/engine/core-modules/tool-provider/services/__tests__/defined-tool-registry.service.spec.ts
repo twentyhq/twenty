@@ -1,4 +1,5 @@
-import { type DiscoveryService } from '@nestjs/core';
+import { DiscoveryService } from '@nestjs/core';
+import { Test } from '@nestjs/testing';
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -12,7 +13,7 @@ import {
   type ApplicationWorkspaceAuthContext,
   type UserWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -20,7 +21,7 @@ import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provide
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -162,7 +163,7 @@ class RotateWebhookSecretTool extends BaseTool<
   }
 }
 
-const buildDefinedToolRegistryService = ({
+const buildDefinedToolRegistryService = async ({
   tools,
   isGranted,
   enabledFeatureFlags = [],
@@ -181,19 +182,29 @@ const buildDefinedToolRegistryService = ({
       ),
   };
 
-  const definedToolRegistryService = new DefinedToolRegistryService(
-    {
-      getProviders: () =>
-        tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
-    } as unknown as DiscoveryService,
-    new AccessPolicyService(
+  const module = await Test.createTestingModule({
+    providers: [
+      DefinedToolRegistryService,
+      AccessPolicyService,
       {
-        hasPermissionFlag: jest.fn().mockResolvedValue(isGranted),
-      } as unknown as PermissionsService,
-      featureFlagService as unknown as FeatureFlagService,
-    ),
-    featureFlagService as unknown as FeatureFlagService,
-  );
+        provide: DiscoveryService,
+        useValue: {
+          getProviders: () =>
+            tools.map((tool) => ({
+              instance: tool,
+              metatype: tool.constructor,
+            })),
+        },
+      },
+      {
+        provide: PermissionsService,
+        useValue: { hasPermissionFlag: jest.fn().mockResolvedValue(isGranted) },
+      },
+      { provide: FeatureFlagService, useValue: featureFlagService },
+    ],
+  }).compile();
+
+  const definedToolRegistryService = module.get(DefinedToolRegistryService);
 
   definedToolRegistryService.onModuleInit();
 
@@ -210,9 +221,13 @@ const listToolNames = async (
     })
   ).map(({ name }) => name);
 
-const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
+const buildRenameWebhookTool = async ({
+  isGranted,
+}: {
+  isGranted: boolean;
+}) => {
   const tool = new RenameWebhookTool();
-  const { definedToolRegistryService } = buildDefinedToolRegistryService({
+  const { definedToolRegistryService } = await buildDefinedToolRegistryService({
     tools: [tool],
     isGranted,
   });
@@ -228,10 +243,11 @@ const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
 describe('DefinedToolRegistryService', () => {
   describe('getAvailableDescriptors', () => {
     it('should list a declared icon and leave it out for tools without one', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [new RenameWebhookTool(), new ArchiveWebhookTool()],
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools: [new RenameWebhookTool(), new ArchiveWebhookTool()],
+          isGranted: true,
+        });
 
       const descriptors =
         await definedToolRegistryService.getAvailableDescriptors(context, {
@@ -264,24 +280,26 @@ describe('DefinedToolRegistryService', () => {
 
       expect(
         await listToolNames(
-          buildDefinedToolRegistryService({ tools, isGranted: true })
+          (await buildDefinedToolRegistryService({ tools, isGranted: true }))
             .definedToolRegistryService,
         ),
       ).toEqual(['rename_webhook']);
       expect(
         await listToolNames(
-          buildDefinedToolRegistryService({
-            tools,
-            isGranted: true,
-            enabledFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
-          }).definedToolRegistryService,
+          (
+            await buildDefinedToolRegistryService({
+              tools,
+              isGranted: true,
+              enabledFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+            })
+          ).definedToolRegistryService,
         ),
       ).toEqual(['rename_webhook', 'replay_webhook']);
     });
 
     it('should read the workspace feature flags once per listing', async () => {
       const { definedToolRegistryService, featureFlagService } =
-        buildDefinedToolRegistryService({
+        await buildDefinedToolRegistryService({
           tools: [new ReplayWebhookTool(), new PauseWebhookTool()],
           isGranted: true,
           enabledFeatureFlags: [
@@ -307,10 +325,11 @@ describe('DefinedToolRegistryService', () => {
     const tools = [new RenameWebhookTool(), new RotateWebhookSecretTool()];
 
     it('should hide a tool from a principal its access policy refuses', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools,
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools,
+          isGranted: true,
+        });
 
       expect(
         await listToolNames(definedToolRegistryService, {
@@ -321,10 +340,11 @@ describe('DefinedToolRegistryService', () => {
     });
 
     it('should not count the agent a caller acts through against the access policy', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools,
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools,
+          isGranted: true,
+        });
 
       expect(
         await listToolNames(definedToolRegistryService, {
@@ -339,10 +359,11 @@ describe('DefinedToolRegistryService', () => {
     });
 
     it('should list no tool to a caller with no principal', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools,
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools,
+          isGranted: true,
+        });
 
       expect(
         await listToolNames(definedToolRegistryService, {
@@ -356,7 +377,7 @@ describe('DefinedToolRegistryService', () => {
   describe('execute', () => {
     it('should run the tool with its parsed input when every flag is granted', async () => {
       const { definedToolRegistryService, definedTool } =
-        buildRenameWebhookTool({ isGranted: true });
+        await buildRenameWebhookTool({ isGranted: true });
 
       const output = await definedToolRegistryService.execute({
         definedTool,
@@ -372,7 +393,7 @@ describe('DefinedToolRegistryService', () => {
 
     it('should refuse the tool when a flag is no longer granted at call time', async () => {
       const { definedToolRegistryService, definedTool, tool } =
-        buildRenameWebhookTool({ isGranted: false });
+        await buildRenameWebhookTool({ isGranted: false });
       const executeSpy = jest.spyOn(tool, 'execute');
 
       const output = await definedToolRegistryService.execute({
@@ -390,10 +411,11 @@ describe('DefinedToolRegistryService', () => {
 
     it('should refuse the tool to a principal its access policy refuses', async () => {
       const tool = new RotateWebhookSecretTool();
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [tool],
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools: [tool],
+          isGranted: true,
+        });
       const definedTool = definedToolRegistryService.findDefinedTool(
         'rotate_webhook_secret',
       );
@@ -429,10 +451,11 @@ describe('DefinedToolRegistryService', () => {
 
     it('should refuse the tool when a feature flag is disabled at call time', async () => {
       const tool = new ReplayWebhookTool();
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [tool],
-        isGranted: true,
-      });
+      const { definedToolRegistryService } =
+        await buildDefinedToolRegistryService({
+          tools: [tool],
+          isGranted: true,
+        });
       const definedTool =
         definedToolRegistryService.findDefinedTool('replay_webhook');
       const executeSpy = jest.spyOn(tool, 'execute');

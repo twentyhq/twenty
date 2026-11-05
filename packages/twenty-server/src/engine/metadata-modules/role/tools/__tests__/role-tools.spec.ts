@@ -1,15 +1,18 @@
+import { type Type } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import {
   FieldActorSource,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { type ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { type RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { AssignRoleToWorkspaceMemberTool } from 'src/engine/metadata-modules/role/tools/assign-role-to-workspace-member.tool';
 import { CreateRoleTool } from 'src/engine/metadata-modules/role/tools/create-role.tool';
 import { DeleteRoleTool } from 'src/engine/metadata-modules/role/tools/delete-role.tool';
@@ -17,9 +20,9 @@ import { ListRolesTool } from 'src/engine/metadata-modules/role/tools/list-roles
 import { UpdateRoleTool } from 'src/engine/metadata-modules/role/tools/update-role.tool';
 import { UpsertObjectPermissionsTool } from 'src/engine/metadata-modules/role/tools/upsert-object-permissions.tool';
 import { UpsertRowLevelPermissionRulesTool } from 'src/engine/metadata-modules/role/tools/upsert-row-level-permission-rules.tool';
-import { type RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
-import { type RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
-import { type UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
+import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 
 const workspaceId = 'workspace-id';
 const callerRoleId = 'caller-role-id';
@@ -76,12 +79,37 @@ const buildServices = () => ({
   },
 });
 
+const buildTool = async <TTool>(
+  toolClass: Type<TTool>,
+  services: ReturnType<typeof buildServices>,
+) => {
+  const module = await Test.createTestingModule({
+    providers: [
+      toolClass,
+      { provide: PermissionsService, useValue: services.permissionsService },
+      { provide: RoleService, useValue: services.roleService },
+      { provide: UserRoleService, useValue: services.userRoleService },
+      {
+        provide: ObjectPermissionService,
+        useValue: services.objectPermissionService,
+      },
+      {
+        provide: RowLevelPermissionPredicateService,
+        useValue: services.rowLevelPermissionPredicateService,
+      },
+      {
+        provide: RowLevelPermissionPredicateGroupService,
+        useValue: services.rowLevelPermissionPredicateGroupService,
+      },
+      { provide: ApplicationService, useValue: services.applicationService },
+    ],
+  }).compile();
+
+  return module.get(toolClass);
+};
+
 const buildListRolesTool = (services: ReturnType<typeof buildServices>) =>
-  new ListRolesTool(
-    services.roleService as unknown as RoleService,
-    services.rowLevelPermissionPredicateService as unknown as RowLevelPermissionPredicateService,
-    services.rowLevelPermissionPredicateGroupService as unknown as RowLevelPermissionPredicateGroupService,
-  );
+  buildTool(ListRolesTool, services);
 
 const context: ToolProviderContext = {
   workspaceId,
@@ -115,7 +143,9 @@ describe('Role tools', () => {
         },
       ]);
 
-      const output = await buildListRolesTool(services).execute({
+      const output = await (
+        await buildListRolesTool(services)
+      ).execute({
         input: {},
         context,
       });
@@ -145,7 +175,9 @@ describe('Role tools', () => {
         ],
       );
 
-      const output = await buildListRolesTool(services).execute({
+      const output = await (
+        await buildListRolesTool(services)
+      ).execute({
         input: { includeRowLevelPermissionRules: true },
         context,
       });
@@ -176,7 +208,9 @@ describe('Role tools', () => {
         { id: 'role-3', label: 'Guest', isEditable: true },
       ]);
 
-      await buildListRolesTool(services).execute({
+      await (
+        await buildListRolesTool(services)
+      ).execute({
         input: { includeRowLevelPermissionRules: true },
         context,
       });
@@ -202,9 +236,8 @@ describe('Role tools', () => {
         label: 'Sales',
       });
 
-      const output = await new CreateRoleTool(
-        services.roleService as unknown as RoleService,
-        services.applicationService as unknown as ApplicationService,
+      const output = await (
+        await buildTool(CreateRoleTool, services)
       ).execute({
         input: { label: 'Sales', canReadAllObjectRecords: true },
         context,
@@ -232,9 +265,8 @@ describe('Role tools', () => {
         label: 'Support L1',
       });
 
-      const output = await new UpdateRoleTool(
-        services.roleService as unknown as RoleService,
-        services.permissionsService as unknown as PermissionsService,
+      const output = await (
+        await buildTool(UpdateRoleTool, services)
       ).execute({
         input: {
           roleId: otherRoleId,
@@ -266,9 +298,8 @@ describe('Role tools', () => {
         'application-role-id',
       ]);
 
-      await new UpdateRoleTool(
-        services.roleService as unknown as RoleService,
-        services.permissionsService as unknown as PermissionsService,
+      await (
+        await buildTool(UpdateRoleTool, services)
       ).execute({
         input: { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
         context,
@@ -288,9 +319,8 @@ describe('Role tools', () => {
       services.roleService.updateRole.mockResolvedValue({ id: otherRoleId });
       services.permissionsService.getRoleIds.mockResolvedValue([]);
 
-      await new UpdateRoleTool(
-        services.roleService as unknown as RoleService,
-        services.permissionsService as unknown as PermissionsService,
+      await (
+        await buildTool(UpdateRoleTool, services)
       ).execute({
         input: { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
         context,
@@ -312,9 +342,8 @@ describe('Role tools', () => {
         label: 'Support',
       });
 
-      const output = await new DeleteRoleTool(
-        services.roleService as unknown as RoleService,
-        services.permissionsService as unknown as PermissionsService,
+      const output = await (
+        await buildTool(DeleteRoleTool, services)
       ).execute({ input: { roleId: otherRoleId }, context });
 
       expect(output.success).toBe(true);
@@ -330,8 +359,8 @@ describe('Role tools', () => {
     it('delegates to the user role service with the acting user workspace', async () => {
       const services = buildServices();
 
-      const output = await new AssignRoleToWorkspaceMemberTool(
-        services.userRoleService as unknown as UserRoleService,
+      const output = await (
+        await buildTool(AssignRoleToWorkspaceMemberTool, services)
       ).execute({
         input: { workspaceMemberId: targetMemberId, roleId: otherRoleId },
         context,
@@ -364,8 +393,8 @@ describe('Role tools', () => {
         [objectPermission],
       );
 
-      const output = await new UpsertObjectPermissionsTool(
-        services.objectPermissionService as unknown as ObjectPermissionService,
+      const output = await (
+        await buildTool(UpsertObjectPermissionsTool, services)
       ).execute({
         input: { roleId: supportRoleId, objectPermissions: [objectPermission] },
         context,
@@ -388,8 +417,8 @@ describe('Role tools', () => {
     it('upserts predicates and injects the object metadata id into groups', async () => {
       const services = buildServices();
 
-      const output = await new UpsertRowLevelPermissionRulesTool(
-        services.rowLevelPermissionPredicateService as unknown as RowLevelPermissionPredicateService,
+      const output = await (
+        await buildTool(UpsertRowLevelPermissionRulesTool, services)
       ).execute({
         input: {
           roleId: supportRoleId,

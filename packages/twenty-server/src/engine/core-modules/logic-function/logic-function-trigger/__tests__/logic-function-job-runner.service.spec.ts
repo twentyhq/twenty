@@ -1,22 +1,35 @@
+import { Test } from '@nestjs/testing';
+
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
-  type LogicFunctionExecutorService,
+  LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
-import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 describe('LogicFunctionJobRunnerService', () => {
   const execute = jest.fn();
   const existsBy = jest.fn();
   const persistRetryCount = jest.fn();
-  const logicFunctionJobRunnerService = new LogicFunctionJobRunnerService(
-    { execute } as unknown as LogicFunctionExecutorService,
-    {
-      existsBy,
-    } as unknown as WorkspaceScopedRepository<LogicFunctionEntity>,
-  );
+  let logicFunctionJobRunnerService: LogicFunctionJobRunnerService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        LogicFunctionJobRunnerService,
+        { provide: LogicFunctionExecutorService, useValue: { execute } },
+        {
+          provide: getWorkspaceScopedRepositoryToken(LogicFunctionEntity),
+          useValue: { existsBy },
+        },
+      ],
+    }).compile();
+
+    logicFunctionJobRunnerService = module.get(LogicFunctionJobRunnerService);
+  });
+
   const notFoundError = new LogicFunctionExecutionException(
     'Logic function with id logic-function-id not found',
     LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,

@@ -44,8 +44,31 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     manifest: {
       application: {
         universalIdentifier: '97141c95-2870-5662-8992-44fb6536be9a',
+        defaultRoleUniversalIdentifier: 'default-role-universal-identifier',
+        displayName: 'My App',
+        description: '',
+        packageJsonChecksum: '',
+        yarnLockChecksum: null,
       },
-    } as unknown as Manifest,
+      objects: [],
+      fields: [],
+      roles: [],
+      viewFields: [],
+      logicFunctions: [],
+      frontComponents: [],
+      permissionFlags: [],
+      skills: [],
+      agents: [],
+      publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
+      pageLayouts: [],
+      pageLayoutTabs: [],
+      pageLayoutWidgets: [],
+      commandMenuItems: [],
+      timelineActivityTypes: [],
+      settingsMenuItems: [],
+    } satisfies Manifest,
   };
 
   const buildExistingRegistration = (

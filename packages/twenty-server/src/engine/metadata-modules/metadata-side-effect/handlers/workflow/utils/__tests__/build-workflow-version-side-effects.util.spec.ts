@@ -1,5 +1,4 @@
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { buildWorkflowVersionSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-side-effects.util';
 import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
 import {
@@ -490,10 +489,9 @@ describe('managed workflow version validation', () => {
     expect(
       validate({
         ...version,
-        triggers: [
-          { ...trigger, type: 'UNKNOWN' as unknown as WorkflowTriggerType },
-        ],
-      } as typeof version).errors[0]?.message,
+        // @ts-expect-error an application manifest written in plain JavaScript can declare any trigger type
+        triggers: [{ ...trigger, type: 'UNKNOWN' }],
+      }).errors[0]?.message,
     ).toContain('Application workflows require one trigger of type MANUAL');
   });
 

@@ -93,7 +93,8 @@ describe('fromUpdateSkillInputToFlatSkillToUpdateOrThrow', () => {
     const result = updateAsWorkspace({
       id: appSkill.id,
       label: 'Summarize briefly',
-      isActive: null as unknown as boolean,
+      // @ts-expect-error GraphQL accepts an explicit null for any optional input
+      isActive: null,
     });
 
     expect(result.isActive).toBe(true);

@@ -1,15 +1,17 @@
-import { MessageParticipantRole } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { type ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
-import { type MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SEND_ARGS = {
   workspaceId: 'workspace-id',
@@ -25,7 +27,7 @@ describe('ApplicationMessageSendService', () => {
   const ingest = jest.fn();
   let service: ApplicationMessageSendService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     const cache = new Map<string, unknown>();
@@ -52,50 +54,83 @@ describe('ApplicationMessageSendService', () => {
       sentAt: '2026-10-21T10:00:00.000Z',
     });
 
-    service = new ApplicationMessageSendService(
-      {
-        findOne: jest.fn().mockResolvedValue({
-          id: SEND_ARGS.messageChannelId,
-          isSyncEnabled: true,
-          connectedAccountId: 'connected-account-id',
-          handle: 'urn:li:person:jane',
-          displayName: 'Jane Doe',
-          messagingProviderUniversalIdentifier: 'messaging-provider',
-        }),
-      } as unknown as Repository<MessageChannelEntity>,
-      {
-        verifyUsableByCaller: jest.fn().mockResolvedValue({
-          id: 'connected-account-id',
-          applicationId: 'application-id',
-          connectionProviderId: 'connection-provider-id',
-        }),
-      } as unknown as ConnectedAccountMetadataService,
-      {
-        resolveSenderOrThrow: jest.fn().mockResolvedValue({}),
-        sendOrThrow,
-      } as unknown as MessagingProviderMessageSenderService,
-      { ingest } as unknown as ApplicationMessageIngestionService,
-      {
-        executeInWorkspaceContext: jest.fn((callback) => callback()),
-        getRepositoryWithoutPermissionChecks: jest.fn((objectName: string) => ({
-          find: jest.fn().mockResolvedValue(rowsByObjectName[objectName] ?? []),
-        })),
-      } as unknown as WorkspaceOrmManager,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatWorkspaceMemberMaps: { idByUserWorkspaceId: {} },
-        }),
-      } as unknown as WorkspaceCacheService,
-      {
-        withLock: jest.fn((callback) => callback()),
-      } as unknown as CacheLockService,
-      {
-        get: jest.fn(async (key: string) => cache.get(key)),
-        set: jest.fn(async (key: string, value: unknown) => {
-          cache.set(key, value);
-        }),
-      } as unknown as CacheStorageService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationMessageSendService,
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({
+              id: SEND_ARGS.messageChannelId,
+              isSyncEnabled: true,
+              connectedAccountId: 'connected-account-id',
+              handle: 'urn:li:person:jane',
+              displayName: 'Jane Doe',
+              messagingProviderUniversalIdentifier: 'messaging-provider',
+            }),
+          },
+        },
+        {
+          provide: ConnectedAccountMetadataService,
+          useValue: {
+            verifyUsableByCaller: jest.fn().mockResolvedValue({
+              id: 'connected-account-id',
+              applicationId: 'application-id',
+              connectionProviderId: 'connection-provider-id',
+            }),
+          },
+        },
+        {
+          provide: MessagingProviderMessageSenderService,
+          useValue: {
+            resolveSenderOrThrow: jest.fn().mockResolvedValue({}),
+            sendOrThrow,
+          },
+        },
+        {
+          provide: ApplicationMessageIngestionService,
+          useValue: { ingest },
+        },
+        {
+          provide: WorkspaceOrmManager,
+          useValue: {
+            executeInWorkspaceContext: jest.fn((callback) => callback()),
+            getRepositoryWithoutPermissionChecks: jest.fn(
+              (objectName: string) => ({
+                find: jest
+                  .fn()
+                  .mockResolvedValue(rowsByObjectName[objectName] ?? []),
+              }),
+            ),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatWorkspaceMemberMaps: { idByUserWorkspaceId: {} },
+            }),
+          },
+        },
+        {
+          provide: CacheLockService,
+          useValue: {
+            withLock: jest.fn((callback) => callback()),
+          },
+        },
+        {
+          provide: CacheStorageNamespace.ModuleMessaging,
+          useValue: {
+            get: jest.fn(async (key: string) => cache.get(key)),
+            set: jest.fn(async (key: string, value: unknown) => {
+              cache.set(key, value);
+            }),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get(ApplicationMessageSendService);
   });
 
   it('records a delivered reply on retry without sending it again', async () => {

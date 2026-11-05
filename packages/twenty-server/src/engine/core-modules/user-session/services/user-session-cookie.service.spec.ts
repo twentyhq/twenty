@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Request, type Response } from 'express';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -8,15 +7,15 @@ import { UserSessionCookieService } from 'src/engine/core-modules/user-session/s
 
 const SESSION_COOKIE = '__Host-twenty-session=sess_abc';
 
-const buildRequest = (headers: Record<string, string>): Request =>
-  ({ headers: { cookie: SESSION_COOKIE, ...headers } }) as unknown as Request;
+const buildRequest = (headers: Record<string, string>) => ({
+  headers: { cookie: SESSION_COOKIE, ...headers },
+});
 
-const buildResponse = (request: Request): Response =>
-  ({
-    req: request,
-    cookie: jest.fn(),
-    clearCookie: jest.fn(),
-  }) as unknown as Response;
+const buildResponse = (request: ReturnType<typeof buildRequest>) => ({
+  req: request,
+  cookie: jest.fn(),
+  clearCookie: jest.fn(),
+});
 
 describe('UserSessionCookieService', () => {
   let service: UserSessionCookieService;

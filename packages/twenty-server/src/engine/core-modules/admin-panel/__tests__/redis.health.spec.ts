@@ -25,7 +25,7 @@ describe('RedisHealthIndicator', () => {
 
     const mockRedisService = {
       getClient: () => mockRedis,
-    } as unknown as RedisClientService;
+    };
 
     healthIndicatorService = {
       check: jest.fn().mockReturnValue({

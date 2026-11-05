@@ -2,30 +2,33 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { type ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
-import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
-  type ApplicationPackageFetcherService,
+  ApplicationPackageFetcherService,
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
-import { type ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
-import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const APPLICATION_ID = 'application-id';
@@ -34,14 +37,42 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 const LOGO_PATH = 'public/logo.png';
 const LOGO_FILE_ID = 'logo-file-id';
 
-const MANIFEST = {
+const MANIFEST: Manifest = {
   application: {
     universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    defaultRoleUniversalIdentifier: 'default-role-universal-identifier',
     displayName: 'Application',
+    description: '',
     logo: LOGO_PATH,
+    packageJsonChecksum: '',
+    yarnLockChecksum: null,
   },
-  publicAssets: [{ filePath: LOGO_PATH }],
-} as unknown as Manifest;
+  publicAssets: [
+    {
+      filePath: LOGO_PATH,
+      fileName: 'logo.png',
+      fileType: 'image/png',
+      checksum: null,
+    },
+  ],
+  objects: [],
+  fields: [],
+  roles: [],
+  viewFields: [],
+  logicFunctions: [],
+  frontComponents: [],
+  permissionFlags: [],
+  skills: [],
+  agents: [],
+  views: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};
 
 describe('ApplicationInstallService', () => {
   let extractedDir: string;
@@ -64,37 +95,79 @@ describe('ApplicationInstallService', () => {
     findOne: jest.fn(),
   };
 
-  const service = new ApplicationInstallService(
-    appRegistrationRepository as unknown as Repository<ApplicationRegistrationEntity>,
-    applicationService as unknown as ApplicationService,
-    applicationLookupService as unknown as ApplicationLookupService,
-    applicationPackageFetcherService as unknown as ApplicationPackageFetcherService,
-    {
-      validateVersionProgression: jest.fn().mockReturnValue({ allowed: true }),
-    } as unknown as ApplicationVersionValidationService,
-    {
-      ensureNpmVersion: jest.fn().mockResolvedValue(undefined),
-    } as unknown as ApplicationRegistrationVersionService,
-    {} as ApplicationSyncService,
-    {
-      applyManifestToWorkspace: jest
-        .fn()
-        .mockResolvedValue({ workspaceMigration: { actions: [] } }),
-      refreshRegistrationFromManifest: jest.fn(),
-    } as unknown as ApplicationManifestApplyService,
-    fileStorageService as unknown as FileStorageService,
-    {} as LogicFunctionExecutorService,
-    {
-      withLock: jest.fn((callback: () => Promise<boolean>) => callback()),
-    } as unknown as CacheLockService,
-    {} as MessageQueueService,
-    {} as MessageQueueService,
-    {} as WorkspaceCacheService,
-    { incrementCounterBy: jest.fn() } as unknown as MetricsService,
-    {
-      recordApplicationPlatformEvents: jest.fn(),
-    } as unknown as EventLogEmitterService,
-  );
+  let service: ApplicationInstallService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationInstallService,
+        {
+          provide: getRepositoryToken(ApplicationRegistrationEntity),
+          useValue: appRegistrationRepository,
+        },
+        { provide: ApplicationService, useValue: applicationService },
+        {
+          provide: ApplicationLookupService,
+          useValue: applicationLookupService,
+        },
+        {
+          provide: ApplicationPackageFetcherService,
+          useValue: applicationPackageFetcherService,
+        },
+        {
+          provide: ApplicationVersionValidationService,
+          useValue: {
+            validateVersionProgression: jest
+              .fn()
+              .mockReturnValue({ allowed: true }),
+          },
+        },
+        {
+          provide: ApplicationRegistrationVersionService,
+          useValue: {
+            ensureNpmVersion: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        { provide: ApplicationSyncService, useValue: {} },
+        {
+          provide: ApplicationManifestApplyService,
+          useValue: {
+            applyManifestToWorkspace: jest
+              .fn()
+              .mockResolvedValue({ workspaceMigration: { actions: [] } }),
+            refreshRegistrationFromManifest: jest.fn(),
+          },
+        },
+        { provide: FileStorageService, useValue: fileStorageService },
+        { provide: LogicFunctionExecutorService, useValue: {} },
+        {
+          provide: CacheLockService,
+          useValue: {
+            withLock: jest.fn((callback: () => Promise<boolean>) => callback()),
+          },
+        },
+        {
+          provide: getQueueToken(MessageQueue.applicationLifecycleHookQueue),
+          useValue: {},
+        },
+        {
+          provide: getQueueToken(MessageQueue.lambdaManagementQueue),
+          useValue: {},
+        },
+        { provide: WorkspaceCacheService, useValue: {} },
+        {
+          provide: MetricsService,
+          useValue: { incrementCounterBy: jest.fn() },
+        },
+        {
+          provide: EventLogEmitterService,
+          useValue: { recordApplicationPlatformEvents: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    service = module.get(ApplicationInstallService);
+  });
 
   const install = () =>
     service.installApplication({

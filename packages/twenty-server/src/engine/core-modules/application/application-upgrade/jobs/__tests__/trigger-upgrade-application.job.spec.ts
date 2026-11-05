@@ -1,4 +1,6 @@
-import type { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
+import { Test } from '@nestjs/testing';
+
+import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import {
   TriggerUpgradeApplicationJob,
   type TriggerUpgradeApplicationJobData,
@@ -8,9 +10,23 @@ import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/mes
 describe('TriggerUpgradeApplicationJob', () => {
   const applicationUpgradeService = {
     upgradeApplication: jest.fn(),
-  } as unknown as ApplicationUpgradeService;
+  };
 
-  const job = new TriggerUpgradeApplicationJob(applicationUpgradeService);
+  let job: TriggerUpgradeApplicationJob;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        TriggerUpgradeApplicationJob,
+        {
+          provide: ApplicationUpgradeService,
+          useValue: applicationUpgradeService,
+        },
+      ],
+    }).compile();
+
+    job = module.get(TriggerUpgradeApplicationJob);
+  });
 
   const jobData: TriggerUpgradeApplicationJobData = {
     applicationRegistrationId: 'application-registration-id',

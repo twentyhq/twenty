@@ -1,6 +1,8 @@
-import { type Response } from 'express';
+import { Test } from '@nestjs/testing';
+
 import { HTTPMethod } from 'twenty-shared/types';
 
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { RouteTriggerController } from 'src/engine/metadata-modules/route-trigger/route-trigger.controller';
 
@@ -15,17 +17,23 @@ const createResponseMock = () => {
     getHeader: jest.fn((key: string) => headers[key.toLowerCase()]),
     send: jest.fn(),
     json: jest.fn(),
-  } as unknown as Response;
+  };
 };
 
 describe('RouteTriggerController', () => {
   let controller: RouteTriggerController;
   const handle = jest.fn();
 
-  beforeEach(() => {
-    const routeTriggerService = { handle } as unknown as RouteTriggerService;
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      controllers: [RouteTriggerController],
+      providers: [
+        { provide: RouteTriggerService, useValue: { handle } },
+        { provide: HttpExceptionHandlerService, useValue: {} },
+      ],
+    }).compile();
 
-    controller = new RouteTriggerController(routeTriggerService);
+    controller = module.get(RouteTriggerController);
   });
 
   afterEach(() => {

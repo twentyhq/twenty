@@ -1,4 +1,3 @@
-import { type RawBodyRequest } from '@nestjs/common';
 import { type Request } from 'express';
 import { type LogicFunctionEvent } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -61,8 +60,10 @@ export const filterRequestHeaders = ({
   return filteredHeaders;
 };
 
-export const extractRawBody = (request: Request): string | undefined => {
-  const rawBody = (request as RawBodyRequest<Request>).rawBody;
+export const extractRawBody = (request: {
+  rawBody?: Buffer;
+}): string | undefined => {
+  const rawBody = request.rawBody;
 
   if (!isDefined(rawBody)) {
     return undefined;
@@ -71,7 +72,7 @@ export const extractRawBody = (request: Request): string | undefined => {
   return rawBody.toString('utf-8');
 };
 
-export const extractBody = (request: Request): object | null => {
+export const extractBody = (request: Pick<Request, 'body'>): object | null => {
   if (!isDefined(request.body)) {
     return null;
   }
@@ -153,7 +154,9 @@ export const buildLogicFunctionEvent = ({
   forwardableCredentialHeaderName,
   userWorkspaceId,
 }: {
-  request: Request;
+  request: Pick<Request, 'headers' | 'query' | 'body' | 'method' | 'path'> & {
+    rawBody?: Buffer;
+  };
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;

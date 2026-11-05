@@ -1,10 +1,8 @@
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
-import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 describe('findLogicFunctionUniversalIdentifiersToWarmUp', () => {
   it('keeps created functions and updates that change the prebuilt bundle state', () => {
-    const workspaceMigration = {
-      applicationUniversalIdentifier: 'test-app',
+    const universalIdentifiers = findLogicFunctionUniversalIdentifiersToWarmUp({
       actions: [
         {
           type: 'create',
@@ -35,15 +33,15 @@ describe('findLogicFunctionUniversalIdentifiersToWarmUp', () => {
           universalIdentifier: 'deleted',
         },
         {
-          type: 'create',
           metadataName: 'objectMetadata',
-          flatEntity: { universalIdentifier: 'object' },
         },
       ],
-    } as unknown as WorkspaceMigration;
+    });
 
-    expect(
-      findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
-    ).toEqual(['created', 'checksum-changed', 'became-prebuilt']);
+    expect(universalIdentifiers).toEqual([
+      'created',
+      'checksum-changed',
+      'became-prebuilt',
+    ]);
   });
 });

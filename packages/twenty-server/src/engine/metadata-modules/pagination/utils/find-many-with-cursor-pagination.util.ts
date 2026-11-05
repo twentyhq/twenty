@@ -1,8 +1,11 @@
-import { type ObjectLiteral, type SelectQueryBuilder } from 'typeorm';
+import { type ObjectLiteral } from 'typeorm';
 
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
-import { paginateMetadataQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
+import {
+  paginateMetadataQueryBuilder,
+  type PaginableMetadataQueryBuilder,
+} from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
 import { parseGraphqlMetadataPagination } from 'src/engine/metadata-modules/pagination/utils/parse-graphql-metadata-pagination.util';
 import { toCursorConnection } from 'src/engine/metadata-modules/pagination/utils/to-cursor-connection.util';
 
@@ -21,7 +24,7 @@ export const findManyWithCursorPagination = async <
   defaultResultSize,
   maxResultsSize,
 }: {
-  queryBuilder: SelectQueryBuilder<TEntity>;
+  queryBuilder: PaginableMetadataQueryBuilder<TEntity>;
   alias: string;
   paging: CursorPagingInput | undefined;
   defaultResultSize?: number;

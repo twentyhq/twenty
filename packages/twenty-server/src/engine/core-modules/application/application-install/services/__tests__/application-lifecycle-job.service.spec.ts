@@ -1,10 +1,13 @@
+import { Test } from '@nestjs/testing';
+
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
-import type { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
+import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { TriggerUpgradeApplicationJob } from 'src/engine/core-modules/application/application-upgrade/jobs/trigger-upgrade-application.job';
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
-import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import type { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -16,29 +19,41 @@ const buildJobId = (operation: string) =>
 describe('ApplicationLifecycleJobService', () => {
   const applicationService = {
     findOneApplicationWithRelationsOrThrow: jest.fn(),
-  } as unknown as ApplicationService;
+  };
 
   const marketplaceQueryService = {
     findRegistrationByUniversalIdentifier: jest
       .fn()
       .mockResolvedValue({ id: 'application-registration-id' }),
-  } as unknown as MarketplaceQueryService;
+  };
 
   const cacheLockService = {
     withLock: jest.fn((callback: () => Promise<unknown>) => callback()),
-  } as unknown as CacheLockService;
+  };
 
   const workspaceQueueService = {
     add: jest.fn(),
     getInFlightJobs: jest.fn(),
-  } as unknown as MessageQueueService;
+  };
 
-  const service = new ApplicationLifecycleJobService(
-    applicationService,
-    marketplaceQueryService,
-    cacheLockService,
-    workspaceQueueService,
-  );
+  let service: ApplicationLifecycleJobService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationLifecycleJobService,
+        { provide: ApplicationService, useValue: applicationService },
+        { provide: MarketplaceQueryService, useValue: marketplaceQueryService },
+        { provide: CacheLockService, useValue: cacheLockService },
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: workspaceQueueService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(ApplicationLifecycleJobService);
+  });
 
   const triggerUpgrade = () =>
     service.triggerUpgradeApplication({

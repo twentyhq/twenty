@@ -28,9 +28,11 @@ const buildService = ({ claimAffected = 1 } = {}) => {
       steps.push('end turn');
     }),
   };
-  const writePart = jest.fn(async () => {
-    steps.push('close part');
-  });
+  const writePart = jest.fn(
+    async (_query: string, _parameters: [string, string, string]) => {
+      steps.push('close part');
+    },
+  );
   const messagePartRepository = {
     find: jest.fn().mockResolvedValue([
       {
@@ -78,8 +80,8 @@ describe('AgentChatThreadLifecycleService closePendingQuestion', () => {
 
     await service.closePendingQuestion(closeArguments);
 
-    const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] = writePart
-      .mock.calls as unknown as [[string, [string, string, string]]];
+    const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
+      writePart.mock.calls;
 
     expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
     expect({ partId, expectedStatus }).toEqual({

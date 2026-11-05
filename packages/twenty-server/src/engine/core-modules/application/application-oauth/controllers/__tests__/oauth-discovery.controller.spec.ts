@@ -1,7 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Request } from 'express';
-
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-discovery.controller';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -14,12 +12,14 @@ describe('OAuthDiscoveryController', () => {
     .fn()
     .mockResolvedValue({ oAuthClientId: 'cli-client-id' });
 
-  const buildMockRequest = (host: string, protocol = 'https') =>
-    ({
-      protocol,
-      get: (header: string) =>
+  const buildMockRequest = (host: string, protocol = 'https') => ({
+    protocol,
+    get: jest
+      .fn()
+      .mockImplementation((header: string) =>
         header.toLowerCase() === 'host' ? host : undefined,
-    }) as unknown as Request;
+      ),
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

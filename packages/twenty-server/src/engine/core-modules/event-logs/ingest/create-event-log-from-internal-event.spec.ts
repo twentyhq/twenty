@@ -1,38 +1,55 @@
+import { Test } from '@nestjs/testing';
+
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 describe('CreateEventLogFromInternalEvent', () => {
   let ingest: jest.Mock;
   let addToQueue: jest.Mock;
   let handler: CreateEventLogFromInternalEvent;
 
-  const batch = {
+  const batch: WorkspaceEventBatch<ObjectRecordEvent> = {
     name: 'company.created',
     workspaceId: 'workspace-1',
-    objectMetadata: { id: 'object-metadata-1' },
-    events: [{ recordId: 'record-1', userId: 'user-1', properties: {} }],
-  } as unknown as WorkspaceEventBatch<ObjectRecordEvent>;
+    objectMetadata: getFlatObjectMetadataMock({
+      id: 'object-metadata-1',
+      universalIdentifier: 'object-metadata-universal-identifier',
+    }),
+    events: [
+      { recordId: 'record-1', userId: 'user-1', properties: { after: {} } },
+    ],
+  };
 
   const transientError = Object.assign(
     new Error('Failed to insert 1 objectEvent row(s) into ClickHouse'),
     { cause: new Error('Timeout error.') },
   );
 
-  beforeEach(() => {
+  beforeEach(async () => {
     ingest = jest.fn().mockResolvedValue(undefined);
     addToQueue = jest.fn().mockResolvedValue(undefined);
 
-    handler = new CreateEventLogFromInternalEvent(
-      {
-        isEnabled: () => true,
-        ingest,
-      } as unknown as WorkspaceEventSinkService,
-      { add: addToQueue } as unknown as MessageQueueService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        CreateEventLogFromInternalEvent,
+        {
+          provide: WorkspaceEventSinkService,
+          useValue: { isEnabled: () => true, ingest },
+        },
+        {
+          provide: getQueueToken(MessageQueue.eventLogQueue),
+          useValue: { add: addToQueue },
+        },
+      ],
+    }).compile();
+
+    handler = module.get(CreateEventLogFromInternalEvent);
   });
 
   it('ingests object events (persist + live fan-out) through the sink pipeline', async () => {

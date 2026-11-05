@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { type DeleteResult, type Repository } from 'typeorm';
+import { DeleteResult, type Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
@@ -127,9 +127,8 @@ describe('ApprovedAccessDomainService', () => {
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
     );
-    jwtWrapperService = module.get(
-      JwtWrapperService,
-    ) as unknown as jest.Mocked<JwtWrapperService>;
+    jwtWrapperService =
+      module.get<jest.Mocked<JwtWrapperService>>(JwtWrapperService);
   });
 
   describe('createApprovedAccessDomain', () => {
@@ -153,7 +152,7 @@ describe('ApprovedAccessDomainService', () => {
       jest
         .spyOn(approvedAccessDomainRepository, 'insertAndReturnOne')
         .mockResolvedValue(
-          expectedApprovedAccessDomain as unknown as ApprovedAccessDomainEntity,
+          expectedApprovedAccessDomain as ApprovedAccessDomainEntity,
         );
 
       jest
@@ -213,7 +212,7 @@ describe('ApprovedAccessDomainService', () => {
         .mockResolvedValue(approvedAccessDomainEntity);
       jest
         .spyOn(approvedAccessDomainRepository, 'delete')
-        .mockResolvedValue({} as unknown as DeleteResult);
+        .mockResolvedValue(new DeleteResult());
 
       await service.deleteApprovedAccessDomain(
         workspace,

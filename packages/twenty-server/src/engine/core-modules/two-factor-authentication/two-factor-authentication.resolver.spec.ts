@@ -10,7 +10,6 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
@@ -70,7 +69,7 @@ describe('TwoFactorAuthenticationResolver', () => {
 
   const MOCK_USER_ISO = '2024-01-01T00:00:00.000Z';
 
-  const mockUser = {
+  const mockUser: FlatAuthContextUser = {
     id: 'user-123',
     firstName: '',
     lastName: '',
@@ -81,9 +80,9 @@ describe('TwoFactorAuthenticationResolver', () => {
     canAccessFullAdminPanel: false,
     createdAt: MOCK_USER_ISO,
     updatedAt: MOCK_USER_ISO,
-    deletedAt: null,
+    deletedAt: MOCK_USER_ISO,
     locale: 'en',
-  } as unknown as FlatAuthContextUser;
+  };
 
   const mockWorkspace: WorkspaceEntity = {
     id: 'workspace-123',
@@ -177,9 +176,7 @@ describe('TwoFactorAuthenticationResolver', () => {
       workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         mockWorkspace,
       );
-      userService.findUserByEmailOrThrow.mockResolvedValue(
-        mockUser as unknown as UserEntity,
-      );
+      userService.findUserByEmailOrThrow.mockResolvedValue(mockUser);
       twoFactorAuthenticationService.initiateStrategyConfiguration.mockResolvedValue(
         'otpauth://totp/Twenty:test@example.com?secret=SECRETKEY&issuer=Twenty',
       );

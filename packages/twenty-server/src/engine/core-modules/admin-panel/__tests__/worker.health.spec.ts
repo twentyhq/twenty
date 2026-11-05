@@ -40,7 +40,7 @@ describe('WorkerHealthIndicator', () => {
       getClient: () => mockRedis,
       getQueueClient: () => mockRedis,
       getQueuePrefix: () => 'bull',
-    } as unknown as RedisClientService;
+    };
 
     healthIndicatorService = {
       check: jest.fn().mockReturnValue({

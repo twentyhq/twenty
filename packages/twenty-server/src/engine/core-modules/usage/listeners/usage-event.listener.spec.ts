@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -30,15 +31,19 @@ describe('UsageEventListener', () => {
   let dispatch: jest.Mock;
   let isEnabled: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.spyOn(Logger.prototype, 'error').mockImplementation();
     dispatch = jest.fn().mockResolvedValue(undefined);
     isEnabled = jest.fn().mockReturnValue(true);
 
-    listener = new UsageEventListener({
-      dispatch,
-      isEnabled,
-    } as unknown as EventLogEmitterService);
+    const module = await Test.createTestingModule({
+      providers: [
+        UsageEventListener,
+        { provide: EventLogEmitterService, useValue: { dispatch, isEnabled } },
+      ],
+    }).compile();
+
+    listener = module.get(UsageEventListener);
   });
 
   it('dispatchs a usageEvent envelope for each event in the batch', async () => {

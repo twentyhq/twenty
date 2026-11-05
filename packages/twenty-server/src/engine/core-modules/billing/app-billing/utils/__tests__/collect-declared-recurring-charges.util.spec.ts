@@ -36,8 +36,9 @@ const SEAT_FEE = {
 const collectOne = (charge: unknown) =>
   collectDeclaredRecurringCharges({
     flatApplicationMaps: buildFlatApplicationMaps([
+      // @ts-expect-error billing is untrusted jsonb, so any shape can reach the collector
       { id: APPLICATION_ID, billing: { recurring: { fee: charge } } },
-    ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
+    ]),
   });
 
 describe('collectDeclaredRecurringCharges', () => {
@@ -193,8 +194,9 @@ describe('collectDeclaredRecurringCharges', () => {
     const { declaredCharges, rejectedCharges } =
       collectDeclaredRecurringCharges({
         flatApplicationMaps: buildFlatApplicationMaps([
+          // @ts-expect-error billing is untrusted jsonb, so any shape can reach the collector
           { id: APPLICATION_ID, billing: { recurring: [PLATFORM_FEE] } },
-        ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
+        ]),
       });
 
     expect(declaredCharges).toEqual([]);

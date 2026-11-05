@@ -1,10 +1,12 @@
+import { Test } from '@nestjs/testing';
+
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -54,15 +56,23 @@ const generateDescriptors = async (
   flatFrontComponentMaps.universalIdentifierById[FRONT_COMPONENT_ID] =
     FRONT_COMPONENT_UNIVERSAL_IDENTIFIER;
 
-  const flatEntityMapsCacheService = {
-    getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatLogicFunctionMaps,
-      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-      flatFrontComponentMaps,
-    }),
-  } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
+  const module = await Test.createTestingModule({
+    providers: [
+      LogicFunctionToolProvider,
+      {
+        provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+        useValue: {
+          getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+            flatLogicFunctionMaps,
+            flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+            flatFrontComponentMaps,
+          }),
+        },
+      },
+    ],
+  }).compile();
 
-  const provider = new LogicFunctionToolProvider(flatEntityMapsCacheService);
+  const provider = module.get(LogicFunctionToolProvider);
 
   return (await provider.generateDescriptors(
     {

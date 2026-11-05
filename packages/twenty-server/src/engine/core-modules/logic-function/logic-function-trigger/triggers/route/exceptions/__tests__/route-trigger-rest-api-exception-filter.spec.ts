@@ -1,4 +1,5 @@
-import { type ArgumentsHost } from '@nestjs/common';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { Test } from '@nestjs/testing';
 
 import { type Response } from 'express';
 
@@ -6,7 +7,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
 import {
   RouteTriggerException,
@@ -17,17 +18,23 @@ describe('RouteTriggerRestApiExceptionFilter', () => {
   const handleError = jest.fn();
   const response = {} as Response;
 
-  const httpExceptionHandlerService = {
-    handleError,
-  } as unknown as HttpExceptionHandlerService;
+  const host = new ExecutionContextHost([{}, response]);
 
-  const filter = new RouteTriggerRestApiExceptionFilter(
-    httpExceptionHandlerService,
-  );
+  let filter: RouteTriggerRestApiExceptionFilter;
 
-  const host = {
-    switchToHttp: () => ({ getResponse: () => response }),
-  } as unknown as ArgumentsHost;
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        RouteTriggerRestApiExceptionFilter,
+        {
+          provide: HttpExceptionHandlerService,
+          useValue: { handleError },
+        },
+      ],
+    }).compile();
+
+    filter = module.get(RouteTriggerRestApiExceptionFilter);
+  });
 
   afterEach(() => {
     jest.clearAllMocks();

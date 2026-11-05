@@ -58,7 +58,7 @@ export class SdkClientController {
 
   @Get(['metadata', 'metadata/:checksum'])
   async getInstanceSdkMetadataModule(
-    @Res() res: Response,
+    @Res() res: Pick<Response, 'setHeader' | 'send'>,
     @Param('checksum') checksum?: string,
   ) {
     const { moduleBuffer, checksum: servedModuleChecksum } =
@@ -75,7 +75,7 @@ export class SdkClientController {
   @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
   @UseGuards(ApplicationTargetGuard)
   async getSdkModule(
-    @Res() res: Response,
+    @Res() res: Pick<Response, 'setHeader' | 'send'>,
     @ApplicationTargetParam('applicationId', {
       kind: 'applicationId',
       requireApplicationRegistrationOwnership: false,
@@ -132,7 +132,7 @@ export class SdkClientController {
     servedModuleChecksum,
     requestedChecksum,
   }: {
-    res: Response;
+    res: Pick<Response, 'setHeader' | 'send'>;
     moduleBuffer: Buffer;
     servedModuleChecksum: string | null;
     requestedChecksum?: string;

@@ -7,6 +7,7 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { type WorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 
 const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
@@ -46,13 +47,20 @@ const buildDeleteSideEffects = (
   });
 };
 
-const codeStep = (logicFunctionId: string) => ({
+const codeStep = (logicFunctionId: string): WorkflowCodeAction => ({
   id: `step-${logicFunctionId}`,
   name: 'Code',
   type: WorkflowActionType.CODE,
   valid: true,
   nextStepIds: [],
-  settings: { input: { logicFunctionId } },
+  settings: {
+    input: { logicFunctionId, logicFunctionInput: {} },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
 });
 
 describe('buildWorkflowVersionDeleteSideEffects', () => {
@@ -126,7 +134,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
       for (const version of versions) {
         maps.flatWorkflowVersionMaps.byUniversalIdentifier[
           version.universalIdentifier
-        ] = version as unknown as FlatWorkflowVersion;
+        ] = version as FlatWorkflowVersion;
       }
 
       const commandMenuItems = [

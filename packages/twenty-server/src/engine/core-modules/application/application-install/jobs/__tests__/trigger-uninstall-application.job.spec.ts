@@ -1,4 +1,6 @@
-import type { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
+import { Test } from '@nestjs/testing';
+
+import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import {
   TriggerUninstallApplicationJob,
   type TriggerUninstallApplicationJobData,
@@ -8,11 +10,23 @@ import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/mes
 describe('TriggerUninstallApplicationJob', () => {
   const applicationUninstallRunnerService = {
     uninstallApplication: jest.fn(),
-  } as unknown as ApplicationUninstallRunnerService;
+  };
 
-  const job = new TriggerUninstallApplicationJob(
-    applicationUninstallRunnerService,
-  );
+  let job: TriggerUninstallApplicationJob;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        TriggerUninstallApplicationJob,
+        {
+          provide: ApplicationUninstallRunnerService,
+          useValue: applicationUninstallRunnerService,
+        },
+      ],
+    }).compile();
+
+    job = module.get(TriggerUninstallApplicationJob);
+  });
 
   const jobData: TriggerUninstallApplicationJobData = {
     universalIdentifier: 'application-universal-identifier',

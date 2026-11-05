@@ -1,3 +1,5 @@
+import { Test } from '@nestjs/testing';
+
 import {
   type ObjectRecordsPermissions,
   type ObjectRecordsOperationType,
@@ -5,18 +7,18 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const workspaceId = 'workspace-id';
 
@@ -89,7 +91,7 @@ describe('DatabaseToolProvider', () => {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
-    } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
+    };
 
     // Echo the messageId so labels fall back to the English source, as at runtime without a translation.
     const i18nService = {
@@ -102,7 +104,7 @@ describe('DatabaseToolProvider', () => {
             ? descriptor
             : (descriptor.message ?? descriptor.id),
       })),
-    } as unknown as I18nService;
+    };
 
     const applicationTranslationCatalogService = {
       getApplicationAuthorIdentifiers: jest.fn().mockResolvedValue({
@@ -111,7 +113,7 @@ describe('DatabaseToolProvider', () => {
           'workspace-custom-application-universal-identifier',
         universalIdentifierByApplicationId: {},
       }),
-    } as unknown as ApplicationTranslationCatalogService;
+    };
 
     const canOperateOnSomeRecords = (
       operationType: ObjectRecordsOperationType,
@@ -148,14 +150,25 @@ describe('DatabaseToolProvider', () => {
       findNonUpdatableFieldMetadataIdsOrThrow: jest
         .fn()
         .mockResolvedValue(new Set()),
-    } as unknown as PermissionsService;
+    };
 
-    const provider = new DatabaseToolProvider(
-      permissionsService,
-      flatEntityMapsCacheService,
-      i18nService,
-      applicationTranslationCatalogService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        DatabaseToolProvider,
+        { provide: PermissionsService, useValue: permissionsService },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: flatEntityMapsCacheService,
+        },
+        { provide: I18nService, useValue: i18nService },
+        {
+          provide: ApplicationTranslationCatalogService,
+          useValue: applicationTranslationCatalogService,
+        },
+      ],
+    }).compile();
+
+    const provider = module.get(DatabaseToolProvider);
 
     return (await provider.generateDescriptors(
       {

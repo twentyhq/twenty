@@ -107,9 +107,7 @@ describe('SdkClientController', () => {
     });
 
     it('serves the installed metadata module without touching workspace caches', async () => {
-      await controller.getInstanceSdkMetadataModule(
-        response as unknown as Response,
-      );
+      await controller.getInstanceSdkMetadataModule(response);
 
       expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
       expect(
@@ -119,9 +117,7 @@ describe('SdkClientController', () => {
     });
 
     it('opts out of caching on the bare url', async () => {
-      await controller.getInstanceSdkMetadataModule(
-        response as unknown as Response,
-      );
+      await controller.getInstanceSdkMetadataModule(response);
 
       expect(response.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
@@ -131,7 +127,7 @@ describe('SdkClientController', () => {
 
     it('serves fingerprinted urls as immutable when the checksum matches the installed module', async () => {
       await controller.getInstanceSdkMetadataModule(
-        response as unknown as Response,
+        response,
         INSTALLED_METADATA_CHECKSUM,
       );
 
@@ -142,10 +138,7 @@ describe('SdkClientController', () => {
     });
 
     it('opts out of caching when the fingerprint does not match the installed module', async () => {
-      await controller.getInstanceSdkMetadataModule(
-        response as unknown as Response,
-        'c'.repeat(64),
-      );
+      await controller.getInstanceSdkMetadataModule(response, 'c'.repeat(64));
 
       expect(response.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
@@ -163,7 +156,7 @@ describe('SdkClientController', () => {
     });
 
     await controller.getSdkModule(
-      response as unknown as Response,
+      response,
       APPLICATION_ID,
       'metadata',
       workspace,
@@ -176,12 +169,7 @@ describe('SdkClientController', () => {
   });
 
   it('serves the core module from the application archive', async () => {
-    await controller.getSdkModule(
-      response as unknown as Response,
-      APPLICATION_ID,
-      'core',
-      workspace,
-    );
+    await controller.getSdkModule(response, APPLICATION_ID, 'core', workspace);
 
     expect(
       sdkClientArchiveService.getClientModuleFromArchive,
@@ -195,12 +183,7 @@ describe('SdkClientController', () => {
   });
 
   it('disables MIME sniffing and opts out of HTTP caching on the bare fallback url', async () => {
-    await controller.getSdkModule(
-      response as unknown as Response,
-      APPLICATION_ID,
-      'core',
-      workspace,
-    );
+    await controller.getSdkModule(response, APPLICATION_ID, 'core', workspace);
 
     expect(response.setHeader).toHaveBeenCalledWith(
       'Content-Type',
@@ -218,7 +201,7 @@ describe('SdkClientController', () => {
 
   it('serves fingerprinted urls as immutable when the checksum matches the persisted core checksum', async () => {
     await controller.getSdkModule(
-      response as unknown as Response,
+      response,
       APPLICATION_ID,
       'core',
       workspace,
@@ -233,7 +216,7 @@ describe('SdkClientController', () => {
 
   it('opts out of caching when the fingerprint does not match the persisted checksum', async () => {
     await controller.getSdkModule(
-      response as unknown as Response,
+      response,
       APPLICATION_ID,
       'core',
       workspace,
@@ -249,7 +232,7 @@ describe('SdkClientController', () => {
   it('rejects unknown module names', async () => {
     await expect(
       controller.getSdkModule(
-        response as unknown as Response,
+        response,
         APPLICATION_ID,
         'evil' as never,
         workspace,
@@ -259,12 +242,7 @@ describe('SdkClientController', () => {
 
   it('rejects unknown applications', async () => {
     await expect(
-      controller.getSdkModule(
-        response as unknown as Response,
-        'unknown-app',
-        'metadata',
-        workspace,
-      ),
+      controller.getSdkModule(response, 'unknown-app', 'metadata', workspace),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 });

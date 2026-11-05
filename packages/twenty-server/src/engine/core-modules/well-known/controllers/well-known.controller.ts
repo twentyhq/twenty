@@ -21,7 +21,7 @@ export class WellKnownController {
   @Get('mcp/server-card.json')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @Header('Cache-Control', DISCOVERY_CACHE_CONTROL)
-  getMcpServerCard(@Req() request: Request) {
+  getMcpServerCard(@Req() request: Pick<Request, 'protocol' | 'get'>) {
     const version =
       extractVersionMajorMinorPatch(
         this.twentyConfigService.get('APP_VERSION'),
@@ -41,7 +41,7 @@ export class WellKnownController {
     'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
   )
   @Header('Cache-Control', DISCOVERY_CACHE_CONTROL)
-  getApiCatalog(@Req() request: Request): string {
+  getApiCatalog(@Req() request: Pick<Request, 'protocol' | 'get'>): string {
     return JSON.stringify(buildApiCatalog(getRequestBaseUrl(request)), null, 2);
   }
 }

@@ -1,13 +1,15 @@
+import { Test } from '@nestjs/testing';
+
 import {
   FieldMetadataType,
   ViewFilterOperand,
   ViewVisibility,
 } from 'twenty-shared/types';
 
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
-import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 jest.mock('src/engine/metadata-modules/view/services/view.service', () => ({
   ViewService: class {},
@@ -64,11 +66,18 @@ describe('ViewQueryParamsService', () => {
         },
       }),
     };
-    const service = new ViewQueryParamsService(
-      viewService as unknown as ViewService,
-      flatEntityMapsCacheService as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
-      {} as WorkspaceOrmManager,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ViewQueryParamsService,
+        { provide: ViewService, useValue: viewService },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: flatEntityMapsCacheService,
+        },
+        { provide: WorkspaceOrmManager, useValue: {} },
+      ],
+    }).compile();
+    const service = module.get(ViewQueryParamsService);
 
     const result = await service.resolveViewToQueryParams({
       viewId: 'view-id',

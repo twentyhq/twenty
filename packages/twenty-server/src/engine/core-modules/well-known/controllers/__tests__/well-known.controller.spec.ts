@@ -1,7 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Request } from 'express';
-
 import { WellKnownController } from 'src/engine/core-modules/well-known/controllers/well-known.controller';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -9,12 +7,14 @@ describe('WellKnownController', () => {
   let controller: WellKnownController;
   const configGet = jest.fn();
 
-  const buildMockRequest = (host: string, protocol = 'https') =>
-    ({
-      protocol,
-      get: (header: string) =>
+  const buildMockRequest = (host: string, protocol = 'https') => ({
+    protocol,
+    get: jest
+      .fn()
+      .mockImplementation((header: string) =>
         header.toLowerCase() === 'host' ? host : undefined,
-    }) as unknown as Request;
+      ),
+  });
 
   beforeEach(async () => {
     configGet.mockReset();

@@ -1,8 +1,3 @@
-import {
-  type WorkspaceCompanyEnrichment,
-  type WorkspacePersonEnrichment,
-} from 'twenty-shared/workspace';
-
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-summary-max-length.constant';
 import { WORKSPACE_PERSON_ENRICHMENT_MAX_SKILLS } from 'src/engine/core-modules/company-enrichment/constants/workspace-person-enrichment-max-skills.constant';
@@ -37,8 +32,8 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   const start = (
     resolver: WorkspaceSetupChatResolver,
-    companyContext: WorkspaceCompanyEnrichment | null,
-    personContext: WorkspacePersonEnrichment | null = null,
+    companyContext: unknown,
+    personContext: unknown = null,
   ) =>
     resolver.startWorkspaceSetupChat(
       companyContext,
@@ -56,7 +51,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       domain: 42,
       enrichedAt: true,
       injectedField: 'ignore me',
-    } as unknown as WorkspaceCompanyEnrichment);
+    });
 
     expect(
       workspaceSetupChatService.startWorkspaceSetupChat,
@@ -83,7 +78,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       ),
       employeeCount: 'not-a-number',
       injectedField: 'ignore me',
-    } as unknown as WorkspaceCompanyEnrichment);
+    });
 
     const { companyContext } =
       workspaceSetupChatService.startWorkspaceSetupChat.mock.calls[0][0];
@@ -108,7 +103,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
         (_, index) => `skill-${index}`,
       ),
       injectedField: 'ignore me',
-    } as unknown as WorkspacePersonEnrichment);
+    });
 
     const { personContext } =
       workspaceSetupChatService.startWorkspaceSetupChat.mock.calls[0][0];
@@ -128,7 +123,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       email: 'someone-else@evil.com',
       enrichedAt: '2026-07-21T10:00:00.000Z',
       jobTitle: 'CEO',
-    } as unknown as WorkspacePersonEnrichment);
+    });
 
     const { personContext } =
       workspaceSetupChatService.startWorkspaceSetupChat.mock.calls[0][0];

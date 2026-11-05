@@ -1,8 +1,11 @@
+import { Test } from '@nestjs/testing';
+
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pending-wake-up/listeners/pending-wake-up-database-event.listener';
-import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const buildWakeUp = (overrides: Partial<PendingWakeUpEntity> = {}) =>
@@ -22,33 +25,40 @@ const buildWakeUp = (overrides: Partial<PendingWakeUpEntity> = {}) =>
     ...overrides,
   }) as PendingWakeUpEntity;
 
-const buildUpdateEvent = (recordId: string) =>
-  ({
-    recordId,
-    properties: {
-      before: { name: 'Before' },
-      after: { name: 'After' },
-      updatedFields: ['name'],
-      diff: {},
-    },
-  }) as unknown as ObjectRecordEvent;
+const buildUpdateEvent = (recordId: string): ObjectRecordEvent => ({
+  recordId,
+  properties: {
+    before: { name: 'Before' },
+    after: { name: 'After' },
+    updatedFields: ['name'],
+    diff: {},
+  },
+});
 
-const payload = {
+const payload: WorkspaceEventBatch<ObjectRecordEvent> = {
   workspaceId: 'workspace-id',
   name: 'company.updated',
+  objectMetadata: getFlatObjectMetadataMock({
+    universalIdentifier: 'object-metadata-universal-identifier',
+  }),
   events: [buildUpdateEvent('record-a'), buildUpdateEvent('record-b')],
-} as unknown as WorkspaceEventBatch<ObjectRecordEvent>;
+};
 
-const buildListener = (wakeUps: PendingWakeUpEntity[]) => {
+const buildListener = async (wakeUps: PendingWakeUpEntity[]) => {
   const pendingWakeUpService = {
     findEventWakeUps: jest.fn().mockResolvedValue(wakeUps),
     scheduleResolution: jest.fn(),
   };
 
+  const module = await Test.createTestingModule({
+    providers: [
+      PendingWakeUpDatabaseEventListener,
+      { provide: PendingWakeUpService, useValue: pendingWakeUpService },
+    ],
+  }).compile();
+
   return {
-    listener: new PendingWakeUpDatabaseEventListener(
-      pendingWakeUpService as unknown as PendingWakeUpService,
-    ),
+    listener: module.get(PendingWakeUpDatabaseEventListener),
     pendingWakeUpService,
   };
 };
@@ -56,7 +66,7 @@ const buildListener = (wakeUps: PendingWakeUpEntity[]) => {
 describe('PendingWakeUpDatabaseEventListener', () => {
   it('hands the matching event to its resolution without checking it against any role', async () => {
     const wakeUp = buildWakeUp();
-    const { listener, pendingWakeUpService } = buildListener([wakeUp]);
+    const { listener, pendingWakeUpService } = await buildListener([wakeUp]);
 
     await listener.handleObjectRecordUpdateEvent(payload);
 
@@ -74,7 +84,7 @@ describe('PendingWakeUpDatabaseEventListener', () => {
   });
 
   it('leaves an expired wake-up to its timeout', async () => {
-    const { listener, pendingWakeUpService } = buildListener([
+    const { listener, pendingWakeUpService } = await buildListener([
       buildWakeUp({ resumeAt: new Date(Date.now() - 1000) }),
     ]);
 

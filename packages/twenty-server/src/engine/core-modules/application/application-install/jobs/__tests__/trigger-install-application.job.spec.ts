@@ -1,4 +1,6 @@
-import type { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { Test } from '@nestjs/testing';
+
+import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import {
   TriggerInstallApplicationJob,
   type TriggerInstallApplicationJobData,
@@ -8,9 +10,23 @@ import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/mes
 describe('TriggerInstallApplicationJob', () => {
   const applicationInstallService = {
     installApplication: jest.fn(),
-  } as unknown as ApplicationInstallService;
+  };
 
-  const job = new TriggerInstallApplicationJob(applicationInstallService);
+  let job: TriggerInstallApplicationJob;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        TriggerInstallApplicationJob,
+        {
+          provide: ApplicationInstallService,
+          useValue: applicationInstallService,
+        },
+      ],
+    }).compile();
+
+    job = module.get(TriggerInstallApplicationJob);
+  });
 
   const jobData: TriggerInstallApplicationJobData = {
     applicationRegistrationId: 'application-registration-id',

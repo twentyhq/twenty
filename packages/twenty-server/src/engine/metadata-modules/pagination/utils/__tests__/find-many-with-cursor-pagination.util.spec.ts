@@ -1,5 +1,3 @@
-import { type SelectQueryBuilder } from 'typeorm';
-
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
@@ -42,10 +40,7 @@ const createFakeQueryBuilder = (rows: FakeEntity[]) => {
     getMany: async () => rows.slice(0, takenAmount ?? rows.length),
   };
 
-  return {
-    queryBuilder: queryBuilder as unknown as SelectQueryBuilder<FakeEntity>,
-    calls,
-  };
+  return { queryBuilder, calls };
 };
 
 const paginate = (

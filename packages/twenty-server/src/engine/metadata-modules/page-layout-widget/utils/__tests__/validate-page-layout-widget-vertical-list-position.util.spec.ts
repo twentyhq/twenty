@@ -30,8 +30,9 @@ describe('validatePageLayoutWidgetVerticalListPosition', () => {
     const errors = validatePageLayoutWidgetVerticalListPosition(
       {
         ...validPosition,
+        // @ts-expect-error stored widget positions can hold values no longer supported
         heightBehavior: 'FULL_PAGE',
-      } as unknown as PageLayoutWidgetVerticalListPosition,
+      },
       'Widget',
     );
 
