@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JOB_QUEUE_MEMORY_LIMIT_MODE } from 'src/engine/core-modules/message-queue/constants/job-queue-memory-limit-mode.constant';
+import { type JobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limit-refusal.type';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -26,12 +27,16 @@ export class JobSizeLimiter {
   constructor(private readonly options: JobSizeLimiterOptions) {}
 
   isEnabled(): boolean {
+    return isDefined(this.getActiveMode());
+  }
+
+  private getActiveMode(): JobMemoryLimitRefusal['mode'] | undefined {
     const mode = this.options.getMode();
 
-    return (
-      mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ||
+    return mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ||
       mode === JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    );
+      ? mode
+      : undefined;
   }
 
   checkJobSizes({
@@ -41,12 +46,9 @@ export class JobSizeLimiter {
     queueName: MessageQueue;
     jobs: SizedJob[];
   }): void {
-    const mode = this.options.getMode();
+    const mode = this.getActiveMode();
 
-    if (
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE &&
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    ) {
+    if (!isDefined(mode)) {
       return;
     }
 

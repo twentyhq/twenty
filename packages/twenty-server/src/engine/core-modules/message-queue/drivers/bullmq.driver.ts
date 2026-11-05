@@ -975,7 +975,9 @@ export class BullMQDriver
           ...queueOptions,
           jobId:
             job.jobId ??
-            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
+            (isDefined(queueOptions.jobId)
+              ? `${queueOptions.jobId}-${index}`
+              : undefined),
         },
         scope: job,
       })),
