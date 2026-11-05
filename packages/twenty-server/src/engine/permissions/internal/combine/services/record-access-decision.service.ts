@@ -402,10 +402,8 @@ export class RecordAccessDecisionService {
     validateOperationIsPermittedOrThrow({
       entityName: flatObjectMetadata.nameSingular,
       operationType,
-      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-        principals,
-        metadataMaps,
-      }),
+      recordsPermissions:
+        await this.findPrincipalsRecordsPermissions(principals),
       flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
       objectIdByNameSingular: {
@@ -453,8 +451,6 @@ export class RecordAccessDecisionService {
     });
   }
 
-  // An update must not move a record out of the update policy. Records it
-  // did not grant before are left to the update query, which skips them
   async assertUpdatesKeepRecordAccessOrThrow({
     principals,
     flatObjectMetadata,
