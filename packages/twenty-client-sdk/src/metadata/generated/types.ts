@@ -15720,13 +15720,13 @@ export default {
                 1
             ],
             "objectPermissions": [
-                399
+                400
             ],
             "objectRecordsPermissions": [
                 407
             ],
             "objectsPermissions": [
-                399
+                400
             ],
             "permissionFlags": [
                 425
