@@ -118,7 +118,7 @@ const renderWorkflowCommands = (applicationId: string) => {
         updatedAt: '2026-09-30T00:00:00.000Z',
       },
     },
-  ] as unknown as ReturnType<typeof useCoreWorkflowsWithCurrentVersions>);
+  ]);
 
   return render(
     <CommandMenuContextProviderWithWorkflowEnrichment

@@ -7,7 +7,8 @@ import {
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const buildMockField = (
   id: string,
@@ -15,7 +16,7 @@ const buildMockField = (
   type: FieldMetadataType,
   overrides: Partial<FlatFieldMetadata> = {},
 ): FlatFieldMetadata =>
-  ({
+  getFlatFieldMetadataMock({
     id,
     universalIdentifier: id,
     name,
@@ -25,7 +26,7 @@ const buildMockField = (
     label: name,
     isNullable: true,
     ...overrides,
-  }) as unknown as FlatFieldMetadata;
+  });
 
 const closeDateField = buildMockField(
   'closedate-id',
@@ -66,12 +67,12 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   universalIdentifiersByApplicationId: {},
 };
 
-const flatObjectMetadata = {
+const flatObjectMetadata = getFlatObjectMetadataMock({
   id: 'obj-id',
   universalIdentifier: 'obj-id',
   nameSingular: 'opportunity',
   fieldIds: ['closedate-id', 'fullname-id', 'company-id', 'owner-id'],
-} as unknown as FlatObjectMetadata;
+});
 
 describe('buildOrderByColumnsToSelect', () => {
   it('should select the column of a scalar orderBy field', () => {

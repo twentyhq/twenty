@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -97,7 +96,7 @@ const scheduleBot = ({
   client: FakeCoreApiClient;
   meetingStartsAt: string;
 }) =>
-  scheduleRecallBotForCallRecording(client as unknown as CoreApiClient, {
+  scheduleRecallBotForCallRecording(client, {
     callRecording: { id: 'call-recording-1' },
     calendarEvent: {
       id: 'calendar-event-1',

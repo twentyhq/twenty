@@ -108,20 +108,21 @@ describe('resolveOrderByLeaves', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const flatObjectMetadata = {
+  const flatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
+    universalIdentifier: objectMetadataId,
     workspaceId,
     nameSingular: 'opportunity',
     fieldIds: rootFields.map((field) => field.id),
-  } as unknown as FlatObjectMetadata;
+  });
 
-  const companyObjectMetadata = {
+  const companyObjectMetadata = getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
     fieldIds: ['company-name-id', 'company-contactname-id'],
-  } as unknown as FlatObjectMetadata;
+  });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {

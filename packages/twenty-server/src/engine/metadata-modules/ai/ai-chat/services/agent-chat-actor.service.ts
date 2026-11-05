@@ -14,7 +14,8 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { resolveAgentChatMessageWorkspaceMemberIdOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id-or-throw.util';
@@ -32,7 +33,8 @@ export class AgentChatActorService {
     private readonly threads: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   async resolveMessage({
@@ -144,7 +146,7 @@ export class AgentChatActorService {
       );
     }
     if (
-      !(await this.permissionsService.userHasWorkspaceSettingPermission({
+      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         applicationId: sender.applicationId ?? undefined,
@@ -168,9 +170,7 @@ export class AgentChatActorService {
 
   // a member with no role left cannot act in the chat nor run the calls they approve
   async hasRole(authContext: WorkspaceAuthContext): Promise<boolean> {
-    const roleIds = await this.permissionsService.getRoleIds(authContext);
-
-    return roleIds.length > 0;
+    return this.rolePermissionsService.hasAnyRole({ authContext });
   }
 
   // resolved from the application context of the turn that made the call

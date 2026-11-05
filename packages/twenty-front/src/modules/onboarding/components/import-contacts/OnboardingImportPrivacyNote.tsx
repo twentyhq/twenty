@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -18,18 +17,18 @@ const StyledNoteText = styled.span`
   margin-block: calc((${PRIVACY_NOTE_ICON_SIZE}px - 1.4em) / 2);
 `;
 
-export const OnboardingImportPrivacyNote = () => {
-  const { t } = useLingui();
-
-  return (
-    <StyledNote>
-      <IconLock
-        size={PRIVACY_NOTE_ICON_SIZE}
-        color={themeCssVariables.font.color.tertiary}
-      />
-      <StyledNoteText>
-        {t`Only you will be able to see your emails and events`}
-      </StyledNoteText>
-    </StyledNote>
-  );
+type OnboardingImportPrivacyNoteProps = {
+  text: string;
 };
+
+export const OnboardingImportPrivacyNote = ({
+  text,
+}: OnboardingImportPrivacyNoteProps) => (
+  <StyledNote>
+    <IconLock
+      size={PRIVACY_NOTE_ICON_SIZE}
+      color={themeCssVariables.font.color.tertiary}
+    />
+    <StyledNoteText>{text}</StyledNoteText>
+  </StyledNote>
+);

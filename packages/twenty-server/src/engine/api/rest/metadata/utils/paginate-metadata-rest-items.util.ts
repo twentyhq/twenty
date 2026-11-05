@@ -8,7 +8,7 @@ export const paginateMetadataRestItems = <T extends { id: string }>({
   request,
 }: {
   items: T[];
-  request: AuthenticatedRequest;
+  request: Pick<AuthenticatedRequest, 'query'>;
 }): MetadataRestListResponse<T> => {
   const page = paginateMetadataOrderedItems({
     items,

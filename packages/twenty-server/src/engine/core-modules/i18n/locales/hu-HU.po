@@ -1668,6 +1668,7 @@ msgstr "fájlt csatolt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Csatolva ehhez"
@@ -1715,6 +1716,7 @@ msgid "Attachment record position"
 msgstr "Csatolmány rekord pozíciója"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -3348,10 +3350,10 @@ msgstr "Először csatlakoztasson egy fiókot ehhez az MCP-kiszolgálóhoz."
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Nem megengedett az összekapcsolás a(z) {connectFieldName} mezőn a(z) {objectMetadataNameSingular} objektumon."
 
-#. js-lingui-id: eTJ1jL
+#. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Connect your mailbox"
-msgstr "Csatlakoztassa postafiókját"
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr ""
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -4062,6 +4064,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "Irányítópultok"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr ""
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -4172,6 +4179,11 @@ msgstr "Üzlet"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "Üzlet"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr ""
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4503,11 +4515,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "Kézbesítés időpontja"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "megtagadva"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4742,6 +4749,11 @@ msgstr "A kapcsolódó rekord útvonalának minden mezőjének az előző kapcso
 #: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Minden shareWith bejegyzésnek pontosan a workspaceMemberId, a roleId vagy az everyone egyikét kell megcéloznia"
+
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr ""
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5829,6 +5841,7 @@ msgstr "Fájl"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "A(z) {fileId} fájl már egy végleges fájlmezőhöz van társítva. Kérjük, töltse fel újra a fájlt."
 
@@ -5918,6 +5931,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Fájlok"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr ""
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -6001,11 +6020,6 @@ msgstr "Lezáruló üzletek utókövetése"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
 msgstr "Utókövetési utasítások"
-
-#. js-lingui-id: xRdoZk
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Follow-up request sent"
-msgstr "Utókövetési kérés elküldve"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6429,6 +6443,11 @@ msgstr "A kezelő neve érvénytelen"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "A handlerName értékének érvényes JavaScript-azonosítónak vagy pontozott elérési útnak kell lennie"
 
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr ""
+
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6613,6 +6632,11 @@ msgstr "Importálás"
 msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "{objectLabelPlural} importálása"
+
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr ""
 
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
@@ -7721,6 +7745,11 @@ msgstr "Meghívó elküldve"
 msgid "Invite your team"
 msgstr "Hívja meg csapatát"
 
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr ""
+
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8356,6 +8385,11 @@ msgstr "Legyen privát"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Munkafolyamat priváttá tétele"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr ""
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9840,6 +9874,11 @@ msgstr "Az ObjectMetadataId szükséges a nézet létrehozásához."
 #: src/engine/metadata-modules/view/tools/services/complete-view-upsert.service.ts
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "Nézet létrehozásához ObjectMetadataId szükséges"
+
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr ""
 
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -12553,11 +12592,6 @@ msgstr "A beállítási menüelem címe kötelező"
 msgid "Setup instructions"
 msgstr "Telepítési utasítások"
 
-#. js-lingui-id: gIoyTf
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Setup request sent"
-msgstr "Beállítási kérelem elküldve"
-
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
@@ -12907,11 +12941,6 @@ msgstr "Szóközök és vessző"
 msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "Táblázat"
-
-#. js-lingui-id: 73/iLE
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Spreadsheet uploaded"
-msgstr "Táblázat feltöltve"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -15740,6 +15769,11 @@ msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Fordulat"
 
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr ""
+
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17251,11 +17285,6 @@ msgstr "A munkafolyamat megkettőzése sikertelen, próbálja újra"
 msgid "Workflow edge not found."
 msgstr "Munkafolyamat-él nem található."
 
-#. js-lingui-id: 5ENQ3i
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Workflow enabled"
-msgstr "Munkafolyamat engedélyezve"
-
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
@@ -17591,6 +17620,11 @@ msgstr "Munkaterület feltöltése bemutatóadatokkal"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
 msgstr "A munkaterület nem létezik."
+
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr ""
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -18187,6 +18221,11 @@ msgstr "A fizetési módját elutasították. Kérjük, frissítse, majd próbá
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "A megvásárolt krediteket nem sikerült hozzáadni. Kérjük, lépjen kapcsolatba az ügyfélszolgálattal."
+
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr ""
 
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

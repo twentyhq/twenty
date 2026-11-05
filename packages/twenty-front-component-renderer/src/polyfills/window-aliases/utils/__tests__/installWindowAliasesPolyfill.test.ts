@@ -1,9 +1,10 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
 
 const createSandbox = () => {
-  const polyfillWindow = new Window() as unknown as Record<string, unknown>;
+  const polyfillWindow = toGlobalScopeRecord(new Window());
   const globalScope: Record<string, unknown> = {
     window: polyfillWindow,
     console,

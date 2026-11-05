@@ -1,39 +1,29 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 
-type FlatEntityFixture = { id: string; universalIdentifier: string };
+const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
+  flatEntities: TFlatEntity[],
+) =>
+  addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
 
-const buildFlatEntityMaps = <T extends FlatEntityFixture>(
-  flatEntities: T[],
-): FlatEntityMaps<never> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.universalIdentifier,
-        flatEntity,
-      ]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.id,
-        flatEntity.universalIdentifier,
-      ]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<never>;
-
-const NOTE_OBJECT = {
+const NOTE_OBJECT = getFlatObjectMetadataMock({
   id: 'note-object',
   universalIdentifier: 'note-object-uid',
   nameSingular: 'note',
   fieldIds: ['note-targets-field'],
-};
+});
 
-const NOTE_TARGET_OBJECT = {
+const NOTE_TARGET_OBJECT = getFlatObjectMetadataMock({
   id: 'note-target-object',
   universalIdentifier: 'note-target-object-uid',
   nameSingular: 'noteTarget',
@@ -42,23 +32,23 @@ const NOTE_TARGET_OBJECT = {
     'note-target-person-field',
     'note-target-company-field',
   ],
-};
+});
 
-const PERSON_OBJECT = {
+const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object',
   universalIdentifier: 'person-object-uid',
   nameSingular: 'person',
   fieldIds: [],
-};
+});
 
-const COMPANY_OBJECT = {
+const COMPANY_OBJECT = getFlatObjectMetadataMock({
   id: 'company-object',
   universalIdentifier: 'company-object-uid',
   nameSingular: 'company',
   fieldIds: [],
-};
+});
 
-const NOTE_TARGETS_FIELD = {
+const NOTE_TARGETS_FIELD = getFlatFieldMetadataMock({
   id: 'note-targets-field',
   universalIdentifier: 'note-targets-field-uid',
   name: 'noteTargets',
@@ -71,9 +61,9 @@ const NOTE_TARGETS_FIELD = {
     relationType: RelationType.ONE_TO_MANY,
     junctionTargetFieldId: 'note-target-person-field',
   },
-};
+});
 
-const NOTE_TARGET_NOTE_FIELD = {
+const NOTE_TARGET_NOTE_FIELD = getFlatFieldMetadataMock({
   id: 'note-target-note-field',
   universalIdentifier: 'note-target-note-field-uid',
   name: 'note',
@@ -86,9 +76,9 @@ const NOTE_TARGET_NOTE_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'noteId',
   },
-};
+});
 
-const NOTE_TARGET_PERSON_FIELD = {
+const NOTE_TARGET_PERSON_FIELD = getFlatFieldMetadataMock({
   id: 'note-target-person-field',
   universalIdentifier: 'note-target-person-field-uid',
   name: 'targetPerson',
@@ -101,9 +91,9 @@ const NOTE_TARGET_PERSON_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'targetPersonId',
   },
-};
+});
 
-const NOTE_TARGET_COMPANY_FIELD = {
+const NOTE_TARGET_COMPANY_FIELD = getFlatFieldMetadataMock({
   id: 'note-target-company-field',
   universalIdentifier: 'note-target-company-field-uid',
   name: 'targetCompany',
@@ -116,9 +106,9 @@ const NOTE_TARGET_COMPANY_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'targetCompanyId',
   },
-};
+});
 
-const NON_MORPH_JUNCTION_TARGET_FIELD = {
+const NON_MORPH_JUNCTION_TARGET_FIELD = getFlatFieldMetadataMock({
   id: 'junction-person-field',
   universalIdentifier: 'junction-person-field-uid',
   name: 'person',
@@ -131,26 +121,25 @@ const NON_MORPH_JUNCTION_TARGET_FIELD = {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'personId',
   },
-};
+});
 
 const flatObjectMetadataMaps = buildFlatEntityMaps([
   NOTE_OBJECT,
   NOTE_TARGET_OBJECT,
   PERSON_OBJECT,
   COMPANY_OBJECT,
-]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+]);
 
 const flatFieldMetadataMaps = buildFlatEntityMaps([
   NOTE_TARGETS_FIELD,
   NOTE_TARGET_NOTE_FIELD,
   NOTE_TARGET_PERSON_FIELD,
   NOTE_TARGET_COMPANY_FIELD,
-]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+]);
 
-const buildShape = (relationFlatFieldMetadata: object) =>
+const buildShape = (relationFlatFieldMetadata: OrmFlatFieldMetadata) =>
   buildJunctionTargetShape({
-    relationFlatFieldMetadata:
-      relationFlatFieldMetadata as unknown as FlatFieldMetadata,
+    relationFlatFieldMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
@@ -196,13 +185,13 @@ describe('buildJunctionTargetShape', () => {
           relationType: RelationType.ONE_TO_MANY,
           junctionTargetFieldId: NON_MORPH_JUNCTION_TARGET_FIELD.id,
         },
-      } as unknown as FlatFieldMetadata,
+      },
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: buildFlatEntityMaps([
         NOTE_TARGETS_FIELD,
         NOTE_TARGET_NOTE_FIELD,
         NON_MORPH_JUNCTION_TARGET_FIELD,
-      ]) as unknown as FlatEntityMaps<FlatFieldMetadata>,
+      ]),
     });
 
     expect(shape).toEqual({

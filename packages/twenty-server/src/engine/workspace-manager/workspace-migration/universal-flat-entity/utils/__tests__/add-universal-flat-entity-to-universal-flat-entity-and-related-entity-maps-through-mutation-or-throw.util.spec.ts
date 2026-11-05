@@ -1,4 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectOpenRecordIn,
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import {
   FlatEntityMapsException,
@@ -28,71 +34,89 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
     const applicationUniversalIdentifier =
       '20202020-f3ad-452e-b5b6-2d49d3ea88b1';
 
-    const mockUniversalObjectMetadata = {
-      universalIdentifier: objectMetadataUniversalIdentifier,
-      viewUniversalIdentifiers: [],
-      fieldUniversalIdentifiers: [],
-      indexMetadataUniversalIdentifiers: [],
-      description: 'default flat object metadata description',
-      icon: 'icon',
-      isActive: true,
-      isAuditLogged: true,
-      isLabelSyncedWithName: false,
-      isRemote: false,
-      isSearchable: true,
-      isSystem: false,
-      isUIEditable: true,
-      labelPlural: 'default flat object metadata label plural',
-      labelSingular: 'default flat object metadata label singular',
-      namePlural: 'defaultflatObjectMetadataNamePlural',
-      nameSingular: 'defaultflatObjectMetadataNameSingular',
-      shortcut: 'shortcut',
-      overrides: null,
-      targetTableName: '',
-      createdAt: '2024-01-01T00:00:00.000Z',
-      updatedAt: '2024-01-01T00:00:00.000Z',
-      duplicateCriteria: null,
-      applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        '20202020-1a62-405c-87fa-4d4fd215851b',
-      imageIdentifierFieldMetadataUniversalIdentifier:
-        '20202020-9d65-415f-b0e1-216a2e257ea4',
-    };
+    const mockUniversalObjectMetadata: MetadataUniversalFlatEntity<'objectMetadata'> =
+      {
+        universalIdentifier: objectMetadataUniversalIdentifier,
+        viewUniversalIdentifiers: [],
+        fieldUniversalIdentifiers: [],
+        indexMetadataUniversalIdentifiers: [],
+        description: 'default flat object metadata description',
+        icon: 'icon',
+        isActive: true,
+        isAuditLogged: true,
+        isLabelSyncedWithName: false,
+        isRemote: false,
+        isSearchable: true,
+        isSystem: false,
+        isUIEditable: true,
+        isUICreatable: true,
+        commandMenuItemUniversalIdentifiers: [],
+        fieldPermissionUniversalIdentifiers: [],
+        navigationMenuItemUniversalIdentifiers: [],
+        objectPermissionUniversalIdentifiers: [],
+        pageLayoutUniversalIdentifiers: [],
+        searchFieldMetadataUniversalIdentifiers: [],
+        color: null,
+        disabledObjectPermissionActions: null,
+        openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+        labelPlural: 'default flat object metadata label plural',
+        labelSingular: 'default flat object metadata label singular',
+        namePlural: 'defaultflatObjectMetadataNamePlural',
+        nameSingular: 'defaultflatObjectMetadataNameSingular',
+        shortcut: 'shortcut',
+        overrides: null,
+        targetTableName: '',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+        duplicateCriteria: null,
+        applicationUniversalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          '20202020-1a62-405c-87fa-4d4fd215851b',
+        imageIdentifierFieldMetadataUniversalIdentifier:
+          '20202020-9d65-415f-b0e1-216a2e257ea4',
+      };
 
-    const mockUniversalFieldMetadata = {
-      universalIdentifier: fieldMetadataUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      type: FieldMetadataType.DATE,
-      applicationUniversalIdentifier,
-      viewFieldUniversalIdentifiers: [],
-      viewFilterUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [],
-      calendarEndViewUniversalIdentifiers: [],
-      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-      kanbanAggregateOperationViewUniversalIdentifiers: [],
-      createdAt: '2024-01-01T00:00:00.000Z',
-      updatedAt: '2024-01-01T00:00:00.000Z',
-      defaultValue: null,
-      options: null,
-      morphId: null,
-      settings: null,
-      universalSettings: null,
-      description: 'default flat field metadata description',
-      icon: 'icon',
-      isActive: true,
-      name: 'flatFieldMetadataName',
-      label: 'flat field metadata label',
-      isNullable: true,
-      isUnique: false,
-      isUIEditable: true,
-      isLabelSyncedWithName: false,
-      isSystem: false,
-      overrides: null,
-      relationTargetObjectMetadataUniversalIdentifier: null,
-      relationTargetFieldMetadataUniversalIdentifier: null,
-    };
+    const mockUniversalFieldMetadata: MetadataUniversalFlatEntity<'fieldMetadata'> =
+      {
+        universalIdentifier: fieldMetadataUniversalIdentifier,
+        objectMetadataUniversalIdentifier,
+        type: FieldMetadataType.DATE,
+        applicationUniversalIdentifier,
+        viewFieldUniversalIdentifiers: [],
+        viewFilterUniversalIdentifiers: [],
+        calendarViewUniversalIdentifiers: [],
+        calendarEndViewUniversalIdentifiers: [],
+        mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+        kanbanAggregateOperationViewUniversalIdentifiers: [],
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+        defaultValue: null,
+        options: null,
+        morphId: null,
+        universalSettings: null,
+        description: 'default flat field metadata description',
+        icon: 'icon',
+        isActive: true,
+        name: 'flatFieldMetadataName',
+        label: 'flat field metadata label',
+        isNullable: true,
+        isUnique: false,
+        isUIEditable: true,
+        isSystemSideEffect: false,
+        disabledFieldPermissionActions: null,
+        isSearchable: false,
+        isAuditLogged: true,
+        fieldPermissionUniversalIdentifiers: [],
+        viewSortUniversalIdentifiers: [],
+        searchFieldMetadataUniversalIdentifiers: [],
+        isLabelSyncedWithName: false,
+        isSystem: false,
+        overrides: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
+      };
 
-    const mockUniversalView = {
+    const mockUniversalView: MetadataUniversalFlatEntity<'view'> = {
       universalIdentifier: viewUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       viewFieldUniversalIdentifiers: [],
@@ -106,17 +130,30 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
-      type: 'table',
+      type: ViewType.TABLE,
+      isActive: true,
+      isSystemSideEffect: false,
+      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      calendarLayout: null,
+      shouldHideEmptyGroups: false,
+      kanbanColumnWidth: null,
+      groupLoadLimit: 20,
+      anyFieldFilterValue: null,
+      visibility: ViewVisibility.WORKSPACE,
+      createdByUserWorkspaceId: null,
+      deletedAt: null,
+      viewSortUniversalIdentifiers: [],
+      navigationMenuItemUniversalIdentifiers: [],
+      viewFieldGroupUniversalIdentifiers: [],
+      universalOverrides: null,
       icon: 'IconList',
       isCompact: false,
       position: 0,
       key: null,
-      kanbanFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
-      rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     };
 
     const flatObjectMetadataMaps =
@@ -135,18 +172,18 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       universalFlatEntityMapsToMutate: flatFieldMetadataMaps,
     });
 
-    const universalFlatEntityAndRelatedMapsToMutate = {
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      flatViewMaps:
-        createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
-    } as unknown as MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'>;
+    const universalFlatEntityAndRelatedMapsToMutate: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'> =
+      {
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        flatViewMaps:
+          createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
+      };
 
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
         metadataName: 'view',
-        universalFlatEntity:
-          mockUniversalView as unknown as MetadataUniversalFlatEntity<'view'>,
+        universalFlatEntity: mockUniversalView,
         universalFlatEntityAndRelatedMapsToMutate,
       },
     );
@@ -190,7 +227,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
     const applicationUniversalIdentifier =
       '20202020-f3ad-452e-b5b6-2d49d3ea88b1';
 
-    const mockUniversalView = {
+    const mockUniversalView: MetadataUniversalFlatEntity<'view'> = {
       universalIdentifier: viewUniversalIdentifier,
       objectMetadataUniversalIdentifier:
         nonExistentObjectMetadataUniversalIdentifier,
@@ -202,32 +239,46 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
-      type: 'table',
+      calendarEndFieldMetadataUniversalIdentifier: null,
+      type: ViewType.TABLE,
+      isActive: true,
+      isSystemSideEffect: false,
+      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      calendarLayout: null,
+      shouldHideEmptyGroups: false,
+      kanbanColumnWidth: null,
+      groupLoadLimit: 20,
+      anyFieldFilterValue: null,
+      visibility: ViewVisibility.WORKSPACE,
+      createdByUserWorkspaceId: null,
+      deletedAt: null,
+      viewSortUniversalIdentifiers: [],
+      navigationMenuItemUniversalIdentifiers: [],
+      viewFieldGroupUniversalIdentifiers: [],
+      universalOverrides: null,
       icon: 'IconList',
       isCompact: false,
       position: 0,
       key: null,
-      kanbanFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
-      rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     };
 
-    const universalFlatEntityAndRelatedMapsToMutate = {
-      flatFieldMetadataMaps: createEmptyUniversalFlatEntityMaps(),
-      flatObjectMetadataMaps: createEmptyUniversalFlatEntityMaps(),
-      flatViewMaps:
-        createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
-    } as unknown as MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'>;
+    const universalFlatEntityAndRelatedMapsToMutate: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'> =
+      {
+        flatFieldMetadataMaps: createEmptyUniversalFlatEntityMaps(),
+        flatObjectMetadataMaps: createEmptyUniversalFlatEntityMaps(),
+        flatViewMaps:
+          createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
+      };
 
     expect(() =>
       addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
         {
           metadataName: 'view',
-          universalFlatEntity:
-            mockUniversalView as unknown as MetadataUniversalFlatEntity<'view'>,
+          universalFlatEntity: mockUniversalView,
           universalFlatEntityAndRelatedMapsToMutate,
         },
       ),

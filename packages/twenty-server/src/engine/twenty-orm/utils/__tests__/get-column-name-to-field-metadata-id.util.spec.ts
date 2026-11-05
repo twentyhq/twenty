@@ -4,6 +4,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 
 describe('getColumnNameToFieldMetadataIdMap', () => {
   const createMockFlatObjectMetadata = (
@@ -67,7 +68,7 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     type: FieldMetadataType,
     settings?: Record<string, unknown>,
   ): FlatFieldMetadata =>
-    ({
+    getFlatFieldMetadataMock({
       id,
       name,
       type,
@@ -75,17 +76,15 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
       objectMetadataId: 'test-object-id',
       isLabelSyncedWithName: true,
       isNullable: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: id,
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       ...(settings ? { settings } : {}),
-    }) as unknown as FlatFieldMetadata;
+    });
 
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],

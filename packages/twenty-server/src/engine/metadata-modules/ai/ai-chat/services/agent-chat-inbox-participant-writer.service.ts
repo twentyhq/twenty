@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -16,8 +18,6 @@ import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadat
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -30,8 +30,8 @@ export class AgentChatInboxParticipantWriterService {
     private readonly participantEventService: AgentChatThreadParticipantEventService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
   ) {}
 
   async writeParticipantInboxState({
@@ -180,7 +180,7 @@ export class AgentChatInboxParticipantWriterService {
         insertedParticipantIds.add(id);
       }
 
-      await this.privateRecordStorageService.setPrivate({
+      await this.privateRecordWriteService.setPrivate({
         workspaceId,
         flatObjectMetadata: participantObjectMetadata,
         recordIds: identifiers.map(({ id }) => id),
@@ -220,7 +220,7 @@ export class AgentChatInboxParticipantWriterService {
 
     const participantsAfter = await findParticipants();
 
-    await this.recordShareStorageService.insertMany({
+    await this.recordSharingWriteService.insertRecordShares({
       workspaceId,
       recordShares: buildAgentChatThreadParticipantOwnerShares({
         participants: participantsAfter,

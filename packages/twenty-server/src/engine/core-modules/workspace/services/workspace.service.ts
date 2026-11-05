@@ -114,7 +114,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -188,7 +188,7 @@ export class WorkspaceService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -1343,7 +1343,7 @@ export class WorkspaceService {
 
     for (const [permission, fields] of fieldsByPermission.entries()) {
       const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
+        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
           setting: permission,
