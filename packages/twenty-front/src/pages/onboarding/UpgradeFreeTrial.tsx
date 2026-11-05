@@ -19,7 +19,6 @@ import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useS
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
-import { SettingsBillingPartnerCodeForm } from '@/settings/billing/components/SettingsBillingPartnerCodeForm';
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -320,10 +319,6 @@ const UpgradeFreeTrialContent = ({
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
-          <SettingsBillingPartnerCodeForm
-            instanceId="onboarding-partner-code"
-            variant="onboarding"
-          />
           {requirePaymentMethod && isPaymentAvailable ? (
             <UpgradeFreeTrialSubmitButton
               plan={planKey}
