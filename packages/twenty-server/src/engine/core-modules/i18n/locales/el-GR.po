@@ -5591,6 +5591,23 @@ msgstr "Το όνομα πεδίου δεν είναι συγχρονισμέν�
 msgid "Field not found."
 msgstr "Το πεδίο δεν βρέθηκε."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Το πεδίο της επιλογής πεδίου δεν βρέθηκε"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Η επιλογή πεδίου δεν βρέθηκε"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Η επιλογή πεδίου δεν βρέθηκε."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -6947,6 +6964,11 @@ msgstr "Μη έγκυρο κλειδί σημαίας λειτουργίας."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "Μη έγκυρα δεδομένα εισόδου πεδίου."
+
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Μη έγκυρα δεδομένα εισόδου επιλογής πεδίου."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10130,6 +10152,12 @@ msgstr "Η ετικέτα επιλογής πρέπει να είναι μια �
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Η τιμή επιλογής \"{sanitizedValue}\" είναι κάτω από 1 χαρακτήρα"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Η τιμή επιλογής \"{value}\" υπάρχει ήδη σε αυτό το πεδίο"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10184,12 @@ msgstr "Η τιμή επιλογής πρέπει να είναι μια χορ�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Απαιτούνται επιλογές για πεδία λίστας"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Οι επιλογές μπορούν να ανήκουν μόνο σε πεδία επιλογής, πολλαπλής επιλογής ή αξιολόγησης"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10387,7 +10421,7 @@ msgstr "Συμμετέχοντες"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "Οι κωδικοί συνεργατών ισχύουν μόνο για νέους πελάτες του Twenty."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -14002,7 +14036,7 @@ msgstr "Δεν ήταν δυνατή η πρόσβαση στο μητρώο π�
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "Ο κωδικός συνεργάτη δεν μπορεί πλέον να προστεθεί ή να αλλάξει. Επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14877,7 +14911,7 @@ msgstr "Αυτό το κλειδί Οργανισμού χρησιμοποιεί
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "Αυτός ο κωδικός συνεργάτη δεν είναι έγκυρος."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts

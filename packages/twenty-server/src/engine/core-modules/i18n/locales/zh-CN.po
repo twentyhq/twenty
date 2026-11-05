@@ -5591,6 +5591,23 @@ msgstr "字段名称未与标签同步。"
 msgid "Field not found."
 msgstr "未找到字段。"
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "未找到字段选项字段"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "未找到字段选项"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "未找到字段选项。"
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -6947,6 +6964,11 @@ msgstr "无效的功能开关键。"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "字段输入无效。"
+
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "字段选项输入无效。"
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10130,6 +10152,12 @@ msgstr "选项标签必须至少为一个字符的字符串"
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "选项值“{sanitizedValue}\" 少于1个字符"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "此字段中已存在选项值 \"{value}\""
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10184,12 @@ msgstr "选项值必须至少为一个字符的字符串"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "枚举字段需要选项"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "选项只能属于选择、多选或评分字段"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10387,7 +10421,7 @@ msgstr "参与者"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "合作伙伴代码仅适用于新的 Twenty 客户。"
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -14002,7 +14036,7 @@ msgstr "无法连接到软件包注册表来验证软件包来源。请稍后重
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "无法再添加或更改合作伙伴代码。请联系支持团队。"
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14877,7 +14911,7 @@ msgstr "此组织密钥已在另一台服务器实例上使用。请先从该服
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "此合作伙伴代码无效。"
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts

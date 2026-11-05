@@ -94,6 +94,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({

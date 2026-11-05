@@ -1,10 +1,12 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
+import {
+  type CurrentUserWorkspace,
+  currentUserWorkspaceState,
+} from '@/auth/states/currentUserWorkspaceState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 export const currentUserWorkspaceObjectRecordsPermissionsSelector =
   createAtomSelector<
-    CurrentUserWorkspaceObjectRecordsPermissions[] | undefined
+    CurrentUserWorkspace['objectRecordsPermissions'] | undefined
   >({
     key: 'currentUserWorkspaceObjectRecordsPermissionsSelector',
     get: ({ get }) => get(currentUserWorkspaceState)?.objectRecordsPermissions,

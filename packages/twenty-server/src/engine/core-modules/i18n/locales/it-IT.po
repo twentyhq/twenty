@@ -5591,6 +5591,23 @@ msgstr "Il nome del campo non è sincronizzato con l'etichetta."
 msgid "Field not found."
 msgstr "Campo non trovato."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Campo opzione del campo non trovato"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Opzione del campo non trovata"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Opzione del campo non trovata."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -6947,6 +6964,11 @@ msgstr "Chiave del feature flag non valida."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "Input del campo non valido."
+
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Input dell'opzione del campo non valido."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10130,6 +10152,12 @@ msgstr "L'etichetta dell'opzione deve essere una stringa di almeno un carattere"
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Il valore dell'opzione \"{sanitizedValue}\" è inferiore a 1 carattere"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Il valore dell'opzione \"{value}\" esiste già in questo campo"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10184,12 @@ msgstr "Il valore dell'opzione deve essere una stringa di almeno un carattere"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Le opzioni sono richieste per i campi enum"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Le opzioni possono appartenere solo a campi di selezione, selezione multipla o valutazione"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10387,7 +10421,7 @@ msgstr "Partecipanti"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "I codici partner si applicano solo ai nuovi clienti di Twenty."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -14002,7 +14036,7 @@ msgstr "Non è stato possibile raggiungere il registro dei pacchetti per verific
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "Il codice partner non può più essere aggiunto o modificato. Contatta l'assistenza."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14877,7 +14911,7 @@ msgstr "Questa chiave Organization è già in uso su un'altra istanza del server
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "Questo codice partner non è valido."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts

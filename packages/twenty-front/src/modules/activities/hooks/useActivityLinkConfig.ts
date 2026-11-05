@@ -6,7 +6,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export type ActivityLinkConfig = {
@@ -35,10 +35,13 @@ export const useActivityLinkConfig = ({
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: activityObjectNameSingular,
   });
-  const { canUpdateObjectRecords: canLinkActivities } =
-    useObjectPermissionsForObject(
-      junctionConfig?.junctionObjectMetadata.id ?? '',
-    );
+  const junctionObjectPermissions = useObjectPermissionsForObject(
+    junctionConfig?.junctionObjectMetadata.id ?? '',
+  );
+  const canLinkActivities = canReachSomeRecords({
+    objectRecordsPermissions: junctionObjectPermissions,
+    operationType: 'update',
+  });
 
   const companyRelationField = objectMetadataItem.fields.find(
     (field) =>

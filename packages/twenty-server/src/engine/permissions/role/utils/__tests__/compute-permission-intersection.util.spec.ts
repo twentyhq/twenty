@@ -1,4 +1,5 @@
 import {
+  type ObjectRecordsPermissions,
   type RestrictedFieldsPermissions,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -6,7 +7,6 @@ import {
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 type AllRecordsGrants = {
