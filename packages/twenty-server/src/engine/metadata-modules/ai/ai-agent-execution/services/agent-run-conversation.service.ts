@@ -1,9 +1,3 @@
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -49,18 +43,8 @@ export class AgentRunConversationService {
   }): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'activeStreamId', 'conversationType'],
+      select: ['id', 'activeStreamId'],
     });
-
-    if (
-      thread?.conversationType ===
-      AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
-      throw new AiException(
-        doNotTranslate('Direct messages do not run an assistant'),
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
 
     if (isDefined(thread)) {
       const interruptedError = await this.streamRecoveryService.reapDeadStream({
