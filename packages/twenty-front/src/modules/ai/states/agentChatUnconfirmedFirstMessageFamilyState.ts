@@ -5,4 +5,5 @@ export const agentChatUnconfirmedFirstMessageFamilyState =
   createAtomFamilyState<AgentChatUnconfirmedFirstMessage | null, string>({
     key: 'ai/agentChatUnconfirmedFirstMessageFamilyState',
     defaultValue: null,
+    useSessionStorage: true,
   });

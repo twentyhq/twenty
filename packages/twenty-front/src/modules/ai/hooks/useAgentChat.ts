@@ -343,6 +343,7 @@ export const useAgentChat = () => {
         await refreshAgentChatThreadPermissions([threadId]);
         store.set(newAiChatThreadIdState.atom, v4());
         store.set(agentChatNewThreadChannelIdState.atom, null);
+        store.set(unconfirmedFirstMessageAtom, null);
 
         if (isDefined(newInboxChatRecipients)) {
           store.set(
