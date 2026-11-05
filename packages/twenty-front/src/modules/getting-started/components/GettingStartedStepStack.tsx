@@ -9,7 +9,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconChevronDown,
@@ -163,8 +162,10 @@ export const GettingStartedStepStack = ({
     ({ actionKey }) => actionKey === selectedStepActionKey,
   );
   const selectedStepDefinition = steps[selectedStepIndex];
-  const previousStepDefinition = steps[selectedStepIndex - 1];
-  const nextStepDefinition = steps[selectedStepIndex + 1];
+  const hasSeveralSteps = steps.length > 1;
+  const previousStepDefinition =
+    steps[(selectedStepIndex - 1 + steps.length) % steps.length];
+  const nextStepDefinition = steps[(selectedStepIndex + 1) % steps.length];
   const stackedSteps = getGettingStartedStackedSteps({
     steps,
     completedStepActionKeys,
@@ -221,9 +222,8 @@ export const GettingStartedStepStack = ({
               size="xs"
               emphasis="subtle"
               aria-label={t`Previous step`}
-              disabled={isSaving || !isDefined(previousStepDefinition)}
+              disabled={isSaving || !hasSeveralSteps}
               onClick={() =>
-                isDefined(previousStepDefinition) &&
                 selectGettingStartedStep(previousStepDefinition.actionKey)
               }
             >
@@ -250,9 +250,8 @@ export const GettingStartedStepStack = ({
               size="xs"
               emphasis="subtle"
               aria-label={t`Next step`}
-              disabled={isSaving || !isDefined(nextStepDefinition)}
+              disabled={isSaving || !hasSeveralSteps}
               onClick={() =>
-                isDefined(nextStepDefinition) &&
                 selectGettingStartedStep(nextStepDefinition.actionKey)
               }
             >
