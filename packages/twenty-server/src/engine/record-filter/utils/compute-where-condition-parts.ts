@@ -4,12 +4,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { findPostgresDefaultNullEquivalentValue } from 'src/engine/record-filter/utils/find-postgres-default-null-equivalent-value.util';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  RecordFilterException,
+  RecordFilterExceptionCode,
+} from 'src/engine/record-filter/exceptions/record-filter.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import {
   escapeIdentifier,
@@ -232,10 +232,10 @@ export const computeWhereConditionParts = ({
         params: { [`${parameterKey}${paramSuffix}`]: value },
       };
     default:
-      throw new GraphqlQueryRunnerException(
-        `Operator "${operator}" is not supported`,
-        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
+      throw new RecordFilterException({
+        message: `Operator "${operator}" is not supported`,
+        code: RecordFilterExceptionCode.UNSUPPORTED_OPERATOR,
+        userFriendlyMessage: STANDARD_ERROR_MESSAGE,
+      });
   }
 };

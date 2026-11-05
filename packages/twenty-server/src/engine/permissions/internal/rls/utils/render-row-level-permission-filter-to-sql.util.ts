@@ -8,9 +8,9 @@ import {
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
-import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
-import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
+import { assertArrayOperatorValueIsNonEmptyArrayOrThrow } from 'src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util';
+import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -198,7 +198,7 @@ const renderFieldCondition = (
   const operatorConditions = Object.entries(
     filterValue as Record<string, unknown>,
   ).map(([operator, operatorValue]) => {
-    assertArrayOperatorValueIsNonEmptyArray({
+    assertArrayOperatorValueIsNonEmptyArrayOrThrow({
       operator,
       value: operatorValue,
       key: fieldNameOrJoinColumnName,
@@ -256,7 +256,7 @@ const renderCompositeFieldCondition = (
     }
 
     return Object.entries(subFieldFilter).map(([operator, operatorValue]) => {
-      assertArrayOperatorValueIsNonEmptyArray({
+      assertArrayOperatorValueIsNonEmptyArrayOrThrow({
         operator,
         value: operatorValue,
         key: subFieldName,
