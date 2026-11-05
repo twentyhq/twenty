@@ -126,30 +126,28 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
   async restartVerification(
     input: EmailingDomainResourceInput,
-    checks: EmailingDomainVerificationCheck[],
+    check: EmailingDomainVerificationCheck,
   ): Promise<void> {
-    const sesClient = this.awsSesClientProvider.getSESClient();
+    switch (check.name) {
+      case 'DKIM':
+        this.logger.log(
+          `Restarting DKIM verification for domain: ${input.domain}`,
+        );
 
-    for (const check of checks) {
-      switch (check.name) {
-        case 'DKIM':
-          this.logger.log(
-            `Restarting DKIM verification for domain: ${input.domain}`,
-          );
+        await this.awsSesClientProvider.getSESClient().send(
+          new PutEmailIdentityDkimSigningAttributesCommand({
+            EmailIdentity: input.domain,
+            SigningAttributesOrigin: 'AWS_SES',
+          }),
+        );
 
-          await sesClient.send(
-            new PutEmailIdentityDkimSigningAttributesCommand({
-              EmailIdentity: input.domain,
-              SigningAttributesOrigin: 'AWS_SES',
-            }),
-          );
-          break;
-        case 'MAIL_FROM':
-          this.logger.log(`Restarting MAIL FROM setup for: ${input.domain}`);
+        return;
+      case 'MAIL_FROM':
+        this.logger.log(`Restarting MAIL FROM setup for: ${input.domain}`);
 
-          await this.awsSesRegisterDomainService.registerDomain(input.domain);
-          break;
-      }
+        await this.awsSesRegisterDomainService.registerDomain(input.domain);
+
+        return;
     }
   }
 

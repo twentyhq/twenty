@@ -31,6 +31,7 @@ export class UnsubscribeHostnameService {
   private async register(
     emailingDomain: EmailingDomainEntity,
     hostname: string,
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
   ): Promise<void> {
     const unsubscribeHostnameId = await this.registerOrAdoptHostname(hostname);
 
@@ -40,7 +41,7 @@ export class UnsubscribeHostnameService {
       {
         unsubscribeHostname: hostname,
         unsubscribeHostnameId,
-        unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+        unsubscribeHostnameStatus,
       },
     );
   }
@@ -79,18 +80,24 @@ export class UnsubscribeHostnameService {
 
     switch (validationState) {
       case 'active':
-        return this.updateStatus(
+        return this.saveExistingHostnameStatus(
           emailingDomain,
+          hostname,
           UnsubscribeHostnameStatus.ACTIVE,
         );
       case 'pending':
-        return this.updateStatus(
+        return this.saveExistingHostnameStatus(
           emailingDomain,
+          hostname,
           UnsubscribeHostnameStatus.PENDING,
         );
       case 'missing':
         if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
-          return this.register(emailingDomain, hostname);
+          return this.register(
+            emailingDomain,
+            hostname,
+            UnsubscribeHostnameStatus.PENDING,
+          );
         }
 
         return this.updateStatus(
@@ -101,17 +108,31 @@ export class UnsubscribeHostnameService {
         if (await this.isRestartAllowed(hostname, { isUserTriggered })) {
           await this.dnsManagerService.refreshHostname(hostname);
 
-          return this.updateStatus(
+          return this.saveExistingHostnameStatus(
             emailingDomain,
+            hostname,
             UnsubscribeHostnameStatus.PENDING,
           );
         }
 
-        return this.updateStatus(
+        return this.saveExistingHostnameStatus(
           emailingDomain,
+          hostname,
           UnsubscribeHostnameStatus.FAILED,
         );
     }
+  }
+
+  private async saveExistingHostnameStatus(
+    emailingDomain: EmailingDomainEntity,
+    hostname: string,
+    unsubscribeHostnameStatus: UnsubscribeHostnameStatus,
+  ): Promise<void> {
+    if (!isNonEmptyString(emailingDomain.unsubscribeHostnameId)) {
+      return this.register(emailingDomain, hostname, unsubscribeHostnameStatus);
+    }
+
+    return this.updateStatus(emailingDomain, unsubscribeHostnameStatus);
   }
 
   private getRegisteredOrNewHostname(

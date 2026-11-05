@@ -25,7 +25,7 @@ export interface EmailingDomainDriverInterface {
   ): Promise<EmailingDomainVerificationResult>;
   restartVerification(
     input: EmailingDomainResourceInput,
-    checks: EmailingDomainVerificationCheck[],
+    check: EmailingDomainVerificationCheck,
   ): Promise<void>;
   cleanupDomain(input: EmailingDomainResourceInput): Promise<void>;
   sendEmail(

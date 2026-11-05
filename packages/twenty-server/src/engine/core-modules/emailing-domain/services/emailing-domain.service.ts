@@ -360,18 +360,17 @@ export class EmailingDomainService {
       return verificationResult;
     }
 
-    return emailingDomainDriver
-      .restartVerification(resourceInput, checksToRestart)
-      .then(
-        () => emailingDomainDriver.verifyDomain(resourceInput),
-        (error) => {
+    for (const check of checksToRestart) {
+      await emailingDomainDriver
+        .restartVerification(resourceInput, check)
+        .catch((error) => {
           this.logger.warn(
-            `Could not restart verification of emailing domain ${emailingDomain.domain}: ${error}`,
+            `Could not restart ${check.name} verification of emailing domain ${emailingDomain.domain}: ${error}`,
           );
+        });
+    }
 
-          return verificationResult;
-        },
-      );
+    return emailingDomainDriver.verifyDomain(resourceInput);
   }
 
   private async findChecksWithRecordsInPlace(

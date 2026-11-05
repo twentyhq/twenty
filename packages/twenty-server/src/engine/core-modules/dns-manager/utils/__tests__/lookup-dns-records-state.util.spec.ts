@@ -40,7 +40,7 @@ describe('lookupDnsRecordsState', () => {
     mockResolveTxt.mockReset();
   });
 
-  it('should report found when every record resolves to its expected value, ignoring case and trailing dots', async () => {
+  it('should report found when every record resolves to its expected value, ignoring hostname case and trailing dots', async () => {
     mockResolveCname.mockResolvedValue(['Token.DKIM.amazonses.com.']);
     mockResolveMx.mockResolvedValue([
       { exchange: 'feedback-smtp.eu-central-1.amazonses.com', priority: 10 },
@@ -74,6 +74,33 @@ describe('lookupDnsRecordsState', () => {
     await expect(lookupDnsRecordsState([MAIL_FROM_MX_RECORD])).resolves.toBe(
       'missing',
     );
+  });
+
+  it('should report missing when the mail from subdomain repeats the exchange under another priority', async () => {
+    mockResolveMx.mockResolvedValue([
+      { exchange: 'feedback-smtp.eu-central-1.amazonses.com', priority: 10 },
+      { exchange: 'feedback-smtp.eu-central-1.amazonses.com', priority: 20 },
+    ]);
+
+    await expect(lookupDnsRecordsState([MAIL_FROM_MX_RECORD])).resolves.toBe(
+      'missing',
+    );
+  });
+
+  it('should report missing when a TXT value differs only in letter case', async () => {
+    mockResolveTxt.mockResolvedValue([
+      ['p=migfma0gcsqgsib3dqebaquaa4gnadcbiqkbgqc'],
+    ]);
+
+    await expect(
+      lookupDnsRecordsState([
+        {
+          type: 'TXT',
+          key: 'resend._domainkey.example.com',
+          value: 'p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC',
+        },
+      ]),
+    ).resolves.toBe('missing');
   });
 
   it('should report missing when a record does not exist', async () => {

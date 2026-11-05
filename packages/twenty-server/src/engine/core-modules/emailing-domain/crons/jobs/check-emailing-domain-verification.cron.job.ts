@@ -37,7 +37,7 @@ export class CheckEmailingDomainVerificationCronJob {
     CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    await this.refreshIncompleteDomains();
+    await this.refreshDueDomains();
     await this.reprovisionWorkspacesOfTheHour();
   }
 
@@ -69,30 +69,35 @@ export class CheckEmailingDomainVerificationCronJob {
     }
   }
 
-  private async refreshIncompleteDomains(): Promise<void> {
-    const isDueThisRun = Raw(
+  private async refreshDueDomains(): Promise<void> {
+    const isRecent = Raw(
       (alias) =>
-        `(${alias} > NOW() - INTERVAL '${EMAILING_DOMAIN_HOURLY_CHECK_PERIOD}' OR EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW()))`,
+        `${alias} > NOW() - INTERVAL '${EMAILING_DOMAIN_HOURLY_CHECK_PERIOD}'`,
     );
 
-    const incompleteDomains = await this.emailingDomainRepository.find({
+    const dueDomains = await this.emailingDomainRepository.find({
       where: [
         {
+          createdAt: Raw(
+            (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
+          ),
+        },
+        {
           status: Not(EmailingDomainStatus.VERIFIED),
-          createdAt: isDueThisRun,
+          createdAt: isRecent,
         },
         {
           unsubscribeHostnameStatus: Or(
             IsNull(),
             Not(UnsubscribeHostnameStatus.ACTIVE),
           ),
-          createdAt: isDueThisRun,
+          createdAt: isRecent,
         },
       ],
       select: ['id', 'workspaceId', 'domain'],
     });
 
-    for (const emailingDomain of incompleteDomains) {
+    for (const emailingDomain of dueDomains) {
       await this.emailingDomainService
         .refreshEmailingDomain({
           workspaceId: emailingDomain.workspaceId,

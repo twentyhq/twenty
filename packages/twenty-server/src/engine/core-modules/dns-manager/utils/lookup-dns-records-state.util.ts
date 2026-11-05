@@ -11,17 +11,16 @@ const isMatchingRecord = (
   record: ExpectedDnsRecord,
   foundValues: string[],
 ): boolean => {
-  const expectedValue = normalizeDnsText(record.value);
-  const normalizedValues = foundValues.map(normalizeDnsText);
-
   switch (record.type) {
     case 'TXT':
-      return normalizedValues.includes(expectedValue);
+      return foundValues
+        .map((value) => value.trim())
+        .includes(record.value.trim());
     case 'CNAME':
     case 'MX':
       return (
-        normalizedValues.length > 0 &&
-        normalizedValues.every((value) => value === expectedValue)
+        foundValues.length === 1 &&
+        normalizeDnsText(foundValues[0]) === normalizeDnsText(record.value)
       );
   }
 };
