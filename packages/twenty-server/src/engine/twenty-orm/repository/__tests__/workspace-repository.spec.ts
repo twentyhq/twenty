@@ -106,10 +106,14 @@ const buildRepository = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
-      flatRoleTargetByAgentIdMaps: {},
-      recordPermissionReadOrm: {
-        findRecordShares: jest.fn().mockResolvedValue([]),
-        findPrivateRecordStates: jest.fn().mockResolvedValue(new Map()),
+      permissionsPrincipals: undefined,
+      recordPermissions: {
+        isOperationDisabled: jest.fn().mockResolvedValue(false),
+        assertObjectOperationAccessibleOrThrow: jest.fn(),
+        assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
+        buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+        assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
+        assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
@@ -119,28 +123,21 @@ const buildRepository = ({
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       coreDataSource: new DataSource({ type: 'postgres' }),
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
-      rolesPermissions: {
-        [ROLE_ID]: {
-          canReadAllRecords: true,
-          canUpdateAllRecords: true,
-          canSoftDeleteAllRecords: true,
-          canDestroyAllRecords: true,
-          objects: {
-            [OBJECT_METADATA_ID]: {
-              canReadAllRecords: true,
-              canUpdateAllRecords: true,
-              canSoftDeleteAllRecords: true,
-              canDestroyAllRecords: true,
-              restrictedFields: {},
-            },
+      recordsPermissions: {
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
+        objects: {
+          [OBJECT_METADATA_ID]: {
+            canReadAllRecords: true,
+            canUpdateAllRecords: true,
+            canSoftDeleteAllRecords: true,
+            canDestroyAllRecords: true,
+            restrictedFields: {},
           },
         },
       },
-      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
     },
     authContext: {
       type: 'apiKey',

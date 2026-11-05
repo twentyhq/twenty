@@ -69,11 +69,11 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -110,8 +110,8 @@ export class UserResolver {
     private readonly userVarService: UserVarsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -130,10 +130,10 @@ export class UserResolver {
     ].includes(workspace.activationStatus);
 
     if (workspaceIsPendingOrOngoingCreation) {
-      return this.permissionsService.getDefaultUserWorkspacePermissions();
+      return this.settingPermissionsService.getDefaultUserWorkspacePermissions();
     }
 
-    return await this.permissionsService.getUserWorkspacePermissions({
+    return await this.settingPermissionsService.getUserWorkspacePermissions({
       userWorkspaceId: currentUserWorkspace.id,
       workspaceId: workspace.id,
     });
@@ -268,7 +268,7 @@ export class UserResolver {
       });
 
     const roleOfUserWorkspace =
-      await this.userRoleService.getRolesByUserWorkspaces({
+      await this.rolePermissionsService.findRolesByUserWorkspaceIds({
         userWorkspaceIds: [userWorkspace.id],
         workspaceId,
       });
@@ -316,7 +316,7 @@ export class UserResolver {
     );
 
     const rolesByUserWorkspacesMap =
-      await this.userRoleService.getRolesByUserWorkspaces({
+      await this.rolePermissionsService.findRolesByUserWorkspaceIds({
         userWorkspaceIds: userWorkspaces.map(
           (userWorkspace) => userWorkspace.id,
         ),
@@ -472,7 +472,7 @@ export class UserResolver {
 
     const canDeleteUserFromWorkspace =
       workspaceMemberToDeleteIsAuthenticatedUser ||
-      (await this.permissionsService.userHasWorkspaceSettingPermission({
+      (await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
@@ -544,7 +544,7 @@ export class UserResolver {
 
     const canUpdateWorkspaceMember =
       isUpdatingSelf ||
-      (await this.permissionsService.userHasWorkspaceSettingPermission({
+      (await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
