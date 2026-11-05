@@ -1,18 +1,22 @@
+import { Test } from '@nestjs/testing';
+
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
-import { type McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
-import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const WORKSPACE_ID = 'workspace-id';
-const MCP_SERVER_ID = 'mcp-server-id';
 
-const mcpServer = {
-  id: MCP_SERVER_ID,
+const MCP_SERVER = {
+  id: 'mcp-server-id',
   universalIdentifier: 'mcp-server-universal-id',
   workspaceId: WORKSPACE_ID,
   applicationId: 'application-id',
@@ -20,109 +24,177 @@ const mcpServer = {
   url: 'https://docs.example.com/mcp',
   connectionProviderId: null,
   isActive: true,
-  tools: [],
-} as unknown as FlatMcpServer;
-
-const step: WorkflowAction = {
-  id: 'step-1',
-  name: 'Search docs',
-  type: WorkflowActionType.MCP_TOOL,
-  valid: true,
-  settings: {
-    outputSchema: {},
-    errorHandlingOptions: {
-      retryOnFailure: { value: 0 },
-      continueOnFailure: { value: false },
+  tools: [
+    {
+      name: 'search_docs',
+      description: null,
+      inputSchema: { type: 'object' },
+      annotations: null,
     },
-    input: {
-      mcpServerId: MCP_SERVER_ID,
-      toolName: 'search_docs',
-      toolInput: { query: '{{trigger.query}}' },
-    },
-  },
+  ],
 };
 
-const setup = (server: FlatMcpServer = mcpServer) => {
-  const mcpServerClientService = { callTool: jest.fn() };
-  const workflowExecutionContextService = {
-    getExecutionContext: jest.fn().mockResolvedValue({
-      authContext: {
-        type: 'user',
-        workspace: { id: WORKSPACE_ID },
-        user: { id: 'user-id' },
-        userWorkspaceId: 'user-workspace-id',
+const buildInput = (toolName = 'search_docs'): WorkflowActionInput => {
+  const step: WorkflowAction = {
+    id: 'step-1',
+    name: 'Search docs',
+    type: WorkflowActionType.MCP_TOOL,
+    valid: true,
+    settings: {
+      outputSchema: {},
+      errorHandlingOptions: {
+        retryOnFailure: { value: 0 },
+        continueOnFailure: { value: false },
       },
-      application: undefined,
-    }),
-    assertRunApplicationCanTriggerStepTargetOrThrow: jest.fn(),
-  };
-  const flatEntityMapsCacheService = {
-    getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatMcpServerMaps: {
-        byUniversalIdentifier: { [server.universalIdentifier]: server },
-        universalIdentifierById: { [server.id]: server.universalIdentifier },
+      input: {
+        mcpServerId: MCP_SERVER.id,
+        toolName,
+        toolInput: { query: '{{trigger.query}}', limit: null },
       },
-    }),
+    },
   };
-  const action = new McpToolWorkflowAction(
-    mcpServerClientService as unknown as McpServerClientService,
-    workflowExecutionContextService as unknown as WorkflowExecutionContextService,
-    flatEntityMapsCacheService as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
-  );
-  const input = {
+
+  return {
     currentStepId: step.id,
     steps: [step],
     context: { trigger: { query: 'invoices' } },
     runInfo: { workspaceId: WORKSPACE_ID, workflowRunId: 'run-id' },
-  } as unknown as WorkflowActionInput;
+  };
+};
 
-  return { action, input, mcpServerClientService };
+const setup = async (mcpServer: typeof MCP_SERVER = MCP_SERVER) => {
+  const callTool = jest.fn().mockResolvedValue({
+    output: {
+      success: true,
+      message: 'MCP tool search_docs executed',
+      result: { total: 2 },
+    },
+    isToolUnknownToServer: false,
+  });
+  const assertRunApplicationCanTriggerStepTargetOrThrow = jest.fn();
+
+  const module = await Test.createTestingModule({
+    providers: [
+      McpToolWorkflowAction,
+      { provide: McpServerToolCallService, useValue: { callTool } },
+      {
+        provide: WorkflowExecutionContextService,
+        useValue: {
+          getExecutionContext: jest.fn().mockResolvedValue({
+            authContext: {
+              type: 'user',
+              workspace: { id: WORKSPACE_ID },
+              user: { id: 'user-id' },
+              userWorkspaceId: 'user-workspace-id',
+            },
+            application: { id: 'application-id', name: 'Docs app' },
+          }),
+          assertRunApplicationCanTriggerStepTargetOrThrow,
+        },
+      },
+      {
+        provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+        useValue: {
+          getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+            flatMcpServerMaps: {
+              byUniversalIdentifier: {
+                [mcpServer.universalIdentifier]: mcpServer,
+              },
+              universalIdentifierById: {
+                [mcpServer.id]: mcpServer.universalIdentifier,
+              },
+            },
+          }),
+        },
+      },
+    ],
+  }).compile();
+
+  return {
+    action: module.get(McpToolWorkflowAction),
+    callTool,
+    assertRunApplicationCanTriggerStepTargetOrThrow,
+  };
 };
 
 describe('McpToolWorkflowAction', () => {
-  it('resolves variables and calls the tool as the run user', async () => {
-    const { action, input, mcpServerClientService } = setup();
+  it('calls the tool as the run user with the filled-in arguments', async () => {
+    const { action, callTool } = await setup();
 
-    mcpServerClientService.callTool.mockResolvedValue({
-      content: [{ type: 'text', text: 'two results' }],
-      structuredContent: { total: 2 },
-    });
+    const output = await action.execute(buildInput());
 
-    const output = await action.execute(input);
-
-    expect(mcpServerClientService.callTool).toHaveBeenCalledWith({
-      target: expect.objectContaining({
-        url: 'https://docs.example.com/mcp',
-        userWorkspaceId: 'user-workspace-id',
-      }),
+    expect(callTool).toHaveBeenCalledWith({
+      mcpServer: MCP_SERVER,
       toolName: 'search_docs',
       toolArguments: { query: 'invoices' },
+      userWorkspaceId: 'user-workspace-id',
     });
     expect(output).toEqual({ result: { total: 2 } });
   });
 
-  it('returns the server error text as the step error', async () => {
-    const { action, input, mcpServerClientService } = setup();
+  it('returns the tool failure as the step error', async () => {
+    const { action, callTool } = await setup();
 
-    mcpServerClientService.callTool.mockResolvedValue({
-      isError: true,
-      content: [{ type: 'text', text: 'index unavailable' }],
+    callTool.mockResolvedValue({
+      output: {
+        success: false,
+        message: 'MCP tool search_docs failed',
+        error: 'index unavailable',
+      },
+      isToolUnknownToServer: false,
     });
 
-    expect(await action.execute(input)).toEqual({
+    expect(await action.execute(buildInput())).toEqual({
       error: 'index unavailable',
     });
   });
 
-  it('fails without calling an inactive server', async () => {
-    const { action, input, mcpServerClientService } = setup({
-      ...mcpServer,
+  it('refuses an inactive server without calling it', async () => {
+    const { action, callTool } = await setup({
+      ...MCP_SERVER,
       isActive: false,
     });
 
-    expect(await action.execute(input)).toEqual({
-      error: 'MCP server Docs is inactive',
+    await expect(action.execute(buildInput())).rejects.toMatchObject({
+      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      message: 'MCP server Docs is inactive',
     });
-    expect(mcpServerClientService.callTool).not.toHaveBeenCalled();
+    expect(callTool).not.toHaveBeenCalled();
+  });
+
+  it('refuses a tool the server no longer offers', async () => {
+    const { action, callTool } = await setup();
+
+    await expect(
+      action.execute(buildInput('delete_docs')),
+    ).rejects.toMatchObject({
+      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      message: 'MCP server Docs no longer offers the tool delete_docs',
+    });
+    expect(callTool).not.toHaveBeenCalled();
+  });
+
+  it('does not call a server the run application cannot reach', async () => {
+    const {
+      action,
+      callTool,
+      assertRunApplicationCanTriggerStepTargetOrThrow,
+    } = await setup();
+    const forbidden = new WorkflowStepExecutorException(
+      'MCP server "Docs" belongs to another application',
+      WorkflowStepExecutorExceptionCode.FORBIDDEN,
+    );
+
+    assertRunApplicationCanTriggerStepTargetOrThrow.mockImplementation(() => {
+      throw forbidden;
+    });
+
+    await expect(action.execute(buildInput())).rejects.toBe(forbidden);
+    expect(
+      assertRunApplicationCanTriggerStepTargetOrThrow,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ targetApplicationId: 'application-id' }),
+    );
+    expect(callTool).not.toHaveBeenCalled();
   });
 });
