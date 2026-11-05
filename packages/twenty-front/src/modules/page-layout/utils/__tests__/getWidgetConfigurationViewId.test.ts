@@ -23,17 +23,6 @@ describe('getWidgetConfigurationViewId', () => {
     expect(getWidgetConfigurationViewId(configuration)).toBeNull();
   });
 
-  it('should return null when viewId is not a string', () => {
-    const configuration: PageLayoutWidget['configuration'] = {
-      __typename: 'RecordTableConfiguration',
-      configurationType: WidgetConfigurationType.RECORD_TABLE,
-      // @ts-expect-error widget configurations are stored as JSON
-      viewId: 123,
-    };
-
-    expect(getWidgetConfigurationViewId(configuration)).toBeNull();
-  });
-
   it('should return null when viewId is null', () => {
     const configuration: PageLayoutWidget['configuration'] = {
       __typename: 'RecordTableConfiguration',

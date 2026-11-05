@@ -373,7 +373,6 @@ describe('createClassTokenList', () => {
       const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
 
-      // @ts-expect-error the DOM converts a null force coming from plain JS callers
       expect(classTokenList.toggle('open', null)).toBe(false);
       expect(element.getAttribute('class')).toBeNull();
     });
@@ -446,10 +445,11 @@ describe('createClassTokenList', () => {
     it('should reject numeric writes so enumeration stays consistent', () => {
       const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
+      const writableClassTokenList: { [index: number]: string } =
+        classTokenList;
 
       expect(() => {
-        // @ts-expect-error plain JS callers can write an index despite it being readonly
-        classTokenList[5] = 'expando';
+        writableClassTokenList[5] = 'expando';
       }).toThrow(TypeError);
 
       element.setAttribute('class', 'a b c d e f');

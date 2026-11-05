@@ -1,6 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { installEventConstructorPolyfills } from '../installEventConstructorPolyfills';
 
@@ -17,9 +18,7 @@ const createInstalledScope = () => {
   };
 
   installEventConstructorPolyfills({ globalScope });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = polyfillWindow.document;
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     globalScope,

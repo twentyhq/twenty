@@ -145,11 +145,7 @@ describe('LogConsole', () => {
     renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
-      jotaiStore.set(
-        logConsoleDisplayModeState.atom,
-        // @ts-expect-error localStorage can still hold the mode of an earlier version
-        'closed',
-      );
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'closed');
     });
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));
 

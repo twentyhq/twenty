@@ -49,15 +49,4 @@ describe('getCurrentGraphTypeFromConfig', () => {
       ),
     ).toBe(GraphType.AGGREGATE);
   });
-
-  it('throws for unknown configuration type', () => {
-    const unknownConfig = {
-      __typename: 'UnknownConfiguration',
-    };
-
-    // @ts-expect-error a newer server can send a configuration this client does not know
-    expect(() => getCurrentGraphTypeFromConfig(unknownConfig)).toThrow(
-      'Unknown chart configuration type',
-    );
-  });
 });

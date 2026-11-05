@@ -6,6 +6,7 @@ import {
 } from '@remote-dom/core/elements';
 
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { createWorkerActiveElementStore } from '../createWorkerActiveElementStore';
 import { createWorkerFocusTransport } from '../createWorkerFocusTransport';
@@ -29,9 +30,7 @@ const createPolyfillDocument = (): Document => {
     documentTarget: polyfillWindow.document,
     activeElementStore,
   });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  return polyfillWindow.document;
+  return toDomWindow(polyfillWindow).document;
 };
 
 describe('installFocusAndBlurMethodsPolyfill', () => {
@@ -137,8 +136,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     const activeElementStore = createWorkerActiveElementStore();
     const focusTransport = createWorkerFocusTransport();
     const connection = { mutate: jest.fn(), call: jest.fn() };
-    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-    const document: Document = polyfillWindow.document;
+    const document = toDomWindow(polyfillWindow).document;
     const container = document.createElement('div');
     const button = document.createElement('button');
     const removeChild = jest.fn(({ node }: { node: Node }) =>
@@ -301,9 +299,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
       resolveFocusVisibleElement: () =>
         activeElementStore.getFocusVisibleElement(),
     });
-
-    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-    const document: Document = polyfillWindow.document;
+    const document = toDomWindow(polyfillWindow).document;
     const container = document.createElement('div');
     const button = document.createElement('button');
 

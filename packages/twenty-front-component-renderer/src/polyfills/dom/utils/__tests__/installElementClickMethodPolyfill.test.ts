@@ -5,15 +5,13 @@ import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 import { installElementClickMethodPolyfill } from '../installElementClickMethodPolyfill';
 
-const createPolyfillDocument = (): Document => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
 
   installEventConstructorPolyfills({
     globalScope: toGlobalScopeRecord(polyfillWindow),
   });
   installElementClickMethodPolyfill(polyfillWindow.Element.prototype);
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
   return polyfillWindow.document;
 };
 

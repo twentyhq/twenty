@@ -2,12 +2,10 @@ import { Window } from '@remote-dom/polyfill';
 
 import { installGetRootNodePolyfill } from '../installGetRootNodePolyfill';
 
-const createPolyfillDocument = (): Document => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
 
   installGetRootNodePolyfill(polyfillWindow.Node.prototype);
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
   return polyfillWindow.document;
 };
 

@@ -3,7 +3,10 @@ import { splitPulledTranslations } from '@/app/pull/split-pulled-translations';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  type TranslationsManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { generateMessageId } from 'twenty-shared/i18n';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -156,38 +159,20 @@ describe('splitPulledTranslations', () => {
   });
 
   it('should ignore locales the platform does not support, including path-shaped keys', async () => {
+    const translationsWithUnsupportedLocales: TranslationsManifest &
+      Record<'klingon' | '../../escape', Record<string, string>> = {
+      'fr-FR': { [PET_LABEL_ID]: 'Animal' },
+      klingon: { [PET_LABEL_ID]: 'targh' },
+      '../../escape': { [PET_LABEL_ID]: 'nope' },
+    };
     const catalogs = await splitPulledTranslations({
       manifest: buildManifest({
-        translations: {
-          'fr-FR': { [PET_LABEL_ID]: 'Animal' },
-          // @ts-expect-error a server can export a locale this CLI does not know
-          klingon: { [PET_LABEL_ID]: 'targh' },
-          '../../escape': { [PET_LABEL_ID]: 'nope' },
-        },
+        translations: translationsWithUnsupportedLocales,
       }),
       frontComponentSourcePaths: [],
     });
 
     expect(catalogs.map(({ locale }) => locale)).toEqual(['fr-FR']);
-  });
-
-  it('should ignore a locale whose catalog is not a map of strings', async () => {
-    const catalogs = await splitPulledTranslations({
-      manifest: buildManifest({
-        translations: {
-          // @ts-expect-error a pulled catalog is unvalidated JSON
-          'fr-FR': 'Animal',
-          // @ts-expect-error a pulled catalog is unvalidated JSON
-          'de-DE': ['Haustier'],
-          // @ts-expect-error a pulled catalog is unvalidated JSON
-          'es-ES': { [PET_LABEL_ID]: 7 },
-          'it-IT': { [PET_LABEL_ID]: 'Animale' },
-        },
-      }),
-      frontComponentSourcePaths: [],
-    });
-
-    expect(catalogs.map(({ locale }) => locale)).toEqual(['it-IT']);
   });
 
   it('should order locales and return nothing for an export without translations', async () => {

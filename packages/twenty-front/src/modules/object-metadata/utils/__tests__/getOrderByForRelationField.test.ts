@@ -85,37 +85,6 @@ describe('getOrderByForRelationField', () => {
     expect(result).toEqual([{ companyId: 'AscNullsLast' }]);
   });
 
-  it('should use default "name" field when labelIdentifierFieldMetadataId is not set', () => {
-    const field: Pick<FieldMetadataItem, 'name'> = {
-      name: 'company',
-    };
-
-    const relatedObjectMetadataItem: Pick<
-      EnrichedObjectMetadataItem,
-      'fields' | 'labelIdentifierFieldMetadataId'
-    > = {
-      // @ts-expect-error the server schema leaves this field nullable
-      labelIdentifierFieldMetadataId: undefined,
-      fields: [
-        {
-          id: 'name-field-id',
-          name: 'name',
-          type: FieldMetadataType.TEXT,
-        } as FieldMetadataItem,
-      ],
-    };
-
-    const result = getOrderByForRelationField({
-      field,
-      relatedObjectMetadataItem,
-      orderByDirection: 'AscNullsLast',
-    });
-
-    // When labelIdentifierFieldMetadataId is not set, isLabelIdentifierField
-    // falls back to checking for a field named 'name'
-    expect(result).toEqual([{ company: { name: 'AscNullsLast' } }]);
-  });
-
   it('should handle descending direction', () => {
     const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'company',

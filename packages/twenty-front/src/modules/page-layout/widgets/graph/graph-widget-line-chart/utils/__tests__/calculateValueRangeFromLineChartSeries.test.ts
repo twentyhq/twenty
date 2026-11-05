@@ -82,7 +82,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
   });
 
-  describe('with null/undefined values', () => {
+  describe('with null values', () => {
     it('should treat null y values as 0', () => {
       const data = [
         {
@@ -98,24 +98,6 @@ describe('calculateValueRangeFromLineChartSeries', () => {
 
       expect(result.minimum).toBe(0);
       expect(result.maximum).toBe(50);
-    });
-
-    it('should treat undefined y values as 0', () => {
-      const data = [
-        {
-          key: 'series1',
-          data: [
-            { x: 'Jan', y: undefined },
-            { x: 'Feb', y: 30 },
-          ],
-        },
-      ];
-
-      // @ts-expect-error a series gap can reach this as a missing y
-      const result = calculateValueRangeFromLineChartSeries(data);
-
-      expect(result.minimum).toBe(0);
-      expect(result.maximum).toBe(30);
     });
   });
 

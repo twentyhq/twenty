@@ -368,8 +368,11 @@ describe('fetchComponentSource', () => {
   });
 
   it('falls back to the network when CacheStorage is unavailable', async () => {
-    // @ts-expect-error CacheStorage is undefined outside secure contexts
-    globalThis.caches = undefined;
+    Object.defineProperty(globalThis, 'caches', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
 
     const fetchMock = jest.fn(async () =>
       createFakeJsResponse(COMPONENT_SOURCE),
@@ -384,8 +387,11 @@ describe('fetchComponentSource', () => {
   });
 
   it('rejects a mismatched network response when CacheStorage is unavailable', async () => {
-    // @ts-expect-error CacheStorage is undefined outside secure contexts
-    globalThis.caches = undefined;
+    Object.defineProperty(globalThis, 'caches', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
 
     const fetchMock = jest.fn(async () =>
       createFakeJsResponse(COMPONENT_SOURCE),

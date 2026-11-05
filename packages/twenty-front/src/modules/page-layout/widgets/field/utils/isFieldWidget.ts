@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 export const isFieldWidget = (
-  widget: PageLayoutWidget,
+  widget: Pick<PageLayoutWidget, 'type' | 'configuration'>,
 ): widget is PageLayoutWidget & {
   type: typeof WidgetType.FIELD;
   configuration: FieldConfiguration;

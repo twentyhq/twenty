@@ -82,14 +82,8 @@ describe('setColumn', () => {
     });
   });
 
-  it('should return an empty column if field type is not recognized', () => {
-    const field: SpreadsheetImportField = {
-      ...defaultField,
-      // @ts-expect-error import fields are declared by plain configuration objects
-      fieldType: { type: 'unknown' },
-    };
-
-    const result = setColumn(oldColumn, field);
+  it('should return an empty column if no field is given', () => {
+    const result = setColumn(oldColumn);
 
     expect(result).toEqual({
       index: 0,

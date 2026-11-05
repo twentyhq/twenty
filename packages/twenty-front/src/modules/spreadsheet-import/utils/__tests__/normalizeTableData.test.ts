@@ -155,14 +155,14 @@ describe('normalizeTableData', () => {
     expect(result).toStrictEqual([{}]);
   });
 
-  it('should handle unrecognized column types and return empty object', () => {
+  it('should leave out column types without a dedicated case', () => {
     const columns: SpreadsheetColumns = [
       {
         index: 0,
-        header: 'Unrecognized',
-        // @ts-expect-error the fallback branch only runs on a type outside the union
-        type: 'Unknown',
+        header: 'Errored',
+        type: SpreadsheetColumnType.matchedError,
         value: '',
+        errorMessage: 'error',
       },
     ];
 

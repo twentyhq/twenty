@@ -1,5 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installTextTreeWalkerPolyfill } from '../installTextTreeWalkerPolyfill';
 
 const createPolyfillDocument = () => {
@@ -7,9 +9,7 @@ const createPolyfillDocument = () => {
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
   installTextTreeWalkerPolyfill({ globalScope });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = polyfillWindow.document;
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     document,

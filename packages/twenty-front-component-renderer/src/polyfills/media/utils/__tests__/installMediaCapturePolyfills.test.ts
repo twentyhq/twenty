@@ -11,7 +11,7 @@ type MediaGlobals = {
   MediaStream: new (streamOrTracks?: unknown) => MediaStreamLike;
   MediaStreamTrack: new () => unknown;
   MediaRecorder: (new (
-    stream: MediaStreamLike,
+    stream: unknown,
     options?: { mimeType?: string },
   ) => MediaRecorderLike) & { isTypeSupported: (mimeType: string) => boolean };
 };
@@ -320,9 +320,7 @@ describe('installMediaCapturePolyfills', () => {
     const { mediaGlobals } = installOnFreshScope(createTransportStub());
 
     expect(
-      () =>
-        // @ts-expect-error plain JS callers can pass a foreign value
-        new mediaGlobals.MediaRecorder({ id: 'not-a-stream' }),
+      () => new mediaGlobals.MediaRecorder({ id: 'not-a-stream' }),
     ).toThrow(TypeError);
 
     const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({

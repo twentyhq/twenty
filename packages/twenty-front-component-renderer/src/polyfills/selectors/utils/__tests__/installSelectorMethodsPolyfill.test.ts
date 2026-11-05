@@ -2,6 +2,7 @@ import { Window } from '@remote-dom/polyfill';
 
 import { type WorkerActiveElementStore } from '@/polyfills/dom/types/WorkerActiveElementStore';
 import { createWorkerActiveElementStore } from '@/polyfills/dom/utils/createWorkerActiveElementStore';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { installSelectorMethodsPolyfill } from '../installSelectorMethodsPolyfill';
 
@@ -25,9 +26,7 @@ const createSelectorFixture = (): SelectorFixture => {
     resolveFocusVisibleElement: () =>
       activeElementStore.getFocusVisibleElement(),
   });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = polyfillWindow.document;
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     document,

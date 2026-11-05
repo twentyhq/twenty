@@ -122,8 +122,12 @@ describe('computeCursorArgFilter', () => {
 
   it('should ignore nested values that are not order-by directions', () => {
     const orderBy: RecordGqlOperationOrderBy = [
-      // @ts-expect-error order-by values are not validated at runtime
-      { name: { firstName: 'AscNullsFirst', metadata: 'not-a-direction' } },
+      {
+        name: {
+          firstName: 'AscNullsFirst',
+          metadata: { source: 'AscNullsFirst' },
+        },
+      },
     ];
 
     const result = computeCursorArgFilter({

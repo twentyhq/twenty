@@ -2,10 +2,10 @@ import { remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
 import { findSelfOrAncestorByRemoteId } from '@/polyfills/dom/utils/findSelfOrAncestorByRemoteId';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 const createRemoteTree = () => {
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = new Window().document;
+  const document = toDomWindow(new Window()).document;
   const rootElement = document.createElement('div');
   const scrollContainer = document.createElement('div');
   const listItem = document.createElement('div');

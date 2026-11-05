@@ -940,13 +940,15 @@ describe('manifestValidate', () => {
     });
 
     it('should hint at the correct key when the raw aggregateFieldMetadataId was used', () => {
-      const configurationWithRawKey: PageLayoutWidgetManifest['configuration'] =
-        {
-          configurationType: 'AGGREGATE_CHART',
-          // @ts-expect-error plain JS authors can write the raw id key
-          aggregateFieldMetadataId: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a03',
-          aggregateOperation: AggregateOperations.COUNT,
-        };
+      const configurationWithRawKey: Extract<
+        PageLayoutWidgetManifest['configuration'],
+        { configurationType: 'AGGREGATE_CHART' }
+      > & { aggregateFieldMetadataId: string } = {
+        configurationType: 'AGGREGATE_CHART',
+        aggregateFieldMetadataUniversalIdentifier: null,
+        aggregateFieldMetadataId: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a03',
+        aggregateOperation: AggregateOperations.COUNT,
+      };
 
       const result = manifestValidate({
         ...validManifest,

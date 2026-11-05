@@ -1,10 +1,11 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { createWorkerTextTreeWalker } from '../createWorkerTextTreeWalker';
 
 const createPolyfillDocument = (): Document =>
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  new Window().document;
+  toDomWindow(new Window()).document;
 
 describe('createWorkerTextTreeWalker', () => {
   it('should traverse nested text in DOM order without leaving the root', () => {

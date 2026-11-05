@@ -1,16 +1,12 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installCompareDocumentPositionPolyfill } from '../installCompareDocumentPositionPolyfill';
 
-type PolyfillNodeConstructor = typeof Node;
-
-const createPolyfillDocument = (): {
-  document: Document;
-  nodeConstructor: PolyfillNodeConstructor;
-} => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
-  // @ts-expect-error remote-dom's Node only implements part of the DOM Node
-  const nodeConstructor: PolyfillNodeConstructor = polyfillWindow.Node;
+  const nodeConstructor = toDomWindow(polyfillWindow).Node;
 
   installCompareDocumentPositionPolyfill({
     nodeConstructor,
@@ -18,7 +14,6 @@ const createPolyfillDocument = (): {
   });
 
   return {
-    // @ts-expect-error remote-dom's Document only implements part of the DOM Document
     document: polyfillWindow.document,
     nodeConstructor,
   };
@@ -49,15 +44,13 @@ describe('installCompareDocumentPositionPolyfill', () => {
     const { document } = createPolyfillDocument();
     const element = document.createElement('div');
 
-    // @ts-expect-error plain JS callers can pass anything
     expect(() => element.compareDocumentPosition(null)).toThrow(TypeError);
     expect(() => element.compareDocumentPosition({} as Node)).toThrow(
       TypeError,
     );
-    expect(() =>
-      // @ts-expect-error plain JS callers can pass anything
-      element.compareDocumentPosition({ parentNode: null }),
-    ).toThrow(TypeError);
+    expect(() => element.compareDocumentPosition({ parentNode: null })).toThrow(
+      TypeError,
+    );
   });
 
   it('should keep disconnected ordering stable and reverse it when arguments reverse', () => {

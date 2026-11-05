@@ -1,4 +1,4 @@
-import { type RulesLogic } from 'json-logic-js';
+import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
@@ -142,8 +142,7 @@ describe('evaluateWidgetVisibility', () => {
   });
 
   it('should throw error for invalid operator', () => {
-    const invalidConditionalDisplay: RulesLogic = {
-      // @ts-expect-error conditional display rules are stored as JSON
+    const invalidConditionalDisplay: RulesLogic<AdditionalOperation> = {
       invalidOperator: 'test',
     };
 

@@ -1,5 +1,6 @@
 import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { buildPullEntities } from '@/app/pull/build-pull-entities';
+import { toPullManifest } from '@/app/pull/to-pull-manifest';
 import {
   NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
@@ -497,18 +498,18 @@ describe('buildPullEntities', () => {
 
   it('should drop the GraphQL typename keys a widget configuration saved from the UI carries', () => {
     const pageLayoutManifest = buildPageLayoutManifest();
-    const widgetWithTypename: PageLayoutWidgetManifest = {
+    const widgetWithTypename = {
       ...pageLayoutManifest.tabs![0].widgets![0],
       configuration: {
         __typename: 'RecordTableConfiguration',
         configurationType: 'RECORD_TABLE',
-        // @ts-expect-error a widget saved from the UI stores a null limit
         recordLimit: null,
         viewUniversalIdentifier: VIEW_UID,
       },
     };
     const { entities } = buildPullEntities({
-      manifest: buildManifest({
+      manifest: toPullManifest({
+        ...buildManifest(),
         pageLayouts: [
           {
             ...pageLayoutManifest,
@@ -518,9 +519,10 @@ describe('buildPullEntities', () => {
           },
         ],
         pageLayoutTabs: [
-          buildPageLayoutTabManifest({
+          {
+            ...buildPageLayoutTabManifest(),
             widgets: [widgetWithTypename],
-          }),
+          },
         ],
       }),
     });
@@ -937,6 +939,14 @@ describe('buildPullEntities', () => {
   });
 
   it('should write a standalone page layout widget into src/page-layout-widgets, named after its title', () => {
+    const configurationWithTypename: Extract<
+      PageLayoutWidgetManifest['configuration'],
+      { configurationType: 'IFRAME' }
+    > & { __typename: string } = {
+      configurationType: 'IFRAME',
+      url: 'https://example.com/docs',
+      __typename: 'IframeConfiguration',
+    };
     const { entities, skipped } = buildPullEntities({
       manifest: buildManifest({
         pageLayoutWidgets: [
@@ -950,12 +960,7 @@ describe('buildPullEntities', () => {
               layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
               index: 1000,
             },
-            configuration: {
-              configurationType: 'IFRAME',
-              url: 'https://example.com/docs',
-              // @ts-expect-error a widget saved from the UI carries a GraphQL typename
-              __typename: 'IframeConfiguration',
-            },
+            configuration: configurationWithTypename,
           },
         ],
       }),
@@ -1088,8 +1093,7 @@ describe('buildPullEntities', () => {
     });
 
     const { entities, skipped } = buildPullEntities({
-      // @ts-expect-error older servers export a manifest without these properties
-      manifest: manifestWithoutViews,
+      manifest: toPullManifest(manifestWithoutViews),
     });
 
     expect(skipped).toEqual([]);

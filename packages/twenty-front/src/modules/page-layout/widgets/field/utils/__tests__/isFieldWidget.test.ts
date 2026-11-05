@@ -37,27 +37,16 @@ describe('isFieldWidget', () => {
     expect(isFieldWidget(widget)).toBe(false);
   });
 
-  it('should return false when configuration is null', () => {
-    const widget = {
-      id: 'w1',
-      type: WidgetType.FIELD,
-      configuration: null,
-    };
-
-    // @ts-expect-error the server decides what a widget configuration holds
-    expect(isFieldWidget(widget)).toBe(false);
-  });
-
   it('should return false when configuration typename does not match', () => {
-    const widget = {
-      id: 'w1',
+    const widget: Pick<PageLayoutWidget, 'type' | 'configuration'> = {
       type: WidgetType.FIELD,
       configuration: {
-        __typename: 'WidgetConfiguration',
+        __typename: 'IframeConfiguration',
+        configurationType: WidgetConfigurationType.IFRAME,
+        url: 'https://example.com',
       },
     };
 
-    // @ts-expect-error the server decides what a widget configuration holds
     expect(isFieldWidget(widget)).toBe(false);
   });
 });

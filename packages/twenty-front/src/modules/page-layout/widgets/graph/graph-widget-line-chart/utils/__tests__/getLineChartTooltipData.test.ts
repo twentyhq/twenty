@@ -10,7 +10,7 @@ import {
 type MockPointOverrides = {
   seriesId: string;
   dataX?: string | number;
-  dataY?: number | string | null;
+  dataY: number | string | null;
   pointY?: number;
 };
 
@@ -34,7 +34,6 @@ const createMockPoint = ({
     y: pointY ?? Number(dataY ?? 0),
     data: {
       x: dataX,
-      // @ts-expect-error nivo hands a series gap over as a null or missing y
       y: dataY,
       xFormatted: String(dataX),
       yFormatted: String(fallbackValue),
@@ -153,10 +152,10 @@ describe('getLineChartTooltipData', () => {
     ]);
   });
 
-  it('should fall back to point.y when data.y is undefined', () => {
+  it('should fall back to point.y when data.y is null', () => {
     const enrichedSeries = [createSeries('series1')];
     const slice = createMockSlice([
-      createMockPoint({ seriesId: 'series1', dataY: undefined, pointY: 7 }),
+      createMockPoint({ seriesId: 'series1', dataY: null, pointY: 7 }),
     ]);
 
     const result = getLineChartTooltipData({

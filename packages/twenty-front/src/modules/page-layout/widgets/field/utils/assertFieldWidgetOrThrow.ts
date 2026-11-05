@@ -5,13 +5,13 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type AssertFieldWidgetOrThrow = (
-  widget: PageLayoutWidget,
+  widget: Pick<PageLayoutWidget, 'configuration'>,
 ) => asserts widget is PageLayoutWidget & {
   configuration: FieldConfiguration;
 };
 
 export const assertFieldWidgetOrThrow: AssertFieldWidgetOrThrow = (
-  widget: PageLayoutWidget,
+  widget: Pick<PageLayoutWidget, 'configuration'>,
 ) => {
   assertIsDefinedOrThrow(
     widget.configuration,

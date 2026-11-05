@@ -100,7 +100,6 @@ describe('createWorkerMediaQueryList', () => {
     expect(subscribeToEnvironmentUpdates).not.toHaveBeenCalled();
 
     expect(() => {
-      // @ts-expect-error plain JS callers can pass null
       mediaQueryList.addListener(null);
       setMatches(true);
     }).not.toThrow();
@@ -356,12 +355,7 @@ describe('createWorkerMediaQueryList', () => {
     const changeListener = jest.fn();
 
     expect(() => {
-      mediaQueryList.addEventListener(
-        'change',
-        changeListener,
-        // @ts-expect-error plain JS callers can pass null
-        null,
-      );
+      mediaQueryList.addEventListener('change', changeListener, null);
     }).not.toThrow();
 
     setMatches(true);

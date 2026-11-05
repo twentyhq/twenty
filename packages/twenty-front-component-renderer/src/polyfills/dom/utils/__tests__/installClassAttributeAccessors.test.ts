@@ -4,15 +4,14 @@ import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationR
 import { type createMutationObserverClass } from '@/polyfills/dom/utils/createMutationObserverClass';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 const createSandboxDocument = (polyfillWindow = new Window()): Document => {
   installClassAttributeAccessors({
     elementPrototype: polyfillWindow.Element.prototype,
     remoteElementPrototypes: [],
   });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  return polyfillWindow.document;
+  return toDomWindow(polyfillWindow).document;
 };
 
 describe('installClassAttributeAccessors', () => {

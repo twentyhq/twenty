@@ -137,7 +137,6 @@ describe('slackPostMessageHandler', () => {
     await slackPostMessageHandler({
       slackChannelId: CHANNEL_ID,
       messageText: 'standalone',
-      // @ts-expect-error workflow callers can send a null timestamp
       parentMessageTimestamp: null,
     });
 
@@ -152,7 +151,6 @@ describe('slackPostMessageHandler', () => {
     const result = await slackPostMessageHandler({
       slackChannelId: CHANNEL_ID,
       messageText: 'standalone',
-      // @ts-expect-error workflow callers can send a non-string timestamp
       parentMessageTimestamp: 1700000000,
     });
 

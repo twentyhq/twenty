@@ -4,14 +4,14 @@ import { Window } from '@remote-dom/polyfill';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { dispatchOwnedPressEvent } from '@/remote/elements/utils/dispatchOwnedPressEvent';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 const createOwnedPressFixture = () => {
   const polyfillWindow = new Window();
   installEventConstructorPolyfills({
     globalScope: toGlobalScopeRecord(polyfillWindow),
   });
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const documentTarget: Document = polyfillWindow.document;
+  const documentTarget = toDomWindow(polyfillWindow).document;
   const connection = { mutate: jest.fn(), call: jest.fn() };
   const backdrop = documentTarget.createElement('div');
 

@@ -6,8 +6,7 @@ import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 const createObservationFixture = () => {
   const polyfillWindow = new Window();
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const documentTarget: Document = polyfillWindow.document;
+  const documentTarget = polyfillWindow.document;
   const observation = installOutsidePressObservation({
     hooks: resolvePolyfillHooks([toGlobalScopeRecord(polyfillWindow)]),
     documentTarget,

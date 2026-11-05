@@ -2,12 +2,10 @@ import { Window } from '@remote-dom/polyfill';
 
 import { installElementDatasetPolyfill } from '../installElementDatasetPolyfill';
 
-const createPolyfillElement = (): HTMLElement => {
+const createPolyfillElement = () => {
   const polyfillWindow = new Window();
 
   installElementDatasetPolyfill(polyfillWindow.Element.prototype);
-
-  // @ts-expect-error remote-dom's Element only implements part of the DOM Element
   return polyfillWindow.document.createElement('div');
 };
 

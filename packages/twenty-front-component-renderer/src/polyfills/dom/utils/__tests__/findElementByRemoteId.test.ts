@@ -1,11 +1,12 @@
 import { remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { findElementByRemoteId } from '../findElementByRemoteId';
 
 const createPolyfillDocument = (): Document =>
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  new Window().document;
+  toDomWindow(new Window()).document;
 
 describe('findElementByRemoteId', () => {
   it('should find the element carrying the remote id under the root', () => {

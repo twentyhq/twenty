@@ -6,9 +6,10 @@ import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/Worke
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 type WorkerMutationObserverConstructor = new (
-  callback: WorkerMutationObserverCallback,
+  callback: WorkerMutationObserverCallback | number,
 ) => WorkerMutationObserver;
 
 const createSandbox = (installHooks?: (hooks: Partial<Hooks>) => void) => {
@@ -18,9 +19,7 @@ const createSandbox = (installHooks?: (hooks: Partial<Hooks>) => void) => {
   installHooks?.(polyfillWindow[HOOKS]);
 
   installMutationObserver({ globalScope });
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = polyfillWindow.document;
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     globalScope,
@@ -647,11 +646,7 @@ describe('installMutationObserver', () => {
   it('rejects a callback that is not a function', () => {
     const { MutationObserver } = createSandbox();
 
-    expect(
-      () =>
-        // @ts-expect-error front components are authored in plain JS and can pass anything
-        new MutationObserver(123),
-    ).toThrow(TypeError);
+    expect(() => new MutationObserver(123)).toThrow(TypeError);
   });
 
   it('logs a throwing callback that no error listener handled', async () => {

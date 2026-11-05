@@ -1,22 +1,18 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { setHostEventDispatchTarget } from '@/polyfills/events/utils/setHostEventDispatchTarget';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { installHostEventRetargetingPolyfill } from '../installHostEventRetargetingPolyfill';
 
 const createNestedButton = () => {
-  const polyfillWindow = new Window();
-
-  // @ts-expect-error remote-dom's Element only implements part of the DOM Element
-  installHostEventRetargetingPolyfill(polyfillWindow.Element.prototype);
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  const document: Document = polyfillWindow.document;
+  const domWindow = toDomWindow(new Window());
+  installHostEventRetargetingPolyfill(domWindow.Element.prototype);
+  const document = domWindow.document;
   const container = document.createElement('div');
   const button = document.createElement('button');
   const createEvent = (type: string, eventInit?: EventInit): Event =>
-    // @ts-expect-error remote-dom's Event only implements part of the DOM Event
-    new polyfillWindow.Event(type, eventInit);
+    new domWindow.Event(type, eventInit);
 
   container.append(button);
   document.body.append(container);

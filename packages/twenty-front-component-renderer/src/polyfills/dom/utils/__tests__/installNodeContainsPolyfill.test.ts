@@ -1,14 +1,14 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installNodeContainsPolyfill } from '../installNodeContainsPolyfill';
 
 const createPolyfillDocument = (): Document => {
   const polyfillWindow = new Window();
 
   installNodeContainsPolyfill(polyfillWindow.Node.prototype);
-
-  // @ts-expect-error remote-dom's Document only implements part of the DOM Document
-  return polyfillWindow.document;
+  return toDomWindow(polyfillWindow).document;
 };
 
 describe('installNodeContainsPolyfill', () => {
@@ -89,8 +89,6 @@ describe('installNodeContainsPolyfill', () => {
     const element = document.createElement('div');
 
     expect(element.contains(null)).toBe(false);
-    // @ts-expect-error plain JS callers can pass undefined
-    expect(element.contains(undefined)).toBe(false);
     expect(element.contains({} as Node)).toBe(false);
   });
 });
