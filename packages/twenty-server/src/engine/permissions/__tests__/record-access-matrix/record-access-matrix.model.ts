@@ -77,7 +77,7 @@ const isShareHeldByActor = ({
   scenario: { actor, row },
   rules,
 }: {
-  scenario: MatrixScenario;
+  scenario: Pick<MatrixScenario, 'actor' | 'row'>;
   rules: MatrixRules;
 }): boolean =>
   (rules.canEveryoneShareGrantAccess &&

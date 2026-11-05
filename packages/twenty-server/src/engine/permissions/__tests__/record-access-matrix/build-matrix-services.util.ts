@@ -10,7 +10,6 @@ import { PrincipalPermissionsService } from 'src/engine/permissions/principal-pe
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Only the two I/O doors are data: everything between them is production code
 export const buildMatrixServices = (cacheValues: object) => {
   const workspaceCacheService = {
     getOrRecompute: async () => cacheValues,
