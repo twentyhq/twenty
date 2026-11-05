@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -7,6 +8,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -27,12 +29,13 @@ const MESSAGE_ATTACHMENT_INDEX_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-57:add-message-attachment-target',
   description:
-    'Add the message attachment target relation in existing workspaces',
+    'Add the message attachment target relation in existing workspaces and enable message attachments',
 })
 export class AddMessageAttachmentTargetCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -121,36 +124,42 @@ export class AddMessageAttachmentTargetCommand extends ProvisionedWorkspaceComma
       allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length;
     const creationSummary = `${fieldCount} field(s) and ${indexCount} index(es)`;
 
-    if (fieldCount + indexCount === 0) {
-      return;
-    }
-
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would create ${creationSummary} for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${creationSummary} and enable message attachments for workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          shouldDeferActions: false,
-          allFlatEntityOperationByMetadataName,
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-        },
-      );
+    if (fieldCount + indexCount > 0) {
+      const result =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+          {
+            shouldDeferActions: false,
+            allFlatEntityOperationByMetadataName,
+            workspaceId,
+            isSystemBuild: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
+          },
+        );
 
-    if (result.status === 'fail') {
-      throw new Error(
-        `Failed to create the message attachment target for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+      if (result.status === 'fail') {
+        throw new Error(
+          `Failed to create the message attachment target for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+        );
+      }
+
+      this.logger.log(
+        `Created ${creationSummary} for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(`Created ${creationSummary} for workspace ${workspaceId}`);
+    await this.featureFlagService.upsertWorkspaceFeatureFlag({
+      workspaceId,
+      featureFlag: FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+      value: true,
+    });
   }
 }

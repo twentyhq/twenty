@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
-import { type EnableMessageAttachmentCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793893704074-enable-message-attachment.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -34,7 +33,6 @@ const MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
 
 describe('2-57 workspace command - add message attachment target (integration)', () => {
   let command: AddMessageAttachmentTargetCommand;
-  let enableCommand: EnableMessageAttachmentCommand;
   let featureFlagService: FeatureFlagService;
   let workspaceCacheService: WorkspaceCacheService;
   let originalFlagValue: boolean | undefined;
@@ -157,9 +155,6 @@ describe('2-57 workspace command - add message attachment target (integration)',
     command = getAppProviderByClassName<AddMessageAttachmentTargetCommand>(
       'AddMessageAttachmentTargetCommand',
     );
-    enableCommand = getAppProviderByClassName<EnableMessageAttachmentCommand>(
-      'EnableMessageAttachmentCommand',
-    );
     featureFlagService =
       getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
@@ -176,12 +171,6 @@ describe('2-57 workspace command - add message attachment target (integration)',
     await setMessageAttachmentFlag(originalFlagValue);
   });
 
-  it('keeps message attachments disabled while the target is absent', async () => {
-    await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-
-    expect(await findMessageAttachmentFlag()).toBeUndefined();
-  });
-
   it('leaves the workspace unchanged on a dry run', async () => {
     await command.runOnWorkspace({
       ...RUN_ON_WORKSPACE_ARGS,
@@ -193,35 +182,32 @@ describe('2-57 workspace command - add message attachment target (integration)',
       hasIndex: false,
       hasColumn: false,
     });
-  });
-
-  it('adds both relation fields, the index and the column, and is a no-op when run again', async () => {
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-
-    expect(await findMessageAttachmentTarget()).toEqual({
-      fieldCount: 2,
-      hasIndex: true,
-      hasColumn: true,
-    });
-
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-
-    expect(await findMessageAttachmentTarget()).toEqual({
-      fieldCount: 2,
-      hasIndex: true,
-      hasColumn: true,
-    });
-  });
-
-  it('enables message attachments once the target exists', async () => {
-    await enableCommand.runOnWorkspace({
-      ...RUN_ON_WORKSPACE_ARGS,
-      options: { dryRun: true },
-    });
-
     expect(await findMessageAttachmentFlag()).toBeUndefined();
+  });
 
-    await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+  it('adds both relation fields, the index and the column, enables message attachments, and is a no-op when run again', async () => {
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await findMessageAttachmentTarget()).toEqual({
+      fieldCount: 2,
+      hasIndex: true,
+      hasColumn: true,
+    });
+    expect(await findMessageAttachmentFlag()).toBe(true);
+
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await findMessageAttachmentTarget()).toEqual({
+      fieldCount: 2,
+      hasIndex: true,
+      hasColumn: true,
+    });
+  });
+
+  it('enables message attachments when the target already exists', async () => {
+    await setMessageAttachmentFlag(undefined);
+
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findMessageAttachmentFlag()).toBe(true);
   });
