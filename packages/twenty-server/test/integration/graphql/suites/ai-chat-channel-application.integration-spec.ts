@@ -819,24 +819,26 @@ describe('Uninstalling an application that created inbox channels', () => {
       'emitDatabaseBatchEvent',
     );
 
-    const { errors } = await uninstallApplication({
-      universalIdentifier:
-        uninstalledApplication.application.universalIdentifier,
-    });
+    try {
+      const { errors } = await uninstallApplication({
+        universalIdentifier:
+          uninstalledApplication.application.universalIdentifier,
+      });
 
-    expect(errors).toBeUndefined();
-    expect(await readChannelApplicationId(channelId)).toBeUndefined();
-    expect(
-      emitDatabaseBatchEventSpy.mock.calls.some(
-        ([batchEvent]) =>
-          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
-          batchEvent.events.some(
-            (event) => 'recordId' in event && event.recordId === threadId,
-          ),
-      ),
-    ).toBe(true);
-
-    emitDatabaseBatchEventSpy.mockRestore();
+      expect(errors).toBeUndefined();
+      expect(await readChannelApplicationId(channelId)).toBeUndefined();
+      expect(
+        emitDatabaseBatchEventSpy.mock.calls.some(
+          ([batchEvent]) =>
+            batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
+            batchEvent.events.some(
+              (event) => 'recordId' in event && event.recordId === threadId,
+            ),
+        ),
+      ).toBe(true);
+    } finally {
+      emitDatabaseBatchEventSpy.mockRestore();
+    }
 
     expect(await readThreadChannelState(threadId)).toMatchObject({
       channelId: generalChannelId,
