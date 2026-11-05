@@ -1,3 +1,5 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
+import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconSparkles } from 'twenty-ui/icon';
 
@@ -13,7 +15,11 @@ export const McpToolMenuItem = ({
   onClick,
 }: McpToolMenuItemProps) => (
   <ListItemButton
-    startIcon={<IconSparkles size={16} />}
+    startIcon={
+      <ListItemIconContainer>
+        <IconSparkles color={getActionIconColorOrThrow('MCP_TOOL')} size={16} />
+      </ListItemIconContainer>
+    }
     description={description ?? undefined}
     onClick={onClick}
   >

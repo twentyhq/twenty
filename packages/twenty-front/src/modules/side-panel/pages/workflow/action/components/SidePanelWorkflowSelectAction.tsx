@@ -22,7 +22,7 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   isAgentRunnableAsWorkflowStep,
   WORKFLOW_ACTION_FEATURE_FLAGS,
@@ -109,7 +109,7 @@ export const SidePanelWorkflowSelectAction = ({
 
   const { mcpServers } = useFindManyMcpServers();
   const mcpServersWithTools = mcpServers.filter(
-    (mcpServer) => mcpServer.isActive && mcpServer.tools.length > 0,
+    (mcpServer) => mcpServer.isActive && isNonEmptyArray(mcpServer.tools),
   );
 
   const handleMcpToolClick = ({
