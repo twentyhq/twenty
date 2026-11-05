@@ -181,7 +181,10 @@ export class UnsubscribeHostnameService {
     emailingDomain,
     unsubscribeHostnameStatus,
   }: {
-    emailingDomain: EmailingDomainEntity;
+    emailingDomain: Pick<
+      EmailingDomainEntity,
+      'id' | 'workspaceId' | 'unsubscribeHostnameStatus'
+    >;
     unsubscribeHostnameStatus: UnsubscribeHostnameStatus;
   }): Promise<void> {
     if (

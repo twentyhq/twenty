@@ -41,7 +41,7 @@ export class CheckEmailingDomainVerificationCronJob {
     await this.reprovisionWorkspacesOfTheHour();
   }
 
-  private isInCurrentHourOfDay(): FindOperator<Date> {
+  private buildCurrentHourOfDayCondition(): FindOperator<Date> {
     return Raw(
       (alias) => `EXTRACT(HOUR FROM ${alias}) = EXTRACT(HOUR FROM NOW())`,
     );
@@ -49,7 +49,7 @@ export class CheckEmailingDomainVerificationCronJob {
 
   private async reprovisionWorkspacesOfTheHour(): Promise<void> {
     const emailingDomainsOfTheHour = await this.emailingDomainRepository.find({
-      where: { createdAt: this.isInCurrentHourOfDay() },
+      where: { createdAt: this.buildCurrentHourOfDayCondition() },
       select: ['workspaceId'],
     });
 
@@ -72,24 +72,24 @@ export class CheckEmailingDomainVerificationCronJob {
   }
 
   private async refreshDueDomains(): Promise<void> {
-    const isRecent = Raw(
+    const recentlyCreatedCondition = Raw(
       (alias) =>
         `${alias} > NOW() - INTERVAL '${EMAILING_DOMAIN_HOURLY_CHECK_PERIOD}'`,
     );
 
     const dueDomains = await this.emailingDomainRepository.find({
       where: [
-        { createdAt: this.isInCurrentHourOfDay() },
+        { createdAt: this.buildCurrentHourOfDayCondition() },
         {
           status: Not(EmailingDomainStatus.VERIFIED),
-          createdAt: isRecent,
+          createdAt: recentlyCreatedCondition,
         },
         {
           unsubscribeHostnameStatus: Or(
             IsNull(),
             Not(UnsubscribeHostnameStatus.ACTIVE),
           ),
-          createdAt: isRecent,
+          createdAt: recentlyCreatedCondition,
         },
       ],
       select: ['id', 'workspaceId', 'domain'],
