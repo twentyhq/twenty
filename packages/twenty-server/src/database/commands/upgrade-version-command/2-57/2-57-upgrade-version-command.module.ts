@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
-import { BackfillFieldMetadataOptionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793899027652-backfill-field-metadata-options.command';
+import { BackfillFieldMetadataOptionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793916608344-backfill-field-metadata-options.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
