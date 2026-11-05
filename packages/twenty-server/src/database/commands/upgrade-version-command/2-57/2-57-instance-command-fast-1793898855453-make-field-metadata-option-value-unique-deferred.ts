@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.56.0', 1793889370928)
+@RegisteredInstanceCommand('2.57.0', 1793898855453)
 export class MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // USING INDEX promotes the existing unique index without rebuilding it.
