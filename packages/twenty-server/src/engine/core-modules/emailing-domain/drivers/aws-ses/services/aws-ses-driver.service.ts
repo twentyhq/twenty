@@ -167,6 +167,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        return;
+      }
+
       this.awsSesHandleErrorService.handleAwsSesError(
         error,
         'retryVerification',
