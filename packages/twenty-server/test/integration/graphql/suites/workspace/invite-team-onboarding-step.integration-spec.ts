@@ -119,7 +119,7 @@ describe('Invite-team onboarding step on a new workspace (integration)', () => {
     signUpAccessToken = undefined;
   });
 
-  it('should not set up the invite step at creation when billing is enabled, even with a work email', async () => {
+  it('should set up the invite step at creation when billing is enabled', async () => {
     signUpAccessToken = await signUpWithVerifiedEmail(
       `invite-team-${randomUUID()}@twenty-invite-test.dev`,
     );
@@ -129,9 +129,7 @@ describe('Invite-team onboarding step on a new workspace (integration)', () => {
       isBillingEnabled: true,
     });
 
-    expect(
-      await findInviteTeamPendingUserVar(workspaceAccessToken),
-    ).toBeUndefined();
+    expect(await findInviteTeamPendingUserVar(workspaceAccessToken)).toBe(true);
   });
 
   it('should set up the invite step at creation when billing is disabled, even with a personal email', async () => {

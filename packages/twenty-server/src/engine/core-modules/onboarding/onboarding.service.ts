@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
@@ -16,6 +17,7 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
@@ -64,6 +66,7 @@ export class OnboardingService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly onboardingInviteSuggestionsService: OnboardingInviteSuggestionsService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -498,7 +501,7 @@ export class OnboardingService {
       workspaceId,
     });
 
-    await this.setOnboardingInviteTeamPendingIfInviteSuggestionsFound({
+    await this.setOnboardingInviteTeamPendingFromInviteSuggestions({
       userId,
       workspaceId,
     });
@@ -610,14 +613,20 @@ export class OnboardingService {
     }
   }
 
-  private async setOnboardingInviteTeamPendingIfInviteSuggestionsFound({
+  private async setOnboardingInviteTeamPendingFromInviteSuggestions({
     userId,
     workspaceId,
   }: {
     userId: string;
     workspaceId: string;
   }) {
-    if (!this.billingService.isBillingEnabled()) {
+    if (
+      !this.billingService.isBillingEnabled() ||
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspaceId,
+      ))
+    ) {
       return;
     }
 
@@ -627,29 +636,24 @@ export class OnboardingService {
         relations: { user: true },
       });
 
-      if (
-        !isDefined(userWorkspace) ||
-        !isWorkEmail(userWorkspace.user.email) ||
-        !(await this.isWorkspaceCreator({ userId, workspaceId }))
-      ) {
-        return;
-      }
-
-      const inviteSuggestions =
-        await this.onboardingInviteSuggestionsService.getOrComputeSuggestions({
-          workspaceId,
-          userId,
-          userWorkspaceId: userWorkspace.id,
-        });
-
-      if (!isNonEmptyArray(inviteSuggestions)) {
-        return;
-      }
+      const hasInviteSuggestions =
+        isDefined(userWorkspace) &&
+        isWorkEmail(userWorkspace.user.email) &&
+        (await this.isWorkspaceCreator({ userId, workspaceId })) &&
+        isNonEmptyArray(
+          await this.onboardingInviteSuggestionsService.getOrComputeSuggestions(
+            {
+              workspaceId,
+              userId,
+              userWorkspaceId: userWorkspace.id,
+            },
+          ),
+        );
 
       await this.setOnboardingInviteTeamPending({
         userId,
         workspaceId,
-        value: true,
+        value: hasInviteSuggestions,
       });
     } catch (error) {
       this.logger.error(
