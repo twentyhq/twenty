@@ -7,8 +7,6 @@ import { graphqlDirectExecutionToGraphqlApiExceptionHandler } from 'src/engine/a
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { RecordFilterException } from 'src/engine/record-filter/exceptions/record-filter.exception';
 import { recordFilterGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/record-filter-graphql-api-exception-handler.util';
-import { WorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
-import { workspaceQueryExecutorGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-executor-graphql-api-exception-handler.util';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
@@ -51,8 +49,6 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return graphqlQueryRunnerExceptionHandler(error);
     case error instanceof TwentyOrmException:
       return twentyOrmGraphqlApiExceptionHandler(error);
-    case error instanceof WorkspaceQueryExecutorException:
-      return workspaceQueryExecutorGraphqlApiExceptionHandler(error);
     case error instanceof RecordFilterException:
       return recordFilterGraphqlApiExceptionHandler(error);
     case error instanceof RecordValidationRuleException:

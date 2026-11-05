@@ -19,8 +19,6 @@ import { CustomError } from 'twenty-shared/utils';
 import { PostgresException } from 'src/engine/workspace-query-executor/exceptions/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { hasRestResponse } from 'src/engine/core-modules/exception-handler/utils/has-rest-response.util';
-import { WorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
-import { isWorkspaceQueryExecutorUserInputError } from 'src/engine/workspace-query-executor/utils/is-workspace-query-executor-user-input-error.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
@@ -100,14 +98,6 @@ export class HttpExceptionHandlerService {
     if (
       exception instanceof TwentyOrmException &&
       isTwentyOrmUserInputError(exception)
-    ) {
-      exception = new BadRequestException(exception.message);
-      statusCode = 400;
-    }
-
-    if (
-      exception instanceof WorkspaceQueryExecutorException &&
-      isWorkspaceQueryExecutorUserInputError(exception)
     ) {
       exception = new BadRequestException(exception.message);
       statusCode = 400;

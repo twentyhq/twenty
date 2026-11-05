@@ -1,7 +1,3 @@
-import {
-  WorkspaceQueryExecutorException,
-  WorkspaceQueryExecutorExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
 
 import {
@@ -103,17 +99,17 @@ describe('isUserFacingToolExecutionError', () => {
     ],
     [
       'a duplicate entry',
-      new WorkspaceQueryExecutorException(
+      new TwentyOrmException(
         'Duplicate entry',
-        WorkspaceQueryExecutorExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
       ),
       true,
     ],
     [
       'a database read timeout',
-      new WorkspaceQueryExecutorException(
+      new TwentyOrmException(
         'Query read timeout',
-        WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT,
+        TwentyOrmExceptionCode.QUERY_READ_TIMEOUT,
       ),
       false,
     ],

@@ -11,7 +11,9 @@ import {
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
-import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
+import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 @Injectable()
 export class RecordPermissionQueryService {
@@ -30,7 +32,7 @@ export class RecordPermissionQueryService {
     transactionScope?: RecordPermissionTransactionScope;
     query: RecordPermissionQuery;
   }): Promise<TRow[]> {
-    const statement = compileNamedParameters(query.sql, query.parameters);
+    const statement = compileTwentyOrmStatement(query.sql, query.parameters);
 
     if (
       isDefined(transactionScope) &&
@@ -42,12 +44,29 @@ export class RecordPermissionQueryService {
       );
     }
 
-    const rows = isDefined(transactionScope)
-      ? await transactionScope.executeRawQuery(statement.text, statement.values)
-      : await this.workspaceQueryExecutorService
-          .getPrimaryQueryExecutorOrThrow()
-          .execute(statement);
+    const rows = await this.executeStatement({ statement, transactionScope });
 
     return rows as TRow[];
+  }
+
+  private async executeStatement({
+    statement,
+    transactionScope,
+  }: {
+    statement: CompiledStatement;
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<Record<string, unknown>[]> {
+    try {
+      return isDefined(transactionScope)
+        ? await transactionScope.executeRawQuery(
+            statement.text,
+            statement.values,
+          )
+        : await this.workspaceQueryExecutorService
+            .getPrimaryQueryExecutorOrThrow()
+            .execute(statement);
+    } catch (error) {
+      throw toTwentyOrmException(error);
+    }
   }
 }
