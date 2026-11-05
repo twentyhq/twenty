@@ -8,7 +8,6 @@ import { useIsAiDataPolicyConfigurable } from '@/settings/privacy/hooks/useIsAiD
 import { useIsTwentyCloud } from '@/settings/privacy/hooks/useIsTwentyCloud';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// hosting, certifications and the DPA describe Twenty Cloud, so self-hosted instances only get the controls
 export const SettingsPrivacy = () => {
   const isTwentyCloud = useIsTwentyCloud();
   const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();

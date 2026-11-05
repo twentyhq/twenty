@@ -2,6 +2,7 @@ import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { DEFAULT_SENTRY_TRACES_SAMPLE_RATE } from '@/error-handler/constants/DefaultSentryTracesSampleRate';
 import { SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE } from '@/error-handler/constants/SentryReplayIgnoreMutationsAttribute';
@@ -17,6 +18,7 @@ export const SentryInitEffect = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
 
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
   const [isSentryInitializing, setIsSentryInitializing] = useState(false);
@@ -99,9 +101,12 @@ export const SentryInitEffect = () => {
       }
     };
 
-    // replays only start once the workspace is known to share product improvement data
     const syncSessionReplayWithSharing = async () => {
-      if (!isSentryInitialized || !isDefined(currentWorkspace)) {
+      if (
+        !isSentryInitialized ||
+        !isCurrentUserLoaded ||
+        !isDefined(currentWorkspace)
+      ) {
         return;
       }
 
@@ -141,6 +146,7 @@ export const SentryInitEffect = () => {
     currentWorkspace,
     currentWorkspaceMember,
     isSentryUserDefined,
+    isCurrentUserLoaded,
   ]);
 
   return <></>;

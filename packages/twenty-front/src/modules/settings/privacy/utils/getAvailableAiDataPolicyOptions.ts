@@ -1,8 +1,8 @@
 import {
+  AI_DATA_RESIDENCY_POLICIES,
   type AiDataPolicy,
   type AiDataResidencyPolicy,
   isAiModelCompliantWithDataPolicy,
-  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
 } from 'twenty-shared/ai';
 
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
@@ -21,9 +21,7 @@ export const getAvailableAiDataPolicyOptions = ({
   dataResidencies: AiDataResidencyPolicy[];
   isZeroDataRetentionAvailable: boolean;
 } => ({
-  dataResidencies: (
-    Object.keys(MODEL_RESIDENCIES_ALLOWED_BY_POLICY) as AiDataResidencyPolicy[]
-  ).filter(
+  dataResidencies: AI_DATA_RESIDENCY_POLICIES.filter(
     (dataResidency) =>
       dataResidency === aiDataPolicy.dataResidency ||
       aiModels.some((model) =>

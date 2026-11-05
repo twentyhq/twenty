@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsBoolean, IsIn } from 'class-validator';
 import {
-  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
+  AI_DATA_RESIDENCY_POLICIES,
   type AiDataPolicy,
   type AiDataResidencyPolicy,
 } from 'twenty-shared/ai';
@@ -10,7 +10,7 @@ import {
 @InputType()
 export class AiDataPolicyInput implements AiDataPolicy {
   @Field(() => String, { nullable: true })
-  @IsIn([...Object.keys(MODEL_RESIDENCIES_ALLOWED_BY_POLICY), null])
+  @IsIn([...AI_DATA_RESIDENCY_POLICIES, null])
   dataResidency: AiDataResidencyPolicy | null;
 
   @Field(() => Boolean)

@@ -6,11 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
+
+type AiDataPolicyWorkspace = Pick<WorkspaceEntity, 'id' | 'aiDataPolicy'>;
 
 @Injectable()
 export class WorkspaceAiDataPolicyService {
@@ -25,19 +28,24 @@ export class WorkspaceAiDataPolicyService {
     );
   }
 
-  async getEffectiveAiDataPolicy(workspace: {
-    id: string;
-    aiDataPolicy?: AiDataPolicy;
-  }): Promise<AiDataPolicy> {
+  async getEffectiveAiDataPolicy(
+    workspace: AiDataPolicyWorkspace,
+  ): Promise<AiDataPolicy> {
+    return (await this.findStoredAiDataPolicy(workspace)) ?? NO_AI_DATA_POLICY;
+  }
+
+  async findStoredAiDataPolicy(
+    workspace: AiDataPolicyWorkspace,
+  ): Promise<AiDataPolicy | null> {
     const isAiDataPolicyEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
         workspace.id,
       );
 
-    return isAiDataPolicyEnabled
+    return isAiDataPolicyEnabled && isDefined(workspace.aiDataPolicy)
       ? { ...NO_AI_DATA_POLICY, ...workspace.aiDataPolicy }
-      : NO_AI_DATA_POLICY;
+      : null;
   }
 
   async isContentRecordingAllowedOrThrow(
@@ -48,10 +56,9 @@ export class WorkspaceAiDataPolicyService {
     );
   }
 
-  async isContentRecordingAllowed(workspace: {
-    id: string;
-    aiDataPolicy?: AiDataPolicy;
-  }): Promise<boolean> {
+  async isContentRecordingAllowed(
+    workspace: AiDataPolicyWorkspace,
+  ): Promise<boolean> {
     const aiDataPolicy = await this.getEffectiveAiDataPolicy(workspace);
 
     return (

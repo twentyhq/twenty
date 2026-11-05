@@ -40,7 +40,10 @@ export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-a
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export type { AiDataResidencyPolicy } from './constants/model-residencies-allowed-by-policy.const';
-export { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from './constants/model-residencies-allowed-by-policy.const';
+export {
+  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
+  AI_DATA_RESIDENCY_POLICIES,
+} from './constants/model-residencies-allowed-by-policy.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
@@ -136,6 +139,7 @@ export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
+export { isAiDataResidencyPolicy } from './utils/is-ai-data-residency-policy.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';

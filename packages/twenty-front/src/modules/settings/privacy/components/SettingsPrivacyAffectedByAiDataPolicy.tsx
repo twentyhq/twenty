@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
+  AI_MODEL_TIERS,
   isAiDataPolicyActive,
   isAiModelCompliantWithDataPolicy,
 } from 'twenty-shared/ai';
@@ -19,10 +20,7 @@ import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  type AiModelTier,
-  FindManyAgentsDocument,
-} from '~/generated-metadata/graphql';
+import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 
 const StyledCalloutContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
@@ -57,12 +55,16 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
     .map(({ label }) => label)
     .join(', ');
 
-  const pinnedTierLabels = currentWorkspace?.isAutoModelSelectionEnabled
-    ? ''
-    : Object.entries(currentWorkspace?.aiModelIdByTier ?? {})
-        .filter(([, modelId]) => isModelExcluded(modelId as string))
-        .map(([tier]) => getAiModelTierLabel(tier as AiModelTier))
-        .join(', ');
+  const pinnedTiers = currentWorkspace?.isAutoModelSelectionEnabled
+    ? []
+    : AI_MODEL_TIERS.filter((tier) => {
+        const pinnedModelId = currentWorkspace?.aiModelIdByTier?.[tier];
+
+        return (
+          isNonEmptyString(pinnedModelId) && isModelExcluded(pinnedModelId)
+        );
+      });
+  const pinnedTierLabels = pinnedTiers.map(getAiModelTierLabel).join(', ');
 
   const warningIcon = (
     <IconAlertTriangle

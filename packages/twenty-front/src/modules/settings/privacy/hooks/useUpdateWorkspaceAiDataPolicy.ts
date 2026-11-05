@@ -7,41 +7,41 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+
+// an update replaces the whole policy, so saves must reach the server one at a time
+let lastAiDataPolicySave: Promise<void> = Promise.resolve();
 
 export const useUpdateWorkspaceAiDataPolicy = () => {
   const { enqueueToast } = useToast();
   const store = useStore();
-  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const updateWorkspaceAiDataPolicy = async (
-    changes: Partial<AiDataPolicy>,
-  ) => {
-    const currentWorkspace = store.get(currentWorkspaceState.atom);
+  const setStoredAiDataPolicy = (aiDataPolicy: AiDataPolicy) =>
+    store.set(currentWorkspaceState.atom, (workspace) =>
+      isDefined(workspace) ? { ...workspace, aiDataPolicy } : workspace,
+    );
 
-    if (!isDefined(currentWorkspace)) {
-      return;
-    }
+  const readStoredAiDataPolicy = () =>
+    getWorkspaceAiDataPolicy(store.get(currentWorkspaceState.atom));
 
-    const previousAiDataPolicy = currentWorkspace.aiDataPolicy;
-    const aiDataPolicy = {
-      ...getWorkspaceAiDataPolicy(currentWorkspace),
-      ...changes,
-    };
+  const updateWorkspaceAiDataPolicy = (changes: Partial<AiDataPolicy>) => {
+    const previousAiDataPolicy = readStoredAiDataPolicy();
 
-    try {
-      setCurrentWorkspace({ ...currentWorkspace, aiDataPolicy });
-      await updateWorkspace({ variables: { input: { aiDataPolicy } } });
-    } catch (error) {
-      setCurrentWorkspace((workspace) =>
-        isDefined(workspace)
-          ? { ...workspace, aiDataPolicy: previousAiDataPolicy }
-          : workspace,
-      );
-      enqueueToast(getToastOptionsFromError({ error }));
-    }
+    setStoredAiDataPolicy({ ...previousAiDataPolicy, ...changes });
+
+    lastAiDataPolicySave = lastAiDataPolicySave.then(async () => {
+      try {
+        await updateWorkspace({
+          variables: { input: { aiDataPolicy: readStoredAiDataPolicy() } },
+        });
+      } catch (error) {
+        setStoredAiDataPolicy(previousAiDataPolicy);
+        enqueueToast(getToastOptionsFromError({ error }));
+      }
+    });
+
+    return lastAiDataPolicySave;
   };
 
   return { updateWorkspaceAiDataPolicy };

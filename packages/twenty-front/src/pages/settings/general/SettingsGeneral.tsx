@@ -54,6 +54,10 @@ export const SettingsGeneral = () => {
   const hasPrivacySettings =
     isPrivacyEnabled && (isMultiWorkspaceEnabled || isAiDataPolicyConfigurable);
 
+  const privacyTabs = hasPrivacySettings
+    ? [{ id: GENERAL_TAB_PRIVACY, title: t`Privacy`, Icon: IconShield }]
+    : [];
+
   const tabs = [
     {
       id: GENERAL_TAB_GENERAL,
@@ -63,9 +67,7 @@ export const SettingsGeneral = () => {
     ...(hasSecurityPermission
       ? [
           { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
-          ...(hasPrivacySettings
-            ? [{ id: GENERAL_TAB_PRIVACY, title: t`Privacy`, Icon: IconShield }]
-            : []),
+          ...privacyTabs,
           { id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory },
         ]
       : []),
