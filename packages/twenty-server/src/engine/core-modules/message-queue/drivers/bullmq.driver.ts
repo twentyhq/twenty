@@ -663,7 +663,9 @@ export class BullMQDriver
       ...queueOptions,
       jobId:
         jobId ??
-        (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
+        (isDefined(queueOptions.jobId)
+          ? `${queueOptions.jobId}-${index}`
+          : undefined),
     }));
 
     this.checkJobSizes({
