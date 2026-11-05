@@ -8,7 +8,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ViewVisibility } from 'twenty-shared/types';
 
-import { ViewAccessService } from 'src/engine/metadata-modules/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
 
 @Injectable()

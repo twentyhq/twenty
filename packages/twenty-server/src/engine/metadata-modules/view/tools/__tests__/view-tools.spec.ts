@@ -31,7 +31,7 @@ import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tool
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { ViewAccessService } from 'src/engine/metadata-modules/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view/services/view-entity-lookup.service';
 
 describe('View tools', () => {

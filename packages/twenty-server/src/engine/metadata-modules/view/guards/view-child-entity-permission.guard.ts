@@ -7,7 +7,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view/types/view-permissions.type';
-import { ViewAccessService } from 'src/engine/metadata-modules/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view/services/view-entity-lookup.service';
 import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
 import { resolveViewChildEntityId } from 'src/engine/metadata-modules/view/utils/resolve-view-child-entity-id.util';
