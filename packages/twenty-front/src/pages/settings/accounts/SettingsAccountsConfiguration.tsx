@@ -67,7 +67,7 @@ export const SettingsAccountsConfiguration = () => {
   };
 
   const handleAddAccount = async () => {
-    if (!connectedAccountId) return;
+    if (!connectedAccountId || !isDefined(completionPath)) return;
 
     await startChannelSyncMutation({
       variables: {
@@ -99,7 +99,7 @@ export const SettingsAccountsConfiguration = () => {
         <SettingsAccountsConfigurationStepEmail
           messageChannel={messageChannel}
           hasNextStep={isDefined(calendarChannel)}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmitting || !isDefined(completionPath)}
           onNext={handleNext}
           onAddAccount={handleAddAccount}
         />
@@ -115,7 +115,7 @@ export const SettingsAccountsConfiguration = () => {
     <SettingsAccountsConfigurationStepCalendar
       calendarChannel={calendarChannel}
       messageChannel={messageChannel}
-      isSubmitting={isSubmitting}
+      isSubmitting={isSubmitting || !isDefined(completionPath)}
       onAddAccount={handleAddAccount}
     />
   );
