@@ -1401,6 +1401,46 @@ describe('app message channels API (e2e)', () => {
         'BAD_USER_INPUT',
       );
     });
+
+    it('attaches a file to one message only when several channels ingest it at the same time', async () => {
+      const channels = await Promise.all(
+        Array.from({ length: 4 }, (_, index) =>
+          createChannelOrThrow({
+            handle: `shared-file-${index}@linkedin.test`,
+          }),
+        ),
+      );
+      const fileId = await uploadMessageAttachment();
+
+      const responses = await Promise.all(
+        channels.map((channel) =>
+          ingest({
+            messageChannelId: channel.id,
+            messages: [
+              {
+                ...buildMessage({
+                  externalId: 'shared-file',
+                  threadExternalId: `thread-${uuidv4()}`,
+                  senderHandle: 'candidate@linkedin.test',
+                }),
+                attachments: [{ fileId, label: 'photo.png' }],
+              },
+            ],
+          }),
+        ),
+      );
+
+      const attachmentsHoldingFile = await globalThis.testDataSource.query(
+        `SELECT id FROM "${WORKSPACE_SCHEMA}"."attachment"
+           WHERE file::jsonb @> $1::jsonb`,
+        [JSON.stringify([{ fileId }])],
+      );
+
+      expect(
+        responses.filter((response) => response.body.errors === undefined),
+      ).toHaveLength(1);
+      expect(attachmentsHoldingFile).toHaveLength(1);
+    });
   });
 
   describe('syncAppMessageFolders', () => {
