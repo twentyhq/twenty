@@ -2,6 +2,7 @@ import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 import { computeSystemViewFieldsToCreate } from '../compute-system-view-fields-to-create.util';
@@ -11,34 +12,18 @@ const makeFieldMetadata = (
     name: string;
     type: FieldMetadataType;
   },
-): UniversalFlatFieldMetadata => {
-  const universalIdentifier = overrides.universalIdentifier ?? v4();
-
-  return {
-    universalIdentifier,
+) =>
+  getFlatFieldMetadataMock({
+    universalIdentifier: overrides.universalIdentifier ?? v4(),
+    objectMetadataId: 'object-id',
     objectMetadataUniversalIdentifier: 'object-uid',
     applicationUniversalIdentifier: 'a1a2a3a4-a5a6-4000-8000-000000000001',
     name: overrides.name,
     label: overrides.label ?? overrides.name,
     type: overrides.type,
-    isActive: true,
-    isSystem: false,
-    isUIEditable: true,
-    isNullable: true,
-    isUnique: false,
-    isLabelSyncedWithName: false,
-    defaultValue: null,
     description: null,
     icon: null,
-    options: null,
-    settings: null,
-    overrides: null,
-    relationTargetObjectMetadataUniversalIdentifier: null,
-    createdAt: '2026-01-01T00:00:00.000Z',
-    updatedAt: '2026-01-01T00:00:00.000Z',
-    deletedAt: null,
-  } as unknown as UniversalFlatFieldMetadata;
-};
+  });
 
 const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 
