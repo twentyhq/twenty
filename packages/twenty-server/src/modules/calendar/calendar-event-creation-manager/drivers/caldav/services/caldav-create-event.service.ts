@@ -49,7 +49,10 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const organizerEmail =
         input.attendees.length > 0
-          ? await this.resolveOrganizerEmail(client, connectedAccount.handle)
+          ? await this.resolveOrganizerEmail({
+              client,
+              handle: connectedAccount.handle,
+            })
           : undefined;
 
       const uid = uuid();
@@ -156,10 +159,13 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
     }
   }
 
-  private async resolveOrganizerEmail(
-    client: DAVClient,
-    handle: string,
-  ): Promise<string> {
+  private async resolveOrganizerEmail({
+    client,
+    handle,
+  }: {
+    client: DAVClient;
+    handle: string;
+  }): Promise<string> {
     const calendarUserAddresses = isDefined(client.account)
       ? await client
           .fetchCalendarUserAddresses({ account: client.account })
