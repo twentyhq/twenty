@@ -587,15 +587,33 @@ export class FilesFieldSync {
     toRemove: Set<string>;
   }): Promise<void> {
     if (fileIds.toAdd.size > 0) {
-      await this.fileRepository.update(
-        { id: In([...fileIds.toAdd]) },
-        {
-          settings: {
-            isTemporaryFile: false,
-            toDelete: false,
-          },
-        },
+      const claimResult = await this.fileRepository
+        .createQueryBuilder()
+        .update(FileEntity)
+        .set({ settings: { isTemporaryFile: false, toDelete: false } })
+        .where({ id: In([...fileIds.toAdd]) })
+        .andWhere(`settings->>'isTemporaryFile' = 'true'`)
+        .returning(['id'])
+        .execute();
+
+      const claimedFileIds = new Set(
+        (claimResult.raw as Pick<FileEntity, 'id'>[]).map(({ id }) => id),
       );
+      const unclaimedFileIds = [...fileIds.toAdd].filter(
+        (fileId) => !claimedFileIds.has(fileId),
+      );
+
+      if (unclaimedFileIds.length > 0) {
+        const [fileId] = unclaimedFileIds;
+
+        throw new TwentyOrmException(
+          `Files ${unclaimedFileIds.join(', ')} were attached to another record first`,
+          TwentyOrmExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`File ${fileId} is already associated with a permanent files field. Please re-upload the file.`,
+          },
+        );
+      }
     }
 
     if (fileIds.toRemove.size > 0) {

@@ -14,6 +14,7 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -48,7 +49,7 @@ describe('Chat message participation with real storage', () => {
 
       await context.setConversationType({
         threadId,
-        conversationType: 'DIRECT_MESSAGE',
+        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
       });
       const response = await runWithRejectedChatWrite({
         workspaceId: context.workspaceId,
@@ -93,7 +94,7 @@ describe('Chat message participation with real storage', () => {
 
     await context.setConversationType({
       threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     await context.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId: context.workspaceId,
@@ -348,7 +349,7 @@ describe('Chat message participation with real storage', () => {
 
     await context.setConversationType({
       threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     const firstResponse = await sendChatParticipationMessage({
       threadId,

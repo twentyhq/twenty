@@ -1,10 +1,8 @@
-import { GettingStartedAutoAdvanceEffect } from '@/getting-started/components/GettingStartedAutoAdvanceEffect';
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
-import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
@@ -16,7 +14,6 @@ import { Plural, useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
@@ -92,15 +89,9 @@ const StyledDigit = styled.span`
   }
 `;
 
-const StyledFooter = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
-  const { selectGettingStartedStep, isSaving } = useSelectGettingStartedStep();
   const { daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
   const gettingStartedJustCompletedStep = useAtomStateValue(
@@ -117,29 +108,15 @@ export const GettingStartedPageContent = () => {
   const stepDefinitions = progress?.steps ?? [];
   const stepActionKeys = stepDefinitions.map(({ actionKey }) => actionKey);
   const completedStepActionKeys = progress?.completedStepActionKeys ?? [];
-  const remainingSteps = stepActionKeys.filter(
-    (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
-  );
-  const isComplete = remainingSteps.length === 0;
-  const { selectedStepActionKey, nextStep, stepAfterSkip } =
-    getGettingStartedStepSelection({
-      stepActionKeys,
-      completedStepActionKeys,
-      selectedStepActionKey:
-        gettingStartedJustCompletedStep ?? progress?.selectedStepActionKey,
-    });
-  const isSelectedStepCompleted = completedStepActionKeys.includes(
-    selectedStepActionKey,
-  );
+  const { selectedStepActionKey } = getGettingStartedStepSelection({
+    stepActionKeys,
+    completedStepActionKeys,
+    selectedStepActionKey:
+      gettingStartedJustCompletedStep ?? progress?.selectedStepActionKey,
+  });
 
   return (
     <StyledScroll>
-      {isDefined(gettingStartedJustCompletedStep) && (
-        <GettingStartedAutoAdvanceEffect
-          completedStepActionKey={gettingStartedJustCompletedStep}
-          nextStepActionKey={nextStep}
-        />
-      )}
       <StyledContent>
         <StyledHeading>
           <StyledCountdown>
@@ -190,17 +167,6 @@ export const GettingStartedPageContent = () => {
                 selectedStepActionKey={selectedStepActionKey}
                 completedStepActionKeys={completedStepActionKeys}
               />
-            )}
-            {!isComplete && stepAfterSkip !== selectedStepActionKey && (
-              <StyledFooter>
-                <Button
-                  variant="ghost"
-                  disabled={isSaving}
-                  onClick={() => selectGettingStartedStep(stepAfterSkip)}
-                >
-                  {isSelectedStepCompleted ? t`Back to current step` : t`Skip`}
-                </Button>
-              </StyledFooter>
             )}
           </>
         )}

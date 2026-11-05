@@ -10,10 +10,10 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       __typename: 'GettingStartedStepDefinition',
       actionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
       kind: GettingStartedStepKind.CUSTOM,
-      title: 'Connect your mailbox',
+      title: 'Import your contacts',
       doneTitle: 'Mailbox connected',
       description:
-        'Companies and people fill in from your emails and meetings.',
+        'Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.',
       doneDescription:
         'Companies and people fill in from your emails and meetings.',
       icon: 'IconAt',

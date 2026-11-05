@@ -23,6 +23,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -126,6 +127,11 @@ export class ApplicationMessageIngestionService {
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
 
+    const messageIdsWithAttachments = await this.findMessageIdsWithAttachments({
+      workspaceId,
+      messageIds: [...new Set(messageExternalIdsAndIdsMap.values())],
+    });
+
     // never drop a row: the app would see success with nothing to retry
     return {
       messages: messagesToSave.map((message) => {
@@ -145,9 +151,43 @@ export class ApplicationMessageIngestionService {
           externalId: message.externalId,
           messageId,
           messageThreadId,
+          hasAttachments: messageIdsWithAttachments.has(messageId),
         };
       }),
     };
+  }
+
+  private async findMessageIdsWithAttachments({
+    workspaceId,
+    messageIds,
+  }: {
+    workspaceId: string;
+    messageIds: string[];
+  }): Promise<Set<string>> {
+    if (messageIds.length === 0) {
+      return new Set();
+    }
+
+    const attachments =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+              'attachment',
+            )
+            .find({
+              where: { targetMessageId: In(messageIds) },
+              select: { targetMessageId: true },
+            }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    return new Set(
+      attachments
+        .map(({ targetMessageId }) => targetMessageId)
+        .filter(isDefined),
+    );
   }
 
   private toMessageWithParticipants({
@@ -177,6 +217,7 @@ export class ApplicationMessageIngestionService {
         channelHandle: messageChannel.handle,
       }),
       attachments: [],
+      attachmentFiles: message.attachments ?? [],
       participants: message.participants.map((participant) => ({
         role: participant.role,
         handle: participant.handle,

@@ -4,6 +4,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -124,7 +125,8 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    return thread.conversationType === 'DIRECT_MESSAGE'
+    return thread.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
       ? (workspace.aiChatDirectMessageAssistantMode ??
           AiChatAssistantMode.MENTION_ONLY)
       : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
@@ -139,13 +141,15 @@ export class AgentChatAssistantPolicyService {
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds: string[];
   }): Promise<AgentChatAudience> {
-    if (thread.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return AgentChatAudience.DIRECT_MESSAGE;
     }
 
     if (
       (isDefined(thread.conversationType) &&
-        thread.conversationType !== 'STANDARD') ||
+        thread.conversationType !== AgentChatThreadConversationType.STANDARD) ||
       isDefined(thread.channelId) ||
       !isDefined(thread.workspaceMemberId)
     ) {

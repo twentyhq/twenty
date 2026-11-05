@@ -6,7 +6,7 @@ import {
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -24,6 +24,7 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
+import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
@@ -42,6 +43,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
+    private readonly messageAttachmentService: MessagingMessageAttachmentService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -176,6 +178,21 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 workspaceId,
                 transactionScope,
               );
+
+              await this.messageAttachmentService.saveMessageAttachments({
+                messageAttachmentFiles: messagesToSave.flatMap((message) => {
+                  const messageId = messageExternalIdsAndIdsMap.get(
+                    message.externalId,
+                  );
+
+                  return isDefined(messageId) &&
+                    isNonEmptyArray(message.attachmentFiles)
+                    ? [{ messageId, attachmentFiles: message.attachmentFiles }]
+                    : [];
+                }),
+                workspaceId,
+                transactionScope,
+              });
 
               return {
                 participantsWithMessageId,

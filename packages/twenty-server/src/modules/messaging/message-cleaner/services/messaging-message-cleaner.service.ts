@@ -7,6 +7,7 @@ import { In, MoreThan } from 'typeorm';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -48,6 +49,10 @@ export class MessagingMessageCleanerService {
             const messageThreadRepository =
               transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
+              );
+            const attachmentRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+                'attachment',
               );
 
             for (const messageExternalIdsChunk of chunk(
@@ -97,6 +102,9 @@ export class MessagingMessageCleanerService {
                 where: { id: In(orphanMessageIds) },
               });
 
+              await attachmentRepository.delete({
+                targetMessageId: In(orphanMessageIds),
+              });
               await messageRepository.delete(orphanMessageIds);
 
               const candidateThreadIds = [
@@ -199,6 +207,10 @@ export class MessagingMessageCleanerService {
               transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
               );
+            const attachmentRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+                'attachment',
+              );
 
             await this.deleteOrphansByKeyset(
               async (cursor) => {
@@ -224,6 +236,9 @@ export class MessagingMessageCleanerService {
                   ),
                 ];
 
+                await attachmentRepository.delete({
+                  targetMessageId: In(ids),
+                });
                 await messageRepository.delete(ids);
 
                 const survivingThreadIds = await this.findReferencedThreadIds(

@@ -1901,6 +1901,7 @@ export interface IngestAppMessagesOutput {
 
 export interface IngestedAppMessage {
     externalId: Scalars['String']
+    hasAttachments: Scalars['Boolean']
     messageId: Scalars['UUID']
     messageThreadId: Scalars['UUID']
     __typename: 'IngestedAppMessage'
@@ -4717,9 +4718,11 @@ export interface AppKeyValueGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AppMessageAttachmentInput {fileId: Scalars['UUID'],label: Scalars['String']}
+
 export interface AppMessageFolderInput {externalId: Scalars['String'],isSynced?: (Scalars['Boolean'] | null),name: Scalars['String']}
 
-export interface AppMessageInput {externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
+export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
 
@@ -6564,6 +6567,7 @@ export interface IngestAppMessagesOutputGenqlSelection{
 
 export interface IngestedAppMessageGenqlSelection{
     externalId?: boolean | number
+    hasAttachments?: boolean | number
     messageId?: boolean | number
     messageThreadId?: boolean | number
     __typename?: boolean | number
