@@ -57,9 +57,9 @@ export class ResendDriver implements EmailingDomainDriverInterface {
   }
 
   async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
-    const domain = await this.findOrCreateDomain(input.domain);
-
-    await this.resendApiClientService.verifyDomain(domain.id);
+    this.logger.log(
+      `Resend re-verifies ${input.domain} on every verifyDomain call, nothing to retry`,
+    );
   }
 
   async verifyDomain(
