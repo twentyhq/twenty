@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import ical from 'ical-generator';
 import { v4 as uuid } from 'uuid';
 
@@ -60,7 +61,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const filename = `${uid}.ics`;
 
-      await client.createCalendarObject({
+      const createResponse = await client.createCalendarObject({
         calendar: targetCalendar,
         filename,
         iCalString: calendar.toString(),
@@ -70,17 +71,21 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       // import keys on, so a later sync reconciles this event instead of
       // duplicating it. Reconstructing the href locally risks a format mismatch
       // (full URL vs the server-relative path the provider returns).
-      const reconstructedHref = new URL(filename, targetCalendar.url).href;
+      const reconstructedUrl = this.resolveCreatedEventUrl(
+        createResponse.headers.get('location'),
+        filename,
+        targetCalendar.url,
+      );
 
-      let id = reconstructedHref;
+      let id = reconstructedUrl.pathname;
 
       try {
         const [syncedEvent] =
           await this.calDavFetchEventsService.fetchEventsByHrefs(client, [
-            reconstructedHref,
+            reconstructedUrl.href,
           ]);
 
-        id = syncedEvent?.id ?? reconstructedHref;
+        id = syncedEvent?.id ?? id;
       } catch {
         // The event was created; resolving its server href is best-effort, so
         // fall back to the reconstructed href rather than failing the create.
@@ -123,5 +128,17 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
+
+  private resolveCreatedEventUrl(
+    location: string | null,
+    filename: string,
+    calendarUrl: string,
+  ): URL {
+    const locationUrl = isNonEmptyString(location)
+      ? URL.parse(location, calendarUrl)
+      : null;
+
+    return locationUrl ?? new URL(filename, calendarUrl);
   }
 }
