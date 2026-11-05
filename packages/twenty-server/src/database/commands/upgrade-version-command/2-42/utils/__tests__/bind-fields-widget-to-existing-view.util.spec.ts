@@ -1,5 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { bindFieldsWidgetToExistingView } from 'src/database/commands/upgrade-version-command/2-42/utils/bind-fields-widget-to-existing-view.util';
 
 const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
@@ -12,23 +15,31 @@ const EXISTING_VIEW_ID = '20202020-0000-0000-0000-000000000011';
 
 const EXISTING_FIELDS_VIEW = { id: EXISTING_VIEW_ID };
 
+const [STANDARD_WIDGET] = Object.values(
+  computeTwentyStandardApplicationAllFlatEntityMaps({
+    now: '2026-01-01T00:00:00.000Z',
+    workspaceId: '20202020-0000-0000-0000-000000000001',
+    twentyStandardApplicationId: '20202020-0000-0000-0000-000000000002',
+  }).allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
+).filter(isDefined);
+
 const buildFieldsWidget = (
   overrides: Partial<FlatPageLayoutWidget> = {},
-): FlatPageLayoutWidget =>
-  ({
-    universalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-    configuration: {
-      configurationType: WidgetConfigurationType.FIELDS,
-      viewId: STANDARD_VIEW_ID,
-      newFieldDefaultVisibility: true,
-    },
-    universalConfiguration: {
-      configurationType: WidgetConfigurationType.FIELDS,
-      viewUniversalIdentifier: '20202020-0000-0000-0000-0000000000aa',
-      newFieldDefaultVisibility: true,
-    },
-    ...overrides,
-  }) as unknown as FlatPageLayoutWidget;
+): FlatPageLayoutWidget => ({
+  ...STANDARD_WIDGET,
+  universalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
+  configuration: {
+    configurationType: WidgetConfigurationType.FIELDS,
+    viewId: STANDARD_VIEW_ID,
+    newFieldDefaultVisibility: true,
+  },
+  universalConfiguration: {
+    configurationType: WidgetConfigurationType.FIELDS,
+    viewUniversalIdentifier: '20202020-0000-0000-0000-0000000000aa',
+    newFieldDefaultVisibility: true,
+  },
+  ...overrides,
+});
 
 describe('bindFieldsWidgetToExistingView', () => {
   it('rebinds the fields widget to the view the workspace already holds', () => {
@@ -90,7 +101,7 @@ describe('bindFieldsWidgetToExistingView', () => {
       configuration: {
         configurationType: WidgetConfigurationType.TIMELINE,
       },
-    } as unknown as Partial<FlatPageLayoutWidget>);
+    });
 
     const result = bindFieldsWidgetToExistingView({
       flatPageLayoutWidget: widget,

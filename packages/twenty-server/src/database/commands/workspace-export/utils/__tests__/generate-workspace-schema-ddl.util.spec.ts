@@ -1,9 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { generateWorkspaceSchemaDdl } from 'src/database/commands/workspace-export/utils/generate-workspace-schema-ddl.util';
 
@@ -21,7 +19,7 @@ describe('generateWorkspaceSchemaDdl', () => {
       namePlural: 'persons',
     }),
     isActive: true,
-  } as unknown as ObjectMetadataEntity;
+  };
 
   const nameField = getFlatFieldMetadataMock({
     universalIdentifier: 'name',
@@ -29,7 +27,7 @@ describe('generateWorkspaceSchemaDdl', () => {
     objectMetadataId,
     type: FieldMetadataType.TEXT,
     name: 'name',
-  }) as unknown as FieldMetadataEntity;
+  });
 
   const searchVectorField = getFlatFieldMetadataMock({
     universalIdentifier: 'searchVector',
@@ -37,9 +35,9 @@ describe('generateWorkspaceSchemaDdl', () => {
     objectMetadataId,
     type: FieldMetadataType.TS_VECTOR,
     name: 'searchVector',
-  }) as unknown as FieldMetadataEntity;
+  });
 
-  const fieldsByObjectId = new Map<string, FieldMetadataEntity[]>([
+  const fieldsByObjectId = new Map([
     [objectMetadataId, [nameField, searchVectorField]],
   ]);
 

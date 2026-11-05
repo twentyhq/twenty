@@ -1,20 +1,31 @@
 import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { UpdateFeatureFlagCommand } from 'src/database/commands/update-feature-flag.command';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 describe('UpdateFeatureFlagCommand', () => {
   const featureFlagKey = Object.values(FeatureFlagKey)[0];
   const upsertWorkspaceFeatureFlag = jest.fn();
 
-  const command = new UpdateFeatureFlagCommand(
-    {} as WorkspaceIteratorService,
-    { upsertWorkspaceFeatureFlag } as unknown as FeatureFlagService,
-  );
+  let command: UpdateFeatureFlagCommand;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        UpdateFeatureFlagCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: FeatureFlagService,
+          useValue: { upsertWorkspaceFeatureFlag },
+        },
+      ],
+    }).compile();
+
+    command = module.get(UpdateFeatureFlagCommand);
+
     jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
     upsertWorkspaceFeatureFlag.mockReset();
   });
