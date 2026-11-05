@@ -30,6 +30,7 @@ export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
         throw new UserInputError(exception);
       case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS:
         throw new ConflictError(exception);
+      case ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN:
       default:
         throw new InternalServerError(exception);
     }

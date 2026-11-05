@@ -27,6 +27,7 @@ export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
     return {
       ...application,
       logoUrl: queriedApplication?.logoUrl,
+      sourceType: queriedApplication?.sourceType,
       applicationRegistration: queriedApplication?.applicationRegistration,
       defaultRoleId: queriedApplication?.defaultRoleId,
     };

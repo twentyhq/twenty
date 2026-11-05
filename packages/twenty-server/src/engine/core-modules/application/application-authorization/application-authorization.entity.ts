@@ -88,6 +88,9 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'timestamptz', nullable: true })
   lastAuthorizedAt: Date | null;
 
+  @Column({ type: 'uuid', nullable: true })
+  consentId: string | null;
+
   // Touched on refresh, at most once per access-token TTL, so no write throttling needed
   @Column({ type: 'timestamptz' })
   lastUsedAt: Date;

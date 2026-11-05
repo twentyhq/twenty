@@ -8,6 +8,7 @@ import { In, Repository } from 'typeorm';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { isOAuthOnlyApplicationRegistration } from 'src/engine/core-modules/application/application-oauth-identity/utils/is-oauth-only-application-registration.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -74,7 +75,10 @@ export class ApplicationUpgradeService {
 
     const targetVersion = appRegistration.latestAvailableVersion;
 
-    if (!isDefined(targetVersion)) {
+    if (
+      !isDefined(targetVersion) ||
+      isOAuthOnlyApplicationRegistration(appRegistration)
+    ) {
       return {
         appRegistration,
         targetVersion: null,
@@ -252,7 +256,10 @@ export class ApplicationUpgradeService {
 
     const targetVersion = appRegistration.latestAvailableVersion;
 
-    if (!isDefined(targetVersion)) {
+    if (
+      !isDefined(targetVersion) ||
+      isOAuthOnlyApplicationRegistration(appRegistration)
+    ) {
       this.logger.log(
         `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: no latest available version`,
       );
@@ -331,8 +338,7 @@ export class ApplicationUpgradeService {
     // code artifacts.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.OAUTH_ONLY
+      isOAuthOnlyApplicationRegistration(appRegistration)
     ) {
       throw new ApplicationException(
         'Cannot upgrade an app installed from a local source or OAuth-only registration',

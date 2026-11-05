@@ -12,12 +12,13 @@ import {
 type WorkspaceApplicationStatusApplication = Pick<
   Application,
   'id' | 'version'
-> & {
-  applicationRegistration?: Pick<
-    ApplicationRegistrationSummary,
-    'sourceType' | 'latestAvailableVersion'
-  > | null;
-};
+> &
+  Partial<Pick<Application, 'sourceType'>> & {
+    applicationRegistration?: Pick<
+      ApplicationRegistrationSummary,
+      'latestAvailableVersion'
+    > | null;
+  };
 
 type WorkspaceApplicationStatusApplicationWithVariables = Pick<
   Application,
@@ -61,7 +62,7 @@ export const getWorkspaceApplicationStatusesById = ({
 
     if (
       hasApplicationUpdate({
-        sourceType: application.applicationRegistration?.sourceType,
+        sourceType: application.sourceType,
         currentVersion: application.version,
         latestAvailableVersion:
           application.applicationRegistration?.latestAvailableVersion,

@@ -1,6 +1,8 @@
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
+import { CONNECTABLE_APPS_GRAPHQL_HANDLER } from '@/settings/app-preferences/testing/connectableAppsGraphqlHandler';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
@@ -15,6 +17,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
@@ -291,6 +294,7 @@ export const disconnectConnectedAccount = fn();
 export const myApplicationPreferencesRequested = fn();
 
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
+  CONNECTABLE_APPS_GRAPHQL_HANDLER,
   graphql.query('MyConnectedAccounts', () =>
     HttpResponse.json({
       data: {
@@ -407,4 +411,14 @@ export const seedAccountGroupsStory = async () => {
     ...mockedWorkspaceMemberData,
     userWorkspaceId: MY_USER_WORKSPACE_ID,
   });
+  jotaiStore.set(
+    currentUserWorkspaceState.atom,
+    mockedUserData.currentUserWorkspace,
+  );
 };
+
+export const removeConnectedAccountsPermission = () =>
+  jotaiStore.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags: [],
+  });

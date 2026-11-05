@@ -46,4 +46,10 @@ export class MarketplaceAppDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;
+
+  // Set only for an app with an OAuth identity; `{mcpServerUrl}` is left for the client to fill
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  connectUrl?: string;
 }

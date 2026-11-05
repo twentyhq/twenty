@@ -1,5 +1,9 @@
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import {
+  CHATGPT_CONNECTABLE_APP,
+  CLAUDE_CONNECTABLE_APP,
+} from '@/settings/app-preferences/testing/connectableAppFixtures';
+import {
   NPM_APPLICATION,
   OAUTH_ONLY_APPLICATION,
   STANDARD_APPLICATION,
@@ -8,14 +12,15 @@ import { getSettingsApplicationsTableRowItems } from '@/settings/applications/ut
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 describe('getSettingsApplicationsTableRowItems', () => {
-  it('lists the standard app, then built-in account apps, then the other apps with OAuth-only apps last', () => {
+  it('lists the standard app, then built-in and connectable apps, then the other apps with OAuth-only apps last', () => {
     const rowItems = getSettingsApplicationsTableRowItems({
       applications: [
         OAUTH_ONLY_APPLICATION,
         NPM_APPLICATION,
         STANDARD_APPLICATION,
       ],
-      builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
+      builtInApps: BUILT_IN_ACCOUNT_APPS,
+      connectableApps: [CHATGPT_CONNECTABLE_APP, CLAUDE_CONNECTABLE_APP],
       currentWorkspace: null,
     });
 
@@ -24,19 +29,21 @@ describe('getSettingsApplicationsTableRowItems', () => {
       'google',
       'outlook',
       'imap',
+      CHATGPT_CONNECTABLE_APP.id,
+      CLAUDE_CONNECTABLE_APP.id,
       NPM_APPLICATION.id,
       OAUTH_ONLY_APPLICATION.id,
     ]);
   });
 
-  it('keeps the existing order without built-in account apps', () => {
+  it('keeps the existing order without built-in apps', () => {
     const rowItems = getSettingsApplicationsTableRowItems({
       applications: [
         NPM_APPLICATION,
         OAUTH_ONLY_APPLICATION,
         STANDARD_APPLICATION,
       ],
-      builtInAccountApps: [],
+      builtInApps: [],
       currentWorkspace: null,
     });
 
@@ -47,10 +54,10 @@ describe('getSettingsApplicationsTableRowItems', () => {
     ]);
   });
 
-  it('gives installed apps their source type and built-in account apps none', () => {
+  it('gives installed apps their source type and built-in apps none', () => {
     const [googleRowItem, npmRowItem] = getSettingsApplicationsTableRowItems({
       applications: [NPM_APPLICATION],
-      builtInAccountApps: BUILT_IN_ACCOUNT_APPS.slice(0, 1),
+      builtInApps: BUILT_IN_ACCOUNT_APPS.slice(0, 1),
       currentWorkspace: null,
     });
 
@@ -68,6 +75,36 @@ describe('getSettingsApplicationsTableRowItems', () => {
     expect(googleRowItem.sourceType).toBeUndefined();
   });
 
+  it('labels an install by how it was installed, and one without a registration as built-in', () => {
+    const [standardRowItem, claudeRowItem] =
+      getSettingsApplicationsTableRowItems({
+        applications: [
+          {
+            ...STANDARD_APPLICATION,
+            sourceType: ApplicationRegistrationSourceType.LOCAL,
+          },
+          {
+            id: 'claude-application-id',
+            name: 'Claude',
+            universalIdentifier: 'claude-universal-identifier',
+            sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+            applicationRegistration: {
+              id: 'claude-registration-id',
+              sourceType: ApplicationRegistrationSourceType.NPM,
+              oAuthIdentityUniversalIdentifier: 'claude-universal-identifier',
+            },
+          },
+        ],
+        builtInApps: [],
+        currentWorkspace: null,
+      });
+
+    expect(standardRowItem.sourceType).toBeUndefined();
+    expect(claudeRowItem.sourceType).toBe(
+      ApplicationRegistrationSourceType.OAUTH_ONLY,
+    );
+  });
+
   it('gives the standard and custom apps the name and description their rows show', () => {
     const customApplication = {
       id: 'custom-application-id',
@@ -81,7 +118,7 @@ describe('getSettingsApplicationsTableRowItems', () => {
           { ...STANDARD_APPLICATION, name: 'twenty-standard' },
           customApplication,
         ],
-        builtInAccountApps: [],
+        builtInApps: [],
         currentWorkspace: {
           workspaceCustomApplication: { id: customApplication.id },
         },

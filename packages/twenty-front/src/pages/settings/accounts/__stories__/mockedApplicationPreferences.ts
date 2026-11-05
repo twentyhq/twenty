@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { CONNECTABLE_APPS_GRAPHQL_HANDLER } from '@/settings/app-preferences/testing/connectableAppsGraphqlHandler';
 import { HttpResponse, graphql } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
@@ -255,6 +256,7 @@ export const failNextConnectedAccountsRequest = () => {
 };
 
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
+  CONNECTABLE_APPS_GRAPHQL_HANDLER,
   graphql.query('MyApplicationPreferences', () => {
     myApplicationPreferencesRequested();
 
