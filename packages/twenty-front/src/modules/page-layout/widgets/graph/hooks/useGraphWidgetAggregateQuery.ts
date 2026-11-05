@@ -10,12 +10,12 @@ import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graph-widg
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { useLingui } from '@lingui/react/macro';
 
 export const useGraphWidgetAggregateQuery = ({
   objectMetadataItemId,
@@ -24,6 +24,7 @@ export const useGraphWidgetAggregateQuery = ({
   objectMetadataItemId: string;
   configuration: AggregateChartConfiguration;
 }) => {
+  const { t } = useLingui();
   const { objectMetadataItem, gqlOperationFilter, aggregateField } =
     useGraphWidgetQueryCommon({
       objectMetadataItemId,

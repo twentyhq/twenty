@@ -15,7 +15,9 @@ import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modu
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
+import { reconstructRelatedRecordPathsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-related-record-paths-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
+import { reconstructValidationRulesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-validation-rules-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
@@ -163,16 +165,6 @@ export class ApplicationManifestExportService {
       await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
         { workspaceId },
       );
-    const { workflows, coverage: workflowsCoverage } =
-      reconstructWorkflowsManifest({
-        applicationAllFlatEntityMaps,
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers,
-        resolvableFieldUniversalIdentifiers,
-        isWorkspaceCustomApplication:
-          flatApplication.id === workspaceCustomFlatApplication.id,
-        connectedAccounts,
-      });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
@@ -182,9 +174,31 @@ export class ApplicationManifestExportService {
           metadataName: 'role',
         }),
     });
+    const { workflows, coverage: workflowsCoverage } =
+      reconstructWorkflowsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+        exportedAgentUniversalIdentifiers: new Set(
+          agents.map(({ universalIdentifier }) => universalIdentifier),
+        ),
+        isWorkspaceCustomApplication:
+          flatApplication.id === workspaceCustomFlatApplication.id,
+        connectedAccounts,
+      });
     const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
       applicationAllFlatEntityMaps,
     });
+    const { validationRules, coverage: validationRulesCoverage } =
+      reconstructValidationRulesManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+      });
+    const { relatedRecordPaths, coverage: relatedRecordPathsCoverage } =
+      reconstructRelatedRecordPathsManifest({ applicationAllFlatEntityMaps });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -219,7 +233,9 @@ export class ApplicationManifestExportService {
       commandMenuItems: [],
       timelineActivityTypes: [],
       settingsMenuItems: [],
+      relatedRecordPaths,
       workflows,
+      validationRules,
       ...(isDefined(translations) ? { translations } : {}),
     };
 
@@ -243,6 +259,8 @@ export class ApplicationManifestExportService {
           ...workflowsCoverage,
           ...agentsCoverage,
           ...skillsCoverage,
+          ...validationRulesCoverage,
+          ...relatedRecordPathsCoverage,
         ],
       }),
       files: shouldIncludeDependencies

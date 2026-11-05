@@ -61,6 +61,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   roleTarget: {
     role: true,
     agent: true,
+    webhook: true,
   },
   agent: {
     role: true,
@@ -141,6 +142,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   settingsMenuItem: {
     frontComponent: true,
+  },
+  fieldMetadataOption: {
+    fieldMetadata: true,
   },
   relatedRecordPath: {
     objectMetadata: true,

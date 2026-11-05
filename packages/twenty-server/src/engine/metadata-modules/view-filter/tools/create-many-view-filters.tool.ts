@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -8,6 +7,8 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { createViewFilterInputSchema } from 'src/engine/metadata-modules/view-filter/tools/schemas/create-view-filter-input.schema';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { VIEW_FILTER_ACCESS_POLICY } from 'src/engine/metadata-modules/view-filter/constants/view-filter-access-policy.constant';
 
 const createManyViewFiltersInputSchema = z.object({
   filters: z
@@ -20,7 +21,7 @@ const createManyViewFiltersInputSchema = z.object({
 @DefineTool({
   name: 'create_many_view_filters',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:
     'Add multiple filters to a view in one call. Use get_field_metadata to get fieldMetadataId values.',
 })
@@ -29,16 +30,28 @@ export class CreateManyViewFiltersTool extends BaseTool<
 > {
   readonly inputSchema = createManyViewFiltersInputSchema;
 
-  constructor(private readonly viewFilterService: ViewFilterService) {
+  constructor(
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewAccessService: ViewAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof createManyViewFiltersInputSchema
   >): Promise<ToolOutput> {
+    await Promise.all(
+      input.filters.map(({ viewId }) =>
+        this.viewAccessService.findModifiableViewOrThrow({
+          viewId,
+          accessContext: { workspaceId, userWorkspaceId, authContext },
+        }),
+      ),
+    );
+
     const results = [];
 
     for (const filterInput of input.filters) {

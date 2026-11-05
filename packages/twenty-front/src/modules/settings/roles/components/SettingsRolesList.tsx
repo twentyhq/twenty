@@ -14,7 +14,6 @@ import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,6 +33,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -58,6 +58,7 @@ const StyledCreateRoleContainer = styled.div`
 `;
 
 export const SettingsRolesList = () => {
+  const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAgentRoles, setShowAgentRoles] = useState(false);

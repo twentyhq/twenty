@@ -1,14 +1,15 @@
-import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 
 import { AgentTurnStatus } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type CoreAgentRunStatusProps = {
   status: AgentTurnStatus;
 };
 
 export const CoreAgentRunStatus = ({ status }: CoreAgentRunStatusProps) => {
+  const { t } = useLingui();
   switch (status) {
     case AgentTurnStatus.RUNNING:
       return (

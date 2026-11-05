@@ -1,20 +1,18 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { t } from '@lingui/core/macro';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
+import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentPermissionsCrudListProps = {
   permissions: Array<{
     key: SettingsRoleObjectPermissionKey;
     label: string;
   }>;
-  objectPermissions?: ObjectPermission;
+  objectPermissions?: WorkflowAiAgentObjectPermission;
   readonly: boolean;
-  onAddPermission: (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => void;
+  onAddPermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
   objectMetadataId: string;
 };
 
@@ -25,6 +23,7 @@ export const WorkflowAiAgentPermissionsCrudList = ({
   onAddPermission,
   objectMetadataId,
 }: WorkflowAiAgentPermissionsCrudListProps) => {
+  const { t } = useLingui();
   return (
     <SidePanelGroup heading={t`CRUD`}>
       {permissions.map((permission) => {
@@ -36,9 +35,14 @@ export const WorkflowAiAgentPermissionsCrudList = ({
             permission={permission}
             isEnabled={isEnabled}
             readonly={readonly}
-            showDeleteButton={false}
+            shouldShowDeleteButton={false}
             alwaysShowGranted={true}
-            onAdd={() => onAddPermission(objectMetadataId, permission.key)}
+            onAdd={() =>
+              onAddPermission?.({
+                objectMetadataId,
+                permissionKey: permission.key,
+              })
+            }
           />
         );
       })}

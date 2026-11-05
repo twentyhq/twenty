@@ -92,4 +92,34 @@ await sendInboxMessage({
 * Упоминание только рендеров. Он не добавляет участника в разговор или не уведомляет их, поэтому перечислите всех, кто должен получить сообщение в разделе `workspaceMemberIds`.
 * `INBOX_ASSISTANT_MENTION` - это текст, в котором автор пишет, когда член упоминает помощника (`@Ada`), так что ваше имя сообщения совпадает.
 
+## Прикрепление записей к беседе
+
+`attachRecordToInboxThread()` связывает беседу с записью, а `detachRecordFromInboxThread()` удаляет эту связь.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+* Обе функции принимают `threadId` беседы и запись в виде `objectNameSingular` и `recordId`. Беседу можно связать с записями «Люди», «Компании», «Сделки» и записями пользовательских объектов.
+* Обе функции идемпотентны: повторное прикрепление записи сохраняет одну связь, а открепление неприкреплённой записи ничего не меняет.
+* Вызов выполняется с теми же правами доступа, что и [отправка сообщения](#who-sends-the-message), для которой требуется разрешение `AI`. Участник должен иметь возможность редактировать обсуждение, а ваше приложение может работать с обсуждением, которое оно само создало, или с обсуждением, к которому был предоставлен доступ его роли по умолчанию; в противном случае вызов завершается ошибкой `THREAD_NOT_FOUND`.
+* Запись должна быть доступна для чтения с такими правами доступа, иначе вызов завершается ошибкой `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />

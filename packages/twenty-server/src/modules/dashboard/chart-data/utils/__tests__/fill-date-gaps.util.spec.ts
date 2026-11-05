@@ -347,3 +347,58 @@ describe('fillDateGapsTwoDimensional', () => {
     });
   });
 });
+
+describe('fillDateGaps with records that have no value', () => {
+  it('should keep the null group after the filled dates', () => {
+    const result = fillDateGaps({
+      data: [
+        { groupByDimensionValues: ['2024-01-01'], aggregateValue: 1 },
+        { groupByDimensionValues: ['2024-01-03'], aggregateValue: 2 },
+        { groupByDimensionValues: [null], aggregateValue: 7 },
+      ],
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+    });
+
+    expect(result.data).toEqual([
+      { groupByDimensionValues: ['2024-01-01'], aggregateValue: 1 },
+      { groupByDimensionValues: ['2024-01-02'], aggregateValue: 0 },
+      { groupByDimensionValues: ['2024-01-03'], aggregateValue: 2 },
+      { groupByDimensionValues: [null], aggregateValue: 7 },
+    ]);
+  });
+
+  it('should keep the null group in descending order', () => {
+    const result = fillDateGaps({
+      data: [
+        { groupByDimensionValues: ['2024-01-02'], aggregateValue: 1 },
+        { groupByDimensionValues: [null], aggregateValue: 7 },
+      ],
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      isDescOrder: true,
+    });
+
+    expect(result.data).toEqual([
+      { groupByDimensionValues: ['2024-01-02'], aggregateValue: 1 },
+      { groupByDimensionValues: [null], aggregateValue: 7 },
+    ]);
+  });
+
+  it('should keep the null group for every secondary value', () => {
+    const result = fillDateGapsTwoDimensional({
+      data: [
+        { groupByDimensionValues: ['2024-01-01', 'X'], aggregateValue: 1 },
+        { groupByDimensionValues: ['2024-01-02', 'X'], aggregateValue: 3 },
+        { groupByDimensionValues: [null, 'X'], aggregateValue: 4 },
+        { groupByDimensionValues: [null, 'Y'], aggregateValue: 2 },
+      ],
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+    });
+
+    expect(result.data).toEqual([
+      { groupByDimensionValues: ['2024-01-01', 'X'], aggregateValue: 1 },
+      { groupByDimensionValues: ['2024-01-02', 'X'], aggregateValue: 3 },
+      { groupByDimensionValues: [null, 'X'], aggregateValue: 4 },
+      { groupByDimensionValues: [null, 'Y'], aggregateValue: 2 },
+    ]);
+  });
+});

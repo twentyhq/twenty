@@ -35,6 +35,7 @@
   "components/data-display": {
     "reExports": [],
     "values": {
+      "AssistantAvatar": "components/data-display/AssistantAvatar/AssistantAvatar",
       "AvatarGroup": "components/data-display/AvatarGroup/AvatarGroup",
       "CommandBlock": "components/data-display/CommandBlock/CommandBlock",
       "DetailsRow": "components/data-display/DetailsRow/DetailsRow",
@@ -45,6 +46,11 @@
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
+      "AssistantAvatarColor": "components/data-display/AssistantAvatar/types/AssistantAvatarColor",
+      "AssistantAvatarFace": "components/data-display/AssistantAvatar/types/AssistantAvatarFace",
+      "AssistantAvatarProps": "components/data-display/AssistantAvatar/types/AssistantAvatarProps",
+      "AssistantAvatarShape": "components/data-display/AssistantAvatar/types/AssistantAvatarShape",
+      "AssistantAvatarSize": "components/data-display/AssistantAvatar/types/AssistantAvatarSize",
       "AvatarGroupProps": "components/data-display/AvatarGroup/types/AvatarGroupProps",
       "CommandBlockProps": "components/data-display/CommandBlock/types/CommandBlockProps",
       "DetailsRowProps": "components/data-display/DetailsRow/types/DetailsRowProps",
@@ -210,7 +216,6 @@
   "icon": {
     "reExports": [],
     "values": {
-      "Icon": "icon/components/Icon",
       "Icon123": "icon/components/TablerIcons",
       "IconAddressBook": "icon/components/IconAddressBook",
       "IconAdjustments": "icon/components/TablerIcons",
@@ -616,7 +621,6 @@
       "IconSortZA": "icon/components/TablerIcons",
       "IconSparkle2": "icon/components/IconSparkle2",
       "IconSparkles": "icon/components/TablerIcons",
-      "IconsProvider": "icon/providers/IconsProvider",
       "IconSpy": "icon/components/TablerIcons",
       "IconSql": "icon/components/TablerIcons",
       "IconSquare": "icon/components/TablerIcons",
@@ -720,16 +724,25 @@
       "ThinkingOrbitLoaderIcon": "icon/components/ThinkingOrbitLoaderIcon",
       "TWENTY_ICON_DICTIONARY": "icon/constants/TwentyIconDictionary",
       "TWENTY_ICON_DICTIONARY_CATEGORIES": "icon/constants/TwentyIconDictionary",
-      "TWENTY_ICON_DICTIONARY_FIGMA_URL": "icon/constants/TwentyIconDictionary",
-      "useIcons": "icon/hooks/useIcons"
+      "TWENTY_ICON_DICTIONARY_FIGMA_URL": "icon/constants/TwentyIconDictionary"
     },
     "types": {
       "IconComponent": "icon/types/IconComponent",
       "IconComponentProps": "icon/types/IconComponent",
-      "IconProps": "icon/components/Icon",
       "TablerIconsProps": "icon/components/TablerIcons",
       "TwentyIconDictionaryCategory": "icon/constants/TwentyIconDictionary",
       "TwentyIconDictionaryEntry": "icon/constants/TwentyIconDictionary"
+    }
+  },
+  "icon/provider": {
+    "reExports": [],
+    "values": {
+      "Icon": "icon/provider/components/Icon",
+      "IconsProvider": "icon/provider/IconsProvider",
+      "useIcons": "icon/provider/hooks/useIcons"
+    },
+    "types": {
+      "IconProps": "icon/provider/components/Icon"
     }
   },
   "primitives": {
@@ -1266,6 +1279,7 @@
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",
+      "isPageZoomGesture": "utilities/zoom/utils/isPageZoomGesture",
       "MOBILE_MEDIA_QUERY": "utilities/responsive/constants/MobileMediaQuery",
       "normalizeSearchText": "utilities/utils/normalizeSearchText",
       "parseThemeColor": "utilities/color/utils/parseThemeColor",

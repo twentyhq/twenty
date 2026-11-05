@@ -1,20 +1,61 @@
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { Test, type TestingModule } from '@nestjs/testing';
 import {
   FieldMetadataType,
-  type ObjectsPermissions,
   RelationType,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 describe('CommonSelectFieldsBuilder', () => {
   let handler: CommonSelectFieldsBuilder;
+
+  const buildFromDepth = (
+    args: Omit<
+      Parameters<CommonSelectFieldsBuilder['buildFromDepth']>[0],
+      'readableObjectMetadataIds' | 'unreadableFieldMetadataIds'
+    > & { recordsPermissions: Pick<RoleRecordsPermissions, 'objects'> },
+  ) => {
+    const { recordsPermissions } = args;
+
+    return handler.buildFromDepth({
+      ...args,
+      readableObjectMetadataIds: new Set(
+        Object.entries(recordsPermissions.objects)
+          .filter(([, objectRecordsPermissions]) =>
+            canReachSomeRecords({
+              objectRecordsPermissions,
+              operationType: 'select',
+            }),
+          )
+          .map(([objectMetadataId]) => objectMetadataId),
+      ),
+      unreadableFieldMetadataIds: new Set(
+        Object.values(args.flatFieldMetadataMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .filter((field) => {
+            const objectRecordsPermissions =
+              recordsPermissions.objects[field.objectMetadataId];
+
+            return (
+              !isDefined(objectRecordsPermissions) ||
+              objectRecordsPermissions.restrictedFields[field.id]?.canRead ===
+                false
+            );
+          })
+          .map((field) => field.id),
+      ),
+    });
+  };
 
   const createMockField = (
     overrides: Partial<FlatFieldMetadata> & {
@@ -93,33 +134,40 @@ describe('CommonSelectFieldsBuilder', () => {
       createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
     );
 
-  const createObjectsPermissions = (
-    objectIds: string[],
-    options: {
-      restrictedFields?: Record<
-        string,
-        { canRead: boolean; canUpdate: boolean }
-      >;
-    } = {},
-  ): ObjectsPermissions => {
-    return objectIds.reduce((acc, objectId) => {
-      acc[objectId] = {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: options.restrictedFields || {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      };
-
-      return acc;
-    }, {} as ObjectsPermissions);
-  };
+  const createRecordsPermissions = ({
+    objectIds,
+    restrictedFields,
+    restrictedFieldsByObjectId,
+  }: {
+    objectIds: string[];
+    restrictedFields?: RestrictedFieldsPermissions;
+    restrictedFieldsByObjectId?: Record<string, RestrictedFieldsPermissions>;
+  }): RoleRecordsPermissions => ({
+    canReadAllRecords: true,
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: true,
+    objects: Object.fromEntries(
+      objectIds.map((objectId) => [
+        objectId,
+        {
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
+          restrictedFields:
+            restrictedFieldsByObjectId?.[objectId] ?? restrictedFields ?? {},
+        },
+      ]),
+    ),
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommonSelectFieldsBuilder],
+      providers: [
+        CommonSelectFieldsBuilder,
+        { provide: PermissionsService, useValue: {} },
+      ],
     }).compile();
 
     handler = module.get<CommonSelectFieldsBuilder>(CommonSelectFieldsBuilder);
@@ -201,7 +249,8 @@ describe('CommonSelectFieldsBuilder', () => {
         flatObjectMetadata: person,
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([person, company]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
-        objectsPermissions: createObjectsPermissions(['person', 'company'], {
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person', 'company'],
           restrictedFields: {
             'salary-field': { canRead: false, canUpdate: false },
           },
@@ -212,7 +261,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('adds id and expands requested composite fields even when they exceed the default cap', () => {
       expect(
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           requestedFields: new Set(['name']),
           maximumDefaultFieldCount: 1,
@@ -224,7 +273,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('rejects unknown and unreadable requested fields', () => {
       expect(() =>
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           requestedFields: new Set(['unknown', 'salary']),
         }),
@@ -241,7 +290,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('rejects an explicitly empty selection', () => {
       expect(() =>
-        handler.buildFromDepth({ ...buildArgs(), requestedFields: new Set() }),
+        buildFromDepth({ ...buildArgs(), requestedFields: new Set() }),
       ).toThrow('Requested fields cannot be empty');
     });
 
@@ -249,7 +298,7 @@ describe('CommonSelectFieldsBuilder', () => {
       'rejects one-to-many and morph relations at depth %s',
       (depth) => {
         expect(() =>
-          handler.buildFromDepth({
+          buildFromDepth({
             ...buildArgs(),
             depth,
             requestedFields: new Set(['activities', 'attachments']),
@@ -260,7 +309,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('returns the foreign key of a requested many-to-one relation at depth zero', () => {
       expect(
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           requestedFields: new Set(['company']),
         }).selectedFields,
@@ -269,7 +318,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('expands only requested root relations without restricting related fields', () => {
       expect(
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           depth: 1,
           requestedFields: new Set(['activities', 'attachments']),
@@ -283,12 +332,12 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('caps defaults after permission filtering and excludes depth-zero one-to-many relations', () => {
       expect(
-        handler.buildFromDepth({ ...buildArgs(), maximumDefaultFieldCount: 2 }),
+        buildFromDepth({ ...buildArgs(), maximumDefaultFieldCount: 2 }),
       ).toEqual({
         selectedFields: { id: true, name: { firstName: true, lastName: true } },
       });
       expect(
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           maximumDefaultFieldCount: 4,
         }).selectedFields,
@@ -301,7 +350,7 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('counts expanded one-to-many and morph relations toward the default cap', () => {
       expect(
-        handler.buildFromDepth({
+        buildFromDepth({
           ...buildArgs(),
           depth: 1,
           maximumDefaultFieldCount: 4,
@@ -334,10 +383,10 @@ describe('CommonSelectFieldsBuilder', () => {
           flatObjectMetadata: object,
           flatObjectMetadataMaps: buildFlatObjectMetadataMaps([object]),
           flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
-          objectsPermissions: createObjectsPermissions(['wide']),
+          recordsPermissions: createRecordsPermissions({ objectIds: ['wide'] }),
           depth: 0 as const,
         };
-        const capped = handler.buildFromDepth({
+        const capped = buildFromDepth({
           ...args,
           maximumDefaultFieldCount: 200,
         });
@@ -345,12 +394,12 @@ describe('CommonSelectFieldsBuilder', () => {
           Math.min(fieldCount, 200),
         );
         expect(capped.selectedFields.id).toBe(true);
-        expect(
-          Object.keys(handler.buildFromDepth(args).selectedFields),
-        ).toHaveLength(fieldCount);
+        expect(Object.keys(buildFromDepth(args).selectedFields)).toHaveLength(
+          fieldCount,
+        );
         expect(
           Object.keys(
-            handler.buildFromDepth({
+            buildFromDepth({
               ...args,
               maximumDefaultFieldCount: 200,
               requestedFields: new Set(fields.map((field) => field.name)),
@@ -390,8 +439,10 @@ describe('CommonSelectFieldsBuilder', () => {
         personObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions(['person-id']),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -450,11 +501,10 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions([
-          'person-id',
-          'company-id',
-        ]),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -515,17 +565,17 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const objectsPermissions = createObjectsPermissions([
-        'person-id',
-        'company-id',
-      ]);
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'company-id': {
+            'field-3': { canRead: false, canUpdate: false },
+          },
+        },
+      });
 
-      objectsPermissions['company-id'].restrictedFields = {
-        'field-3': { canRead: false, canUpdate: false },
-      };
-
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions,
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -578,17 +628,17 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const objectsPermissions = createObjectsPermissions([
-        'person-id',
-        'company-id',
-      ]);
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'company-id': {
+            'field-2': { canRead: false, canUpdate: false },
+          },
+        },
+      });
 
-      objectsPermissions['company-id'].restrictedFields = {
-        'field-2': { canRead: false, canUpdate: false },
-      };
-
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions,
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -639,17 +689,17 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const objectsPermissions = createObjectsPermissions([
-        'person-id',
-        'company-id',
-      ]);
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'person-id': {
+            'field-1': { canRead: false, canUpdate: false },
+          },
+        },
+      });
 
-      objectsPermissions['person-id'].restrictedFields = {
-        'field-1': { canRead: false, canUpdate: false },
-      };
-
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions,
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -715,11 +765,10 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions([
-          'person-id',
-          'company-id',
-        ]),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -775,8 +824,10 @@ describe('CommonSelectFieldsBuilder', () => {
         personObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions(['person-id']),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -854,12 +905,10 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions([
-          'noteTarget-id',
-          'note-id',
-          'company-id',
-        ]),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['noteTarget-id', 'note-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: noteTargetObject,
@@ -954,12 +1003,10 @@ describe('CommonSelectFieldsBuilder', () => {
         personObject,
       ]);
 
-      const { selectedFields: result } = handler.buildFromDepth({
-        objectsPermissions: createObjectsPermissions([
-          'company-id',
-          'junction-id',
-          'person-id',
-        ]),
+      const { selectedFields: result } = buildFromDepth({
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['company-id', 'junction-id', 'person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: companyObject,

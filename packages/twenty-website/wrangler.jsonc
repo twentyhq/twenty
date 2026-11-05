@@ -50,6 +50,10 @@
           "binding": "WORKER_SELF_REFERENCE",
           "service": "twenty-website-dev",
         },
+        {
+          "binding": "TWENTY_CONNECT",
+          "service": "twenty-connect-dev",
+        },
       ],
       // Skew-protection runtime inputs. The handler reads these to construct
       // `<old-version-id>-<CF_WORKER_NAME>.<CF_PREVIEW_DOMAIN>.workers.dev`
@@ -85,6 +89,10 @@
         {
           "binding": "WORKER_SELF_REFERENCE",
           "service": "twenty-website-prod",
+        },
+        {
+          "binding": "TWENTY_CONNECT",
+          "service": "twenty-connect-prod",
         },
       ],
       "vars": {

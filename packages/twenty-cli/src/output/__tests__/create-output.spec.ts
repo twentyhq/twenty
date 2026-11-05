@@ -254,6 +254,32 @@ describe('terminal progress', () => {
     );
   });
 
+  it.each(['Same message', '', null, 42])(
+    'does not repeat or format an unusable friendly message %j',
+    (userFriendlyMessage) => {
+      const output = createOutput({ mode: 'human', command: 'app apply' });
+
+      output.fail(
+        new CliError({
+          code: 'GRAPHQL_ERROR',
+          message: 'Validation failed',
+          details: {
+            validationErrors: [
+              {
+                metadataName: 'fieldMetadata',
+                message: 'Same message',
+                userFriendlyMessage,
+              },
+            ],
+          },
+        }),
+      );
+
+      expect(stderr).toContain('• fieldMetadata: Same message\n');
+      expect(stderr.match(/Same message/g)).toHaveLength(1);
+    },
+  );
+
   it('includes the validation details in the JSON error envelope', () => {
     const output = createOutput({ mode: 'json', command: 'app apply' });
 

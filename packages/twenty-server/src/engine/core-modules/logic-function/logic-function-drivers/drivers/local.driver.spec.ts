@@ -124,7 +124,11 @@ const escapeUnsafeChars = (value: string): string =>
 
 jest.useRealTimers();
 
-const PACKAGE_JSON = '{"name":"local-build-fixture","private":true}\n';
+const PACKAGE_JSON = `${JSON.stringify({
+  name: 'local-build-fixture',
+  private: true,
+  dependencies: { react: '*', 'react-dom': '*', 'twenty-ui': '*' },
+})}\n`;
 const YARN_LOCK = '# exact app-owned lock bytes\n';
 const INPUT = {
   componentId: 'local-component',

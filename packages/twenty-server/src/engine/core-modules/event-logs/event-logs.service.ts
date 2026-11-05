@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { type ReachableApplications } from 'src/engine/core-modules/application/types/reachable-applications.type';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
@@ -47,7 +48,7 @@ export class EventLogsService {
   async queryEventLogs(
     workspace: Pick<WorkspaceEntity, 'id' | 'eventLogRetentionDays'>,
     input: EventLogQueryInput,
-    { callingApplicationId }: { callingApplicationId?: string } = {},
+    { reachableApplications }: { reachableApplications: ReachableApplications },
   ): Promise<EventLogQueryResult> {
     const workspaceId = workspace.id;
 
@@ -74,10 +75,10 @@ export class EventLogsService {
 
     if (
       input.table === EventLogTable.APPLICATION_LOG &&
-      isDefined(callingApplicationId)
+      reachableApplications.type === 'own'
     ) {
-      whereClauses.push('"applicationId" = {callingApplicationId:String}');
-      params.callingApplicationId = callingApplicationId;
+      whereClauses.push('"applicationId" = {reachableApplicationId:String}');
+      params.reachableApplicationId = reachableApplications.applicationId;
     }
 
     await this.applyFilters(

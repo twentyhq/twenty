@@ -31,6 +31,7 @@ import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShown
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
@@ -120,6 +121,7 @@ const AiChatInboxPageContent = () => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const { threads, isLoading } = useAgentChatInboxShownThreads();
   const { fetchMoreAgentChatInboxShownThreads } =
     useFetchMoreAgentChatInboxShownThreads();
@@ -261,6 +263,7 @@ const AiChatInboxPageContent = () => {
   return (
     <StyledInbox>
       <AgentChatChannelThreadsLoadEffect />
+      <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
         key={selectedThreadId}
@@ -347,7 +350,6 @@ const AiChatInboxPageContent = () => {
               {isNewThreadShown && (
                 <>
                   <AiChatPageEffects />
-                  <AiChatInboxNewThreadChannelEffect />
                   <AiChatNewThreadPageContent
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}

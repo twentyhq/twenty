@@ -296,13 +296,19 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  fieldMetadataOption: {
+    entityKind: 'field option',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
   relatedRecordPath: {
     entityKind: 'related record path',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      toCandidates(manifest.relatedRecordPaths, () => undefined),
   },
   validationRule: {
     entityKind: 'validation rule',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      toCandidates(manifest.validationRules, (rule) => rule.name),
   },
   agentChatChannel: {
     entityKind: 'chat channel',

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -134,6 +135,12 @@ export class DevSeederAgentChatChannelWorkspaceService {
       assigneeId: conversation.assigneeId,
       channelId,
     });
+    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentChatThread')} SET "${IS_PRIVATE_COLUMN_NAME}" = true WHERE id = $1`,
+        [threadId],
+      ),
+    );
 
     await this.conversationWriterService.insertTurn({
       workspaceId,

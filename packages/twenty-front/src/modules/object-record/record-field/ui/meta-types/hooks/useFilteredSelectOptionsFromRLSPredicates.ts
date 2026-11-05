@@ -123,14 +123,14 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const selectPredicates =
-      objectPermissions.rowLevelPermissionPredicates.filter(
-        (predicate) => predicate.fieldMetadataId === fieldMetadataId,
-      );
+    const selectPredicates = (
+      objectPermissions.rowLevelRecordsPermissions?.predicates ?? []
+    ).filter((predicate) => predicate.fieldMetadataId === fieldMetadataId);
 
     const restrictingPredicates = getRestrictingRowLevelPermissionPredicates({
       predicates: selectPredicates,
-      predicateGroups: objectPermissions.rowLevelPermissionPredicateGroups,
+      predicateGroups:
+        objectPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
     });
 
     if (restrictingPredicates.length === 0) {
@@ -156,8 +156,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
     };
   }, [
     objectMetadataId,
-    objectPermissions.rowLevelPermissionPredicates,
-    objectPermissions.rowLevelPermissionPredicateGroups,
+    objectPermissions.rowLevelRecordsPermissions,
     fieldMetadataId,
     options,
   ]);

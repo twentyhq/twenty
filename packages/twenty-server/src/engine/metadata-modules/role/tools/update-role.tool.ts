@@ -1,15 +1,15 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ROLE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-write-access-policy.constant';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
 const updateRoleInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role to update'),
@@ -25,7 +25,7 @@ const updateRoleInputSchema = z.object({
 @DefineTool({
   name: 'update_role',
   category: ToolCategory.ROLE,
-  requiredPermissionFlags: [PermissionFlagType.ROLES],
+  accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Update an existing role's label, description, icon, global record permissions, settings access, or assignability.
 
 System-managed roles (isEditable=false, like Admin) cannot be updated. Updates that would remove your own access to role management are rejected.`,
@@ -33,13 +33,16 @@ System-managed roles (isEditable=false, like Admin) cannot be updated. Updates t
 export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
   readonly inputSchema = updateRoleInputSchema;
 
-  constructor(private readonly roleService: RoleService) {
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly permissionsService: PermissionsService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, rolePermissionConfig },
+    context: { workspaceId, authContext },
   }: ToolExecuteArgs<typeof updateRoleInputSchema>): Promise<ToolOutput> {
     const role = await this.roleService.updateRole({
       workspaceId,
@@ -47,7 +50,7 @@ export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
         id: input.roleId,
         update: input.update,
       },
-      actingRoleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
+      actingRoleIds: await this.permissionsService.getRoleIds(authContext),
     });
 
     return {

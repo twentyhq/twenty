@@ -17,13 +17,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEditorContainer = styled.div<{ isEditable: boolean }>`
   box-sizing: border-box;
@@ -50,6 +50,7 @@ export const StandaloneRichTextEditorContent = ({
   shouldFocus,
   containerElement,
 }: StandaloneRichTextEditorContentProps) => {
+  const { t } = useLingui();
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

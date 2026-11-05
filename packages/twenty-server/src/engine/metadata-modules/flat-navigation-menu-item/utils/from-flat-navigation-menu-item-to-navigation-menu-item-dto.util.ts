@@ -18,6 +18,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   color: flatNavigationMenuItem.color ?? undefined,
   pageLayoutId: flatNavigationMenuItem.pageLayoutId ?? undefined,
   agentChatChannelId: flatNavigationMenuItem.agentChatChannelId ?? undefined,
+  nativePageKey: flatNavigationMenuItem.nativePageKey ?? undefined,
   position: flatNavigationMenuItem.position,
   workspaceId: flatNavigationMenuItem.workspaceId,
   applicationId: flatNavigationMenuItem.applicationId ?? undefined,

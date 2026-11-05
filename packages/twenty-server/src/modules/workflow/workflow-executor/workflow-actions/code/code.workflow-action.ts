@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -14,9 +15,11 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/guards/is-workflow-code-action.guard';
+import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
 import { buildCodeStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/code/utils/build-code-step-log.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
@@ -30,6 +33,7 @@ export class CodeWorkflowAction implements WorkflowAction {
     private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    private readonly codeStepRunnerService: CodeStepRunnerService,
   ) {}
 
   async execute({
@@ -50,37 +54,23 @@ export class CodeWorkflowAction implements WorkflowAction {
       );
     }
 
-    const workflowActionInput = resolveInput(
-      step.settings.input,
+    // Inline code must stay verbatim: only the step input goes through the variable resolver
+    const logicFunctionInput = resolveInput(
+      step.settings.input.logicFunctionInput,
       context,
-    ) as WorkflowCodeActionInput;
+    ) as WorkflowCodeActionInput['logicFunctionInput'];
 
     const { workspaceId } = runInfo;
 
-    const { flatLogicFunction } =
-      await this.logicFunctionFromSourceHelperService.findLogicFunctionRunnableOnDemandOrThrow(
-        {
-          id: workflowActionInput.logicFunctionId,
-          workspaceId,
-        },
-      );
-
-    const { authContext, application } =
+    const { authContext, application, workflowId } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
-      {
-        application,
-        targetApplicationId: flatLogicFunction.applicationId,
-        targetLabel: `Logic function "${flatLogicFunction.name}"`,
-      },
-    );
-
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: workflowActionInput.logicFunctionId,
+    const result = await this.runCodeStep({
+      code: step.settings.input.code,
+      logicFunctionId: step.settings.input.logicFunctionId,
       workspaceId,
-      payload: workflowActionInput.logicFunctionInput,
-      ...getUserFromAuthContext(authContext),
+      payload: logicFunctionInput,
+      executionContext: { authContext, application, workflowId },
     });
 
     await this.persistStepLog({
@@ -95,6 +85,85 @@ export class CodeWorkflowAction implements WorkflowAction {
     }
 
     return { result: result.data || {} };
+  }
+
+  private async runCodeStep({
+    code,
+    logicFunctionId,
+    workspaceId,
+    payload,
+    executionContext,
+  }: {
+    code: string | undefined;
+    logicFunctionId: string | undefined;
+    workspaceId: string;
+    payload: object;
+    executionContext: Pick<
+      WorkflowExecutionContext,
+      'authContext' | 'application' | 'workflowId'
+    >;
+  }): Promise<LogicFunctionExecuteResult> {
+    if (isDefined(code)) {
+      return this.codeStepRunnerService.run({
+        flatApplication: executionContext.application,
+        code,
+        payload,
+        workflowId: executionContext.workflowId,
+        ...getUserFromAuthContext(executionContext.authContext),
+      });
+    }
+
+    return this.executeLegacyLogicFunction({
+      logicFunctionId,
+      workspaceId,
+      payload,
+      executionContext,
+    });
+  }
+
+  private async executeLegacyLogicFunction({
+    logicFunctionId,
+    workspaceId,
+    payload,
+    executionContext,
+  }: {
+    logicFunctionId: string | undefined;
+    workspaceId: string;
+    payload: object;
+    executionContext: Pick<
+      WorkflowExecutionContext,
+      'authContext' | 'application'
+    >;
+  }): Promise<LogicFunctionExecuteResult> {
+    if (!isNonEmptyString(logicFunctionId)) {
+      throw new WorkflowStepExecutorException(
+        'Code step has neither code nor a logic function',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    const { flatLogicFunction } =
+      await this.logicFunctionFromSourceHelperService.findLogicFunctionRunnableOnDemandOrThrow(
+        {
+          id: logicFunctionId,
+          workspaceId,
+        },
+      );
+
+    this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
+      {
+        executionContext,
+        targetApplicationId: flatLogicFunction.applicationId,
+        targetLabel: `Logic function "${flatLogicFunction.name}"`,
+      },
+    );
+
+    return this.logicFunctionExecutorService.execute({
+      logicFunctionId,
+      workspaceId,
+      payload,
+      ...getUserFromAuthContext(executionContext.authContext),
+    });
   }
 
   private async persistStepLog({

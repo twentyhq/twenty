@@ -126,7 +126,17 @@ export const NativeNames: Story = {
 };
 
 export const DropdownShortcutLabels: Story = {
-  parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
+  parameters: {
+    a11y: {
+      ...A11Y_DEFER_COLOR_CONTRAST,
+      config: {
+        rules: [
+          ...DROPDOWN_STORY_A11Y_PARAMETERS.config.rules,
+          ...A11Y_DEFER_COLOR_CONTRAST.config.rules,
+        ],
+      },
+    },
+  },
   render: () => (
     <Dropdown.Root type="menu">
       <Dropdown.Trigger render={<Button>Open shortcuts</Button>} />

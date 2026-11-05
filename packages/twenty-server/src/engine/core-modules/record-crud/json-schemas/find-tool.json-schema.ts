@@ -1,5 +1,4 @@
 import { type JSONSchema7 } from 'json-schema';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 
 import { generateRecordOrderByJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/order-by.json-schema';
 import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-filter.json-schema';
@@ -9,16 +8,16 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateFindToolInputSchema = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   const { properties: filterProperties } = generateRecordFilterJsonSchema({
     objectMetadata,
-    restrictedFields,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
@@ -38,7 +37,7 @@ export const generateFindToolInputSchema = ({
       },
       orderBy: generateRecordOrderByJsonSchema({
         objectMetadata,
-        restrictedFields,
+        unreadableFieldMetadataIds,
         definitions,
       }),
       select: {

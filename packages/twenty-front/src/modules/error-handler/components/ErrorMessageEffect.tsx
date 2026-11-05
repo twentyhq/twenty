@@ -7,7 +7,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 export const ErrorMessageEffect = () => {
   const { enqueueToast } = useToast();
   const [searchParams] = useSearchParams();
-  const { hash } = useLocation();
+  const { pathname, hash } = useLocation();
   const navigate = useNavigate();
   const errorMessage = searchParams.get('errorMessage');
 
@@ -20,9 +20,12 @@ export const ErrorMessageEffect = () => {
       });
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('errorMessage');
-      navigate({ search: newSearchParams.toString(), hash }, { replace: true });
+      navigate(
+        { pathname, search: newSearchParams.toString(), hash },
+        { replace: true },
+      );
     }
-  }, [enqueueToast, errorMessage, hash, navigate, searchParams]);
+  }, [enqueueToast, errorMessage, hash, navigate, pathname, searchParams]);
 
   return <></>;
 };

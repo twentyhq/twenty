@@ -1,0 +1,31 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.body,
+.face {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  mask-mode: alpha;
+}
+
+.body {
+  background-color: var(--assistant-avatar-body-color);
+}
+
+.face {
+  background-color: var(--assistant-avatar-face-color);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-animated='true'] > .face {
+    display: none;
+  }
+}

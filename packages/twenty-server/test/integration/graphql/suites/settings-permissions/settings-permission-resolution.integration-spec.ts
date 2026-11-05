@@ -19,7 +19,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -32,7 +32,7 @@ type GraphqlResponse = {
   };
 };
 
-// apiKeys sits behind SettingsPermissionGuard(API_KEYS_AND_WEBHOOKS) and
+// apiKeys requires API_KEYS_AND_WEBHOOKS through its access policy and
 // accepts user, API key and application callers, so it probes every branch
 const queryApiKeys = (token: string): Promise<GraphqlResponse> =>
   makeMetadataApiRequest(
@@ -390,8 +390,8 @@ describe('Settings permission resolution', () => {
       );
     });
 
-    it('bounds the user by the user role alone when the application has no default role', async () => {
-      expectAllowed(
+    it('denies a user acting through an application without a default role', async () => {
+      expectPermissionDenied(
         await queryApiKeys(
           await generateApplicationAccessToken({
             applicationId: rolelessApplication.id,

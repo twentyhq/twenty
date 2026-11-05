@@ -1,5 +1,10 @@
-export type ValidationErrorDetail = {
+import { type FailedMetadataValidationError } from 'twenty-shared/metadata';
+
+export type ValidationErrorDetail = Pick<
+  FailedMetadataValidationError,
+  'message' | 'userFriendlyMessage'
+> & {
   metadataName: string;
   entityLabel?: string;
-  message: string;
+  code?: FailedMetadataValidationError['code'];
 };

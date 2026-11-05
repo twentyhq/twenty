@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
+import { addValidationRuleManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-validation-rule-manifests-to-flat-entity-maps-or-throw.util';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
 import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
@@ -259,6 +260,15 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
+    addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      validationRules: manifest.validationRules ?? [],
+      ownerFlatApplication,
+      inferDeletionFromMissingEntities,
+      existingAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+      now,
+    });
+
     const allFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
@@ -465,7 +475,12 @@ export class ApplicationManifestMigrationService {
         : {}),
       ...(isDefined(healthCheckLogicFunctionId) ||
       inferDeletionFromMissingEntities
-        ? { healthCheckLogicFunctionId }
+        ? {
+            healthCheckLogicFunctionId,
+            isUserHealthCheckEnabled:
+              manifest.application.healthCheckLogicFunction
+                ?.runOnUserPreferences ?? false,
+          }
         : {}),
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });

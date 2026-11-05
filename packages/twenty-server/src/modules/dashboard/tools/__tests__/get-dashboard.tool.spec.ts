@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
@@ -8,6 +9,10 @@ import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboar
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const AGG_FIELD_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const OWNER_FIELD_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
@@ -143,7 +148,7 @@ describe('get_dashboard tool', () => {
       >,
       {
         workspaceId: WORKSPACE_ID,
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        authContext: AUTH_CONTEXT,
       },
     );
 

@@ -18,6 +18,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
   FeatureFlagKey,
   PermissionFlagType,
@@ -149,6 +150,7 @@ const renderThread = async ({
               channelId: SALES_CHANNEL.id,
               channelStatus,
               assignment: AgentChatChannelAssignmentFilter.ANY,
+              filter: AgentChatChannelThreadFilter.ANY,
             }
           : null,
       );
@@ -169,6 +171,7 @@ const renderThread = async ({
           snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
           lastReadAt: THREAD_ACTIVITY_AT,
           lastMentionedAt: null,
+          mentionsResolvedAt: null,
           updatedAt: INBOX_EVENT_AT,
         },
       });

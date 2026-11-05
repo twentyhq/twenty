@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -7,6 +6,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
@@ -23,12 +23,16 @@ const updateWebhookInputSchema = z.object({
     .describe('Replaces the operations list. Leave unset to keep current.'),
   description: z.string().optional(),
   secret: z.string().optional(),
+  roleId: z
+    .uuid()
+    .optional()
+    .describe('Id of the new role. Leave unset to keep the current role.'),
 });
 
 @DefineTool({
   name: 'update_webhook',
   category: ToolCategory.WEBHOOK,
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  accessPolicy: WEBHOOK_WRITE_ACCESS_POLICY,
   description: `Update an existing webhook. Only the fields you pass are modified; everything else is preserved.`,
 })
 export class UpdateWebhookTool extends BaseTool<
@@ -42,13 +46,14 @@ export class UpdateWebhookTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId },
+    context,
   }: ToolExecuteArgs<typeof updateWebhookInputSchema>): Promise<ToolOutput> {
     const update: {
       targetUrl?: string;
       operations?: string[];
       description?: string;
       secret?: string;
+      roleId?: string;
     } = {};
 
     if (isDefined(input.targetUrl)) {
@@ -63,11 +68,14 @@ export class UpdateWebhookTool extends BaseTool<
     if (isDefined(input.secret)) {
       update.secret = input.secret;
     }
+    if (isDefined(input.roleId)) {
+      update.roleId = input.roleId;
+    }
 
-    const webhook = await this.webhookService.update(
-      { id: input.id, update },
-      workspaceId,
-    );
+    const webhook = await this.webhookService.update({
+      input: { id: input.id, update },
+      workspaceId: context.workspaceId,
+    });
 
     return {
       success: true,

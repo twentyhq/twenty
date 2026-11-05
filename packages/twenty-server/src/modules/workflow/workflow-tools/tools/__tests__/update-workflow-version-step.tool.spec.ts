@@ -1,6 +1,11 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: 'workspace-id' },
+} as WorkspaceAuthContext;
 
 const mockStep = {
   id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
@@ -19,7 +24,7 @@ const buildTool = () => {
     { coreWorkflowVersionMutationService } as never,
     {
       workspaceId: 'workspace-id',
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      authContext: AUTH_CONTEXT,
     },
   );
 

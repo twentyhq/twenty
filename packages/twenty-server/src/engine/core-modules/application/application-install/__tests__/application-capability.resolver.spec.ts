@@ -15,13 +15,14 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -40,18 +41,20 @@ const USER_REQUEST = {
 class TestQueryResolver {
   @Query(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+      requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   isReady(): boolean {
     return true;
@@ -100,6 +103,8 @@ describe('ApplicationCapabilityResolver', () => {
         ApplicationCapabilityResolver,
         { provide: ApplicationService, useValue: applicationService },
         { provide: PermissionsService, useValue: permissionsService },
+        { provide: FeatureFlagService, useValue: {} },
+        AccessPolicyService,
       ],
     }).compile();
 

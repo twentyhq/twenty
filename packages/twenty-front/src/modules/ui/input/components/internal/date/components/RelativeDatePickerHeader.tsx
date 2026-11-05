@@ -5,7 +5,7 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATETIME_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnits';
 import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
 
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -18,6 +18,7 @@ import {
   type RelativeDateFilterUnit,
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
   display: flex;
@@ -67,6 +68,7 @@ export const RelativeDatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
 }: RelativeDatePickerHeaderProps) => {
+  const { t } = useLingui();
   const amountString = amount?.toString() ?? '';
 
   const amountTextValue = direction === 'THIS' ? '' : amountString;

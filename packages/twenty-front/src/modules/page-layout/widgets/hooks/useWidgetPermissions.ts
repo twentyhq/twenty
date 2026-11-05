@@ -5,8 +5,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 export type UseWidgetPermissionsReturn = {
   hasAccess: boolean;
@@ -16,6 +16,7 @@ export type UseWidgetPermissionsReturn = {
 export const useWidgetPermissions = (
   widget: PageLayoutWidget,
 ): UseWidgetPermissionsReturn => {
+  const { t } = useLingui();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -37,7 +38,10 @@ export const useWidgetPermissions = (
     widget.objectMetadataId,
   );
 
-  const hasObjectAccess = objectPermissions.canReadObjectRecords;
+  const hasObjectAccess = canReachSomeRecords({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'select',
+  });
 
   if (!hasObjectAccess) {
     return {

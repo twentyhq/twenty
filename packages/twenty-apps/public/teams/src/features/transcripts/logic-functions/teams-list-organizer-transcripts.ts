@@ -13,6 +13,7 @@ import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
 import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
@@ -73,12 +74,13 @@ export const teamsListOrganizerTranscriptsHandler = async (
       ? resolveTeamsCalendarNextPageUrlOrThrow(parameters.nextPageUrl)
       : buildTeamsCalendarViewUrl(resolveTeamsMeetingWindowOrThrow(parameters));
     const connection = await getTeamsConnectionForRequestOrThrow(context);
+    const accessToken = getConnectionAccessTokenOrThrow(connection);
     const page = await listTeamsCalendarPage({
-      accessToken: connection.accessToken,
+      accessToken,
       url: calendarPageUrl,
     });
     const { transcripts } = await listTeamsOccurrenceTranscripts({
-      accessToken: connection.accessToken,
+      accessToken,
       occurrences: page.occurrences,
     });
 

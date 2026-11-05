@@ -132,7 +132,9 @@ export const getOnboardingCreditsProgress = ({
     earnedCreditsByStep: ONBOARDING_CREDITS_STEPS.filter(
       (step) =>
         getCountedCredits(step) > 0 ||
-        (isStepDone(step) && rewardCreditsByStep[step] > 0),
+        (isStepDone(step) &&
+          step !== 'inviteTeam' &&
+          rewardCreditsByStep[step] > 0),
     ).map((step) => ({
       step,
       credits: getCountedCredits(step),

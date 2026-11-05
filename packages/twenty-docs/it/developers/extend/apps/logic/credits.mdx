@@ -82,24 +82,28 @@ Modalità di applicazione:
 
 ## Operazioni fatturabili
 
-Un'operazione è ciò per cui la tua app addebita mentre funziona. Ogni voce associa un nome di operazione scelto da te alla categoria di fatturazione misurata dalla piattaforma, oltre all'etichetta mostrata agli amministratori del workspace in **Impostazioni > Utilizzo**.
+Un'operazione è ciò per cui la tua app addebita mentre funziona. Ogni voce denomina un'operazione scelta da te e l'etichetta mostrata agli amministratori dello spazio di lavoro in **Impostazioni > Utilizzo** e a te nel grafico di monitoraggio **Crediti utilizzati** della tua app. Facoltativamente, può essere associata a una delle categorie di fatturazione della piattaforma.
 
 ```ts src/application-config.ts
 billing: {
   operations: {
+    enrichPerson: {
+      label: 'Person enrichment',
+      icon: 'IconUserSearch',
+    },
     recordMeeting: {
       operationType: 'CALL_RECORDING',
       label: 'Meeting recording',
-    },
-    summarizeMeeting: {
-      operationType: 'AI_CHAT_TOKEN',
-      label: 'Meeting summary',
     },
   },
 },
 ```
 
-`operationType` deve essere una delle categorie di fatturazione della piattaforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Determina il modo in cui la spesa viene misurata e quale unità di conteggio si applica (token, invocazioni, minuti), ma non è ciò che leggono gli amministratori. Lo è `label`.
+`icon` è facoltativo: un nome di icona Twenty (ad es. `IconUserSearch`) visualizzato accanto all'etichetta nella ripartizione dei crediti della tua app nella relativa pagina delle impostazioni.
+
+`operationType` è facoltativo e per impostazione predefinita è `APP_OPERATION`, la categoria dedicata agli addebiti delle app. Impostalo solo quando la spesa rientra effettivamente in una delle categorie della piattaforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`, `APP_OPERATION`. Determina il modo in cui la spesa viene misurata e quale unità di conteggio si applica (token, invocazioni, minuti), ma non è ciò che leggono gli amministratori. Lo è `label`.
+
+`CODE_EXECUTION` è il punto in cui la piattaforma contabilizza le esecuzioni delle tue funzioni, quindi gli addebiti registrati lì vengono mescolati con esse; preferisci l'impostazione predefinita.
 
 La build rifiuta un `operationType` sconosciuto, un `label` vuoto e un nome utilizzato sia da un addebito ricorrente sia da un'operazione.
 
@@ -123,13 +127,13 @@ Note:
 
 * La dichiarazione delle operazioni consente a Utilizzo di suddividere la spesa della tua app in base a ciò per cui ha addebitato. Un'app che non dichiara nulla viene comunque riportata come un'unica sezione sotto il suo nome visualizzato.
 * L'addebito di un'operazione non dichiarata dal tuo manifest viene rifiutato. Aggiungila a `billing.operations` e sincronizza.
-* Più operazioni possono condividere uno stesso `operationType`. Due operazioni di arricchimento, entrambe misurate come `CODE_EXECUTION`, vengono comunque visualizzate come due sezioni etichettate.
-* Senza `operation`, indica direttamente la categoria di fatturazione con `operationType`, facoltativamente con un `resourceContext` in formato libero. Le due forme si escludono a vicenda: `operation` contiene l'etichetta, `operationType` no.
+* Più operazioni possono condividere uno stesso `operationType`. Due operazioni di arricchimento, entrambe contabilizzate come `APP_OPERATION`, vengono comunque visualizzate come due segmenti etichettati.
+* Senza `operation`, l'addebito confluisce in `APP_OPERATION`, o nella categoria specificata con `operationType`, facoltativamente con un `resourceContext` in formato libero. Le due forme si escludono a vicenda: `operation` contiene l'etichetta, `operationType` no.
 * L'addebito non fa mai fallire la tua funzione. Un errore di fatturazione viene registrato e ignorato, e la chiamata non esegue alcuna operazione al di fuori del runtime della funzione di logica, affinché le esecuzioni locali e i test non si arrestino in modo anomalo.
 
 ## Verificare prima di spendere
 
-Un workspace può esaurire i crediti. Quando ciò accade, la tua funzione viene rifiutata prima che il codice inizi e anche il lavoro della piattaforma si interrompe: `runAgent` restituisce un errore invece di essere eseguito e gli altri punti di ingresso dell'IA rifiutano del tutto. `sendInboxMessage` non esegue alcun modello e non aggiunge alcun addebito AI proprio, sebbene la funzione che la chiama venga rifiutata come qualsiasi altra; la risposta di un membro viene addebitata come qualsiasi turno di chat. Gli hook di disinstallazione e disconnessione costituiscono l'eccezione e vengono sempre eseguiti, quindi un'app può comunque essere rimossa correttamente. Un'esecuzione che riesce a passare può comunque fallire più tardi, durante una chiamata della piattaforma che non ha scritto, se lo spazio di lavoro esaurisce le risorse durante l'esecuzione.
+Un workspace può esaurire i crediti. Quando ciò accade, la tua funzione viene rifiutata prima che il codice inizi e anche il lavoro della piattaforma si interrompe: `runAgent` restituisce un errore invece di essere eseguito e gli altri punti di ingresso dell'IA rifiutano del tutto. `sendInboxMessage` non esegue alcun modello e non aggiunge alcun addebito AI proprio, sebbene la funzione che la chiama venga rifiutata come qualsiasi altra; la risposta di un membro viene addebitata come qualsiasi turno di chat. Gli hook di disinstallazione e disconnessione costituiscono l'eccezione e vengono sempre eseguiti, quindi un'app può comunque essere rimossa correttamente. Un'esecuzione che arriva attraverso può ancora fallire tardi, su una chiamata di piattaforma non ha scritto, se il workspace termina a metà corso; `ai. enerate` poi risolve con `successo: false` e la ragione in `error`.
 
 Chiedi prima:
 

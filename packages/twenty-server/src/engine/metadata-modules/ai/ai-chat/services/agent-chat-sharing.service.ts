@@ -1,3 +1,5 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -8,59 +10,56 @@ import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modu
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import chunk from 'lodash.chunk';
-import { In, Repository } from 'typeorm';
+import { Any, In, IsNull, Repository } from 'typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  RecordShareRowCause,
+  type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
-import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-workspace-member-row-access-policy-subject.util';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
-import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
+import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
+import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
+import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
+import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import {
-  type RowAccessPolicy,
-  type RowAccessPolicySubject,
-} from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
-
-const AGENT_CHAT_REPLY_OPERATION_TYPES = [
-  'select',
-  'update',
-] as const satisfies OperationType[];
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -79,6 +78,9 @@ export class AgentChatSharingService {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -95,7 +97,37 @@ export class AgentChatSharingService {
     return hasAgentChatThreadChannelField({ flatFieldMetadataMaps });
   }
 
+  // TODO(@bosiraphael): remove once 2.54 leaves the cross-upgrade window
+  async assertHasMentionResolutionOrThrow(workspaceId: string): Promise<void> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (
+      !isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThreadParticipant.fields.mentionsResolvedAt
+            .universalIdentifier
+        ],
+      )
+    ) {
+      throw new AiException(
+        'Chats are not available until this workspace finishes upgrading',
+        AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      );
+    }
+  }
+
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
+    return (await this.getParticipantObjectMetadata(workspaceId)).id;
+  }
+
+  async getParticipantObjectMetadata(
+    workspaceId: string,
+  ): Promise<FlatObjectMetadata> {
+    await this.assertHasMentionResolutionOrThrow(workspaceId);
+
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -106,7 +138,7 @@ export class AgentChatSharingService {
         flatObjectMetadataMaps,
         'agentChatThreadParticipant',
       ) ?? throwAgentChatThreadNotFound()
-    ).id;
+    );
   }
 
   async isThreadWritableByRole({
@@ -139,7 +171,7 @@ export class AgentChatSharingService {
     operationType,
     ...args
   }: AgentChatThreadAccessArgs & {
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }) {
     const authContext = await this.getAuthContext(args);
     const thread = await this.threadRepository.findOne(args.workspaceId, {
@@ -171,9 +203,7 @@ export class AgentChatSharingService {
     // batches that stay well under PostgreSQL's parameter limit
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          'agentChatThread',
-        );
+        this.workspaceOrmManager.getRepository('agentChatThread');
       const readableThreadIds: string[] = [];
 
       for (const threadIdBatch of chunk(
@@ -220,10 +250,7 @@ export class AgentChatSharingService {
     };
     const sharing = await this.recordSharingService.getSharing(recordTarget);
 
-    if (
-      sharing.canManageSharing &&
-      !EDIT_ACCESS_LEVELS.includes(sharing.generalAccessLevel)
-    ) {
+    if (sharing.canManageSharing) {
       for (const memberId of chatMemberIds) {
         const memberShare = sharing.shares.find(
           ({ principalId }) => principalId === memberId,
@@ -293,61 +320,45 @@ export class AgentChatSharingService {
       threadId,
       authContext,
     });
-    const permissionMaps = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        'rolesPermissions',
-        'roleIdsWithAllRecordsAccess',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-      ],
+    const threadFlatObjectMetadata =
+      await this.getThreadObjectMetadata(workspaceId);
+
+    const hypotheticalRecordShareAccessLevel =
+      shouldConsiderNewShares && canManageSharing
+        ? RecordShareAccessLevel.READ_WRITE
+        : undefined;
+    const admittedMemberIds = new Set(
+      (
+        await Promise.all(
+          [...roleIdByMemberId.keys()].map(async (memberId) => {
+            const principals =
+              await this.permissionsService.buildPermissionsPrincipals({
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: memberId,
+                },
+              });
+            const question = {
+              principals,
+              objectMetadataId: threadFlatObjectMetadata.id,
+              recordIds: [threadId],
+              hypotheticalRecordShareAccessLevel,
+            };
+            const [canReadThread, canUpdateThread] = await Promise.all([
+              this.permissionsService.canReadRecords(question),
+              this.permissionsService.canUpdateRecords(question),
+            ]);
+
+            return canReadThread && canUpdateThread ? memberId : undefined;
+          }),
+        )
+      ).filter(isDefined),
     );
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const members = await this.workspaceOrmManager
-        .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-          shouldBypassPermissionChecks: true,
-        })
-        .find({ where: { id: In([...roleIdByMemberId.keys()]) } });
-      const repository = this.workspaceOrmManager.getRepository(
-        'agentChatThread',
-        { shouldBypassPermissionChecks: true },
-      );
-      const policiesBySubjectId = new Map(
-        members.flatMap((member) => {
-          const roleId = roleIdByMemberId.get(member.id);
-
-          if (!isDefined(roleId)) {
-            return [];
-          }
-
-          const policy = this.buildParticipantReplyPolicy({
-            repository,
-            canManageSharing: shouldConsiderNewShares && canManageSharing,
-            subject: buildWorkspaceMemberRowAccessPolicySubject({
-              ...permissionMaps,
-              roleId,
-              owningApplicationId: undefined,
-              workspaceMemberId: member.id,
-              workspaceMember: member,
-            }),
-          });
-
-          return [[member.id, policy] as const];
-        }),
-      );
-      const admittedMemberIds =
-        await repository.findSubjectIdsAdmittedByRowAccessPolicies({
-          recordId: threadId,
-          policiesBySubjectId,
-        });
-
-      return candidateMemberIds.filter((memberId) =>
-        admittedMemberIds.has(memberId),
-      );
-    }, authContext);
+    return candidateMemberIds.filter((memberId) =>
+      admittedMemberIds.has(memberId),
+    );
   }
 
   async createThread(args: {
@@ -363,78 +374,101 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const participantObjectMetadataId =
-      await this.getParticipantObjectMetadataId(args.workspaceId);
+    const participantObjectMetadata = await this.getParticipantObjectMetadata(
+      args.workspaceId,
+    );
 
     await this.validateThreadCreationIsPermitted({
       authContext,
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
 
-    return this.threadRepository.query(
-      args.workspaceId,
-      async ({ manager, table }) => {
-        if (isDefined(args.channelId)) {
-          await lockAgentChatChannelForThreadWriteOrThrow({
-            manager,
-            workspaceId: args.workspaceId,
-            channelId: args.channelId,
-          });
-        }
-        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-          manager,
-          workspaceId: args.workspaceId,
-          channelIds: [args.channelId],
-        });
-        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${isDefined(args.channelId) ? ', "channelId"' : ''})
-           VALUES ($1, $2, $3${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
-          [
-            args.id ?? randomUUID(),
-            args.title ?? null,
-            authContext.workspaceMemberId,
-            ...(isDefined(args.channelId) ? [args.channelId] : []),
-          ],
-        );
-        const record = records[0];
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId: args.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [record.id],
-          manager,
-        });
-        const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
-          manager,
-          workspaceId: args.workspaceId,
-          threadTableExpression: table('agentChatThread'),
-          recordIds: [record.id],
-        });
-        if (ownerGrantCount !== 1) {
-          throw new AiException(
-            'Thread owner is no longer a workspace member',
-            AiExceptionCode.THREAD_NOT_FOUND,
-          );
-        }
-        if (isDefined(args.channelId)) {
-          await this.channelGrantService.rewriteThreadGrantsInTransaction({
-            manager,
-            workspaceId: args.workspaceId,
-            threadIds: [record.id],
-            affectedChannelIds: [args.channelId],
-          });
-        }
-        const [setUpRecord] = await this.setUpCreatedThreadsInboxState({
-          manager,
-          table,
-          workspaceId: args.workspaceId,
-          workspaceMemberId: authContext.workspaceMemberId,
-          threadIds: [record.id],
-          participantObjectMetadataId,
-          isArchived: args.isArchived,
-          isSubscribed: args.isSubscribed,
-        });
-        return setUpRecord ?? record;
-      },
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            if (isDefined(args.channelId)) {
+              await lockAgentChatChannelForThreadWriteOrThrow({
+                transactionScope,
+                channelRepository: this.channelRepository,
+                workspaceId: args.workspaceId,
+                channelId: args.channelId,
+              });
+            }
+            await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+              transactionScope,
+              workspaceId: args.workspaceId,
+              channelIds: [args.channelId],
+            });
+            const threadRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+                'agentChatThread',
+                { shouldSkipEventEmission: true },
+              );
+            const threadId = args.id ?? randomUUID();
+
+            await threadRepository.insert({
+              id: threadId,
+              title: args.title ?? null,
+              workspaceMemberId: authContext.workspaceMemberId,
+              ...(isDefined(args.channelId)
+                ? { channelId: args.channelId }
+                : {}),
+            });
+            await this.privateRecordStorageService.setPrivate({
+              workspaceId: args.workspaceId,
+              flatObjectMetadata: objectMetadata,
+              recordIds: [threadId],
+              isPrivate: true,
+              transactionScope,
+            });
+            await this.recordShareStorageService.deleteByRecordIds({
+              workspaceId: args.workspaceId,
+              objectMetadataId: objectMetadata.id,
+              recordIds: [threadId],
+              transactionScope,
+            });
+            await this.recordShareStorageService.insertMany({
+              workspaceId: args.workspaceId,
+              recordShares: [
+                {
+                  objectMetadataId: objectMetadata.id,
+                  recordId: threadId,
+                  principalId: authContext.workspaceMemberId,
+                  principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                  accessLevel: RecordShareAccessLevel.FULL,
+                  rowCause: RecordShareRowCause.OWNER,
+                  sourceId: threadId,
+                },
+              ],
+              transactionScope,
+            });
+            if (isDefined(args.channelId)) {
+              await this.channelGrantService.replaceRuleGrantsInTransaction({
+                transactionScope,
+                workspaceId: args.workspaceId,
+                scope: { threadIds: [threadId] },
+              });
+            }
+            await this.setUpCreatedThreadsInboxState({
+              transactionScope,
+              workspaceId: args.workspaceId,
+              workspaceMemberId: authContext.workspaceMemberId,
+              threadIds: [threadId],
+              participantObjectMetadata,
+              isArchived: args.isArchived,
+              isSubscribed: args.isSubscribed,
+            });
+
+            const createdThread = await threadRepository.findOne({
+              where: { id: threadId },
+            });
+
+            return createdThread ?? throwAgentChatThreadNotFound();
+          },
+        ),
+      buildSystemAuthContext(args.workspaceId),
+      { lite: true },
     );
   }
 
@@ -448,7 +482,7 @@ export class AgentChatSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
+          .getRepository('agentChatThread')
           .validateWriteIsPermitted({
             operationType: 'insert',
             columnsToReturn: ['id'],
@@ -512,8 +546,8 @@ export class AgentChatSharingService {
         }
         await manager.query(
           `WITH participant AS (
-             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
-             VALUES ($1, $2, clock_timestamp(), false)
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "isSubscribed")
+             VALUES ($1, $2, true, clock_timestamp(), false)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
@@ -540,50 +574,80 @@ export class AgentChatSharingService {
   // inbox. Threads already set up keep their state, so an upsert of an
   // existing thread through the record API cannot reset it.
   async setUpCreatedThreadsInboxState({
-    manager,
-    table,
+    transactionScope,
     workspaceId,
     workspaceMemberId,
     threadIds,
-    participantObjectMetadataId,
+    participantObjectMetadata,
     isArchived = false,
     isSubscribed = true,
-  }: AgentHistoryStorageContext & {
+  }: {
+    transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
     workspaceMemberId: string;
     threadIds: string[];
-    participantObjectMetadataId: string;
+    participantObjectMetadata: FlatObjectMetadata;
     isArchived?: boolean;
     isSubscribed?: boolean;
-  }): Promise<AgentChatThreadWorkspaceEntity[]> {
-    return manager.query<AgentChatThreadWorkspaceEntity[]>(
-      `WITH thread AS (
-         UPDATE ${table('agentChatThread')}
-         SET "lastActivityAt" = clock_timestamp()
-         WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
-         RETURNING *
-       ), participant AS (
-         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt", "isSubscribed")
-         SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
-         FROM thread
-         ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
-         RETURNING id, "workspaceMemberId"
-       ), owner_share AS (
-         ${buildAgentChatThreadParticipantOwnerShareInsert({
-           workspaceId,
-           participantSource: 'participant',
-           objectMetadataIdParameter: '$3',
-         })}
-       )
-       SELECT * FROM thread`,
-      [
-        threadIds,
-        workspaceMemberId,
-        participantObjectMetadataId,
-        isArchived,
-        isSubscribed,
-      ],
+  }): Promise<string[]> {
+    const threadRepository =
+      transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+        'agentChatThread',
+        { shouldSkipEventEmission: true },
+      );
+    const participantRepository =
+      transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
+        'agentChatThreadParticipant',
+        { shouldSkipEventEmission: true },
+      );
+    const setUpAt = new Date().toISOString();
+
+    const { generatedMaps: setUpThreads } = await threadRepository.update(
+      { id: Any(threadIds), lastActivityAt: IsNull() },
+      { lastActivityAt: setUpAt },
     );
+    const setUpThreadIds: string[] = setUpThreads.map(({ id }) => id);
+
+    if (!isNonEmptyArray(setUpThreadIds)) {
+      return [];
+    }
+
+    const { identifiers: insertedParticipants } =
+      await participantRepository.insert(
+        setUpThreadIds.map((threadId) => ({
+          threadId,
+          workspaceMemberId,
+          lastReadAt: setUpAt,
+          archivedAt: isArchived ? setUpAt : null,
+          isSubscribed,
+        })),
+        { onConflictDoNothing: true },
+      );
+    const insertedParticipantIds: string[] = insertedParticipants.map(
+      ({ id }) => id,
+    );
+
+    await this.privateRecordStorageService.setPrivate({
+      workspaceId,
+      flatObjectMetadata: participantObjectMetadata,
+      recordIds: insertedParticipantIds,
+      isPrivate: true,
+      transactionScope,
+    });
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      recordShares: buildAgentChatThreadParticipantOwnerShares({
+        participants: insertedParticipantIds.map((id) => ({
+          id,
+          workspaceMemberId,
+        })),
+        objectMetadataId: participantObjectMetadata.id,
+      }),
+      transactionScope,
+    });
+
+    return setUpThreadIds;
   }
 
   async restoreThreadWithAccess(
@@ -660,10 +724,10 @@ export class AgentChatSharingService {
   // must run inside the caller's workspace context
   private async assertOperationAllowed(
     threadId: string,
-    operationType: OperationType,
+    operationType: ObjectRecordsOperationType,
   ): Promise<void> {
     const allowedIds = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions('agentChatThread')
+      .getRepository('agentChatThread')
       .findRecordIdsAllowedForOperation({
         recordIds: [threadId],
         operationType,
@@ -783,42 +847,6 @@ export class AgentChatSharingService {
           : [],
       ),
     );
-  }
-
-  private buildParticipantReplyPolicy({
-    repository,
-    subject,
-    canManageSharing,
-  }: {
-    repository: WorkspaceRepository;
-    subject: RowAccessPolicySubject;
-    canManageSharing: boolean;
-  }): RowAccessPolicy {
-    if (!isDefined(subject.objectsPermissions)) {
-      return { kind: 'denied' };
-    }
-
-    const policies = AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-      repository.buildRowAccessPolicy({
-        subject,
-        operationType,
-        hypotheticalRecordShareAccessLevel: canManageSharing
-          ? RecordShareAccessLevel.READ_WRITE
-          : undefined,
-      }),
-    );
-
-    if (policies.some(({ kind }) => kind === 'denied')) {
-      return { kind: 'denied' };
-    }
-
-    const operands = policies.flatMap((policy) =>
-      policy.kind === 'gated' ? [policy.expression] : [],
-    );
-
-    return isNonEmptyArray(operands)
-      ? { kind: 'gated', expression: { kind: 'and', operands } }
-      : { kind: 'open' };
   }
 
   private async canManageThreadSharing({

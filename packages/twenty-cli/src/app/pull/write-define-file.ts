@@ -7,7 +7,6 @@ import {
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
-  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
@@ -45,11 +44,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
     members: FieldMetadataType,
   },
   {
-    path: [...prefix, 'writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: [...prefix, 'universalSettings', 'relationType'],
     symbol: 'RelationType',
     members: RelationType,
@@ -74,11 +68,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
 export const FIELD_ENUM_BINDINGS: EnumBinding[] = buildFieldEnumBindings([]);
 
 export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
-  {
-    path: ['writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
   {
     path: ['openRecordIn'],
     symbol: 'ObjectOpenRecordIn',
@@ -255,10 +244,12 @@ export const writeDefineFile = ({
   definer,
   config,
   enumBindings = [],
+  importStatements = [],
 }: {
   definer: string;
   config: unknown;
   enumBindings?: EnumBinding[];
+  importStatements?: string[];
 }): { content: string; requiredSdkExports: string[] } => {
   const usedSymbols = new Set<string>();
 
@@ -293,7 +284,7 @@ export const writeDefineFile = ({
       : `import {\n${imported.map((name) => `  ${name},`).join('\n')}\n} from 'twenty-sdk/define';`;
 
   return {
-    content: `${importStatement}
+    content: `${[...importStatements, importStatement].join('\n')}
 
 export default ${definer}(${body});
 `,

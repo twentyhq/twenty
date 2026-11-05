@@ -1,12 +1,12 @@
 import { type getDefaultStore } from 'jotai';
 import { type Location, matchPath } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 
-const DASHBOARD_NAME_SINGULAR = CoreObjectNameSingular.Dashboard;
+const DASHBOARD_NAME_SINGULAR = StandardObjectNameSingular.Dashboard;
 
 export const getPageLayoutIdForLocation = ({
   location,

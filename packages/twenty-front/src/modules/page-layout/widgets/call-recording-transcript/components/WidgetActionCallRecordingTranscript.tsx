@@ -3,7 +3,6 @@ import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/
 import { getCallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/utils/getCallRecordingPlaybackMedia';
 import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
   isDefined,
@@ -12,8 +11,10 @@ import {
 } from 'twenty-shared/utils';
 import { IconCopy, IconLink } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 export const WidgetActionCallRecordingTranscript = () => {
+  const { t } = useLingui();
   const { callRecording, loading, error, restriction } =
     useCallRecordingForWidget({ kind: 'transcript' });
   const { copyToClipboard } = useCopyToClipboard();

@@ -43,6 +43,15 @@ export type {
   TimelineActivityTypeManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 
+export { defineValidationRule } from '@/sdk/define/validation-rules/define-validation-rule';
+export type { ValidationRuleConfig } from '@/sdk/define/validation-rules/define-validation-rule';
+export { ruleExpression } from '@/sdk/define/validation-rules/rule-expression';
+export type {
+  RuleExpression,
+  RuleExpressionOperand,
+} from '@/sdk/define/validation-rules/rule-expression';
+export type { ValidationRuleManifest } from 'twenty-shared/application';
+
 export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
 export type {
   SettingsMenuItemConfig,
@@ -112,7 +121,10 @@ export type {
   UninstallHandler,
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
-export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
+export type {
+  HealthCheckHandler,
+  UserHealthCheckHandler,
+} from '@/sdk/define/logic-functions/health-check-handler-type';
 export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
   ApplicationHealthCheckAction,
@@ -192,6 +204,7 @@ export {
 } from 'twenty-shared/types';
 export { SystemPermissionFlag } from '@/sdk/define/roles/system-permission-flag.constant';
 
+export { defineRelatedRecordPath } from '@/sdk/define/related-record-paths/define-related-record-path';
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
@@ -226,13 +239,10 @@ export {
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
   IndexType,
-  MetadataReadability,
-  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
-  ObjectSharingReach,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,

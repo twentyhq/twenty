@@ -1,6 +1,7 @@
 export const ROW_LEVEL_PERMISSION_PREDICATE_GQL_FIELDS = `
     id
     fieldMetadataId
+    relationFieldMetadataId
     objectMetadataId
     operand
     value
@@ -17,6 +18,10 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_GQL_FIELDS = `
     parentRowLevelPermissionPredicateGroupId
     logicalOperator
     positionInRowLevelPermissionPredicateGroup
+    canReadRecords
+    canUpdateRecords
+    canSoftDeleteRecords
+    canDestroyRecords
     roleId
     objectMetadataId
 `;

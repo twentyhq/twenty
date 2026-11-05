@@ -37,9 +37,8 @@ export class CalendarEventParticipantService {
     calendarEventIds: string[];
   }): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     const calendarEventParticipantRepository =
-      this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
-        { shouldBypassPermissionChecks: true },
       );
 
     return calendarEventParticipantRepository.find({
@@ -55,9 +54,8 @@ export class CalendarEventParticipantService {
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const calendarEventParticipantRepository =
-      transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
+      transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
-        { shouldBypassPermissionChecks: true },
       );
 
     if (operations.participantIdsToDelete.length > 0) {
@@ -101,9 +99,8 @@ export class CalendarEventParticipantService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarEventParticipantRepository =
-          this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
             'calendarEventParticipant',
-            { shouldBypassPermissionChecks: true },
           );
 
         const savedParticipants: CalendarEventParticipantWorkspaceEntity[] = [];

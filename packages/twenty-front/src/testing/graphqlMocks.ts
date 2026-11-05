@@ -16,6 +16,7 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { BILLING_PARTNER_CODE } from '@/settings/billing/graphql/queries/billingPartnerCode';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
 import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
@@ -565,6 +566,17 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query(getOperationName(BILLING_PARTNER_CODE) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          billingPartnerCode: {
+            __typename: 'BillingPartnerCode',
+            partnerCode: null,
+            isEditable: true,
+          },
+        },
+      });
+    }),
     graphql.query(getOperationName(BILLING_PORTAL_SESSION) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -690,6 +702,25 @@ export const graphqlMocks = {
               operations: ['*.created', '*.updated'],
               description: 'Slack notifications for lead updates',
               secret: 'sample-secret',
+              role: {
+                __typename: 'Role',
+                id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+              },
+            },
+          ],
+        },
+      });
+    }),
+    metadataGraphql.query('GetApiKeyRoles', () => {
+      return HttpResponse.json({
+        data: {
+          getApiKeyRoles: [
+            {
+              __typename: 'Role',
+              id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+              label: 'Admin',
+              icon: 'IconUserCog',
+              canBeAssignedToApiKeys: true,
             },
           ],
         },
@@ -707,6 +738,10 @@ export const graphqlMocks = {
             operations: ['*.created', '*.updated'],
             description: 'Slack notifications for lead updates',
             secret: 'sample-secret',
+            role: {
+              __typename: 'Role',
+              id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+            },
           },
         },
       });

@@ -6,7 +6,8 @@ import { useId, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
-import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';

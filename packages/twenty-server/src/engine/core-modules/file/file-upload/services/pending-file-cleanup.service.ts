@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
+import { In, IsNull, LessThan, Like, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import {
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
@@ -55,18 +59,52 @@ export class PendingFileCleanupService {
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
 
+    if (staleFiles.length < PENDING_FILE_CLEANUP_BATCH_SIZE) {
+      const expiredTemporaryFiles = await this.fileRepository
+        .createQueryBuilder('file')
+        .where({
+          status: FILE_STATUS.UPLOADED,
+          workspaceId: Not(IsNull()),
+          id: Not(In(staleFiles.map((file) => file.id))),
+        })
+        .andWhere(`"file"."settings" @> '{"isTemporaryFile":true}'`)
+        .andWhere(`"file"."settings"->>'expiresAt' <= :now`, {
+          now: new Date().toISOString(),
+        })
+        .orderBy(`"file"."settings"->>'expiresAt'`)
+        .take(PENDING_FILE_CLEANUP_BATCH_SIZE - staleFiles.length)
+        .getMany();
+
+      staleFiles.push(...expiredTemporaryFiles);
+    }
+
+    const fileFolders = Object.values(FileFolder);
     let deletedCount = 0;
 
     for (const file of staleFiles) {
       try {
         if (
-          file.path.startsWith(`${FileFolder.RecordExport}/`) &&
+          (file.path.startsWith(`${FileFolder.RecordExport}/`) ||
+            (file.status === FILE_STATUS.UPLOADED &&
+              file.settings?.isTemporaryFile &&
+              isDefined(file.settings.expiresAt))) &&
           isDefined(file.workspaceId)
         ) {
+          const fileFolder = fileFolders.find(
+            (folder) => folder === file.path.split('/')[0],
+          );
+
+          if (!isDefined(fileFolder)) {
+            throw new FileException(
+              `Invalid folder for stale file ${file.id}`,
+              FileExceptionCode.INVALID_FILE_FOLDER,
+            );
+          }
+
           await this.fileStorageService.deleteByFileId({
             fileId: file.id,
             workspaceId: file.workspaceId,
-            fileFolder: FileFolder.RecordExport,
+            fileFolder,
           });
           deletedCount++;
 

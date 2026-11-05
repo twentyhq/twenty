@@ -1,35 +1,82 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
-import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
+import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
+import { type ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
+
+const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
+  objectMetadataId,
+  objectRecordsPermissions,
+}: {
+  objectMetadataId: string;
+  objectRecordsPermissions: ObjectRecordsPermissions;
+}): ObjectPermissionDTO => ({
+  objectMetadataId,
+  canReadObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'select',
+  }),
+  canUpdateObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'update',
+  }),
+  canSoftDeleteObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'soft-delete',
+  }),
+  canDestroyObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'delete',
+  }),
+  restrictedFields: objectRecordsPermissions.restrictedFields,
+  rowLevelPermissionPredicates:
+    objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
+  rowLevelPermissionPredicateGroups:
+    objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
+});
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
-  objectsPermissions: rawObjectsPermissions,
+  recordsPermissions,
   permissionFlags: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
-  const objectPermissions = Object.entries(rawObjectsPermissions).map(
-    ([objectMetadataId, permissions]) => ({
-      objectMetadataId,
-      canReadObjectRecords: permissions.canReadObjectRecords,
-      canUpdateObjectRecords: permissions.canUpdateObjectRecords,
-      canSoftDeleteObjectRecords: permissions.canSoftDeleteObjectRecords,
-      canDestroyObjectRecords: permissions.canDestroyObjectRecords,
-      restrictedFields: permissions.restrictedFields,
-      rowLevelPermissionPredicates: permissions.rowLevelPermissionPredicates,
-      rowLevelPermissionPredicateGroups:
-        permissions.rowLevelPermissionPredicateGroups,
-    }),
-  );
+  const objectRecordsPermissions: ObjectRecordsPermissionsDTO[] = [];
+  const legacyObjectPermissions: ObjectPermissionDTO[] = [];
 
-  const objectsPermissions = objectPermissions;
+  for (const [objectMetadataId, permissions] of Object.entries(
+    recordsPermissions.objects,
+  )) {
+    if (!isDefined(permissions)) {
+      continue;
+    }
+
+    objectRecordsPermissions.push({
+      objectMetadataId,
+      canReadAllRecords: permissions.canReadAllRecords,
+      canUpdateAllRecords: permissions.canUpdateAllRecords,
+      canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
+      canDestroyAllRecords: permissions.canDestroyAllRecords,
+      restrictedFields: permissions.restrictedFields,
+      rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
+    });
+    legacyObjectPermissions.push(
+      fromObjectRecordsPermissionsToLegacyObjectPermission({
+        objectMetadataId,
+        objectRecordsPermissions: permissions,
+      }),
+    );
+  }
 
   const permissionFlags = (
     Object.keys(rawSettingsPermissions) as PermissionFlagType[]
   ).filter((feature) => rawSettingsPermissions[feature] === true);
 
   return {
-    objectPermissions,
-    objectsPermissions,
+    objectRecordsPermissions,
+    objectPermissions: legacyObjectPermissions,
+    objectsPermissions: legacyObjectPermissions,
     permissionFlags,
   };
 };

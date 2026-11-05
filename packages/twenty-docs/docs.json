@@ -448,7 +448,8 @@
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/system-fields",
                       "developers/extend/apps/data/relations",
-                      "developers/extend/apps/data/timeline-activity-types"
+                      "developers/extend/apps/data/timeline-activity-types",
+                      "developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -629,6 +630,7 @@
                       {
                         "group": "Data display",
                         "pages": [
+                          "ui/components/data-display/assistant-avatar",
                           "ui/components/data-display/avatar-group",
                           "ui/components/data-display/command-block",
                           "ui/components/data-display/details-row",
@@ -1559,7 +1561,8 @@
                       "ar/developers/extend/apps/data/extending-objects",
                       "ar/developers/extend/apps/data/system-fields",
                       "ar/developers/extend/apps/data/relations",
-                      "ar/developers/extend/apps/data/timeline-activity-types"
+                      "ar/developers/extend/apps/data/timeline-activity-types",
+                      "ar/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -1740,6 +1743,7 @@
                       {
                         "group": "عرض البيانات",
                         "pages": [
+                          "ar/ui/components/data-display/assistant-avatar",
                           "ar/ui/components/data-display/avatar-group",
                           "ar/ui/components/data-display/command-block",
                           "ar/ui/components/data-display/details-row",
@@ -3122,7 +3126,8 @@
                       "es/developers/extend/apps/data/extending-objects",
                       "es/developers/extend/apps/data/system-fields",
                       "es/developers/extend/apps/data/relations",
-                      "es/developers/extend/apps/data/timeline-activity-types"
+                      "es/developers/extend/apps/data/timeline-activity-types",
+                      "es/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -3303,6 +3308,7 @@
                       {
                         "group": "Visualización de datos",
                         "pages": [
+                          "es/ui/components/data-display/assistant-avatar",
                           "es/ui/components/data-display/avatar-group",
                           "es/ui/components/data-display/command-block",
                           "es/ui/components/data-display/details-row",
@@ -3781,7 +3787,8 @@
                       "it/developers/extend/apps/data/extending-objects",
                       "it/developers/extend/apps/data/system-fields",
                       "it/developers/extend/apps/data/relations",
-                      "it/developers/extend/apps/data/timeline-activity-types"
+                      "it/developers/extend/apps/data/timeline-activity-types",
+                      "it/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -3962,6 +3969,7 @@
                       {
                         "group": "Visualizzazione dati",
                         "pages": [
+                          "it/ui/components/data-display/assistant-avatar",
                           "it/ui/components/data-display/avatar-group",
                           "it/ui/components/data-display/command-block",
                           "it/ui/components/data-display/details-row",
@@ -5796,7 +5804,8 @@
                       "ro/developers/extend/apps/data/extending-objects",
                       "ro/developers/extend/apps/data/system-fields",
                       "ro/developers/extend/apps/data/relations",
-                      "ro/developers/extend/apps/data/timeline-activity-types"
+                      "ro/developers/extend/apps/data/timeline-activity-types",
+                      "ro/developers/extend/apps/data/validation-rules"
                     ]
                   },
                   {
@@ -5977,6 +5986,7 @@
                       {
                         "group": "Afișarea datelor",
                         "pages": [
+                          "ro/ui/components/data-display/assistant-avatar",
                           "ro/ui/components/data-display/avatar-group",
                           "ro/ui/components/data-display/command-block",
                           "ro/ui/components/data-display/details-row",

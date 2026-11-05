@@ -3,7 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useDuplicateDashboard } from '@/dashboards/hooks/useDuplicateDashboard';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -34,7 +34,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
       });
 
       navigate(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Dashboard,
+        objectNameSingular: StandardObjectNameSingular.Dashboard,
         objectRecordId: result.id,
       });
     }

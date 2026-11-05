@@ -1,7 +1,7 @@
 import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
-import { t } from '@lingui/core/macro';
 import { type AgentResponseFieldType } from 'twenty-shared/ai';
+import { useLingui } from '@lingui/react/macro';
 
 type AgentOutputFieldTypeSelectorProps = {
   value?: AgentResponseFieldType;
@@ -16,6 +16,7 @@ export const AgentOutputFieldTypeSelector = ({
   disabled,
   dropdownId,
 }: AgentOutputFieldTypeSelectorProps) => {
+  const { t } = useLingui();
   return (
     <Select
       dropdownId={dropdownId}
