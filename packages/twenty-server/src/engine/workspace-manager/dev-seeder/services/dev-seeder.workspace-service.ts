@@ -258,10 +258,7 @@ export class DevSeederWorkspaceService {
           chatReferenceIds,
         });
         await backfillWorkspaceChatThreadOwnerGrants({
-          transactionScope: {
-            executeRawQuery: (sql, parameters) =>
-              manager.query(sql, parameters),
-          },
+          manager,
           workspaceId,
           threadTableExpression: table('agentChatThread'),
         });

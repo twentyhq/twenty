@@ -274,6 +274,7 @@ export class AgentChatChannelService {
             async (transactionScope) => {
               await lockAgentChatChannelForThreadWriteOrThrow({
                 transactionScope,
+                channelRepository: this.channelRepository,
                 workspaceId,
                 channelId: destinationChannelId,
               });
