@@ -351,7 +351,7 @@ export class RecordAccessPolicyService {
 
     return filterReadableEvents({
       events,
-      permittedRecordIds: await findPermittedEventRecordIds(principals),
+      readableRecordIds: await findPermittedEventRecordIds(principals),
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
         principals,

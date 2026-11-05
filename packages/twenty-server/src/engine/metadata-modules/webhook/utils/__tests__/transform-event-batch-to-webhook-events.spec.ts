@@ -246,7 +246,7 @@ describe('transformEventBatchToWebhookEvents', () => {
     expect(resultWithoutEventDate).toEqual(expectedResultWithoutEventDate);
   });
 
-  it('should only keep the events of the permitted records', () => {
+  it('should only keep the events of the readable records', () => {
     const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
       workspaceId: 'workspaceId',
       objectMetadata: {
@@ -280,7 +280,7 @@ describe('transformEventBatchToWebhookEvents', () => {
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
-      permittedRecordIds: new Set(['recordId-1']),
+      readableRecordIds: new Set(['recordId-1']),
     });
 
     expect(result).toHaveLength(1);

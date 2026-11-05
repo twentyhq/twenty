@@ -8,13 +8,13 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 
 export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   events,
-  permittedRecordIds,
+  readableRecordIds,
   objectMetadata,
   recordsPermissions,
   metadataMaps,
 }: {
   events: TEvent[];
-  permittedRecordIds: Set<string>;
+  readableRecordIds: Set<string>;
   objectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   metadataMaps: Pick<
@@ -23,7 +23,7 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   >;
 }): TEvent[] =>
   events
-    .filter((event) => permittedRecordIds.has(event.recordId))
+    .filter((event) => readableRecordIds.has(event.recordId))
     .map((event) =>
       omitRestrictedFieldsFromEvent({
         event,
