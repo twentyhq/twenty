@@ -1,6 +1,5 @@
 import { GettingStartedAutoAdvanceEffect } from '@/getting-started/components/GettingStartedAutoAdvanceEffect';
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
-import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
@@ -13,14 +12,12 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
 import { Plural, useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { IconCheck, IconListCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   GettingStartedWorkflowPreviewsDocument,
@@ -94,20 +91,6 @@ const StyledDigit = styled.span`
   }
 `;
 
-const StyledGoal = styled.div`
-  align-items: center;
-  align-self: center;
-  border: 1px dashed ${themeCssVariables.border.color.strong};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  height: calc(
-    ${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing['0.5']}
-  );
-  padding: 0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]};
-`;
-
 const StyledFooter = styled.div`
   display: flex;
   justify-content: center;
@@ -115,10 +98,9 @@ const StyledFooter = styled.div`
 
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
   const { selectGettingStartedStep, isSaving } = useSelectGettingStartedStep();
-  const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
+  const { daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
   const gettingStartedJustCompletedStep = useAtomStateValue(
     gettingStartedJustCompletedStepState,
@@ -148,18 +130,6 @@ export const GettingStartedPageContent = () => {
   const isSelectedStepCompleted = completedStepActionKeys.includes(
     selectedStepActionKey,
   );
-
-  const remainingStepCount = remainingSteps.length;
-  const remainingStepsLabel = isDefined(formattedTrialEnd)
-    ? plural(remainingStepCount, {
-        one: `Finish # step by ${formattedTrialEnd}`,
-        other: `Finish # steps by ${formattedTrialEnd}`,
-      })
-    : plural(remainingStepCount, {
-        one: 'Finish # step',
-        other: 'Finish # steps',
-      });
-  const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
 
   return (
     <StyledScroll>
@@ -213,20 +183,6 @@ export const GettingStartedPageContent = () => {
         )}
         {isDefined(progress) && (
           <>
-            <StyledGoal>
-              {isComplete ? (
-                <IconCheck
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              ) : (
-                <IconListCheck
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              )}
-              <GettingStartedRollingText text={goalLabel} />
-            </StyledGoal>
             {isNonEmptyArray(stepActionKeys) && (
               <GettingStartedStepStack
                 steps={stepDefinitions}
