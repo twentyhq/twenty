@@ -1,4 +1,5 @@
 import {
+  type RawBodyRequest,
   Controller,
   Get,
   HttpCode,
@@ -84,7 +85,9 @@ export class ConnectionProviderCustomController {
     UsageLimitRestApiExceptionFilter,
     BillingRestApiExceptionFilter,
   )
-  async callbackNotification(@Req() req: Request): Promise<{ success: true }> {
+  async callbackNotification(
+    @Req() req: RawBodyRequest<Request>,
+  ): Promise<{ success: true }> {
     const { state, queryStringParameters, headers } =
       this.readCallbackRequestOrThrow(req);
 

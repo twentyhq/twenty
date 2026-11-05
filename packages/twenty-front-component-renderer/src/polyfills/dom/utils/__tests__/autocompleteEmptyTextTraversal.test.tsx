@@ -3,6 +3,8 @@ import { Window } from '@remote-dom/polyfill';
 import { act, type Ref, useImperativeHandle } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installTextTreeWalkerPolyfill } from '../installTextTreeWalkerPolyfill';
 
 (
@@ -37,8 +39,7 @@ describe('Autocomplete Empty text traversal', () => {
     installTextTreeWalkerPolyfill({
       globalScope: { window: polyfillWindow },
     });
-
-    remoteDocument = polyfillWindow.document as unknown as Document;
+    remoteDocument = toDomWindow(polyfillWindow).document;
     container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);

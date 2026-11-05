@@ -10,7 +10,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -79,7 +79,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UpgradeModule,
     WorkflowRunModule,
     WorkflowAgentConversationModule,
-    RecordShareStorageModule,
+    RecordShareModule,
   ],
   exports: [DevSeederWorkspaceService],
   providers: [

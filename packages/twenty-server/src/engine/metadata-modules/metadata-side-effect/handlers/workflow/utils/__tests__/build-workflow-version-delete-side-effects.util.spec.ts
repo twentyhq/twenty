@@ -109,7 +109,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
       for (const version of versions) {
         maps.flatWorkflowVersionMaps.byUniversalIdentifier[
           version.universalIdentifier
-        ] = version as unknown as FlatWorkflowVersion;
+        ] = version as FlatWorkflowVersion;
       }
 
       const commandMenuItems = [

@@ -13,11 +13,13 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { CORE_PICTURE_UPLOAD_PERMISSION_FLAGS } from 'src/engine/core-modules/file/file-upload/constants/core-picture-upload-permission-flags.constant';
 import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class CreateFileUploadPermissionGuard implements CanActivate {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
@@ -47,7 +49,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
 
     for (const permissionFlag of acceptedPermissionFlags) {
       const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
+        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId: request.userWorkspaceId,
           workspaceId: request.workspace.id,
           setting: permissionFlag,

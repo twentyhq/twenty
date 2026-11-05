@@ -18,7 +18,7 @@ import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-pri
 import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
 import { withAgentsAdmitted } from 'src/engine/permissions/access-policy/utils/with-agents-admitted.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 // A workspace being created has no roles to check settings permissions against yet
 const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
@@ -26,19 +26,13 @@ const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
   WorkspaceActivationStatus.ONGOING_CREATION,
 ];
 
-type SettingsPermissionRequest = Pick<
-  Request,
-  'workspace' | 'userWorkspaceId' | 'apiKey' | 'application' | 'agentId'
->;
-
 @Injectable()
 export class AccessPolicyService {
   constructor(
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // Throws what the legacy principal, feature flag and permission guards threw
   async assertRequestAccessPolicySatisfiedOrThrow({
     accessPolicy,
     request,
@@ -106,7 +100,7 @@ export class AccessPolicyService {
 
     for (const permissionFlag of accessPolicy.requiredPermissionFlags) {
       if (
-        !(await this.permissionsService.hasPermissionFlag({
+        !(await this.settingPermissionsService.hasPermissionFlag({
           authContext,
           setting: permissionFlag,
         }))
@@ -118,11 +112,11 @@ export class AccessPolicyService {
     return true;
   }
 
-  async isSettingsPermissionGranted({
+  private async isSettingsPermissionGranted({
     request,
     permissionFlag,
   }: {
-    request: SettingsPermissionRequest;
+    request: Request;
     permissionFlag: PermissionFlagType;
   }): Promise<boolean> {
     const { workspace } = request;
@@ -139,7 +133,7 @@ export class AccessPolicyService {
       return true;
     }
 
-    return this.permissionsService.userHasWorkspaceSettingPermission({
+    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
       userWorkspaceId: request.userWorkspaceId,
       setting: permissionFlag,
       workspaceId: workspace.id,

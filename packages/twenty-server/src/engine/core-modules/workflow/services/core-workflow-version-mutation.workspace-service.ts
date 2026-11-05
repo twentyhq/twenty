@@ -740,6 +740,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
         workspaceId,
         userWorkspaceId,
+        callerApplication: undefined,
         coreWorkflowVersionId,
       });
 

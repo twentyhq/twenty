@@ -7,7 +7,8 @@ import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/pa
 
 export type UpdateOnePageLayoutWidgetFactoryInput = {
   id: string;
-} & UpdatePageLayoutWidgetInput;
+  configuration?: unknown;
+} & Omit<UpdatePageLayoutWidgetInput, 'configuration'>;
 
 const DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   id

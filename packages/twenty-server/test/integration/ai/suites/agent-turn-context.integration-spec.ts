@@ -14,10 +14,7 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -69,7 +66,7 @@ const mockAnsweringModel = (): ModelCall[] => {
       modelId: TEST_AI_MODEL_ID,
       sdkPackage: '@ai-sdk/openai',
       model,
-    } as unknown as RegisteredAiModel);
+    });
 
   return calls;
 };

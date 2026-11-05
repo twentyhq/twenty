@@ -172,11 +172,12 @@ describe('writePullEntityFile', () => {
   });
 
   it('matches a local code step file whatever the case of its step identifier', () => {
-    const upperCaseStepUid = 'ABCDEF44-4444-4444-8444-444444444444';
+    const upperCaseStepUniversalIdentifier =
+      'ABCDEF44-4444-4444-8444-444444444444';
     const { codeStepFiles } = writePullEntityFile({
       entity: workflowEntity([
         codeStep({
-          universalIdentifier: upperCaseStepUid,
+          universalIdentifier: upperCaseStepUniversalIdentifier,
           name: 'Format name',
         }),
       ]),
@@ -184,7 +185,7 @@ describe('writePullEntityFile', () => {
       isCodeStepPathAvailable: boundedProbing(),
       localCodeStepPathByStepIdentifier: new Map([
         [
-          upperCaseStepUid.toLowerCase(),
+          upperCaseStepUniversalIdentifier.toLowerCase(),
           'src/workflows/greet-new-pets/ABCDEF44-format-name-3.code.ts',
         ],
       ]),

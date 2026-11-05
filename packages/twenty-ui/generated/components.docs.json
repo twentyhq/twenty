@@ -1265,10 +1265,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"inherit\" | \"primary\" | \"red\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."
+        "description": "Neutral tertiary, inherited text, solid primary accent, solid red, soft accent tint, or secondary treatment."
       },
       {
         "name": "render",
@@ -5301,6 +5301,20 @@
         "description": "A ref to access the hidden input element."
       },
       {
+        "name": "layout",
+        "type": "\"grid\" | \"list\"",
+        "required": false,
+        "defaultValue": "list",
+        "description": "list arranges options in the orientation direction. grid fills the available width with responsive columns."
+      },
+      {
+        "name": "minColumnWidth",
+        "type": "number",
+        "required": false,
+        "defaultValue": "148",
+        "description": "Minimum grid column width in pixels. Columns can shrink below this width when the container is narrower."
+      },
+      {
         "name": "name",
         "type": "string",
         "required": false,
@@ -8388,6 +8402,13 @@
             "description": "CSS background color of the outer card. Child sections have their own backgrounds."
           },
           {
+            "name": "borderStyle",
+            "type": "\"dashed\" | \"solid\"",
+            "required": false,
+            "defaultValue": "solid",
+            "description": "Use a solid or dashed outer border."
+          },
+          {
             "name": "children",
             "type": "ReactNode",
             "required": false,
@@ -8407,6 +8428,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Sets the card width to 100% of its container."
+          },
+          {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Highlights the outer border. Supply the matching accessible selection state on the interactive owner."
           },
           {
             "name": "ref",
@@ -14143,6 +14171,83 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      }
+    ]
+  },
+  {
+    "name": "AssistantAvatar",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/assistant-avatar",
+    "props": [
+      {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Explicitly hides or exposes the character. Takes precedence over the name-based default."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name for a standalone character. Adds the image role; omit it beside a visible name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of an element naming a standalone character. Adds the image role."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the span root."
+      },
+      {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"pink\" | \"purple\" | \"red\" | \"sky\" | \"turquoise\" | \"yellow\"",
+        "required": false,
+        "defaultValue": "blue",
+        "description": "Theme palette used for the body and face. Follows the surrounding light or dark theme."
+      },
+      {
+        "name": "face",
+        "type": "\"default\" | \"happy\" | \"love\" | \"sleepy\" | \"surprised\" | \"wink\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Expression displayed over the body."
+      },
+      {
+        "name": "isAnimated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Plays the selected expression's idle loop. Displays the static expression when the browser prefers reduced motion."
+      },
+      {
+        "name": "shape",
+        "type": "\"arch\" | \"burst\" | \"circle\" | \"cloud\" | \"clover\" | \"cookie\" | \"flower\" | \"gem\" | \"hexagon\" | \"pill\"",
+        "required": false,
+        "defaultValue": "circle",
+        "description": "Body shape of the assistant character."
+      },
+      {
+        "name": "size",
+        "type": "14 | 16 | 20 | 24 | 40",
+        "required": false,
+        "defaultValue": "24",
+        "description": "Width and height in pixels: 14, 16, 20, 24, or 40."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root. Explicit styles override its dimensions and palette defaults."
       }
     ]
   },

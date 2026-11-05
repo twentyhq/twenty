@@ -16,15 +16,18 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
+import { BillingPartnerCodeDTO } from 'src/engine/core-modules/billing/dtos/billing-partner-code.dto';
 import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-payment-intent.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
+import { BillingSetPartnerCodeInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-set-partner-code.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/services/billing-partner-code.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -47,7 +50,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -82,6 +85,21 @@ const BILLING_CHECKOUT_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 
+const BILLING_PARTNER_CODE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: false,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
+
 const BILLING_PLAN_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
@@ -111,8 +129,9 @@ export class BillingResolver {
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
+    private readonly billingPartnerCodeService: BillingPartnerCodeService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -128,6 +147,26 @@ export class BillingResolver {
         forPaymentMethodUpdate,
       ),
     };
+  }
+
+  @Query(() => BillingPartnerCodeDTO)
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
+  async billingPartnerCode(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<BillingPartnerCodeDTO> {
+    return this.billingPartnerCodeService.getPartnerCode(workspace.id);
+  }
+
+  @Mutation(() => BillingPartnerCodeDTO)
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
+  async setBillingPartnerCode(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { partnerCode }: BillingSetPartnerCodeInput,
+  ): Promise<BillingPartnerCodeDTO> {
+    return this.billingPartnerCodeService.setPartnerCode({
+      workspaceId: workspace.id,
+      partnerCode,
+    });
   }
 
   @Mutation(() => BillingSessionDTO)
@@ -519,7 +558,7 @@ export class BillingResolver {
     }
 
     const userHasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.BILLING,

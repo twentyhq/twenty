@@ -18,6 +18,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
+import { canReachSomeRecords } from 'twenty-shared/utils';
 
 export const RecordTable = () => {
   const {
@@ -77,7 +78,10 @@ export const RecordTable = () => {
 
   return (
     <>
-      {objectPermissions.canReadObjectRecords && (
+      {canReachSomeRecords({
+        objectRecordsPermissions: objectPermissions,
+        operationType: 'select',
+      }) && (
         <>
           <RecordTableBodyEffectsWrapper
             hasRecordGroups={hasRecordGroups}

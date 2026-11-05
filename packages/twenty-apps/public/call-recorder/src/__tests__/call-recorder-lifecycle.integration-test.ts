@@ -1445,15 +1445,20 @@ describe('call recorder app lifecycle (integration)', () => {
           markCalendarEventsRecordingOn(new CoreApiClient(), calendarEventIds),
         ).rejects.toThrow('1 of 3 calendar event preference batches failed');
 
-        const result = await client.query({
-          calendarEvents: {
-            __args: {
-              filter: { id: { in: calendarEventIds } },
-              first: fixtureCount,
-            },
-            edges: { node: { id: true, callRecorderPreference: true } },
-          },
-        });
+        const results = await Promise.all(
+          getBatches(calendarEventIds, CALENDAR_EVENT_UPDATE_BATCH_SIZE).map(
+            (calendarEventIdBatch) =>
+              client.query({
+                calendarEvents: {
+                  __args: {
+                    filter: { id: { in: calendarEventIdBatch } },
+                    first: calendarEventIdBatch.length,
+                  },
+                  edges: { node: { id: true, callRecorderPreference: true } },
+                },
+              }),
+          ),
+        );
         const failedCalendarEventIds = new Set(
           [...calendarEventIds]
             .sort()
@@ -1462,7 +1467,9 @@ describe('call recorder app lifecycle (integration)', () => {
               2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE,
             ),
         );
-        const calendarEvents = result.calendarEvents?.edges ?? [];
+        const calendarEvents = results.flatMap(
+          (result) => result.calendarEvents?.edges ?? [],
+        );
 
         expect(preferenceBatchCount).toBe(3);
         expect(calendarEvents).toHaveLength(fixtureCount);

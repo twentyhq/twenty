@@ -96,23 +96,16 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       dataSource: global.testDataSource,
     });
 
-  const readCoreSteps = async (
-    coreWorkflowVersionId: string,
-  ): Promise<CodeStep[]> => {
+  const readSteps = async ({
+    schema,
+    workflowVersionId,
+  }: {
+    schema: string;
+    workflowVersionId: string;
+  }): Promise<CodeStep[]> => {
     const [{ steps }] = await global.testDataSource.query(
-      `SELECT steps FROM core."workflowVersion" WHERE id = $1`,
-      [coreWorkflowVersionId],
-    );
-
-    return steps;
-  };
-
-  const readWorkspaceSteps = async (
-    workspaceWorkflowVersionId: string,
-  ): Promise<CodeStep[]> => {
-    const [{ steps }] = await global.testDataSource.query(
-      `SELECT steps FROM ${SCHEMA}."workflowVersion" WHERE id = $1`,
-      [workspaceWorkflowVersionId],
+      `SELECT steps FROM ${schema}."workflowVersion" WHERE id = $1`,
+      [workflowVersionId],
     );
 
     return steps;
@@ -308,7 +301,10 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
 
     workspaceWorkflowIds.push(workspaceWorkflowId);
 
-    const [step] = await readCoreSteps(coreWorkflowVersionId);
+    const [step] = await readSteps({
+      schema: 'core',
+      workflowVersionId: coreWorkflowVersionId,
+    });
 
     return {
       coreWorkflowId,
@@ -384,14 +380,23 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   it('changes nothing in a dry run', async () => {
     await runCommand({ dryRun: true });
 
-    expect(await readCoreSteps(legacyWorkflow.coreWorkflowVersionId)).toEqual([
-      legacyWorkflow.step,
-    ]);
     expect(
-      await readWorkspaceSteps(legacyWorkflow.workspaceWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: legacyWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([legacyWorkflow.step]);
     expect(
-      await readCoreSteps(missingFunctionWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: legacyWorkflow.workspaceWorkflowVersionId,
+      }),
+    ).toEqual([legacyWorkflow.step]);
+    expect(
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: missingFunctionWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([missingFunctionWorkflow.step]);
   });
 
@@ -403,11 +408,17 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     expect(inlinedStep.settings.input.logicFunctionId).toBe(
       legacyWorkflow.logicFunctionId,
     );
-    expect(await readCoreSteps(legacyWorkflow.coreWorkflowVersionId)).toEqual([
-      inlinedStep,
-    ]);
     expect(
-      await readWorkspaceSteps(legacyWorkflow.workspaceWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: legacyWorkflow.coreWorkflowVersionId,
+      }),
+    ).toEqual([inlinedStep]);
+    expect(
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: legacyWorkflow.workspaceWorkflowVersionId,
+      }),
     ).toEqual([inlinedStep]);
   });
 
@@ -417,7 +428,10 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
 
   it('writes code that throws into a step whose function is gone', async () => {
     expect(
-      await readCoreSteps(missingFunctionWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: missingFunctionWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([
       inlinedStepOf({
         step: missingFunctionWorkflow.step,
@@ -428,41 +442,63 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
 
   it('leaves a step whose source is over the size limit untouched', async () => {
     expect(
-      await readCoreSteps(oversizedWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: oversizedWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([oversizedWorkflow.step]);
     expect(
-      await readWorkspaceSteps(oversizedWorkflow.workspaceWorkflowVersionId),
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: oversizedWorkflow.workspaceWorkflowVersionId,
+      }),
     ).toEqual([oversizedWorkflow.step]);
   });
 
   it('leaves a step whose function exists but whose source cannot be read untouched', async () => {
     expect(
-      await readCoreSteps(unreadableSourceWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: unreadableSourceWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([unreadableSourceWorkflow.step]);
     expect(
-      await readWorkspaceSteps(
-        unreadableSourceWorkflow.workspaceWorkflowVersionId,
-      ),
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: unreadableSourceWorkflow.workspaceWorkflowVersionId,
+      }),
     ).toEqual([unreadableSourceWorkflow.step]);
   });
 
   it('inlines the source of a function owned by another application', async () => {
     expect(
-      await readCoreSteps(otherApplicationWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: otherApplicationWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([inlinedStepOf({ step: otherApplicationWorkflow.step })]);
   });
 
   it('changes nothing on a second run', async () => {
     await runCommand();
 
-    expect(await readCoreSteps(legacyWorkflow.coreWorkflowVersionId)).toEqual([
-      inlinedStepOf({ step: legacyWorkflow.step }),
-    ]);
     expect(
-      await readCoreSteps(oversizedWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: legacyWorkflow.coreWorkflowVersionId,
+      }),
+    ).toEqual([inlinedStepOf({ step: legacyWorkflow.step })]);
+    expect(
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: oversizedWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([oversizedWorkflow.step]);
     expect(
-      await readCoreSteps(unreadableSourceWorkflow.coreWorkflowVersionId),
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: unreadableSourceWorkflow.coreWorkflowVersionId,
+      }),
     ).toEqual([unreadableSourceWorkflow.step]);
     await expectEveryFunctionKept();
   });

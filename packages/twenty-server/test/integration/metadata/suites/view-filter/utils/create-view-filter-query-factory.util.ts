@@ -4,10 +4,17 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 
 import { type CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 
+export type CreateViewFilterFactoryInput = Omit<
+  CreateViewFilterInput,
+  'value'
+> & {
+  value?: unknown;
+};
+
 export const createViewFilterQueryFactory = ({
   gqlFields = VIEW_FILTER_GQL_FIELDS,
   input,
-}: PerformMetadataQueryParams<CreateViewFilterInput>) => ({
+}: PerformMetadataQueryParams<CreateViewFilterFactoryInput>) => ({
   query: gql`
     mutation CreateViewFilter($input: CreateViewFilterInput!) {
       createViewFilter(input: $input) {

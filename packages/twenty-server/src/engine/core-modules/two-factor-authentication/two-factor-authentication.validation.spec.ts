@@ -1,3 +1,7 @@
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
@@ -10,18 +14,19 @@ import { OTPStatus } from './strategies/otp/otp.constants';
 describe('twoFactorAuthenticationMethodsValidator', () => {
   const createMockMethod = (
     status: OTPStatus = OTPStatus.VERIFIED,
-  ): TwoFactorAuthenticationMethodEntity =>
-    ({
-      id: 'method-123',
-      status,
-      strategy: 'TOTP',
-      userWorkspaceId: 'uw-123',
-      userWorkspace: {} as any,
-      secret: 'secret',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: new Date(),
-    }) as unknown as TwoFactorAuthenticationMethodEntity;
+  ): TwoFactorAuthenticationMethodEntity => ({
+    id: 'method-123',
+    status,
+    strategy: TwoFactorAuthenticationStrategy.TOTP,
+    workspaceId: 'workspace-123',
+    workspace: {} as any,
+    userWorkspaceId: 'uw-123',
+    userWorkspace: {} as any,
+    secret: 'secret' as EncryptedString,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: new Date(),
+  });
 
   describe('assertIsDefinedOrThrow', () => {
     it('should not throw when method is defined', () => {

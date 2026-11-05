@@ -12,8 +12,6 @@ const createClient = (): MockClient => ({
   search: jest.fn(),
 });
 
-const asImapFlow = (client: MockClient) => client as unknown as ImapFlow;
-
 const createMailbox = (
   overrides: Partial<NonNullable<ImapFlow['mailbox']>> = {},
 ) =>
@@ -29,7 +27,7 @@ describe('resolveMailboxState', () => {
     const client = createClient();
 
     const state = await resolveMailboxState(
-      asImapFlow(client),
+      client,
       'INBOX',
       createMailbox({ uidNext: 51 }),
     );
@@ -50,7 +48,7 @@ describe('resolveMailboxState', () => {
     client.status.mockResolvedValue({ uidNext: 71 });
 
     const state = await resolveMailboxState(
-      asImapFlow(client),
+      client,
       'INBOX',
       createMailbox({ uidNext: undefined }),
     );
@@ -68,7 +66,7 @@ describe('resolveMailboxState', () => {
     client.search.mockResolvedValue([3, 41, 17]);
 
     const state = await resolveMailboxState(
-      asImapFlow(client),
+      client,
       'INBOX',
       createMailbox({ uidNext: undefined }),
     );
@@ -87,7 +85,7 @@ describe('resolveMailboxState', () => {
     );
 
     const state = await resolveMailboxState(
-      asImapFlow(client),
+      client,
       'INBOX',
       createMailbox({ uidNext: undefined }),
     );
@@ -103,7 +101,7 @@ describe('resolveMailboxState', () => {
     client.search.mockResolvedValue([]);
 
     const state = await resolveMailboxState(
-      asImapFlow(client),
+      client,
       'INBOX',
       createMailbox({ uidNext: undefined }),
     );
@@ -115,12 +113,8 @@ describe('resolveMailboxState', () => {
   it('throws when the mailbox is not selected', async () => {
     const client = createClient();
 
-    await expect(
-      resolveMailboxState(
-        asImapFlow(client),
-        'INBOX',
-        true as unknown as NonNullable<ImapFlow['mailbox']>,
-      ),
-    ).rejects.toThrow('Invalid mailbox state');
+    await expect(resolveMailboxState(client, 'INBOX', false)).rejects.toThrow(
+      'Invalid mailbox state',
+    );
   });
 });

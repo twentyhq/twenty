@@ -53,6 +53,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatFieldMetadataMaps,
       commonQueryParser,
       authContext,
+      permissionsPrincipals,
     } = queryRunnerContext;
 
     const readRepository = this.getReadRepository(queryRunnerContext);
@@ -77,8 +78,10 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         flatObjectMetadata,
         flatFieldMetadataMaps,
         restrictedFields:
-          readRepository.objectRecordsPermissions?.[flatObjectMetadata.id]
-            ?.restrictedFields ?? {},
+          await this.recordPermissionsService.findRestrictedFields({
+            principals: permissionsPrincipals,
+            objectMetadataId: flatObjectMetadata.id,
+          }),
       });
 
       const fetchedRecords = (await existingRecordsQueryBuilder

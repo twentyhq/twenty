@@ -30,7 +30,10 @@ export type {
 } from './CallRecordingTranscript';
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
-export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type {
+  CommandMenuCurrentView,
+  CommandMenuContextApi,
+} from './CommandMenuContextApi';
 export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
 export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
@@ -200,9 +203,9 @@ export type {
 } from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
+export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
+export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';
-export type { ObjectsPermissions } from './ObjectsPermissions';
-export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
@@ -324,6 +327,7 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
+export type { RowLevelRecordsPermissions } from './RowLevelRecordsPermissions';
 export type { SerializedRelation } from './SerializedRelation';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation';
 export { ServerFileFolder } from './ServerFileFolder';

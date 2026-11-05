@@ -266,10 +266,7 @@ export class LogicFunctionExecutorService {
     flatApplication,
     spenders,
     shouldEnforceUsageLimits = true,
-  }: {
-    workspaceId: string;
-    flatApplication: FlatApplication;
-    spenders: UsageSpenders;
+  }: Pick<ExecutionArgs, 'workspaceId' | 'flatApplication' | 'spenders'> & {
     shouldEnforceUsageLimits?: boolean;
   }): Promise<void> {
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
