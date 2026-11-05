@@ -13,9 +13,9 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.56.0', 1793893704074)
+@RegisteredWorkspaceCommand('2.57.0', 1793893704074)
 @Command({
-  name: 'upgrade:2-56:enable-message-attachment',
+  name: 'upgrade:2-57:enable-message-attachment',
   description: doNotTranslate(
     'Enable message attachments after the message attachment target upgrade',
   ),
@@ -46,7 +46,9 @@ export class EnableMessageAttachmentCommand extends ProvisionedWorkspaceCommandR
       STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier,
       STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
     ].every((universalIdentifier) =>
-      isDefined(flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier]),
+      isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
+      ),
     );
 
     if (!isMessageAttachmentTargetCreated) {

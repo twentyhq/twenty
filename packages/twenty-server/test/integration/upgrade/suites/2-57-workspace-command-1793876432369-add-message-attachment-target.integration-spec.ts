@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793876432369-add-message-attachment-target.command';
-import { type EnableMessageAttachmentCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793893704074-enable-message-attachment.command';
+import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
+import { type EnableMessageAttachmentCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793893704074-enable-message-attachment.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -32,7 +32,7 @@ const MESSAGE_ATTACHMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
 const MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.attachment.indexes.messageIdIndex.universalIdentifier;
 
-describe('2-56 workspace command - add message attachment target (integration)', () => {
+describe('2-57 workspace command - add message attachment target (integration)', () => {
   let command: AddMessageAttachmentTargetCommand;
   let enableCommand: EnableMessageAttachmentCommand;
   let featureFlagService: FeatureFlagService;
@@ -160,9 +160,8 @@ describe('2-56 workspace command - add message attachment target (integration)',
     enableCommand = getAppProviderByClassName<EnableMessageAttachmentCommand>(
       'EnableMessageAttachmentCommand',
     );
-    featureFlagService = getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    );
+    featureFlagService =
+      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );

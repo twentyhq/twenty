@@ -23,9 +23,9 @@ const MESSAGE_ATTACHMENT_INDEX_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.attachment.indexes.messageIdIndex.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.56.0', 1793876432369)
+@RegisteredWorkspaceCommand('2.57.0', 1793876432369)
 @Command({
-  name: 'upgrade:2-56:add-message-attachment-target',
+  name: 'upgrade:2-57:add-message-attachment-target',
   description:
     'Add the message attachment target relation in existing workspaces',
 })
