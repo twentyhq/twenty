@@ -1201,7 +1201,7 @@ msgstr "이 작업공간에서 이미 내보내기가 실행 중입니다. 완�
 #. js-lingui-id: M71yE1
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
-msgstr ""
+msgstr "외부 서비스의 응답 시간이 너무 오래 걸렸습니다."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts

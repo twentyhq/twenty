@@ -29856,7 +29856,7 @@ msgstr "更新"
 #: src/modules/object-record/record-form/components/RecordUpdateFormProvider.tsx
 #: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 msgid "Update {0}"
-msgstr ""
+msgstr "更新 {0}"
 
 #. js-lingui-id: ymv+je
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx

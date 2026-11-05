@@ -1201,7 +1201,7 @@ msgstr "Ya se está ejecutando una exportación en este espacio de trabajo. Espe
 #. js-lingui-id: M71yE1
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
-msgstr ""
+msgstr "Un servicio externo tardó demasiado en responder."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
