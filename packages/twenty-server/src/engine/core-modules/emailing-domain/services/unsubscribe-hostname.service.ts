@@ -84,13 +84,13 @@ export class UnsubscribeHostnameService {
 
     switch (validationState) {
       case 'active':
-        return this.saveExistingHostnameStatus({
+        return this.registerOrUpdateStatus({
           emailingDomain,
           hostname,
           unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
         });
       case 'pending':
-        return this.saveExistingHostnameStatus({
+        return this.registerOrUpdateStatus({
           emailingDomain,
           hostname,
           unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
@@ -115,14 +115,14 @@ export class UnsubscribeHostnameService {
         if (await this.isRestartAllowed({ hostname, isUserTriggered })) {
           await this.dnsManagerService.refreshHostname(hostname);
 
-          return this.saveExistingHostnameStatus({
+          return this.registerOrUpdateStatus({
             emailingDomain,
             hostname,
             unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
           });
         }
 
-        return this.saveExistingHostnameStatus({
+        return this.registerOrUpdateStatus({
           emailingDomain,
           hostname,
           unsubscribeHostnameStatus: UnsubscribeHostnameStatus.FAILED,
@@ -130,7 +130,7 @@ export class UnsubscribeHostnameService {
     }
   }
 
-  private async saveExistingHostnameStatus({
+  private async registerOrUpdateStatus({
     emailingDomain,
     hostname,
     unsubscribeHostnameStatus,

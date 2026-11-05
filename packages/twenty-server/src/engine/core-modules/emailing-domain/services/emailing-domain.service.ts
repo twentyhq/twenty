@@ -350,7 +350,7 @@ export class EmailingDomainService {
   }
 
   private async verifyAndRestartGivenUpChecks(
-    emailingDomain: EmailingDomainEntity,
+    emailingDomain: Pick<EmailingDomainEntity, 'domain' | 'workspaceId'>,
     { isUserTriggered }: { isUserTriggered: boolean },
   ): Promise<EmailingDomainVerificationResult> {
     const emailingDomainDriver =
