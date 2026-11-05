@@ -11,7 +11,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -24,7 +24,7 @@ export class UserRoleService {
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   public async assignRoleToWorkspaceMember({
@@ -210,7 +210,7 @@ export class UserRoleService {
     }
 
     const rolesByUserWorkspaces =
-      await this.permissionsService.findRolesByUserWorkspaceIds({
+      await this.rolePermissionsService.findRolesByUserWorkspaceIds({
         userWorkspaceIds,
         workspaceId,
       });
@@ -253,7 +253,7 @@ export class UserRoleService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const roleOfUserWorkspace = await this.permissionsService
+    const roleOfUserWorkspace = await this.rolePermissionsService
       .findRolesByUserWorkspaceIds({
         userWorkspaceIds: [userWorkspaceId],
         workspaceId,
@@ -291,7 +291,7 @@ export class UserRoleService {
     workspaceId: string;
   }) {
     const workspaceMembersWithAdminRole =
-      await this.permissionsService.findWorkspaceMembersWithRole({
+      await this.rolePermissionsService.findWorkspaceMembersWithRole({
         roleId: adminRoleId,
         workspaceId,
       });

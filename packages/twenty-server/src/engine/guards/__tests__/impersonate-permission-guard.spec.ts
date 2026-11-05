@@ -2,18 +2,18 @@ import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 describe('ImpersonateGuard', () => {
   let guard: ImpersonatePermissionGuard;
-  let mockPermissionsService: jest.Mocked<PermissionsService>;
+  let mockSettingPermissionsService: jest.Mocked<SettingPermissionsService>;
 
   beforeEach(() => {
-    mockPermissionsService = {
+    mockSettingPermissionsService = {
       userHasWorkspaceSettingPermission: jest.fn(),
     } as any;
 
-    guard = new ImpersonatePermissionGuard(mockPermissionsService);
+    guard = new ImpersonatePermissionGuard(mockSettingPermissionsService);
   });
 
   it('should return true if user can impersonate', async () => {
@@ -41,7 +41,7 @@ describe('ImpersonateGuard', () => {
 
     expect(result).toBe(true);
     expect(
-      mockPermissionsService.userHasWorkspaceSettingPermission,
+      mockSettingPermissionsService.userHasWorkspaceSettingPermission,
     ).not.toHaveBeenCalled();
   });
 
@@ -60,7 +60,7 @@ describe('ImpersonateGuard', () => {
       })),
     };
 
-    mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
       true,
     );
 
@@ -74,7 +74,7 @@ describe('ImpersonateGuard', () => {
 
     expect(result).toBe(true);
     expect(
-      mockPermissionsService.userHasWorkspaceSettingPermission,
+      mockSettingPermissionsService.userHasWorkspaceSettingPermission,
     ).toHaveBeenCalledWith({
       userWorkspaceId: 'user-workspace-id',
       setting: 'IMPERSONATE',
@@ -97,7 +97,7 @@ describe('ImpersonateGuard', () => {
       })),
     };
 
-    mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
       false,
     );
 

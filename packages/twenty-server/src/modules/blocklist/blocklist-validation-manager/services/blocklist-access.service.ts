@@ -9,14 +9,16 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type BlocklistItem } from 'src/modules/blocklist/types/blocklist-item.type';
 import { type BlocklistMutationContext } from 'src/modules/blocklist/types/blocklist-mutation-context.type';
 
 @Injectable()
 export class BlocklistAccessService {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async assertCanCreateBlocklistEntryOrThrow({
     item,
@@ -63,7 +65,7 @@ export class BlocklistAccessService {
   private async hasWorkspaceBlocklistPermission(
     context: BlocklistMutationContext,
   ): Promise<boolean> {
-    return this.permissionsService.userHasWorkspaceSettingPermission({
+    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
       userWorkspaceId: context.userWorkspaceId,
       setting: PermissionFlagType.WORKSPACE,
       workspaceId: context.workspaceId,
