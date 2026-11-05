@@ -2,29 +2,13 @@ import { t } from '@lingui/core/macro';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { type VerificationRecordGroupKey } from '@/settings/emailing-domains/types/VerificationRecordGroupKey';
-import {
-  type EmailingDomain,
-  EmailingDomainStatus,
-  UnsubscribeHostnameStatus,
-} from '~/generated-metadata/graphql';
+import { type EmailingDomain } from '~/generated-metadata/graphql';
 import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
+import { getUnsubscribeHostnameDisplayStatus } from '@/settings/emailing-domains/utils/getUnsubscribeHostnameDisplayStatus';
 
 type VerificationRecordGroupStatusDisplay = {
   label: string;
   color: ThemeColor;
-};
-
-const getUnsubscribeHostnameDisplayStatus = (
-  unsubscribeHostnameStatus: EmailingDomain['unsubscribeHostnameStatus'],
-): EmailingDomainStatus => {
-  switch (unsubscribeHostnameStatus) {
-    case UnsubscribeHostnameStatus.ACTIVE:
-      return EmailingDomainStatus.VERIFIED;
-    case UnsubscribeHostnameStatus.FAILED:
-      return EmailingDomainStatus.FAILED;
-    default:
-      return EmailingDomainStatus.PENDING;
-  }
 };
 
 export const getVerificationRecordGroupStatusDisplay = ({

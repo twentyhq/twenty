@@ -68,7 +68,9 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     };
   }
 
-  async restartVerification(input: EmailingDomainResourceInput): Promise<void> {
+  async restartVerification(
+    input: Pick<EmailingDomainResourceInput, 'domain'>,
+  ): Promise<void> {
     const domain = await this.findDomainByName(input.domain);
 
     if (!isDefined(domain)) {

@@ -7,7 +7,7 @@ export const resolveDnsRecordValues = async ({
   record,
 }: {
   resolver: Resolver;
-  record: ExpectedDnsRecord;
+  record: Pick<ExpectedDnsRecord, 'type' | 'key'>;
 }): Promise<string[]> => {
   switch (record.type) {
     case 'CNAME':
