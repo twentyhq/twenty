@@ -14,10 +14,8 @@ import { JOB_MEMORY_RESIZE_SCRIPT } from 'src/engine/core-modules/message-queue/
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
-import {
-  computeJobMemoryAvailableBytes,
-  computeJobMemoryCapacityBytes,
-} from 'src/engine/core-modules/message-queue/utils/compute-job-memory-limit.util';
+import { computeJobMemoryAvailableBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-available-bytes.util';
+import { computeJobMemoryCapacityBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-capacity-bytes.util';
 import {
   parseRedisMemoryInfo,
   type RedisMemoryInfo,

@@ -5,7 +5,13 @@ export type RedisMemoryInfo = {
   maxMemoryBytes: number;
 };
 
-const readInfoField = (info: string, field: string): number | undefined => {
+const readInfoField = ({
+  info,
+  field,
+}: {
+  info: string;
+  field: string;
+}): number | undefined => {
   const match = info.match(new RegExp(`^${field}:(\\d+)\\s*$`, 'm'));
 
   return isDefined(match) ? Number(match[1]) : undefined;
@@ -14,8 +20,8 @@ const readInfoField = (info: string, field: string): number | undefined => {
 export const parseRedisMemoryInfo = (
   info: string,
 ): RedisMemoryInfo | undefined => {
-  const usedMemoryBytes = readInfoField(info, 'used_memory');
-  const maxMemoryBytes = readInfoField(info, 'maxmemory');
+  const usedMemoryBytes = readInfoField({ info, field: 'used_memory' });
+  const maxMemoryBytes = readInfoField({ info, field: 'maxmemory' });
 
   if (!isDefined(usedMemoryBytes) || !isDefined(maxMemoryBytes)) {
     return undefined;

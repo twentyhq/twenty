@@ -712,7 +712,7 @@ export class BullMQDriver
         options:
           isCharged &&
           chargeableJobs.includes(sizedJob) &&
-          memoryGroupKeys.length > 0
+          isNonEmptyArray(memoryGroupKeys)
             ? { ...options, memoryGroupKeys, memorySizeBytes: sizeBytes }
             : options,
       };
@@ -820,8 +820,11 @@ export class BullMQDriver
       if (isDefined(await this.queueMap[queueName].getJob(jobId))) {
         return;
       }
-    } catch {
-      // Unknown outcome: keep the charge, it expires with the charge TTL
+    } catch (error) {
+      this.logger.warn(
+        `Kept the job memory charge of job ${jobId} on queue ${queueName}: its enqueue outcome is unknown (${error instanceof Error ? error.message : String(error)})`,
+      );
+
       return;
     }
 

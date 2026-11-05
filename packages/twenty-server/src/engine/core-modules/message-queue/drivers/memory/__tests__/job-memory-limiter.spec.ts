@@ -70,8 +70,13 @@ const createLimiter = async ({
   return { redis, limiter, metricsService };
 };
 
-const readUsedBytes = async (redis: Redis, groupKey: string) =>
-  Number((await redis.get(usedKeyOf(groupKey))) ?? 0);
+const readUsedBytes = async ({
+  redis,
+  groupKey,
+}: {
+  redis: Redis;
+  groupKey: string;
+}) => Number((await redis.get(usedKeyOf(groupKey))) ?? 0);
 
 describe('JobMemoryLimiter', () => {
   it('charges every group key of a job and returns the smallest headroom', async () => {
@@ -89,8 +94,8 @@ describe('JobMemoryLimiter', () => {
     });
 
     expect(admission).toEqual({ isCharged: true, availableBytes: 700 });
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(300);
-    expect(await readUsedBytes(redis, APPLICATION)).toBe(300);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+    expect(await readUsedBytes({ redis, groupKey: APPLICATION })).toBe(300);
     expect(
       Number(await redis.hget(jobsKeyOf(WORKSPACE_1), `${QUEUE}:job-1`)),
     ).toBe(300);
@@ -115,7 +120,7 @@ describe('JobMemoryLimiter', () => {
     await limiter.admit({ queueName: QUEUE, jobs: [job] });
     await limiter.admit({ queueName: QUEUE, jobs: [job, job] });
 
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(300);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
   });
 
   it('counts a refusal but still charges in observe', async () => {
@@ -127,7 +132,7 @@ describe('JobMemoryLimiter', () => {
     });
 
     expect(admission).toEqual({ isCharged: true, availableBytes: 0 });
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(1_500);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(1_500);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
       attributes: { queue: QUEUE, reason: 'share', mode: 'observe' },
@@ -169,8 +174,8 @@ describe('JobMemoryLimiter', () => {
     await limiter.release({ queueName: QUEUE, jobId: 'job-1', groupKeys });
     await limiter.release({ queueName: QUEUE, jobId: 'job-1', groupKeys });
 
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(200);
-    expect(await readUsedBytes(redis, APPLICATION)).toBe(200);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(200);
+    expect(await readUsedBytes({ redis, groupKey: APPLICATION })).toBe(200);
 
     await limiter.release({ queueName: QUEUE, jobId: 'job-2', groupKeys });
 
@@ -204,7 +209,7 @@ describe('JobMemoryLimiter', () => {
       sizeBytes: 800,
     });
 
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(800);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(800);
 
     await limiter.resize({
       queueName: QUEUE,
@@ -213,7 +218,7 @@ describe('JobMemoryLimiter', () => {
       sizeBytes: 100,
     });
 
-    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(100);
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(100);
 
     await limiter.release({ queueName: QUEUE, jobId: 'job-1', groupKeys });
 
