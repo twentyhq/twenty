@@ -82,10 +82,11 @@ export class WorkspaceQueryExecutorService
       : this.primaryPool;
 
     if (!isDefined(pool)) {
-      throw new WorkspaceQueryExecutorException(
-        'WorkspaceQueryExecutorService has not been initialized. Make sure the module has been initialized.',
-        WorkspaceQueryExecutorExceptionCode.UNSUPPORTED_OPERATION,
-      );
+      throw new WorkspaceQueryExecutorException({
+        message:
+          'WorkspaceQueryExecutorService has not been initialized. Make sure the module has been initialized.',
+        code: WorkspaceQueryExecutorExceptionCode.UNSUPPORTED_OPERATION,
+      });
     }
 
     return pool;

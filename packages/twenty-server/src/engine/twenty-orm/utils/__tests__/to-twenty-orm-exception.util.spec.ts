@@ -12,7 +12,10 @@ describe('toTwentyOrmException', () => {
   it.each(Object.values(WorkspaceQueryExecutorExceptionCode))(
     'keeps the code, message and user friendly message of %s',
     (code) => {
-      const error = new WorkspaceQueryExecutorException('message', code);
+      const error = new WorkspaceQueryExecutorException({
+        message: 'message',
+        code,
+      });
 
       const result = toTwentyOrmException(error) as TwentyOrmException;
 
@@ -26,10 +29,10 @@ describe('toTwentyOrmException', () => {
   it('keeps the cause', () => {
     const cause = new Error('pg error');
     const error = Object.assign(
-      new WorkspaceQueryExecutorException(
-        'message',
-        WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
-      ),
+      new WorkspaceQueryExecutorException({
+        message: 'message',
+        code: WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
+      }),
       { cause },
     );
 

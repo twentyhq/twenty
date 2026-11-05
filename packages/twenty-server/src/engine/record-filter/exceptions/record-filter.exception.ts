@@ -8,11 +8,15 @@ export enum RecordFilterExceptionCode {
 }
 
 export class RecordFilterException extends CustomException<RecordFilterExceptionCode> {
-  constructor(
-    message: string,
-    code: RecordFilterExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
-  ) {
+  constructor({
+    message,
+    code,
+    userFriendlyMessage,
+  }: {
+    message: string;
+    code: RecordFilterExceptionCode;
+    userFriendlyMessage: MessageDescriptor;
+  }) {
     super(message, code, {
       userFriendlyMessage,
     });

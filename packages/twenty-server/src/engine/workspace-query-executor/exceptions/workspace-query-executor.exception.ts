@@ -43,11 +43,15 @@ const getWorkspaceQueryExecutorExceptionUserFriendlyMessage = (
 };
 
 export class WorkspaceQueryExecutorException extends CustomException<WorkspaceQueryExecutorExceptionCode> {
-  constructor(
-    message: string,
-    code: WorkspaceQueryExecutorExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
-  ) {
+  constructor({
+    message,
+    code,
+    userFriendlyMessage,
+  }: {
+    message: string;
+    code: WorkspaceQueryExecutorExceptionCode;
+    userFriendlyMessage?: MessageDescriptor;
+  }) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??

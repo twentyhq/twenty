@@ -20,10 +20,10 @@ export const assertArrayOperatorValueIsNonEmptyArray = ({
     ARRAY_OPERATORS.includes(operator) &&
     (!Array.isArray(value) || value.length === 0)
   ) {
-    throw new RecordFilterException(
-      `Invalid filter value for field ${key}. Expected non-empty array`,
-      RecordFilterExceptionCode.INVALID_QUERY_INPUT,
-      { userFriendlyMessage: msg`Invalid filter value` },
-    );
+    throw new RecordFilterException({
+      message: `Invalid filter value for field ${key}. Expected non-empty array`,
+      code: RecordFilterExceptionCode.INVALID_QUERY_INPUT,
+      userFriendlyMessage: msg`Invalid filter value`,
+    });
   }
 };

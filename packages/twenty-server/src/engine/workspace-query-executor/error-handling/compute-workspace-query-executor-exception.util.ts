@@ -64,11 +64,11 @@ export const computeWorkspaceQueryExecutorException = (
 
   if (error.message.includes(QUERY_READ_TIMEOUT_MESSAGE)) {
     return withCause(
-      new WorkspaceQueryExecutorException(
-        QUERY_READ_TIMEOUT_MESSAGE,
-        WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT,
-        { userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: QUERY_READ_TIMEOUT_MESSAGE,
+        code: WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT,
+        userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -82,11 +82,11 @@ export const computeWorkspaceQueryExecutorException = (
       TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode))
   ) {
     return withCause(
-      new WorkspaceQueryExecutorException(
-        error.message,
-        WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
-        { userFriendlyMessage: TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
+        userFriendlyMessage: TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -97,22 +97,22 @@ export const computeWorkspaceQueryExecutorException = (
 
   if (errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
     return withCause(
-      new WorkspaceQueryExecutorException(
-        computeDuplicateEntryMessage(error),
-        WorkspaceQueryExecutorExceptionCode.DUPLICATE_ENTRY_DETECTED,
-        { userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: computeDuplicateEntryMessage(error),
+        code: WorkspaceQueryExecutorExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
 
   if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
     return withCause(
-      new WorkspaceQueryExecutorException(
-        error.message,
-        WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: INVALID_INPUT_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
+        userFriendlyMessage: INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -122,11 +122,11 @@ export const computeWorkspaceQueryExecutorException = (
 
   if (isDefined(constraintViolationMessage)) {
     return withCause(
-      new WorkspaceQueryExecutorException(
-        error.message,
-        WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: constraintViolationMessage },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
+        userFriendlyMessage: constraintViolationMessage,
+      }),
       error,
     );
   }

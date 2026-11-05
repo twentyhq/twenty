@@ -156,10 +156,10 @@ describe('computeWorkspaceQueryExecutorException', () => {
   });
 
   it('should leave an exception the query builder already computed untouched', () => {
-    const error = new WorkspaceQueryExecutorException(
-      'Join path "person.tasks" is to-many',
-      WorkspaceQueryExecutorExceptionCode.UNSUPPORTED_OPERATION,
-    );
+    const error = new WorkspaceQueryExecutorException({
+      message: 'Join path "person.tasks" is to-many',
+      code: WorkspaceQueryExecutorExceptionCode.UNSUPPORTED_OPERATION,
+    });
 
     expect(computeWorkspaceQueryExecutorException(error)).toBe(error);
   });

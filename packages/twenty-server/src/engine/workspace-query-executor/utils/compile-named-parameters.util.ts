@@ -84,20 +84,20 @@ export const compileNamedParameters = (
     const parameterName = sql.slice(nameStartIndex, nameEndIndex);
 
     if (!(parameterName in parameters)) {
-      throw new WorkspaceQueryExecutorException(
-        `Parameter ":${parameterName}" is referenced by the query but was never provided`,
-        WorkspaceQueryExecutorExceptionCode.MISSING_PARAMETER,
-      );
+      throw new WorkspaceQueryExecutorException({
+        message: `Parameter ":${parameterName}" is referenced by the query but was never provided`,
+        code: WorkspaceQueryExecutorExceptionCode.MISSING_PARAMETER,
+      });
     }
 
     const parameterValue = parameters[parameterName];
 
     if (isSpread) {
       if (!Array.isArray(parameterValue)) {
-        throw new WorkspaceQueryExecutorException(
-          `Parameter ":...${parameterName}" expects an array`,
-          WorkspaceQueryExecutorExceptionCode.INVALID_PARAMETER,
-        );
+        throw new WorkspaceQueryExecutorException({
+          message: `Parameter ":...${parameterName}" expects an array`,
+          code: WorkspaceQueryExecutorExceptionCode.INVALID_PARAMETER,
+        });
       }
 
       if (parameterValue.length === 0) {
@@ -140,8 +140,8 @@ const findClosingQuoteIndex = (
     return index;
   }
 
-  throw new WorkspaceQueryExecutorException(
-    `Unterminated ${quote === "'" ? 'string literal' : 'quoted identifier'} in SQL`,
-    WorkspaceQueryExecutorExceptionCode.MALFORMED_SQL,
-  );
+  throw new WorkspaceQueryExecutorException({
+    message: `Unterminated ${quote === "'" ? 'string literal' : 'quoted identifier'} in SQL`,
+    code: WorkspaceQueryExecutorExceptionCode.MALFORMED_SQL,
+  });
 };

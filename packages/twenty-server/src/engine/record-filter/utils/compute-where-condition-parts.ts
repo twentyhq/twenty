@@ -232,10 +232,10 @@ export const computeWhereConditionParts = ({
         params: { [`${parameterKey}${paramSuffix}`]: value },
       };
     default:
-      throw new RecordFilterException(
-        `Operator "${operator}" is not supported`,
-        RecordFilterExceptionCode.UNSUPPORTED_OPERATOR,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
+      throw new RecordFilterException({
+        message: `Operator "${operator}" is not supported`,
+        code: RecordFilterExceptionCode.UNSUPPORTED_OPERATOR,
+        userFriendlyMessage: STANDARD_ERROR_MESSAGE,
+      });
   }
 };
