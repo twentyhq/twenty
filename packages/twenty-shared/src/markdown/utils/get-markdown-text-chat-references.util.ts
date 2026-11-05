@@ -27,10 +27,17 @@ const PLACEHOLDER_DELIMITER_PATTERN = new RegExp(
   'g',
 );
 
-// Code blocks, HTML and links need one of these; a code span needs a backtick on each side of the placeholder.
-const NON_TEXT_BLOCK_SYNTAXES = ['```', '~~~', '<', '](', ']:', '\t', '    '];
+const LINK_OR_HTML_SYNTAXES = ['<', ']('];
 
-const LINK_OR_HTML_SYNTAX_PATTERN = /<|\]\(/;
+// Code blocks, HTML and links need one of these; a code span needs a backtick on each side of the placeholder.
+const NON_TEXT_BLOCK_SYNTAXES = [
+  '```',
+  '~~~',
+  ']:',
+  '\t',
+  '    ',
+  ...LINK_OR_HTML_SYNTAXES,
+];
 
 const BACKTICK_RUN_OR_LINE_BREAK_PATTERN = /`+|\n/g;
 
@@ -144,7 +151,7 @@ const getTextPlaceholderIndexes = (
       .filter(({ src }) => src.includes(PLACEHOLDER_START))
       .flatMap(({ src }) =>
         hasLinkDefinitions ||
-        LINK_OR_HTML_SYNTAX_PATTERN.test(src) ||
+        LINK_OR_HTML_SYNTAXES.some((syntax) => src.includes(syntax)) ||
         hasPlaceholderBetweenBackticks(src)
           ? getInlineTextRaws(lexer.inlineTokens(src))
           : [src],
