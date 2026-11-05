@@ -17,7 +17,7 @@ import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/buil
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
-import { withAgentsAdmitted } from 'src/engine/permissions/access-policy/utils/with-agents-admitted.util';
+import { withAgentsAdmitted } from 'src/engine/guards/access-policy/utils/with-agents-admitted.util';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 // A workspace being created has no roles to check settings permissions against yet

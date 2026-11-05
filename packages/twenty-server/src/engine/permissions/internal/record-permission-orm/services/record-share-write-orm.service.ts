@@ -20,6 +20,7 @@ import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/uti
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import {
   compileNamedParameters,
@@ -167,46 +168,50 @@ export class RecordShareWriteOrmService {
     const isDepartingMemberShare = (alias: string) =>
       `${alias}."objectMetadataId" = ANY(:objectMetadataIds) AND ${alias}."principalType" = :principalType AND ${alias}."principalId" = :fromWorkspaceMemberId AND ${alias}."rowCause" = ANY(:rowCauses) AND ${alias}."deletedAt" IS NULL`;
 
-    await this.workspaceQueryExecutorService.runInTransaction(
-      async (executor) => {
-        if (isDefined(toWorkspaceMemberId)) {
+    try {
+      await this.workspaceQueryExecutorService.runInTransaction(
+        async (executor) => {
+          if (isDefined(toWorkspaceMemberId)) {
+            await executor.execute(
+              compileNamedParameters(
+                `INSERT INTO ${recordShareTable} ("objectMetadataId", "recordId", "principalType", "principalId", "accessLevel", "rowCause", "sourceId")
+                 SELECT departing."objectMetadataId", departing."recordId", departing."principalType", :toWorkspaceMemberId, departing."accessLevel", departing."rowCause", departing."sourceId"
+                 FROM ${recordShareTable} AS departing
+                 WHERE ${isDepartingMemberShare('departing')} AND departing."accessLevel" = :fullAccessLevel
+                 ON CONFLICT DO NOTHING`,
+                parameters,
+              ),
+            );
+
+            // The insert skips rows the successor already holds, so raise those
+            await executor.execute(
+              compileNamedParameters(
+                `UPDATE ${recordShareTable} AS successor
+                 SET "accessLevel" = :fullAccessLevel, "updatedAt" = NOW()
+                 FROM ${recordShareTable} AS departing
+                 WHERE ${isDepartingMemberShare('departing')} AND departing."accessLevel" = :fullAccessLevel
+                   AND successor."objectMetadataId" = departing."objectMetadataId"
+                   AND successor."recordId" = departing."recordId"
+                   AND successor."rowCause" = departing."rowCause"
+                   AND successor."principalType" = :principalType
+                   AND successor."principalId" = :toWorkspaceMemberId
+                   AND successor."accessLevel" <> :fullAccessLevel
+                   AND successor."deletedAt" IS NULL`,
+                parameters,
+              ),
+            );
+          }
+
           await executor.execute(
             compileNamedParameters(
-              `INSERT INTO ${recordShareTable} ("objectMetadataId", "recordId", "principalType", "principalId", "accessLevel", "rowCause", "sourceId")
-               SELECT departing."objectMetadataId", departing."recordId", departing."principalType", :toWorkspaceMemberId, departing."accessLevel", departing."rowCause", departing."sourceId"
-               FROM ${recordShareTable} AS departing
-               WHERE ${isDepartingMemberShare('departing')} AND departing."accessLevel" = :fullAccessLevel
-               ON CONFLICT DO NOTHING`,
+              `DELETE FROM ${recordShareTable} AS departing WHERE ${isDepartingMemberShare('departing')}`,
               parameters,
             ),
           );
-
-          // The insert skips rows the successor already holds, so raise those
-          await executor.execute(
-            compileNamedParameters(
-              `UPDATE ${recordShareTable} AS successor
-               SET "accessLevel" = :fullAccessLevel, "updatedAt" = NOW()
-               FROM ${recordShareTable} AS departing
-               WHERE ${isDepartingMemberShare('departing')} AND departing."accessLevel" = :fullAccessLevel
-                 AND successor."objectMetadataId" = departing."objectMetadataId"
-                 AND successor."recordId" = departing."recordId"
-                 AND successor."rowCause" = departing."rowCause"
-                 AND successor."principalType" = :principalType
-                 AND successor."principalId" = :toWorkspaceMemberId
-                 AND successor."accessLevel" <> :fullAccessLevel
-                 AND successor."deletedAt" IS NULL`,
-              parameters,
-            ),
-          );
-        }
-
-        await executor.execute(
-          compileNamedParameters(
-            `DELETE FROM ${recordShareTable} AS departing WHERE ${isDepartingMemberShare('departing')}`,
-            parameters,
-          ),
-        );
-      },
-    );
+        },
+      );
+    } catch (error) {
+      throw toPermissionsException(error);
+    }
   }
 }

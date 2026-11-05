@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constant';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/transient-postgres-error-codes.constant';
 import {
   CONNECTION_TERMINATED_MESSAGE,
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
@@ -11,12 +11,12 @@ import {
   QUERY_READ_TIMEOUT_MESSAGE,
   QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+} from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
+import { PostgresException } from 'src/engine/workspace-query-executor/exceptions/postgres-exception';
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 const KNOWN_POSTGRES_ERROR_CODES: string[] = Object.values(
@@ -51,7 +51,9 @@ const computeDuplicateEntryMessage = (error: Error): string => {
   return `${DUPLICATE_ENTRY_DETECTED_MESSAGE}: unique constraint ${qualifiedConstraintName} was violated`;
 };
 
-export const computeTwentyOrmException = (error: unknown): Error => {
+export const computeWorkspaceQueryExecutorException = (
+  error: unknown,
+): Error => {
   if (!(error instanceof Error)) {
     return new Error(String(error));
   }
@@ -62,11 +64,11 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (error.message.includes(QUERY_READ_TIMEOUT_MESSAGE)) {
     return withCause(
-      new TwentyOrmException(
-        QUERY_READ_TIMEOUT_MESSAGE,
-        TwentyOrmExceptionCode.QUERY_READ_TIMEOUT,
-        { userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: QUERY_READ_TIMEOUT_MESSAGE,
+        code: WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT,
+        userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -80,11 +82,11 @@ export const computeTwentyOrmException = (error: unknown): Error => {
       TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode))
   ) {
     return withCause(
-      new TwentyOrmException(
-        error.message,
-        TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
-        { userFriendlyMessage: TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
+        userFriendlyMessage: TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -95,22 +97,22 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
     return withCause(
-      new TwentyOrmException(
-        computeDuplicateEntryMessage(error),
-        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
-        { userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: computeDuplicateEntryMessage(error),
+        code: WorkspaceQueryExecutorExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
 
   if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
     return withCause(
-      new TwentyOrmException(
-        error.message,
-        TwentyOrmExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: INVALID_INPUT_USER_FRIENDLY_MESSAGE },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
+        userFriendlyMessage: INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+      }),
       error,
     );
   }
@@ -120,11 +122,11 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (isDefined(constraintViolationMessage)) {
     return withCause(
-      new TwentyOrmException(
-        error.message,
-        TwentyOrmExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: constraintViolationMessage },
-      ),
+      new WorkspaceQueryExecutorException({
+        message: error.message,
+        code: WorkspaceQueryExecutorExceptionCode.INVALID_INPUT,
+        userFriendlyMessage: constraintViolationMessage,
+      }),
       error,
     );
   }

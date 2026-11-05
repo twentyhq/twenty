@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
 
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),

@@ -82,7 +82,7 @@ import {
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
@@ -161,7 +161,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     sql: string,
     parameters: Record<string, unknown>,
   ): Promise<T[]> {
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement(sql, parameters);
 
     return this.options.executor.execute(compiled) as Promise<T[]>;
   }

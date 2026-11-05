@@ -19,7 +19,7 @@ import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provid
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
