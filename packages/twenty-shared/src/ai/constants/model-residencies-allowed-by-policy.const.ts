@@ -6,7 +6,3 @@ export const MODEL_RESIDENCIES_ALLOWED_BY_POLICY = {
 
 export type AiDataResidencyPolicy =
   keyof typeof MODEL_RESIDENCIES_ALLOWED_BY_POLICY;
-
-export const AI_DATA_RESIDENCY_POLICIES = Object.keys(
-  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
-) as AiDataResidencyPolicy[];

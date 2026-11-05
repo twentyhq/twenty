@@ -14,6 +14,7 @@ export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-a
 export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
 export { AI_CHAT_ASSISTANT_AVATAR_SHAPES } from './constants/ai-chat-assistant-avatar-shapes.const';
 export { AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH } from './constants/ai-chat-assistant-display-name-max-length.const';
+export { AI_DATA_RESIDENCY_POLICIES } from './constants/ai-data-residency-policies.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -40,10 +41,7 @@ export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-a
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export type { AiDataResidencyPolicy } from './constants/model-residencies-allowed-by-policy.const';
-export {
-  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
-  AI_DATA_RESIDENCY_POLICIES,
-} from './constants/model-residencies-allowed-by-policy.const';
+export { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from './constants/model-residencies-allowed-by-policy.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
