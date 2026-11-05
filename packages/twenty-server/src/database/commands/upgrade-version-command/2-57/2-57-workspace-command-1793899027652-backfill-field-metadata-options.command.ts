@@ -9,14 +9,14 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   computeFieldMetadataOptionBackfill,
   type EnumFieldToBackfill,
-} from 'src/database/commands/upgrade-version-command/2-56/utils/compute-field-metadata-option-backfill.util';
+} from 'src/database/commands/upgrade-version-command/2-57/utils/compute-field-metadata-option-backfill.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.56.0', 1793890005250)
+@RegisteredWorkspaceCommand('2.57.0', 1793899027652)
 @Command({
-  name: 'upgrade:2-56:backfill-field-metadata-options',
+  name: 'upgrade:2-57:backfill-field-metadata-options',
   description:
     'Create a fieldMetadataOption row for every option of select, multi-select and rating fields.',
 })
