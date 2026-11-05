@@ -22,11 +22,13 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
-const IN_FLIGHT_WORKFLOW_RUN_STATUSES = [
+// FAILED runs can be retried from their saved steps, which 2.56 did not inline
+const RESUMABLE_WORKFLOW_RUN_STATUSES = [
   'NOT_STARTED',
   'ENQUEUED',
   'RUNNING',
   'STOPPING',
+  'FAILED',
 ];
 
 type StepSource = {
@@ -213,7 +215,7 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
         ...versionReferences.filter(
           ({ isInlinedCodeStep }) => !isInlinedCodeStep,
         ),
-        ...(await this.findInFlightRunReferences({
+        ...(await this.findResumableRunReferences({
           dataSource,
           workspaceId,
           schemaName,
@@ -242,7 +244,7 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
       .filter(hasNoTriggerOutsideWorkflows);
   }
 
-  private async findInFlightRunReferences({
+  private async findResumableRunReferences({
     dataSource,
     workspaceId,
     schemaName,
@@ -270,7 +272,7 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
           tableName: `${schemaName}."workflowRun"`,
           stepsExpression: `state->'flow'->'steps'`,
           whereClause: 'status::text = ANY($1::text[])',
-          whereParameters: [IN_FLIGHT_WORKFLOW_RUN_STATUSES],
+          whereParameters: [RESUMABLE_WORKFLOW_RUN_STATUSES],
         },
       ],
     });
