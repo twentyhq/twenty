@@ -148,13 +148,16 @@ const getTextPlaceholderIndexes = (
 
   return new Set(
     lexer.inlineQueue
-      .filter(({ src }) => src.includes(PLACEHOLDER_START))
-      .flatMap(({ src }) =>
+      .map(({ src: inlineMarkdown }) => inlineMarkdown)
+      .filter((inlineMarkdown) => inlineMarkdown.includes(PLACEHOLDER_START))
+      .flatMap((inlineMarkdown) =>
         hasLinkDefinitions ||
-        LINK_OR_HTML_SYNTAXES.some((syntax) => src.includes(syntax)) ||
-        hasPlaceholderBetweenBackticks(src)
-          ? getInlineTextRaws(lexer.inlineTokens(src))
-          : [src],
+        LINK_OR_HTML_SYNTAXES.some((syntax) =>
+          inlineMarkdown.includes(syntax),
+        ) ||
+        hasPlaceholderBetweenBackticks(inlineMarkdown)
+          ? getInlineTextRaws(lexer.inlineTokens(inlineMarkdown))
+          : [inlineMarkdown],
       )
       .flatMap(getPlaceholderIndexes),
   );
