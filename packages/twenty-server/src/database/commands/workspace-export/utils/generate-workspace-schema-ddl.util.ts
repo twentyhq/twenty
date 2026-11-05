@@ -29,7 +29,7 @@ const buildSearchFieldMetadataDerivationInputs = ({
   fieldMetadatas,
   objectSearchFieldMetadatas,
 }: {
-  fieldMetadatas: (FieldMetadataEntity | FlatFieldMetadata)[];
+  fieldMetadatas: FieldMetadataEntity[];
   objectSearchFieldMetadatas: SearchFieldMetadataEntity[];
 }): {
   indexedFieldById: ReadonlyMap<
@@ -75,11 +75,8 @@ const buildSearchFieldMetadataDerivationInputs = ({
 export const generateWorkspaceSchemaDdl = (
   workspaceId: string,
   schemaName: string,
-  objectMetadatas: (
-    | ObjectMetadataEntity
-    | (FlatObjectMetadata & Partial<Pick<ObjectMetadataEntity, 'application'>>)
-  )[],
-  fieldsByObjectId: Map<string, (FieldMetadataEntity | FlatFieldMetadata)[]>,
+  objectMetadatas: ObjectMetadataEntity[],
+  fieldsByObjectId: Map<string, FieldMetadataEntity[]>,
   searchFieldMetadatasByObjectId: Map<string, SearchFieldMetadataEntity[]>,
 ): string[] => {
   const statements: string[] = [];
