@@ -9,7 +9,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isDefined } from 'twenty-shared/utils';
 
 const SEARCH_VECTOR_FIELD = 'searchVector';
@@ -174,7 +173,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps,
   selectedFields,
   selectableRelationFields,
-  recordsPermissions,
+  unreadableFieldMetadataIds,
 }: {
   select: string[];
   filter?:
@@ -189,7 +188,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectedFields: CommonSelectedFields;
   selectableRelationFields: CommonSelectedFields;
-  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): { effectiveSelectedFields: CommonSelectedFields; warnings: string[] } => {
   const filterFieldNames = extractFilterFieldNames(filter);
   const orderByFieldNames = extractOrderByFieldNames(orderBy);
@@ -210,7 +209,7 @@ export const buildEffectiveSelectedFields = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       selectableRelationFields,
-      recordsPermissions,
+      unreadableFieldMetadataIds,
     });
 
   const {

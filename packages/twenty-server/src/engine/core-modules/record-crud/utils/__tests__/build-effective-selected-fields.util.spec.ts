@@ -98,7 +98,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          recordsPermissions: { objects: {} },
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
@@ -122,7 +122,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          recordsPermissions: { objects: {} },
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
@@ -143,7 +143,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(effectiveSelectedFields).toHaveProperty('id');
@@ -162,7 +162,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -181,7 +181,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -202,7 +202,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(2);
@@ -221,7 +221,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
@@ -239,7 +239,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          recordsPermissions: { objects: {} },
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toHaveLength(1);
@@ -263,7 +263,7 @@ describe('buildEffectiveSelectedFields', () => {
           richText: { blocknote: true, markdown: true },
         },
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       const richTextFields =
@@ -301,7 +301,7 @@ describe('buildEffectiveSelectedFields', () => {
           richText: { blocknote: true, markdown: true },
         },
         selectableRelationFields: {},
-        recordsPermissions: { objects: {} },
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       const richTextFields =
@@ -430,6 +430,21 @@ describe('buildEffectiveSelectedFields', () => {
       },
     });
 
+    const buildUnreadableFieldMetadataIds = (
+      recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>,
+    ) =>
+      new Set(
+        [investorLeadObjectMetadata, companyObjectMetadata].flatMap(
+          (objectMetadata) =>
+            objectMetadata.fieldIds.filter(
+              (fieldId) =>
+                recordsPermissions.objects[objectMetadata.id]?.restrictedFields[
+                  fieldId
+                ]?.canRead === false,
+            ),
+        ),
+      );
+
     const buildSelectableRelationFields = (
       recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>,
     ) =>
@@ -440,8 +455,8 @@ describe('buildEffectiveSelectedFields', () => {
         }),
         flatObjectMetadataMaps: relationObjectMaps,
         flatFieldMetadataMaps: relationFieldMaps,
-        flatObjectMetadata: investorLeadObjectMetadata,
-        recordsPermissions,
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
         readableObjectMetadataIds: new Set(
           Object.entries(recordsPermissions.objects)
             .filter(([, objectRecordsPermissions]) =>
@@ -471,7 +486,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          recordsPermissions,
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -497,7 +513,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          recordsPermissions,
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -523,7 +540,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          recordsPermissions,
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -551,7 +569,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          recordsPermissions,
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
@@ -577,7 +596,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          recordsPermissions,
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
@@ -600,7 +620,8 @@ describe('buildEffectiveSelectedFields', () => {
         selectedFields: { id: true, name: true, fund: true },
         selectableRelationFields:
           buildSelectableRelationFields(recordsPermissions),
-        recordsPermissions,
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
       });
 
       expect(warnings).toHaveLength(1);

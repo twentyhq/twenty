@@ -15719,8 +15719,14 @@ export default {
             "locale": [
                 1
             ],
+            "objectPermissions": [
+                399
+            ],
             "objectRecordsPermissions": [
                 407
+            ],
+            "objectsPermissions": [
+                399
             ],
             "permissionFlags": [
                 425

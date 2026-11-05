@@ -26,6 +26,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -973,6 +974,7 @@ describe('AccessPolicyGuard', () => {
           PermissionsService,
           PermissionsPrincipalsService,
           { provide: ApiKeyRoleService, useValue: {} },
+          { provide: RecordAccessPolicyService, useValue: {} },
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,

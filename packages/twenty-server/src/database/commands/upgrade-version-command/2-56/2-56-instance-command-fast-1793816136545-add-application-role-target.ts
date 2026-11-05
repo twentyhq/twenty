@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.55.0', 1793627583457)
+@RegisteredInstanceCommand('2.56.0', 1793816136545)
 export class AddApplicationRoleTargetFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."roleTarget" ADD "targetApplicationId" uuid');
