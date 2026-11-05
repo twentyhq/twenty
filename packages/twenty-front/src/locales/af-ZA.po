@@ -20599,7 +20599,7 @@ msgid "Only you"
 msgstr "Slegs jy"
 
 #. js-lingui-id: P5aFS1
-#: src/modules/onboarding/components/import-contacts/OnboardingImportPrivacyNote.tsx
+#: src/pages/onboarding/ImportContacts.tsx
 msgid "Only you will be able to see your emails and events"
 msgstr "Slegs jy sal jou e-posse en gebeurtenisse kan sien"
 
