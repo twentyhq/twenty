@@ -77,8 +77,10 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
     case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED:
+    case PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND:
       throw error;
     case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID:
+    case PermissionsExceptionCode.RLS_VALIDATION_FAILED:
       throw new UserInputError(error.message, {
         userFriendlyMessage: error.userFriendlyMessage,
       });

@@ -31,7 +31,6 @@ export enum TwentyOrmExceptionCode {
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
-  RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
   MISSING_PARAMETER = 'MISSING_PARAMETER',
   INVALID_PARAMETER = 'INVALID_PARAMETER',
@@ -83,8 +82,6 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return msg`Too many records to update at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:
       return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
-    case TwentyOrmExceptionCode.RLS_VALIDATION_FAILED:
-      return msg`Record does not satisfy security constraints.`;
     case TwentyOrmExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
       return msg`No role found for user.`;
     case TwentyOrmExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
