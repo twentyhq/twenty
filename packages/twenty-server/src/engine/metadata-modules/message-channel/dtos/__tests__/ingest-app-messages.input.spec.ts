@@ -4,8 +4,10 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-import { IngestAppMessagesInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
+import {
+  IngestAppMessagesInput,
+  MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE,
+} from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 
 const MESSAGE_CHANNEL_ID = '55555555-5555-4555-8555-555555555555';
 
@@ -83,7 +85,7 @@ describe('IngestAppMessagesInput attachments', () => {
     expect(
       await attachmentValidationErrors(
         Array.from(
-          { length: MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES + 1 },
+          { length: MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE + 1 },
           () => ({
             fileId: '66666666-6666-4666-8666-666666666666',
             label: 'photo.png',

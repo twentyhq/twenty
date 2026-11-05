@@ -11,34 +11,37 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const UNASSOCIATED_MESSAGE_ID = '20202020-ca1e-4000-8000-000000000101';
+const UNASSOCIATED_MESSAGE_ATTACHMENT_ID =
+  '20202020-ca1e-4000-8000-000000000103';
 const UNASSOCIATED_MESSAGE_PARTICIPANT_ID =
   '20202020-ca1e-4000-8000-000000000102';
 
 const MASKED_FIELDS = {
   subject: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
   text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-  attachments: [],
+  attachments: { edges: [] },
 };
 
-const RESTRICTABLE_FIELDS = 'id subject text attachments { fileId }';
+const RESTRICTABLE_FIELDS =
+  'id subject text attachments { edges { node { id } } }';
 
 describe('message visibility restrictions (e2e)', () => {
   let attachmentFileId: string;
 
   beforeAll(async () => {
-    const [attachmentsField] = await globalThis.testDataSource.query(
+    const [attachmentFileField] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata"
          WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
       [
         SEED_APPLE_WORKSPACE_ID,
-        STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
       ],
     );
     const attachmentFile = await uploadFileWithDirectUpload({
       filename: 'photo.png',
       content: ONE_BY_ONE_TRANSPARENT_PNG,
       fileFolder: 'FilesField',
-      fieldMetadataId: attachmentsField.id,
+      fieldMetadataId: attachmentFileField.id,
     });
 
     attachmentFileId = attachmentFile.id;
@@ -52,20 +55,34 @@ describe('message visibility restrictions (e2e)', () => {
           subject: 'Visibility test subject',
           text: 'Visibility test body',
           receivedAt: new Date().toISOString(),
-          attachments: [{ fileId: attachmentFileId, label: 'photo.png' }],
         },
       }),
     );
 
     expect(messageResponse.body.errors).toBeUndefined();
 
-    const [storedMessage] = await globalThis.testDataSource.query(
-      `SELECT attachments FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."message" WHERE id = $1`,
+    const attachmentResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'attachment',
+        gqlFields: 'id',
+        data: {
+          id: UNASSOCIATED_MESSAGE_ATTACHMENT_ID,
+          name: 'photo.png',
+          file: [{ fileId: attachmentFileId, label: 'photo.png' }],
+          targetMessageId: UNASSOCIATED_MESSAGE_ID,
+        },
+      }),
+    );
+
+    expect(attachmentResponse.body.errors).toBeUndefined();
+
+    const storedAttachments = await globalThis.testDataSource.query(
+      `SELECT id FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."attachment" WHERE "targetMessageId" = $1`,
       [UNASSOCIATED_MESSAGE_ID],
     );
 
-    expect(storedMessage.attachments).toEqual([
-      expect.objectContaining({ fileId: attachmentFileId }),
+    expect(storedAttachments).toEqual([
+      { id: UNASSOCIATED_MESSAGE_ATTACHMENT_ID },
     ]);
 
     const participantResponse = await makeGraphqlApiRequest(
@@ -85,6 +102,14 @@ describe('message visibility restrictions (e2e)', () => {
   });
 
   afterAll(async () => {
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'attachment',
+        gqlFields: 'id',
+        recordId: UNASSOCIATED_MESSAGE_ATTACHMENT_ID,
+      }),
+    );
+
     await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'messageParticipant',
