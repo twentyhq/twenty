@@ -32,25 +32,21 @@ export class RecordPermissionQueryService {
   }): Promise<TRow[]> {
     const statement = compileNamedParameters(query.sql, query.parameters);
 
-    if (!isDefined(transactionScope)) {
-      const rows = await this.workspaceQueryExecutorService
-        .getPrimaryQueryExecutorOrThrow()
-        .execute(statement);
-
-      return rows as TRow[];
-    }
-
-    if (transactionScope.workspaceId !== workspaceId) {
+    if (
+      isDefined(transactionScope) &&
+      transactionScope.workspaceId !== workspaceId
+    ) {
       throw new RecordShareException(
         `Transaction scope of workspace ${transactionScope.workspaceId} cannot read record permission data of workspace ${workspaceId}`,
         RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
       );
     }
 
-    const rows = await transactionScope.executeRawQuery(
-      statement.text,
-      statement.values,
-    );
+    const rows = isDefined(transactionScope)
+      ? await transactionScope.executeRawQuery(statement.text, statement.values)
+      : await this.workspaceQueryExecutorService
+          .getPrimaryQueryExecutorOrThrow()
+          .execute(statement);
 
     return rows as TRow[];
   }
