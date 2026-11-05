@@ -58,13 +58,22 @@ const isEveryBacktickRunClosedOnItsLine = (text: string): boolean => {
   let openRunLength = 0;
 
   for (const [match] of text.matchAll(BACKTICK_RUN_OR_LINE_BREAK_REGEX)) {
-    if (match === '\n') {
-      if (openRunLength > 0) {
-        return false;
-      }
-    } else if (openRunLength === 0) {
+    const isLineBreak = match === '\n';
+
+    if (isLineBreak && openRunLength > 0) {
+      return false;
+    }
+
+    if (isLineBreak) {
+      continue;
+    }
+
+    if (openRunLength === 0) {
       openRunLength = match.length;
-    } else if (match.length === openRunLength) {
+      continue;
+    }
+
+    if (match.length === openRunLength) {
       openRunLength = 0;
     }
   }
