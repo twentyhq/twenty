@@ -169,6 +169,7 @@ describe('JobMemoryLimiter', () => {
       statusCode: 429,
       details: { requestedBytes: 500, availableBytes: 400 },
     });
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
     expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(600);
     expect(await redis.hexists(jobsKeyOf(WORKSPACE_1), `${QUEUE}:job-2`)).toBe(
       0,
