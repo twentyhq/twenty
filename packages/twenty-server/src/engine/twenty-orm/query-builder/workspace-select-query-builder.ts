@@ -573,7 +573,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildSelectStatement();
-    const compiled = compileTwentyOrmStatement(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -682,7 +682,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
     );
-    const compiled = compileTwentyOrmStatement(sql, this.parameters);
+    const compiled = compileTwentyOrmStatement({
+      sql,
+      parameters: this.parameters,
+    });
     const rows = await this.context.executor.execute(compiled);
 
     return Number(rows[0]?.count ?? 0);
@@ -1212,7 +1215,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
-    const compiled = compileTwentyOrmStatement(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return this.context.executor.execute({
       ...compiled,
