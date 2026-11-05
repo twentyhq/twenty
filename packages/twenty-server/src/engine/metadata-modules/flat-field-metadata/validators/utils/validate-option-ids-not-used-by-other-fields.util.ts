@@ -7,14 +7,18 @@ import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modul
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
 // Option ids are their rows' universal identifiers, so they must be unique across the workspace.
+// Existing rows count too: a field replaced in the same migration still owns its rows until it is deleted.
 export const validateOptionIdsNotUsedByOtherFields = ({
   universalFlatFieldMetadata,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
 }: {
   universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>;
   flatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>;
 }): FlatFieldMetadataValidationError[] => {
   const optionIds = new Set(
     (universalFlatFieldMetadata.options ?? [])
@@ -26,7 +30,20 @@ export const validateOptionIdsNotUsedByOtherFields = ({
     return [];
   }
 
-  const errors: FlatFieldMetadataValidationError[] = [];
+  const optionIdsUsedByOtherFields = new Set<string>();
+
+  for (const optionId of optionIds) {
+    const existingOption =
+      flatFieldMetadataOptionMaps.byUniversalIdentifier[optionId];
+
+    if (
+      isDefined(existingOption) &&
+      existingOption.fieldMetadataUniversalIdentifier !==
+        universalFlatFieldMetadata.universalIdentifier
+    ) {
+      optionIdsUsedByOtherFields.add(optionId);
+    }
+  }
 
   for (const otherFlatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
@@ -41,20 +58,16 @@ export const validateOptionIdsNotUsedByOtherFields = ({
     }
 
     for (const option of otherFlatFieldMetadata.options ?? []) {
-      if (!isDefined(option.id) || !optionIds.has(option.id)) {
-        continue;
+      if (isDefined(option.id) && optionIds.has(option.id)) {
+        optionIdsUsedByOtherFields.add(option.id);
       }
-
-      const optionId = option.id;
-
-      errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: t`Option id "${optionId}" is already used by another field`,
-        userFriendlyMessage: msg`Option id "${optionId}" is already used by another field`,
-        value: optionId,
-      });
     }
   }
 
-  return errors;
+  return [...optionIdsUsedByOtherFields].map((optionId) => ({
+    code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    message: t`Option id "${optionId}" is already used by another field`,
+    userFriendlyMessage: msg`Option id "${optionId}" is already used by another field`,
+    value: optionId,
+  }));
 };

@@ -15,6 +15,7 @@ const TEST_ROLE_ID = 'd1b2c3d4-0002-4000-a000-0000000000f2';
 const TEST_OBJECT_ID = 'd1b2c3d4-0003-4000-a000-0000000000f3';
 const NAME_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f1';
 const SELECT_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f2';
+const REPLACEMENT_SELECT_FIELD_ID = 'd1b2c3d4-0100-4000-a000-0000000000f3';
 
 const OPEN_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000f1';
 const CLOSED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000f2';
@@ -24,7 +25,10 @@ type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
 >;
 
-const buildManifest = (options: SelectFieldOptions) => {
+const buildManifest = (
+  options: SelectFieldOptions,
+  selectFieldUniversalIdentifier = SELECT_FIELD_ID,
+) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
     nameSingular: 'optionRowsSubject',
@@ -40,7 +44,7 @@ const buildManifest = (options: SelectFieldOptions) => {
         type: FieldMetadataType.TEXT,
       },
       {
-        universalIdentifier: SELECT_FIELD_ID,
+        universalIdentifier: selectFieldUniversalIdentifier,
         name: 'status',
         label: 'Status',
         type: FieldMetadataType.SELECT,
@@ -159,5 +163,27 @@ describe('Sync application keeps field option rows in step with its manifest', (
         position: 1,
       },
     ]);
+  }, 60000);
+
+  it('rejects a replacement field that reuses the option ids', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildManifest(
+        [
+          {
+            id: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'In progress',
+            color: 'blue',
+            position: 0,
+          },
+        ],
+        REPLACEMENT_SELECT_FIELD_ID,
+      ),
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      `Option id \\"${OPEN_OPTION_ID}\\" is already used by another field`,
+    );
   }, 60000);
 });
