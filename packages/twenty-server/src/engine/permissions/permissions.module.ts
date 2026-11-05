@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
@@ -23,6 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     ApiKeyRoleService,
     PermissionsService,
+    PermissionsMetadataMapsService,
     PermissionsPrincipalsService,
     RecordAccessPolicyService,
     provideWorkspaceScopedRepository(ApiKeyEntity),
@@ -30,6 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
+    PermissionsMetadataMapsService,
     PermissionsService,
     PermissionsPrincipalsService,
     ApiKeyRoleService,

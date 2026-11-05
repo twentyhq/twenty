@@ -50,7 +50,6 @@ type ObjectQuestion = {
 
 type RecordsQuestion = ObjectQuestion & {
   recordIds: string[];
-  // answers as if the caller had granted this share, before it is written
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   transactionScope?: WorkspaceTransactionScope;
 };
@@ -59,7 +58,6 @@ type FieldQuestion = ObjectQuestion & {
   fieldMetadataId: string;
 };
 
-// An empty denied set means every field is allowed, so it cannot answer for a missing principal
 type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
   principals: PermissionsPrincipalsWithRolesContext;
 };
@@ -73,7 +71,6 @@ export class PermissionsService {
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
-  // Undefined when the auth context holds no role, which every question denies
   public buildPermissionsPrincipals({
     authContext,
   }: {
@@ -106,7 +103,6 @@ export class PermissionsService {
     });
   }
 
-  // Shares only cover existing records, so unlike update they never allow creating one
   public canCreateSomeRecords({
     principals,
     objectMetadataId,
@@ -220,7 +216,6 @@ export class PermissionsService {
     });
   }
 
-  // Pass the same batch object on every call: lookups are shared per batch
   public findReadableEventRecordIds(question: {
     authContext: PermissionsAuthContext;
     eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;

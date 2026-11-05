@@ -32,7 +32,6 @@ describe('PermissionsService', () => {
     apiKey: { id: randomUUID() },
   };
 
-  // Other suites wipe every person, so the record under test is created here
   beforeAll(async () => {
     const response = await makeGraphqlApiRequest(
       createOneOperationFactory({

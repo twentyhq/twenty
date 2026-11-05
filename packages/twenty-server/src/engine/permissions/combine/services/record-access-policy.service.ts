@@ -42,10 +42,9 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { loadPermissionsMetadataMaps } from 'src/engine/permissions/combine/utils/load-permissions-metadata-maps.util';
+import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type PrincipalsObjectAccessRequest = Pick<
@@ -69,7 +68,6 @@ type EventBatchAccessLoaders = {
   ) => Promise<Set<string>>;
 };
 
-// Internal to engine/permissions: callers ask PermissionsService instead
 @Injectable()
 export class RecordAccessPolicyService {
   private readonly metadataMapsByPrincipals = new WeakMap<
@@ -93,7 +91,7 @@ export class RecordAccessPolicyService {
   >();
 
   constructor(
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -145,7 +143,6 @@ export class RecordAccessPolicyService {
     );
   }
 
-  // Shares only count once a row exists, so an object reached by nothing stays out of reach
   async hasAccessToSomeRecords({
     principals,
     objectMetadataId,
@@ -188,7 +185,6 @@ export class RecordAccessPolicyService {
     );
   }
 
-  // Ids come back lowercased, as the records store them
   async findAdmittedRecordIds({
     principals,
     objectMetadataId,
@@ -266,7 +262,6 @@ export class RecordAccessPolicyService {
     return !deniedFieldMetadataIds.has(fieldMetadataId);
   }
 
-  // Fails closed: an empty set would allow every field, so an unknown object throws
   async findDeniedFieldMetadataIds({
     principals,
     objectMetadataId,
@@ -298,7 +293,6 @@ export class RecordAccessPolicyService {
 
     return new Set(
       Object.entries(objectRecordsPermissions.restrictedFields)
-        // a field the principal cannot read is never writable
         .filter(
           ([, restrictedField]) =>
             restrictedField.canRead === false ||
@@ -343,7 +337,6 @@ export class RecordAccessPolicyService {
       this.findEventBatchAccessLoaders(eventBatch);
     const metadataMaps = await loadMetadataMaps();
 
-    // A role missing from the cache must not fall through to share or creator admission
     if (
       getPermissionsPrincipalsRoleIds(principals).some(
         (roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]),
@@ -364,7 +357,6 @@ export class RecordAccessPolicyService {
     });
   }
 
-  // Shared by every principal asking about the same batch
   private findEventBatchAccessLoaders(
     eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): EventBatchAccessLoaders {
@@ -449,8 +441,7 @@ export class RecordAccessPolicyService {
 
     let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
     const loadMetadataMaps = () =>
-      (metadataMaps ??= loadPermissionsMetadataMaps({
-        workspaceCacheService: this.workspaceCacheService,
+      (metadataMaps ??= this.permissionsMetadataMapsService.load({
         workspaceId,
       }));
 
@@ -537,8 +528,7 @@ export class RecordAccessPolicyService {
       return cachedMetadataMaps;
     }
 
-    const metadataMaps = loadPermissionsMetadataMaps({
-      workspaceCacheService: this.workspaceCacheService,
+    const metadataMaps = this.permissionsMetadataMapsService.load({
       workspaceId: principals.workspaceId,
     });
 
