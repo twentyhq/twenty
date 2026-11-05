@@ -85,7 +85,7 @@ export class WorkspaceDataSourceService
     }
   }
 
-  getPrimaryQueryExecutor(): QueryExecutor {
+  getPrimaryQueryExecutorOrThrow(): QueryExecutor {
     if (!isDefined(this.primaryPool)) {
       throw new TwentyOrmException(
         'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',

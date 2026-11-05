@@ -151,7 +151,7 @@ export class RecordPermissionOrmService {
     transactionScope?: WorkspaceTransactionScope;
   }): QueryExecutor {
     if (!isDefined(transactionScope)) {
-      return this.workspaceOrmManager.getPrimaryQueryExecutor();
+      return this.workspaceOrmManager.getPrimaryQueryExecutorOrThrow();
     }
 
     if (transactionScope.workspaceId !== workspaceId) {

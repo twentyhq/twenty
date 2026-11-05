@@ -63,8 +63,8 @@ export class WorkspaceOrmManager {
     );
   }
 
-  getPrimaryQueryExecutor(): QueryExecutor {
-    return this.workspaceDataSourceService.getPrimaryQueryExecutor();
+  getPrimaryQueryExecutorOrThrow(): QueryExecutor {
+    return this.workspaceDataSourceService.getPrimaryQueryExecutorOrThrow();
   }
 
   private getDataSource(repositoryOptions?: OrmRepositoryOptions) {
