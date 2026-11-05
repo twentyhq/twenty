@@ -1,3 +1,4 @@
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -197,7 +198,10 @@ export class AgentChatMessageReactionService {
       select: ['conversationType'],
     });
 
-    if (thread?.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      thread?.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return throwAgentChatMessageNotFound();
     }
 
