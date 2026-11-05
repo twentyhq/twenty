@@ -121,7 +121,7 @@ export const Import: Story = {
 
     await expect(
       await canvas.findByRole('button', { name: 'Upload your CRM export' }),
-    ).toHaveTextContent('Drop your CRM export or any spreadsheet');
+    ).toHaveTextContent('Drop your CSV or Excel from any tool');
     await expect(
       canvas.getByRole('button', { name: 'HubSpot' }),
     ).toHaveAttribute(

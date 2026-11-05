@@ -152,7 +152,7 @@ export const GettingStartedImportAction = () => {
         <Text size="md" weight="medium" color="primary">
           {isDragActive
             ? t`Drop to start your import`
-            : t`Drop your CRM export or any spreadsheet`}
+            : t`Drop your CSV or Excel from any tool`}
         </Text>
         <StyledDropZoneDescription>
           <Text size="sm" color="tertiary">
@@ -160,7 +160,7 @@ export const GettingStartedImportAction = () => {
           </Text>
         </StyledDropZoneDescription>
         <Text size="xs" color="light">
-          {t`CSV or Excel, or click to browse`}
+          {t`or click to browse`}
         </Text>
       </StyledDropZone>
       <StyledExportRow>
