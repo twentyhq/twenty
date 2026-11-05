@@ -1,22 +1,22 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 export const omitRestrictedFieldsFromTimelineActivityEvent = <
   TEvent extends ObjectRecordEvent,
 >({
   event,
-  objectsPermissions,
+  recordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): TEvent => {
@@ -40,7 +40,7 @@ export const omitRestrictedFieldsFromTimelineActivityEvent = <
     omitRestrictedFieldsFromTimelineActivity({
       properties: value,
       timelineActivity: timelineActivity ?? {},
-      objectsPermissions,
+      recordsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });

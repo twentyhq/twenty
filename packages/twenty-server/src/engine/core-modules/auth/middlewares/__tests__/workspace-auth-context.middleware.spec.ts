@@ -51,7 +51,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     ({
       workspace: mockWorkspace,
       ...overrides,
-    }) as unknown as Request;
+    }) as Request;
 
   it('should call next without auth context when workspace is not defined', () => {
     const req = buildRequest({ workspace: undefined });

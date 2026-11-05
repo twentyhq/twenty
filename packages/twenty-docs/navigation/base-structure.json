@@ -640,6 +640,7 @@
                   "key": "uiComponentsDataDisplay",
                   "label": "Data display",
                   "pages": [
+                    "ui/components/data-display/assistant-avatar",
                     "ui/components/data-display/avatar-group",
                     "ui/components/data-display/command-block",
                     "ui/components/data-display/details-row",

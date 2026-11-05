@@ -1,4 +1,4 @@
-import { type Job, Worker } from 'bullmq';
+import { type Job } from 'bullmq';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -25,6 +25,9 @@ const mockGetJobCountByTypes = jest.fn();
 const mockTwentyConfigService = { get: jest.fn() };
 const mockAllocateTickets = jest.fn();
 const mockRecordDispatch = jest.fn();
+const mockWorkerConstructor = jest
+  .fn()
+  .mockImplementation(() => ({ on: jest.fn() }));
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -37,7 +40,9 @@ jest.mock('bullmq', () => ({
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
     getJobCountByTypes: mockGetJobCountByTypes,
   })),
-  Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
+  Worker: jest
+    .fn()
+    .mockImplementation((...args: unknown[]) => mockWorkerConstructor(...args)),
   MetricsTime: { ONE_WEEK: 1 },
   PRIORITY_LIMIT: jest.requireActual('bullmq').PRIORITY_LIMIT,
 }));
@@ -251,8 +256,7 @@ describe('BullMQDriver progress', () => {
       driver.work(MessageQueue.workspaceQueue, async (queueJob) => {
         await queueJob.updateProgress(progress);
       });
-
-      const processor = jest.mocked(Worker).mock.calls[0][1];
+      const processor = mockWorkerConstructor.mock.calls[0][1];
 
       if (typeof processor !== 'function') {
         throw new Error('Worker processor was not registered');
@@ -283,10 +287,8 @@ describe('BullMQDriver job change events', () => {
 
   const getWorkerListener = (eventName: string) => {
     driver.work(MessageQueue.workspaceQueue, async () => {});
-
-    const workerInstances = jest.mocked(Worker).mock.results;
-    const worker = workerInstances[workerInstances.length - 1]
-      .value as unknown as { on: jest.Mock };
+    const workerInstances = mockWorkerConstructor.mock.results;
+    const worker = workerInstances[workerInstances.length - 1].value;
     const listener = worker.on.mock.calls.find(
       ([name]: [string, unknown]) => name === eventName,
     )?.[1];
@@ -313,7 +315,7 @@ describe('BullMQDriver job change events', () => {
         attemptsMade: 0,
         progress: 40,
         timestamp: 1,
-      } as unknown as Job,
+      },
       40,
     );
 
@@ -339,7 +341,7 @@ describe('BullMQDriver job change events', () => {
         attemptsMade: 0,
         progress: 40,
         timestamp: 1,
-      } as unknown as Job,
+      },
       40,
     );
 
@@ -363,8 +365,7 @@ describe('BullMQDriver queue wait metric', () => {
   ) => {
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
-
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = mockWorkerConstructor.mock.calls[0][1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');
@@ -377,7 +378,7 @@ describe('BullMQDriver queue wait metric', () => {
       updateData: jest.fn(),
       updateProgress: jest.fn(),
       ...job,
-    } as unknown as Job);
+    });
   };
 
   beforeAll(() => {
@@ -776,8 +777,7 @@ describe('BullMQDriver fair dispatch', () => {
     driver.register(MessageQueue.workflowQueue);
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
-
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = mockWorkerConstructor.mock.calls[0][1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');
@@ -792,7 +792,7 @@ describe('BullMQDriver fair dispatch', () => {
       attemptsStarted: 1,
       updateData: jest.fn(),
       updateProgress: jest.fn(),
-    } as unknown as Job);
+    });
   };
 
   it('records the dispatch of a job', async () => {

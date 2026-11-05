@@ -3,7 +3,7 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { buildRecordShareCondition } from 'src/engine/permissions/record-share/utils/build-record-share-condition.util';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const PRINCIPAL_IDS = ['principal-1', 'principal-2'];

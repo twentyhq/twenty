@@ -277,24 +277,41 @@ const buildWorkflowCommandMenuItem = ({
 }: {
   workflowVersionId: string | null;
   coreWorkflowVersionId: string | null;
-}): FlatCommandMenuItem =>
-  ({
-    id: 'command-menu-item-id',
-    universalIdentifier: COMMAND_MENU_ITEM_UID,
-    applicationId: APP_ID,
-    applicationUniversalIdentifier: APP_UID,
-    workflowVersionId,
-    coreWorkflowVersionId,
-    frontComponentId: null,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
-    label: 'Run workflow',
-    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    isSystemSideEffect: false,
-    deletedAt: null,
-    createdAt: NOW,
-    updatedAt: NOW,
-  }) as unknown as FlatCommandMenuItem;
+}): FlatCommandMenuItem => ({
+  id: 'command-menu-item-id',
+  universalIdentifier: COMMAND_MENU_ITEM_UID,
+  applicationId: APP_ID,
+  applicationUniversalIdentifier: APP_UID,
+  workspaceId: 'workspace-id',
+  workflowVersionId,
+  coreWorkflowVersionId,
+  frontComponentId: null,
+  frontComponentUniversalIdentifier: null,
+  engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+  label: 'Run workflow',
+  icon: null,
+  shortLabel: null,
+  position: 0,
+  isPinned: false,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  payload: null,
+  hotKeys: null,
+  conditionalAvailabilityExpression: null,
+  conditionalPinnedExpression: null,
+  availabilityObjectMetadataId: null,
+  availabilityObjectMetadataUniversalIdentifier: null,
+  availabilityCoreObjectName: null,
+  navigationTargetObjectMetadataId: null,
+  navigationTargetObjectMetadataUniversalIdentifier: null,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
+  isActive: true,
+  overrides: null,
+  universalOverrides: null,
+  isSystemSideEffect: false,
+  createdAt: NOW,
+  updatedAt: NOW,
+});
 
 const classifyCommandMenuItem = (flatCommandMenuItem: FlatCommandMenuItem) => {
   const maps = createEmptyAllFlatEntityMaps();

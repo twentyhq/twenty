@@ -30,7 +30,7 @@ export const convergeDivergedCallRecordings = async ({
   now,
   after,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   now: Date;
   after?: string;
 }): Promise<ConvergeDivergedCallRecordingsResult> => {

@@ -51,7 +51,7 @@ export const useInitializeQueryParamState = () => {
           store.set(returnToPathState.atom, value);
         }
       },
-      partner: (value: string) => {
+      via: (value: string) => {
         const partner = normalizePartner(value);
 
         if (isDefined(partner)) {

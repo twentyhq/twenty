@@ -5,23 +5,20 @@ import { Injectable } from '@nestjs/common';
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
-  type ObjectsPermissions,
   type RecordShareAccessLevel,
+  type RestrictedFieldPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
-import { getPermissionsPrincipalsObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-objects-permissions.util';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
-import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
+import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
+import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
@@ -32,42 +29,41 @@ import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/princi
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principals.util';
-import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
+import { isRoleGrantingOperationOnAllRecords } from 'src/engine/permissions/role/utils/is-role-granting-operation-on-all-records.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
-import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
+import { findGrantedRecordIds } from 'src/engine/permissions/combine/utils/find-granted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-type ObjectAccessRequest = Omit<
+type PrincipalsObjectAccessRequest = Pick<
   PermissionsObjectAccessRequest,
-  'principals' | 'metadataMaps'
->;
-
-type AuthContextAccessRequest = ObjectAccessRequest & {
-  authContext: PermissionsAuthContext;
+  'operationType'
+> & {
+  principals: PermissionsObjectAccessRequest['principals'] | undefined;
+  objectMetadataId: string;
 };
 
-type RecordsAccessRequest = ObjectAccessRequest & {
+type PrincipalsRecordsAccessRequest = PrincipalsObjectAccessRequest & {
   recordIds: string[];
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   transactionScope?: WorkspaceTransactionScope;
 };
 
-type PrincipalsWithRoles = Promise<
-  PermissionsPrincipalsWithRolesContext | undefined
->;
-
-export type ScopedRecordAccessPolicy = {
-  hasAccessToSomeRecords: (request: ObjectAccessRequest) => Promise<boolean>;
-  hasAccessToRecords: (request: RecordsAccessRequest) => Promise<boolean>;
-  findObjectsPermissions: () => Promise<ObjectsPermissions | undefined>;
+type EventBatchAccessLoaders = {
+  loadMetadataMaps: () => Promise<PermissionsMetadataMaps>;
+  findReadableRecordIdsInBatch: (
+    principals: PermissionsPrincipalsWithRolesContext,
+  ) => Promise<Set<string>>;
 };
 
 @Injectable()
@@ -77,74 +73,86 @@ export class RecordAccessPolicyService {
     Promise<PermissionsMetadataMaps>
   >();
 
+  private readonly recordsPermissionsByPrincipals = new WeakMap<
+    PermissionsPrincipalsWithRolesContext,
+    Promise<RoleRecordsPermissions>
+  >();
+
   private readonly sharedAccessLevelsByPrincipals = new WeakMap<
     PermissionsPrincipalsWithRolesContext,
     Promise<Map<string, RecordShareAccessLevel[]>>
   >();
 
+  private readonly accessLoadersByEventBatch = new WeakMap<
+    WorkspaceEventBatch<ObjectRecordEvent>,
+    EventBatchAccessLoaders
+  >();
+
   constructor(
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
+    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
   ) {}
 
-  forAuthContext(
-    authContext: PermissionsAuthContext,
-  ): ScopedRecordAccessPolicy {
-    const principals = this.resolvePrincipalsWithRoles(authContext);
-
-    return {
-      hasAccessToSomeRecords: (request) =>
-        this.hasPrincipalsAccessToSomeRecords({ ...request, principals }),
-      hasAccessToRecords: (request) =>
-        this.hasPrincipalsAccessToRecords({ ...request, principals }),
-      findObjectsPermissions: () =>
-        this.findPrincipalsObjectsPermissions(principals),
-    };
-  }
-
-  async hasAccessToSomeRecords({
-    authContext,
-    ...request
-  }: AuthContextAccessRequest): Promise<boolean> {
-    return this.hasPrincipalsAccessToSomeRecords({
-      ...request,
-      principals: this.resolvePrincipalsWithRoles(authContext),
-    });
-  }
-
-  async hasAccessToRecords({
-    authContext,
-    ...request
-  }: AuthContextAccessRequest & RecordsAccessRequest): Promise<boolean> {
-    return this.hasPrincipalsAccessToRecords({
-      ...request,
-      principals: this.resolvePrincipalsWithRoles(authContext),
-    });
-  }
-
-  // Shares only count once a row exists, so an object reached by nothing stays out of reach
-  private async hasPrincipalsAccessToSomeRecords({
-    principals: principalsWithRoles,
-    flatObjectMetadata,
+  private async findObjectAccessRequest({
+    principals,
+    objectMetadataId,
     operationType,
-  }: Pick<ObjectAccessRequest, 'flatObjectMetadata' | 'operationType'> & {
-    principals: PrincipalsWithRoles;
-  }): Promise<boolean> {
-    const principals = await principalsWithRoles;
-
+  }: PrincipalsObjectAccessRequest): Promise<
+    PermissionsObjectAccessRequest | undefined
+  > {
     if (!isDefined(principals)) {
+      return undefined;
+    }
+
+    const metadataMaps = await this.findPrincipalsMetadataMaps(principals);
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps,
+      objectMetadataId,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return undefined;
+    }
+
+    return { principals, metadataMaps, flatObjectMetadata, operationType };
+  }
+
+  async hasAccessToAllRecords({
+    principals,
+    objectMetadataId,
+    operationType,
+  }: PrincipalsObjectAccessRequest): Promise<boolean> {
+    const request = await this.findObjectAccessRequest({
+      principals,
+      objectMetadataId,
+      operationType,
+    });
+
+    if (!isDefined(request)) {
       return false;
     }
 
-    const request = {
+    return (
+      !isObjectOperationDisabledToPrincipals(request) &&
+      isRoleGrantingOperationOnAllRecords(request)
+    );
+  }
+
+  async hasAccessToSomeRecords({
+    principals,
+    objectMetadataId,
+    operationType,
+  }: PrincipalsObjectAccessRequest): Promise<boolean> {
+    const request = await this.findObjectAccessRequest({
       principals,
-      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
-      flatObjectMetadata,
+      objectMetadataId,
       operationType,
-    };
+    });
+
+    if (!isDefined(request)) {
+      return false;
+    }
 
     if (
       isObjectOperationDisabledToPrincipals(request) ||
@@ -164,145 +172,211 @@ export class RecordAccessPolicyService {
     }
 
     const sharedAccessLevels =
-      (await this.findSharedAccessLevelsByObjectMetadataId(principals)).get(
-        flatObjectMetadata.id,
-      ) ?? [];
+      (
+        await this.findSharedAccessLevelsByObjectMetadataId(request.principals)
+      ).get(request.flatObjectMetadata.id) ?? [];
 
     return sharedAccessLevels.some((accessLevel) =>
       shareGrant.accessLevels.includes(accessLevel),
     );
   }
 
-  private async hasPrincipalsAccessToRecords({
-    principals: principalsWithRoles,
-    flatObjectMetadata,
+  async findGrantedRecordIds({
+    principals,
+    objectMetadataId,
     operationType,
     recordIds,
     hypotheticalRecordShareAccessLevel,
     transactionScope,
-  }: RecordsAccessRequest & {
-    principals: PrincipalsWithRoles;
-  }): Promise<boolean> {
+  }: PrincipalsRecordsAccessRequest): Promise<Set<string>> {
     const uniqueRecordIds = [
       ...new Set(recordIds.map((recordId) => recordId.toLowerCase())),
     ];
-    const principals = await principalsWithRoles;
 
     if (uniqueRecordIds.length === 0 || !isDefined(principals)) {
+      return new Set();
+    }
+
+    const request = await this.findObjectAccessRequest({
+      principals,
+      objectMetadataId,
+      operationType,
+    });
+
+    if (!isDefined(request)) {
+      return new Set();
+    }
+
+    const condition = buildPermissionsCondition({
+      principals: request.principals,
+      metadataMaps: request.metadataMaps,
+      flatObjectMetadata: request.flatObjectMetadata,
+      operationType: request.operationType,
+      recordShareTableExpression: buildRecordShareTableExpression({
+        workspaceId: principals.workspaceId,
+      }),
+      hypotheticalRecordShareAccessLevel,
+    });
+
+    if (condition === false) {
+      return new Set();
+    }
+
+    return this.recordPermissionReadOrmService.findRecordIdsMatchingCondition({
+      workspaceId: principals.workspaceId,
+      flatObjectMetadata: request.flatObjectMetadata,
+      recordIds: uniqueRecordIds,
+      condition,
+      transactionScope,
+    });
+  }
+
+  async hasFieldPermission({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+    fieldPermission,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext | undefined;
+    objectMetadataId: string;
+    fieldMetadataId: string;
+    fieldPermission: keyof RestrictedFieldPermissions;
+  }): Promise<boolean> {
+    if (!isDefined(principals)) {
       return false;
     }
 
-    const findAdmittedRecordIds = (repository: WorkspaceRepository) =>
-      repository.findPrincipalsAdmittedRecordIds({
-        principals,
-        recordIds: uniqueRecordIds,
-        operationType,
-        hypotheticalRecordShareAccessLevel,
-      });
-    const admittedRecordIds = await this.withBypassingRepository({
-      workspaceId: principals.workspaceId,
-      objectNameSingular: flatObjectMetadata.nameSingular,
-      transactionScope,
-      work: findAdmittedRecordIds,
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+      objectMetadataId,
     });
 
-    return uniqueRecordIds.every((recordId) => admittedRecordIds.has(recordId));
+    if (!flatObjectMetadata?.fieldIds.includes(fieldMetadataId)) {
+      return false;
+    }
+
+    const deniedFieldMetadataIds = await this.findDeniedFieldMetadataIdsOrThrow(
+      {
+        principals,
+        objectMetadataId,
+        fieldPermission,
+      },
+    );
+
+    return !deniedFieldMetadataIds.has(fieldMetadataId);
   }
 
-  async getObjectsPermissionsOrThrow(
-    authContext: PermissionsAuthContext,
-  ): Promise<ObjectsPermissions> {
-    const objectsPermissions = await this.findObjectsPermissions(authContext);
+  async findDeniedFieldMetadataIdsOrThrow({
+    principals,
+    objectMetadataId,
+    fieldPermission,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    fieldPermission: keyof RestrictedFieldPermissions;
+  }): Promise<Set<string>> {
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+      objectMetadataId,
+    });
 
-    if (!isDefined(objectsPermissions)) {
+    if (!isDefined(flatObjectMetadata)) {
       throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
-    return objectsPermissions;
-  }
+    const objectRecordsPermissions = (
+      await this.findPrincipalsRecordsPermissions(principals)
+    ).objects[objectMetadataId];
 
-  async findObjectsPermissions(
-    authContext: PermissionsAuthContext,
-  ): Promise<ObjectsPermissions | undefined> {
-    return this.findPrincipalsObjectsPermissions(
-      this.resolvePrincipalsWithRoles(authContext),
+    if (!isDefined(objectRecordsPermissions)) {
+      return new Set(flatObjectMetadata.fieldIds);
+    }
+
+    return new Set(
+      Object.entries(objectRecordsPermissions.restrictedFields)
+        .filter(
+          ([, restrictedField]) =>
+            restrictedField.canRead === false ||
+            restrictedField[fieldPermission] === false,
+        )
+        .map(([fieldMetadataId]) => fieldMetadataId),
     );
   }
 
-  private async findPrincipalsObjectsPermissions(
-    principalsWithRoles: PrincipalsWithRoles,
-  ): Promise<ObjectsPermissions | undefined> {
-    const principals = await principalsWithRoles;
+  async findReadableEventRecordIds({
+    authContext,
+    eventBatch,
+  }: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+  }): Promise<Set<string>> {
+    const principals = await this.resolvePrincipalsWithRoles(authContext);
+
+    return isDefined(principals)
+      ? this.findEventBatchAccessLoaders(
+          eventBatch,
+        ).findReadableRecordIdsInBatch(principals)
+      : new Set<string>();
+  }
+
+  async findReadableEvents<TEvent extends ObjectRecordEvent>({
+    authContext,
+    eventBatch,
+    events = eventBatch.events,
+  }: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<TEvent>;
+    events?: TEvent[];
+  }): Promise<TEvent[]> {
+    const principals = await this.resolvePrincipalsWithRoles(authContext);
 
     if (!isDefined(principals)) {
-      return undefined;
+      return [];
     }
 
-    return getPermissionsPrincipalsObjectsPermissions({
-      principals,
-      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+    const { loadMetadataMaps, findReadableRecordIdsInBatch } =
+      this.findEventBatchAccessLoaders(eventBatch);
+    const metadataMaps = await loadMetadataMaps();
+
+    if (
+      getPermissionsPrincipalsRoleIds(principals).some(
+        (roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]),
+      )
+    ) {
+      return [];
+    }
+
+    return filterReadableEvents({
+      events,
+      readableRecordIds: await findReadableRecordIdsInBatch(principals),
+      objectMetadata: eventBatch.objectMetadata,
+      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+        principals,
+        metadataMaps,
+      }),
+      metadataMaps,
     });
   }
 
-  async loadPermissionsMetadataMaps(
-    workspaceId: string,
-  ): Promise<PermissionsMetadataMaps> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMapsOrm,
-      featureFlagsMap,
-      rolesPermissions,
-      flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMapsOrm',
-      'featureFlagsMap',
-      'rolesPermissions',
-      'flatApplicationMaps',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
-    ]);
+  private findEventBatchAccessLoaders(
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): EventBatchAccessLoaders {
+    const cachedLoaders = this.accessLoadersByEventBatch.get(eventBatch);
 
-    const metadataMaps: PermissionsMetadataMaps = {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-      featureFlagsMap,
-      rolesPermissions,
-      flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-    };
-
-    if (
-      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
-    ) {
-      return metadataMaps;
+    if (isDefined(cachedLoaders)) {
+      return cachedLoaders;
     }
 
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
+    const { workspaceId, objectMetadata, events } = eventBatch;
 
-    return { ...metadataMaps, flatWorkspaceMemberMaps };
-  }
-
-  // Event snapshots go through the same grant paths as the principal's queries
-  buildEventRecordAccessGate<TEvent extends ObjectRecordEvent>({
-    workspaceId,
-    objectMetadata,
-    events,
-  }: WorkspaceEventBatch<TEvent>): EventRecordAccessGate<TEvent> {
     // One lookup per object for the whole batch: operands only ever ask for
     // records of the batch, so later calls are served from what was fetched
     const recordSharesByRecordIdByObject = new Map<
       string,
-      Map<string, Promise<RecordShare[]>>
+      Map<string, Promise<RecordShareGrant[]>>
     >();
     const fetchRecordShares = async ({
       objectMetadataId,
@@ -313,7 +387,7 @@ export class RecordAccessPolicyService {
     }) => {
       const recordSharesByRecordId =
         recordSharesByRecordIdByObject.get(objectMetadataId) ??
-        new Map<string, Promise<RecordShare[]>>();
+        new Map<string, Promise<RecordShareGrant[]>>();
 
       recordSharesByRecordIdByObject.set(
         objectMetadataId,
@@ -328,8 +402,8 @@ export class RecordAccessPolicyService {
       );
 
       if (missingRecordIds.length > 0) {
-        const groupedRecordShares = this.recordShareStorageService
-          .findByRecordIds({
+        const groupedRecordShares = this.recordPermissionReadOrmService
+          .findRecordShares({
             workspaceId,
             objectMetadataId,
             recordIds: missingRecordIds,
@@ -357,26 +431,32 @@ export class RecordAccessPolicyService {
       return recordSharesPerRecord.flat();
     };
 
+    let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
+    const loadMetadataMaps = () =>
+      (metadataMaps ??= this.permissionsMetadataMapsService.load({
+        workspaceId,
+      }));
+
     let privateRecordStates:
       | Promise<Map<string, PrivateRecordState>>
       | undefined;
     const findPrivateRecordStates = () =>
-      (privateRecordStates ??= this.privateRecordStorageService.findStates({
-        workspaceId,
-        flatObjectMetadata: objectMetadata,
-        recordIds: resolveEventRecordSnapshots(events).map(
-          (record) => record.id,
-        ),
-      }));
+      (privateRecordStates ??= loadMetadataMaps().then(
+        ({ flatFieldMetadataMaps }) =>
+          this.recordPermissionReadOrmService.findPrivateRecordStates({
+            workspaceId,
+            flatObjectMetadata: objectMetadata,
+            flatFieldMetadataMaps,
+            recordIds: resolveEventRecordSnapshots(events).map(
+              (record) => record.id,
+            ),
+          }),
+      ));
 
-    let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
-    const loadMetadataMaps = () =>
-      (metadataMaps ??= this.loadPermissionsMetadataMaps(workspaceId));
-
-    const findAdmittedRecordIds = async (
+    const findReadableRecordIdsInBatch = async (
       principals: PermissionsPrincipalsWithRolesContext,
     ) =>
-      findPermissionsAdmittedRecordIds({
+      findGrantedRecordIds({
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
@@ -389,78 +469,11 @@ export class RecordAccessPolicyService {
         },
       });
 
-    return {
-      resolveAdmittedRecordIds: async (authContext) => {
-        const principals = await this.resolvePrincipalsWithRoles(authContext);
+    const loaders = { loadMetadataMaps, findReadableRecordIdsInBatch };
 
-        return isDefined(principals)
-          ? findAdmittedRecordIds(principals)
-          : new Set<string>();
-      },
-      resolveReadableEvents: async ({
-        authContext,
-        events: candidateEvents,
-      }) => {
-        const principals = await this.resolvePrincipalsWithRoles(authContext);
+    this.accessLoadersByEventBatch.set(eventBatch, loaders);
 
-        if (!isDefined(principals)) {
-          return [];
-        }
-
-        const principalMetadataMaps = await loadMetadataMaps();
-
-        // A role missing from the cache must not fall through to share or creator admission
-        if (
-          getPermissionsPrincipalsRoleIds(principals).some(
-            (roleId) =>
-              !isDefined(principalMetadataMaps.rolesPermissions[roleId]),
-          )
-        ) {
-          return [];
-        }
-
-        return filterReadableEvents({
-          events: candidateEvents,
-          admittedRecordIds: await findAdmittedRecordIds(principals),
-          objectMetadata,
-          objectsPermissions: getPermissionsPrincipalsObjectsPermissions({
-            principals,
-            metadataMaps: principalMetadataMaps,
-          }),
-          metadataMaps: principalMetadataMaps,
-        });
-      },
-    };
-  }
-
-  private withBypassingRepository<TResult>({
-    workspaceId,
-    objectNameSingular,
-    transactionScope,
-    work,
-  }: {
-    workspaceId: string;
-    objectNameSingular: string;
-    transactionScope?: WorkspaceTransactionScope;
-    work: (repository: WorkspaceRepository) => Promise<TResult>;
-  }): Promise<TResult> {
-    if (isDefined(transactionScope)) {
-      return work(
-        transactionScope.getRepositoryWithoutPermissionChecks(
-          objectNameSingular,
-        ),
-      );
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        work(
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-            objectNameSingular,
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-    );
+    return loaders;
   }
 
   private resolvePrincipalsWithRoles(
@@ -469,6 +482,19 @@ export class RecordAccessPolicyService {
     return this.permissionsPrincipalsService.findPrincipalsWithRoles(
       authContext,
     );
+  }
+
+  private findFlatObjectMetadata({
+    metadataMaps,
+    objectMetadataId,
+  }: {
+    metadataMaps: PermissionsMetadataMaps;
+    objectMetadataId: string;
+  }): FlatObjectMetadata | undefined {
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
   }
 
   private findPrincipalsMetadataMaps(
@@ -480,13 +506,36 @@ export class RecordAccessPolicyService {
       return cachedMetadataMaps;
     }
 
-    const metadataMaps = this.loadPermissionsMetadataMaps(
-      principals.workspaceId,
-    );
+    const metadataMaps = this.permissionsMetadataMapsService.load({
+      workspaceId: principals.workspaceId,
+    });
 
     this.metadataMapsByPrincipals.set(principals, metadataMaps);
 
     return metadataMaps;
+  }
+
+  private findPrincipalsRecordsPermissions(
+    principals: PermissionsPrincipalsWithRolesContext,
+  ): Promise<RoleRecordsPermissions> {
+    const cachedRecordsPermissions =
+      this.recordsPermissionsByPrincipals.get(principals);
+
+    if (isDefined(cachedRecordsPermissions)) {
+      return cachedRecordsPermissions;
+    }
+
+    const recordsPermissions = this.findPrincipalsMetadataMaps(principals).then(
+      (metadataMaps) =>
+        getPermissionsPrincipalsRecordsPermissions({
+          principals,
+          metadataMaps,
+        }),
+    );
+
+    this.recordsPermissionsByPrincipals.set(principals, recordsPermissions);
+
+    return recordsPermissions;
   }
 
   private findSharedAccessLevelsByObjectMetadataId(
@@ -500,10 +549,12 @@ export class RecordAccessPolicyService {
     }
 
     const sharedAccessLevels =
-      this.recordShareStorageService.findAccessLevelsByObjectMetadataId({
-        workspaceId: principals.workspaceId,
-        principalIds: getPermissionsPrincipalsShareKeys(principals),
-      });
+      this.recordPermissionReadOrmService.findRecordShareAccessLevelsByObjectMetadataId(
+        {
+          workspaceId: principals.workspaceId,
+          principalIds: getPermissionsPrincipalsShareKeys(principals),
+        },
+      );
 
     this.sharedAccessLevelsByPrincipals.set(principals, sharedAccessLevels);
 

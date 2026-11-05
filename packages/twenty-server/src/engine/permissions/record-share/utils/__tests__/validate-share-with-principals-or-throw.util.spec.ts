@@ -7,8 +7,6 @@ import {
 } from 'twenty-shared/types';
 
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 
 const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000001';
 const ROLE_ID = '20202020-0000-4000-8000-000000000002';
@@ -17,18 +15,16 @@ const UNKNOWN_ID = '20202020-0000-4000-8000-000000000009';
 
 const flatWorkspaceMemberMaps = {
   byId: {
-    [WORKSPACE_MEMBER_ID]: { id: WORKSPACE_MEMBER_ID },
+    [WORKSPACE_MEMBER_ID]: { deletedAt: null },
     [DELETED_WORKSPACE_MEMBER_ID]: {
-      id: DELETED_WORKSPACE_MEMBER_ID,
       deletedAt: '2026-09-01T00:00:00.000Z',
     },
   },
-  idByUserId: {},
-} as unknown as FlatWorkspaceMemberMaps;
+};
 
 const flatRoleMaps = {
   universalIdentifierById: { [ROLE_ID]: 'role-universal-identifier' },
-} as unknown as FlatRoleMaps;
+};
 
 describe('validateShareWithPrincipalsOrThrow', () => {
   it('should accept a member, a role and everyone that belong to the workspace', () => {

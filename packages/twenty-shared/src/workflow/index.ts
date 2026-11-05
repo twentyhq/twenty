@@ -8,6 +8,7 @@
  */
 
 export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVariableTagInnerRegex';
+export { CODE_STEP_SOURCE_MAX_LENGTH } from './constants/CodeStepSourceMaxLength';
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
@@ -52,7 +53,10 @@ export {
   workflowClassifyActionSettingsSchema,
 } from './schemas/classify-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
-export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
+export {
+  workflowCodeActionInputSchema,
+  workflowCodeActionSettingsSchema,
+} from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
 export { workflowCreateCalendarEventActionSettingsSchema } from './schemas/create-calendar-event-action-settings-schema';
 export { workflowCreateRecordActionSchema } from './schemas/create-record-action-schema';

@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -651,10 +651,10 @@ msgstr "3 خطوط منتجات"
 msgid "30 days"
 msgstr "30 يومًا"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "30 يومًا بعد النقر. إذا أنشأ الزائر مساحة العمل الخاصة به خلال تلك المدة وأصبح لاحقًا عميلًا مدفوعًا لـ Cloud Organization أو Enterprise، فإن العمولة من حقك. إذا نقر على رابط شريك آخر قبل إنشاء مساحة العمل الخاصة به، فسيحصل ذلك الشريك على الفضل."
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "لمدة 30 يومًا بعد النقر. إذا أنشأ الزائر مساحة عمله خلال تلك الفترة وأصبح لاحقًا عميلًا مدفوعًا لدى Cloud Organization أو Enterprise، فالعمولة لك. إذا نقر على رابط شريك آخر قبل إنشاء مساحة عمله، يُنسب الفضل إلى ذلك الشريك. بمجرد إنشاء مساحة العمل، يصبح الإسناد نهائيًا."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4723,9 +4723,9 @@ msgstr "يضع HubSpot الكيانات المخصّصة خلف مستوى Enter
 msgid "Hungary 🇭🇺"
 msgstr "المجر 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
 msgstr "أوافق على <0>شروط برنامج الشركاء</0>"
 
 #. js-lingui-id: GghmRz
@@ -4748,6 +4748,11 @@ msgstr "الملف التعريفي للعميل المثالي"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "الهوية"
+
+#. js-lingui-id: 9JU/6K
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "إذا كانت هذه أول مساحة عمل لهم على Twenty ولم يتم تعيين رمز شريك عليها بعد، فيمكنهم إدخال رمزك في صفحة /settings/partner ضمن مساحة عملهم أثناء الفترة التجريبية المجانية. خلال 30 يومًا من أول دفعة، يمكنهم أيضًا أن يطلبوا منا إضافته. بمجرد حفظ رمز في مساحة عمل، لا يمكن تغييره."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -6096,6 +6101,7 @@ msgstr "لا تتوفر أي تطبيقات في الوقت الحالي. يُر
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "لا توجد دولة مطابقة."
 
@@ -7614,6 +7620,7 @@ msgstr "فرز أولي"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "ابحث عن دولة…"
 
@@ -7735,6 +7742,7 @@ msgstr "حدد السجلات باستخدام Cmd وShift"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "اختر دولتك"
 
@@ -9759,6 +9767,11 @@ msgstr "ما الذي يتضمنه الاعتماد؟"
 #: src/sections/faq/faq.data.ts
 msgid "What does Twenty cost?"
 msgstr "كم تبلغ تكلفة Twenty؟"
+
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "ماذا لو سجّل عميل بدون الرابط الخاص بي؟"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

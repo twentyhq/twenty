@@ -94,7 +94,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       );
     }
 
-    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
+    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToSuccessor(
       {
         removedUserWorkspace: userWorkspace,
         actingUserWorkspaceId:
@@ -104,7 +104,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       },
     );
 
-    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
+    await this.recordShareOwnershipTransferService.transferRecordSharesToSuccessor(
       {
         removedUserWorkspace: userWorkspace,
         removedWorkspaceMemberId: workspaceMember.id,

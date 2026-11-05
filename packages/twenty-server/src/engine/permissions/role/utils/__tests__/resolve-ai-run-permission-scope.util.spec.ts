@@ -6,6 +6,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -57,14 +58,14 @@ flatFieldMetadataMaps.universalIdentifierById[EMAIL_FIELD_ID] = 'email';
 const resolve = (
   scope: Parameters<typeof resolveAiRunPermissionScope>[0]['scope'],
 ) => {
-  const { objectsPermissions, permissionFlags } = resolveAiRunPermissionScope({
+  const { recordsPermissions, permissionFlags } = resolveAiRunPermissionScope({
     scope,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
   return {
-    objectsPermissions,
+    recordsPermissions,
     grantedPermissionFlags: Object.values(PermissionFlagType).filter(
       (permissionFlag) => permissionFlags[permissionFlag],
     ),
@@ -73,41 +74,49 @@ const resolve = (
 
 describe('resolveAiRunPermissionScope', () => {
   it('denies everything an empty scope leaves out', () => {
-    const { objectsPermissions, grantedPermissionFlags } = resolve({});
+    const { recordsPermissions, grantedPermissionFlags } = resolve({});
 
-    expect(objectsPermissions[PERSON_ID]?.canReadObjectRecords).toBe(false);
-    expect(objectsPermissions[COMPANY_ID]?.canUpdateObjectRecords).toBe(false);
+    expect(recordsPermissions.objects[PERSON_ID]?.canReadAllRecords).toBe(
+      false,
+    );
+    expect(recordsPermissions.objects[COMPANY_ID]?.canUpdateAllRecords).toBe(
+      false,
+    );
     expect(grantedPermissionFlags).toEqual([]);
   });
 
   it('allows only the actions it names on the objects it names', () => {
-    const { objectsPermissions } = resolve({
+    const { recordsPermissions } = resolve({
       objectPermissions: [
         { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
       ],
     });
 
-    expect(objectsPermissions[PERSON_ID]).toMatchObject({
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+    expect(recordsPermissions.objects[PERSON_ID]).toMatchObject({
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
     });
-    expect(objectsPermissions[COMPANY_ID]?.canReadObjectRecords).toBe(false);
+    expect(recordsPermissions.objects[COMPANY_ID]?.canReadAllRecords).toBe(
+      false,
+    );
   });
 
   it('lets an object entry narrow an action granted on all objects', () => {
-    const { objectsPermissions } = resolve({
+    const { recordsPermissions } = resolve({
       canReadAllObjectRecords: true,
       objectPermissions: [
         { objectUniversalIdentifier: 'company', canReadObjectRecords: false },
       ],
     });
 
-    expect(objectsPermissions[PERSON_ID]?.canReadObjectRecords).toBe(true);
-    expect(objectsPermissions[COMPANY_ID]?.canReadObjectRecords).toBe(false);
+    expect(recordsPermissions.objects[PERSON_ID]?.canReadAllRecords).toBe(true);
+    expect(recordsPermissions.objects[COMPANY_ID]?.canReadAllRecords).toBe(
+      false,
+    );
   });
 
   it('restricts the fields it names', () => {
-    const { objectsPermissions } = resolve({
+    const { recordsPermissions } = resolve({
       canReadAllObjectRecords: true,
       fieldPermissions: [
         {
@@ -119,7 +128,7 @@ describe('resolveAiRunPermissionScope', () => {
     });
 
     expect(
-      objectsPermissions[PERSON_ID]?.restrictedFields[EMAIL_FIELD_ID],
+      recordsPermissions.objects[PERSON_ID]?.restrictedFields[EMAIL_FIELD_ID],
     ).toMatchObject({ canRead: false });
   });
 
@@ -172,11 +181,11 @@ describe('resolveAiRunPermissionScope', () => {
     it('grants every action with the flag', () => {
       expect(
         resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
-          .objectsPermissions[WORKFLOW_ID],
+          .recordsPermissions.objects[WORKFLOW_ID],
       ).toMatchObject({
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canDestroyAllRecords: true,
       });
     });
 
@@ -191,11 +200,11 @@ describe('resolveAiRunPermissionScope', () => {
               canDestroyObjectRecords: false,
             },
           ],
-        }).objectsPermissions[WORKFLOW_ID],
+        }).recordsPermissions.objects[WORKFLOW_ID],
       ).toMatchObject({
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: false,
-        canDestroyObjectRecords: false,
+        canReadAllRecords: true,
+        canUpdateAllRecords: false,
+        canDestroyAllRecords: false,
       });
     });
 
@@ -208,7 +217,7 @@ describe('resolveAiRunPermissionScope', () => {
               canReadObjectRecords: true,
             },
           ],
-        }).objectsPermissions[WORKFLOW_ID]?.canReadObjectRecords,
+        }).recordsPermissions.objects[WORKFLOW_ID]?.canReadAllRecords,
       ).toBe(false);
     });
   });
@@ -244,19 +253,21 @@ describe('resolveAiRunPermissionScope', () => {
 
   describe('on a system object', () => {
     it('leaves it readable but not writable when the scope grants nothing', () => {
-      expect(resolve({}).objectsPermissions[CAMPAIGN_ID]).toMatchObject({
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      });
+      expect(resolve({}).recordsPermissions.objects[CAMPAIGN_ID]).toMatchObject(
+        {
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+        },
+      );
     });
 
     it('lets a scope grant writing it, on all objects or on that one', () => {
       expect(
-        resolve({ canUpdateAllObjectRecords: true }).objectsPermissions[
+        resolve({ canUpdateAllObjectRecords: true }).recordsPermissions.objects[
           CAMPAIGN_ID
-        ]?.canUpdateObjectRecords,
+        ]?.canUpdateAllRecords,
       ).toBe(true);
       expect(
         resolve({
@@ -266,7 +277,7 @@ describe('resolveAiRunPermissionScope', () => {
               canUpdateObjectRecords: true,
             },
           ],
-        }).objectsPermissions[CAMPAIGN_ID]?.canUpdateObjectRecords,
+        }).recordsPermissions.objects[CAMPAIGN_ID]?.canUpdateAllRecords,
       ).toBe(true);
     });
 
@@ -290,14 +301,15 @@ describe('resolveAiRunPermissionScope', () => {
             flatFieldMetadataMaps,
             rolesPermissions: {
               'member-role-id': {
-                [CAMPAIGN_ID]: {
-                  canReadObjectRecords: true,
-                  canUpdateObjectRecords: true,
-                  canSoftDeleteObjectRecords: true,
-                  canDestroyObjectRecords: true,
-                  restrictedFields: {},
-                  rowLevelPermissionPredicates: [],
-                  rowLevelPermissionPredicateGroups: [],
+                ...NO_ROLE_RECORDS_PERMISSIONS,
+                objects: {
+                  [CAMPAIGN_ID]: {
+                    canReadAllRecords: true,
+                    canUpdateAllRecords: true,
+                    canSoftDeleteAllRecords: true,
+                    canDestroyAllRecords: true,
+                    restrictedFields: {},
+                  },
                 },
               },
             },

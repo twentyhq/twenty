@@ -40,6 +40,9 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_TOP_UP_NOT_GRANTED = 'BILLING_CREDIT_TOP_UP_NOT_GRANTED',
   BILLING_SEAT_LIMIT_REACHED = 'BILLING_SEAT_LIMIT_REACHED',
   BILLING_ARRANGEMENT_INVALID = 'BILLING_ARRANGEMENT_INVALID',
+  BILLING_PARTNER_CODE_INVALID = 'BILLING_PARTNER_CODE_INVALID',
+  BILLING_PARTNER_CODE_LOCKED = 'BILLING_PARTNER_CODE_LOCKED',
+  BILLING_PARTNER_CODE_NOT_ELIGIBLE = 'BILLING_PARTNER_CODE_NOT_ELIGIBLE',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -105,6 +108,12 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`An unexpected billing error occurred. Please contact support.`;
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return msg`Your purchased credits could not be added. Please contact support.`;
+    case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
+      return msg`This partner code is not valid.`;
+    case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
+      return msg`The partner code can no longer be added or changed. Please contact support.`;
+    case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
+      return msg`Partner codes only apply to new Twenty customers.`;
     case BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED:
       return msg`This workspace has used all its seats. Contact your workspace admin to add more.`;
     default:

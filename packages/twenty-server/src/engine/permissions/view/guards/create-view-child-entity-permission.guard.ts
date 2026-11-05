@@ -25,14 +25,17 @@ export class CreateViewChildEntityPermissionGuard implements CanActivate {
     const accessContext = resolveViewAccessContext(request);
 
     if (viewIds.length === 0) {
-      return this.viewAccessService.canUserModifyView(null, accessContext);
+      return this.viewAccessService.canUserModifyView({
+        viewId: null,
+        accessContext,
+      });
     }
 
     for (const viewId of viewIds) {
-      const canModify = await this.viewAccessService.canUserModifyView(
+      const canModify = await this.viewAccessService.canUserModifyView({
         viewId,
         accessContext,
-      );
+      });
 
       if (!canModify) {
         return false;

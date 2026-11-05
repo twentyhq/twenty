@@ -5,7 +5,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
-import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
@@ -68,7 +67,6 @@ export const useSetNextOnboardingStatus = () => {
           nextOnboardingStatus,
         })
       ) {
-        store.set(isWelcomeAnimationVisibleState.atom, true);
         store.set(
           shouldOpenAiChatAfterOnboardingState.atom,
           isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,

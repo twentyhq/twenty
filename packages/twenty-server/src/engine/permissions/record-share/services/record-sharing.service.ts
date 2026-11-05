@@ -8,7 +8,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -21,6 +21,7 @@ import {
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
@@ -68,6 +69,7 @@ export class RecordSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -275,13 +277,11 @@ export class RecordSharingService {
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
-        criteria: [
-          {
-            objectMetadataId: args.objectMetadataId,
-            recordId: args.recordId,
-            rowCause: RecordShareRowCause.OWNER,
-          },
-        ],
+        criteria: {
+          objectMetadataId: args.objectMetadataId,
+          recordIds: [args.recordId],
+          rowCause: RecordShareRowCause.OWNER,
+        },
       });
 
       return;
@@ -290,14 +290,12 @@ export class RecordSharingService {
     await this.recordShareStorageService.deleteMatching({
       workspaceId,
       transactionScope,
-      criteria: [
-        {
-          objectMetadataId: args.objectMetadataId,
-          recordId: args.recordId,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          rowCause: RecordShareRowCause.MANUAL,
-        },
-      ],
+      criteria: {
+        objectMetadataId: args.objectMetadataId,
+        recordIds: [args.recordId],
+        principalType: RecordSharePrincipalType.EVERYONE,
+        rowCause: RecordShareRowCause.MANUAL,
+      },
     });
 
     if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
@@ -427,19 +425,26 @@ export class RecordSharingService {
           ),
       )
       .map(({ id, label }) => {
-        const roleObjectsPermissions = rolesPermissions[id];
+        const roleRecordsPermissions = rolesPermissions[id];
 
-        if (!isDefined(roleObjectsPermissions)) {
+        if (!isDefined(roleRecordsPermissions)) {
           return { id, label, canRead: null, canUpdate: null };
         }
 
-        const objectPermissions = roleObjectsPermissions[objectMetadataId];
+        const objectRecordsPermissions =
+          roleRecordsPermissions.objects[objectMetadataId];
 
         return {
           id,
           label,
-          canRead: objectPermissions?.canReadObjectRecords ?? false,
-          canUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
+          canRead: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'select',
+          }),
+          canUpdate: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'update',
+          }),
         };
       });
   }
@@ -470,7 +475,7 @@ export class RecordSharingService {
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         roleIdsWithAllRecordsAccess,
       });
-    const shares = await this.recordShareStorageService.findByRecordIds({
+    const shares = await this.recordPermissionReadOrmService.findRecordShares({
       workspaceId,
       objectMetadataId,
       recordIds: [recordId],
@@ -524,10 +529,15 @@ export class RecordSharingService {
     recordId: string;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<PrivateRecordState | undefined> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
     const privateRecordStates =
-      await this.privateRecordStorageService.findStates({
+      await this.recordPermissionReadOrmService.findPrivateRecordStates({
         workspaceId,
         flatObjectMetadata,
+        flatFieldMetadataMaps,
         recordIds: [recordId],
         transactionScope,
       });

@@ -1,11 +1,13 @@
 import { connectRemoteNode, remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installPointerCapturePolyfill } from '../installPointerCapturePolyfill';
 
 const createCaptureFixture = () => {
   const polyfillWindow = new Window();
-  const documentTarget = polyfillWindow.document as unknown as Document;
+  const documentTarget = toDomWindow(polyfillWindow).document;
   const connection = { mutate: jest.fn(), call: jest.fn() };
   const workerPointerCapture = installPointerCapturePolyfill({
     elementPrototype: polyfillWindow.Element.prototype,

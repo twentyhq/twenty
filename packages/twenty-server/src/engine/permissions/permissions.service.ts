@@ -2,9 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordsOperationType,
+  type RecordShareAccessLevel,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -29,7 +35,32 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+
+type ObjectQuestion = {
+  principals: PermissionsPrincipalsWithRolesContext | undefined;
+  objectMetadataId: string;
+};
+
+type RecordsQuestion = ObjectQuestion & {
+  recordIds: string[];
+  hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  transactionScope?: WorkspaceTransactionScope;
+};
+
+type FieldQuestion = ObjectQuestion & {
+  fieldMetadataId: string;
+};
+
+type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
+  principals: PermissionsPrincipalsWithRolesContext;
+};
 
 @Injectable()
 export class PermissionsService {
@@ -37,7 +68,185 @@ export class PermissionsService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
+
+  public buildPermissionsPrincipals({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    return this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      authContext,
+    );
+  }
+
+  public async buildPermissionsPrincipalsOrThrow({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext> {
+    const principals = await this.buildPermissionsPrincipals({ authContext });
+
+    if (!isDefined(principals)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return principals;
+  }
+
+  public canReadAllRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToAllRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public canReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public canCreateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'insert',
+    });
+  }
+
+  public canUpdateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'update',
+    });
+  }
+
+  public canSoftDeleteSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'soft-delete',
+    });
+  }
+
+  public canDestroySomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'delete',
+    });
+  }
+
+  public canReadRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.coversEveryRecord({ question, operationType: 'select' });
+  }
+
+  public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.coversEveryRecord({ question, operationType: 'update' });
+  }
+
+  public async findReadableRecordIds(
+    question: RecordsQuestion,
+  ): Promise<string[]> {
+    const readableRecordIds = await this.findGrantedRecordIds({
+      question,
+      operationType: 'select',
+    });
+
+    return [...new Set(question.recordIds)].filter((recordId) =>
+      readableRecordIds.has(recordId.toLowerCase()),
+    );
+  }
+
+  public canReadField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canRead',
+    });
+  }
+
+  public canUpdateField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canUpdate',
+    });
+  }
+
+  public findUnreadableFieldMetadataIdsOrThrow({
+    principals,
+    objectMetadataId,
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canRead',
+    });
+  }
+
+  public findNonUpdatableFieldMetadataIdsOrThrow({
+    principals,
+    objectMetadataId,
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canUpdate',
+    });
+  }
+
+  public findReadableEventRecordIds(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findReadableEventRecordIds(question);
+  }
+
+  public findReadableEvents<TEvent extends ObjectRecordEvent>(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<TEvent>;
+    events?: TEvent[];
+  }): Promise<TEvent[]> {
+    return this.recordAccessPolicyService.findReadableEvents(question);
+  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
@@ -83,11 +292,11 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: computeObjectsPermissionsForRoles({
-        principals: {
-          mainPrincipal: { type: 'role', roleId: flatRole.id },
-          applicationPrincipal: { type: 'customApplication' },
-        },
+      recordsPermissions: computePrincipalsRecordsPermissions({
+        principals: buildRolePermissionsPrincipals({
+          workspaceId,
+          roleId: flatRole.id,
+        }),
         rolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -103,7 +312,7 @@ export class PermissionsService {
         false,
       ]),
     ) as Record<PermissionFlagType, boolean>,
-    objectsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
   });
 
   public async userHasWorkspaceSettingPermission({
@@ -215,6 +424,49 @@ export class PermissionsService {
     return isDefined(principals)
       ? getPermissionsPrincipalsRoleIds(principals)
       : [];
+  }
+
+  private async coversEveryRecord({
+    question,
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<boolean> {
+    const grantedRecordIds = await this.findGrantedRecordIds({
+      question,
+      operationType,
+    });
+
+    return (
+      question.recordIds.length > 0 &&
+      question.recordIds.every((recordId) =>
+        grantedRecordIds.has(recordId.toLowerCase()),
+      )
+    );
+  }
+
+  private findGrantedRecordIds({
+    question: {
+      principals,
+      objectMetadataId,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
+    },
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findGrantedRecordIds({
+      principals,
+      objectMetadataId,
+      operationType,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
+    });
   }
 
   // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag

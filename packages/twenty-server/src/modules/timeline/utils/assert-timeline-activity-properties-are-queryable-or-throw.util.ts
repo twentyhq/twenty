@@ -1,33 +1,38 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // properties holds other objects' field values, so querying it reveals restricted fields
 export const assertTimelineActivityPropertiesAreQueryableOrThrow = ({
   objectNameSingular,
   fieldName,
-  objectsPermissions,
+  recordsPermissions,
 }: {
   objectNameSingular: string;
   fieldName: string;
-  objectsPermissions: ObjectsPermissions | undefined;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'> | undefined;
 }): void => {
   if (objectNameSingular !== 'timelineActivity' || fieldName !== 'properties') {
     return;
   }
 
   const hasReadDeniedObjectOrField = Object.values(
-    objectsPermissions ?? {},
+    recordsPermissions?.objects ?? {},
   ).some(
-    (objectPermissions) =>
-      !objectPermissions.canReadObjectRecords ||
-      Object.values(objectPermissions.restrictedFields).some(
-        (fieldPermissions) => fieldPermissions.canRead === false,
-      ),
+    (objectRecordsPermissions) =>
+      isDefined(objectRecordsPermissions) &&
+      (!canReachSomeRecords({
+        objectRecordsPermissions,
+        operationType: 'select',
+      }) ||
+        Object.values(objectRecordsPermissions.restrictedFields).some(
+          (fieldPermissions) => fieldPermissions.canRead === false,
+        )),
   );
 
   if (hasReadDeniedObjectOrField) {

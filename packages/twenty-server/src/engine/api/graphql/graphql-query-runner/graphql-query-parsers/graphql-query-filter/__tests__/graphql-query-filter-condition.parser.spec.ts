@@ -12,6 +12,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -116,9 +118,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   universalIdentifiersByApplicationId: {},
 };
 
-const outerQueryBuilder = {
-  objectRecordsPermissions: {},
-} as unknown as WorkspaceSelectQueryBuilder;
+const { queryBuilder: outerQueryBuilder } = buildQueryBuilder();
 
 const recordFilterEntries = (
   filter: Record<string, unknown>,
@@ -448,13 +448,20 @@ describe('GraphqlQueryFilterConditionParser', () => {
     });
 
     it('rejects a referenced field the role cannot read', () => {
-      const restrictedQueryBuilder = {
-        objectRecordsPermissions: {
-          [companyObjectMetadata.id]: {
-            restrictedFields: { [createdAtField.id]: { canRead: false } },
+      const { queryBuilder: restrictedQueryBuilder } = buildQueryBuilder({
+        recordsPermissions: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: {
+            [companyObjectMetadata.id]: {
+              canReadAllRecords: true,
+              canUpdateAllRecords: true,
+              canSoftDeleteAllRecords: true,
+              canDestroyAllRecords: true,
+              restrictedFields: { [createdAtField.id]: { canRead: false } },
+            },
           },
         },
-      } as unknown as WorkspaceSelectQueryBuilder;
+      });
 
       expect(() =>
         recordFilterEntries(

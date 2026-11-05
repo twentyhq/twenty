@@ -1,5 +1,6 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 
 const COMMAND_MENU_ITEM = {
@@ -7,10 +8,10 @@ const COMMAND_MENU_ITEM = {
   conditionalPinnedExpression: 'everyEquals(selectedRecords, "status", "SENT")',
 };
 
-const buildContextApi = (status: string) =>
-  ({
-    selectedRecords: [{ id: 'campaign-id', status }],
-  }) as unknown as CommandMenuContextApi;
+const buildContextApi = (status: string): CommandMenuContextApi => ({
+  ...EMPTY_COMMAND_MENU_CONTEXT_API,
+  selectedRecords: [{ id: 'campaign-id', status }],
+});
 
 describe('resolveCommandMenuItemPinning', () => {
   it('keeps the pin while the expression holds', () => {
