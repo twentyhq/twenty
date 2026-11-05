@@ -187,6 +187,16 @@ export const IdleFaces: CatalogStory<Story, typeof AssistantAvatar> = {
       options: { elementContainer: { width: 56 } },
     },
   },
+};
+
+export const IdleFacesDark: typeof IdleFaces = {
+  ...IdleFaces,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const IdleMotion: typeof IdleFaces = {
+  ...IdleFaces,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const isMotionEnabled = !window.matchMedia(
@@ -202,12 +212,6 @@ export const IdleFaces: CatalogStory<Story, typeof AssistantAvatar> = {
       );
     }
   },
-};
-
-export const IdleFacesDark: typeof IdleFaces = {
-  ...IdleFaces,
-  tags: ['!autodocs'],
-  globals: { colorScheme: 'dark' },
 };
 
 export const StaticFaces: typeof IdleFaces = {
