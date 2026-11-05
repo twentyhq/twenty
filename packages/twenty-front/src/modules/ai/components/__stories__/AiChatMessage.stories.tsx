@@ -7,7 +7,10 @@ import {
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
@@ -602,7 +605,7 @@ export const MultiplayerConversation: Story = {
         ...previousThread,
         id: threadId,
         __typename: 'AgentChatThread',
-        conversationType: 'DIRECT_MESSAGE',
+        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
       });
       await waitFor(() =>
         expect(
