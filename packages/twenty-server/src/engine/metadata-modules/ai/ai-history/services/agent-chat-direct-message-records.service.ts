@@ -8,7 +8,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
@@ -66,24 +66,14 @@ export class AgentChatDirectMessageRecordsService {
       return false;
     }
 
-    const { flatObjectMetadataMaps, flatWorkspaceMemberMaps } =
+    const flatObjectMetadata = await this.findFlatObjectMetadataOrThrow({
+      workspaceId,
+      objectName,
+    });
+    const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
         'flatWorkspaceMemberMaps',
       ]);
-    const flatObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS[objectName].universalIdentifier
-      ];
-
-    if (!isDefined(flatObjectMetadata)) {
-      throw new AgentHistoryStorageException({
-        code: 'OBJECT_METADATA_NOT_FOUND',
-        message: doNotTranslate(
-          `Object metadata for ${objectName} was not found`,
-        ),
-      });
-    }
 
     const activePair = pair.filter((workspaceMemberId) => {
       const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
@@ -115,6 +105,62 @@ export class AgentChatDirectMessageRecordsService {
     });
 
     return true;
+  }
+
+  async unshare({
+    workspaceId,
+    transactionScope,
+    objectName,
+    recordIds,
+  }: {
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+    objectName: AgentHistoryObjectName;
+    recordIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(recordIds)) {
+      return;
+    }
+
+    const flatObjectMetadata = await this.findFlatObjectMetadataOrThrow({
+      workspaceId,
+      objectName,
+    });
+
+    await this.recordShareStorageService.deleteByRecordIds({
+      workspaceId,
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds,
+      transactionScope,
+    });
+  }
+
+  private async findFlatObjectMetadataOrThrow({
+    workspaceId,
+    objectName,
+  }: {
+    workspaceId: string;
+    objectName: AgentHistoryObjectName;
+  }) {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const flatObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS[objectName].universalIdentifier
+      ];
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new AgentHistoryStorageException({
+        code: 'OBJECT_METADATA_NOT_FOUND',
+        message: doNotTranslate(
+          `Object metadata for ${objectName} was not found`,
+        ),
+      });
+    }
+
+    return flatObjectMetadata;
   }
 
   private async findPair({

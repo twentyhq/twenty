@@ -18,7 +18,7 @@ export class AgentHistoryTransactionService {
     @Inject(AgentChatDirectMessageRecordsService)
     private readonly directMessageRecordsService: Pick<
       AgentChatDirectMessageRecordsService,
-      'isEnabled' | 'share'
+      'isEnabled' | 'share' | 'unshare'
     >,
   ) {}
 
@@ -162,7 +162,18 @@ export class AgentHistoryTransactionService {
                 });
               },
               delete: async (name, where) => {
-                await getRepository(name).delete(where);
+                const { raw } = await getRepository(name).delete(where);
+
+                if (!shouldShareDirectMessageRecords) {
+                  return;
+                }
+
+                await this.directMessageRecordsService.unshare({
+                  workspaceId,
+                  transactionScope,
+                  objectName: name,
+                  recordIds: raw.map(({ id }: { id: string }) => id),
+                });
               },
               afterCommit: transactionScope.afterCommit,
             });
