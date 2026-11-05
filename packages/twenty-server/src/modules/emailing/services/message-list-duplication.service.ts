@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  appendCopySuffix,
-  canReachSomeRecords,
-  isDefined,
-} from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -80,33 +76,24 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
-      await Promise.all([
-        this.settingPermissionsService.getUserWorkspacePermissions({
-          workspaceId,
-          userWorkspaceId,
-        }),
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]),
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
       ]);
 
     for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
       const objectMetadata =
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectRecordsPermissions = isDefined(objectMetadata)
-        ? recordsPermissions.objects[objectMetadata.id]
-        : undefined;
 
       if (
-        !canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'select',
-        }) ||
-        !canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'update',
-        })
+        !isDefined(objectMetadata) ||
+        !(await this.settingPermissionsService.canUserWorkspaceReadAndUpdateSomeRecords(
+          {
+            workspaceId,
+            userWorkspaceId,
+            objectMetadataId: objectMetadata.id,
+          },
+        ))
       ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,

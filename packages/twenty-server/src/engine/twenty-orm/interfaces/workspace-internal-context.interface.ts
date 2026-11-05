@@ -12,6 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 export interface WorkspaceInternalContext {
   workspaceId: string;
@@ -25,6 +26,7 @@ export interface WorkspaceInternalContext {
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordsPermissions: RoleRecordsPermissions;
+  recordReadRestrictions: RecordReadRestrictions;
   recordPermissions: Pick<
     RecordPermissionsService,
     | 'isOperationDisabled'

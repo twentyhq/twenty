@@ -5,7 +5,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 import {
   TwentyOrmException,
@@ -65,7 +65,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
-  recordsPermissions: RoleRecordsPermissions;
+  recordReadRestrictions: RecordReadRestrictions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
@@ -79,7 +79,7 @@ export type QueryBuilderContext = {
 export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
-  readonly recordsPermissions: RoleRecordsPermissions;
+  readonly recordReadRestrictions: RecordReadRestrictions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
@@ -103,7 +103,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
-    this.recordsPermissions = context.recordsPermissions;
+    this.recordReadRestrictions = context.recordReadRestrictions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }

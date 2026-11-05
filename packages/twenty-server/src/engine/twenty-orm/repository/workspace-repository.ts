@@ -29,7 +29,9 @@ import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-fie
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -151,6 +153,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.options.internalContext.recordsPermissions;
   }
 
+  private get recordReadRestrictions(): RecordReadRestrictions {
+    const { permissionsPrincipals, shouldBypassPermissionChecks } =
+      this.options;
+
+    if (shouldBypassPermissionChecks || !isDefined(permissionsPrincipals)) {
+      return NO_RECORD_READ_RESTRICTIONS;
+    }
+
+    return this.options.internalContext.recordReadRestrictions;
+  }
+
   private get filesFieldSync(): FilesFieldSync {
     return (this._filesFieldSync ??= new FilesFieldSync(
       this.options.internalContext,
@@ -172,7 +185,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
-        recordsPermissions: this.recordsPermissions,
+        recordReadRestrictions: this.recordReadRestrictions,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
@@ -1435,7 +1448,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new WorkspaceSelectQueryBuilder(alias, {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
-      recordsPermissions: this.recordsPermissions,
+      recordReadRestrictions: this.recordReadRestrictions,
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,

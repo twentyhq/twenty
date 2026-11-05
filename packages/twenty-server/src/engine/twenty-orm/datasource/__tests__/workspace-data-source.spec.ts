@@ -1,3 +1,4 @@
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
@@ -90,6 +91,7 @@ const sumPetColumn = ({
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       permissionsPrincipals: undefined,
       recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
       recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
