@@ -392,6 +392,25 @@ describe('getOnboardingCreditsProgress', () => {
     ]);
   });
 
+  it('should leave a passed invite step that earned nothing out of the recap', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({ importContacts: 2 }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      isWorkspaceCreator: true,
+      isPlanRequired: true,
+      isTrialAvailable: true,
+      profileName: null,
+      inviteTeamValidEmailsCount: 0,
+    });
+
+    expect(progress.earnedCreditsByStep).toEqual([
+      { step: 'importContacts', credits: 2, rewardCredits: 2 },
+      { step: 'createProfile', credits: 0, rewardCredits: 0.5 },
+      { step: 'upgradeTrial', credits: 0, rewardCredits: 0.5 },
+    ]);
+  });
+
   it('should leave the step at hand out of the recap until it earns credits', () => {
     const progress = getOnboardingCreditsProgress({
       onboardingFreeCredits: buildOnboardingFreeCredits({ importContacts: 2 }),

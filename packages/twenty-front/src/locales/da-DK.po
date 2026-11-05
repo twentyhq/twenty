@@ -320,7 +320,7 @@ msgstr "{0, plural, one {Få {formattedInviteTeamCreditsRewardPerUser} gratis kr
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {seat} other {seats}}"
-msgstr ""
+msgstr "{0, plural, one {sæde} other {sæder}}"
 
 #. js-lingui-id: QaXvAD
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
@@ -2425,7 +2425,7 @@ msgstr "Tilføj personer eller alle"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Add permission"
-msgstr "Tilføj adgang"
+msgstr "Tilføj tilladelse"
 
 #. js-lingui-id: 7RdLYg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -12584,7 +12584,7 @@ msgstr "Kunne ikke gemme layouttilpasningen"
 #. js-lingui-id: y3HIOa
 #: src/modules/object-core/agents/hooks/useCoreAgentSave.ts
 msgid "Failed to save role permissions: {errorMessage}"
-msgstr ""
+msgstr "Kunne ikke gemme rollerettigheder: {errorMessage}"
 
 #. js-lingui-id: bH624/
 #: src/modules/settings/applications/hooks/useApplicationVariablesDraft.ts
@@ -13031,7 +13031,7 @@ msgstr "Filen \"{fileName}\" blev uploadet"
 #. js-lingui-id: EYl2hs
 #: src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
 msgid "File field not found for attachment object"
-msgstr ""
+msgstr "Filfeltet blev ikke fundet for vedhæftningsobjekt"
 
 #. js-lingui-id: ZLG0oh
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
@@ -14081,19 +14081,19 @@ msgstr "Gæster"
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
-msgstr ""
+msgstr "h1"
 
 #. js-lingui-id: DM6L2V
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h2"
-msgstr ""
+msgstr "h2"
 
 #. js-lingui-id: aNHeda
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h3"
-msgstr ""
+msgstr "h3"
 
 #. js-lingui-id: Cr5XLk
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14180,7 +14180,7 @@ msgstr "Header-input"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "heading"
-msgstr ""
+msgstr "overskrift"
 
 #. js-lingui-id: zgPjoD
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14193,7 +14193,7 @@ msgstr "Overskrift"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 1"
-msgstr ""
+msgstr "Overskrift 1"
 
 #. js-lingui-id: El7NbA
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
@@ -14201,7 +14201,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 2"
-msgstr ""
+msgstr "Overskrift 2"
 
 #. js-lingui-id: SFN6dN
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
@@ -14209,7 +14209,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 3"
-msgstr ""
+msgstr "Overskrift 3"
 
 #. js-lingui-id: nJeKmw
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14412,7 +14412,7 @@ msgstr "Hjem"
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
-msgstr ""
+msgstr "Horisontalt søjlediagram"
 
 #. js-lingui-id: 8e0cQ8
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14737,7 +14737,7 @@ msgstr "IMAP Server"
 #. js-lingui-id: atF3YG
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Username (Optional)"
-msgstr ""
+msgstr "IMAP Brugernavn (Valgfrit)"
 
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -15147,7 +15147,7 @@ msgstr "Undersøg datamodellen, forespørg poster, og send rå API-anmodninger."
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
-msgstr ""
+msgstr "Installér"
 
 #. js-lingui-id: XOHdRf
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -15205,7 +15205,7 @@ msgstr "Installation"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Installed"
-msgstr ""
+msgstr "Installeret"
 
 #. js-lingui-id: OMxM9j
 #: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
@@ -15929,7 +15929,7 @@ msgstr "Stor overskrift, der skjuler sit indhold"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
-msgstr ""
+msgstr "Stort afsnit overskrift"
 
 #. js-lingui-id: ke14uo
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -16107,7 +16107,7 @@ msgstr "Seneste besked"
 #: src/modules/settings/members/components/MemberNameFields.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name"
-msgstr ""
+msgstr "Efternavn"
 
 #. js-lingui-id: UXBCwc
 #: src/modules/object-record/record-field/ui/form-types/components/FormFullNameFieldInput.tsx
@@ -16337,7 +16337,7 @@ msgstr "Navn på juridisk enhed"
 #. js-lingui-id: MP1v+1
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Legend"
-msgstr ""
+msgstr "Forklaring"
 
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -16453,12 +16453,12 @@ msgstr "Lime"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
-msgstr ""
+msgstr "Grænse"
 
 #. js-lingui-id: JoxPqI
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
-msgstr ""
+msgstr "Grænsen må ikke overskride {maxRecordsFormatted} poster."
 
 #. js-lingui-id: lvAOAE
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
@@ -16483,7 +16483,7 @@ msgstr "Begræns hvor mange værdier der kan tilføjes til dette felt"
 #. js-lingui-id: a4SJUE
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit must be greater than 0."
-msgstr ""
+msgstr "Grænsen skal være større end 0."
 
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -16626,7 +16626,7 @@ msgstr "Links"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
-msgstr ""
+msgstr "liste"
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint.ts
@@ -17099,7 +17099,7 @@ msgstr "Vedligeholdelsestilstand"
 #. js-lingui-id: MOLprz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Make HTTP requests to external APIs"
-msgstr ""
+msgstr "Foretag HTTP anmodninger til eksterne API'er"
 
 #. js-lingui-id: sOv4bh
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -17505,7 +17505,7 @@ msgstr "Mellemstor overskrift, der skjuler sit indhold"
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Medium section heading"
-msgstr ""
+msgstr "Mellemstor afsnit overskrift"
 
 #. js-lingui-id: OvoEq7
 #: src/modules/ai/components/AiChatThreadAvatar.tsx
@@ -17533,7 +17533,7 @@ msgstr "Medlemspræference"
 #. js-lingui-id: cNIHA/
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Member removed from workspace"
-msgstr ""
+msgstr "Medlem fjernet fra arbejdsområdet"
 
 #. js-lingui-id: wlQNTg
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
@@ -17982,7 +17982,7 @@ msgstr "Månedligt"
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "months"
-msgstr ""
+msgstr "måneder"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -18669,7 +18669,7 @@ msgstr "Ny webhook"
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "New widget"
-msgstr ""
+msgstr "Nyt widget"
 
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
@@ -19170,7 +19170,7 @@ msgstr "Intet felt er konfigureret"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 msgid "No fields available"
-msgstr ""
+msgstr "Ingen felter tilgængelige"
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
@@ -19183,7 +19183,7 @@ msgstr "Ingen felter fundet"
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
-msgstr ""
+msgstr "Ingen felter valgt"
 
 #. js-lingui-id: eiEb25
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
@@ -24106,6 +24106,7 @@ msgstr "Lørdag"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Save"
@@ -29851,6 +29852,13 @@ msgstr "opdater"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
 msgstr "Opdater"
+
+#. js-lingui-id: L/gNNk
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/modules/object-record/record-form/components/RecordUpdateFormProvider.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
+msgid "Update {0}"
+msgstr "Opdater {0}"
 
 #. js-lingui-id: ymv+je
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx

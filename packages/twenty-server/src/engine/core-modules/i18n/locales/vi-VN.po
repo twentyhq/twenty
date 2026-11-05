@@ -1198,6 +1198,11 @@ msgstr "Một lượt xuất đang chạy cho workspace này."
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Một bản xuất khác đang chạy trong không gian làm việc này. Vui lòng chờ hoàn tất."
 
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Một dịch vụ bên ngoài mất quá nhiều thời gian để phản hồi."
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."

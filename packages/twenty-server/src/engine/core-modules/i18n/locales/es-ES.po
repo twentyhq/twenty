@@ -1198,6 +1198,11 @@ msgstr "Ya hay una exportación en curso para este espacio de trabajo."
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Ya se está ejecutando una exportación en este espacio de trabajo. Espera a que termine."
 
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Un servicio externo tardó demasiado en responder."
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."

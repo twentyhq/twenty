@@ -5,9 +5,9 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 
 const updateViewInputSchema = z.object({
   id: z.string().uuid().describe('View ID to update'),
@@ -18,7 +18,7 @@ const updateViewInputSchema = z.object({
 @DefineTool({
   name: 'update_view',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description: 'Update an existing view. You can change the name and icon.',
 })
 export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
@@ -26,20 +26,18 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
 
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableViewOrThrow({
       viewId: input.id,
-      workspaceId,
-      userWorkspaceId,
-      operation: 'update',
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const view = await this.viewService.updateOne({

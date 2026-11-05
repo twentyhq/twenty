@@ -279,13 +279,13 @@ import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceComm
 import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793462047826-index-temporary-file-expiration';
 import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793473469981-enable-user-health-check';
 import { AddSettingsMenuItemSlugFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793618487873-add-settings-menu-item-slug';
-import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793627583457-add-application-role-target';
 import { AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793700975254-add-application-granted-iframe-media-permissions';
 import { AddRlsGrantOperationsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793726601132-add-rls-grant-operations';
 import { AddToolsToMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793760000000-add-tools-to-mcp-server';
 import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793777543826-create-billing-arrangement-table';
 import { AddNativePageNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100801-add-native-page-navigation-menu-item';
 import { AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100803-add-command-menu-item-availability-core-object-name';
+import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793816136545-add-application-role-target';
 import { AddWorkspaceAssistantProfileSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-slow-1793810534548-add-workspace-assistant-profile';
 import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793814954654-add-field-metadata-option-table';
 
@@ -569,13 +569,13 @@ export const INSTANCE_COMMANDS = [
   IndexTemporaryFileExpirationSlowInstanceCommand,
   EnableUserHealthCheckFastInstanceCommand,
   AddSettingsMenuItemSlugFastInstanceCommand,
-  AddApplicationRoleTargetFastInstanceCommand,
   AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand,
   AddRlsGrantOperationsFastInstanceCommand,
   AddToolsToMcpServerFastInstanceCommand,
   CreateBillingArrangementTableFastInstanceCommand,
   AddNativePageNavigationMenuItemFastInstanceCommand,
   AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand,
+  AddApplicationRoleTargetFastInstanceCommand,
   AddWorkspaceAssistantProfileSlowInstanceCommand,
   AddFieldMetadataOptionTableFastInstanceCommand,
 ];

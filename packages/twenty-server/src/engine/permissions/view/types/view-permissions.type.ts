@@ -1,3 +1,5 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+
 export type ViewChildEntityKind =
   | 'viewField'
   | 'viewFieldGroup'
@@ -12,4 +14,5 @@ export type ViewAccessContext = {
   apiKeyId?: string;
   applicationId?: string;
   agentId?: string;
+  authContext?: WorkspaceAuthContext;
 };
