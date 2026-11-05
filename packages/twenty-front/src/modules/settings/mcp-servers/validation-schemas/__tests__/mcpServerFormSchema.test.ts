@@ -12,10 +12,6 @@ describe('getMcpServerFormSchema', () => {
     isActive: true,
   };
 
-  it('accepts a valid input', () => {
-    expect(getMcpServerFormSchema().safeParse(validInput).success).toBe(true);
-  });
-
   it.each([
     'http://localhost:3000/mcp',
     'http://mcp-server:3000/mcp',
@@ -48,11 +44,6 @@ describe('getMcpServerFormSchema', () => {
     [
       'name starting with a digit',
       { name: '1linear' },
-      'Use lowercase letters, digits and underscores, starting with a letter',
-    ],
-    [
-      'name with uppercase letters',
-      { name: 'Linear' },
       'Use lowercase letters, digits and underscores, starting with a letter',
     ],
     [

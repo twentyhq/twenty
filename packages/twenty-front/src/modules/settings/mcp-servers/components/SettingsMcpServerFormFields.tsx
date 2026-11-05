@@ -8,8 +8,8 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsMcpServerConnectionProviderSelect } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionProviderSelect';
+import { SettingsMcpServerTextFieldSection } from '@/settings/mcp-servers/components/SettingsMcpServerTextFieldSection';
 import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type McpServer } from '~/generated-metadata/graphql';
 
@@ -32,80 +32,29 @@ export const SettingsMcpServerFormFields = ({
 
   return (
     <>
-      <Section.Root>
-        <Section.Header
-          title={t`Label`}
-          description={t`The name shown to your team and to agents.`}
-        />
-        <Controller
-          name="label"
-          control={control}
-          render={({
-            field: { onChange, onBlur, value },
-            fieldState: { error },
-          }) => (
-            <SettingsTextInput
-              instanceId={`${instanceIdPrefix}-label`}
-              placeholder={t`Linear`}
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              error={error?.message}
-              fullWidth
-              autoFocus={isNewMcpServer}
-            />
-          )}
-        />
-      </Section.Root>
-      <Section.Root>
-        <Section.Header
-          title={t`Name`}
-          description={t`Identifier prefixed to the tool names exposed to agents. Lowercase letters, digits and underscores; cannot be changed later.`}
-        />
-        <Controller
-          name="name"
-          control={control}
-          render={({
-            field: { onChange, onBlur, value },
-            fieldState: { error },
-          }) => (
-            <SettingsTextInput
-              instanceId={`${instanceIdPrefix}-name`}
-              placeholder={t`linear`}
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              error={error?.message}
-              disabled={!isNewMcpServer}
-              fullWidth
-            />
-          )}
-        />
-      </Section.Root>
-      <Section.Root>
-        <Section.Header
-          title={t`URL`}
-          description={t`The HTTP endpoint of the remote MCP server.`}
-        />
-        <Controller
-          name="url"
-          control={control}
-          render={({
-            field: { onChange, onBlur, value },
-            fieldState: { error },
-          }) => (
-            <SettingsTextInput
-              instanceId={`${instanceIdPrefix}-url`}
-              placeholder={t`https://mcp.example.com/mcp`}
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              error={error?.message}
-              fullWidth
-            />
-          )}
-        />
-      </Section.Root>
+      <SettingsMcpServerTextFieldSection
+        name="label"
+        instanceId={`${instanceIdPrefix}-label`}
+        title={t`Label`}
+        description={t`The name shown to your team and to agents.`}
+        placeholder={t`Linear`}
+        autoFocus={isNewMcpServer}
+      />
+      <SettingsMcpServerTextFieldSection
+        name="name"
+        instanceId={`${instanceIdPrefix}-name`}
+        title={t`Name`}
+        description={t`Identifier prefixed to the tool names exposed to agents. Lowercase letters, digits and underscores; cannot be changed later.`}
+        placeholder={t`linear`}
+        disabled={!isNewMcpServer}
+      />
+      <SettingsMcpServerTextFieldSection
+        name="url"
+        instanceId={`${instanceIdPrefix}-url`}
+        title={t`URL`}
+        description={t`The HTTP endpoint of the remote MCP server.`}
+        placeholder={t`https://mcp.example.com/mcp`}
+      />
       {isDefined(connectionProviderApplicationId) && (
         <Section.Root>
           <Section.Header
