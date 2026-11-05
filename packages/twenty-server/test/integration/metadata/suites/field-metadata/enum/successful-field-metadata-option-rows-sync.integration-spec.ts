@@ -4,11 +4,13 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   type FieldMetadataComplexOption,
   FieldMetadataType,
 } from 'twenty-shared/types';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type StoredOption = FieldMetadataComplexOption & { id: string };
@@ -327,6 +329,93 @@ describe('field metadata option rows follow field options', () => {
         applicationId: stageField.applicationId,
       }),
     );
+  });
+
+  it('renames a field whose legacy option ids await the backfill', async () => {
+    const { data } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'legacyIdsField',
+        label: 'Legacy Ids Field',
+        isLabelSyncedWithName: false,
+        options: [
+          { label: 'Open', value: 'OPEN', color: 'green', position: 0 },
+          { label: 'Closed', value: 'CLOSED', color: 'red', position: 1 },
+        ],
+      },
+      gqlFields: 'id',
+    });
+    const fieldMetadataId: string = data.createOneField.id;
+
+    // A field from before the backfill: no rows, and option ids that cannot be universal identifiers.
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."fieldMetadataOption" WHERE "fieldMetadataId" = $1`,
+      [fieldMetadataId],
+    );
+    await globalThis.testDataSource.query(
+      `UPDATE core."fieldMetadata"
+        SET options = (
+          SELECT jsonb_agg(option || jsonb_build_object('id', upper(option->>'id')))
+          FROM jsonb_array_elements(options::jsonb) option
+        )
+        WHERE id = $1`,
+      [fieldMetadataId],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatFieldMetadataMaps',
+      'flatFieldMetadataOptionMaps',
+    ]);
+
+    try {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { label: 'Legacy Ids Field Renamed' },
+        },
+      });
+
+      expect(await findOptionRows(fieldMetadataId)).toEqual([]);
+
+      const [{ options: legacyOptions }] =
+        await globalThis.testDataSource.query(
+          `SELECT options FROM core."fieldMetadata" WHERE id = $1`,
+          [fieldMetadataId],
+        );
+
+      const { errors } = await updateOneFieldMetadata({
+        expectToFail: true,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: {
+            options: (legacyOptions as StoredOption[]).map((option) => ({
+              ...option,
+              label: `${option.label} edited`,
+            })),
+          },
+        },
+      });
+
+      expect(JSON.stringify(errors)).toContain(
+        'Option id must be a lowercase UUID of version 4 or later',
+      );
+    } finally {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldMetadataId },
+      });
+    }
   });
 
   it('keeps a row for every option of the standard fields', async () => {
