@@ -23,7 +23,7 @@ import { type RecordSharingArgs } from 'src/engine/permissions/record-share/type
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -104,7 +104,7 @@ export class PrivateRecordWriteService {
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
     isPrivate: boolean;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     return this.recordPrivacyWriteOrmService.setRecordsPrivate({
       workspaceId,

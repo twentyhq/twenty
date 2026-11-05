@@ -13,13 +13,13 @@ import {
   type RecordSharingObject,
   resolveRecordSharingObjectOrThrow,
 } from 'src/engine/permissions/record-share/utils/resolve-record-sharing-object-or-throw.util';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
+import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type RecordSharingChange = {
   workspaceId: string;
-  transactionScope: WorkspaceTransactionScope;
+  transactionScope: RecordPermissionTransactionScope;
   sharingObject: RecordSharingObject;
   creatorWorkspaceMemberId: string | undefined;
 };
@@ -27,7 +27,7 @@ export type RecordSharingChange = {
 @Injectable()
 export class RecordSharingChangeService {
   constructor(
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
     private readonly permissionsService: PermissionsService,
@@ -57,48 +57,59 @@ export class RecordSharingChangeService {
       throw new NotFoundError('Record not found');
     }
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            await this.recordShareWriteOrmService.lockRecordForSharingChange({
-              workspaceId,
-              flatObjectMetadata,
-              recordId: args.recordId,
-              transactionScope,
-            });
-            const repository = transactionScope.getRepository(
-              flatObjectMetadata.nameSingular,
-            );
-            const writableIds =
-              await repository.findRecordIdsAllowedForOperation({
-                recordIds: [args.recordId],
-                operationType: 'update',
-                withDeleted: true,
-              });
-            if (
-              writableIds.length !== 1 ||
-              !repository.isObjectOperationPermittedByRole('update')
-            ) {
-              throw new NotFoundError('Record not found');
-            }
-            const { viewerAccessLevel, creatorWorkspaceMemberId } =
-              await this.permissionsService.findViewerRecordAccess({
-                ...args,
-                transactionScope,
-              });
-            if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
-              throw new NotFoundError('Record not found');
-            }
-            await write({
-              workspaceId,
-              transactionScope,
-              sharingObject,
-              creatorWorkspaceMemberId,
-            });
-          },
-        ),
-      args.authContext,
+    await this.workspaceQueryExecutorService.runInTransaction(
+      async (executor) => {
+        const transactionScope: RecordPermissionTransactionScope = {
+          workspaceId,
+          executeRawQuery: (sql, parameters = []) =>
+            executor.execute({ text: sql, values: parameters }),
+        };
+
+        await this.recordShareWriteOrmService.lockRecordForSharingChange({
+          workspaceId,
+          flatObjectMetadata,
+          recordId: args.recordId,
+          transactionScope,
+        });
+
+        const principals =
+          await this.permissionsService.buildPermissionsPrincipals({
+            authContext: args.authContext,
+          });
+        const isWritable = await this.permissionsService.canUpdateRecords({
+          principals,
+          objectMetadataId: args.objectMetadataId,
+          recordIds: [args.recordId],
+          transactionScope,
+        });
+
+        if (
+          !isWritable ||
+          !(await this.permissionsService.isUpdatePermittedByRole({
+            principals,
+            objectMetadataId: args.objectMetadataId,
+          }))
+        ) {
+          throw new NotFoundError('Record not found');
+        }
+
+        const { viewerAccessLevel, creatorWorkspaceMemberId } =
+          await this.permissionsService.findViewerRecordAccess({
+            ...args,
+            transactionScope,
+          });
+
+        if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
+          throw new NotFoundError('Record not found');
+        }
+
+        await write({
+          workspaceId,
+          transactionScope,
+          sharingObject,
+          creatorWorkspaceMemberId,
+        });
+      },
     );
 
     return this.permissionsService.findRecordSharingAfterChange(args);

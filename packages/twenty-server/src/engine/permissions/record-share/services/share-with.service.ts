@@ -16,7 +16,7 @@ import { resolveShareWithPrincipalOrThrow } from 'src/engine/permissions/record-
 import { validateShareWithArgOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -72,7 +72,7 @@ export class ShareWithService {
     recordIds: string[];
     apiKeyRoleMap: Record<string, string>;
     createdRecordSharing: CreatedRecordSharing;
-    transactionScope: WorkspaceTransactionScope;
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
 

@@ -12,6 +12,7 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
@@ -36,8 +37,7 @@ import {
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type ViewerRecordAccess = {
@@ -48,7 +48,7 @@ export type ViewerRecordAccess = {
 @Injectable()
 export class RecordSharingReadService {
   constructor(
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -88,7 +88,9 @@ export class RecordSharingReadService {
   }
 
   async findViewerRecordAccess(
-    args: RecordSharingArgs & { transactionScope: WorkspaceTransactionScope },
+    args: RecordSharingArgs & {
+      transactionScope: RecordPermissionTransactionScope;
+    },
   ): Promise<ViewerRecordAccess> {
     const { viewerAccessLevel, creatorWorkspaceMemberId } =
       await this.findRecordShareState({
@@ -168,9 +170,13 @@ export class RecordSharingReadService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.isUpdatePermittedByRole({
-        authContext: args.authContext,
-        flatObjectMetadata,
+      (await this.recordAccessPolicyService.isOperationPermittedByRole({
+        principals:
+          await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+            args.authContext,
+          ),
+        objectMetadataId: flatObjectMetadata.id,
+        operationType: 'update',
       }));
     const grants = shares.filter(
       (share) =>
@@ -295,7 +301,7 @@ export class RecordSharingReadService {
     transactionScope,
   }: RecordSharingArgs & {
     sharingObject: RecordSharingObject;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
     const { flatObjectMetadata, isShareable } = sharingObject;
@@ -365,7 +371,7 @@ export class RecordSharingReadService {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordId: string;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<PrivateRecordState | undefined> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -393,27 +399,12 @@ export class RecordSharingReadService {
     const permissionsByRecordId =
       await this.recordPermissionsService.getPermissionsForRecords({
         authContext: args.authContext,
-        flatObjectMetadata: sharingObject.flatObjectMetadata,
+        objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],
       });
 
     return (
       permissionsByRecordId.get(args.recordId) ?? DENIED_RECORD_PERMISSIONS
-    );
-  }
-
-  private isUpdatePermittedByRole({
-    authContext,
-    flatObjectMetadata,
-  }: Pick<RecordSharingArgs, 'authContext'> & {
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
-  }): Promise<boolean> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepository(flatObjectMetadata.nameSingular)
-          .isObjectOperationPermittedByRole('update'),
-      authContext,
     );
   }
 

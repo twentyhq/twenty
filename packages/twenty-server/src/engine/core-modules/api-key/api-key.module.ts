@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyRoleModule } from 'src/engine/core-modules/api-key/api-key-role.module';
 import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
@@ -33,6 +34,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     RoleTargetModule,
     TokenModule,
     PermissionsModule,
+    ApiKeyRoleModule,
   ],
   providers: [
     ApiKeyService,
@@ -44,6 +46,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   controllers: [ApiKeyController],
-  exports: [ApiKeyService, PermissionsModule, TypeOrmModule],
+  exports: [ApiKeyService, ApiKeyRoleModule, PermissionsModule, TypeOrmModule],
 })
 export class ApiKeyModule {}

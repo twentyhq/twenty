@@ -38,7 +38,7 @@ export class SentMessageRecordLinkService {
     const permissionsByRecordId =
       await this.permissionsService.findRecordsPermissions({
         authContext,
-        flatObjectMetadata: { nameSingular: objectNameSingular },
+        objectNameSingular,
         recordIds: [recordId],
       });
 

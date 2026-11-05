@@ -12,6 +12,7 @@ const readable = { ...denied, canRead: true };
 const buildResolver = () => {
   const objectMetadata = {
     id: 'object',
+    nameSingular: 'agentChatThread',
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   };
   const permissionsService = {
@@ -81,7 +82,7 @@ describe('Generic record permissions query', () => {
         workspace: { id: 'workspace' },
         userWorkspaceId: 'viewer',
       },
-      flatObjectMetadata: objectMetadata,
+      objectNameSingular: objectMetadata.nameSingular,
       recordIds: ['record', 'missing'],
     });
   });
