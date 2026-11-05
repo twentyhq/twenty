@@ -1,4 +1,7 @@
-import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { type RecordFilter } from 'twenty-shared/utils';
+
+import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
 
 const CURRENCY_FIELD_ID = '11111111-1111-4111-8111-111111111111';
 const OTHER_FIELD_ID = '22222222-2222-4222-8222-222222222222';
@@ -9,15 +12,17 @@ const currencyFieldNamesByObjectNameSingular = new Map([
   ['opportunity', new Set(['amount'])],
 ]);
 
-const buildFilter = (recordFilters: Record<string, unknown>[]) => ({
+type StoredRecordFilter = Omit<RecordFilter, 'id'>;
+
+const buildFilter = (recordFilters: StoredRecordFilter[]) => ({
   recordFilters,
   recordFilterGroups: [],
 });
 
-const currencyCodeRecordFilter = {
+const currencyCodeRecordFilter: StoredRecordFilter = {
   fieldMetadataId: CURRENCY_FIELD_ID,
   subFieldName: 'currencyCode',
-  operand: 'IS',
+  operand: ViewFilterOperand.IS,
   value: '["ANG","USD"]',
 };
 
@@ -63,7 +68,7 @@ describe('replaceWithdrawnCurrencyCodeInWorkflowSteps', () => {
       fieldMetadataId: RELATION_FIELD_ID,
       relationTargetFieldMetadataId: CURRENCY_FIELD_ID,
     };
-    const buildFindRecordsStep = (recordFilter: Record<string, unknown>) => ({
+    const buildFindRecordsStep = (recordFilter: StoredRecordFilter) => ({
       type: 'FIND_RECORDS',
       settings: { input: { filter: buildFilter([recordFilter]) } },
     });

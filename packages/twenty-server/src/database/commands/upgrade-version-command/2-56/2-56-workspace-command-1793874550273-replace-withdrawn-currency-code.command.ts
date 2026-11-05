@@ -11,45 +11,40 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/replacement-currency-code.constant';
-import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/withdrawn-currency-code.constant';
-import { WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/workflow-step-types-with-currency-code.constant';
-import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
-import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-default-value.util';
-import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-filter-value.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/withdrawn-currency-code.constant';
+import { WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/workflow-step-types-with-currency-code.constant';
+import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
+import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-default-value.util';
+import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-filter-value.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
+import {
+  rewriteJsonbRowsWithCompareAndSet,
+  type StoredJsonbRow,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-const REWRITE_BATCH_SIZE = 100;
+const MAX_REWRITE_ATTEMPTS = 3;
 
-type StoredJsonbRow = { id: string; value: unknown };
+type RewriteRowsArgs = Parameters<
+  typeof rewriteJsonbRowsWithCompareAndSet<unknown>
+>[0];
 
-type RewriteRowsArgs<TRow extends StoredJsonbRow> = {
-  dataSource: DataSource;
-  isDryRun: boolean;
-  tableName: string;
-  columnName: string;
-  whereClause: string;
-  whereParameters: unknown[];
-  mapRow: (row: TRow) => { value: unknown; hasChanged: boolean };
-};
-
-@RegisteredWorkspaceCommand('2.55.0', 1793608917406)
+@RegisteredWorkspaceCommand('2.56.0', 1793874550273)
 @Command({
-  name: 'upgrade:2-55:replace-withdrawn-currency-code',
+  name: 'upgrade:2-56:replace-withdrawn-currency-code',
   description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow steps and triggers`,
 })
 export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCommandRunner {
@@ -100,18 +95,12 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     >();
 
     for (const field of currencyFlatFieldMetadatas) {
-      const objectNameSingular =
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          field.objectMetadataUniversalIdentifier
-        ]?.nameSingular;
-
-      if (!isDefined(objectNameSingular)) {
-        this.logger.warn(
-          `Skipping workflow steps of currency field ${field.id} in workspace ${workspaceId}: its object metadata is missing`,
-        );
-
-        continue;
-      }
+      const { nameSingular: objectNameSingular } =
+        this.getFlatObjectMetadataOrThrow({
+          field,
+          flatObjectMetadataMaps,
+          workspaceId,
+        });
 
       const currencyFieldNames =
         currencyFieldNamesByObjectNameSingular.get(objectNameSingular) ??
@@ -138,7 +127,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       flatObjectMetadataMaps,
     });
 
-    const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow) =>
+    const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow<unknown>) =>
       replaceWithdrawnCurrencyCodeInFilterValue(value);
 
     const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
@@ -147,7 +136,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       [...currencyFieldMetadataIds],
     ];
 
-    const viewFilterCount = await this.rewriteRows({
+    const viewFilterCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName: 'core."viewFilter"',
@@ -157,7 +146,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       mapRow: mapStoredRecordFilterRow,
     });
 
-    const rowLevelPermissionPredicateCount = await this.rewriteRows({
+    const rowLevelPermissionPredicateCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName: 'core."rowLevelPermissionPredicate"',
@@ -167,7 +156,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       mapRow: mapStoredRecordFilterRow,
     });
 
-    const chartWidgetCount = await this.rewriteRows({
+    const chartWidgetCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName: 'core."pageLayoutWidget"',
@@ -181,7 +170,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         }),
     });
 
-    const mapWorkflowVersionStepsRow = ({ value }: StoredJsonbRow) =>
+    const mapWorkflowVersionStepsRow = ({ value }: StoredJsonbRow<unknown>) =>
       replaceWithdrawnCurrencyCodeInWorkflowSteps({
         steps: value,
         currencyFieldMetadataIds,
@@ -193,7 +182,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         JSON.stringify([{ type }]),
       );
 
-    const coreWorkflowVersionCount = await this.rewriteRows({
+    const coreWorkflowVersionCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName: 'core."workflowVersion"',
@@ -203,7 +192,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       mapRow: mapWorkflowVersionStepsRow,
     });
 
-    const coreWorkflowVersionTriggersCount = await this.rewriteRows({
+    const coreWorkflowVersionTriggersCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName: 'core."workflowVersion"',
@@ -288,7 +277,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     workspaceId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     workflowStepTypeContainments: string[];
-    mapWorkflowVersionStepsRow: RewriteRowsArgs<StoredJsonbRow>['mapRow'];
+    mapWorkflowVersionStepsRow: RewriteRowsArgs['mapRow'];
     currencyFieldMetadataIds: Set<string>;
   }): Promise<{ stepCount: number; triggerCount: number }> {
     const workflowVersionFlatObjectMetadata =
@@ -302,9 +291,14 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       return { stepCount: 0, triggerCount: 0 };
     }
 
-    const tableName = `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`;
+    const { schemaName, tableName: workflowVersionTableName } =
+      getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: workflowVersionFlatObjectMetadata,
+      });
+    const tableName = `"${schemaName}"."${workflowVersionTableName}"`;
 
-    const stepCount = await this.rewriteRows({
+    const stepCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName,
@@ -314,7 +308,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       mapRow: mapWorkflowVersionStepsRow,
     });
 
-    const triggerCount = await this.rewriteRows({
+    const triggerCount = await this.rewriteRowsOrThrow({
       dataSource,
       isDryRun,
       tableName,
@@ -434,35 +428,36 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       return 0;
     }
 
-    let recordCount = 0;
+    const currencyCodeColumnNamesByTableName = new Map<string, string[]>();
 
     for (const field of currencyFlatFieldMetadatas) {
-      const flatObjectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          field.objectMetadataUniversalIdentifier
-        ];
-
-      if (!isDefined(flatObjectMetadata)) {
-        this.logger.warn(
-          `Skipping records of currency field ${field.id} in workspace ${workspaceId}: its object metadata is missing`,
-        );
-
-        continue;
-      }
-
       const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
         workspaceId,
-        objectMetadata: flatObjectMetadata,
+        objectMetadata: this.getFlatObjectMetadataOrThrow({
+          field,
+          flatObjectMetadataMaps,
+          workspaceId,
+        }),
       });
       const qualifiedTableName = `"${schemaName}"."${tableName}"`;
-      const columnName = computeCompositeColumnName(
-        field,
-        currencyCodeProperty,
-      );
+      const columnNames =
+        currencyCodeColumnNamesByTableName.get(qualifiedTableName) ?? [];
 
+      columnNames.push(
+        `"${computeCompositeColumnName(field, currencyCodeProperty)}"`,
+      );
+      currencyCodeColumnNamesByTableName.set(qualifiedTableName, columnNames);
+    }
+
+    let recordCount = 0;
+
+    for (const [
+      qualifiedTableName,
+      columnNames,
+    ] of currencyCodeColumnNamesByTableName) {
       if (isDryRun) {
         const [{ count }]: { count: string }[] = await dataSource.query(
-          `SELECT COUNT(*) AS count FROM ${qualifiedTableName} WHERE "${columnName}" = $1`,
+          `SELECT COUNT(*) AS count FROM ${qualifiedTableName} WHERE ${columnNames.map((columnName) => `${columnName} = $1`).join(' OR ')}`,
           [WITHDRAWN_CURRENCY_CODE],
         );
 
@@ -472,7 +467,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       }
 
       const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-        `UPDATE ${qualifiedTableName} SET "${columnName}" = $1 WHERE "${columnName}" = $2`,
+        `UPDATE ${qualifiedTableName} SET ${columnNames.map((columnName) => `${columnName} = CASE WHEN ${columnName} = $2 THEN $1 ELSE ${columnName} END`).join(', ')} WHERE ${columnNames.map((columnName) => `${columnName} = $2`).join(' OR ')}`,
         [REPLACEMENT_CURRENCY_CODE, WITHDRAWN_CURRENCY_CODE],
       );
 
@@ -482,51 +477,54 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     return recordCount;
   }
 
-  private async rewriteRows<TRow extends StoredJsonbRow>({
-    dataSource,
-    isDryRun,
-    tableName,
-    columnName,
-    whereClause,
-    whereParameters,
-    mapRow,
-  }: RewriteRowsArgs<TRow>): Promise<number> {
-    let rewrittenRowCount = 0;
-    let afterRowId: string | undefined;
+  private getFlatObjectMetadataOrThrow({
+    field,
+    flatObjectMetadataMaps,
+    workspaceId,
+  }: {
+    field: FlatFieldMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    workspaceId: string;
+  }): FlatObjectMetadata {
+    const flatObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        field.objectMetadataUniversalIdentifier
+      ];
 
-    while (true) {
-      const parameters = isDefined(afterRowId)
-        ? [...whereParameters, afterRowId]
-        : whereParameters;
-
-      const rows: TRow[] = await dataSource.query(
-        `SELECT id, ${columnName} AS value FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${parameters.length}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
-        parameters,
+    if (!isDefined(flatObjectMetadata)) {
+      throw new Error(
+        `Object metadata of currency field ${field.id} is missing in workspace ${workspaceId}`,
       );
+    }
 
-      const rewrites = rows.flatMap((row) => {
-        const { value, hasChanged } = mapRow(row);
+    return flatObjectMetadata;
+  }
 
-        return hasChanged ? [{ id: row.id, from: row.value, to: value }] : [];
-      });
+  // Compare-and-set skips rows edited since they were read, so re-read them
+  // until none still hold the withdrawn code
+  private async rewriteRowsOrThrow(args: RewriteRowsArgs): Promise<number> {
+    let rewrittenRowCount = 0;
+    let remainingRowCount = 0;
 
-      if (isDryRun) {
-        rewrittenRowCount += rewrites.length;
-      } else if (rewrites.length > 0) {
-        // Compare-and-set so a row edited since it was read is left as is
-        const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-          `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"`,
-          [JSON.stringify(rewrites)],
-        );
+    for (let attempt = 0; attempt < MAX_REWRITE_ATTEMPTS; attempt++) {
+      rewrittenRowCount += await rewriteJsonbRowsWithCompareAndSet(args);
 
-        rewrittenRowCount += updatedRowCount;
-      }
-
-      if (rows.length < REWRITE_BATCH_SIZE) {
+      if (args.isDryRun) {
         return rewrittenRowCount;
       }
 
-      afterRowId = rows[rows.length - 1].id;
+      remainingRowCount = await rewriteJsonbRowsWithCompareAndSet({
+        ...args,
+        isDryRun: true,
+      });
+
+      if (remainingRowCount === 0) {
+        return rewrittenRowCount;
+      }
     }
+
+    throw new Error(
+      `${remainingRowCount} row(s) of ${args.tableName}.${args.columnName} kept changing during the upgrade and still contain ${WITHDRAWN_CURRENCY_CODE}`,
+    );
   }
 }

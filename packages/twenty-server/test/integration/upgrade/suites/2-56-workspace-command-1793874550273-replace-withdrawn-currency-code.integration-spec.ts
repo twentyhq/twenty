@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type ReplaceWithdrawnCurrencyCodeCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793608917406-replace-withdrawn-currency-code.command';
+import { type ReplaceWithdrawnCurrencyCodeCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793874550273-replace-withdrawn-currency-code.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -69,7 +69,7 @@ const buildCreateOpportunityStep = (currencyCode: string) => ({
   },
 });
 
-describe('2-55 workspace command - replace withdrawn currency code (integration)', () => {
+describe('2-56 workspace command - replace withdrawn currency code (integration)', () => {
   let command: ReplaceWithdrawnCurrencyCodeCommand;
   let amountFieldMetadataId: string;
   let opportunityCompanyFieldMetadataId: string;

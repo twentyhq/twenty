@@ -2,21 +2,21 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/replacement-currency-code.constant';
-import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/withdrawn-currency-code.constant';
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-55/types/mapped-value.type';
-import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-record-filters.util';
-import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-step-filters.util';
-import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-55/utils/to-mapped-value.util';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/withdrawn-currency-code.constant';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
+import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-record-filters.util';
+import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-step-filters.util';
+import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-56/utils/to-mapped-value.util';
 
 const replaceWithdrawnCurrencyCodeInObjectRecord = ({
   objectRecord,
   currencyFieldNames,
 }: {
-  objectRecord: unknown;
+  objectRecord: Record<string, unknown>;
   currencyFieldNames: Set<string> | undefined;
-}): unknown => {
-  if (!isPlainObject(objectRecord) || !isDefined(currencyFieldNames)) {
+}): Record<string, unknown> => {
+  if (!isDefined(currencyFieldNames)) {
     return objectRecord;
   }
 
@@ -40,7 +40,7 @@ const replaceWithdrawnCurrencyCodeInStepInput = ({
   currencyFieldMetadataIds,
   currencyFieldNamesByObjectNameSingular,
 }: {
-  stepType: unknown;
+  stepType: string;
   input: Record<string, unknown>;
   currencyFieldMetadataIds: Set<string>;
   currencyFieldNamesByObjectNameSingular: Map<string, Set<string>>;
@@ -66,7 +66,7 @@ const replaceWithdrawnCurrencyCodeInStepInput = ({
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
     case WorkflowActionType.UPSERT_RECORD:
-      return isString(input.objectName)
+      return isString(input.objectName) && isPlainObject(input.objectRecord)
         ? {
             ...input,
             objectRecord: replaceWithdrawnCurrencyCodeInObjectRecord({
@@ -98,6 +98,7 @@ export const replaceWithdrawnCurrencyCodeInWorkflowSteps = ({
   const mappedSteps = steps.map((step) => {
     if (
       !isPlainObject(step) ||
+      !isString(step.type) ||
       !isPlainObject(step.settings) ||
       !isPlainObject(step.settings.input)
     ) {

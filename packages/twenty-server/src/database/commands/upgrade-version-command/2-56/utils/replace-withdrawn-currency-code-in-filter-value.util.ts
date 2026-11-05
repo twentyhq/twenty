@@ -1,9 +1,9 @@
 import { isString } from '@sniptt/guards';
 import { parseJson } from 'twenty-shared/utils';
 
-import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/replacement-currency-code.constant';
-import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/withdrawn-currency-code.constant';
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-55/types/mapped-value.type';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/withdrawn-currency-code.constant';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
 
 export const replaceWithdrawnCurrencyCodeInFilterValue = (
   value: unknown,

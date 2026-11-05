@@ -1,8 +1,8 @@
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-55/types/mapped-value.type';
-import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-step-filters.util';
-import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-55/utils/to-mapped-value.util';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
+import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-step-filters.util';
+import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-56/utils/to-mapped-value.util';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const replaceWithdrawnCurrencyCodeInWorkflowTrigger = ({

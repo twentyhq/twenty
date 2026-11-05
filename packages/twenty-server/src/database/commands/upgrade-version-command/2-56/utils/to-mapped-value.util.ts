@@ -1,4 +1,4 @@
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-55/types/mapped-value.type';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
 
 export const toMappedValue = ({
   original,
