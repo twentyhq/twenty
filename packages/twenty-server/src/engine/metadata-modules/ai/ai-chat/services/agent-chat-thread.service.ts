@@ -676,8 +676,9 @@ export class AgentChatThreadService {
         (workspaceMemberId) =>
           !thread.writerWorkspaceMemberIds?.includes(workspaceMemberId),
       );
-      const hasNewWriters = isNonEmptyArray(newWriterWorkspaceMemberIds);
-      const writerWorkspaceMemberIds = hasNewWriters
+      const writerWorkspaceMemberIds = isNonEmptyArray(
+        newWriterWorkspaceMemberIds,
+      )
         ? [
             ...(thread.writerWorkspaceMemberIds ?? []),
             ...newWriterWorkspaceMemberIds,
@@ -688,22 +689,18 @@ export class AgentChatThreadService {
       const { generatedMaps: updatedThreads } = await threadRepository.update(
         {
           id: threadBefore.id,
-          ...(hasNewWriters
-            ? {
-                writerWorkspaceMemberIds: isNonEmptyArray(
-                  thread.writerWorkspaceMemberIds,
-                )
-                  ? Equal(thread.writerWorkspaceMemberIds)
-                  : Or(IsNull(), Equal([])),
-              }
-            : {}),
+          writerWorkspaceMemberIds: isNonEmptyArray(
+            thread.writerWorkspaceMemberIds,
+          )
+            ? Equal(thread.writerWorkspaceMemberIds)
+            : Or(IsNull(), Equal([])),
         },
         {
           lastActivityAt: recordedAt.toISOString(),
           updatedAt: recordedAt.toISOString(),
           lastMessageText,
           lastMessageSenderWorkspaceMemberId: null,
-          ...(hasNewWriters ? { writerWorkspaceMemberIds } : {}),
+          writerWorkspaceMemberIds,
         },
       );
 
