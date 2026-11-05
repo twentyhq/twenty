@@ -277,7 +277,7 @@ export class ApplicationMessageIngestionService {
       return (
         !isDefined(file) ||
         file.status !== FILE_STATUS.UPLOADED ||
-        file.settings?.isTemporaryFile !== true ||
+        !file.settings?.isTemporaryFile ||
         !file.path.includes(ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER)
       );
     });
