@@ -26,16 +26,20 @@ const hasOptionColumnsChanged = ({
   existingOption.color !== targetOptionColumns.color ||
   existingOption.position !== targetOptionColumns.position;
 
-// Keeps a field's option rows in step with its `options` array; a row's universal identifier is the option id.
+// A row's universal identifier is its option id.
 export const computeFieldMetadataOptionOperationsForField = ({
   fieldMetadataUniversalIdentifier,
   targetUniversalFlatFieldMetadata,
   existingOptions,
+  isUniversalIdentifierUsedByOtherField,
   applicationUniversalIdentifier,
 }: {
   fieldMetadataUniversalIdentifier: string;
   targetUniversalFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
   existingOptions: UniversalFlatFieldMetadataOption[];
+  isUniversalIdentifierUsedByOtherField: (
+    universalIdentifier: string,
+  ) => boolean;
   applicationUniversalIdentifier: string;
 }): FieldMetadataOptionOperations => {
   const now = new Date().toISOString();
@@ -82,7 +86,11 @@ export const computeFieldMetadataOptionOperationsForField = ({
     universalIdentifier,
     targetOptionColumns,
   ] of targetOptionColumnsByUniversalIdentifier) {
-    if (existingOptionUniversalIdentifiers.has(universalIdentifier)) {
+    // The field validator reports an option id reused across fields.
+    if (
+      existingOptionUniversalIdentifiers.has(universalIdentifier) ||
+      isUniversalIdentifierUsedByOtherField(universalIdentifier)
+    ) {
       continue;
     }
 

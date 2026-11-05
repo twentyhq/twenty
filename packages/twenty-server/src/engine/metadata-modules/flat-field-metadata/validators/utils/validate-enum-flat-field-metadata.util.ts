@@ -20,6 +20,7 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
+import { validateOptionIdsNotUsedByOtherFields } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-not-used-by-other-fields.util';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -377,16 +378,24 @@ export const hasInvalidEnumFlatFieldMetadataOptions = (
 export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
   update,
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     universalFlatFieldMetadataToValidate,
   );
 
-  const shouldValidateOptionColors =
-    !isDefined(update) || isDefined(update.options);
+  const areOptionsWritten = !isDefined(update) || isDefined(update.options);
 
-  const optionColorValidationErrors = shouldValidateOptionColors
+  const optionColorValidationErrors = areOptionsWritten
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
+    : [];
+
+  const optionIdValidationErrors = areOptionsWritten
+    ? validateOptionIdsNotUsedByOtherFields({
+        universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
+        flatFieldMetadataMaps:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
+      })
     : [];
 
   const defaultValueValidationErrors = isDefined(
@@ -401,6 +410,7 @@ export const validateEnumSelectFlatFieldMetadata = ({
   return [
     ...optionsValidationErrors,
     ...optionColorValidationErrors,
+    ...optionIdValidationErrors,
     ...defaultValueValidationErrors,
   ];
 };

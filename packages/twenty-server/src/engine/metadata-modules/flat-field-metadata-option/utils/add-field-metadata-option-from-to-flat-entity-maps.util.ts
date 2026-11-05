@@ -92,7 +92,20 @@ export const addFieldMetadataOptionFromToFlatEntityMaps = ({
       universalIdentifier,
       optionColumns,
     ] of getTargetOptionColumnsByUniversalIdentifier(toFlatFieldMetadata)) {
-      const existingOption = from.byUniversalIdentifier[universalIdentifier];
+      const existingOption =
+        existingFlatFieldMetadataOptionMaps.byUniversalIdentifier[
+          universalIdentifier
+        ];
+
+      // The field validator reports an option id reused across fields.
+      if (
+        isDefined(to.byUniversalIdentifier[universalIdentifier]) ||
+        (isDefined(existingOption) &&
+          existingOption.fieldMetadataUniversalIdentifier !==
+            toFlatFieldMetadata.universalIdentifier)
+      ) {
+        continue;
+      }
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: {

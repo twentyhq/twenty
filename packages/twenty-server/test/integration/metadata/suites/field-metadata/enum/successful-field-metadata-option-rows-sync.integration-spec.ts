@@ -42,7 +42,13 @@ const findFieldApplicationId = async (
   return applicationId;
 };
 
-const toExpectedRows = (options: StoredOption[], applicationId: string) =>
+const toExpectedRows = ({
+  options,
+  applicationId,
+}: {
+  options: StoredOption[];
+  applicationId: string;
+}) =>
   [...options]
     .sort((first, second) => first.position - second.position)
     .map(({ id, value, label, color, position }) => ({
@@ -112,7 +118,7 @@ describe('field metadata option rows follow field options', () => {
     const applicationId = await findFieldApplicationId(fieldMetadataId);
 
     expect(await findOptionRows(fieldMetadataId)).toEqual(
-      toExpectedRows(createdOptions, applicationId),
+      toExpectedRows({ options: createdOptions, applicationId }),
     );
 
     const [newOption, wonOption] = createdOptions;
@@ -135,7 +141,7 @@ describe('field metadata option rows follow field options', () => {
     const updatedOptions = updateData.updateOneField.options as StoredOption[];
 
     expect(await findOptionRows(fieldMetadataId)).toEqual(
-      toExpectedRows(updatedOptions, applicationId),
+      toExpectedRows({ options: updatedOptions, applicationId }),
     );
 
     await updateOneFieldMetadata({
@@ -151,6 +157,110 @@ describe('field metadata option rows follow field options', () => {
     });
 
     expect(await findOptionRows(fieldMetadataId)).toEqual([]);
+  });
+
+  it('swaps and shifts option values in one update', async () => {
+    const { data: createData } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'levelField',
+        label: 'Level Field',
+        isLabelSyncedWithName: false,
+        options: [
+          { label: 'Low', value: 'LOW', color: 'green', position: 0 },
+          { label: 'High', value: 'HIGH', color: 'red', position: 1 },
+        ],
+      },
+      gqlFields: 'id options',
+    });
+
+    const fieldMetadataId: string = createData.createOneField.id;
+    const [lowOption, highOption] = createData.createOneField
+      .options as StoredOption[];
+    const applicationId = await findFieldApplicationId(fieldMetadataId);
+
+    const { data: swapData } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: fieldMetadataId,
+        updatePayload: {
+          options: [
+            { ...lowOption, value: 'HIGH' },
+            { ...highOption, value: 'LOW' },
+          ] satisfies FieldMetadataComplexOption[],
+        },
+      },
+      gqlFields: 'id options',
+    });
+
+    expect(await findOptionRows(fieldMetadataId)).toEqual(
+      toExpectedRows({
+        options: swapData.updateOneField.options as StoredOption[],
+        applicationId,
+      }),
+    );
+
+    const { data: shiftData } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: fieldMetadataId,
+        updatePayload: {
+          options: [
+            { ...lowOption, value: 'LOW' },
+            { ...highOption, value: 'MEDIUM' },
+          ] satisfies FieldMetadataComplexOption[],
+        },
+      },
+      gqlFields: 'id options',
+    });
+
+    expect(await findOptionRows(fieldMetadataId)).toEqual(
+      toExpectedRows({
+        options: shiftData.updateOneField.options as StoredOption[],
+        applicationId,
+      }),
+    );
+  });
+
+  it('rejects an option id already used by another field', async () => {
+    const { data: createData } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'sourceField',
+        label: 'Source Field',
+        isLabelSyncedWithName: false,
+        options: [{ label: 'Web', value: 'WEB', color: 'blue', position: 0 }],
+      },
+      gqlFields: 'id options',
+    });
+
+    const [webOption] = createData.createOneField.options as StoredOption[];
+
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'copiedSourceField',
+        label: 'Copied Source Field',
+        isLabelSyncedWithName: false,
+        options: [webOption],
+      },
+      gqlFields: 'id',
+    });
+
+    const validationErrors = errors?.[0]?.extensions?.errors;
+
+    expect(validationErrors?.fieldMetadata?.[0]?.errors).toEqual([
+      expect.objectContaining({
+        message: `Option id "${webOption.id}" is already used by another field`,
+      }),
+    ]);
+    expect(validationErrors?.fieldMetadataOption).toBeUndefined();
   });
 
   it('keeps a row for every option of the standard fields', async () => {
