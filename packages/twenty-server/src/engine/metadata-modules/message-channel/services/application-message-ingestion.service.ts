@@ -172,7 +172,6 @@ export class ApplicationMessageIngestionService {
     };
   }
 
-  // the save path shared with email import writes no files, and a message that already holds some keeps them
   private async storeMissingAttachments({
     workspaceId,
     transactionScope,
@@ -224,7 +223,6 @@ export class ApplicationMessageIngestionService {
       }));
     });
 
-    // checked up front so a bad file rejects the batch as invalid ingestion input, and no file is claimed twice
     await this.assertFilesAreAttachableOrThrow({
       workspaceId,
       fileIds: attachmentsToCreate.flatMap(({ file }) =>
