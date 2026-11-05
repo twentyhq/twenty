@@ -71,10 +71,7 @@ export const createLearnToolsTool = (
     );
 
     const foundNames = new Set(toolInfos.map((toolInfo) => toolInfo.name));
-    // Report every requested name that was not learned, including names
-    // isToolAllowed rejects: a misspelled name must not vanish silently, or
-    // the agent concludes it lacks permission. Suggestions only ever point
-    // at allowed tools, so excluded tools are never surfaced as alternatives.
+    // Includes names isToolAllowed rejects: a silently dropped name reads to the agent as a missing permission.
     const notFound = toolNames.filter((name) => !foundNames.has(name));
 
     const suggestions: Record<string, string[]> =
