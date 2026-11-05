@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 
 @Injectable()
 export class ConnectedAccountOwnershipTransferService {
   constructor(
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -25,7 +25,7 @@ export class ConnectedAccountOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }) {
     const successorUserWorkspace =
-      await this.permissionsService.findSuccessorUserWorkspace({
+      await this.rolePermissionsService.findSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });

@@ -23,7 +23,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -58,7 +58,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
@@ -184,10 +184,11 @@ export class ObjectRecordEventPublisher {
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
-    const readableEvents = await this.permissionsService.findReadableEvents({
-      authContext: permissionsAuthContext,
-      eventBatch: workspaceEventBatch,
-    });
+    const readableEvents =
+      await this.recordPermissionsService.findReadableEvents({
+        authContext: permissionsAuthContext,
+        eventBatch: workspaceEventBatch,
+      });
 
     for (const event of readableEvents) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);

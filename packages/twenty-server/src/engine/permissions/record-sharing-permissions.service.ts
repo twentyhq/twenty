@@ -12,15 +12,15 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { RecordAccessDecisionService } from 'src/engine/permissions/combine/services/record-access-decision.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import {
   type RecordSharingDTO,
   type RecordSharingGrantDTO,
@@ -46,13 +46,13 @@ export type ViewerRecordAccess = {
 };
 
 @Injectable()
-export class RecordSharingReadService {
+export class RecordSharingPermissionsService {
   constructor(
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordAccessDecisionService: RecordAccessDecisionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly recordPermissionsService: RecordPermissionsService,
-    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
   async findRecordSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
@@ -85,6 +85,12 @@ export class RecordSharingReadService {
     }
 
     return this.buildSharingResponse({ args, sharingObject, permissions });
+  }
+
+  async canManageRecordSharing(args: RecordSharingArgs): Promise<boolean> {
+    const { canManageSharing } = await this.findRecordSharing(args);
+
+    return canManageSharing;
   }
 
   async findViewerRecordAccess(
@@ -170,11 +176,11 @@ export class RecordSharingReadService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordAccessPolicyService.isOperationPermittedByRole({
+      (await this.recordAccessDecisionService.isOperationPermittedByRole({
         principals:
-          await this.permissionsPrincipalsService.findPrincipalsWithRoles(
-            args.authContext,
-          ),
+          await this.principalPermissionsService.buildPermissionsPrincipals({
+            authContext: args.authContext,
+          }),
         objectMetadataId: flatObjectMetadata.id,
         operationType: 'update',
       }));
@@ -310,9 +316,9 @@ export class RecordSharingReadService {
         'roleIdsWithAllRecordsAccess',
       ]);
     const principals =
-      await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      await this.principalPermissionsService.buildPermissionsPrincipals({
         authContext,
-      );
+      });
     const canAccessAllRecords =
       isDefined(principals) &&
       canRolesAccessAllRecords({
@@ -397,7 +403,7 @@ export class RecordSharingReadService {
     sharingObject: RecordSharingObject;
   }): Promise<RecordPermissionsDTO> {
     const permissionsByRecordId =
-      await this.recordPermissionsService.getPermissionsForRecords({
+      await this.recordPermissionsService.findRecordsPermissions({
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],

@@ -13,7 +13,7 @@ import {
   RecordSharingDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
@@ -42,12 +42,12 @@ export class RecordSharingResolver {
   constructor(
     private readonly recordSharingWriteService: RecordSharingWriteService,
     private readonly privateRecordWriteService: PrivateRecordWriteService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
   ) {}
 
   @Query(() => RecordSharingDTO)
   recordSharing(@Args('target') target: RecordTargetInput) {
-    return this.permissionsService.findRecordSharing({
+    return this.recordSharingPermissionsService.findRecordSharing({
       ...target,
       authContext: this.getUserContext(),
     });

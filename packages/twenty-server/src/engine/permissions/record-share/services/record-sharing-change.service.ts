@@ -5,7 +5,9 @@ import { Injectable } from '@nestjs/common';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { RecordShareWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-share-write-orm.service';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
@@ -30,7 +32,9 @@ export class RecordSharingChangeService {
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
   ) {}
 
   async runChange({
@@ -73,19 +77,21 @@ export class RecordSharingChangeService {
         });
 
         const principals =
-          await this.permissionsService.buildPermissionsPrincipals({
+          await this.principalPermissionsService.buildPermissionsPrincipals({
             authContext: args.authContext,
           });
-        const isWritable = await this.permissionsService.canUpdateRecords({
-          principals,
-          objectMetadataId: args.objectMetadataId,
-          recordIds: [args.recordId],
-          transactionScope,
-        });
+        const isWritable = await this.recordPermissionsService.canUpdateRecords(
+          {
+            principals,
+            objectMetadataId: args.objectMetadataId,
+            recordIds: [args.recordId],
+            transactionScope,
+          },
+        );
 
         if (
           !isWritable ||
-          !(await this.permissionsService.isUpdatePermittedByRole({
+          !(await this.recordPermissionsService.isUpdatePermittedByRole({
             principals,
             objectMetadataId: args.objectMetadataId,
           }))
@@ -94,7 +100,7 @@ export class RecordSharingChangeService {
         }
 
         const { viewerAccessLevel, creatorWorkspaceMemberId } =
-          await this.permissionsService.findViewerRecordAccess({
+          await this.recordSharingPermissionsService.findViewerRecordAccess({
             ...args,
             transactionScope,
           });
@@ -112,6 +118,8 @@ export class RecordSharingChangeService {
       },
     );
 
-    return this.permissionsService.findRecordSharingAfterChange(args);
+    return this.recordSharingPermissionsService.findRecordSharingAfterChange(
+      args,
+    );
   }
 }

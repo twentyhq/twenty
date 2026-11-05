@@ -7,7 +7,8 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
@@ -30,7 +31,8 @@ export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
   // Without reach beyond roles, a grant the recipient's role cannot use would
@@ -116,14 +118,15 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.permissionsService.canReadRecords({
-        principals: await this.permissionsService.buildPermissionsPrincipals({
-          authContext: {
-            type: 'user',
-            workspace: { id: workspaceId },
-            workspaceMemberId: principal.principalId,
-          },
-        }),
+      const hasGrant = await this.recordPermissionsService.canReadRecords({
+        principals:
+          await this.principalPermissionsService.buildPermissionsPrincipals({
+            authContext: {
+              type: 'user',
+              workspace: { id: workspaceId },
+              workspaceMemberId: principal.principalId,
+            },
+          }),
         objectMetadataId: flatObjectMetadata.id,
         recordIds,
         transactionScope,

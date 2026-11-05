@@ -16,18 +16,38 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
-export class UserRoleReadService {
+export class RolePermissionsService {
   constructor(
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
+
+  public findRoleIds({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext | undefined;
+  }): Promise<string[]> {
+    return this.findPrincipalRoleIds(authContext);
+  }
+
+  public async hasAnyRole({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext | undefined;
+  }): Promise<boolean> {
+    return (await this.findPrincipalRoleIds(authContext)).length > 0;
+  }
 
   async findUserWorkspaceRoleIdOrThrow({
     workspaceId,
@@ -213,5 +233,23 @@ export class UserRoleReadService {
     );
 
     return oldestAdminUserWorkspace ?? otherUserWorkspaces[0];
+  }
+
+  // Empty for the system, which acts with no role
+  private async findPrincipalRoleIds(
+    authContext: PermissionsAuthContext | undefined,
+  ): Promise<string[]> {
+    if (!isDefined(authContext)) {
+      return [];
+    }
+
+    const principals =
+      await this.principalPermissionsService.buildPermissionsPrincipals({
+        authContext,
+      });
+
+    return isDefined(principals)
+      ? getPermissionsPrincipalsRoleIds(principals)
+      : [];
   }
 }

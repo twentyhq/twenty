@@ -2,6 +2,13 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
@@ -9,12 +16,31 @@ import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/pr
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class PermissionsPrincipalsService {
+export class PrincipalPermissionsService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
-  async findPrincipalsWithRoles(
-    authContext: PermissionsAuthContext,
-  ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+  async buildPermissionsPrincipalsOrThrow({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext> {
+    const principals = await this.buildPermissionsPrincipals({ authContext });
+
+    if (!isDefined(principals)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return principals;
+  }
+
+  async buildPermissionsPrincipals({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
     if (!canAuthContextHoldRoles(authContext)) {
       return undefined;
     }

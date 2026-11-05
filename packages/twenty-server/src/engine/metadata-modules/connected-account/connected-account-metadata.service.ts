@@ -35,7 +35,7 @@ import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/co
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -53,7 +53,7 @@ export class ConnectedAccountMetadataService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
@@ -244,15 +244,17 @@ export class ConnectedAccountMetadataService {
 
     switch (connectedAccount.scope) {
       case 'WORKSPACE':
-        return this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          applicationId,
-          agentId,
-          setting: getConnectedAccountAdministrationPermissionFlag(
-            connectedAccount.provider,
-          ),
-        });
+        return this.settingPermissionsService.userHasWorkspaceSettingPermission(
+          {
+            userWorkspaceId,
+            workspaceId,
+            applicationId,
+            agentId,
+            setting: getConnectedAccountAdministrationPermissionFlag(
+              connectedAccount.provider,
+            ),
+          },
+        );
       case 'USER':
         return false;
       default:

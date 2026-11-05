@@ -4,7 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
 
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
 import {
   type ViewAccessContext,
@@ -25,7 +25,7 @@ export class ViewAccessService {
   constructor(
     private readonly viewService: ViewService,
     private readonly viewEntityLookupService: ViewEntityLookupService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async canUserModifyView({
@@ -171,7 +171,7 @@ export class ViewAccessService {
   }: ViewAccessContext): Promise<boolean> {
     // A tool call's auth context also carries the AI run scope, which can narrow VIEWS
     if (isDefined(authContext)) {
-      return this.permissionsService.hasPermissionFlag({
+      return this.settingPermissionsService.hasPermissionFlag({
         authContext,
         setting: PermissionFlagType.VIEWS,
       });
@@ -183,7 +183,7 @@ export class ViewAccessService {
       return false;
     }
 
-    return this.permissionsService.userHasWorkspaceSettingPermission({
+    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
       workspaceId,
       userWorkspaceId,
       apiKeyId,

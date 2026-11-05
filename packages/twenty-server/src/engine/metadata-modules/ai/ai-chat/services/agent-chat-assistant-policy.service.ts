@@ -4,7 +4,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -35,7 +35,7 @@ export class AgentChatAssistantPolicyService {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
   ) {}
 
   async resolveAssistantMessageDecision({
@@ -169,7 +169,7 @@ export class AgentChatAssistantPolicyService {
     }
 
     const [hasSharedAudience, audienceMemberCount] = await Promise.all([
-      this.permissionsService.isRecordSharedBeyondMember({
+      this.recordSharingPermissionsService.isRecordSharedBeyondMember({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
         recordId: thread.id,

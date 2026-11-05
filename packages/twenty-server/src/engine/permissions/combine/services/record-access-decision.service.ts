@@ -17,7 +17,7 @@ import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
@@ -71,7 +71,7 @@ type EventBatchAccessLoaders = {
 };
 
 @Injectable()
-export class RecordAccessPolicyService {
+export class RecordAccessDecisionService {
   private readonly metadataMapsByPrincipals = new WeakMap<
     PermissionsPrincipalsWithRolesContext,
     Promise<PermissionsMetadataMaps>
@@ -95,7 +95,7 @@ export class RecordAccessPolicyService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
-    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
   private async findObjectAccessRequest({
@@ -246,9 +246,9 @@ export class RecordAccessPolicyService {
     const isSystem = isSystemAuthContext(authContext);
     const principals = isSystem
       ? undefined
-      : await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      : await this.principalPermissionsService.buildPermissionsPrincipals({
           authContext,
-        );
+        });
 
     if (recordIds.length === 0 || (!isSystem && !isDefined(principals))) {
       return new Map();
@@ -557,9 +557,9 @@ export class RecordAccessPolicyService {
   private resolvePrincipalsWithRoles(
     authContext: PermissionsAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
-    return this.permissionsPrincipalsService.findPrincipalsWithRoles(
+    return this.principalPermissionsService.buildPermissionsPrincipals({
       authContext,
-    );
+    });
   }
 
   private findFlatObjectMetadata({
