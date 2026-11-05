@@ -279,7 +279,6 @@ describe('normalizeQueryStringParameters', () => {
   it('should filter non-string values from arrays and join with commas', () => {
     const query = { ids: ['1', { nested: 'value' }, '2'] };
 
-    // @ts-expect-error qs yields mixed arrays for inputs like ids[]=1&ids[][nested]=value
     const result = normalizeQueryStringParameters(query);
 
     expect(result).toEqual({ ids: '1,2' });

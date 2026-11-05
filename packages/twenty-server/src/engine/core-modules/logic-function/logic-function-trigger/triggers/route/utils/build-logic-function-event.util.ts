@@ -101,7 +101,7 @@ export const extractBody = (request: Pick<Request, 'body'>): object | null => {
 };
 
 export const normalizeQueryStringParameters = (
-  query: Request['query'],
+  query: Record<string, unknown>,
 ): Record<string, string | undefined> => {
   const normalized: Record<string, string | undefined> = {};
 
