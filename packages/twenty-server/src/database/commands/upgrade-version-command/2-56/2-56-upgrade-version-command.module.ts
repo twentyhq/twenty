@@ -10,6 +10,7 @@ import { RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-
 import { RepairApplicationDependencyChecksumsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720039867-repair-application-dependency-checksums.command';
 import { ConvertWorkflowNavigationMenuItemsToNativePageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793783100802-convert-workflow-navigation-menu-items-to-native-page.command';
 import { ScopeWorkflowCommandMenuItemsToCoreObjectCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793783100804-scope-workflow-command-menu-items-to-core-object.command';
+import { UpdateConversationsTabIconCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793873141281-update-conversations-tab-icon.command';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793876432369-add-message-attachment-target.command';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -38,6 +39,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ConvertWorkflowNavigationMenuItemsToNativePageCommand,
     ScopeWorkflowCommandMenuItemsToCoreObjectCommand,
     InlineCodeStepSourcesCommand,
+    UpdateConversationsTabIconCommand,
     AddMessageAttachmentTargetCommand,
   ],
 })
