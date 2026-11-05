@@ -2,46 +2,47 @@ import {
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   type AiChatAssistantProfile,
 } from 'twenty-shared/ai';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SETTINGS_AI_ASSISTANT_PRESETS = [
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   {
-    displayName: 'Scout',
+    displayName: doNotTranslate('Scout'),
     avatarShape: 'cookie',
     avatarColor: 'orange',
     avatarFace: 'wink',
     isAvatarAnimated: false,
   },
   {
-    displayName: 'Nova',
+    displayName: doNotTranslate('Nova'),
     avatarShape: 'cloud',
     avatarColor: 'sky',
     avatarFace: 'happy',
     isAvatarAnimated: false,
   },
   {
-    displayName: 'Sage',
+    displayName: doNotTranslate('Sage'),
     avatarShape: 'clover',
     avatarColor: 'green',
     avatarFace: 'sleepy',
     isAvatarAnimated: false,
   },
   {
-    displayName: 'Pixel',
+    displayName: doNotTranslate('Pixel'),
     avatarShape: 'hexagon',
     avatarColor: 'purple',
     avatarFace: 'surprised',
     isAvatarAnimated: false,
   },
   {
-    displayName: 'Echo',
+    displayName: doNotTranslate('Echo'),
     avatarShape: 'pill',
     avatarColor: 'pink',
     avatarFace: 'love',
     isAvatarAnimated: false,
   },
   {
-    displayName: 'Atlas',
+    displayName: doNotTranslate('Atlas'),
     avatarShape: 'gem',
     avatarColor: 'turquoise',
     avatarFace: 'default',
