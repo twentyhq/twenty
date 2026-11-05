@@ -357,19 +357,9 @@ describe('resolveOrderByLeaves', () => {
   });
 
   describe('field read permissions', () => {
-    const permissionsRestricting = (
-      fieldMetadataId: string,
-      objectId: string,
-    ) => ({
-      objects: {
-        [objectId]: {
-          canReadAllRecords: true,
-          canUpdateAllRecords: true,
-          canSoftDeleteAllRecords: true,
-          canDestroyAllRecords: true,
-          restrictedFields: { [fieldMetadataId]: { canRead: false } },
-        },
-      },
+    const restrictionsOnField = (fieldMetadataId: string) => ({
+      unreadableObjectMetadataIds: new Set<string>(),
+      unreadableFieldMetadataIds: new Set([fieldMetadataId]),
     });
 
     it('should reject ordering by a role-restricted root field', () => {
@@ -378,10 +368,7 @@ describe('resolveOrderByLeaves', () => {
           orderBy: [{ closeDate: OrderByDirection.AscNullsLast }],
           flatObjectMetadata,
           flatFieldMetadataMaps,
-          recordsPermissions: permissionsRestricting(
-            'closedate-id',
-            objectMetadataId,
-          ),
+          recordReadRestrictions: restrictionsOnField('closedate-id'),
         }),
       ).toThrow('does not have permission');
     });
@@ -393,10 +380,7 @@ describe('resolveOrderByLeaves', () => {
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          recordsPermissions: permissionsRestricting(
-            'company-name-id',
-            'company-object-id',
-          ),
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
         }),
       ).toThrow('does not have permission');
     });
@@ -461,10 +445,7 @@ describe('resolveOrderByLeaves', () => {
               ]),
             ),
           },
-          recordsPermissions: permissionsRestricting(
-            'company-name-id',
-            'company-object-id',
-          ),
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
         }),
       ).toThrow('does not have permission');
     });

@@ -120,12 +120,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
     const restrictedFields =
-      context.repository.recordsPermissions.objects[
-        context.flatObjectMetadata.id
-      ]?.restrictedFields;
+      await this.recordPermissionsService.findRestrictedFields({
+        principals: context.permissionsPrincipals,
+        objectMetadataId: context.flatObjectMetadata.id,
+      });
 
     const columnsToSelect = getAllSelectableColumnNames({
-      restrictedFields: restrictedFields ?? {},
+      restrictedFields,
       objectMetadata: {
         objectMetadataMapItem: context.flatObjectMetadata,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
@@ -209,13 +210,16 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const {
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      permissionsPrincipals,
       repository,
       transactionScope,
     } = queryRunnerContext;
 
     const restrictedFields =
-      repository.recordsPermissions.objects[flatObjectMetadata.id]
-        ?.restrictedFields ?? {};
+      await this.recordPermissionsService.findRestrictedFields({
+        principals: permissionsPrincipals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const unreadableFieldIds = new Set(
       Object.entries(restrictedFields)

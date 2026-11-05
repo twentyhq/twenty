@@ -5,6 +5,7 @@ import {
   type ObjectRecord,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -13,7 +14,7 @@ import {
   RecordAccessDecisionService,
   type RecordOperationQuestion,
 } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -82,12 +83,22 @@ export class RecordPermissionsService {
     );
   }
 
-  public findPrincipalsRecordsPermissions({
+  public findRestrictedFields({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<RestrictedFieldsPermissions> {
+    return this.recordAccessDecisionService.findRestrictedFields({
+      principals,
+      objectMetadataId,
+    });
+  }
+
+  public findRecordReadRestrictions({
     principals,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-  }): Promise<RoleRecordsPermissions> {
-    return this.recordAccessDecisionService.findPrincipalsRecordsPermissions(
+  }): Promise<RecordReadRestrictions> {
+    return this.recordAccessDecisionService.findRecordReadRestrictions(
       principals,
     );
   }

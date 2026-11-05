@@ -88,6 +88,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
+      permissionsPrincipals,
     } = queryRunnerContext;
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
@@ -121,6 +122,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
+      permissionsPrincipals,
     });
 
     const queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
@@ -320,6 +322,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatFieldMetadataMaps,
     workspaceId,
     commonQueryParser,
+    permissionsPrincipals,
   }: {
     args: GroupByQueryArgs;
     appliedFilters: ObjectRecordFilter;
@@ -329,6 +332,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
+    permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
   }): Promise<void> {
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
@@ -339,8 +343,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         restrictedFields:
-          queryBuilder.recordsPermissions.objects[flatObjectMetadata.id]
-            ?.restrictedFields ?? {},
+          await this.recordPermissionsService.findRestrictedFields({
+            principals: permissionsPrincipals,
+            objectMetadataId: flatObjectMetadata.id,
+          }),
         appliedFilters,
         workspaceId,
       });

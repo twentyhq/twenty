@@ -10,7 +10,7 @@ import {
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import { resolveOrderByLeaves } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -42,12 +42,12 @@ export class GraphqlQueryOrderFieldParser {
     orderBy,
     objectNameSingular,
     isForwardPagination = true,
-    recordsPermissions,
+    recordReadRestrictions,
   }: {
     orderBy: ObjectRecordOrderBy;
     objectNameSingular: string;
     isForwardPagination?: boolean;
-    recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>;
+    recordReadRestrictions?: RecordReadRestrictions;
   }): ParseOrderByResult {
     const orderByConditions: Record<string, OrderByClause> = {};
     const relationJoins: RelationJoinInfo[] = [];
@@ -59,7 +59,7 @@ export class GraphqlQueryOrderFieldParser {
       flatObjectMetadataMaps: this.flatObjectMetadataMaps,
       flatFieldMetadataMaps: this.flatFieldMetadataMaps,
       strictValidation: true,
-      recordsPermissions,
+      recordReadRestrictions,
     });
 
     for (const orderByLeaf of orderByLeaves) {

@@ -9,6 +9,7 @@ import {
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
   type RestrictedFieldPermissions,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -47,6 +48,8 @@ import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/inte
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
 import { filterReadableEvents } from 'src/engine/permissions/internal/combine/utils/filter-readable-events.util';
@@ -262,6 +265,31 @@ export class RecordAccessDecisionService {
     return canReachSomeRecords({
       objectRecordsPermissions: objects[objectMetadataId],
       operationType,
+    });
+  }
+
+  async findRestrictedFields({
+    principals,
+    objectMetadataId,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext | undefined;
+    objectMetadataId: string;
+  }): Promise<RestrictedFieldsPermissions> {
+    if (!isDefined(principals)) {
+      return {};
+    }
+
+    const { objects } = await this.findPrincipalsRecordsPermissions(principals);
+
+    return objects[objectMetadataId]?.restrictedFields ?? {};
+  }
+
+  async findRecordReadRestrictions(
+    principals: PermissionsPrincipalsWithRolesContext,
+  ): Promise<RecordReadRestrictions> {
+    return buildRecordReadRestrictions({
+      recordsPermissions:
+        await this.findPrincipalsRecordsPermissions(principals),
     });
   }
 
