@@ -30,6 +30,17 @@ export const SettingsApplicationContentPageLayout = ({
 }: SettingsApplicationContentPageLayoutProps) => {
   const { t } = useLingui();
 
+  const getContentBreadcrumbLinks = () => {
+    if (!isDefined(contentTypeLabel)) {
+      return [{ children: t`Content` }];
+    }
+
+    return [
+      { children: t`Content`, href: contentPath },
+      { children: contentTypeLabel },
+    ];
+  };
+
   return (
     <SettingsPageLayout
       links={[
@@ -42,12 +53,7 @@ export const SettingsApplicationContentPageLayout = ({
           href: getSettingsPath(SettingsPath.Applications),
         },
         { children: applicationName, href: applicationPath },
-        ...(isDefined(contentTypeLabel)
-          ? [
-              { children: t`Content`, href: contentPath },
-              { children: contentTypeLabel },
-            ]
-          : [{ children: t`Content` }]),
+        ...getContentBreadcrumbLinks(),
       ]}
       title={title}
       icon={icon}

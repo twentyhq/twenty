@@ -61,6 +61,10 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
 const isSoftDeletedFlatEntity = (flatEntity: object) =>
   'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
+const isPersonalNavigationMenuItem = (navigationMenuItem: {
+  userWorkspaceId: string | null;
+}) => isDefined(navigationMenuItem.userWorkspaceId);
+
 export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId,
   flatEntityMaps,
@@ -101,11 +105,10 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const pageLayoutTabs = findOwned(flatEntityMaps.flatPageLayoutTabMaps).filter(
     (tab) => !tab.isSystemSideEffect,
   );
-  // Personal navigation items belong to the workspace app but only to one member
   const navigationMenuItems = findOwned(
     flatEntityMaps.flatNavigationMenuItemMaps,
   ).filter(
-    (navigationMenuItem) => !isDefined(navigationMenuItem.userWorkspaceId),
+    (navigationMenuItem) => !isPersonalNavigationMenuItem(navigationMenuItem),
   );
   const commandMenuItems = findOwned(
     flatEntityMaps.flatCommandMenuItemMaps,

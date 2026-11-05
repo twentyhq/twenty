@@ -41,13 +41,16 @@ export const SettingsApplicationContentItemIcon = ({
         return resolveObject(item.universalIdentifier)?.color;
       case 'fields':
         return resolveObject(item.objectUniversalIdentifier)?.color;
-      case 'navigationMenuItems':
-        return isDefined(item.tag) && isNavigationMenuItemType(item.tag)
-          ? getNavigationMenuItemColor(
-              { type: item.tag, color: item.color },
-              resolveObject(item.objectUniversalIdentifier)?.colorSource,
-            )
-          : undefined;
+      case 'navigationMenuItems': {
+        if (!isDefined(item.tag) || !isNavigationMenuItemType(item.tag)) {
+          return undefined;
+        }
+
+        return getNavigationMenuItemColor(
+          { type: item.tag, color: item.color },
+          resolveObject(item.objectUniversalIdentifier)?.colorSource,
+        );
+      }
       default:
         return undefined;
     }
