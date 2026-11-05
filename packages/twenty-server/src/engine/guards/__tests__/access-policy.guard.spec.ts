@@ -827,11 +827,16 @@ describe('AccessPolicyGuard', () => {
       await expect(canActivateSession()).resolves.toBe(true);
       expect(
         mockSettingPermissionsService.hasPermissionFlag,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          permissionFlag: PermissionFlagType.WORKSPACE,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockSettingPermissionsService.hasPermissionFlag,
+      ).toHaveBeenCalledWith({
+        authContext: expect.objectContaining({
+          type: 'pendingActivationUser',
+          userWorkspaceId: 'user-workspace-id',
         }),
-      );
+        permissionFlag: PermissionFlagType.WORKSPACE,
+      });
     });
 
     it('should throw PermissionsException when the caller lacks the permission flag', async () => {

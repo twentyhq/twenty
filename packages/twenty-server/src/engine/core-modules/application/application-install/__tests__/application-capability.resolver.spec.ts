@@ -146,11 +146,16 @@ describe('ApplicationCapabilityResolver', () => {
       id: APPLICATION_ID,
       grantedCapabilities: ['microphone', 'camera'],
     });
-    expect(settingPermissionsService.hasPermissionFlag).toHaveBeenCalledWith(
-      expect.objectContaining({
-        permissionFlag: PermissionFlagType.APPLICATIONS,
-      }),
+    expect(settingPermissionsService.hasPermissionFlag).toHaveBeenCalledTimes(
+      1,
     );
+    expect(settingPermissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+      authContext: expect.objectContaining({
+        type: 'pendingActivationUser',
+        userWorkspaceId: USER_REQUEST.userWorkspaceId,
+      }),
+      permissionFlag: PermissionFlagType.APPLICATIONS,
+    });
     expect(
       applicationService.findOneApplicationWithRelationsOrThrow,
     ).toHaveBeenCalledWith({

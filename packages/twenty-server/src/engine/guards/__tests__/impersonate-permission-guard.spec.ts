@@ -73,9 +73,16 @@ describe('ImpersonateGuard', () => {
     expect(result).toBe(true);
     expect(
       mockSettingPermissionsService.hasPermissionFlag,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ permissionFlag: 'IMPERSONATE' }),
-    );
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      mockSettingPermissionsService.hasPermissionFlag,
+    ).toHaveBeenCalledWith({
+      authContext: expect.objectContaining({
+        type: 'pendingActivationUser',
+        userWorkspaceId: 'user-workspace-id',
+      }),
+      permissionFlag: 'IMPERSONATE',
+    });
   });
 
   it('should throw permission denied exception when user cannot impersonate and has no workspace permission', async () => {
