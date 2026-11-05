@@ -6,12 +6,12 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
-import { getMcpToolInputSchema } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/getMcpToolInputSchema';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
@@ -41,46 +41,55 @@ export const WorkflowEditActionMcpTool = ({
   actionOptions,
 }: WorkflowEditActionMcpToolProps) => {
   const { t } = useLingui();
-  const { mcpServerId, toolName } = action.settings.input;
   const { mcpServers, loading } = useFindManyMcpServers();
+  const [settings, setSettings] = useState(action.settings);
 
-  const mcpServer = mcpServers.find((server) => server.id === mcpServerId);
-  const tool = mcpServer?.tools.find((candidate) => candidate.name === toolName);
-  const inputSchema = getMcpToolInputSchema(tool?.inputSchema);
+  const { mcpServerId, toolName } = settings.input;
+  const tool = mcpServers
+    .find((mcpServer) => mcpServer.id === mcpServerId)
+    ?.tools.find((candidate) => candidate.name === toolName);
+  const inputSchema = isDefined(tool)
+    ? jsonSchemaToInputSchema(tool.inputSchema)
+    : undefined;
+  const defaultToolInput = isDefined(inputSchema)
+    ? getFunctionInputFromInputSchema(inputSchema)[0]
+    : undefined;
+  const toolInput = isObject(defaultToolInput)
+    ? mergeDefaultFunctionInputAndFunctionInput({
+        newInput: defaultToolInput,
+        oldInput: settings.input.toolInput,
+      })
+    : settings.input.toolInput;
 
-  const toolInput = useMemo(() => {
-    const storedInput = action.settings.input.toolInput ?? {};
-
-    if (!isDefined(inputSchema)) {
-      return storedInput;
-    }
-
-    const defaultInput = getFunctionInputFromInputSchema(inputSchema)[0];
-
-    return isObject(defaultInput)
-      ? mergeDefaultFunctionInputAndFunctionInput({
-          newInput: defaultInput,
-          oldInput: storedInput,
-        })
-      : storedInput;
-  }, [inputSchema, action.settings.input.toolInput]);
-
-  const updateAction = useDebouncedCallback(
-    (settings: WorkflowMcpToolAction['settings']) => {
-      if (actionOptions.readonly === true) {
+  const saveAction = useDebouncedCallback(
+    (updatedSettings: WorkflowMcpToolAction['settings']) => {
+      if (actionOptions.readonly) {
         return;
       }
 
-      actionOptions.onActionUpdate({ ...action, settings });
+      actionOptions.onActionUpdate({ ...action, settings: updatedSettings });
     },
     500,
   );
 
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
+
+  const updateSettings = (
+    updatedSettings: WorkflowMcpToolAction['settings'],
+  ) => {
+    setSettings(updatedSettings);
+    saveAction(updatedSettings);
+  };
+
   const handleInputChange = (value: unknown, path: string[]) => {
-    updateAction({
-      ...action.settings,
+    updateSettings({
+      ...settings,
       input: {
-        ...action.settings.input,
+        ...settings.input,
         toolInput: setNestedValue(toolInput, path, value),
       },
     });
@@ -89,7 +98,7 @@ export const WorkflowEditActionMcpTool = ({
   const handleExpectedOutputBodyChange = (
     parsedValue: Record<string, unknown>,
   ) => {
-    updateAction({ ...action.settings, expectedOutputSchema: parsedValue });
+    updateSettings({ ...settings, expectedOutputSchema: parsedValue });
   };
 
   if (loading) {
@@ -102,13 +111,14 @@ export const WorkflowEditActionMcpTool = ({
     <>
       <WorkflowStepBody>
         <StyledContainer>
-          {!isDefined(tool) ? (
+          {!isDefined(tool) && (
             <Callout
               status="warning"
               title={t`Tool not found`}
               description={t`This tool is no longer offered by its MCP server. Sync the server tools or pick another tool.`}
             />
-          ) : hasInputFields ? (
+          )}
+          {isDefined(tool) && hasInputFields && (
             <WorkflowEditActionCodeFields
               functionInput={toolInput}
               inputSchema={inputSchema}
@@ -117,7 +127,8 @@ export const WorkflowEditActionMcpTool = ({
               VariablePicker={WorkflowVariablePicker}
               fullWidth
             />
-          ) : (
+          )}
+          {isDefined(tool) && !hasInputFields && (
             <Callout
               status="neutral"
               title={t`No input fields for this tool`}
@@ -125,7 +136,7 @@ export const WorkflowEditActionMcpTool = ({
             />
           )}
           <WorkflowExpectedOutputBodyInput
-            defaultValue={action.settings.expectedOutputSchema}
+            defaultValue={settings.expectedOutputSchema}
             onChange={handleExpectedOutputBodyChange}
             readonly={actionOptions.readonly}
           />
