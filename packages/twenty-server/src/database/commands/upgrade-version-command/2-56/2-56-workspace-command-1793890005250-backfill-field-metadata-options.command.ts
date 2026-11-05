@@ -92,23 +92,27 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
           );
         }
 
+        if (optionRowsToInsert.length === 0) {
+          return {
+            rewrittenFieldCount: optionsToRewriteByFieldMetadataId.size,
+            insertedRowCount: 0,
+          };
+        }
+
         // Rows the new code already created are kept; the deferred value constraint cannot arbitrate ON CONFLICT.
-        const insertedRows: { id: string }[] =
-          optionRowsToInsert.length === 0
-            ? []
-            : await entityManager.query(
-                `INSERT INTO core."fieldMetadataOption"
-                  ("workspaceId", "universalIdentifier", "applicationId", "fieldMetadataId", value, label, color, position)
-                  SELECT $1, row."universalIdentifier", row."applicationId", row."fieldMetadataId", row.value, row.label, row.color, row.position
-                  FROM jsonb_to_recordset($2::jsonb) AS row("universalIdentifier" uuid, "applicationId" uuid, "fieldMetadataId" uuid, value varchar, label varchar, color varchar, position double precision)
-                  WHERE NOT EXISTS (
-                    SELECT 1 FROM core."fieldMetadataOption" existing
-                    WHERE existing."fieldMetadataId" = row."fieldMetadataId" AND existing.value = row.value
-                  )
-                  ON CONFLICT ("workspaceId", "universalIdentifier") DO NOTHING
-                  RETURNING id`,
-                [workspaceId, JSON.stringify(optionRowsToInsert)],
-              );
+        const insertedRows: { id: string }[] = await entityManager.query(
+          `INSERT INTO core."fieldMetadataOption"
+            ("workspaceId", "universalIdentifier", "applicationId", "fieldMetadataId", value, label, color, position)
+            SELECT $1, row."universalIdentifier", row."applicationId", row."fieldMetadataId", row.value, row.label, row.color, row.position
+            FROM jsonb_to_recordset($2::jsonb) AS row("universalIdentifier" uuid, "applicationId" uuid, "fieldMetadataId" uuid, value varchar, label varchar, color varchar, position double precision)
+            WHERE NOT EXISTS (
+              SELECT 1 FROM core."fieldMetadataOption" existing
+              WHERE existing."fieldMetadataId" = row."fieldMetadataId" AND existing.value = row.value
+            )
+            ON CONFLICT ("workspaceId", "universalIdentifier") DO NOTHING
+            RETURNING id`,
+          [workspaceId, JSON.stringify(optionRowsToInsert)],
+        );
 
         return {
           rewrittenFieldCount: optionsToRewriteByFieldMetadataId.size,
