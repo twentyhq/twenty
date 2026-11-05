@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
