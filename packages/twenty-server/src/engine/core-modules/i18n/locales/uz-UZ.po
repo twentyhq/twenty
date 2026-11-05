@@ -18233,8 +18233,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Sizning rolingiz ushbu yozuvlarning ayrimlarini o‘chira olmaydi, shuning uchun ularni birlashtirib bo‘lmaydi."
 
 #. js-lingui-id: XxkUFT
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
-#: src/engine/permissions/setting-permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ushbu ish maydonida sizning rolingiz topilmadi. Iltimos, ish maydoni administratoriga murojaat qiling."
 
