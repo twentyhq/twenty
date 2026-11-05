@@ -1,9 +1,9 @@
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { randomUUID } from 'node:crypto';
 
-import gql from 'graphql-tag';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { saveDirectMessageAssistantModeOperationFactory } from 'test/integration/graphql/utils/save-direct-message-assistant-mode-operation-factory.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -94,18 +94,9 @@ describe('Chat participation through the authenticated API', () => {
     'applies saved DM mode $mode when Ada mention is $isAssistantMentioned',
     async ({ mode, isAssistantMentioned, shouldReply, evaluationCalls }) => {
       models.enableEvaluation();
-      const saved = await makeMetadataApiRequest({
-        query: gql`
-          mutation SaveDirectMessageAssistantMode(
-            $data: UpdateWorkspaceInput!
-          ) {
-            updateWorkspace(data: $data) {
-              aiChatDirectMessageAssistantMode
-            }
-          }
-        `,
-        variables: { data: { aiChatDirectMessageAssistantMode: mode } },
-      });
+      const saved = await makeMetadataApiRequest(
+        saveDirectMessageAssistantModeOperationFactory(mode),
+      );
 
       expect(saved.body.errors).toBeUndefined();
       expect(
