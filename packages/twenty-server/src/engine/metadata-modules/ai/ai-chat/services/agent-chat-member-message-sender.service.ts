@@ -87,8 +87,10 @@ export class AgentChatMemberMessageSenderService {
 
     await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
+      ...assistantParticipationInput,
       channelId: target.channelId,
       shouldApplyAssistantParticipation: false,
+      shouldValidateRecipients: true,
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);

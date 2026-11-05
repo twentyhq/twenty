@@ -202,6 +202,7 @@ describe('Chat participation through the authenticated API', () => {
     const foreignMemberId = randomUUID();
     const response = await sendChatParticipationMessage({
       threadId,
+      isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [
         recipientId,
         recipientId,
@@ -235,6 +236,52 @@ describe('Chat participation through the authenticated API', () => {
       }),
     );
   });
+
+  it.each([
+    { threadState: 'new', hasExistingThread: false },
+    { threadState: 'pre-created empty', hasExistingThread: true },
+  ])(
+    'refuses a first send without Ada in a $threadState thread when no picked person can reply',
+    async ({ hasExistingThread }) => {
+      const threadId = hasExistingThread
+        ? await context.createThread()
+        : context.registerThread();
+      const threadBefore = await context.readThread(threadId);
+      const emitter = getAppProviderByClassName<WorkspaceEventEmitter>(
+        'WorkspaceEventEmitter',
+      );
+      const emit = jest.spyOn(emitter, 'emitDatabaseBatchEvent');
+      const response = await sendChatParticipationMessage({
+        threadId,
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT],
+      });
+
+      expect(response.body.errors[0].extensions).toMatchObject({
+        code: 'BAD_USER_INPUT',
+        subCode: 'CHAT_RECIPIENTS_CANNOT_REPLY',
+        userFriendlyMessage: expect.stringContaining(
+          'None of the people you picked can reply',
+        ),
+      });
+      expect(await context.readThread(threadId)).toEqual(threadBefore);
+      expect(
+        await context.chatService.hasMessages({
+          workspaceId: context.workspaceId,
+          threadId,
+        }),
+      ).toBe(false);
+      const hasCreatedThreadEvent = emit.mock.calls.some(
+        ([event]) =>
+          isDefined(event) &&
+          event.objectMetadataNameSingular === 'agentChatThread' &&
+          event.action === DatabaseEventAction.CREATED &&
+          event.events.some(({ recordId }) => recordId === threadId),
+      );
+
+      expect(hasCreatedThreadEvent).toBe(false);
+    },
+  );
 
   it('delivers a member selected and mentioned once while acknowledging both selections', async () => {
     const threadId = await context.createThread(false);

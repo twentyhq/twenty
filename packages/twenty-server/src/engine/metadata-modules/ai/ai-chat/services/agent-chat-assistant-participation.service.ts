@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
 
 import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
@@ -32,6 +32,7 @@ export class AgentChatAssistantParticipationService {
     workspaceMemberId,
     thread,
     isInitialMessage: providedIsInitialMessage,
+    isProposedThread = false,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     isReplyRequested = true,
@@ -43,6 +44,7 @@ export class AgentChatAssistantParticipationService {
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
+    isProposedThread?: boolean;
   }): Promise<AgentChatAssistantParticipation> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
@@ -57,6 +59,7 @@ export class AgentChatAssistantParticipationService {
         workspaceId,
         workspaceMemberId,
         threadId: thread.id,
+        proposedThread: isProposedThread ? thread : undefined,
         memberIds: [
           ...mentionedWorkspaceMemberIds,
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
@@ -74,6 +77,10 @@ export class AgentChatAssistantParticipationService {
         isInitialAssistantParticipant,
         isInitialMessage,
         isReplyRequested,
+        isProposedThread,
+        hasRequestedRecipients:
+          isNonEmptyArray(recipientWorkspaceMemberIds) ||
+          isNonEmptyArray(mentionedWorkspaceMemberIds),
       });
 
     return { ...assistantMessageDecision, isInitialMessage };

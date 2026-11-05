@@ -59,10 +59,15 @@ export class AgentChatThreadService {
     recipientWorkspaceMemberIds,
     mentionedWorkspaceMemberIds,
     shouldApplyAssistantParticipation = true,
+    shouldValidateRecipients = false,
     ...args
-  }: Parameters<AgentChatSharingService['createThread']>[0] &
+  }: Omit<
+    Parameters<AgentChatSharingService['createThread']>[0],
+    'validateThread'
+  > &
     AgentChatAssistantParticipationArgs & {
       shouldApplyAssistantParticipation?: boolean;
+      shouldValidateRecipients?: boolean;
     }): Promise<AgentChatThreadWorkspaceEntity> {
     if (isDefined(args.channelId)) {
       await this.channelAccessService.assertChannelAccess({
@@ -72,15 +77,26 @@ export class AgentChatThreadService {
       });
     }
 
-    const createdThread = await this.sharingService.createThread(args);
-    const savedThread = await this.reconcileInitialAssistantParticipation({
+    const assistantParticipationInput = {
       workspaceId: args.workspaceId,
       workspaceMemberId: args.workspaceMemberId,
-      thread: createdThread,
       isAssistantMentioned,
       isInitialAssistantParticipant,
       recipientWorkspaceMemberIds,
       mentionedWorkspaceMemberIds,
+    };
+    const createdThread = await this.sharingService.createThread({
+      ...args,
+      validateThread: (thread) =>
+        this.validateInitialRecipients({
+          ...assistantParticipationInput,
+          thread,
+          shouldValidateRecipients,
+        }),
+    });
+    const savedThread = await this.reconcileInitialAssistantParticipation({
+      ...assistantParticipationInput,
+      thread: createdThread,
       shouldApplyAssistantParticipation,
     });
 
@@ -97,6 +113,25 @@ export class AgentChatThreadService {
     });
 
     return savedThread;
+  }
+
+  private async validateInitialRecipients({
+    shouldValidateRecipients,
+    ...args
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> &
+    AgentChatAssistantParticipationArgs & {
+      thread: AgentChatThreadWorkspaceEntity;
+      shouldValidateRecipients: boolean;
+    }): Promise<void> {
+    if (!shouldValidateRecipients) {
+      return;
+    }
+
+    await this.assistantParticipationService.resolveAssistantParticipation({
+      ...args,
+      isInitialMessage: true,
+      isProposedThread: true,
+    });
   }
 
   private async reconcileInitialAssistantParticipation({
@@ -132,6 +167,7 @@ export class AgentChatThreadService {
     isSubscribed?: boolean;
     channelId?: string;
     shouldApplyAssistantParticipation?: boolean;
+    shouldValidateRecipients?: boolean;
   } & AgentChatAssistantParticipationArgs): Promise<boolean> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })

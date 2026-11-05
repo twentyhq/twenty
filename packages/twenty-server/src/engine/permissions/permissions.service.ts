@@ -39,6 +39,8 @@ import { RecordAccessPolicyService } from 'src/engine/permissions/combine/servic
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
+import { type RowAccessRecord } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -52,6 +54,12 @@ type RecordsQuestion = ObjectQuestion & {
   recordIds: string[];
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   transactionScope?: WorkspaceTransactionScope;
+};
+
+type ProposedRecordQuestion = ObjectQuestion & {
+  record: RowAccessRecord;
+  privateRecordState: PrivateRecordState;
+  hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
 };
 
 type FieldQuestion = ObjectQuestion & {
@@ -170,6 +178,24 @@ export class PermissionsService {
 
   public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
     return this.coversEveryRecord({ question, operationType: 'update' });
+  }
+
+  public canReadProposedRecord(
+    question: ProposedRecordQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToProposedRecord({
+      ...question,
+      operationType: 'select',
+    });
+  }
+
+  public canUpdateProposedRecord(
+    question: ProposedRecordQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToProposedRecord({
+      ...question,
+      operationType: 'update',
+    });
   }
 
   public async findReadableRecordIds(

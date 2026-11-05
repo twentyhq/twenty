@@ -19,6 +19,10 @@ import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai
 import { resolveAgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-execution-decision.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 type AssistantPolicyThread = Pick<
   AgentChatThreadWorkspaceEntity,
@@ -47,6 +51,8 @@ export class AgentChatAssistantPolicyService {
     isInitialAssistantParticipant,
     isInitialMessage,
     isReplyRequested = true,
+    hasRequestedRecipients = false,
+    isProposedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
@@ -55,6 +61,8 @@ export class AgentChatAssistantPolicyService {
     isInitialAssistantParticipant?: boolean;
     isInitialMessage: boolean;
     isReplyRequested?: boolean;
+    hasRequestedRecipients?: boolean;
+    isProposedThread?: boolean;
   }): Promise<AgentChatAssistantDecision> {
     const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
       workspaceId,
@@ -64,7 +72,22 @@ export class AgentChatAssistantPolicyService {
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
+      isProposedThread,
     });
+    const isAssistantOptOutLeftAlone =
+      isInitialMessage &&
+      !isInitialAssistantParticipant &&
+      !isAssistantMentioned &&
+      hasRequestedRecipients &&
+      chatAudience === AgentChatAudience.ASSISTANT_CHAT;
+
+    if (isAssistantOptOutLeftAlone) {
+      throw new AiException(
+        'None of the requested recipients can reply in this chat',
+        AiExceptionCode.CHAT_RECIPIENTS_CANNOT_REPLY,
+      );
+    }
+
     const isAssistantParticipant = resolveAgentChatAssistantParticipation({
       mode: workspaceAssistantMode,
       audience: chatAudience,
@@ -136,10 +159,12 @@ export class AgentChatAssistantPolicyService {
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
+    isProposedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds: string[];
+    isProposedThread?: boolean;
   }): Promise<AgentChatAudience> {
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
@@ -154,6 +179,17 @@ export class AgentChatAssistantPolicyService {
       !isDefined(thread.workspaceMemberId)
     ) {
       return AgentChatAudience.CONVERSATION;
+    }
+
+    if (isProposedThread) {
+      const audienceMemberIds = new Set([
+        thread.workspaceMemberId,
+        ...candidateWorkspaceMemberIds,
+      ]);
+
+      return audienceMemberIds.size <= 1
+        ? AgentChatAudience.ASSISTANT_CHAT
+        : AgentChatAudience.CONVERSATION;
     }
 
     const { flatObjectMetadataMaps } =

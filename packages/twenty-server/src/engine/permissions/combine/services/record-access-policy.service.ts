@@ -22,6 +22,7 @@ import { type RecordShareGrant } from 'src/engine/permissions/record-share/types
 import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
+  type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
@@ -116,6 +117,53 @@ export class RecordAccessPolicyService {
     }
 
     return { principals, metadataMaps, flatObjectMetadata, operationType };
+  }
+
+  async hasAccessToProposedRecord({
+    principals,
+    objectMetadataId,
+    operationType,
+    record,
+    privateRecordState,
+    hypotheticalRecordShareAccessLevel,
+  }: PrincipalsObjectAccessRequest & {
+    record: RowAccessRecord;
+    privateRecordState: PrivateRecordState;
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  }): Promise<boolean> {
+    const request = await this.findObjectAccessRequest({
+      principals,
+      objectMetadataId,
+      operationType,
+    });
+
+    if (!isDefined(request)) {
+      return false;
+    }
+
+    const hasMissingRolePermissions = getPermissionsPrincipalsRoleIds(
+      request.principals,
+    ).some(
+      (roleId) => !isDefined(request.metadataMaps.rolesPermissions[roleId]),
+    );
+
+    if (hasMissingRolePermissions) {
+      return false;
+    }
+
+    const admittedRecordIds = await findPermissionsAdmittedRecordIds({
+      ...request,
+      hypotheticalRecordShareAccessLevel,
+      records: [record],
+      context: {
+        shouldIgnoreSoftDeleteDefaultFilter: true,
+        fetchRecordShares: () => Promise.resolve([]),
+        findPrivateRecordStates: () =>
+          Promise.resolve(new Map([[record.id, privateRecordState]])),
+      },
+    });
+
+    return admittedRecordIds.has(record.id);
   }
 
   async hasAccessToAllRecords({

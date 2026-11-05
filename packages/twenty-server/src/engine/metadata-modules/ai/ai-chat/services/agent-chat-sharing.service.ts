@@ -30,6 +30,7 @@ import { RecordSharePrincipalService } from 'src/engine/permissions/record-share
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
+import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
@@ -57,6 +58,7 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { buildAgentChatProposedThreadAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-proposed-thread-access.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -293,9 +295,11 @@ export class AgentChatSharingService {
     workspaceMemberId,
     threadId,
     shouldConsiderNewShares = true,
+    proposedThread,
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
     shouldConsiderNewShares?: boolean;
+    proposedThread?: AgentChatThreadWorkspaceEntity;
   }): Promise<string[]> {
     const candidateMemberIds = [...new Set(memberIds)].filter(
       (memberId) => memberId !== workspaceMemberId,
@@ -318,13 +322,14 @@ export class AgentChatSharingService {
       return [];
     }
 
+    const threadFlatObjectMetadata =
+      await this.getThreadObjectMetadata(workspaceId);
     const canManageSharing = await this.canManageThreadSharing({
       workspaceId,
       threadId,
       authContext,
+      proposedThread,
     });
-    const threadFlatObjectMetadata =
-      await this.getThreadObjectMetadata(workspaceId);
 
     const hypotheticalRecordShareAccessLevel =
       shouldConsiderNewShares && canManageSharing
@@ -342,16 +347,32 @@ export class AgentChatSharingService {
                   workspaceMemberId: memberId,
                 },
               });
-            const question = {
+            const objectQuestion = {
               principals,
               objectMetadataId: threadFlatObjectMetadata.id,
-              recordIds: [threadId],
               hypotheticalRecordShareAccessLevel,
             };
-            const [canReadThread, canUpdateThread] = await Promise.all([
-              this.permissionsService.canReadRecords(question),
-              this.permissionsService.canUpdateRecords(question),
-            ]);
+            const [canReadThread, canUpdateThread] = isDefined(proposedThread)
+              ? await Promise.all([
+                  this.permissionsService.canReadProposedRecord({
+                    ...objectQuestion,
+                    ...buildAgentChatProposedThreadAccess(proposedThread),
+                  }),
+                  this.permissionsService.canUpdateProposedRecord({
+                    ...objectQuestion,
+                    ...buildAgentChatProposedThreadAccess(proposedThread),
+                  }),
+                ])
+              : await Promise.all([
+                  this.permissionsService.canReadRecords({
+                    ...objectQuestion,
+                    recordIds: [threadId],
+                  }),
+                  this.permissionsService.canUpdateRecords({
+                    ...objectQuestion,
+                    recordIds: [threadId],
+                  }),
+                ]);
 
             return canReadThread && canUpdateThread ? memberId : undefined;
           }),
@@ -374,6 +395,7 @@ export class AgentChatSharingService {
     isSubscribed?: boolean;
     // checked by the caller, as the member must be able to reach it
     channelId?: string;
+    validateThread?: (thread: AgentChatThreadWorkspaceEntity) => Promise<void>;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -463,11 +485,14 @@ export class AgentChatSharingService {
               isSubscribed: args.isSubscribed,
             });
 
-            const createdThread = await threadRepository.findOne({
-              where: { id: threadId },
-            });
+            const createdThread =
+              (await threadRepository.findOne({
+                where: { id: threadId },
+              })) ?? throwAgentChatThreadNotFound();
 
-            return createdThread ?? throwAgentChatThreadNotFound();
+            await args.validateThread?.(createdThread);
+
+            return createdThread;
           },
         ),
       buildSystemAuthContext(args.workspaceId),
@@ -856,12 +881,27 @@ export class AgentChatSharingService {
     workspaceId,
     threadId,
     authContext,
+    proposedThread,
   }: {
     workspaceId: string;
     threadId: string;
     authContext: UserWorkspaceAuthContext;
+    proposedThread?: AgentChatThreadWorkspaceEntity;
   }): Promise<boolean> {
     const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
+
+    if (isDefined(proposedThread)) {
+      const { featureFlagsMap } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'featureFlagsMap',
+        ]);
+
+      return resolveObjectSharing({
+        flatObjectMetadata: objectMetadata,
+        featureFlagsMap,
+      }).isShareable;
+    }
+
     const { canManageSharing } = await this.recordSharingService.getSharing({
       objectMetadataId: objectMetadata.id,
       recordId: threadId,
