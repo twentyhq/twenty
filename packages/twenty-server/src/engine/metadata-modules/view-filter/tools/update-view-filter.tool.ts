@@ -7,8 +7,8 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { VIEW_FILTER_ACCESS_POLICY } from 'src/engine/metadata-modules/view-filter/constants/view-filter-access-policy.constant';
 
 const updateViewFilterInputSchema = z.object({
   id: z.string().uuid().describe('ID of the view filter to update'),
@@ -34,7 +34,7 @@ const updateViewFilterInputSchema = z.object({
 @DefineTool({
   name: 'update_view_filter',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:
     'Update a filter on a view. Use get_view_filters to find the filter ID.',
 })
@@ -45,20 +45,19 @@ export class UpdateViewFilterTool extends BaseTool<
 
   constructor(
     private readonly viewFilterService: ViewFilterService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewFilterInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableParentViewOrThrow({
       kind: 'viewFilter',
       entityId: input.id,
-      workspaceId,
-      userWorkspaceId,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const filter = await this.viewFilterService.updateOne({

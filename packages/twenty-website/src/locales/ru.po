@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -654,7 +654,7 @@ msgstr "30 дней"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "30 дней после перехода по ссылке. Если посетитель создаст своё рабочее пространство в течение этого времени, а затем станет платным клиентом Cloud Organization или Enterprise, комиссия будет вашей. Если до создания рабочего пространства он перейдёт по ссылке другого партнёра, вознаграждение получит этот партнёр. После создания рабочего пространства вознаграждение закрепляется окончательно."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4726,7 +4726,7 @@ msgstr "Венгрия 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "Я соглашаюсь с <0>Условиями партнёрской программы</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4752,7 +4752,7 @@ msgstr "Идентификация"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "Если это их первое рабочее пространство Twenty и для него ещё не указан код партнёра, они могут ввести ваш в разделе «Настройки → Выставление счетов» во время бесплатного пробного периода. В течение 30 дней после первого платежа они также могут попросить нас добавить его. После сохранения кода в рабочем пространстве его нельзя изменить."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9771,7 +9771,7 @@ msgstr "Сколько стоит Twenty?"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "Что, если клиент зарегистрируется без моей ссылки?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

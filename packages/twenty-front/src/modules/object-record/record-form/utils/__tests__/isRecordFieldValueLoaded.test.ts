@@ -30,4 +30,13 @@ describe('isRecordFieldValueLoaded', () => {
       isRecordFieldValueLoaded({ record: {}, fieldPath: 'lostReason' }),
     ).toBe(false);
   });
+
+  it('misses a field whose value is undefined', () => {
+    expect(
+      isRecordFieldValueLoaded({
+        record: { lostReason: undefined },
+        fieldPath: 'lostReason',
+      }),
+    ).toBe(false);
+  });
 });

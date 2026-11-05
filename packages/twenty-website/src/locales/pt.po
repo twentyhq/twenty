@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -654,7 +654,7 @@ msgstr "30 dias"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "30 dias após o clique. Se o visitante criar seu espaço de trabalho dentro desse período e posteriormente se tornar um cliente pagante do Cloud Organization ou Enterprise, a comissão será sua. Se ele clicar no link de outro parceiro antes de criar seu espaço de trabalho, esse parceiro receberá o crédito. Depois que o espaço de trabalho for criado, o crédito será definitivo."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4726,7 +4726,7 @@ msgstr "Hungria 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "Concordo com os <0>Termos do Programa de Afiliados</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4752,7 +4752,7 @@ msgstr "Identidade"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "Se for o primeiro espaço de trabalho Twenty e ainda não houver nenhum código de parceiro definido nele, a pessoa poderá inserir o seu em Configurações → Cobrança durante o período de avaliação gratuito. Em até 30 dias após o primeiro pagamento, ela também poderá nos pedir para adicioná-lo. Depois que um código for salvo em um espaço de trabalho, ele não poderá ser alterado."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9771,7 +9771,7 @@ msgstr "Quanto custa o Twenty?"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "E se um cliente se inscrever sem o meu link?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

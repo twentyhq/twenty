@@ -1,3 +1,4 @@
+import { canReachSomeRecords } from 'twenty-shared/utils';
 import { Test, type TestingModule } from '@nestjs/testing';
 import {
   FieldMetadataType,
@@ -14,7 +15,6 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 describe('CommonSelectFieldsBuilder', () => {
