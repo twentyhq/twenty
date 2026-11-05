@@ -10,13 +10,15 @@ const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 const NO_POLICY = {
   dataResidency: null,
   isZeroDataRetentionRequired: false,
+  isProductImprovementDataSharingEnabled: true,
 };
 const EU_ZERO_RETENTION_POLICY = {
+  ...NO_POLICY,
   dataResidency: 'eu',
   isZeroDataRetentionRequired: true,
 };
 const ZERO_RETENTION_POLICY = {
-  dataResidency: null,
+  ...NO_POLICY,
   isZeroDataRetentionRequired: true,
 };
 
@@ -42,27 +44,6 @@ const createAgentOnUnlabeledModel = ({
     expectToFail,
     token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
   });
-
-const updateDataSharing = ({
-  isProductImprovementDataSharingEnabled,
-  token,
-}: {
-  isProductImprovementDataSharingEnabled: boolean;
-  token: string;
-}) =>
-  makeMetadataApiRequest(
-    {
-      query: gql`
-        mutation UpdateWorkspaceDataSharing($data: UpdateWorkspaceInput!) {
-          updateWorkspace(data: $data) {
-            isProductImprovementDataSharingEnabled
-          }
-        }
-      `,
-      variables: { data: { isProductImprovementDataSharingEnabled } },
-    },
-    token,
-  );
 
 const readAiDataPolicy = () =>
   makeMetadataApiRequest(
@@ -126,7 +107,7 @@ describe('workspace AI data policy', () => {
 
   it.each([
     ['an unknown residency', { ...NO_POLICY, dataResidency: 'us' }],
-    ['a missing residency', { isZeroDataRetentionRequired: true }],
+    ['a missing residency', { ...NO_POLICY, dataResidency: undefined }],
     [
       'a null retention requirement',
       { dataResidency: 'eu', isZeroDataRetentionRequired: null },
@@ -170,71 +151,22 @@ describe('workspace AI data policy', () => {
     );
   });
 
-  describe('product improvement data sharing', () => {
-    afterEach(async () => {
-      await updateDataSharing({
-        isProductImprovementDataSharingEnabled: true,
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-    });
-
-    it('lets a workspace admin turn it off', async () => {
-      const response = await updateDataSharing({
-        isProductImprovementDataSharingEnabled: false,
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      expect(response.body.errors).toBeUndefined();
-      expect(
-        response.body.data.updateWorkspace
-          .isProductImprovementDataSharingEnabled,
-      ).toBe(false);
-    });
-
-    it('refuses a member without the security permission', async () => {
-      const response = await updateDataSharing({
-        isProductImprovementDataSharingEnabled: false,
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      });
-
-      expect(response.body.errors[0].extensions.subCode).toBe(
-        'PERMISSION_DENIED',
-      );
-    });
-
-    it('refuses a change and reads as on while the flag is off', async () => {
-      await updateDataSharing({
-        isProductImprovementDataSharingEnabled: false,
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-      await setAiDataPolicyFlag(false);
-
-      const update = await updateDataSharing({
-        isProductImprovementDataSharingEnabled: false,
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      expect(update.body.errors[0].extensions.subCode).toBe(
-        'PERMISSION_DENIED',
-      );
-
-      const read = await makeMetadataApiRequest(
-        {
-          query: gql`
-            query {
-              currentWorkspace {
-                isProductImprovementDataSharingEnabled
-              }
-            }
-          `,
+  it('keeps the sharing choice in the policy', async () => {
+    const response = await updateAiDataPolicy({
+      data: {
+        aiDataPolicy: {
+          ...NO_POLICY,
+          isProductImprovementDataSharingEnabled: false,
         },
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
-
-      expect(
-        read.body.data.currentWorkspace.isProductImprovementDataSharingEnabled,
-      ).toBe(true);
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.updateWorkspace.aiDataPolicy
+        .isProductImprovementDataSharingEnabled,
+    ).toBe(false);
   });
 
   describe('with the feature flag off', () => {

@@ -61,6 +61,7 @@ const renderSettingsPrivacy = ({
   aiDataPolicy?: {
     dataResidency: string | null;
     isZeroDataRetentionRequired: boolean;
+    isProductImprovementDataSharingEnabled: boolean;
   } | null;
 }) => {
   const store = createStore();
@@ -165,7 +166,11 @@ describe('SettingsPrivacy', () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
-      aiDataPolicy: { dataResidency: 'eu', isZeroDataRetentionRequired: true },
+      aiDataPolicy: {
+        dataResidency: 'eu',
+        isZeroDataRetentionRequired: true,
+        isProductImprovementDataSharingEnabled: true,
+      },
     });
 
     expect(

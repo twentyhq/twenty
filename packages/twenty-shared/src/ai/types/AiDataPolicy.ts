@@ -3,4 +3,5 @@ import { type AiDataResidencyPolicy } from '../constants/model-residencies-allow
 export type AiDataPolicy = {
   dataResidency: AiDataResidencyPolicy | null;
   isZeroDataRetentionRequired: boolean;
+  isProductImprovementDataSharingEnabled: boolean;
 };

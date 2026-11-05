@@ -191,14 +191,6 @@ export class UpdateWorkspaceInput {
   )
   aiDataPolicy?: AiDataPolicyInput;
 
-  @Field({ nullable: true })
-  @IsBoolean()
-  @ValidateIf(
-    ({ isProductImprovementDataSharingEnabled }: UpdateWorkspaceInput) =>
-      !isUndefined(isProductImprovementDataSharingEnabled),
-  )
-  isProductImprovementDataSharingEnabled?: boolean;
-
   @Field(() => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })

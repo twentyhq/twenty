@@ -7,6 +7,7 @@ const UPDATE_WORKSPACE_AI_DATA_POLICY = gql`
       aiDataPolicy {
         dataResidency
         isZeroDataRetentionRequired
+        isProductImprovementDataSharingEnabled
       }
     }
   }

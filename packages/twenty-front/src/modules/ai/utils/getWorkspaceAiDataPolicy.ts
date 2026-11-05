@@ -24,5 +24,7 @@ export const getWorkspaceAiDataPolicy = (
       : null,
     isZeroDataRetentionRequired:
       workspace?.aiDataPolicy?.isZeroDataRetentionRequired ?? false,
+    isProductImprovementDataSharingEnabled:
+      workspace?.aiDataPolicy?.isProductImprovementDataSharingEnabled ?? true,
   };
 };

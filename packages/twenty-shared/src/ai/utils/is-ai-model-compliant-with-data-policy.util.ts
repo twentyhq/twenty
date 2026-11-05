@@ -13,7 +13,10 @@ export const isAiModelCompliantWithDataPolicy = ({
     dataResidency?: string | null;
     zeroDataRetention?: boolean | null;
   };
-  aiDataPolicy: AiDataPolicy;
+  aiDataPolicy: Pick<
+    AiDataPolicy,
+    'dataResidency' | 'isZeroDataRetentionRequired'
+  >;
 }): boolean => {
   if (
     aiDataPolicy.isZeroDataRetentionRequired &&

@@ -19,6 +19,7 @@ export const AI_DATA_POLICIES: AiDataPolicy[] = DATA_RESIDENCIES.flatMap(
       NO_AI_DATA_POLICY.isZeroDataRetentionRequired,
       !NO_AI_DATA_POLICY.isZeroDataRetentionRequired,
     ].map((isZeroDataRetentionRequired) => ({
+      ...NO_AI_DATA_POLICY,
       dataResidency,
       isZeroDataRetentionRequired,
     })),

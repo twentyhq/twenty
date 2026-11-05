@@ -722,6 +722,9 @@ export default {
             "dataResidency": [
                 1
             ],
+            "isProductImprovementDataSharingEnabled": [
+                4
+            ],
             "isZeroDataRetentionRequired": [
                 4
             ],
@@ -732,6 +735,9 @@ export default {
         "AiDataPolicyInput": {
             "dataResidency": [
                 1
+            ],
+            "isProductImprovementDataSharingEnabled": [
+                4
             ],
             "isZeroDataRetentionRequired": [
                 4
@@ -15018,9 +15024,6 @@ export default {
             "isPasswordAuthEnabled": [
                 4
             ],
-            "isProductImprovementDataSharingEnabled": [
-                4
-            ],
             "isPublicInviteLinkEnabled": [
                 4
             ],
@@ -16545,9 +16548,6 @@ export default {
                 4
             ],
             "isPasswordAuthEnabled": [
-                4
-            ],
-            "isProductImprovementDataSharingEnabled": [
                 4
             ],
             "isPublicInviteLinkEnabled": [

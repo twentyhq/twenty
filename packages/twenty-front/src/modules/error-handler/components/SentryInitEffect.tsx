@@ -1,3 +1,4 @@
+import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -107,7 +108,10 @@ export const SentryInitEffect = () => {
       const { addIntegration, getReplay, replayIntegration } =
         await import('@sentry/react');
 
-      if (!currentWorkspace.isProductImprovementDataSharingEnabled) {
+      const { isProductImprovementDataSharingEnabled } =
+        getWorkspaceAiDataPolicy(currentWorkspace);
+
+      if (!isProductImprovementDataSharingEnabled) {
         await getReplay()?.stop();
 
         return;

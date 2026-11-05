@@ -15,7 +15,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPrivacyAffectedByAiDataPolicy } from '@/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy';
 import { useAvailableAiDataPolicyOptions } from '@/settings/privacy/hooks/useAvailableAiDataPolicyOptions';
-import { useUpdateWorkspacePrivacySettings } from '@/settings/privacy/hooks/useUpdateWorkspacePrivacySettings';
+import { useUpdateWorkspaceAiDataPolicy } from '@/settings/privacy/hooks/useUpdateWorkspaceAiDataPolicy';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -34,8 +34,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
-  const { updateWorkspacePrivacySettings } =
-    useUpdateWorkspacePrivacySettings();
+  const { updateWorkspaceAiDataPolicy } = useUpdateWorkspaceAiDataPolicy();
 
   const aiDataPolicy = getWorkspaceAiDataPolicy(currentWorkspace);
   const { dataResidencies, isZeroDataRetentionAvailable } =
@@ -77,12 +76,9 @@ export const SettingsPrivacyAiDataProcessing = () => {
               dropdownId="settings-privacy-ai-data-residency"
               value={aiDataPolicy.dataResidency ?? WORLDWIDE_OPTION_VALUE}
               onChange={(value) =>
-                updateWorkspacePrivacySettings({
-                  aiDataPolicy: {
-                    ...aiDataPolicy,
-                    dataResidency:
-                      value === WORLDWIDE_OPTION_VALUE ? null : value,
-                  },
+                updateWorkspaceAiDataPolicy({
+                  dataResidency:
+                    value === WORLDWIDE_OPTION_VALUE ? null : value,
                 })
               }
               options={aiDataResidencyOptions}
@@ -97,11 +93,8 @@ export const SettingsPrivacyAiDataProcessing = () => {
             description={t`Only use providers that keep no copy of your prompts and responses`}
             checked={aiDataPolicy.isZeroDataRetentionRequired}
             onChange={(checked) =>
-              updateWorkspacePrivacySettings({
-                aiDataPolicy: {
-                  ...aiDataPolicy,
-                  isZeroDataRetentionRequired: checked,
-                },
+              updateWorkspaceAiDataPolicy({
+                isZeroDataRetentionRequired: checked,
               })
             }
           />

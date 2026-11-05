@@ -29,12 +29,14 @@ export class WorkspaceAiDataPolicyService {
     id: string;
     aiDataPolicy?: AiDataPolicy;
   }): Promise<AiDataPolicy> {
-    const isAiDataPolicyEnabled = await this.isAiDataPolicyEnabled(
-      workspace.id,
-    );
+    const isAiDataPolicyEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspace.id,
+      );
 
     return isAiDataPolicyEnabled
-      ? (workspace.aiDataPolicy ?? NO_AI_DATA_POLICY)
+      ? { ...NO_AI_DATA_POLICY, ...workspace.aiDataPolicy }
       : NO_AI_DATA_POLICY;
   }
 
@@ -49,22 +51,12 @@ export class WorkspaceAiDataPolicyService {
   async isContentRecordingAllowed(workspace: {
     id: string;
     aiDataPolicy?: AiDataPolicy;
-    isProductImprovementDataSharingEnabled?: boolean;
   }): Promise<boolean> {
-    if (!(await this.isAiDataPolicyEnabled(workspace.id))) {
-      return true;
-    }
+    const aiDataPolicy = await this.getEffectiveAiDataPolicy(workspace);
 
     return (
-      !isAiDataPolicyActive(workspace.aiDataPolicy ?? NO_AI_DATA_POLICY) &&
-      (workspace.isProductImprovementDataSharingEnabled ?? true)
-    );
-  }
-
-  private isAiDataPolicyEnabled(workspaceId: string): Promise<boolean> {
-    return this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
-      workspaceId,
+      !isAiDataPolicyActive(aiDataPolicy) &&
+      aiDataPolicy.isProductImprovementDataSharingEnabled
     );
   }
 

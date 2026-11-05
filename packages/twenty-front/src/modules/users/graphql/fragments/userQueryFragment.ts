@@ -140,8 +140,8 @@ export const USER_QUERY_FRAGMENT = gql`
       aiDataPolicy {
         dataResidency
         isZeroDataRetentionRequired
+        isProductImprovementDataSharingEnabled
       }
-      isProductImprovementDataSharingEnabled
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

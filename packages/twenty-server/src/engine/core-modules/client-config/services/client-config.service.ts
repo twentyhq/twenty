@@ -166,7 +166,15 @@ export class ClientConfigService {
         });
 
         return isDefined(model)
-          ? [{ tier, modelId: model.modelId, ...aiDataPolicy }]
+          ? [
+              {
+                tier,
+                modelId: model.modelId,
+                dataResidency: aiDataPolicy.dataResidency,
+                isZeroDataRetentionRequired:
+                  aiDataPolicy.isZeroDataRetentionRequired,
+              },
+            ]
           : [];
       }),
     );

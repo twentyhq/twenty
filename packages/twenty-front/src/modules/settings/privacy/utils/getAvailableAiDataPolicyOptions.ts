@@ -13,7 +13,10 @@ export const getAvailableAiDataPolicyOptions = ({
   aiDataPolicy,
 }: {
   aiModels: Pick<ClientAiModelConfig, 'dataResidency' | 'zeroDataRetention'>[];
-  aiDataPolicy: AiDataPolicy;
+  aiDataPolicy: Pick<
+    AiDataPolicy,
+    'dataResidency' | 'isZeroDataRetentionRequired'
+  >;
 }): {
   dataResidencies: AiDataResidencyPolicy[];
   isZeroDataRetentionAvailable: boolean;

@@ -16,4 +16,8 @@ export class AiDataPolicyInput implements AiDataPolicy {
   @Field(() => Boolean)
   @IsBoolean()
   isZeroDataRetentionRequired: boolean;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  isProductImprovementDataSharingEnabled: boolean;
 }

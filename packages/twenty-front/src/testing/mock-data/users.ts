@@ -92,7 +92,6 @@ export const mockCurrentWorkspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
-  isProductImprovementDataSharingEnabled: true,
   aiChatModelTier: AiModelTier.fast,
   aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
   aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,

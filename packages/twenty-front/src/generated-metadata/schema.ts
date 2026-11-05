@@ -316,11 +316,13 @@ export type AiChatUserCreditsUsage = {
 export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
   dataResidency?: Maybe<Scalars['String']['output']>;
+  isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
 };
 
 export type AiDataPolicyInput = {
   dataResidency?: InputMaybe<Scalars['String']['input']>;
+  isProductImprovementDataSharingEnabled: Scalars['Boolean']['input'];
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
 };
 
@@ -8025,7 +8027,6 @@ export type UpdateWorkspaceInput = {
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPasswordAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
@@ -8826,7 +8827,6 @@ export type Workspace = {
   isMicrosoftAuthEnabled: Scalars['Boolean']['output'];
   isPasswordAuthBypassEnabled: Scalars['Boolean']['output'];
   isPasswordAuthEnabled: Scalars['Boolean']['output'];
-  isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   isTrialAvailable: Scalars['Boolean']['output'];
   isTwoFactorAuthenticationEnforced: Scalars['Boolean']['output'];

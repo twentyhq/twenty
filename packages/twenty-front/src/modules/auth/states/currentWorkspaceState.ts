@@ -48,7 +48,6 @@ export type CurrentWorkspace = Pick<
   | 'aiModelIdByTier'
   | 'aiAdditionalInstructions'
   | 'aiDataPolicy'
-  | 'isProductImprovementDataSharingEnabled'
   | 'editableProfileFields'
   | 'isInternalMessagesImportEnabled'
 > & {

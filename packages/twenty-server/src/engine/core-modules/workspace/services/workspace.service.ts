@@ -168,7 +168,6 @@ export class WorkspaceService {
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
-    isProductImprovementDataSharingEnabled: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -488,24 +487,16 @@ export class WorkspaceService {
       });
     }
 
-    const isUpdatingAiDataPolicy = isDefined(payload.aiDataPolicy);
-    const isUpdatingDataSharing = isDefined(
-      payload.isProductImprovementDataSharingEnabled,
-    );
-
-    if (isUpdatingAiDataPolicy || isUpdatingDataSharing) {
+    if (isDefined(payload.aiDataPolicy)) {
       await this.assertFeatureIsEnabledOrThrow({
         featureFlagKey: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
         workspaceId: workspace.id,
         userFriendlyMessage: msg`Privacy settings are not enabled for this workspace.`,
       });
 
-      const isUpdatedColumnHidden =
-        (isUpdatingAiDataPolicy && !isDefined(workspace.aiDataPolicy)) ||
-        (isUpdatingDataSharing &&
-          !isDefined(workspace.isProductImprovementDataSharingEnabled));
+      const isAiDataPolicyColumnHidden = !isDefined(workspace.aiDataPolicy);
 
-      if (isUpdatedColumnHidden) {
+      if (isAiDataPolicyColumnHidden) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,

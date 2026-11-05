@@ -12,4 +12,7 @@ export class AiDataPolicyDTO implements AiDataPolicy {
 
   @Field(() => Boolean)
   isZeroDataRetentionRequired: boolean;
+
+  @Field(() => Boolean)
+  isProductImprovementDataSharingEnabled: boolean;
 }

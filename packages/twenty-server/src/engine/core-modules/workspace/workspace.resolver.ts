@@ -41,6 +41,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
@@ -291,22 +292,9 @@ export class WorkspaceResolver {
         workspace.id,
       );
 
-    return isAiDataPolicyEnabled ? (workspace.aiDataPolicy ?? null) : null;
-  }
-
-  @ResolveField(() => Boolean)
-  async isProductImprovementDataSharingEnabled(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    const isAiDataPolicyEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
-        workspace.id,
-      );
-
-    return isAiDataPolicyEnabled
-      ? (workspace.isProductImprovementDataSharingEnabled ?? true)
-      : true;
+    return isAiDataPolicyEnabled && isDefined(workspace.aiDataPolicy)
+      ? { ...NO_AI_DATA_POLICY, ...workspace.aiDataPolicy }
+      : null;
   }
 
   @Mutation(() => WorkspaceEntity)
