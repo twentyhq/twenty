@@ -24,7 +24,10 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle'
+    >,
   ): Promise<FetchedCalendarEvent> {
     const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
       connectedAccount.id,

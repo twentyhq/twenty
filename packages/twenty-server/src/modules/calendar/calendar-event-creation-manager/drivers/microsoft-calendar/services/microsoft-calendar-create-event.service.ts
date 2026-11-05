@@ -22,7 +22,10 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle'
+    >,
   ): Promise<FetchedCalendarEvent> {
     const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
       connectedAccount.id,

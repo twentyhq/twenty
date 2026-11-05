@@ -24,7 +24,10 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle'
+    >,
   ): Promise<FetchedCalendarEvent> {
     try {
       const client = await this.calDavClientProvider.getClient(
@@ -43,6 +46,9 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const uid = uuid();
       const calendar = ical({ prodId: '//Twenty//Calendar//EN' });
+      const organizerEmail = connectedAccount.handle.includes('@')
+        ? connectedAccount.handle.trim()
+        : '';
 
       calendar.createEvent({
         id: uid,
@@ -52,6 +58,14 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         summary: input.title,
         description: input.description,
         location: input.location,
+        ...(organizerEmail
+          ? {
+              organizer: {
+                name: organizerEmail,
+                email: organizerEmail,
+              },
+            }
+          : {}),
         attendees: input.attendees.map((attendee) => ({
           email: attendee.email,
           name: attendee.displayName,
@@ -100,7 +114,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         isCanceled: false,
         isPrivate: false,
         status: 'CONFIRMED',
-        organizerHandle: '',
+        organizerHandle: organizerEmail,
         conferenceLinkLabel: '',
         conferenceLinkUrl: '',
         conferenceSolution: '',
