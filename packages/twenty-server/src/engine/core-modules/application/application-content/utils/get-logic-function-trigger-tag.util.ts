@@ -1,12 +1,17 @@
+import { type LogicFunctionManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+type LogicFunctionTriggerSettingsKey =
+  | 'cronTriggerSettings'
+  | 'databaseEventTriggerSettings'
+  | 'httpRouteTriggerSettings'
+  | 'serverRouteTriggerSettings'
+  | 'toolTriggerSettings'
+  | 'workflowActionTriggerSettings';
+
+// Installed logic functions store missing settings as null, manifests omit them
 type LogicFunctionTriggerSettings = {
-  cronTriggerSettings?: unknown;
-  databaseEventTriggerSettings?: unknown;
-  httpRouteTriggerSettings?: unknown;
-  serverRouteTriggerSettings?: unknown;
-  toolTriggerSettings?: unknown;
-  workflowActionTriggerSettings?: unknown;
+  [Key in LogicFunctionTriggerSettingsKey]?: LogicFunctionManifest[Key] | null;
 };
 
 export const getLogicFunctionTriggerTag = (

@@ -78,7 +78,7 @@ export const SettingsApplicationContentItemsTable = ({
   const resolveObject = useApplicationContentObjectResolver(content);
   const { getItemLabel, getItemIcon } =
     useApplicationContentItemDisplay(content);
-  const filters = useApplicationContentFilters(contentType, content);
+  const filters = useApplicationContentFilters({ contentType, content });
   const getItemSettingsPath = useApplicationContentItemSettingsPath(
     installedApplicationId,
   );
