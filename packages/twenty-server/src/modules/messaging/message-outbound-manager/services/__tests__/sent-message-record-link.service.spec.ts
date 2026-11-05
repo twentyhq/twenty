@@ -23,8 +23,8 @@ const buildService = ({
       () => messageThreadTargetRepository,
     ),
   };
-  const recordPermissionsService = {
-    getPermissionsForRecords: jest
+  const permissionsService = {
+    findRecordsPermissions: jest
       .fn()
       .mockResolvedValue(
         new Map([['opportunity-id', { canUpdate: canUpdateRecord }]]),
@@ -33,10 +33,10 @@ const buildService = ({
 
   const service = new SentMessageRecordLinkService(
     workspaceOrmManager as never,
-    recordPermissionsService as never,
+    permissionsService as never,
   );
 
-  return { service, messageThreadTargetRepository, recordPermissionsService };
+  return { service, messageThreadTargetRepository, permissionsService };
 };
 
 const LINK_ARGS = {
@@ -78,13 +78,11 @@ describe('SentMessageRecordLinkService', () => {
   });
 
   it('checks the sender access to the record itself, row-level rules included', async () => {
-    const { service, recordPermissionsService } = buildService({});
+    const { service, permissionsService } = buildService({});
 
     await service.linkSentMessageThreadToRecord(LINK_ARGS);
 
-    expect(
-      recordPermissionsService.getPermissionsForRecords,
-    ).toHaveBeenCalledWith({
+    expect(permissionsService.findRecordsPermissions).toHaveBeenCalledWith({
       authContext: LINK_ARGS.authContext,
       flatObjectMetadata: { nameSingular: 'opportunity' },
       recordIds: ['opportunity-id'],

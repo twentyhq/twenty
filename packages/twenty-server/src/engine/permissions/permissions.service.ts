@@ -41,6 +41,19 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
+import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import {
+  RecordSharingReadService,
+  type ViewerRecordAccess,
+} from 'src/engine/permissions/record-share/services/record-sharing-read.service';
+import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
+import { UserRoleReadService } from 'src/engine/permissions/role-assignment/user-role-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type ObjectQuestion = {
@@ -69,6 +82,9 @@ export class PermissionsService {
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordSharingReadService: RecordSharingReadService,
+    private readonly userRoleReadService: UserRoleReadService,
   ) {}
 
   public buildPermissionsPrincipals({
@@ -96,17 +112,6 @@ export class PermissionsService {
     }
 
     return principals;
-  }
-
-  public canReadAllRecords({
-    principals,
-    objectMetadataId,
-  }: ObjectQuestion): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToAllRecords({
-      principals,
-      objectMetadataId,
-      operationType: 'select',
-    });
   }
 
   public canReadSomeRecords({
@@ -170,45 +175,6 @@ export class PermissionsService {
 
   public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
     return this.coversEveryRecord({ question, operationType: 'update' });
-  }
-
-  public async findReadableRecordIds(
-    question: RecordsQuestion,
-  ): Promise<string[]> {
-    const readableRecordIds = await this.findGrantedRecordIds({
-      question,
-      operationType: 'select',
-    });
-
-    return [...new Set(question.recordIds)].filter((recordId) =>
-      readableRecordIds.has(recordId.toLowerCase()),
-    );
-  }
-
-  public canReadField({
-    principals,
-    objectMetadataId,
-    fieldMetadataId,
-  }: FieldQuestion): Promise<boolean> {
-    return this.recordAccessPolicyService.hasFieldPermission({
-      principals,
-      objectMetadataId,
-      fieldMetadataId,
-      fieldPermission: 'canRead',
-    });
-  }
-
-  public canUpdateField({
-    principals,
-    objectMetadataId,
-    fieldMetadataId,
-  }: FieldQuestion): Promise<boolean> {
-    return this.recordAccessPolicyService.hasFieldPermission({
-      principals,
-      objectMetadataId,
-      fieldMetadataId,
-      fieldPermission: 'canUpdate',
-    });
   }
 
   public findUnreadableFieldMetadataIdsOrThrow({
@@ -315,6 +281,137 @@ export class PermissionsService {
     recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
   });
 
+  public findRoleIds({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext | undefined;
+  }): Promise<string[]> {
+    return this.findPrincipalRoleIds(authContext);
+  }
+
+  public async hasAnyRole({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext | undefined;
+  }): Promise<boolean> {
+    return (await this.findPrincipalRoleIds(authContext)).length > 0;
+  }
+
+  public findRecordsPermissions(question: {
+    authContext: WorkspaceAuthContext;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+    recordIds: string[];
+  }): Promise<Map<string, RecordPermissionsDTO>> {
+    return this.recordPermissionsService.getPermissionsForRecords(question);
+  }
+
+  public findRecordSharing(
+    question: RecordSharingArgs,
+  ): Promise<RecordSharingDTO> {
+    return this.recordSharingReadService.findRecordSharing(question);
+  }
+
+  public findRecordSharingAfterChange(
+    question: RecordSharingArgs,
+  ): Promise<RecordSharingDTO> {
+    return this.recordSharingReadService.findRecordSharingAfterChange(question);
+  }
+
+  public async canManageRecordSharing(
+    question: RecordSharingArgs,
+  ): Promise<boolean> {
+    const { canManageSharing } =
+      await this.recordSharingReadService.findRecordSharing(question);
+
+    return canManageSharing;
+  }
+
+  public findViewerRecordAccess(
+    question: RecordSharingArgs & {
+      transactionScope: WorkspaceTransactionScope;
+    },
+  ): Promise<ViewerRecordAccess> {
+    return this.recordSharingReadService.findViewerRecordAccess(question);
+  }
+
+  public canRoleUpdateSharedRecord(question: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordId: string;
+    roleId: string;
+  }): Promise<boolean> {
+    return this.recordSharingReadService.canRoleUpdateSharedRecord(question);
+  }
+
+  public isRecordSharedBeyondMember(question: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordId: string;
+    workspaceMemberId: string;
+  }): Promise<boolean> {
+    return this.recordSharingReadService.isRecordSharedBeyondMember(question);
+  }
+
+  public findWorkspaceMemberRoleIds(question: {
+    workspaceId: string;
+    workspaceMemberIds: string[];
+  }): Promise<(string | undefined)[]> {
+    return this.recordSharingReadService.findWorkspaceMemberRoleIds(question);
+  }
+
+  public findUserWorkspaceRoleIdOrThrow(question: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<string> {
+    return this.userRoleReadService.findUserWorkspaceRoleIdOrThrow(question);
+  }
+
+  public findRolesByUserWorkspaceIds(question: {
+    userWorkspaceIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, RoleEntity[]>> {
+    return this.userRoleReadService.findRolesByUserWorkspaceIds(question);
+  }
+
+  public findWorkspaceMembersWithRole(question: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<FlatWorkspaceMember[]> {
+    return this.userRoleReadService.findWorkspaceMembersWithRole(question);
+  }
+
+  public findUserWorkspaceIdsWithRole(question: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<string[]> {
+    return this.userRoleReadService.findUserWorkspaceIdsWithRole(question);
+  }
+
+  public findSuccessorUserWorkspace(question: {
+    removedUserWorkspace: UserWorkspaceEntity;
+    actingUserWorkspaceId?: string;
+  }): Promise<UserWorkspaceEntity | undefined> {
+    return this.userRoleReadService.findSuccessorUserWorkspace(question);
+  }
+
+  public validateUserWorkspaceIsNotUniqueAdminOrThrow(question: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    return this.userRoleReadService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+      question,
+    );
+  }
+
+  public validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow(question: {
+    adminRoleId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    return this.userRoleReadService.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow(
+      question,
+    );
+  }
+
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
     workspaceId,
@@ -409,10 +506,10 @@ export class PermissionsService {
   }
 
   // Empty for the system, which acts with no role
-  public async getRoleIds(
-    authContext: WorkspaceAuthContext | undefined,
+  private async findPrincipalRoleIds(
+    authContext: PermissionsAuthContext | undefined,
   ): Promise<string[]> {
-    if (!isDefined(authContext) || isSystemAuthContext(authContext)) {
+    if (!isDefined(authContext)) {
       return [];
     }
 

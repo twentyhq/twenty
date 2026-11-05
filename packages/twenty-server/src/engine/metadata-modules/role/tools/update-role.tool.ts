@@ -50,7 +50,9 @@ export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
         id: input.roleId,
         update: input.update,
       },
-      actingRoleIds: await this.permissionsService.getRoleIds(authContext),
+      actingRoleIds: await this.permissionsService.findRoleIds({
+        authContext: authContext,
+      }),
     });
 
     return {

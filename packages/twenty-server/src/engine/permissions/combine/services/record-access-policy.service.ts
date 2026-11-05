@@ -118,27 +118,6 @@ export class RecordAccessPolicyService {
     return { principals, metadataMaps, flatObjectMetadata, operationType };
   }
 
-  async hasAccessToAllRecords({
-    principals,
-    objectMetadataId,
-    operationType,
-  }: PrincipalsObjectAccessRequest): Promise<boolean> {
-    const request = await this.findObjectAccessRequest({
-      principals,
-      objectMetadataId,
-      operationType,
-    });
-
-    if (!isDefined(request)) {
-      return false;
-    }
-
-    return (
-      !isObjectOperationDisabledToPrincipals(request) &&
-      isRoleGrantingOperationOnAllRecords(request)
-    );
-  }
-
   async hasAccessToSomeRecords({
     principals,
     objectMetadataId,
@@ -229,41 +208,6 @@ export class RecordAccessPolicyService {
       condition,
       transactionScope,
     });
-  }
-
-  async hasFieldPermission({
-    principals,
-    objectMetadataId,
-    fieldMetadataId,
-    fieldPermission,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext | undefined;
-    objectMetadataId: string;
-    fieldMetadataId: string;
-    fieldPermission: keyof RestrictedFieldPermissions;
-  }): Promise<boolean> {
-    if (!isDefined(principals)) {
-      return false;
-    }
-
-    const flatObjectMetadata = this.findFlatObjectMetadata({
-      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
-      objectMetadataId,
-    });
-
-    if (!flatObjectMetadata?.fieldIds.includes(fieldMetadataId)) {
-      return false;
-    }
-
-    const deniedFieldMetadataIds = await this.findDeniedFieldMetadataIdsOrThrow(
-      {
-        principals,
-        objectMetadataId,
-        fieldPermission,
-      },
-    );
-
-    return !deniedFieldMetadataIds.has(fieldMetadataId);
   }
 
   async findDeniedFieldMetadataIdsOrThrow({

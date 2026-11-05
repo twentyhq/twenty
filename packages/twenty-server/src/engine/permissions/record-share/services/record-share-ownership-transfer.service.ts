@@ -10,13 +10,13 @@ import { PrivateRecordStorageService } from 'src/engine/permissions/private-reco
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class RecordShareOwnershipTransferService {
   constructor(
-    private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -97,7 +97,7 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<string | undefined> {
     const successorUserWorkspace =
-      await this.userRoleService.resolveSuccessorUserWorkspace({
+      await this.permissionsService.findSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });

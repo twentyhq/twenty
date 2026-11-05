@@ -29,6 +29,9 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
+import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
+import { UserRoleReadService } from 'src/engine/permissions/role-assignment/user-role-read.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -992,6 +995,9 @@ describe('AccessPolicyGuard', () => {
           PermissionsPrincipalsService,
           { provide: ApiKeyRoleService, useValue: {} },
           { provide: RecordAccessPolicyService, useValue: {} },
+          { provide: RecordPermissionsService, useValue: {} },
+          { provide: RecordSharingReadService, useValue: {} },
+          { provide: UserRoleReadService, useValue: {} },
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,
