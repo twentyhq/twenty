@@ -12,7 +12,6 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { NON_TRANSFERABLE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/record-share/constants/non-transferable-object-universal-identifiers.constant';
 
 @Injectable()
 export class RecordShareOwnershipTransferService {
@@ -85,13 +84,7 @@ export class RecordShareOwnershipTransferService {
             },
           });
 
-          return (
-            isShareable &&
-            !isPrivateByDefault &&
-            !NON_TRANSFERABLE_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
-              flatObjectMetadata.universalIdentifier,
-            )
-          );
+          return isShareable && !isPrivateByDefault;
         })
     );
   }
