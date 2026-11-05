@@ -111,7 +111,19 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
         .map(({ id }) => id),
     );
 
-    const droppedLogicFunctionIds = new Set<string>();
+    // delete before dropping the references: once dropped, nothing marks a function as a code step's, so a retry could not find it
+    const flatLogicFunctionsToDelete = await this.findFlatLogicFunctionsToDelete(
+      { dataSource, workspaceId, schemaName, workflowVersionSources },
+    );
+
+    const deletedLogicFunctionCount = isDryRun
+      ? flatLogicFunctionsToDelete.length
+      : await this.deleteLogicFunctions({
+          dataSource,
+          workspaceId,
+          flatLogicFunctionsToDelete,
+        });
+
     const rewrittenRowCounts: number[] = [];
 
     for (const source of workflowVersionSources) {
@@ -133,10 +145,6 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
               steps: value,
               existingLogicFunctionIds,
             });
-
-            droppedReferences.forEach(({ logicFunctionId }) =>
-              droppedLogicFunctionIds.add(logicFunctionId),
-            );
 
             for (const { stepId, logicFunctionId } of codelessReferences) {
               this.logger.warn(
@@ -169,25 +177,6 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
       ]);
     }
 
-    const flatLogicFunctionsToDelete = await this.findFlatLogicFunctionsToDelete(
-      {
-        dataSource,
-        workspaceId,
-        schemaName,
-        workflowVersionSources,
-        droppedLogicFunctionIds,
-        isDryRun,
-      },
-    );
-
-    const deletedLogicFunctionCount = isDryRun
-      ? flatLogicFunctionsToDelete.length
-      : await this.deleteLogicFunctions({
-          dataSource,
-          workspaceId,
-          flatLogicFunctionsToDelete,
-        });
-
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: dropped the code step functions of ${coreWorkflowVersionCount} core workflow version(s) and ${workflowVersionCount} workflow version(s), and deleted ${deletedLogicFunctionCount} code step function(s)`,
     );
@@ -198,22 +187,38 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
     workspaceId,
     schemaName,
     workflowVersionSources,
-    droppedLogicFunctionIds,
-    isDryRun,
   }: {
     dataSource: DataSource;
     workspaceId: string;
     schemaName: string;
     workflowVersionSources: StepSource[];
-    droppedLogicFunctionIds: Set<string>;
-    isDryRun: boolean;
   }): Promise<FlatLogicFunction[]> {
-    if (droppedLogicFunctionIds.size === 0) {
+    const versionReferences = await this.findReferences({
+      dataSource,
+      sources: workflowVersionSources,
+    });
+
+    const inlinedCodeStepLogicFunctionIds = new Set(
+      versionReferences
+        .filter(({ isInlinedCodeStep }) => isInlinedCodeStep)
+        .map(({ logicFunctionId }) => logicFunctionId),
+    );
+
+    if (inlinedCodeStepLogicFunctionIds.size === 0) {
       return [];
     }
 
-    const referencedLogicFunctionIds = await this.findReferencedLogicFunctionIds(
-      { dataSource, workspaceId, schemaName, workflowVersionSources, isDryRun },
+    const referencedLogicFunctionIds = new Set(
+      [
+        ...versionReferences.filter(
+          ({ isInlinedCodeStep }) => !isInlinedCodeStep,
+        ),
+        ...(await this.findInFlightRunReferences({
+          dataSource,
+          workspaceId,
+          schemaName,
+        })),
+      ].map(({ logicFunctionId }) => logicFunctionId),
     );
 
     const workspaceCustomApplicationId =
@@ -230,34 +235,22 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
       .filter(
         ({ id, deletedAt, applicationId }) =>
           !isDefined(deletedAt) &&
-          droppedLogicFunctionIds.has(id) &&
+          inlinedCodeStepLogicFunctionIds.has(id) &&
           !referencedLogicFunctionIds.has(id) &&
           applicationId === workspaceCustomApplicationId,
       )
       .filter(hasNoTriggerOutsideWorkflows);
   }
 
-  // a dry run did not rewrite the versions, so the inlined steps it would rewrite are not counted as references
-  private async findReferencedLogicFunctionIds({
+  private async findInFlightRunReferences({
     dataSource,
     workspaceId,
     schemaName,
-    workflowVersionSources,
-    isDryRun,
   }: {
     dataSource: DataSource;
     workspaceId: string;
     schemaName: string;
-    workflowVersionSources: StepSource[];
-    isDryRun: boolean;
-  }): Promise<Set<string>> {
-    const versionReferences = (
-      await this.findReferences({
-        dataSource,
-        sources: workflowVersionSources,
-      })
-    ).filter(({ isInlinedCodeStep }) => !isDryRun || !isInlinedCodeStep);
-
+  }): Promise<StepLogicFunctionReference[]> {
     const hasWorkflowRunTable = await this.hasWorkspaceTable({
       dataSource,
       workspaceId,
@@ -266,25 +259,21 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
       tableName: `${schemaName}."workflowRun"`,
     });
 
-    const inFlightRunReferences = hasWorkflowRunTable
-      ? await this.findReferences({
-          dataSource,
-          sources: [
-            {
-              tableName: `${schemaName}."workflowRun"`,
-              stepsExpression: `state->'flow'->'steps'`,
-              whereClause: 'status::text = ANY($1::text[])',
-              whereParameters: [IN_FLIGHT_WORKFLOW_RUN_STATUSES],
-            },
-          ],
-        })
-      : [];
+    if (!hasWorkflowRunTable) {
+      return [];
+    }
 
-    return new Set(
-      [...versionReferences, ...inFlightRunReferences].map(
-        ({ logicFunctionId }) => logicFunctionId,
-      ),
-    );
+    return this.findReferences({
+      dataSource,
+      sources: [
+        {
+          tableName: `${schemaName}."workflowRun"`,
+          stepsExpression: `state->'flow'->'steps'`,
+          whereClause: 'status::text = ANY($1::text[])',
+          whereParameters: [IN_FLIGHT_WORKFLOW_RUN_STATUSES],
+        },
+      ],
+    });
   }
 
   private async findReferences({
