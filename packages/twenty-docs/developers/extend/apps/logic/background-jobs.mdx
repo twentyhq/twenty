@@ -115,6 +115,19 @@ await enqueueJobs({
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
 
+## Queue memory
+
+Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 1 MB of serialized payload.
+
+`enqueueJobs` reports what each call used:
+
+| Field | What it holds |
+|-------|---------------|
+| `jobs` | Each enqueued job's `jobId` and `sizeBytes`. |
+| `availableBytes` | Memory your application and workspace can still enqueue, as of this call. `null` when the server does not limit queue memory. It is a snapshot, not a reservation. |
+
+Keep payloads small: pass record ids and fetch the records inside the run instead of embedding them. If `availableBytes` runs low, enqueue fewer jobs at once or chain them with `delayMs`.
+
 ## Retry a transient failure
 
 Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, a queued logic function can request up to three retries by throwing `RetryableLogicFunctionError`.

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { Queue } from 'bullmq';
+import { type Job, Queue } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   bullMQToJobStateEnum,
@@ -11,8 +12,12 @@ import {
 } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { createJobMemoryLimiters } from 'src/engine/core-modules/message-queue/drivers/memory/create-job-memory-limiters.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type JobOperationResult = {
   jobId: string;
@@ -22,7 +27,69 @@ type JobOperationResult = {
 
 @Injectable()
 export class AdminPanelQueueService {
-  constructor(private readonly redisClient: RedisClientService) {}
+  constructor(
+    private readonly redisClient: RedisClientService,
+    private readonly metricsService: MetricsService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
+
+  private buildJobMemoryLimiters(queue: Queue) {
+    return createJobMemoryLimiters({
+      getClient: () => queue.client,
+      keyPrefix: this.redisClient.getQueuePrefix(),
+      metricsService: this.metricsService,
+      twentyConfigService: this.twentyConfigService,
+    });
+  }
+
+  private getMemoryGroupKeys(job: Job): string[] {
+    const { memoryGroupKeys } = job.opts as { memoryGroupKeys?: string[] };
+
+    return isNonEmptyArray(memoryGroupKeys) ? memoryGroupKeys : [];
+  }
+
+  // A failed job released its memory, so a retry is a new enqueue and must pass the limits again
+  private async retryJob({
+    queueName,
+    queue,
+    job,
+  }: {
+    queueName: MessageQueue;
+    queue: Queue;
+    job: Job;
+  }): Promise<void> {
+    const { jobSizeLimiter, jobMemoryLimiter } =
+      this.buildJobMemoryLimiters(queue);
+    const groupKeys = this.getMemoryGroupKeys(job);
+    const sizeBytes = computeJobSizeBytes({
+      data: job.data,
+      options: job.opts,
+    });
+
+    jobSizeLimiter.checkJobSizes({
+      queueName,
+      jobs: [{ groupKey: groupKeys[0] ?? 'unknown', sizeBytes }],
+    });
+
+    if (groupKeys.length === 0 || !job.id) {
+      await job.retry();
+
+      return;
+    }
+
+    await jobMemoryLimiter.admit({
+      queueName,
+      jobs: [{ jobId: job.id, sizeBytes, groupKeys }],
+    });
+
+    try {
+      await job.retry();
+    } catch (error) {
+      await jobMemoryLimiter.release({ queueName, jobId: job.id, groupKeys });
+
+      throw error;
+    }
+  }
 
   async getQueueJobs(
     queueName: MessageQueue,
@@ -166,7 +233,7 @@ export class AdminPanelQueueService {
         }
 
         try {
-          await job.retry();
+          await this.retryJob({ queueName, queue, job });
           retriedCount++;
           results.push({
             jobId,
@@ -225,6 +292,17 @@ export class AdminPanelQueueService {
 
         try {
           await job.remove();
+
+          const groupKeys = this.getMemoryGroupKeys(job);
+
+          if (job.id && groupKeys.length > 0) {
+            await this.buildJobMemoryLimiters(queue).jobMemoryLimiter.release({
+              queueName,
+              jobId: job.id,
+              groupKeys,
+            });
+          }
+
           deletedCount++;
           results.push({
             jobId,

@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import {
+  type BulkAddReport,
   type MessageQueueDriver,
   type QueueJobToAdd,
   type QueueJobDetails,
@@ -15,6 +16,7 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
 
 // Synchronous driver for tests and local dev
 export class SyncDriver implements MessageQueueDriver {
@@ -79,6 +81,22 @@ export class SyncDriver implements MessageQueueDriver {
     }
 
     return jobIds;
+  }
+
+  async bulkAddWithReport<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    jobs: QueueJobToAdd<T>[],
+  ): Promise<BulkAddReport> {
+    const jobIds = await this.bulkAdd(queueName, jobName, jobs);
+
+    return {
+      jobs: jobIds.map((jobId, index) => ({
+        jobId,
+        sizeBytes: computeJobSizeBytes({ data: jobs[index].data, options: {} }),
+      })),
+      availableBytes: null,
+    };
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({
