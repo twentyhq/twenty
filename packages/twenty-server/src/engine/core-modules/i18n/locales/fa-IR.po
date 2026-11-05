@@ -219,11 +219,6 @@ msgstr "یک معامله برنده می شود"
 msgid "A DNS manager error occurred."
 msgstr "خطایی در مدیر DNS رخ داد."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "یک ورودی تکراری شناسایی شد."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "یک فیلد الزامی وجود ندارد."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "یک فیلد الزامی وجود ندارد. لطفاً همه مقادیر الزامی را وارد کرده و دوباره تلاش کنید."
 
@@ -1183,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "خطایی در داده‌های احراز هویت دومرحله‌ای رخ داد."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -7058,7 +7053,7 @@ msgid "Invalid filter parameter."
 msgstr "پارامتر فیلتر نامعتبر است."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "مقدار فیلتر نامعتبر است"
 
@@ -7170,9 +7165,9 @@ msgid "Invalid input for application registration."
 msgstr "ورودی ثبت برنامه نامعتبر است."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "ورودی ارائه‌شده نامعتبر است."
 
@@ -11137,11 +11132,6 @@ msgstr "اجرای پرس‌وجو ناموفق بود."
 msgid "Query failed."
 msgstr "پرس‌وجو ناموفق بود."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "زمان پرس‌وجو به پایان رسید. لطفاً دوباره تلاش کنید."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -14958,7 +14948,7 @@ msgid "This operation is not supported."
 msgstr "این عملیات پشتیبانی نمی‌شود."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "این عملیات به رکوردی ارجاع می‌دهد که وجود ندارد یا به‌دلیل روابط موجود قابل تغییر نیست."
 
@@ -15009,12 +14999,12 @@ msgid "This public domain is already registered."
 msgstr "این دامنه عمومی از قبل ثبت شده است."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "این رکورد از قبل وجود دارد. لطفاً داده‌های خود را بررسی کرده و دوباره تلاش کنید."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "این رکورد قابل حذف نیست، زیرا همچنان توسط رکوردهای دیگر ارجاع داده می‌شود."
 
@@ -16936,8 +16926,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "فیلدهای تحت‌نظر فقط برای محرک‌های رویداد پایگاه داده «updated» اعمال می‌شوند"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "ما با مشکلی موقت در پایگاه داده خود مواجه هستیم. لطفاً بعداً دوباره تلاش کنید."
 

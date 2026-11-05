@@ -219,11 +219,6 @@ msgstr "Prilika je dobijena"
 msgid "A DNS manager error occurred."
 msgstr "Došlo je do greške u menadžeru DNS-a."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Otkriven je duplikatni unos."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Nedostaje obavezno polje."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Nedostaje obavezno polje. Unesite sve obavezne vrednosti i pokušajte ponovo."
 
@@ -1183,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "Došlo je do greške sa podacima dvofaktorske autentifikacije."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -7058,7 +7053,7 @@ msgid "Invalid filter parameter."
 msgstr "Nevažeći parametar filtera."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Nevažeća vrednost filtera"
 
@@ -7170,9 +7165,9 @@ msgid "Invalid input for application registration."
 msgstr "Nevažeći unos za registraciju aplikacije."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Dat je nevažeći unos."
 
@@ -11137,11 +11132,6 @@ msgstr "Izvršavanje upita nije uspelo."
 msgid "Query failed."
 msgstr "Upit nije uspeo."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Vreme za upit je isteklo. Pokušajte ponovo."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -14958,7 +14948,7 @@ msgid "This operation is not supported."
 msgstr "Ova operacija nije podržana."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ova operacija referencira zapis koji ne postoji ili se ne može izmeniti zbog postojećih odnosa."
 
@@ -15009,12 +14999,12 @@ msgid "This public domain is already registered."
 msgstr "Ovaj javni domen je već registrovan."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Ovaj zapis već postoji. Molimo proverite vaše podatke i pokušajte ponovo."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Ovaj zapis ne može da se izbriše jer se na njega i dalje pozivaju drugi zapisi."
 
@@ -16936,8 +16926,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Nadgledana polja primenjuju se samo na okidače događaja baze podataka \"updated\""
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Iskusili smo privremeni problem sa našom bazom podataka. Molimo vas pokušajte ponovo kasnije."
 

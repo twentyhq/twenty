@@ -219,11 +219,6 @@ msgstr "거래 성사됨"
 msgid "A DNS manager error occurred."
 msgstr "DNS 매니저 오류가 발생했습니다."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "중복 항목이 감지되었습니다."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "필수 필드가 누락되었습니다."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "필수 필드가 누락되었습니다. 모든 필수 값을 입력한 후 다시 시도하세요."
 
@@ -1183,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "이중 인증 데이터에서 오류가 발생했습니다."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -7058,7 +7053,7 @@ msgid "Invalid filter parameter."
 msgstr "잘못된 필터 매개변수입니다."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "잘못된 필터 값"
 
@@ -7170,9 +7165,9 @@ msgid "Invalid input for application registration."
 msgstr "애플리케이션 등록을 위한 입력이 유효하지 않습니다."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "잘못된 입력이 제공되었습니다."
 
@@ -11137,11 +11132,6 @@ msgstr "쿼리 실행에 실패했습니다."
 msgid "Query failed."
 msgstr "쿼리 실패."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "쿼리가 시간 초과되었습니다. 다시 시도해 주세요."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -14958,7 +14948,7 @@ msgid "This operation is not supported."
 msgstr "이 작업은 지원되지 않습니다."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "이 작업은 존재하지 않거나 기존 관계로 인해 수정할 수 없는 레코드를 참조합니다."
 
@@ -15009,12 +14999,12 @@ msgid "This public domain is already registered."
 msgstr "이 공용 도메인은 이미 등록되어 있습니다."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "이 레코드는 이미 존재합니다. 데이터를 확인하고 다시 시도하십시오."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "이 레코드는 다른 레코드에서 계속 참조하고 있으므로 삭제할 수 없습니다."
 
@@ -16936,8 +16926,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "감시 필드는 \"updated\" 데이터베이스 이벤트 트리거에만 적용됩니다"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
 

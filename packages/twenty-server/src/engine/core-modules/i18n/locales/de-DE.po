@@ -219,11 +219,6 @@ msgstr "Ein Deal wurde gewonnen"
 msgid "A DNS manager error occurred."
 msgstr "Es ist ein Fehler im DNS-Manager aufgetreten."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Ein doppelter Eintrag wurde erkannt."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Ein erforderliches Feld fehlt."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Ein erforderliches Feld fehlt. Bitte geben Sie alle erforderlichen Werte ein und versuchen Sie es erneut."
 
@@ -1183,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "Bei den Daten der Zwei-Faktor-Authentifizierung ist ein Fehler aufgetreten."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -7058,7 +7053,7 @@ msgid "Invalid filter parameter."
 msgstr "Ungültiger Filterparameter."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Ungültiger Filterwert"
 
@@ -7170,9 +7165,9 @@ msgid "Invalid input for application registration."
 msgstr "Ungültige Eingabe für die Anwendungsregistrierung."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Ungültige Eingabe angegeben."
 
@@ -11137,11 +11132,6 @@ msgstr "Ausführung der Abfrage fehlgeschlagen."
 msgid "Query failed."
 msgstr "Abfrage fehlgeschlagen."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Zeitüberschreitung bei der Abfrage. Bitte versuchen Sie es erneut."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -14958,7 +14948,7 @@ msgid "This operation is not supported."
 msgstr "Dieser Vorgang wird nicht unterstützt."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Dieser Vorgang verweist auf einen Datensatz, der nicht existiert oder aufgrund bestehender Beziehungen nicht geändert werden kann."
 
@@ -15009,12 +14999,12 @@ msgid "This public domain is already registered."
 msgstr "Diese öffentliche Domäne ist bereits registriert."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Dieser Eintrag existiert bereits. Bitte überprüfen Sie Ihre Daten und versuchen Sie es erneut."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Dieser Datensatz kann nicht gelöscht werden, da er noch von anderen Datensätzen referenziert wird."
 
@@ -16936,8 +16926,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Überwachte Felder gelten nur für Datenbankereignis-Trigger vom Typ \"updated\""
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Wir haben ein vorübergehendes Problem mit unserer Datenbank. Bitte versuchen Sie es später noch einmal."
 
