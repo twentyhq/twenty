@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useContext } from 'react';
 import { expect, within } from 'storybook/test';
@@ -35,6 +36,7 @@ const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
   selectedRecords: [{ id: 'chat' }],
   objectMetadataItem: {
     nameSingular: StandardObjectNameSingular.AgentChatThread,
+    universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   },
   featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
 };

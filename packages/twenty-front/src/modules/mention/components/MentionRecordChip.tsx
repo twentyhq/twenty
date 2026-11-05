@@ -6,6 +6,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useLingui } from '@lingui/react/macro';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type MentionRecordChipProps = {
   recordId: string;
@@ -21,6 +23,10 @@ export const MentionRecordChip = ({
   imageUrl,
 }: MentionRecordChipProps) => {
   const { t } = useLingui();
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    { objectName: objectNameSingular, objectNameType: 'singular' },
+  );
   if (!isNonEmptyString(objectNameSingular)) {
     return <Chip variant="plain" aria-disabled>{t`Unknown object`}</Chip>;
   }
@@ -29,8 +35,10 @@ export const MentionRecordChip = ({
     return <Chip variant="plain" aria-disabled>{t`Deleted record`}</Chip>;
   }
 
-  const linkToShowPage = getLinkToShowPage(objectNameSingular, {
-    id: recordId,
+  const linkToShowPage = getLinkToShowPage({
+    objectNameSingular,
+    objectUniversalIdentifier: objectMetadataItem?.universalIdentifier,
+    record: { id: recordId },
   });
 
   return (

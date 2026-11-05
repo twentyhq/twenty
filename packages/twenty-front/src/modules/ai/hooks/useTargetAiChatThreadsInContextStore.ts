@@ -1,26 +1,21 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import {
-  ContextStorePageType,
-  StandardObjectNameSingular,
-} from 'twenty-shared/types';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useTargetAiChatThreadsInContextStore = () => {
   const store = useStore();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: StandardObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    },
+    objectMetadataItemByUniversalIdentifierFamilySelector,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   );
 
   const targetAiChatThreadsInContextStore = useCallback(

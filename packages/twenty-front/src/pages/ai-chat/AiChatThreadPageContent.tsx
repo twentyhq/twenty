@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { useObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/hooks/useObjectMetadataItemByUniversalIdentifier';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
@@ -15,16 +16,22 @@ export const AiChatThreadPageContent = ({
   threadId,
   headerActions,
   headerTitlePrefix,
-}: AiChatThreadPageContentProps) => (
-  <RecordShowPageContent
-    parameters={{
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-      objectRecordId: threadId,
-    }}
-    headerActions={headerActions}
-    headerTitlePrefix={headerTitlePrefix}
-    headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
-    headerTitleMode="record-title"
-    isRecordIdentifierBarHidden
-  />
-);
+}: AiChatThreadPageContentProps) => {
+  const { objectMetadataItem } = useObjectMetadataItemByUniversalIdentifier({
+    universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+  });
+
+  return (
+    <RecordShowPageContent
+      parameters={{
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectRecordId: threadId,
+      }}
+      headerActions={headerActions}
+      headerTitlePrefix={headerTitlePrefix}
+      headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
+      headerTitleMode="record-title"
+      isRecordIdentifierBarHidden
+    />
+  );
+};

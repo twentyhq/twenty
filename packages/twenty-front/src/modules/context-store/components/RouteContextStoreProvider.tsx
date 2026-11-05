@@ -11,6 +11,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewType } from '~/generated-metadata/graphql';
@@ -72,19 +73,24 @@ export const RouteContextStoreProvider = () => {
     isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const chatObjectMetadataItem = objectMetadataItems.find(
+    ({ universalIdentifier }) =>
+      universalIdentifier ===
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+  );
 
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular =
     isCoreWorkflowIndexPage || isCoreWorkflowShowPage
       ? StandardObjectNameSingular.Workflow
       : isAiChatPage
-        ? StandardObjectNameSingular.AgentChatThread
+        ? chatObjectMetadataItem?.nameSingular
         : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
   const views = useAtomStateValue(viewsSelector);
 

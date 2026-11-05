@@ -12,6 +12,7 @@ export const ChatThreadsCard = () => {
   const targetRecord = useTargetRecord();
   const {
     threads,
+    threadObjectNameSingular,
     getAllLinkIdsToThread,
     loading,
     error,
@@ -40,6 +41,7 @@ export const ChatThreadsCard = () => {
       onRetry={() => void refetch()}
       onDetachThread={(threadId) => void handleDetachThread(threadId)}
       threads={threads}
+      threadObjectNameSingular={threadObjectNameSingular}
       hasNextPage={hasNextPage}
       pagination={
         hasNextPage && (

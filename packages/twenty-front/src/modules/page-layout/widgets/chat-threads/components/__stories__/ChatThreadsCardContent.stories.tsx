@@ -120,6 +120,7 @@ const meta = {
   args: {
     loading: false,
     threads: THREADS,
+    threadObjectNameSingular: 'agentChatThread',
     onRetry: fn(),
     onDetachThread: fn(),
     isFetchingMoreThreads: false,
@@ -134,6 +135,7 @@ const meta = {
         loading={args.loading}
         error={args.error}
         threads={args.threads}
+        threadObjectNameSingular={args.threadObjectNameSingular}
         onRetry={args.onRetry}
         onDetachThread={args.onDetachThread}
         hasNextPage={args.hasNextPage}

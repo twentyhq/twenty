@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
@@ -50,6 +51,8 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -105,6 +108,10 @@ const StyledThreadList = styled.div`
 `;
 
 const AiChatInboxPageContent = () => {
+  const chatObjectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemByUniversalIdentifierFamilySelector,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+  );
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isSplitView = useIsAiChatInboxSplitView();
@@ -203,7 +210,10 @@ const AiChatInboxPageContent = () => {
   const isListFullWidth = !isSplitView || !isSecondaryPaneShown;
   const isSidePanelShowingAiChat =
     isSidePanelOpened &&
-    isSidePanelItemShowingAiChat(sidePanelNavigationStack.at(-1));
+    isSidePanelItemShowingAiChat({
+      sidePanelItem: sidePanelNavigationStack.at(-1),
+      chatObjectNameSingular: chatObjectMetadataItem?.nameSingular,
+    });
   const shouldRenderConversationPane =
     !isSelectionPaneShown &&
     (isSecondaryPaneShown || !isSidePanelShowingAiChat);

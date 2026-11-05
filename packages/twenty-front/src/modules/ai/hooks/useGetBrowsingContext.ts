@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
@@ -71,8 +71,8 @@ export const useGetBrowsingContext = () => {
     // The chat page is the chat's own record page, not what the user is asking about.
     if (
       !objectMetadataItem ||
-      objectMetadataItem.nameSingular ===
-        StandardObjectNameSingular.AgentChatThread
+      objectMetadataItem.universalIdentifier ===
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
     ) {
       return null;
     }

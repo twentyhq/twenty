@@ -31,8 +31,10 @@ const SidePanelShareRecordPageContent = ({
         objectLabelPlural={objectMetadataItem.labelPlural}
         recordUrl={
           new URL(
-            getLinkToShowPage(objectMetadataItem.nameSingular, {
-              id: target.recordId,
+            getLinkToShowPage({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
+              record: { id: target.recordId },
             }),
             window.location.origin,
           ).href

@@ -19,6 +19,7 @@ export const getObjectRecordIdentifier = ({
     | 'fields'
     | 'labelIdentifierFieldMetadataId'
     | 'nameSingular'
+    | 'universalIdentifier'
     | 'imageIdentifierFieldMetadataId'
   >;
   record: ObjectRecord;
@@ -44,10 +45,11 @@ export const getObjectRecordIdentifier = ({
     allowRequestsToTwentyIcons,
   );
 
-  const linkToShowPage = getLinkToShowPage(
-    objectMetadataItem.nameSingular,
+  const linkToShowPage = getLinkToShowPage({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
     record,
-  );
+  });
 
   return {
     id: record.id,

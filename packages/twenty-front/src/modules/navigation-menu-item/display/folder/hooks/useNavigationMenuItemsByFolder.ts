@@ -85,11 +85,11 @@ export const useNavigationMenuItemsByFolder = () => {
     return sortedFolders.reduce<NavigationMenuItemFolder[]>((acc, folder) => {
       const itemsInFolder = itemsByFolderId.get(folder.id) || [];
 
-      const sortedItems = filterAndSortNavigationMenuItems(
-        itemsInFolder,
+      const sortedItems = filterAndSortNavigationMenuItems({
+        navigationMenuItems: itemsInFolder,
         views,
         objectMetadataItems,
-      );
+      });
 
       acc.push({
         id: folder.id,

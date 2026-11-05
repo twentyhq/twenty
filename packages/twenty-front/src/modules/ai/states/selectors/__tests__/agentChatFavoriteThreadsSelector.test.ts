@@ -7,13 +7,19 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 
 const CHAT_OBJECT_METADATA_ID = 'chat-object-metadata-id';
 
-jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
-  objectMetadataItemFamilySelector: {
-    type: 'FamilySelector',
-    selectorFamily: () =>
-      atom({ id: 'chat-object-metadata-id', nameSingular: 'agentChatThread' }),
-  },
-}));
+jest.mock(
+  '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector',
+  () => ({
+    objectMetadataItemByUniversalIdentifierFamilySelector: {
+      type: 'FamilySelector',
+      selectorFamily: () =>
+        atom({
+          id: 'chat-object-metadata-id',
+          nameSingular: 'agentChatThread',
+        }),
+    },
+  }),
+);
 
 const buildFavorite = ({
   id,

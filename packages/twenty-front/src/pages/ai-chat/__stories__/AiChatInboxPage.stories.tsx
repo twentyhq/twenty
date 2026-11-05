@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { styled } from '@linaria/react';
 import {
@@ -172,6 +173,7 @@ const loadChatRecordMetadata = () => {
   const chatObjectDefinitions = [
     {
       id: CHAT_OBJECT_METADATA_ID,
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
       nameSingular: StandardObjectNameSingular.AgentChatThread,
       namePlural: 'agentChatThreads',
       labelSingular: 'Chat',
@@ -181,6 +183,8 @@ const loadChatRecordMetadata = () => {
     },
     {
       id: CHAT_TARGET_OBJECT_METADATA_ID,
+      universalIdentifier:
+        STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
       nameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       namePlural: 'agentChatThreadTargets',
       labelSingular: 'Chat target',
@@ -210,7 +214,7 @@ const loadChatRecordMetadata = () => {
       return {
         ...objectMetadataTemplate,
         ...objectDefinition,
-        universalIdentifier: objectDefinition.id,
+        universalIdentifier: objectDefinition.universalIdentifier,
         labelIdentifierFieldMetadataId: labelField.id,
         isSystem: true,
         isSearchable: false,

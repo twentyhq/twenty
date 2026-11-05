@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -377,6 +378,7 @@ const meta = {
     const chatMetadata: EnrichedObjectMetadataItem = {
       ...noteMetadata,
       id: CHAT_OBJECT_ID,
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
       nameSingular: StandardObjectNameSingular.AgentChatThread,
       namePlural: 'agentChatThreads',
       labelSingular: 'Chat',

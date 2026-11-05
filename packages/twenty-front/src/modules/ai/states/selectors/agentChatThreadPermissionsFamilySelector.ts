@@ -1,7 +1,7 @@
-import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { recordPermissionsFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
@@ -12,10 +12,10 @@ export const agentChatThreadPermissionsFamilySelector =
     get:
       (threadId) =>
       ({ get }) => {
-        const objectMetadata = get(objectMetadataItemFamilySelector, {
-          objectName: StandardObjectNameSingular.AgentChatThread,
-          objectNameType: 'singular',
-        });
+        const objectMetadata = get(
+          objectMetadataItemByUniversalIdentifierFamilySelector,
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        );
         return isDefined(objectMetadata)
           ? get(recordPermissionsFamilySelector, {
               objectMetadataId: objectMetadata.id,

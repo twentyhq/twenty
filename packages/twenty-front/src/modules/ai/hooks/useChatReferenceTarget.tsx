@@ -86,8 +86,10 @@ export const useChatReferenceTarget = (
           return null;
         }
 
-        const recordPath = getLinkToShowPage(reference.objectNameSingular, {
-          id: reference.recordId,
+        const recordPath = getLinkToShowPage({
+          objectNameSingular: objectMetadataItem.nameSingular,
+          objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
+          record: { id: reference.recordId },
         });
 
         return {

@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
@@ -35,7 +36,6 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
-  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -109,8 +109,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     agentChatThreadParticipantsState,
   );
   const inboxStatusThreadIds =
-    objectMetadataItem?.nameSingular ===
-      StandardObjectNameSingular.AgentChatThread &&
+    objectMetadataItem?.universalIdentifier ===
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
     isDefined(agentChatThreadParticipants)
       ? (recordIds ?? [])
       : [];

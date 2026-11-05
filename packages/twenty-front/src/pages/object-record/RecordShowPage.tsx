@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
@@ -19,20 +20,19 @@ export const RecordShowPage = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const isInSidePanel = workspaceSurface.type === 'side-panel';
-  const isRouteObjectMetadataAvailable =
-    isDefined(parameters.objectNameSingular) &&
-    objectMetadataItems.some(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === parameters.objectNameSingular,
-    );
+  const routeObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === parameters.objectNameSingular,
+  );
+  const isRouteObjectMetadataAvailable = isDefined(routeObjectMetadataItem);
 
   if (isInSidePanel && !isRouteObjectMetadataAvailable) {
     return <WorkspaceRouteUnavailable />;
   }
 
   if (
-    parameters.objectNameSingular ===
-      StandardObjectNameSingular.AgentChatThread &&
+    routeObjectMetadataItem?.universalIdentifier ===
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
     isDefined(parameters.objectRecordId)
   ) {
     // A chat's record page is the chat page, on its own route

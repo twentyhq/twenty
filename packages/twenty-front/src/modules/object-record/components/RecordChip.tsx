@@ -12,6 +12,8 @@ import { StandardObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type RecordChipProps = {
   objectNameSingular: string;
@@ -42,6 +44,10 @@ export const RecordChip = ({
   triggerEvent = 'MOUSE_DOWN',
   onClick,
 }: RecordChipProps) => {
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    { objectName: objectNameSingular, objectNameType: 'singular' },
+  );
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
@@ -110,7 +116,14 @@ export const RecordChip = ({
       }
       variant={variant === 'ghost' ? 'plain' : (variant ?? 'soft')}
       clickable={variant !== 'ghost'}
-      to={to ?? getLinkToShowPage(objectNameSingular, record)}
+      to={
+        to ??
+        getLinkToShowPage({
+          objectNameSingular,
+          objectUniversalIdentifier: objectMetadataItem?.universalIdentifier,
+          record,
+        })
+      }
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
     >

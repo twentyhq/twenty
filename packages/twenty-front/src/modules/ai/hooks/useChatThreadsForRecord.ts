@@ -1,6 +1,7 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { useObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/hooks/useObjectMetadataItemByUniversalIdentifier';
 import { useCallback, useMemo } from 'react';
 import {
-  StandardObjectNameSingular,
   type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
@@ -69,10 +70,19 @@ export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
+  const { objectMetadataItem: chatObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    });
+  const { objectMetadataItem: threadTargetObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier:
+        STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+    });
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: chatObjectMetadataItem.nameSingular,
   });
 
   const filter = useMemo(
@@ -88,10 +98,6 @@ export const useChatThreadsForRecord = ({
   );
 
   const isRecordLinkable = isNonEmptyArray(filter?.or);
-  const chatObjectMetadataItem = objectMetadataItems.find(
-    ({ nameSingular }) =>
-      nameSingular === StandardObjectNameSingular.AgentChatThread,
-  );
 
   const {
     records: links,
@@ -102,7 +108,7 @@ export const useChatThreadsForRecord = ({
     hasNextPage,
     queryIdentifier,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
     skip: !isRecordLinkable,
     filter,
     orderBy: [
@@ -116,7 +122,7 @@ export const useChatThreadsForRecord = ({
 
   const { findManyRecordsQuery: findThreadLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
   const { canReadObjectRecords } = useObjectPermissionsForObject(
@@ -149,10 +155,10 @@ export const useChatThreadsForRecord = ({
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
       variables: { filter },
     }),
-    [filter],
+    [filter, threadTargetObjectMetadataItem.nameSingular],
   );
 
   useListenToEventsForQuery({
@@ -213,6 +219,7 @@ export const useChatThreadsForRecord = ({
 
   return {
     threads,
+    threadObjectNameSingular: chatObjectMetadataItem.nameSingular,
     getAllLinkIdsToThread,
     loading,
     error,

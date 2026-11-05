@@ -50,6 +50,7 @@ const renderContent = ({
           onRetry={onRetry}
           onDetachThread={jest.fn()}
           threads={threads}
+          threadObjectNameSingular="agentChatThread"
         />
       </MemoryRouter>
     </I18nProvider>,

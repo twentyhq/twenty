@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
@@ -11,15 +11,10 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-
-const AGENT_CHAT_THREADS_OPERATION_SIGNATURE = {
-  objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-  variables: {},
-};
 
 const toThreadUpdate = ({
   recordId,
@@ -33,11 +28,8 @@ const toThreadUpdate = ({
 
 export const AgentChatThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: StandardObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    },
+    objectMetadataItemByUniversalIdentifierFamilySelector,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   );
   const { applyAgentChatThreadUpdate, addAgentChatThread } =
     useApplyAgentChatThreadUpdate();
@@ -47,6 +39,13 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const { refreshAgentChatOpenThreadsSummary } =
     useRefreshAgentChatOpenThreadsSummary();
   const isEnabled = isDefined(chatObjectMetadataItem);
+  const operationSignature = useMemo(
+    () => ({
+      objectNameSingular: chatObjectMetadataItem?.nameSingular ?? '',
+      variables: {},
+    }),
+    [chatObjectMetadataItem?.nameSingular],
+  );
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
   const reloadAgentChatThreads = useCallback(async () => {
@@ -61,7 +60,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
-    operationSignature: AGENT_CHAT_THREADS_OPERATION_SIGNATURE,
+    operationSignature,
     skip: !isEnabled,
     onSseReconnected: reloadAgentChatThreads,
   });

@@ -1,9 +1,8 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { useObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/hooks/useObjectMetadataItemByUniversalIdentifier';
 import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
-import {
-  StandardObjectNameSingular,
-  type RecordGqlFields,
-} from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
@@ -33,12 +32,21 @@ export const useAiChatThreadRecordTargets = ({
   threadId: string;
   recordPickerInstanceId: string;
 }) => {
+  const { objectMetadataItem: chatObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    });
+  const { objectMetadataItem: threadTargetObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier:
+        STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+    });
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMorphJunctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: chatObjectMetadataItem.nameSingular,
   });
   const junctionConfig = isUsableJunctionConfig(objectMorphJunctionConfig)
     ? objectMorphJunctionConfig
@@ -64,7 +72,7 @@ export const useAiChatThreadRecordTargets = ({
     !isAiChatInboxEnabled || !isDefined(junctionConfig);
 
   const { record: thread, refetch } = useFindOneRecord({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: chatObjectMetadataItem.nameSingular,
     objectRecordId: threadId,
     recordGqlFields,
     skip: isThreadQuerySkipped,
@@ -73,10 +81,10 @@ export const useAiChatThreadRecordTargets = ({
   // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
       variables: { filter: { threadId: { eq: threadId } } },
     }),
-    [threadId],
+    [threadId, threadTargetObjectMetadataItem.nameSingular],
   );
 
   useListenToEventsForQuery({

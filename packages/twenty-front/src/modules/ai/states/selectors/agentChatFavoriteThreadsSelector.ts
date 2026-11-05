@@ -1,13 +1,11 @@
-import {
-  StandardObjectNameSingular,
-  NavigationMenuItemType,
-} from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 export const agentChatFavoriteThreadsSelector = createAtomSelector<
@@ -15,10 +13,10 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
 >({
   key: 'agentChatFavoriteThreadsSelector',
   get: ({ get }) => {
-    const chatObjectMetadataItem = get(objectMetadataItemFamilySelector, {
-      objectName: StandardObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    });
+    const chatObjectMetadataItem = get(
+      objectMetadataItemByUniversalIdentifierFamilySelector,
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    );
 
     if (!isDefined(chatObjectMetadataItem)) {
       return [];

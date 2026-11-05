@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type Decorator,
   type Meta,
@@ -115,7 +116,7 @@ const allowSelectedConversationUpdates = () => {
   const chatObjectMetadataItem = {
     ...objectMetadataTemplate,
     id: CHAT_OBJECT_METADATA_ID,
-    universalIdentifier: CHAT_OBJECT_METADATA_ID,
+    universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     nameSingular: StandardObjectNameSingular.AgentChatThread,
     namePlural: 'agentChatThreads',
     labelSingular: 'Chat',

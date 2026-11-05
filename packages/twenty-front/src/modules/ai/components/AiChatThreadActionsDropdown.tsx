@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -16,7 +16,8 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -51,11 +52,8 @@ export const AiChatThreadActionsDropdown = ({
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: StandardObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    },
+    objectMetadataItemByUniversalIdentifierFamilySelector,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   );
   const permissions = useAtomFamilySelectorValue(
     agentChatThreadPermissionsFamilySelector,
@@ -97,7 +95,9 @@ export const AiChatThreadActionsDropdown = ({
                 upsertRecordsInStore({
                   partialRecords: [
                     {
-                      __typename: 'AgentChatThread',
+                      __typename: getObjectTypename(
+                        chatObjectMetadataItem.nameSingular,
+                      ),
                       id: thread.id,
                       title: thread.title ?? null,
                       deletedAt: thread.deletedAt ?? null,

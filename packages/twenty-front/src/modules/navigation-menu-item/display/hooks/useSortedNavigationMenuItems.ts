@@ -14,19 +14,19 @@ export const useSortedNavigationMenuItems = () => {
   const objectMetadataItems = useNavigationObjectMetadataItems();
 
   const navigationMenuItemsSorted = useMemo(() => {
-    return filterAndSortNavigationMenuItems(
+    return filterAndSortNavigationMenuItems({
       navigationMenuItems,
       views,
       objectMetadataItems,
-    );
+    });
   }, [navigationMenuItems, views, objectMetadataItems]);
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
-    return filterAndSortNavigationMenuItems(
-      workspaceNavigationMenuItems,
+    return filterAndSortNavigationMenuItems({
+      navigationMenuItems: workspaceNavigationMenuItems,
       views,
       objectMetadataItems,
-    );
+    });
   }, [workspaceNavigationMenuItems, views, objectMetadataItems]);
 
   return {

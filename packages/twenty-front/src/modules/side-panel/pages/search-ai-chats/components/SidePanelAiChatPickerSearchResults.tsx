@@ -1,6 +1,7 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { useObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/hooks/useObjectMetadataItemByUniversalIdentifier';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -21,6 +22,10 @@ export const SidePanelAiChatPickerSearchResults = ({
   searchTerm,
   isSearchPending,
 }: SidePanelAiChatPickerSearchResultsProps) => {
+  const { objectMetadataItem: chatObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    });
   const { t } = useLingui();
   const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
     aiChatPickerOpeningThreadIdComponentState,
@@ -28,7 +33,7 @@ export const SidePanelAiChatPickerSearchResults = ({
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
     useFindManyRecords<AgentChatThreadRecord>({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+      objectNameSingular: chatObjectMetadataItem.nameSingular,
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
       filter: { title: { ilike: `%${escapeForIlike(searchTerm)}%` } },
       orderBy: [{ lastActivityAt: 'DescNullsLast' }],

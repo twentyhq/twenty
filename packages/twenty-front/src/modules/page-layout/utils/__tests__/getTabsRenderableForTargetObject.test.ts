@@ -132,7 +132,21 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(
       getTabsRenderableForTargetObject({
         tabs,
-        targetObjectFields: [createRelationField('agentChatThreadTargets')],
+        chatThreadTargetObjectMetadataId: 'chat-thread-target-object-id',
+        targetObjectFields: [
+          {
+            ...createRelationField('archivedChatTargets', false),
+            relation: {
+              targetObjectMetadata: { id: 'chat-thread-target-object-id' },
+            },
+          },
+          {
+            ...createRelationField('inboxThreadTargets'),
+            relation: {
+              targetObjectMetadata: { id: 'chat-thread-target-object-id' },
+            },
+          },
+        ],
       }).map((tab) => tab.id),
     ).toEqual(['chats-tab']);
   });

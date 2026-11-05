@@ -84,7 +84,8 @@ type RecordListRowProps = {
 
 export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const { t } = useLingui();
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { objectNameSingular, objectMetadataItem } =
+    useRecordIndexContextOrThrow();
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
@@ -179,7 +180,11 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     toggleRecordSelection({ recordId, shouldSelectRange: event.shiftKey });
   };
 
-  const linkToRecord = getLinkToShowPage(objectNameSingular, recordStore);
+  const linkToRecord = getLinkToShowPage({
+    objectNameSingular,
+    objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
+    record: recordStore,
+  });
 
   const overflowChipLabel = `+${hiddenFieldCount}`;
   const overflowChipTooltipLabel = plural(hiddenFieldCount, {

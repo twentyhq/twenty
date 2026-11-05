@@ -1,7 +1,6 @@
-import {
-  StandardObjectNameSingular,
-  type RecordGqlFields,
-} from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { useObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/hooks/useObjectMetadataItemByUniversalIdentifier';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -19,20 +18,29 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 const EXISTING_LINK_GQL_FIELDS = { id: true } satisfies RecordGqlFields;
 
 export const useAttachChatThreadToRecord = () => {
+  const { objectMetadataItem: chatObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    });
+  const { objectMetadataItem: threadTargetObjectMetadataItem } =
+    useObjectMetadataItemByUniversalIdentifier({
+      universalIdentifier:
+        STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+    });
   const { enqueueToast } = useToast();
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+    objectNameSingular: chatObjectMetadataItem.nameSingular,
   });
 
   const { findManyRecordsQuery: findExistingLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
       recordGqlFields: EXISTING_LINK_GQL_FIELDS,
     });
   const { createManyRecords: createLinks } = useCreateManyRecords({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: threadTargetObjectMetadataItem.nameSingular,
     shouldRefetchAggregateQueries: false,
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();

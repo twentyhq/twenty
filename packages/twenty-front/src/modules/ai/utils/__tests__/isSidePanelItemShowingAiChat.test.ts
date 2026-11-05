@@ -13,33 +13,75 @@ const buildRoutedPage = (pathname: string): SidePanelNavigationStackItem => ({
 });
 
 describe('isSidePanelItemShowingAiChat', () => {
-  it('recognizes Ask AI and a chat record page', () => {
+  it('recognizes the current chat object name after a rename', () => {
     expect(
       isSidePanelItemShowingAiChat({
-        page: SidePanelPages.AskAI,
-        pageTitle: 'Ask AI',
-        pageIcon: IconDotsVertical,
-        pageId: 'ask-ai',
+        sidePanelItem: buildRoutedPage('/object/inboxThread/chat-id'),
+        chatObjectNameSingular: 'inboxThread',
+      }),
+    ).toBe(true);
+  });
+
+  it('recognizes Ask AI without object metadata and rejects other routes', () => {
+    expect(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
       }),
     ).toBe(true);
     expect(
-      isSidePanelItemShowingAiChat(
-        buildRoutedPage(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: buildRoutedPage('/artifact'),
+      }),
+    ).toBe(false);
+  });
+
+  it('recognizes Ask AI and a chat record page', () => {
+    expect(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+        chatObjectNameSingular: 'agentChatThread',
+      }),
+    ).toBe(true);
+    expect(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: buildRoutedPage(
           '/object/agentChatThread/20202020-0000-4000-8000-0000000000aa',
         ),
-      ),
+        chatObjectNameSingular: 'agentChatThread',
+      }),
     ).toBe(true);
   });
 
   it('leaves other pages and an empty panel alone', () => {
     expect(
-      isSidePanelItemShowingAiChat(
-        buildRoutedPage('/object/company/20202020-0000-4000-8000-0000000000aa'),
-      ),
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: buildRoutedPage(
+          '/object/company/20202020-0000-4000-8000-0000000000aa',
+        ),
+        chatObjectNameSingular: 'agentChatThread',
+      }),
     ).toBe(false);
-    expect(isSidePanelItemShowingAiChat(buildRoutedPage('/artifact'))).toBe(
-      false,
-    );
-    expect(isSidePanelItemShowingAiChat(undefined)).toBe(false);
+    expect(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: buildRoutedPage('/artifact'),
+        chatObjectNameSingular: 'agentChatThread',
+      }),
+    ).toBe(false);
+    expect(
+      isSidePanelItemShowingAiChat({
+        sidePanelItem: undefined,
+        chatObjectNameSingular: 'agentChatThread',
+      }),
+    ).toBe(false);
   });
 });

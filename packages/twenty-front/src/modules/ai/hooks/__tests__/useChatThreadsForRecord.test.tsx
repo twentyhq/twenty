@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
@@ -8,6 +9,7 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 const RENEWAL_THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -24,6 +26,7 @@ const companyTargetField = getMockFieldMetadataItemOrThrow({
 const threadObjectMetadataItem = {
   ...personObjectMetadataItem,
   id: 'agent-chat-thread-metadata-id',
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
   fields: [
@@ -34,6 +37,8 @@ const threadObjectMetadataItem = {
 const threadTargetObjectMetadataItem = {
   ...personObjectMetadataItem,
   id: 'agent-chat-thread-target-metadata-id',
+  universalIdentifier:
+    STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
   nameSingular: 'agentChatThreadTarget',
   namePlural: 'agentChatThreadTargets',
   fields: [companyTargetField],
@@ -167,8 +172,14 @@ jest.mock(
 const renderChatThreadsForRecord = ({
   targetObjectNameSingular = 'company',
   store = createStore(),
-} = {}) =>
-  renderHook(
+} = {}) => {
+  store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+    current: [threadObjectMetadataItem, threadTargetObjectMetadataItem],
+    draft: [],
+    status: 'up-to-date',
+  });
+
+  return renderHook(
     () => useChatThreadsForRecord({ id: COMPANY_ID, targetObjectNameSingular }),
     {
       wrapper: ({ children }: { children: ReactNode }) => (
@@ -176,6 +187,7 @@ const renderChatThreadsForRecord = ({
       ),
     },
   ).result;
+};
 
 const dispatchThreadOperation = (
   operation: Parameters<

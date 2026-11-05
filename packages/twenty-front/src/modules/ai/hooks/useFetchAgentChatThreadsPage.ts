@@ -1,10 +1,8 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  StandardObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
@@ -13,7 +11,7 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
@@ -35,10 +33,9 @@ export const useFetchAgentChatThreadsPage = () => {
       threadIdFilter?: RecordGqlOperationFilter;
     }) => {
       const chatObjectMetadataItem = store.get(
-        objectMetadataItemFamilySelector.selectorFamily({
-          objectName: StandardObjectNameSingular.AgentChatThread,
-          objectNameType: 'singular',
-        }),
+        objectMetadataItemByUniversalIdentifierFamilySelector.selectorFamily(
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        ),
       );
 
       if (

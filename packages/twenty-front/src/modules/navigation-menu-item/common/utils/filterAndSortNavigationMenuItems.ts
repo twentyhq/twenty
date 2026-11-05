@@ -1,34 +1,40 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
-import {
-  StandardObjectNameSingular,
-  NavigationMenuItemType,
-} from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNativePageKey } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const filterAndSortNavigationMenuItems = (
-  navigationMenuItems: NavigationMenuItem[],
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
+export const filterAndSortNavigationMenuItems = ({
+  navigationMenuItems,
+  views,
+  objectMetadataItems,
+}: {
+  navigationMenuItems: NavigationMenuItem[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
   objectMetadataItems: Pick<
     EnrichedObjectMetadataItem,
-    'id' | 'isActive' | 'nameSingular'
-  >[],
-): NavigationMenuItem[] => {
+    'id' | 'isActive' | 'universalIdentifier'
+  >[];
+}): NavigationMenuItem[] => {
   const activeObjectMetadataItems = objectMetadataItems.filter(
-    (meta) => meta.isActive,
+    (objectMetadataItem) => objectMetadataItem.isActive,
   );
 
   // Chat favorites are listed in the chat menu instead
-  const hiddenRecordObjectNames: string[] = [
-    StandardObjectNameSingular.AgentChatThread,
-    StandardObjectNameSingular.Workflow,
+  const hiddenRecordObjectUniversalIdentifiers: string[] = [
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    STANDARD_OBJECTS.workflow.universalIdentifier,
   ];
 
   const hiddenRecordObjectMetadataIds = new Set(
     activeObjectMetadataItems
-      .filter((meta) => hiddenRecordObjectNames.includes(meta.nameSingular))
-      .map((meta) => meta.id),
+      .filter((objectMetadataItem) =>
+        hiddenRecordObjectUniversalIdentifiers.includes(
+          objectMetadataItem.universalIdentifier,
+        ),
+      )
+      .map((objectMetadataItem) => objectMetadataItem.id),
   );
 
   return navigationMenuItems
@@ -49,7 +55,8 @@ export const filterAndSortNavigationMenuItems = (
         return (
           isDefined(item.targetObjectMetadataId) &&
           activeObjectMetadataItems.some(
-            (meta) => meta.id === item.targetObjectMetadataId,
+            (objectMetadataItem) =>
+              objectMetadataItem.id === item.targetObjectMetadataId,
           )
         );
       }
@@ -61,7 +68,8 @@ export const filterAndSortNavigationMenuItems = (
         return (
           isDefined(view) &&
           activeObjectMetadataItems.some(
-            (meta) => meta.id === view.objectMetadataId,
+            (objectMetadataItem) =>
+              objectMetadataItem.id === view.objectMetadataId,
           )
         );
       }
@@ -72,7 +80,8 @@ export const filterAndSortNavigationMenuItems = (
           isDefined(item.targetRecordIdentifier) &&
           !hiddenRecordObjectMetadataIds.has(item.targetObjectMetadataId) &&
           activeObjectMetadataItems.some(
-            (meta) => meta.id === item.targetObjectMetadataId,
+            (objectMetadataItem) =>
+              objectMetadataItem.id === item.targetObjectMetadataId,
           )
         );
       }

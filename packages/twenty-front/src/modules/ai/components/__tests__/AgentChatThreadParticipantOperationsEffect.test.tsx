@@ -9,7 +9,7 @@ import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatT
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const PARTICIPANT_OBJECT_METADATA_ITEM = {
@@ -25,7 +25,7 @@ jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
   () => ({
     useAtomFamilySelectorValue: (selector: unknown) =>
-      selector === objectMetadataItemFamilySelector
+      selector === objectMetadataItemByUniversalIdentifierFamilySelector
         ? PARTICIPANT_OBJECT_METADATA_ITEM
         : undefined,
   }),

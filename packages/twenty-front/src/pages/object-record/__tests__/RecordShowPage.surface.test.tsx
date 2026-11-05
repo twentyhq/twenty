@@ -1,8 +1,12 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { render, screen } from '@testing-library/react';
 
-let mockObjectMetadataItems = [{ nameSingular: 'person' }];
+let mockObjectMetadataItems: {
+  nameSingular: string;
+  universalIdentifier?: string;
+}[] = [{ nameSingular: 'person' }];
 let mockParameters = {
   objectNameSingular: 'person',
   objectRecordId: 'record-1',
@@ -156,7 +160,13 @@ describe('RecordShowPage workspace surface composition', () => {
   });
 
   it('sends a chat record to the chat page', () => {
-    mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
+    mockObjectMetadataItems = [
+      {
+        nameSingular: 'agentChatThread',
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+      },
+    ];
     mockParameters = {
       objectNameSingular: 'agentChatThread',
       objectRecordId: 'chat-1',

@@ -1,8 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
+import { getDefaultStore } from 'jotai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: jest.fn(),
@@ -43,6 +47,22 @@ describe('useAiChatThreadRename', () => {
   const updateOneRecord = jest.fn();
 
   beforeEach(() => {
+    getDefaultStore().set(
+      metadataStoreState.atomFamily('objectMetadataItems'),
+      {
+        current: [
+          {
+            ...getMockObjectMetadataItemOrThrow('person'),
+            nameSingular: 'agentChatThread',
+            namePlural: 'agentChatThreads',
+            universalIdentifier:
+              STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+          },
+        ],
+        draft: [],
+        status: 'up-to-date',
+      },
+    );
     jest.clearAllMocks();
     updateOneRecord.mockResolvedValue({});
     (useUpdateOneRecord as jest.Mock).mockReturnValue({ updateOneRecord });

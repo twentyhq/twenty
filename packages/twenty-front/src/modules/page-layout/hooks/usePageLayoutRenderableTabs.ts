@@ -9,6 +9,7 @@ import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibl
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const usePageLayoutRenderableTabs = () => {
@@ -19,6 +20,11 @@ export const usePageLayoutRenderableTabs = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const chatThreadTargetObjectMetadataItem = objectMetadataItems.find(
+    ({ universalIdentifier }) =>
+      universalIdentifier ===
+      STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+  );
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -39,6 +45,8 @@ export const usePageLayoutRenderableTabs = () => {
     : getTabsRenderableForTargetObject({
         tabs: tabsWithVisibleWidgets,
         targetObjectFields: targetObjectMetadataItem?.fields,
+        chatThreadTargetObjectMetadataId:
+          chatThreadTargetObjectMetadataItem?.id,
       });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({

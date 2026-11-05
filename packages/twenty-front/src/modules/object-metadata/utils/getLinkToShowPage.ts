@@ -1,12 +1,19 @@
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isNonEmptyString } from '@sniptt/guards';
 import { getAppPath } from 'twenty-shared/utils';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const getLinkToShowPage = (
-  objectNameSingular: string,
-  record: Partial<ObjectRecord>,
-) => {
+export const getLinkToShowPage = ({
+  objectNameSingular,
+  objectUniversalIdentifier,
+  record,
+}: {
+  objectNameSingular: string;
+  objectUniversalIdentifier?: string;
+  record: Partial<ObjectRecord>;
+}) => {
   const basePathToShowPage = getBasePathToShowPage({
     objectNameSingular,
   });
@@ -23,8 +30,9 @@ export const getLinkToShowPage = (
   }
 
   if (
-    objectNameSingular === StandardObjectNameSingular.AgentChatThread &&
-    record.id
+    objectUniversalIdentifier ===
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
+    isNonEmptyString(record.id)
   ) {
     return getAppPath(AppPath.AiChat, { threadId: record.id });
   }
@@ -38,7 +46,7 @@ export const getLinkToShowPage = (
   }
 
   const linkToShowPage =
-    isWorkspaceMemberObjectMetadata || !record.id
+    isWorkspaceMemberObjectMetadata || !isNonEmptyString(record.id)
       ? ''
       : `${basePathToShowPage}${record.id}`;
 

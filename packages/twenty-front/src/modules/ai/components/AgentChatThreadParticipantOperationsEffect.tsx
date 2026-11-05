@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
@@ -11,7 +11,7 @@ import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThrea
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,11 +24,8 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   const { refreshAgentChatOpenThreadsSummary } =
     useRefreshAgentChatOpenThreadsSummary();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: StandardObjectNameSingular.AgentChatThreadParticipant,
-      objectNameType: 'singular',
-    },
+    objectMetadataItemByUniversalIdentifierFamilySelector,
+    STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
   );
   const currentWorkspaceMemberId = useAtomStateValue(
     currentWorkspaceMemberState,
@@ -41,12 +38,12 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   // the member's own are asked for
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
+      objectNameSingular: participantObjectMetadataItem?.nameSingular ?? '',
       variables: {
         filter: { workspaceMemberId: { eq: currentWorkspaceMemberId } },
       },
     }),
-    [currentWorkspaceMemberId],
+    [currentWorkspaceMemberId, participantObjectMetadataItem?.nameSingular],
   );
 
   useListenToEventsForQuery({

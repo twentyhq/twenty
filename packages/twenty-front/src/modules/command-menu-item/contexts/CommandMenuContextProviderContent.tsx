@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
@@ -24,7 +25,6 @@ import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import {
   ContextStorePageType,
-  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
@@ -105,8 +105,8 @@ export const CommandMenuContextProviderContent = ({
 
     const isAiChatInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
-      commandMenuContextApi.objectMetadataItem.nameSingular ===
-        StandardObjectNameSingular.AgentChatThread &&
+      commandMenuContextApi.objectMetadataItem.universalIdentifier ===
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
       (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
 
     const contextCommandMenuItems = commandMenuItemsToDisplay

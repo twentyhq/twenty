@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
@@ -25,6 +26,7 @@ describe('filterAndSortNavigationMenuItems', () => {
   const mockWorkflowObjectMetadataItem = {
     id: 'workflow-metadata-id',
     nameSingular: 'workflow',
+    universalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
     namePlural: 'workflows',
     labelPlural: 'Workflows',
     icon: 'IconSettingsAutomation',
@@ -54,28 +56,29 @@ describe('filterAndSortNavigationMenuItems', () => {
     } as NavigationMenuItem;
 
     expect(
-      filterAndSortNavigationMenuItems(
-        [workflowsNativePageItem, unknownNativePageItem],
-        [],
-        [],
-      ),
+      filterAndSortNavigationMenuItems({
+        navigationMenuItems: [workflowsNativePageItem, unknownNativePageItem],
+        views: [],
+        objectMetadataItems: [],
+      }),
     ).toEqual([workflowsNativePageItem]);
   });
 
   it('hides workflow record items', () => {
     expect(
-      filterAndSortNavigationMenuItems(
-        [workflowRecordItem],
-        [],
-        [mockWorkflowObjectMetadataItem],
-      ),
+      filterAndSortNavigationMenuItems({
+        navigationMenuItems: [workflowRecordItem],
+        views: [],
+        objectMetadataItems: [mockWorkflowObjectMetadataItem],
+      }),
     ).toEqual([]);
   });
 
   it('hides chat record items, which the chat menu lists', () => {
     const chatObjectMetadataItem = {
       id: 'chat-metadata-id',
-      nameSingular: 'agentChatThread',
+      nameSingular: 'inboxThread',
+      universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
       isActive: true,
     } as EnrichedObjectMetadataItem;
     const chatRecordItem = {
@@ -87,11 +90,11 @@ describe('filterAndSortNavigationMenuItems', () => {
     } as NavigationMenuItem;
 
     expect(
-      filterAndSortNavigationMenuItems(
-        [chatRecordItem],
-        [],
-        [chatObjectMetadataItem],
-      ),
+      filterAndSortNavigationMenuItems({
+        navigationMenuItems: [chatRecordItem],
+        views: [],
+        objectMetadataItems: [chatObjectMetadataItem],
+      }),
     ).toEqual([]);
   });
 
@@ -106,16 +109,20 @@ describe('filterAndSortNavigationMenuItems', () => {
     } as unknown as NavigationMenuItem;
 
     expect(
-      filterAndSortNavigationMenuItems(
-        [personRecordItem],
-        [],
-        [mockObjectMetadataItem],
-      ),
+      filterAndSortNavigationMenuItems({
+        navigationMenuItems: [personRecordItem],
+        views: [],
+        objectMetadataItems: [mockObjectMetadataItem],
+      }),
     ).toEqual([personRecordItem]);
   });
 
   it('should return empty array when navigationMenuItems is empty', () => {
-    const result = filterAndSortNavigationMenuItems([], [], []);
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [],
+      views: [],
+      objectMetadataItems: [],
+    });
     expect(result).toEqual([]);
   });
 
@@ -127,11 +134,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       position: 1,
     } as NavigationMenuItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [navigationMenuItem],
-      [mockView],
-      [mockObjectMetadataItem],
-    );
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [navigationMenuItem],
+      views: [mockView],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('item-id');
@@ -145,11 +152,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       position: 1,
     } as NavigationMenuItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [navigationMenuItem],
-      [],
-      [mockObjectMetadataItem],
-    );
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [navigationMenuItem],
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toEqual([]);
   });
@@ -167,11 +174,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       position: 2,
     } as NavigationMenuItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [navigationMenuItem],
-      [],
-      [mockObjectMetadataItem],
-    );
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [navigationMenuItem],
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('item-id');
@@ -185,11 +192,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       position: 1,
     } as NavigationMenuItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [navigationMenuItem],
-      [],
-      [mockObjectMetadataItem],
-    );
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [navigationMenuItem],
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toEqual([]);
   });
@@ -207,11 +214,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       position: 1,
     } as NavigationMenuItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [navigationMenuItem],
-      [],
-      [mockObjectMetadataItem],
-    );
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [navigationMenuItem],
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toEqual([]);
   });
@@ -253,11 +260,11 @@ describe('filterAndSortNavigationMenuItems', () => {
       },
     ] as NavigationMenuItem[];
 
-    const result = filterAndSortNavigationMenuItems(
+    const result = filterAndSortNavigationMenuItems({
       navigationMenuItems,
-      [],
-      [mockObjectMetadataItem],
-    );
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
 
     expect(result).toHaveLength(3);
     expect(result[0].id).toBe('item-1');
@@ -266,8 +273,8 @@ describe('filterAndSortNavigationMenuItems', () => {
   });
 
   it('should keep link items', () => {
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'link-1',
           type: NavigationMenuItemType.LINK,
@@ -276,16 +283,16 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [],
-      [],
-    );
+      views: [],
+      objectMetadataItems: [],
+    });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('link-1');
   });
 
   it('should keep object items when objectMetadata exists', () => {
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'obj-1',
           type: NavigationMenuItemType.OBJECT,
@@ -293,16 +300,16 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [],
-      [mockObjectMetadataItem],
-    );
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('obj-1');
   });
 
   it('should filter out object items when objectMetadata is not found', () => {
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'obj-1',
           type: NavigationMenuItemType.OBJECT,
@@ -310,9 +317,9 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [],
-      [mockObjectMetadataItem],
-    );
+      views: [],
+      objectMetadataItems: [mockObjectMetadataItem],
+    });
     expect(result).toEqual([]);
   });
 
@@ -323,8 +330,8 @@ describe('filterAndSortNavigationMenuItems', () => {
       isActive: false,
     } as EnrichedObjectMetadataItem;
 
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'obj-1',
           type: NavigationMenuItemType.OBJECT,
@@ -332,9 +339,9 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [],
-      [inactiveObjectMetadataItem],
-    );
+      views: [],
+      objectMetadataItems: [inactiveObjectMetadataItem],
+    });
     expect(result).toEqual([]);
   });
 
@@ -352,8 +359,8 @@ describe('filterAndSortNavigationMenuItems', () => {
         key: ViewKey.INDEX,
       };
 
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'view-item-1',
           type: NavigationMenuItemType.VIEW,
@@ -361,15 +368,15 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [viewForInactiveObject],
-      [inactiveObjectMetadataItem],
-    );
+      views: [viewForInactiveObject],
+      objectMetadataItems: [inactiveObjectMetadataItem],
+    });
     expect(result).toEqual([]);
   });
 
   it('should keep folder items', () => {
-    const result = filterAndSortNavigationMenuItems(
-      [
+    const result = filterAndSortNavigationMenuItems({
+      navigationMenuItems: [
         {
           id: 'folder-1',
           type: NavigationMenuItemType.FOLDER,
@@ -377,9 +384,9 @@ describe('filterAndSortNavigationMenuItems', () => {
           position: 1,
         } as NavigationMenuItem,
       ],
-      [],
-      [],
-    );
+      views: [],
+      objectMetadataItems: [],
+    });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('folder-1');
   });

@@ -4,34 +4,56 @@ import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/Widg
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { WidgetType } from '~/generated-metadata/graphql';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 
 type GetTabsRenderableForTargetObjectParams = {
   tabs: PageLayoutTab[];
   targetObjectFields:
-    | Pick<FieldMetadataItem, 'name' | 'isActive' | 'type'>[]
+    | (Pick<FieldMetadataItem, 'name' | 'isActive' | 'type'> & {
+        relation?: {
+          targetObjectMetadata: Pick<
+            FieldMetadataItemRelation['targetObjectMetadata'],
+            'id'
+          >;
+        } | null;
+      })[]
     | undefined;
+  chatThreadTargetObjectMetadataId?: string;
 };
 
 export const getTabsRenderableForTargetObject = ({
   tabs,
   targetObjectFields,
+  chatThreadTargetObjectMetadataId,
 }: GetTabsRenderableForTargetObjectParams): PageLayoutTab[] => {
   if (!isDefined(targetObjectFields)) {
     return tabs;
   }
 
-  const relationFieldsByName = new Map(
-    targetObjectFields
-      .filter(
-        (field) =>
-          field.type === FieldMetadataType.RELATION ||
-          field.type === FieldMetadataType.MORPH_RELATION,
-      )
-      .map((field) => [field.name, field]),
+  const relationFields = targetObjectFields.filter(
+    (field) =>
+      field.type === FieldMetadataType.RELATION ||
+      field.type === FieldMetadataType.MORPH_RELATION,
   );
+  const relationFieldsByName = new Map(
+    relationFields.map((field) => [field.name, field]),
+  );
+  const hasActiveChatThreadTargetRelation =
+    isDefined(chatThreadTargetObjectMetadataId) &&
+    relationFields.some(
+      (field) =>
+        field.isActive &&
+        field.relation?.targetObjectMetadata.id ===
+          chatThreadTargetObjectMetadataId,
+    );
 
   return tabs.filter((tab) =>
     tab.widgets.every((widget) => {
+      if (widget.type === WidgetType.CHAT_THREADS) {
+        return hasActiveChatThreadTargetRelation;
+      }
+
       const relationFieldName = WIDGET_TYPE_TO_RELATION_FIELD_NAME[widget.type];
 
       if (!isDefined(relationFieldName)) {

@@ -1,6 +1,10 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { useStore } from 'jotai';
+import { objectMetadataItemByUniversalIdentifierFamilySelector } from '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector';
 import { useState } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
+import { assertIsDefinedOrThrow, CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -9,6 +13,7 @@ export const useAiChatThreadRename = (thread: {
   id: string;
   title?: string | null;
 }) => {
+  const store = useStore();
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueToast } = useToast();
 
@@ -34,8 +39,23 @@ export const useAiChatThreadRename = (thread: {
     }
 
     try {
+      const chatObjectMetadataItem = store.get(
+        objectMetadataItemByUniversalIdentifierFamilySelector.selectorFamily(
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        ),
+      );
+      assertIsDefinedOrThrow(
+        chatObjectMetadataItem,
+        new CustomError(
+          doNotTranslate(
+            `Object metadata item not found for universal identifier ${STANDARD_OBJECTS.agentChatThread.universalIdentifier}`,
+          ),
+          'OBJECT_METADATA_ITEM_NOT_FOUND',
+        ),
+      );
+
       await updateOneRecord({
-        objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+        objectNameSingular: chatObjectMetadataItem.nameSingular,
         idToUpdate: thread.id,
         updateOneRecordInput: { title: trimmed },
       });

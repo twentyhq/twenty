@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
@@ -6,11 +7,7 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/constants/PlaceholderRecordIndexId';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import {
-  AppPath,
-  StandardObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -83,8 +80,8 @@ export const DestroyRecordsCommand = () => {
     if (
       !isSingleRecord ||
       isInSidePanel ||
-      objectMetadataItem.nameSingular ===
-        StandardObjectNameSingular.AgentChatThread
+      objectMetadataItem.universalIdentifier ===
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
     ) {
       return;
     }

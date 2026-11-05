@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -35,6 +34,7 @@ type ChatThreadsCardContentProps = {
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
   threads: AgentChatThreadRecord[];
+  threadObjectNameSingular: string;
   hasNextPage?: boolean;
   pagination?: ReactNode;
 };
@@ -45,6 +45,7 @@ export const ChatThreadsCardContent = ({
   onRetry,
   onDetachThread,
   threads,
+  threadObjectNameSingular,
   hasNextPage = false,
   pagination,
 }: ChatThreadsCardContentProps) => {
@@ -57,8 +58,7 @@ export const ChatThreadsCardContent = ({
     : null;
   const sidePanelThreadId =
     isSidePanelOpened &&
-    sidePanelRecord?.objectNameSingular ===
-      StandardObjectNameSingular.AgentChatThread
+    sidePanelRecord?.objectNameSingular === threadObjectNameSingular
       ? sidePanelRecord.objectRecordId
       : undefined;
   const isThreadsEmpty = !isNonEmptyArray(threads);
@@ -113,7 +113,7 @@ export const ChatThreadsCardContent = ({
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
-            objectNameSingular: StandardObjectNameSingular.AgentChatThread,
+            objectNameSingular: threadObjectNameSingular,
           })
         }
         onDetachThread={onDetachThread}
