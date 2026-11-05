@@ -58,10 +58,9 @@ export class CommonSelectFieldsBuilder {
       : [];
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((relationTargetObjectMetadata) =>
-        this.permissionsService.canAccessSomeRecords({
+        this.permissionsService.canReadSomeRecords({
           principals,
           objectMetadataId: relationTargetObjectMetadata.id,
-          operationType: 'select',
         }),
       ),
     );

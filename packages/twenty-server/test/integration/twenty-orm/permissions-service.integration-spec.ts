@@ -1,4 +1,3 @@
-import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { randomUUID } from 'node:crypto';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -84,7 +83,7 @@ describe('PermissionsService', () => {
     question,
     authContext,
   }: {
-    question: 'canAccessAllRecords' | 'canAccessSomeRecords';
+    question: 'canReadAllRecords' | 'canReadSomeRecords';
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
     permissionsService[question]({
@@ -92,47 +91,45 @@ describe('PermissionsService', () => {
         authContext,
       }),
       objectMetadataId: personFlatObjectMetadata.id,
-      operationType: 'select',
     });
 
-  const canAccessRecords = async ({
+  const askRecordsQuestion = async ({
+    question = 'canReadRecords',
     authContext,
     recordIds,
-    operationType = 'select',
   }: {
+    question?: 'canReadRecords' | 'canUpdateRecords';
     authContext: PermissionsAuthContext;
     recordIds: string[];
-    operationType?: ObjectRecordsOperationType;
   }): Promise<boolean> =>
-    permissionsService.canAccessRecords({
+    permissionsService[question]({
       principals: await permissionsService.buildPermissionsPrincipals({
         authContext,
       }),
       objectMetadataId: personFlatObjectMetadata.id,
-      operationType,
       recordIds,
     });
 
-  describe('canAccessRecords', () => {
+  describe('canReadRecords and canUpdateRecords', () => {
     it('grants a role reading and updating an existing record it permits', async () => {
       expect(
-        await canAccessRecords({
+        await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId],
         }),
       ).toBe(true);
       expect(
-        await canAccessRecords({
+        await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId],
-          operationType: 'update',
+          question: 'canUpdateRecords',
         }),
       ).toBe(true);
     });
 
     it('denies an API key without a role', async () => {
       expect(
-        await canAccessRecords({
+        await askRecordsQuestion({
           authContext: missingRoleAuthContext,
           recordIds: [recordId],
         }),
@@ -141,7 +138,7 @@ describe('PermissionsService', () => {
 
     it('denies when one of the records does not exist', async () => {
       expect(
-        await canAccessRecords({
+        await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId, randomUUID()],
         }),
@@ -149,22 +146,21 @@ describe('PermissionsService', () => {
     });
   });
 
-  describe('findAccessibleRecordIds', () => {
+  describe('findReadableRecordIds', () => {
     it('keeps only the records the principal is admitted to', async () => {
       expect(
-        await permissionsService.findAccessibleRecordIds({
+        await permissionsService.findReadableRecordIds({
           principals: await permissionsService.buildPermissionsPrincipals({
             authContext: adminAuthContext,
           }),
           objectMetadataId: personFlatObjectMetadata.id,
-          operationType: 'select',
           recordIds: [recordId, randomUUID()],
         }),
       ).toEqual([recordId]);
     });
   });
 
-  describe.each(['canAccessAllRecords', 'canAccessSomeRecords'] as const)(
+  describe.each(['canReadAllRecords', 'canReadSomeRecords'] as const)(
     '%s',
     (question) => {
       it('follows the role when it permits the operation', async () => {

@@ -153,7 +153,7 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.permissionsService.canAccessRecords({
+      const hasGrant = await this.permissionsService.canReadRecords({
         principals: await this.permissionsService.buildPermissionsPrincipals({
           authContext: {
             type: 'user',
@@ -162,7 +162,6 @@ export class RecordSharePrincipalService {
           },
         }),
         objectMetadataId: flatObjectMetadata.id,
-        operationType: 'select',
         recordIds,
         transactionScope,
       });

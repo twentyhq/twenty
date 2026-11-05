@@ -270,7 +270,7 @@ export class RecordAccessPolicyService {
     });
   }
 
-  async findAccessibleEventRecordIds({
+  async findReadableEventRecordIds({
     authContext,
     eventBatch,
   }: {

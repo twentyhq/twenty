@@ -113,6 +113,20 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
+    const canOperateOnSomeRecords = (
+      operationType: ObjectRecordsOperationType,
+    ) =>
+      jest.fn(async () => {
+        const objectPermission =
+          OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
+
+        return (
+          (options?.sharedOperationTypes ?? []).includes(operationType) ||
+          (isDefined(objectPermission) &&
+            objectRecordsPermissions[objectPermission])
+        );
+      });
+
     const permissionsService = {
       buildPermissionsPrincipals: jest.fn().mockResolvedValue({
         workspaceId,
@@ -123,22 +137,11 @@ describe('DatabaseToolProvider', () => {
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
-      canAccessSomeRecords: jest.fn(
-        async ({
-          operationType,
-        }: {
-          operationType: ObjectRecordsOperationType;
-        }) => {
-          const objectPermission =
-            OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
-
-          return (
-            (options?.sharedOperationTypes ?? []).includes(operationType) ||
-            (isDefined(objectPermission) &&
-              objectRecordsPermissions[objectPermission])
-          );
-        },
-      ),
+      canCreateSomeRecords: canOperateOnSomeRecords('insert'),
+      canReadSomeRecords: canOperateOnSomeRecords('select'),
+      canUpdateSomeRecords: canOperateOnSomeRecords('update'),
+      canSoftDeleteSomeRecords: canOperateOnSomeRecords('soft-delete'),
+      canDestroySomeRecords: canOperateOnSomeRecords('delete'),
       findReadableFieldMetadataIds: jest.fn().mockResolvedValue([]),
       findUpdatableFieldMetadataIds: jest.fn().mockResolvedValue([]),
     } as unknown as PermissionsService;

@@ -43,25 +43,19 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-type RecordsAccessQuestion = {
+type ObjectQuestion = {
   principals: PermissionsPrincipalsWithRolesContext | undefined;
   objectMetadataId: string;
-  operationType: ObjectRecordsOperationType;
 };
 
-type RecordIdsAccessQuestion = RecordsAccessQuestion & {
+type RecordsQuestion = ObjectQuestion & {
   recordIds: string[];
   // answers as if the caller had granted this share, before it is written
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   transactionScope?: WorkspaceTransactionScope;
 };
 
-type FieldsAccessQuestion = Pick<
-  RecordsAccessQuestion,
-  'principals' | 'objectMetadataId'
->;
-
-type FieldAccessQuestion = FieldsAccessQuestion & {
+type FieldQuestion = ObjectQuestion & {
   fieldMetadataId: string;
 };
 
@@ -85,37 +79,88 @@ export class PermissionsService {
     );
   }
 
-  public canAccessAllRecords(
-    question: RecordsAccessQuestion,
-  ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToAllRecords(question);
+  public canReadAllRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToAllRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
   }
 
-  public canAccessSomeRecords(
-    question: RecordsAccessQuestion,
-  ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToSomeRecords(question);
+  public canReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
   }
 
-  public async canAccessRecords(
-    question: RecordIdsAccessQuestion,
-  ): Promise<boolean> {
-    const admittedRecordIds =
-      await this.recordAccessPolicyService.findAdmittedRecordIds(question);
-
-    return (
-      question.recordIds.length > 0 &&
-      question.recordIds.every((recordId) =>
-        admittedRecordIds.has(recordId.toLowerCase()),
-      )
-    );
+  // Shares only cover existing records, so unlike update they never allow creating one
+  public canCreateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'insert',
+    });
   }
 
-  public async findAccessibleRecordIds(
-    question: RecordIdsAccessQuestion,
+  public canUpdateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'update',
+    });
+  }
+
+  public canSoftDeleteSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'soft-delete',
+    });
+  }
+
+  public canDestroySomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'delete',
+    });
+  }
+
+  public canReadRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.isAdmittedToEveryRecord({ question, operationType: 'select' });
+  }
+
+  public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
+    return this.isAdmittedToEveryRecord({ question, operationType: 'update' });
+  }
+
+  public async findReadableRecordIds(
+    question: RecordsQuestion,
   ): Promise<string[]> {
-    const admittedRecordIds =
-      await this.recordAccessPolicyService.findAdmittedRecordIds(question);
+    const admittedRecordIds = await this.findAdmittedRecordIds({
+      question,
+      operationType: 'select',
+    });
 
     return [...new Set(question.recordIds)].filter((recordId) =>
       admittedRecordIds.has(recordId.toLowerCase()),
@@ -126,7 +171,7 @@ export class PermissionsService {
     principals,
     objectMetadataId,
     fieldMetadataId,
-  }: FieldAccessQuestion): Promise<boolean> {
+  }: FieldQuestion): Promise<boolean> {
     return (
       await this.findReadableFieldMetadataIds({ principals, objectMetadataId })
     ).includes(fieldMetadataId);
@@ -136,7 +181,7 @@ export class PermissionsService {
     principals,
     objectMetadataId,
     fieldMetadataId,
-  }: FieldAccessQuestion): Promise<boolean> {
+  }: FieldQuestion): Promise<boolean> {
     return (
       await this.findUpdatableFieldMetadataIds({ principals, objectMetadataId })
     ).includes(fieldMetadataId);
@@ -145,7 +190,7 @@ export class PermissionsService {
   public findReadableFieldMetadataIds({
     principals,
     objectMetadataId,
-  }: FieldsAccessQuestion): Promise<string[]> {
+  }: ObjectQuestion): Promise<string[]> {
     return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
       principals,
       objectMetadataId,
@@ -156,7 +201,7 @@ export class PermissionsService {
   public findUpdatableFieldMetadataIds({
     principals,
     objectMetadataId,
-  }: FieldsAccessQuestion): Promise<string[]> {
+  }: ObjectQuestion): Promise<string[]> {
     return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
       principals,
       objectMetadataId,
@@ -165,13 +210,11 @@ export class PermissionsService {
   }
 
   // Pass the same batch object on every call: lookups are shared per batch
-  public findAccessibleEventRecordIds(question: {
+  public findReadableEventRecordIds(question: {
     authContext: PermissionsAuthContext;
     eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
   }): Promise<Set<string>> {
-    return this.recordAccessPolicyService.findAccessibleEventRecordIds(
-      question,
-    );
+    return this.recordAccessPolicyService.findReadableEventRecordIds(question);
   }
 
   public findReadableEvents<TEvent extends ObjectRecordEvent>(question: {
@@ -358,6 +401,49 @@ export class PermissionsService {
     return isDefined(principals)
       ? getPermissionsPrincipalsRoleIds(principals)
       : [];
+  }
+
+  private async isAdmittedToEveryRecord({
+    question,
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<boolean> {
+    const admittedRecordIds = await this.findAdmittedRecordIds({
+      question,
+      operationType,
+    });
+
+    return (
+      question.recordIds.length > 0 &&
+      question.recordIds.every((recordId) =>
+        admittedRecordIds.has(recordId.toLowerCase()),
+      )
+    );
+  }
+
+  private findAdmittedRecordIds({
+    question: {
+      principals,
+      objectMetadataId,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
+    },
+    operationType,
+  }: {
+    question: RecordsQuestion;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findAdmittedRecordIds({
+      principals,
+      objectMetadataId,
+      operationType,
+      recordIds,
+      hypotheticalRecordShareAccessLevel,
+      transactionScope,
+    });
   }
 
   // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag

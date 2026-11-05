@@ -1,4 +1,3 @@
-import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
@@ -137,30 +136,25 @@ export class DatabaseToolProvider implements ToolProvider {
       const isExplicitlyGranted = (objectPermission: ObjectPermissionAction) =>
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
-      const hasAccessToSomeRecords = async (
-        operationType: ObjectRecordsOperationType,
-      ) =>
-        this.permissionsService.canAccessSomeRecords({
-          principals,
-          objectMetadataId: flatObject.id,
-          operationType,
-        });
+      const objectQuestion = { principals, objectMetadataId: flatObject.id };
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await hasAccessToSomeRecords('insert'));
+        (await this.permissionsService.canCreateSomeRecords(objectQuestion));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await hasAccessToSomeRecords('select'));
+        (await this.permissionsService.canReadSomeRecords(objectQuestion));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await hasAccessToSomeRecords('update'));
+        (await this.permissionsService.canUpdateSomeRecords(objectQuestion));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await hasAccessToSomeRecords('soft-delete'));
+        (await this.permissionsService.canSoftDeleteSomeRecords(
+          objectQuestion,
+        ));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await hasAccessToSomeRecords('delete'));
+        (await this.permissionsService.canDestroySomeRecords(objectQuestion));
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);

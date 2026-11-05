@@ -52,11 +52,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 
-const AGENT_CHAT_REPLY_OPERATION_TYPES = [
-  'select',
-  'update',
-] as const satisfies ObjectRecordsOperationType[];
-
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
   RecordShareAccessLevel.FULL,
@@ -326,19 +321,18 @@ export class AgentChatSharingService {
                   workspaceMemberId: memberId,
                 },
               });
-            const grants = await Promise.all(
-              AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                this.permissionsService.canAccessRecords({
-                  principals,
-                  objectMetadataId: threadFlatObjectMetadata.id,
-                  recordIds: [threadId],
-                  operationType,
-                  hypotheticalRecordShareAccessLevel,
-                }),
-              ),
-            );
+            const question = {
+              principals,
+              objectMetadataId: threadFlatObjectMetadata.id,
+              recordIds: [threadId],
+              hypotheticalRecordShareAccessLevel,
+            };
+            const [canReadThread, canUpdateThread] = await Promise.all([
+              this.permissionsService.canReadRecords(question),
+              this.permissionsService.canUpdateRecords(question),
+            ]);
 
-            return grants.every(Boolean) ? memberId : undefined;
+            return canReadThread && canUpdateThread ? memberId : undefined;
           }),
         )
       ).filter(isDefined),

@@ -998,7 +998,7 @@ describe('Conversations through the record API', () => {
     const admittedRecordIds =
       await getAppProviderByClassName<PermissionsService>(
         'PermissionsService',
-      ).findAccessibleEventRecordIds({
+      ).findReadableEventRecordIds({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId,
