@@ -15,6 +15,7 @@ describe('AssistantAvatar', () => {
     expect(ref.current).toHaveAttribute('aria-hidden', 'true');
     expect(ref.current).not.toHaveAttribute('role');
     expect(ref.current).not.toHaveAttribute('tabindex');
+    expect(ref.current).toHaveAttribute('data-animated', 'false');
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
@@ -104,6 +105,7 @@ describe('AssistantAvatar', () => {
         face="love"
         color="pink"
         size={40}
+        isAnimated
       />,
     );
 
@@ -118,5 +120,20 @@ describe('AssistantAvatar', () => {
         EXTERNAL_MASK_IMAGE_URL_PATTERN,
       );
     }
+  });
+
+  it('keeps animation controlled without forwarding it as a native attribute', () => {
+    const { rerender } = render(
+      <AssistantAvatar isAnimated aria-label="Assistant" />,
+    );
+    const avatar = screen.getByRole('img', { name: 'Assistant' });
+
+    expect(avatar).toHaveAttribute('data-animated', 'true');
+    expect(avatar).not.toHaveAttribute('isanimated');
+
+    rerender(<AssistantAvatar isAnimated={false} aria-label="Assistant" />);
+
+    expect(avatar).toHaveAttribute('data-animated', 'false');
+    expect(screen.getAllByRole('img')).toHaveLength(1);
   });
 });

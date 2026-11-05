@@ -1,9 +1,9 @@
 ---
 title: AssistantAvatar
-description: A static assistant character with configurable shape, expression, color, and size.
+description: An assistant character with configurable shape, expression, color, size, and idle animation.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
@@ -37,12 +37,13 @@ export const AssistantLabel = () => (
 
 Choose shapes independently from expressions and colors.
 
-| Prop | Values | Default |
-| --- | --- | --- |
-| `shape` | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle` |
-| `face` | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love` | `default` |
-| `color` | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray` | `blue` |
-| `size` | `14`, `16`, `20`, `24`, `40` pixels | `24` |
+| Prop         | Values                                                                                     | Default   |
+| ------------ | ------------------------------------------------------------------------------------------ | --------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`  |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `default` |
+| `color`      | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `blue`    |
+| `size`       | `14`, `16`, `20`, `24`, `40` pixels                                                        | `24`      |
+| `isAnimated` | `true`, `false`                                                                            | `false`   |
 
 The body and face use the selected palette's theme tokens and follow the surrounding light or dark theme. Set `size` for a square character. Native attributes, events, `className`, `style`, and `ref` target the outer span; explicit styles override its dimensions and palette defaults.
 
@@ -59,6 +60,28 @@ export const CustomAssistant = () => (
   />
 );
 ```
+
+## Idle animation
+
+Set `isAnimated` to play the selected expression's idle loop. Default blinks and glances sideways, Happy lifts its eyes, Wink closes one eye, Surprised widens its eyes, Sleepy floats a sleep mark, and Love pulses its heart eyes. The body stays still.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-data-display-assistantavatar--idle-faces"
+  title="Idle animations for each expression"
+  height={180}
+/>
+
+Animation is off by default. Set `isAnimated={false}` to display the static expression, including the visible wink. When the browser prefers reduced motion, the component displays the static expression even when `isAnimated` is enabled. The preference also applies if it changes while the character is displayed.
+
+The application owns the animation toggle. This prop controls idle presentation and does not represent listening, speaking, thinking, or other assistant activity.
 
 ## Accessibility
 
