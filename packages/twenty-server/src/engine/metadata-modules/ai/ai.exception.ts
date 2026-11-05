@@ -106,7 +106,7 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
       return msg`A channel needs a name.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER:
-      return msg`A channel identifier must be a valid UUID.`;
+      return msg`A channel identifier must be a valid UUID v4 or later.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       return msg`One of these roles no longer exists.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
