@@ -572,7 +572,7 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',
-    state.isLockedForUpdate === true
+    state.isLockedForUpdate
       ? `FOR UPDATE OF ${escapeIdentifier(state.alias)}`
       : '',
   ]

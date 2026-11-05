@@ -559,7 +559,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this;
   }
 
-  // Holds the selected rows until the transaction ends, so a concurrent write waits instead of racing
   forUpdate(): this {
     this.isLockedForUpdate = true;
 
