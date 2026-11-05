@@ -148,6 +148,7 @@ export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
   update,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+  buildOptions,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     universalFlatFieldMetadataToValidate,
@@ -159,8 +160,13 @@ export const validateEnumSelectFlatFieldMetadata = ({
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
     : [];
 
-  // Only written options must be universal identifiers; legacy ids wait for the backfill to regenerate them.
-  const optionUniversalIdentifierValidationErrors = isWritingOptions
+  // Only workspace edits are rejected: an app manifest with legacy ids keeps syncing, its rows skipped.
+  const isWorkspaceWritingOptions =
+    isWritingOptions &&
+    buildOptions.applicationUniversalIdentifier ===
+      buildOptions.workspaceCustomApplicationUniversalIdentifier;
+
+  const optionUniversalIdentifierValidationErrors = isWorkspaceWritingOptions
     ? validateOptionIdsAreUniversalIdentifiers(
         universalFlatFieldMetadataToValidate,
       )
