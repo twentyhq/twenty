@@ -174,7 +174,12 @@ export class AgentChatMemberMessageSenderService {
       });
     }
 
-    if (isDefined(thread.deletedAt)) {
+    if (isDefined(thread.deletedAt) && isDirectMessage) {
+      await this.chatThreadService.restoreDirectMessageThread({
+        workspaceId: actor.workspaceId,
+        thread,
+      });
+    } else if (isDefined(thread.deletedAt)) {
       await this.chatThreadService.restoreThread(threadAccess);
     }
 
