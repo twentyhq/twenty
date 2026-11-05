@@ -17,7 +17,7 @@ import {
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { findPrivateRecordStates } from 'src/engine/permissions/record-permission-orm/utils/find-private-record-states.util';
-import { findRecordShareGrants } from 'src/engine/permissions/record-permission-orm/utils/find-record-share-grants.util';
+import { findRecordShares } from 'src/engine/permissions/record-permission-orm/utils/find-record-shares.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -180,7 +180,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<T[]> {
     const compiled = compileNamedParameters(sql, parameters);
 
-    return this.options.executor.execute(compiled) as Promise<T[]>;
+    return this.options.executor.execute<T>(compiled);
   }
 
   createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
@@ -1820,7 +1820,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
-          findRecordShareGrants({
+          findRecordShares({
             executor: this.options.executor,
             recordShareTableExpression: this.getRecordShareTableExpression(),
             objectMetadataId,

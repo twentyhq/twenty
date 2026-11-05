@@ -164,7 +164,7 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
         execute: async (statement) => {
           executedStatements.push(statement);
 
-          return rows;
+          return rows as never;
         },
       },
       recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,

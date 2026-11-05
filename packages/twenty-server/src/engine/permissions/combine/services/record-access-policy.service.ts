@@ -403,7 +403,7 @@ export class RecordAccessPolicyService {
 
       if (missingRecordIds.length > 0) {
         const groupedRecordShares = this.recordPermissionOrmService
-          .findRecordShareGrants({
+          .findRecordShares({
             workspaceId,
             objectMetadataId,
             recordIds: missingRecordIds,

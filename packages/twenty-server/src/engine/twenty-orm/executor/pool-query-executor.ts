@@ -11,13 +11,13 @@ export class PoolQueryExecutor implements QueryExecutor {
     this.pool = pool;
   }
 
-  async execute(
+  async execute<TRow extends Record<string, unknown> = Record<string, unknown>>(
     statement: CompiledStatement,
-  ): Promise<Record<string, unknown>[]> {
+  ): Promise<TRow[]> {
     try {
-      const result = await this.pool.query(statement);
+      const result = await this.pool.query<TRow>(statement);
 
-      return result.rows as Record<string, unknown>[];
+      return result.rows;
     } catch (error) {
       throw computeTwentyOrmException(error);
     }

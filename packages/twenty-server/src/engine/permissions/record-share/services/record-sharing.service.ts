@@ -21,6 +21,7 @@ import {
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
@@ -68,6 +69,7 @@ export class RecordSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordPermissionOrmService: RecordPermissionOrmService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -477,7 +479,7 @@ export class RecordSharingService {
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         roleIdsWithAllRecordsAccess,
       });
-    const shares = await this.recordShareStorageService.findByRecordIds({
+    const shares = await this.recordPermissionOrmService.findRecordShares({
       workspaceId,
       objectMetadataId,
       recordIds: [recordId],
@@ -531,10 +533,15 @@ export class RecordSharingService {
     recordId: string;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<PrivateRecordState | undefined> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
     const privateRecordStates =
-      await this.privateRecordStorageService.findStates({
+      await this.recordPermissionOrmService.findPrivateRecordStates({
         workspaceId,
         flatObjectMetadata,
+        flatFieldMetadataMaps,
         recordIds: [recordId],
         transactionScope,
       });

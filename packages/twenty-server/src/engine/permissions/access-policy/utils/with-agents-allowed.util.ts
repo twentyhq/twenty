@@ -1,6 +1,6 @@
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 
-// Tools are available to agents: any policy that allows the application allows agents too
+// Tools are available to agents
 export const withAgentsAllowed = (
   authPrincipals: AuthPrincipalGuardConfig,
 ): AuthPrincipalGuardConfig => {

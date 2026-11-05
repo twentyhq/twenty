@@ -24,9 +24,8 @@ import { type RecordShare } from 'src/engine/permissions/record-share/types/reco
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { RECORD_SHARE_OBJECT_METADATA_NAME } from 'src/engine/permissions/record-permission-orm/constants/record-share-object-metadata-name.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-
-const RECORD_SHARE_OBJECT_METADATA_NAME = 'recordShare';
 
 type RecordShareRepository = WorkspaceRepository<RecordShare>;
 
@@ -276,30 +275,6 @@ export class RecordShareStorageService {
          ON CONFLICT DO NOTHING`,
         { ...parameters, granteeWorkspaceMemberId },
       ),
-    );
-  }
-
-  async findByRecordIds({
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
-  }): Promise<RecordShare[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-
-    return this.withRepository(
-      { workspaceId, transactionScope },
-      (repository) =>
-        repository.find({
-          where: { objectMetadataId, recordId: In(recordIds) },
-        }),
     );
   }
 

@@ -6,7 +6,7 @@ import {
   type NamedParameters,
 } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 
-export const executeRecordPermissionQuery = async <
+export const executeRecordPermissionQuery = <
   TRow extends Record<string, unknown>,
 >({
   executor,
@@ -17,4 +17,4 @@ export const executeRecordPermissionQuery = async <
   sql: string;
   parameters: NamedParameters;
 }): Promise<TRow[]> =>
-  (await executor.execute(compileNamedParameters(sql, parameters))) as TRow[];
+  executor.execute<TRow>(compileNamedParameters(sql, parameters));

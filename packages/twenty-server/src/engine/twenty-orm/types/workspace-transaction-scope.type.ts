@@ -17,9 +17,11 @@ export type WorkspaceTransactionScope = {
     objectMetadataName: string,
     repositoryOptions?: WorkspaceRepositoryOptions,
   ) => WorkspaceRepository<T>;
-  executeRawQuery: (
+  executeRawQuery: <
+    TRow extends Record<string, unknown> = Record<string, unknown>,
+  >(
     sql: string,
     parameters?: unknown[],
-  ) => Promise<Record<string, unknown>[]>;
+  ) => Promise<TRow[]>;
   afterCommit: (callback: () => void | Promise<void>) => void;
 };

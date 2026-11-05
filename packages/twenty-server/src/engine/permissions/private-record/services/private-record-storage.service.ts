@@ -6,8 +6,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
@@ -27,33 +25,7 @@ export class PrivateRecordStorageService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly recordPermissionOrmService: RecordPermissionOrmService,
   ) {}
-
-  async findStates({
-    workspaceId,
-    flatObjectMetadata,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
-  }): Promise<Map<string, PrivateRecordState>> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return this.recordPermissionOrmService.findPrivateRecordStates({
-      workspaceId,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      recordIds,
-      transactionScope,
-    });
-  }
 
   async grantPrivateRecordsCreatedBy({
     workspaceId,
