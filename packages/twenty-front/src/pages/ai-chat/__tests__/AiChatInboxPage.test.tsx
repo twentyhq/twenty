@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -53,15 +54,21 @@ const THREADS = [
   buildThread('9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40', 'Third chat'),
 ];
 
-const chatObjectMetadataItemAtom = atom<Pick<EnrichedObjectMetadataItem, 'id'>>(
-  { id: 'chat-object' },
-);
+const chatObjectMetadataItemAtom = atom<
+  Pick<EnrichedObjectMetadataItem, 'id' | 'universalIdentifier'>
+>({
+  id: 'chat-object',
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+});
 
-jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
-  objectMetadataItemFamilySelector: {
-    selectorFamily: () => chatObjectMetadataItemAtom,
-  },
-}));
+jest.mock(
+  '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector',
+  () => ({
+    objectMetadataItemByUniversalIdentifierFamilySelector: {
+      selectorFamily: () => chatObjectMetadataItemAtom,
+    },
+  }),
+);
 
 jest.mock('@/ai/components/AiChatThreadList', () => ({
   AiChatThreadList: ({

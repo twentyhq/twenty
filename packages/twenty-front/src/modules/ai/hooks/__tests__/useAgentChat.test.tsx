@@ -6,6 +6,7 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -258,6 +259,8 @@ describe('useAgentChat', () => {
           ...getMockObjectMetadataItemOrThrow('note'),
           nameSingular: StandardObjectNameSingular.AgentChatThread,
           namePlural: 'agentChatThreads',
+          universalIdentifier:
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
         },
       ],
     });

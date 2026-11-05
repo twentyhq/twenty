@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -52,6 +53,7 @@ const SALES_CHANNEL = {
 const CHAT_OBJECT_METADATA_ITEM = {
   ...getMockObjectMetadataItemOrThrow('note'),
   id: 'chat-object',
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
   fields: [],
@@ -154,11 +156,15 @@ const renderThread = async ({
             }
           : null,
       );
-      setAgentChatThreadPermissions(store, THREAD_ID, {
-        canRead: true,
-        canUpdate: true,
-        canDelete: true,
-        canSoftDelete: true,
+      setAgentChatThreadPermissions({
+        store,
+        threadId: THREAD_ID,
+        permissions: {
+          canRead: true,
+          canUpdate: true,
+          canDelete: true,
+          canSoftDelete: true,
+        },
       });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), thread);
       store.set(agentChatThreadParticipantsState.atom, {

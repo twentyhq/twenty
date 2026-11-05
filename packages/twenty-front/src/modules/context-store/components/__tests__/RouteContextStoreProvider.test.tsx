@@ -5,6 +5,7 @@ import { RouteContextStoreProvider } from '@/context-store/components/RouteConte
 import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Outlet, useRoutes } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 jest.mock('@/navigation/hooks/useLastVisitedView', () => ({
@@ -49,6 +50,8 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             id: 'chat-object',
             namePlural: 'agentChatThreads',
             nameSingular: 'agentChatThread',
+            universalIdentifier:
+              STANDARD_OBJECTS.agentChatThread.universalIdentifier,
           },
         ]
       : [

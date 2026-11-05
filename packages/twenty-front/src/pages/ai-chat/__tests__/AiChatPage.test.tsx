@@ -4,11 +4,13 @@ import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
@@ -16,6 +18,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
 import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -101,6 +104,20 @@ describe('AiChatPage', () => {
     mockIsMobile = false;
     sessionStorage.clear();
     resetJotaiStore();
+    jotaiStore.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+      current: [
+        {
+          ...getMockObjectMetadataItemOrThrow('note'),
+          id: 'chat-object',
+          nameSingular: 'agentChatThread',
+          namePlural: 'agentChatThreads',
+          universalIdentifier:
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        },
+      ],
+      draft: [],
+      status: 'up-to-date',
+    });
   });
 
   it.each([true, false])(

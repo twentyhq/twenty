@@ -4,6 +4,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
@@ -137,12 +138,22 @@ const EDITABLE_PERMISSIONS = {
 const CHAT_THREAD_OBJECT_METADATA_ITEM = {
   ...getMockObjectMetadataItemOrThrow('note'),
   id: 'chat-object',
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
   fields: [],
   readableFields: [],
   updatableFields: [],
   indexMetadatas: [],
+};
+
+const CHAT_THREAD_TARGET_OBJECT_METADATA_ITEM = {
+  ...CHAT_THREAD_OBJECT_METADATA_ITEM,
+  id: 'chat-target-object',
+  universalIdentifier:
+    STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+  nameSingular: 'agentChatThreadTarget',
+  namePlural: 'agentChatThreadTargets',
 };
 
 const ACME_LINK: ObjectRecord = {
@@ -186,6 +197,7 @@ const renderDetails = async ({
     objectMetadataItems: [
       ...getTestEnrichedObjectMetadataItemsMock(),
       CHAT_THREAD_OBJECT_METADATA_ITEM,
+      CHAT_THREAD_TARGET_OBJECT_METADATA_ITEM,
     ],
     onInitializeJotaiStore: (store) => {
       store.set(currentWorkspaceState.atom, {
@@ -197,7 +209,11 @@ const renderDetails = async ({
           },
         ],
       });
-      setAgentChatThreadPermissions(store, THREAD_ID, permissions);
+      setAgentChatThreadPermissions({
+        store,
+        threadId: THREAD_ID,
+        permissions,
+      });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
         __typename: 'AgentChatThread',
         id: THREAD_ID,

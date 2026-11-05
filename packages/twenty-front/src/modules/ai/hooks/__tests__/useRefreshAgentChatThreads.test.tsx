@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { atom, createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -23,15 +24,19 @@ const chatObjectMetadataItemAtom = atom<unknown>({
   id: 'chat-object',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   fields: [{ name: 'title' }, { name: 'lastActivityAt' }],
   readableFields: [{ name: 'title' }],
 });
 
-jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
-  objectMetadataItemFamilySelector: {
-    selectorFamily: () => chatObjectMetadataItemAtom,
-  },
-}));
+jest.mock(
+  '@/object-metadata/states/objectMetadataItemByUniversalIdentifierFamilySelector',
+  () => ({
+    objectMetadataItemByUniversalIdentifierFamilySelector: {
+      selectorFamily: () => chatObjectMetadataItemAtom,
+    },
+  }),
+);
 
 jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
   generateFindManyRecordsQuery: () => 'find-many-agent-chat-threads',

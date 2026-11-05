@@ -1,6 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -66,7 +69,36 @@ jest.mock(
 );
 
 const attachTo = async (objectNameSingular = 'company') => {
-  const { result } = renderHook(() => useAttachChatThreadToRecord());
+  const store = createStore();
+
+  store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+    current: [
+      {
+        ...getMockObjectMetadataItemOrThrow('note'),
+        id: 'chat-object',
+        nameSingular: 'agentChatThread',
+        namePlural: 'agentChatThreads',
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+      },
+      {
+        ...getMockObjectMetadataItemOrThrow('note'),
+        id: 'chat-target-object',
+        nameSingular: 'agentChatThreadTarget',
+        namePlural: 'agentChatThreadTargets',
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+      },
+    ],
+    draft: [],
+    status: 'up-to-date',
+  });
+
+  const { result } = renderHook(() => useAttachChatThreadToRecord(), {
+    wrapper: ({ children }) => (
+      <JotaiProvider store={store}>{children}</JotaiProvider>
+    ),
+  });
 
   await act(async () => {
     await result.current.attachChatThreadToRecord({
