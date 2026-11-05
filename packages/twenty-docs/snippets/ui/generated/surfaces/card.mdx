@@ -33,16 +33,16 @@
   Sets the card width to 100% of its container.
 </ParamField>
 
+<ParamField body="Root.isSelected" type="boolean" default="false">
+  Highlights the outer border. Supply the matching accessible selection state on the interactive owner.
+</ParamField>
+
 <ParamField body="Root.ref" type="Ref&lt;HTMLDivElement&gt;">
   Ref to the default div, or the element supplied through render.
 </ParamField>
 
 <ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
   Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
-</ParamField>
-
-<ParamField body="Root.selected" type="boolean" default="false">
-  Highlights the outer border. Supply the matching accessible selection state on the interactive owner.
 </ParamField>
 
 <ParamField body="Root.style" type="CSSProperties">

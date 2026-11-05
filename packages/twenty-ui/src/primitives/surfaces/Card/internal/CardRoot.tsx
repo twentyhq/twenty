@@ -14,7 +14,7 @@ export const CardRoot = ({
   backgroundColor,
   variant = 'default',
   borderStyle = 'solid',
-  selected = false,
+  isSelected = false,
   style,
   render,
   ref,
@@ -29,7 +29,7 @@ export const CardRoot = ({
       'data-full-width': fullWidth || undefined,
       'data-variant': variant,
       'data-border-style': borderStyle,
-      'data-selected': selected || undefined,
+      'data-selected': isSelected || undefined,
       style: isDefined(backgroundColor)
         ? ({
             ...style,

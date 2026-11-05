@@ -5,5 +5,5 @@ export type CardRootProps = useRender.ComponentProps<'div'> & {
   backgroundColor?: string;
   variant?: 'default' | 'compact';
   borderStyle?: 'solid' | 'dashed';
-  selected?: boolean;
+  isSelected?: boolean;
 };

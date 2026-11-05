@@ -39,7 +39,7 @@ export const SettingsAiAssistantCustomize = ({
           <Card.Root
             render={<button type="button" />}
             borderStyle={isCustom ? 'solid' : 'dashed'}
-            selected={isCustom}
+            isSelected={isCustom}
             fullWidth
           >
             <Card.Content>

@@ -8430,6 +8430,13 @@
             "description": "Sets the card width to 100% of its container."
           },
           {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Highlights the outer border. Supply the matching accessible selection state on the interactive owner."
+          },
+          {
             "name": "ref",
             "type": "Ref<HTMLDivElement>",
             "required": false,
@@ -8442,13 +8449,6 @@
             "required": false,
             "defaultValue": null,
             "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
-          },
-          {
-            "name": "selected",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Highlights the outer border. Supply the matching accessible selection state on the interactive owner."
           },
           {
             "name": "style",
