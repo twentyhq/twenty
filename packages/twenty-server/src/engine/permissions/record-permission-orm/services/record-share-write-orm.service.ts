@@ -102,7 +102,6 @@ export class RecordShareWriteOrmService {
     });
   }
 
-  // Without a custodian the departing member's grants are only dropped
   async transferMemberRecordShares({
     workspaceId,
     objectMetadataIds,

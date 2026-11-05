@@ -212,7 +212,7 @@ export class AgentChatChannelGrantService {
     if (isNonEmptyArray(obsoleteGrantIds)) {
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
-        criteria: [{ ids: obsoleteGrantIds }],
+        criteria: { ids: obsoleteGrantIds },
         transactionScope,
       });
     }

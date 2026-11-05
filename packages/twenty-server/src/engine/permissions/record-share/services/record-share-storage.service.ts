@@ -88,22 +88,20 @@ export class RecordShareStorageService {
     });
   }
 
-  async deleteMatching({
+  deleteMatching({
     workspaceId,
     criteria,
     transactionScope,
   }: {
     workspaceId: string;
-    criteria: RecordShareCriteria[];
+    criteria: RecordShareCriteria;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    for (const criterion of criteria) {
-      await this.recordShareWriteOrmService.deleteRecordShares({
-        workspaceId,
-        transactionScope,
-        criteria: criterion,
-      });
-    }
+    return this.recordShareWriteOrmService.deleteRecordShares({
+      workspaceId,
+      transactionScope,
+      criteria,
+    });
   }
 
   deleteBySourceId({

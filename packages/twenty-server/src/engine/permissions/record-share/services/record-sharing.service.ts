@@ -277,13 +277,11 @@ export class RecordSharingService {
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
-        criteria: [
-          {
-            objectMetadataId: args.objectMetadataId,
-            recordIds: [args.recordId],
-            rowCause: RecordShareRowCause.OWNER,
-          },
-        ],
+        criteria: {
+          objectMetadataId: args.objectMetadataId,
+          recordIds: [args.recordId],
+          rowCause: RecordShareRowCause.OWNER,
+        },
       });
 
       return;
@@ -292,14 +290,12 @@ export class RecordSharingService {
     await this.recordShareStorageService.deleteMatching({
       workspaceId,
       transactionScope,
-      criteria: [
-        {
-          objectMetadataId: args.objectMetadataId,
-          recordIds: [args.recordId],
-          principalType: RecordSharePrincipalType.EVERYONE,
-          rowCause: RecordShareRowCause.MANUAL,
-        },
-      ],
+      criteria: {
+        objectMetadataId: args.objectMetadataId,
+        recordIds: [args.recordId],
+        principalType: RecordSharePrincipalType.EVERYONE,
+        rowCause: RecordShareRowCause.MANUAL,
+      },
     });
 
     if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
