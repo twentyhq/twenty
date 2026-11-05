@@ -6,19 +6,19 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
+import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class RecordShareOwnershipTransferService {
   constructor(
-    private readonly userRoleService: UserRoleService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -55,7 +55,7 @@ export class RecordShareOwnershipTransferService {
 
     if (isDefined(toWorkspaceMemberId)) {
       // Nobody passes the creator check of a removed member's private records, admins included
-      await this.privateRecordStorageService.grantPrivateRecordsCreatedBy({
+      await this.privateRecordWriteService.grantPrivateRecordsCreatedBy({
         workspaceId,
         flatObjectMetadatas: transferableObjects,
         creatorWorkspaceMemberId: removedWorkspaceMemberId,
@@ -97,7 +97,7 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<string | undefined> {
     const successorUserWorkspace =
-      await this.userRoleService.resolveSuccessorUserWorkspace({
+      await this.rolePermissionsService.findSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });

@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -21,6 +23,7 @@ export class MessagingMessageCleanerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -33,6 +36,8 @@ export class MessagingMessageCleanerService {
     messageChannelId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -102,9 +107,11 @@ export class MessagingMessageCleanerService {
                 where: { id: In(orphanMessageIds) },
               });
 
-              await attachmentRepository.delete({
-                targetMessageId: In(orphanMessageIds),
-              });
+              if (hasMessageAttachmentTarget) {
+                await attachmentRepository.delete({
+                  targetMessageId: In(orphanMessageIds),
+                });
+              }
               await messageRepository.delete(orphanMessageIds);
 
               const candidateThreadIds = [
@@ -190,6 +197,8 @@ export class MessagingMessageCleanerService {
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -236,9 +245,11 @@ export class MessagingMessageCleanerService {
                   ),
                 ];
 
-                await attachmentRepository.delete({
-                  targetMessageId: In(ids),
-                });
+                if (hasMessageAttachmentTarget) {
+                  await attachmentRepository.delete({
+                    targetMessageId: In(ids),
+                  });
+                }
                 await messageRepository.delete(ids);
 
                 const survivingThreadIds = await this.findReferencedThreadIds(
@@ -284,6 +295,22 @@ export class MessagingMessageCleanerService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  // targetMessageId only exists once the workspace upgrade has run
+  private async hasMessageAttachmentTarget(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier
+      ],
     );
   }
 

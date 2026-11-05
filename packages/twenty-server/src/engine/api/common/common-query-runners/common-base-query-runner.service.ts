@@ -455,7 +455,7 @@ export abstract class CommonBaseQueryRunnerService<
         : data;
 
     const { selectQueryBuilder, rowLevelPermissionsApplied } =
-      buildMutationQueryBuilder({
+      await buildMutationQueryBuilder({
         repository: writeRepository,
         alias,
         filter,

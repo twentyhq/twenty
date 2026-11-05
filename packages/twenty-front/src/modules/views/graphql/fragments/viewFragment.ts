@@ -36,6 +36,7 @@ export const VIEW_FRAGMENT = gql`
     visibility
     createdByUserWorkspaceId
     applicationId
+    universalIdentifier
     isActive
     viewFields {
       ...ViewFieldFragment

@@ -18,7 +18,7 @@ import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -30,7 +30,7 @@ export class CallWebhookJobsJob {
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -92,7 +92,7 @@ export class CallWebhookJobsJob {
 
       const readableRecordIds =
         readableRecordIdsByRoleId.get(webhookRoleId) ??
-        this.permissionsService.findReadableEventRecordIds({
+        this.recordPermissionsService.findReadableEventRecordIds({
           authContext: {
             type: 'webhook',
             workspace: { id: workspaceEventBatch.workspaceId },

@@ -17,9 +17,6 @@ const UPLOAD_URL = 'https://storage.test/upload/pending-file';
 const toGraphqlResponse = (data: Record<string, unknown>) =>
   new Response(JSON.stringify({ data }), { status: 200 });
 
-const readBodyBytes = async (body: BodyInit | null | undefined) =>
-  new Uint8Array(await new Response(body).arrayBuffer());
-
 const readGraphqlVariables = async (body: BodyInit | null | undefined) =>
   JSON.parse(await new Response(body).text()).variables;
 
@@ -61,9 +58,11 @@ describe('uploadMessageAttachment', () => {
         toGraphqlResponse({ completeFileUpload: { id: 'stored-file' } }),
       );
 
+    const content = new Uint8Array([1, 2, 3]);
+
     const attachment = await uploadMessageAttachment({
       filename: 'photo.png',
-      content: new Uint8Array([1, 2, 3]),
+      content,
     });
 
     expect(attachment).toEqual({ fileId: 'stored-file', label: 'photo.png' });
@@ -85,9 +84,7 @@ describe('uploadMessageAttachment', () => {
     expect(new Headers(uploadInit?.headers).get('Content-Type')).toBe(
       'image/png',
     );
-    expect(await readBodyBytes(uploadInit?.body)).toEqual(
-      new Uint8Array([1, 2, 3]),
-    );
+    expect(uploadInit?.body).toBe(content);
 
     const [, completeInit] = fetchSpy.mock.calls[2];
 

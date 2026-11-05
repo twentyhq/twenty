@@ -70,7 +70,9 @@ export type QueryBuilderContext = {
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
-  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
+  onBeforeExecute: (
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
 };
 
@@ -668,14 +670,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return rows as T[];
   }
 
-  applyRowLevelPermissions(): this {
-    this.context.onBeforeExecute(this);
+  async applyRowLevelPermissions(): Promise<this> {
+    await this.context.onBeforeExecute(this);
 
     return this;
   }
 
   async getCount(): Promise<number> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
@@ -1207,7 +1209,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     allowPlainToManyJoins?: boolean;
     types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);

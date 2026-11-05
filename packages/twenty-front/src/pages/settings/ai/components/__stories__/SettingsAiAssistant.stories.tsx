@@ -48,6 +48,16 @@ export const PresetSelection: Story = {
 
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(customize).toHaveAttribute('aria-pressed', 'false');
+    expect(
+      canvas
+        .getByRole('radio', { name: 'Ada' })
+        .querySelector('[data-size="40"]'),
+    ).toHaveAttribute('data-animated', 'true');
+    expect(
+      canvas
+        .getByRole('radio', { name: 'Scout' })
+        .querySelector('[data-size="40"]'),
+    ).toHaveAttribute('data-animated', 'false');
     await userEvent.click(canvas.getByRole('radio', { name: 'Scout' }));
     expect(args.onChange).toHaveBeenCalledTimes(1);
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
@@ -55,8 +65,14 @@ export const PresetSelection: Story = {
 
     await userEvent.click(customize);
     const animate = await body.findByRole('switch', { name: 'Animate' });
+    const customPreview = customize.querySelector('[data-size="40"]');
+    const namePreview = body
+      .getByRole('dialog', { name: 'Customize assistant' })
+      .querySelector('[data-size="20"]');
 
     expect(animate).not.toBeChecked();
+    expect(customPreview).toHaveAttribute('data-animated', 'false');
+    expect(namePreview).toHaveAttribute('data-animated', 'false');
     await userEvent.click(animate);
     expect(args.onChange).toHaveBeenCalledTimes(2);
     expect(args.onChange).toHaveBeenLastCalledWith({
@@ -65,12 +81,23 @@ export const PresetSelection: Story = {
     });
     expect(customize).toHaveAttribute('aria-pressed', 'true');
     expect(canvas.getByRole('radio', { name: 'Scout' })).not.toBeChecked();
+    expect(animate).toBeChecked();
+    expect(customPreview).toHaveAttribute('data-animated', 'true');
+    expect(namePreview).toHaveAttribute('data-animated', 'true');
+    expect(
+      body
+        .getByRole('button', { name: /^Shape/ })
+        .querySelector('[data-size="16"]'),
+    ).toHaveAttribute('data-animated', 'false');
 
     await userEvent.click(animate);
     expect(args.onChange).toHaveBeenCalledTimes(3);
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
     expect(customize).toHaveAttribute('aria-pressed', 'false');
     expect(canvas.getByRole('radio', { name: 'Scout' })).toBeChecked();
+    expect(animate).not.toBeChecked();
+    expect(customPreview).toHaveAttribute('data-animated', 'false');
+    expect(namePreview).toHaveAttribute('data-animated', 'false');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(customize).toHaveFocus());
   },
@@ -303,6 +330,32 @@ export const FailedChange: Story = {
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(canvas.getByRole('radio', { name: 'Scout' })).not.toBeChecked();
+
+    const body = within(canvasElement.ownerDocument.body);
+    const customize = canvas.getByRole('button', { name: 'Customize' });
+
+    await userEvent.click(customize);
+    const animate = await body.findByRole('switch', { name: 'Animate' });
+
+    await userEvent.click(animate);
+    expect(args.onChange).toHaveBeenCalledTimes(2);
+    expect(args.onChange).toHaveBeenLastCalledWith({
+      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+      isAvatarAnimated: false,
+    });
+    expect(animate).toBeChecked();
+    expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
+    expect(customize.querySelector('[data-size="40"]')).toHaveAttribute(
+      'data-animated',
+      'true',
+    );
+    expect(
+      body
+        .getByRole('dialog', { name: 'Customize assistant' })
+        .querySelector('[data-size="20"]'),
+    ).toHaveAttribute('data-animated', 'true');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(customize).toHaveFocus());
   },
 };
 
