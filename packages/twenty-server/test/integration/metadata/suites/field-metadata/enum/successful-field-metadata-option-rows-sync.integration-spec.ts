@@ -263,6 +263,72 @@ describe('field metadata option rows follow field options', () => {
     expect(validationErrors?.fieldMetadataOption).toBeUndefined();
   });
 
+  it('adds a caller-owned row on a standard field and leaves its standard rows alone', async () => {
+    const [stageField] = await globalThis.testDataSource.query(
+      `SELECT field.id, field.options, field."applicationId"
+        FROM core."fieldMetadata" field
+        JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
+        WHERE field."workspaceId" = $1 AND object."nameSingular" = 'opportunity' AND field.name = 'stage'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    const originalOptions = stageField.options as StoredOption[];
+
+    try {
+      const { data: updateData } = await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: stageField.id,
+          updatePayload: {
+            options: [
+              ...originalOptions,
+              {
+                label: 'On hold',
+                value: 'ON_HOLD',
+                color: 'gray',
+                position: originalOptions.length,
+              },
+            ] satisfies FieldMetadataComplexOption[],
+          },
+        },
+        gqlFields: 'id options',
+      });
+
+      const updatedOptions = updateData.updateOneField
+        .options as StoredOption[];
+      const [{ workspaceCustomApplicationId }] =
+        await globalThis.testDataSource.query(
+          `SELECT "workspaceCustomApplicationId" FROM core.workspace WHERE id = $1`,
+          [SEED_APPLE_WORKSPACE_ID],
+        );
+
+      expect(await findOptionRows(stageField.id)).toEqual(
+        toExpectedRows({
+          options: updatedOptions,
+          applicationId: stageField.applicationId,
+        }).map((row) =>
+          row.value === 'ON_HOLD'
+            ? { ...row, applicationId: workspaceCustomApplicationId }
+            : row,
+        ),
+      );
+    } finally {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: stageField.id,
+          updatePayload: { options: originalOptions },
+        },
+      });
+    }
+
+    expect(await findOptionRows(stageField.id)).toEqual(
+      toExpectedRows({
+        options: originalOptions,
+        applicationId: stageField.applicationId,
+      }),
+    );
+  });
+
   it('keeps a row for every option of the standard fields', async () => {
     const [{ missingOptionRowCount }] = await globalThis.testDataSource.query(
       `SELECT count(*)::int AS "missingOptionRowCount"

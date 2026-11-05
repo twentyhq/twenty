@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   getTargetOptionColumnsByUniversalIdentifier,
@@ -50,6 +50,17 @@ export const computeFieldMetadataOptionOperationsForField = ({
   };
 
   if (isFieldMetadataOptionSyncSkipped(targetUniversalFlatFieldMetadata)) {
+    return operations;
+  }
+
+  // Another app's field without rows awaits the backfill, which gives them the field's app;
+  // rows created here would belong to the caller and collide with that app's next sync.
+  if (
+    !isNonEmptyArray(existingOptions) &&
+    isDefined(targetUniversalFlatFieldMetadata) &&
+    targetUniversalFlatFieldMetadata.applicationUniversalIdentifier !==
+      applicationUniversalIdentifier
+  ) {
     return operations;
   }
 
