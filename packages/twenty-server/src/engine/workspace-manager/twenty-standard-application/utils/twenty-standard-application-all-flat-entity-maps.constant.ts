@@ -68,6 +68,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     },
     twentyStandardApplicationId,
   });

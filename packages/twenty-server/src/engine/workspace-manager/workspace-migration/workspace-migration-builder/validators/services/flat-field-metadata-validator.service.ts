@@ -37,6 +37,7 @@ export class FlatFieldMetadataValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataOptionMaps,
     },
     workspaceId,
     buildOptions,
@@ -257,6 +258,7 @@ export class FlatFieldMetadataValidatorService {
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
             flatObjectMetadataMaps,
+            flatFieldMetadataOptionMaps,
           },
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
@@ -385,6 +387,7 @@ export class FlatFieldMetadataValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataOptionMaps,
     },
     workspaceId,
     buildOptions,
@@ -499,6 +502,7 @@ export class FlatFieldMetadataValidatorService {
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
             flatObjectMetadataMaps,
+            flatFieldMetadataOptionMaps,
           },
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,

@@ -163,6 +163,8 @@ export const validateEnumSelectFlatFieldMetadata = ({
         universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
         flatFieldMetadataMaps:
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataOptionMaps,
       })
     : [];
 

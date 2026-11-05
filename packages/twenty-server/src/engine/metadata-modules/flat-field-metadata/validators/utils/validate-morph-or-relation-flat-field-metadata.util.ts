@@ -25,6 +25,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
   },
   update,
   buildOptions,
@@ -74,6 +75,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          flatFieldMetadataOptionMaps,
         },
       }),
     );
@@ -93,6 +95,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
   },
   update,
   remainingFlatEntityMapsToValidate,
@@ -215,6 +218,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          flatFieldMetadataOptionMaps,
         },
         remainingFlatEntityMapsToValidate,
         workspaceId,
@@ -231,6 +235,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          flatFieldMetadataOptionMaps,
         },
       }),
       ...validateMorphOrRelationFlatFieldOnDelete({
