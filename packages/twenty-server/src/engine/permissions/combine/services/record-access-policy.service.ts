@@ -43,6 +43,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
 import { findGrantedRecordIds } from 'src/engine/permissions/combine/utils/find-granted-record-ids.util';
+import { arePermissionsPrincipalsRolesCached } from 'src/engine/permissions/combine/utils/are-permissions-principals-roles-cached.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -141,17 +142,16 @@ export class RecordAccessPolicyService {
       return false;
     }
 
-    const hasMissingRolePermissions = getPermissionsPrincipalsRoleIds(
-      request.principals,
-    ).some(
-      (roleId) => !isDefined(request.metadataMaps.rolesPermissions[roleId]),
-    );
-
-    if (hasMissingRolePermissions) {
+    if (
+      !arePermissionsPrincipalsRolesCached({
+        principals: request.principals,
+        rolesPermissions: request.metadataMaps.rolesPermissions,
+      })
+    ) {
       return false;
     }
 
-    const admittedRecordIds = await findPermissionsAdmittedRecordIds({
+    const grantedRecordIds = await findGrantedRecordIds({
       ...request,
       hypotheticalRecordShareAccessLevel,
       records: [record],
@@ -163,7 +163,7 @@ export class RecordAccessPolicyService {
       },
     });
 
-    return admittedRecordIds.has(record.id);
+    return grantedRecordIds.has(record.id);
   }
 
   async hasAccessToAllRecords({
