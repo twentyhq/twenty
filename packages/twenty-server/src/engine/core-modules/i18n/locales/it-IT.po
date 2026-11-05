@@ -3348,10 +3348,10 @@ msgstr "Collega prima un account per questo server MCP."
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Il collegamento non è consentito per {connectFieldName} su {objectMetadataNameSingular}"
 
-#. js-lingui-id: eTJ1jL
+#. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Connect your mailbox"
-msgstr "Collega la tua casella di posta"
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr ""
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -6623,6 +6623,11 @@ msgstr "Importa"
 msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "Importa {objectLabelPlural}"
+
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr ""
 
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
