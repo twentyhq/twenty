@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import ical from 'ical-generator';
-import { type DAVClient } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { CalDavInvitationEmailService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation-email.service';
-import { pickCalDavOrganizerEmail } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/pick-caldav-organizer-email.util';
+import { CalDavInvitationService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation.service';
 import {
   CalendarEventCreationException,
   CalendarEventCreationExceptionCode,
@@ -28,7 +26,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly calDavClientProvider: CalDavClientProvider,
     private readonly calDavFetchEventsService: CalDavFetchEventsService,
-    private readonly calDavInvitationEmailService: CalDavInvitationEmailService,
+    private readonly calDavInvitationService: CalDavInvitationService,
   ) {}
 
   async createCalendarEvent(
@@ -55,7 +53,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const organizer =
         input.attendees.length > 0
-          ? await this.resolveOrganizer({
+          ? await this.calDavInvitationService.resolveOrganizer({
               client,
               calendarUrl: targetCalendar.url,
               handle: connectedAccount.handle,
@@ -121,7 +119,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
       }
 
       if (isDefined(organizer) && !organizer.isServerScheduling) {
-        await this.calDavInvitationEmailService.sendInvitationEmail({
+        await this.calDavInvitationService.sendInvitationEmail({
           connectedAccount,
           calendar,
           organizerEmail: organizer.email,
@@ -180,40 +178,6 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
-  }
-
-  private async resolveOrganizer({
-    client,
-    calendarUrl,
-    handle,
-  }: {
-    client: DAVClient;
-    calendarUrl: string;
-    handle: string;
-  }): Promise<{ email: string; isServerScheduling: boolean }> {
-    const optionsResponse = await client.fetchOverride?.(calendarUrl, {
-      method: 'OPTIONS',
-    });
-    const isServerScheduling =
-      optionsResponse?.headers
-        .get('dav')
-        ?.toLowerCase()
-        .includes('calendar-auto-schedule') ?? false;
-
-    if (!isServerScheduling) {
-      return { email: handle, isServerScheduling };
-    }
-
-    const calendarUserAddresses = isDefined(client.account)
-      ? await client
-          .fetchCalendarUserAddresses({ account: client.account })
-          .catch(() => [])
-      : [];
-
-    return {
-      email: pickCalDavOrganizerEmail({ calendarUserAddresses, handle }),
-      isServerScheduling,
-    };
   }
 
   private resolveCreatedEventUrl({
