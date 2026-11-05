@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, mocked, userEvent, waitFor, within } from 'storybook/test';
 import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -49,6 +49,7 @@ export const PresetSelection: Story = {
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(customize).toHaveAttribute('aria-pressed', 'false');
     await userEvent.click(canvas.getByRole('radio', { name: 'Scout' }));
+    expect(args.onChange).toHaveBeenCalledTimes(1);
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
     expect(canvas.getByRole('radio', { name: 'Scout' })).toBeChecked();
 
@@ -57,6 +58,7 @@ export const PresetSelection: Story = {
 
     expect(animate).not.toBeChecked();
     await userEvent.click(animate);
+    expect(args.onChange).toHaveBeenCalledTimes(2);
     expect(args.onChange).toHaveBeenLastCalledWith({
       ...SCOUT_PROFILE,
       isAvatarAnimated: true,
@@ -65,6 +67,8 @@ export const PresetSelection: Story = {
     expect(canvas.getByRole('radio', { name: 'Scout' })).not.toBeChecked();
 
     await userEvent.click(animate);
+    expect(args.onChange).toHaveBeenCalledTimes(3);
+    expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
     expect(customize).toHaveAttribute('aria-pressed', 'false');
     expect(canvas.getByRole('radio', { name: 'Scout' })).toBeChecked();
     await userEvent.keyboard('{Escape}');
@@ -77,6 +81,7 @@ export const CustomEditsAndReset: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const customize = canvas.getByRole('button', { name: 'Customize' });
+    const onChange = mocked(args.onChange);
 
     await userEvent.click(customize);
     const name = await body.findByRole('textbox', { name: 'Assistant name' });
@@ -85,35 +90,58 @@ export const CustomEditsAndReset: Story = {
     await userEvent.tab();
     expect(name).toHaveAttribute('aria-invalid', 'true');
     await userEvent.type(name, '  Nimbus  ');
+    onChange.mockClear();
     await userEvent.tab();
     await waitFor(() => expect(name).toHaveValue('Nimbus'));
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith({
+      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+      displayName: 'Nimbus',
+    });
     expect(name).not.toHaveAttribute('aria-invalid', 'true');
 
+    onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: /^Shape/ }));
     await userEvent.click(
       await body.findByRole('menuitemradio', { name: 'Cloud' }),
     );
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith({
+      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+      displayName: 'Nimbus',
+      avatarShape: 'cloud',
+    });
     expect(body.getByRole('menuitemradio', { name: 'Cloud' })).toBeChecked();
     await userEvent.click(
       body.getByRole('menuitem', { name: 'Back to customization' }),
     );
 
+    onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: /^Color/ }));
     await userEvent.click(
       await body.findByRole('menuitemradio', { name: 'Purple' }),
     );
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith({
+      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+      displayName: 'Nimbus',
+      avatarShape: 'cloud',
+      avatarColor: 'purple',
+    });
     await userEvent.click(
       body.getByRole('menuitem', { name: 'Back to customization' }),
     );
 
+    onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: /^Face/ }));
     await userEvent.click(
       await body.findByRole('menuitemradio', { name: 'Happy' }),
     );
+    expect(onChange).toHaveBeenCalledOnce();
     await userEvent.click(
       body.getByRole('menuitem', { name: 'Back to customization' }),
     );
-    expect(args.onChange).toHaveBeenLastCalledWith({
+    expect(onChange).toHaveBeenCalledWith({
       displayName: 'Nimbus',
       avatarShape: 'cloud',
       avatarColor: 'purple',
@@ -125,10 +153,10 @@ export const CustomEditsAndReset: Story = {
       'Nimbus',
     );
 
+    onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: 'Reset to Ada' }));
-    expect(args.onChange).toHaveBeenLastCalledWith(
-      DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-    );
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(customize).toHaveAttribute('aria-pressed', 'false');
   },
@@ -144,6 +172,7 @@ export const KeyboardNavigation: Story = {
     ada.focus();
     await userEvent.keyboard('{ArrowRight}');
     expect(canvas.getByRole('radio', { name: 'Scout' })).toBeChecked();
+    expect(args.onChange).toHaveBeenCalledTimes(1);
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
 
     customize.focus();
@@ -160,12 +189,18 @@ export const KeyboardNavigation: Story = {
     await userEvent.keyboard('{Enter}');
     await body.findByRole('menuitemradio', { name: 'Circle' });
     await userEvent.keyboard('{End}{Enter}');
+    expect(args.onChange).toHaveBeenCalledTimes(2);
+    expect(args.onChange).toHaveBeenLastCalledWith({
+      ...SCOUT_PROFILE,
+      avatarShape: 'hexagon',
+    });
     expect(body.getByRole('menuitemradio', { name: 'Hexagon' })).toBeChecked();
 
     await userEvent.keyboard('{Home}{Enter}');
     await waitFor(() => expect(shape).toHaveFocus());
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(customize).toHaveFocus());
+    expect(args.onChange).toHaveBeenCalledTimes(2);
   },
 };
 
@@ -248,6 +283,7 @@ export const SavingWhileOpen: Story = {
     );
     expect(customize).not.toBeDisabled();
     expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(args.onChange).toHaveBeenCalledOnce();
   },
 };
 
@@ -263,6 +299,7 @@ export const FailedChange: Story = {
       'Unable to save assistant settings. Try again.',
     );
     await userEvent.click(canvas.getByRole('radio', { name: 'Scout' }));
+    expect(args.onChange).toHaveBeenCalledOnce();
     expect(args.onChange).toHaveBeenLastCalledWith(SCOUT_PROFILE);
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(canvas.getByRole('radio', { name: 'Scout' })).not.toBeChecked();
