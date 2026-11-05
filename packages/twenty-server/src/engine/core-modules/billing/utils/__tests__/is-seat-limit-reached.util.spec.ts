@@ -5,17 +5,19 @@ import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/bi
 import { type SeatBillingArrangement } from 'src/engine/core-modules/billing/types/seat-billing-arrangement.type';
 import { isSeatLimitReached } from 'src/engine/core-modules/billing/utils/is-seat-limit-reached.util';
 
-const committedSeats = (
-  seats: number,
-  overrides: Partial<SeatBillingArrangement> = {},
-): SeatBillingArrangement => ({
+const committedSeats = ({
+  seats,
+  seatCapMode = BillingArrangementSeatCapMode.HARD,
+}: {
+  seats: number;
+  seatCapMode?: BillingArrangementSeatCapMode;
+}): SeatBillingArrangement => ({
   type: BillingArrangementType.COMMITTED_SEATS,
   seats,
-  seatCapMode: BillingArrangementSeatCapMode.HARD,
+  seatCapMode,
   startsAt: new Date('2026-11-01T00:00:00.000Z'),
   endsAt: null,
   revokedAt: null,
-  ...overrides,
 });
 
 const freeSeats = (seats: number): SeatBillingArrangement => ({
@@ -38,7 +40,7 @@ describe('isSeatLimitReached', () => {
     expect(
       isSeatLimitReached({
         memberCount: 19,
-        seatArrangements: [committedSeats(20)],
+        seatArrangements: [committedSeats({ seats: 20 })],
       }),
     ).toBe(false);
   });
@@ -47,7 +49,7 @@ describe('isSeatLimitReached', () => {
     expect(
       isSeatLimitReached({
         memberCount: 20,
-        seatArrangements: [committedSeats(20)],
+        seatArrangements: [committedSeats({ seats: 20 })],
       }),
     ).toBe(true);
   });
@@ -56,14 +58,14 @@ describe('isSeatLimitReached', () => {
     expect(
       isSeatLimitReached({
         memberCount: 22,
-        seatArrangements: [committedSeats(20), freeSeats(3)],
+        seatArrangements: [committedSeats({ seats: 20 }), freeSeats(3)],
       }),
     ).toBe(false);
 
     expect(
       isSeatLimitReached({
         memberCount: 23,
-        seatArrangements: [committedSeats(20), freeSeats(3)],
+        seatArrangements: [committedSeats({ seats: 20 }), freeSeats(3)],
       }),
     ).toBe(true);
   });
@@ -73,7 +75,8 @@ describe('isSeatLimitReached', () => {
       isSeatLimitReached({
         memberCount: 20,
         seatArrangements: [
-          committedSeats(20, {
+          committedSeats({
+            seats: 20,
             seatCapMode: BillingArrangementSeatCapMode.SOFT,
           }),
         ],

@@ -2,15 +2,14 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
-
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
-import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
+import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
+import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
@@ -19,15 +18,12 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class BillingSeatService {
   constructor(
-    @InjectWorkspaceScopedRepository(BillingArrangementEntity)
-    private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
+    private readonly billingArrangementService: BillingArrangementService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly cacheLockService: CacheLockService,
@@ -53,8 +49,9 @@ export class BillingSeatService {
   async findSeatArrangements(
     workspaceId: string,
   ): Promise<BillingArrangementEntity[]> {
-    return await this.billingArrangementRepository.find(workspaceId, {
-      where: { type: In(SEAT_BILLING_ARRANGEMENT_TYPES) },
+    return await this.billingArrangementService.findArrangementsByTypes({
+      workspaceId,
+      types: SEAT_BILLING_ARRANGEMENT_TYPES,
     });
   }
 

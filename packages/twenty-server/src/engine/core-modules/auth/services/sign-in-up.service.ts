@@ -30,6 +30,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SEAT_LIMIT_REACHED_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
@@ -379,7 +380,7 @@ export class SignInUpService {
       'This workspace has used all its seats. Contact your workspace admin to add more.',
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
       {
-        userFriendlyMessage: msg`This workspace has used all its seats. Contact your workspace admin to add more.`,
+        userFriendlyMessage: BILLING_SEAT_LIMIT_REACHED_MESSAGE,
       },
     );
   }

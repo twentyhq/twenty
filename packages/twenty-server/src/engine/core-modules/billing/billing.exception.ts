@@ -4,6 +4,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { BILLING_SEAT_LIMIT_REACHED_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant';
 import { getBillingExceptionStatusCode } from 'src/engine/core-modules/billing/utils/get-billing-exception-status-code.util';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -115,7 +116,7 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
       return msg`Partner codes only apply to new Twenty customers.`;
     case BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED:
-      return msg`This workspace has used all its seats. Contact your workspace admin to add more.`;
+      return BILLING_SEAT_LIMIT_REACHED_MESSAGE;
     default:
       assertUnreachable(code);
   }

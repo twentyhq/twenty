@@ -13,7 +13,6 @@ import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolve
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
-import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -69,7 +68,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingProductEntity,
       BillingPriceEntity,
       BillingCreditGrantEntity,
-      BillingArrangementEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
     ]),
@@ -105,7 +103,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
-    provideWorkspaceScopedRepository(BillingArrangementEntity),
     provideWorkspaceScopedRepository(BillingCreditGrantEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),

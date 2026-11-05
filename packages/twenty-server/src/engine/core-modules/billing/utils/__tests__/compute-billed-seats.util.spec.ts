@@ -68,13 +68,4 @@ describe('computeBilledSeats', () => {
       }),
     ).toBe(22);
   });
-
-  it('uses the highest commitment when two apply in the same period', () => {
-    expect(
-      computeBilledSeats({
-        memberCount: 10,
-        seatArrangements: [committedSeats(30), committedSeats(20)],
-      }),
-    ).toBe(30);
-  });
 });

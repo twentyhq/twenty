@@ -81,7 +81,9 @@ export class BillingSeatArrangementSyncCronJob {
         UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
       );
     } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error]);
+      this.exceptionHandlerService.captureExceptions([error], {
+        additionalData: { workspaceIds: [...workspaceIds] },
+      });
     }
   }
 }

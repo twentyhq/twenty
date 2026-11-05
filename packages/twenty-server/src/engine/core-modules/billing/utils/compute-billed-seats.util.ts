@@ -3,16 +3,15 @@
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type SeatBillingArrangement } from 'src/engine/core-modules/billing/types/seat-billing-arrangement.type';
 
-const getMaxSeats = (
-  seatArrangements: SeatBillingArrangement[],
-  type: BillingArrangementType,
-): number =>
-  Math.max(
-    0,
-    ...seatArrangements
-      .filter((arrangement) => arrangement.type === type)
-      .map((arrangement) => arrangement.seats ?? 0),
-  );
+// Overlapping arrangements of one type are rejected at insert, so at most one is active
+const getSeats = ({
+  seatArrangements,
+  type,
+}: {
+  seatArrangements: SeatBillingArrangement[];
+  type: BillingArrangementType;
+}): number =>
+  seatArrangements.find((arrangement) => arrangement.type === type)?.seats ?? 0;
 
 export const computeBilledSeats = ({
   memberCount,
@@ -22,8 +21,11 @@ export const computeBilledSeats = ({
   seatArrangements: SeatBillingArrangement[];
 }): number =>
   Math.max(
-    getMaxSeats(seatArrangements, BillingArrangementType.COMMITTED_SEATS),
+    getSeats({
+      seatArrangements,
+      type: BillingArrangementType.COMMITTED_SEATS,
+    }),
     memberCount -
-      getMaxSeats(seatArrangements, BillingArrangementType.FREE_SEATS),
+      getSeats({ seatArrangements, type: BillingArrangementType.FREE_SEATS }),
     0,
   );

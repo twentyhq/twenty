@@ -233,32 +233,54 @@ export class BillingSubscriptionUpdateService {
       return;
     }
 
-    const billedSeats =
-      await this.billingSeatService.computeCurrentBilledSeats(workspaceId);
+    await this.withSubscriptionUpdateLock({
+      workspaceId,
+      update: async () => {
+        const billedSeats =
+          await this.billingSeatService.computeCurrentBilledSeats(workspaceId);
 
-    if (!isDefined(billedSeats)) {
-      return;
-    }
+        if (!isDefined(billedSeats)) {
+          return;
+        }
 
-    await this.updateSubscription(workspaceId, billingSubscription.id, {
-      type: SubscriptionUpdateType.SEATS,
-      newSeats: billedSeats,
+        await this.applySubscriptionUpdate({
+          workspaceId,
+          subscriptionId: billingSubscription.id,
+          subscriptionUpdate: {
+            type: SubscriptionUpdateType.SEATS,
+            newSeats: billedSeats,
+          },
+        });
+      },
     });
   }
 
-  // Seat jobs and plan switches rewrite the same Stripe schedule, so they must not interleave
   async updateSubscription(
     workspaceId: string,
     subscriptionId: string,
     subscriptionUpdate: SubscriptionUpdate,
   ): Promise<void> {
-    await this.cacheLockService.withLock(
-      () =>
+    await this.withSubscriptionUpdateLock({
+      workspaceId,
+      update: () =>
         this.applySubscriptionUpdate({
           workspaceId,
           subscriptionId,
           subscriptionUpdate,
         }),
+    });
+  }
+
+  // Seat jobs and plan switches rewrite the same Stripe schedule, so they must not interleave
+  private async withSubscriptionUpdateLock({
+    workspaceId,
+    update,
+  }: {
+    workspaceId: string;
+    update: () => Promise<void>;
+  }): Promise<void> {
+    await this.cacheLockService.withLock(
+      update,
       buildBillingSubscriptionUpdateLockKey(workspaceId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
