@@ -33,7 +33,6 @@ export class RecordShareWriteOrmService {
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
   ) {}
 
-  // Locks the target as well as its grants, so deletion cannot leave an orphan grant
   async lockRecordForSharingChange({
     workspaceId,
     flatObjectMetadata,

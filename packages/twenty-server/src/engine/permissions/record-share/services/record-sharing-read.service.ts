@@ -66,7 +66,6 @@ export class RecordSharingReadService {
     return this.buildSharingResponse({ args, sharingObject, permissions });
   }
 
-  // A writer may revoke their own access; the mutation must still succeed with a redacted state.
   async findRecordSharingAfterChange(
     args: RecordSharingArgs,
   ): Promise<RecordSharingDTO> {

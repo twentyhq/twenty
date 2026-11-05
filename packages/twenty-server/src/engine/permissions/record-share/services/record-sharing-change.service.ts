@@ -76,7 +76,6 @@ export class RecordSharingChangeService {
                 operationType: 'update',
                 withDeleted: true,
               });
-            // A grant may extend editing beyond a role, never decide who else gets it
             if (
               writableIds.length !== 1 ||
               !repository.isObjectOperationPermittedByRole('update')

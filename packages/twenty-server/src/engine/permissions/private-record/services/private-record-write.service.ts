@@ -138,7 +138,6 @@ export class PrivateRecordWriteService {
       transactionScope,
     });
 
-    // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
       if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
         return;

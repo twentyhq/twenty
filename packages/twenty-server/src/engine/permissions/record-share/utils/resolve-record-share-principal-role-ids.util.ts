@@ -7,7 +7,6 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 
-// Undefined for everyone, and for a member who left or whose membership is gone
 export const resolveRecordSharePrincipalRoleIds = ({
   principals,
   flatWorkspaceMemberMaps,
