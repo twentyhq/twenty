@@ -33,6 +33,7 @@ import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/a
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -98,7 +99,9 @@ export class AgentChatMemberMessageSenderService {
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
-    if (thread.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       const isDirectMessageIdentityEnabled =
         await this.featureFlagService.isFeatureEnabled(
           FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,

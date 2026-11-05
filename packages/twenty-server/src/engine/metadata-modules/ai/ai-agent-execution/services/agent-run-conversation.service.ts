@@ -1,4 +1,5 @@
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import {
   AiException,
   AiExceptionCode,
@@ -51,7 +52,10 @@ export class AgentRunConversationService {
       select: ['id', 'activeStreamId', 'conversationType'],
     });
 
-    if (thread?.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      thread?.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       throw new AiException(
         doNotTranslate('Direct messages do not run an assistant'),
         AiExceptionCode.INVALID_AGENT_INPUT,

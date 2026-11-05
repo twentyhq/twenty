@@ -12,6 +12,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
@@ -148,7 +149,9 @@ export class AgentChatDirectMessageRecordsService {
       return throwAgentChatThreadNotFound();
     }
 
-    if (thread.conversationType !== 'DIRECT_MESSAGE') {
+    if (
+      thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       directMessagePairsByThreadId?.set(threadId, null);
 
       return null;
