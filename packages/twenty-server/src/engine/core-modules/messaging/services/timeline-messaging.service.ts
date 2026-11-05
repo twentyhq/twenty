@@ -435,7 +435,7 @@ export class TimelineMessagingService {
         recordIds: [messageThreadId],
       });
 
-    if (recordsPermissions.get(messageThreadId)?.canRead !== true) {
+    if (!recordsPermissions.get(messageThreadId)?.canRead) {
       return null;
     }
 

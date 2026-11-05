@@ -227,7 +227,6 @@ export class RecordAccessDecisionService {
     });
   }
 
-  // Answers for the operation on each record, and also requires the object itself to be readable
   async findGrantedRecordIdsOnReadableObject(
     request: PrincipalsRecordsAccessRequest,
   ): Promise<Set<string>> {
