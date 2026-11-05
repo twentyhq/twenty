@@ -5492,7 +5492,16 @@ export default {
             "description": [
                 1
             ],
+            "doneChatThreadId": [
+                1
+            ],
+            "doneDescription": [
+                1
+            ],
             "doneTitle": [
+                1
+            ],
+            "doneWorkflowId": [
                 1
             ],
             "icon": [
@@ -14014,6 +14023,9 @@ export default {
             "completedStepActionKey": [
                 299
             ],
+            "completedStepChatThreadId": [
+                1
+            ],
             "isHidden": [
                 4
             ],
@@ -15702,8 +15714,14 @@ export default {
             "locale": [
                 1
             ],
+            "objectPermissions": [
+                399
+            ],
             "objectRecordsPermissions": [
                 406
+            ],
+            "objectsPermissions": [
+                399
             ],
             "permissionFlags": [
                 424

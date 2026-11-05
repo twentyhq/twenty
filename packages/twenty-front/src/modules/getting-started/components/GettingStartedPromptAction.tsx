@@ -46,13 +46,17 @@ export const GettingStartedPromptAction = ({
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const trimmedPrompt = prompt.trim();
 
-  const sendPrompt = () => {
-    openAskAiPageWithPreprompt({
+  const sendPrompt = async () => {
+    const chatThreadId = await openAskAiPageWithPreprompt({
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(trimmedPrompt),
       mode: 'SEND',
     });
-    void updateGettingStarted({ completedStepActionKey: actionKey });
+
+    void updateGettingStarted({
+      completedStepActionKey: actionKey,
+      completedStepChatThreadId: chatThreadId,
+    });
   };
 
   return (
@@ -75,7 +79,7 @@ export const GettingStartedPromptAction = ({
             disabled={
               !canSendAgentChatMessage || !isNonEmptyString(trimmedPrompt)
             }
-            onClick={sendPrompt}
+            onClick={() => void sendPrompt()}
           >
             <IconArrowUp />
           </IconButton>

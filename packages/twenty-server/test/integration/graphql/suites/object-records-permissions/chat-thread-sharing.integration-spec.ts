@@ -696,7 +696,7 @@ describe('Conversation sharing through the authenticated API', () => {
       threadId: randomUUID(),
     };
     const cleanup = jest
-      .spyOn(shareService, 'deleteByRecordIdsInTransaction')
+      .spyOn(shareService, 'deleteByRecordIds')
       .mockRejectedValueOnce(new Error('Grant storage unavailable'));
     try {
       await expect(

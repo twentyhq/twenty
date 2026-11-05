@@ -12,6 +12,7 @@ import {
 export const buildDeleteRecordSharesQuery = ({
   recordShareTableExpression,
   criteria: {
+    ids,
     objectMetadataId,
     recordIds,
     principalId,
@@ -24,6 +25,7 @@ export const buildDeleteRecordSharesQuery = ({
   criteria: RecordShareCriteria;
 }): RecordPermissionQuery => {
   const conditions = [
+    isDefined(ids) && `"id" = ANY(:ids)`,
     isDefined(objectMetadataId) && `"objectMetadataId" = :objectMetadataId`,
     isDefined(recordIds) && `"recordId" = ANY(:recordIds)`,
     isDefined(principalId) && `"principalId" = :principalId`,
@@ -43,6 +45,7 @@ export const buildDeleteRecordSharesQuery = ({
   return {
     sql: `DELETE FROM ${recordShareTableExpression} WHERE ${conditions.join(' AND ')} AND "deletedAt" IS NULL`,
     parameters: {
+      ...(isDefined(ids) && { ids }),
       ...(isDefined(objectMetadataId) && { objectMetadataId }),
       ...(isDefined(recordIds) && { recordIds }),
       ...(isDefined(principalId) && { principalId }),

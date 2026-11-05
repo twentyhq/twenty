@@ -12,5 +12,6 @@ export type RecordShareCriteria = Partial<
     | 'sourceId'
   >
 > & {
+  ids?: string[];
   recordIds?: string[];
 };

@@ -3,15 +3,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { RecordShareRowCause } from 'twenty-shared/types';
-import { type EntityManager } from 'typeorm';
 
-import { RECORD_SHARE_OBJECT_METADATA_NAME } from 'src/engine/permissions/record-permission-orm/constants/record-share-object-metadata-name.constant';
 import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
 import { type RecordShareCriteria } from 'src/engine/permissions/record-permission-orm/types/record-share-criteria.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
 export class RecordShareStorageService {
@@ -90,27 +86,6 @@ export class RecordShareStorageService {
       transactionScope,
       criteria: { objectMetadataId, recordIds },
     });
-  }
-
-  async deleteByRecordIdsInTransaction({
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-    manager,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-    manager: EntityManager;
-  }): Promise<void> {
-    if (recordIds.length === 0) {
-      return;
-    }
-    // History transactions span core and workspace tables, so they must reuse their connection.
-    await manager.query(
-      `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
-      [objectMetadataId, recordIds],
-    );
   }
 
   async deleteMatching({
