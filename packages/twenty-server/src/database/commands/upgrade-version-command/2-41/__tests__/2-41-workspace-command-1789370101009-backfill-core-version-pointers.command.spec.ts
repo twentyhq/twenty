@@ -1,0 +1,185 @@
+import { Test } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789370101009-backfill-core-version-pointers.command';
+
+const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
+
+const isUpdate = (sql: unknown) =>
+  typeof sql === 'string' && sql.trimStart().startsWith('UPDATE');
+
+const updatedTable = (sql: string) =>
+  sql.includes('core."workflow" cw') ? 'workflow' : 'commandMenuItem';
+
+const setup = async ({
+  workflowTotal = 0,
+  commandMenuItemTotal = 0,
+  hasCoreWorkflowVersionIdColumn = true,
+}: {
+  workflowTotal?: number;
+  commandMenuItemTotal?: number;
+  hasCoreWorkflowVersionIdColumn?: boolean;
+} = {}) => {
+  const query = jest.fn().mockImplementation(async (...args: unknown[]) => {
+    const sql = args[0] as string;
+
+    if (sql.includes('information_schema.columns')) {
+      return hasCoreWorkflowVersionIdColumn ? [{ '?column?': 1 }] : [];
+    }
+    if (sql.includes('count(*)')) {
+      return [
+        {
+          total: sql.includes('core."workflow" cw')
+            ? workflowTotal
+            : commandMenuItemTotal,
+        },
+      ];
+    }
+
+    return [];
+  });
+
+  const dataSource = new DataSource({ type: 'postgres' });
+  const queryRunner = dataSource.createQueryRunner();
+
+  queryRunner.connect = jest.fn();
+  queryRunner.release = jest.fn();
+  queryRunner.query = query;
+  dataSource.createQueryRunner = () => queryRunner;
+
+  const flush = jest.fn();
+
+  const module = await Test.createTestingModule({
+    providers: [
+      BackfillCoreVersionPointersCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      { provide: WorkspaceCacheService, useValue: { flush } },
+    ],
+  }).compile();
+  const command = module.get(BackfillCoreVersionPointersCommand);
+
+  const run = (dryRun = false) =>
+    command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource,
+      options: { dryRun },
+      index: 0,
+      total: 1,
+    });
+
+  return { run, query, queryRunner, flush };
+};
+
+describe('BackfillCoreVersionPointersCommand', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('builds single-FROM statements', async () => {
+    const { run, query } = await setup({
+      workflowTotal: 2,
+      commandMenuItemTotal: 3,
+    });
+
+    await run();
+
+    const statements = query.mock.calls
+      .map((call) => String(call[0]))
+      .filter((sql) => !sql.includes('information_schema.columns'));
+
+    expect(statements).not.toHaveLength(0);
+
+    for (const sql of statements) {
+      expect(sql.match(/\bFROM\b/g)).toHaveLength(1);
+    }
+  });
+
+  it('updates both tables when both have rows left to fill', async () => {
+    const { run, query, queryRunner, flush } = await setup({
+      workflowTotal: 2,
+      commandMenuItemTotal: 3,
+    });
+
+    await run();
+
+    const updated = query.mock.calls
+      .filter((call) => isUpdate(call[0]))
+      .map((call) => updatedTable(String(call[0])));
+
+    expect(updated).toEqual(['workflow', 'commandMenuItem']);
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(flush).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatCommandMenuItemMaps',
+    ]);
+  });
+
+  it('updates only the table that has rows left to fill', async () => {
+    const { run, query } = await setup({
+      workflowTotal: 0,
+      commandMenuItemTotal: 3,
+    });
+
+    await run();
+
+    const updated = query.mock.calls
+      .filter((call) => isUpdate(call[0]))
+      .map((call) => updatedTable(String(call[0])));
+
+    expect(updated).toEqual(['commandMenuItem']);
+  });
+
+  it('skips a workspace whose workflowVersion table has no coreWorkflowVersionId column', async () => {
+    const { run, query, queryRunner } = await setup({
+      workflowTotal: 2,
+      commandMenuItemTotal: 3,
+      hasCoreWorkflowVersionIdColumn: false,
+    });
+
+    await run();
+
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not update on a dry run', async () => {
+    const { run, query, flush } = await setup({
+      workflowTotal: 2,
+      commandMenuItemTotal: 3,
+    });
+
+    await run(true);
+
+    expect(query.mock.calls.some((call) => isUpdate(call[0]))).toBe(false);
+    expect(flush).not.toHaveBeenCalled();
+  });
+
+  it('is a no-op when nothing is left to fill', async () => {
+    const { run, query } = await setup();
+
+    await run();
+
+    expect(query.mock.calls.some((call) => isUpdate(call[0]))).toBe(false);
+  });
+
+  it('releases the query runner when an update throws', async () => {
+    const { run, queryRunner, query } = await setup({ workflowTotal: 2 });
+
+    query.mockImplementation(async (...args: unknown[]) => {
+      const sql = args[0] as string;
+
+      if (sql.includes('information_schema.columns')) {
+        return [{ '?column?': 1 }];
+      }
+      if (sql.includes('count(*)')) {
+        return [{ total: 2 }];
+      }
+
+      throw new Error('update failed');
+    });
+
+    await expect(run()).rejects.toThrow('update failed');
+
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
+  });
+});
