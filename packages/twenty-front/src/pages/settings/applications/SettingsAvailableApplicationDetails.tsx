@@ -11,8 +11,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
-import { useMarketplaceApplicationContent } from '@/settings/applications/hooks/useMarketplaceApplicationContent';
-import { getNonEmptyApplicationContentTypes } from '@/settings/applications/utils/getNonEmptyApplicationContentTypes';
+import { useMarketplaceApplicationContentPath } from '@/settings/applications/hooks/useMarketplaceApplicationContentPath';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -93,13 +92,9 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const application = applicationData?.findOneApplication;
 
-  const { content } = useMarketplaceApplicationContent(
+  const contentPath = useMarketplaceApplicationContentPath(
     isUuidFormat(availableApplicationId) ? availableApplicationId : undefined,
   );
-
-  const hasContent =
-    isDefined(content) &&
-    getNonEmptyApplicationContentTypes(content).length > 0;
 
   const detail = detailData?.findMarketplaceAppDetail;
 
@@ -220,13 +215,7 @@ export const SettingsAvailableApplicationDetails = () => {
           issueReportUrl: detail.issueReportUrl ?? undefined,
           sourcePackageUrl,
         }}
-        contentPath={
-          hasContent
-            ? getSettingsPath(SettingsPath.AvailableApplicationContent, {
-                availableApplicationId,
-              })
-            : undefined
-        }
+        contentPath={contentPath}
         onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
       />
     );
