@@ -102,12 +102,17 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const now = new Date().toISOString();
 
-      const attendeeParticipants = input.attendees.map((attendee) => ({
-        displayName: attendee.displayName ?? '',
-        handle: attendee.email,
-        responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
-        isOrganizer: false,
-      }));
+      const attendeeParticipants = input.attendees
+        .filter(
+          (attendee) =>
+            attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
+        )
+        .map((attendee) => ({
+          displayName: attendee.displayName ?? '',
+          handle: attendee.email,
+          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
+          isOrganizer: false,
+        }));
 
       return {
         id,
@@ -161,6 +166,6 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
           .catch(() => [])
       : [];
 
-    return pickCalDavOrganizerEmail(calendarUserAddresses, handle);
+    return pickCalDavOrganizerEmail({ calendarUserAddresses, handle });
   }
 }

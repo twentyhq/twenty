@@ -24,10 +24,7 @@ const HANDLE = `caldav-omitted-component-set-${randomUUID()}@acme.test`;
 const COLLECTION = 'personal';
 const PASSWORD = 'radicale-password';
 
-// Radicale always publishes supported-calendar-component-set, so reproducing an
-// RFC 4791 server that leaves it out means stripping it off the wire. The
-// self-closing form is matched on its own so it cannot pair up with a later
-// closing tag and swallow every response in between.
+// Self-closing form matched separately so it cannot pair with a later closing tag.
 const COMPONENT_SET_ELEMENT =
   /<(\w+:)?supported-calendar-component-set\b[^>]*\/>|<(\w+:)?supported-calendar-component-set\b[^>]*>[\s\S]*?<\/(\w+:)?supported-calendar-component-set>/g;
 

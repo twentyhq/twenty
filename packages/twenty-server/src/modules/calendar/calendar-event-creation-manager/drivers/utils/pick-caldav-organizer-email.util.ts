@@ -1,7 +1,10 @@
-export const pickCalDavOrganizerEmail = (
-  calendarUserAddresses: string[],
-  handle: string,
-): string => {
+export const pickCalDavOrganizerEmail = ({
+  calendarUserAddresses,
+  handle,
+}: {
+  calendarUserAddresses: string[];
+  handle: string;
+}): string => {
   const emails = calendarUserAddresses
     .filter((address) => /^mailto:/i.test(address))
     .map((address) => address.replace(/^mailto:/i, ''));
