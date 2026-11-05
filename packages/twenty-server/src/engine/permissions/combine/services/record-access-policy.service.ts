@@ -212,9 +212,9 @@ export class RecordAccessPolicyService {
       flatObjectMetadata: request.flatObjectMetadata,
       operationType: request.operationType,
       recordShareTableExpression:
-        this.recordPermissionOrmService.buildRecordShareTableExpression(
-          principals.workspaceId,
-        ),
+        this.recordPermissionOrmService.buildRecordShareTableExpression({
+          workspaceId: principals.workspaceId,
+        }),
       hypotheticalRecordShareAccessLevel,
     });
 

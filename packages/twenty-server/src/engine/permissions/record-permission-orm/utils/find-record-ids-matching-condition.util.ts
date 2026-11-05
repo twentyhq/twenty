@@ -3,8 +3,8 @@
 import { isObject } from '@sniptt/guards';
 
 import { type SqlCondition } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { executeRecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/utils/execute-record-permission-query.util';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const findRecordIdsMatchingCondition = async ({
@@ -23,15 +23,14 @@ export const findRecordIdsMatchingCondition = async ({
   const escapedTableAlias = escapeIdentifier(tableAlias);
   const conditionClause = isObject(condition) ? ` AND (${condition.sql})` : '';
 
-  const rows = await executor.execute(
-    compileNamedParameters(
-      `SELECT ${escapedTableAlias}."id" FROM ${tableExpression} AS ${escapedTableAlias} WHERE ${escapedTableAlias}."id" = ANY(:candidateRecordIds)${conditionClause}`,
-      {
-        ...(isObject(condition) ? condition.parameters : {}),
-        candidateRecordIds: recordIds,
-      },
-    ),
-  );
+  const rows = await executeRecordPermissionQuery<{ id: string }>({
+    executor,
+    sql: `SELECT ${escapedTableAlias}."id" FROM ${tableExpression} AS ${escapedTableAlias} WHERE ${escapedTableAlias}."id" = ANY(:candidateRecordIds)${conditionClause}`,
+    parameters: {
+      ...(isObject(condition) ? condition.parameters : {}),
+      candidateRecordIds: recordIds,
+    },
+  });
 
-  return new Set(rows.map(({ id }) => String(id)));
+  return new Set(rows.map(({ id }) => id));
 };

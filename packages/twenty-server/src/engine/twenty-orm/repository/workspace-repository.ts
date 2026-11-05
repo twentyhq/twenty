@@ -1,9 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
-  type RecordShareAccessLevel,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';

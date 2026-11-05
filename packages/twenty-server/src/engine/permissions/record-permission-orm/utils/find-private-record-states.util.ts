@@ -9,8 +9,8 @@ import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/h
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { executeRecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/utils/execute-record-permission-query.util';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const findPrivateRecordStates = async <
@@ -39,15 +39,16 @@ export const findPrivateRecordStates = async <
     ? escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)
     : 'NULL';
 
-  const rows = await executor.execute(
-    compileNamedParameters(
-      `SELECT "id", ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AS "isPrivate", ${createdBy} AS "createdByWorkspaceMemberId" FROM ${tableExpression} WHERE "id" = ANY(:recordIds)`,
-      { recordIds },
-    ),
-  );
+  const rows = await executeRecordPermissionQuery<
+    { id: string } & PrivateRecordState
+  >({
+    executor,
+    sql: `SELECT "id", ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AS "isPrivate", ${createdBy} AS "createdByWorkspaceMemberId" FROM ${tableExpression} WHERE "id" = ANY(:recordIds)`,
+    parameters: { recordIds },
+  });
 
   return new Map(
-    (rows as ({ id: string } & PrivateRecordState)[]).map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
+    rows.map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
       id,
       { isPrivate, createdByWorkspaceMemberId },
     ]),

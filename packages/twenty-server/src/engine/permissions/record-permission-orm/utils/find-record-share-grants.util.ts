@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
+import { executeRecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/utils/execute-record-permission-query.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 
 export const findRecordShareGrants = async ({
   executor,
@@ -19,12 +19,9 @@ export const findRecordShareGrants = async ({
     return [];
   }
 
-  const rows = await executor.execute(
-    compileNamedParameters(
-      `SELECT "recordId", "principalId", "accessLevel" FROM ${recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
-      { objectMetadataId, recordIds },
-    ),
-  );
-
-  return rows as RecordShareGrant[];
+  return executeRecordPermissionQuery<RecordShareGrant>({
+    executor,
+    sql: `SELECT "recordId", "principalId", "accessLevel" FROM ${recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
+    parameters: { objectMetadataId, recordIds },
+  });
 };
