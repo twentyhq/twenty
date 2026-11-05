@@ -11,6 +11,8 @@ import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 // an update replaces the whole policy, so saves must reach the server one at a time
 let lastAiDataPolicySave: Promise<void> = Promise.resolve();
+let pendingAiDataPolicySaveCount = 0;
+let confirmedAiDataPolicy: AiDataPolicy | null = null;
 
 export const useUpdateWorkspaceAiDataPolicyField = () => {
   const { enqueueToast } = useToast();
@@ -32,21 +34,29 @@ export const useUpdateWorkspaceAiDataPolicyField = () => {
     field: TField;
     value: AiDataPolicy[TField];
   }) => {
-    const previousValue = readStoredAiDataPolicy()[field];
+    const storedAiDataPolicy = readStoredAiDataPolicy();
 
-    setStoredAiDataPolicy({ ...readStoredAiDataPolicy(), [field]: value });
+    if (pendingAiDataPolicySaveCount === 0) {
+      confirmedAiDataPolicy = storedAiDataPolicy;
+    }
+
+    pendingAiDataPolicySaveCount += 1;
+    setStoredAiDataPolicy({ ...storedAiDataPolicy, [field]: value });
 
     lastAiDataPolicySave = lastAiDataPolicySave.then(async () => {
+      const aiDataPolicy = readStoredAiDataPolicy();
+
       try {
-        await updateWorkspace({
-          variables: { input: { aiDataPolicy: readStoredAiDataPolicy() } },
-        });
+        await updateWorkspace({ variables: { input: { aiDataPolicy } } });
+        confirmedAiDataPolicy = aiDataPolicy;
       } catch (error) {
         setStoredAiDataPolicy({
           ...readStoredAiDataPolicy(),
-          [field]: previousValue,
+          [field]: (confirmedAiDataPolicy ?? storedAiDataPolicy)[field],
         });
         enqueueToast(getToastOptionsFromError({ error }));
+      } finally {
+        pendingAiDataPolicySaveCount -= 1;
       }
     });
 
