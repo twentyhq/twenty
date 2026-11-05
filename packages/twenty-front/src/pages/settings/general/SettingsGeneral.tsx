@@ -11,9 +11,8 @@ import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
 import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
-import { useIsAiDataPolicyConfigurable } from '@/settings/privacy/hooks/useIsAiDataPolicyConfigurable';
+import { useHasPrivacySettings } from '@/settings/privacy/hooks/useHasPrivacySettings';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -25,7 +24,6 @@ import {
   IconSettings2,
   IconShield,
 } from 'twenty-ui/icon';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
@@ -47,12 +45,7 @@ export const SettingsGeneral = () => {
   );
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
-  const isPrivacyEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
-  );
-  const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();
-  const hasPrivacySettings =
-    isPrivacyEnabled && (isMultiWorkspaceEnabled || isAiDataPolicyConfigurable);
+  const hasPrivacySettings = useHasPrivacySettings();
 
   const privacyTabs = hasPrivacySettings
     ? [{ id: GENERAL_TAB_PRIVACY, title: t`Privacy`, Icon: IconShield }]
