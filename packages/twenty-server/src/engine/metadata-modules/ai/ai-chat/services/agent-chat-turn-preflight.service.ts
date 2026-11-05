@@ -6,7 +6,7 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
-import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import {
   AiException,
   AiExceptionCode,
@@ -23,6 +23,7 @@ export class AgentChatTurnPreflightService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly threadService: AgentChatThreadService,
     private readonly aiBillingService: AiBillingService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   async assertCanStartChatTurn({
@@ -38,7 +39,7 @@ export class AgentChatTurnPreflightService {
     workspaceMemberId: string;
     workspace: AgentChatTurnWorkspace;
   }) {
-    this.assertModelAvailable({ modelId, workspace });
+    await this.assertModelAvailable({ modelId, workspace });
 
     const thread = await this.threadService.getWritableThread({
       threadId,
@@ -60,18 +61,18 @@ export class AgentChatTurnPreflightService {
     userWorkspaceId: string;
     workspace: AgentChatTurnWorkspace;
   }): Promise<void> {
-    this.assertModelAvailable({ modelId, workspace });
+    await this.assertModelAvailable({ modelId, workspace });
 
     await this.assertAiExecutionAllowed({ userWorkspaceId, workspace });
   }
 
-  private assertModelAvailable({
+  private async assertModelAvailable({
     modelId,
     workspace,
   }: {
     modelId?: string;
     workspace: AgentChatTurnWorkspace;
-  }): void {
+  }): Promise<void> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -81,7 +82,10 @@ export class AgentChatTurnPreflightService {
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: getChatModelId({ requestedModelId: modelId, workspace }),
-      aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
+      aiDataPolicy:
+        await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+          workspace,
+        ),
     });
   }
 

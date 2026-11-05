@@ -14,7 +14,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 
 import { AgentService } from './agent.service';
@@ -40,6 +40,7 @@ export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -107,7 +108,10 @@ export class AgentResolver {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
-        aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
+        aiDataPolicy:
+          await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          ),
       });
     }
 
@@ -137,7 +141,10 @@ export class AgentResolver {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
-        aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
+        aiDataPolicy:
+          await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          ),
       });
     }
 

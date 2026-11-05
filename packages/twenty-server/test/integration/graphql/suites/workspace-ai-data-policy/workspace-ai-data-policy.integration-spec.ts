@@ -1,3 +1,5 @@
+import { gql } from 'graphql-tag';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateAiDataPolicy } from 'test/integration/graphql/suites/workspace-ai-data-policy/utils/update-ai-data-policy.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -25,7 +27,11 @@ const setAiDataPolicyFlag = (value: boolean) =>
     expectToFail: false,
   });
 
-const createAgentOnUnlabeledModel = () =>
+const createAgentOnUnlabeledModel = ({
+  expectToFail,
+}: {
+  expectToFail: boolean;
+}) =>
   createOneAgent({
     input: {
       label: 'Excluded model agent',
@@ -33,9 +39,25 @@ const createAgentOnUnlabeledModel = () =>
       modelId: UNLABELED_CATALOG_MODEL_ID,
     },
     gqlFields: 'id',
-    expectToFail: true,
+    expectToFail,
     token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
   });
+
+const readAiDataPolicy = () =>
+  makeMetadataApiRequest(
+    {
+      query: gql`
+        query {
+          currentWorkspace {
+            aiDataPolicy {
+              dataResidency
+            }
+          }
+        }
+      `,
+    },
+    APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  );
 
 describe('workspace AI data policy', () => {
   beforeEach(async () => {
@@ -118,7 +140,9 @@ describe('workspace AI data policy', () => {
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    const { errors } = await createAgentOnUnlabeledModel();
+    const { errors } = await createAgentOnUnlabeledModel({
+      expectToFail: true,
+    });
 
     expect(errors[0].extensions.subCode).toBe(
       'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
@@ -139,16 +163,30 @@ describe('workspace AI data policy', () => {
       );
     });
 
-    it('keeps enforcing a policy that was already set', async () => {
+    it('ignores a stored policy until the flag is back on', async () => {
       await updateAiDataPolicy({
         data: { aiDataPolicy: ZERO_RETENTION_POLICY },
         token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
       await setAiDataPolicyFlag(false);
 
-      const { errors } = await createAgentOnUnlabeledModel();
+      const read = await readAiDataPolicy();
 
-      expect(errors[0].extensions.subCode).toBe(
+      expect(read.body.data.currentWorkspace.aiDataPolicy).toBeNull();
+
+      const { errors: errorsWithFlagOff } = await createAgentOnUnlabeledModel({
+        expectToFail: false,
+      });
+
+      expect(errorsWithFlagOff).toBeUndefined();
+
+      await setAiDataPolicyFlag(true);
+
+      const { errors: errorsWithFlagOn } = await createAgentOnUnlabeledModel({
+        expectToFail: true,
+      });
+
+      expect(errorsWithFlagOn[0].extensions.subCode).toBe(
         'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
       );
     });

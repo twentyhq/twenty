@@ -47,7 +47,6 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -434,7 +433,6 @@ export class WorkspaceEntity {
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
 
-  @Field(() => AiDataPolicyDTO, { nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
   })

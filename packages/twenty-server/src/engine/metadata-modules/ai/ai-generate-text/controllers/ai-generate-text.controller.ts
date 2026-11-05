@@ -30,7 +30,7 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
@@ -72,6 +72,7 @@ export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
@@ -100,7 +101,10 @@ export class AiGenerateTextController {
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
-    const aiDataPolicy = getWorkspaceAiDataPolicy(workspace);
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+        workspace,
+      );
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: resolvedModelId,
@@ -110,7 +114,7 @@ export class AiGenerateTextController {
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(
         { modelId: resolvedModelId },
-        workspace,
+        { ...workspace, effectiveAiDataPolicy: aiDataPolicy },
       );
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;

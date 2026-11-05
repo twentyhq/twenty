@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -13,7 +14,7 @@ import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-
 
 @Global()
 @Module({
-  imports: [EnterpriseModule, CoreEntityCacheModule],
+  imports: [EnterpriseModule, CoreEntityCacheModule, FeatureFlagModule],
   providers: [
     DefaultAiCatalogService,
     ProviderConfigService,

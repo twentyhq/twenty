@@ -53,7 +53,6 @@ import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
 import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
-import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 
 export interface RegisteredAiModel {
   modelId: string;
@@ -642,7 +641,8 @@ export class AiModelRegistryService {
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,
   ): RegisteredAiModel {
-    const aiDataPolicy = getWorkspaceAiDataPolicy(workspaceSettings);
+    const aiDataPolicy =
+      workspaceSettings?.effectiveAiDataPolicy ?? NO_AI_DATA_POLICY;
     const pinnedModelId =
       isDefined(workspaceSettings) &&
       !workspaceSettings.isAutoModelSelectionEnabled
@@ -940,7 +940,7 @@ export class AiModelRegistryService {
 
     this.assertModelIsCompliantWithDataPolicy({
       modelId: registeredModel.modelId,
-      aiDataPolicy: getWorkspaceAiDataPolicy(workspaceSettings),
+      aiDataPolicy: workspaceSettings.effectiveAiDataPolicy,
     });
 
     return registeredModel;

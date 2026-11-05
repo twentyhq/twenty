@@ -105,7 +105,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -183,6 +183,7 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -607,7 +608,10 @@ export class WorkspaceService {
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
         aiDataPolicy:
-          payload.aiDataPolicy ?? getWorkspaceAiDataPolicy(workspace),
+          payload.aiDataPolicy ??
+          (await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          )),
       });
     }
 
