@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
-import { type Request } from 'express';
+import { Test } from '@nestjs/testing';
 
-import { type SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { SamlAuthStrategy } from './saml.auth.strategy';
 
@@ -33,28 +33,41 @@ const buildRequest = ({
   return {
     params: { identityProviderId: paramsIdpId },
     body,
-  } as unknown as Request;
+  };
 };
 
-const buildProfile = (email: string = VALID_EMAIL) =>
-  ({
-    email,
-    nameID: email,
-    issuer: 'irrelevant',
-  }) as unknown as Parameters<SamlAuthStrategy['validate']>[1];
+const buildProfile = (
+  email: string = VALID_EMAIL,
+): Parameters<SamlAuthStrategy['validate']>[1] => ({
+  email,
+  nameID: email,
+  nameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+  issuer: 'irrelevant',
+  getAssertionXml: () => '',
+  getAssertion: () => ({}),
+  getSamlResponseXml: () => '',
+});
 
 describe('SamlAuthStrategy.validate', () => {
   let strategy: SamlAuthStrategy;
 
-  beforeEach(() => {
-    const ssoService = {
-      findSsoIdentityProviderById: jest.fn(),
-      isSamlIdentityProvider: jest.fn(),
-      buildIssuerURL: jest.fn(),
-      buildCallbackUrl: jest.fn(),
-    } as unknown as SsoService;
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        SamlAuthStrategy,
+        {
+          provide: SsoService,
+          useValue: {
+            findSsoIdentityProviderById: jest.fn(),
+            isSamlIdentityProvider: jest.fn(),
+            buildIssuerURL: jest.fn(),
+            buildCallbackUrl: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-    strategy = new SamlAuthStrategy(ssoService);
+    strategy = module.get(SamlAuthStrategy);
   });
 
   // A RelayState claiming another IdP than the one whose cert verified the assertion must not influence the resolved IdP
@@ -190,11 +203,7 @@ describe('SamlAuthStrategy.validate', () => {
     const request = buildRequest({ paramsIdpId: IDP_A });
     const done = jest.fn();
 
-    await strategy.validate(
-      request,
-      undefined as unknown as Parameters<SamlAuthStrategy['validate']>[1],
-      done,
-    );
+    await strategy.validate(request, null, done);
 
     expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeInstanceOf(Error);

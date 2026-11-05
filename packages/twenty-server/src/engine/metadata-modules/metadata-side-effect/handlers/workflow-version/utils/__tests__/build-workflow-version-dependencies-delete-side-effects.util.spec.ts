@@ -7,6 +7,10 @@ import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/typ
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildWorkflowVersionDependenciesDeleteSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow-version/utils/build-workflow-version-dependencies-delete-side-effects.util';
+import {
+  type WorkflowCodeAction,
+  type WorkflowLogicFunctionAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
@@ -18,13 +22,20 @@ const APPLICATION_FUNCTION_ID = '44444444-4444-4444-8444-444444444444';
 const step = (
   type: WorkflowActionType.CODE | WorkflowActionType.LOGIC_FUNCTION,
   logicFunctionId: string,
-) => ({
+): WorkflowCodeAction | WorkflowLogicFunctionAction => ({
   id: `step-${type}-${logicFunctionId}`,
   name: 'Step',
   type,
   valid: true,
   nextStepIds: [],
-  settings: { input: { logicFunctionId } },
+  settings: {
+    input: { logicFunctionId, logicFunctionInput: {} },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
 });
 
 const buildMaps = () => {
@@ -67,7 +78,7 @@ const buildMaps = () => {
   for (const version of versions) {
     maps.flatWorkflowVersionMaps.byUniversalIdentifier[
       version.universalIdentifier
-    ] = version as unknown as FlatWorkflowVersion;
+    ] = version as FlatWorkflowVersion;
   }
 
   const commandMenuItems = [
