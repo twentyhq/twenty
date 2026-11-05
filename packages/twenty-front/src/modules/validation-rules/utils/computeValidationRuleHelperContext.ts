@@ -1,3 +1,4 @@
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
   isDefined,
   tokenizeValidationRuleExpression,
@@ -78,9 +79,14 @@ export const computeValidationRuleHelperContext = ({
     };
   }
 
+  const isPreviousValueContainer =
+    parentPath === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME;
   const parentField = fields.find((field) => field.path === parentPath);
 
-  if (!isDefined(parentField) || !parentField.hasMembers) {
+  if (
+    !isPreviousValueContainer &&
+    (!isDefined(parentField) || !parentField.hasMembers)
+  ) {
     return { replaceFromOffset: cursorOffset, items: [] };
   }
 
@@ -94,6 +100,12 @@ export const computeValidationRuleHelperContext = ({
         (field) =>
           field.path.startsWith(`${parentPath}.`) &&
           field.path.split('.').length === memberDepth,
+      )
+      .filter(
+        (field) =>
+          !isPreviousValueContainer ||
+          !field.isSystem ||
+          partialWord.length > 0,
       )
       .filter((field) =>
         matchesQuery(
