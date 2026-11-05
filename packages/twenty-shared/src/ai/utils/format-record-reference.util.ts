@@ -2,6 +2,12 @@ import { isAgentChatAssistantReference } from './is-agent-chat-assistant-referen
 
 const UNENCODED_REFERENCE_LABEL_PUNCTUATION_REGEX = /[!'()*_~.-]/g;
 
+const encodeAgentChatAssistantReferenceLabel = (displayName: string): string =>
+  encodeURIComponent(displayName).replace(
+    UNENCODED_REFERENCE_LABEL_PUNCTUATION_REGEX,
+    (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+
 export const formatRecordReference = ({
   objectNameSingular,
   recordId,
@@ -12,10 +18,7 @@ export const formatRecordReference = ({
   displayName: string;
 }): string => {
   const label = isAgentChatAssistantReference({ objectNameSingular, recordId })
-    ? encodeURIComponent(displayName).replace(
-        UNENCODED_REFERENCE_LABEL_PUNCTUATION_REGEX,
-        (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
-      )
+    ? encodeAgentChatAssistantReferenceLabel(displayName)
     : displayName;
 
   return `[[record:${objectNameSingular}:${recordId}:${label}]]`;
