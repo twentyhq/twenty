@@ -9,18 +9,18 @@ const userAuthContext = {
   type: 'user',
   workspace: { id: 'workspace-1' },
   workspaceMemberId: 'workspace-member-1',
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const apiKeyAuthContext = {
   type: 'apiKey',
   workspace: { id: 'workspace-1' },
   apiKey: { id: 'api-key-1' },
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const systemAuthContext = {
   type: 'system',
   workspace: { id: 'workspace-1' },
-} as unknown as WorkspaceAuthContext;
+} as WorkspaceAuthContext;
 
 const OTHER_WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000002';
 const ROLE_ID = '20202020-0000-4000-8000-000000000003';

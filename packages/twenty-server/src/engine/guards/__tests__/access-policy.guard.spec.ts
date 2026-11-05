@@ -1,6 +1,8 @@
 import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
+import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
+
 import {
   PermissionFlagType,
   SystemPermissionFlag,
@@ -11,7 +13,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   runGuardedQuery,
@@ -321,16 +323,31 @@ const PRINCIPAL_CASES: {
 ];
 
 const buildHttpContext = (request: unknown): ExecutionContext =>
-  ({
-    getType: () => 'http',
-    switchToHttp: () => ({ getRequest: () => request }),
-  }) as unknown as ExecutionContext;
+  buildExecutionContextMock({ request });
 
 const buildAccessPolicyService = (
   permissionsService = {} as PermissionsService,
   featureFlagService = {} as FeatureFlagService,
 ): AccessPolicyService =>
   new AccessPolicyService(permissionsService, featureFlagService);
+
+const buildAccessPolicyServiceWithMocks = async ({
+  permissionsService,
+  featureFlagService = {},
+}: {
+  permissionsService: object;
+  featureFlagService?: object;
+}): Promise<AccessPolicyService> => {
+  const module = await Test.createTestingModule({
+    providers: [
+      AccessPolicyService,
+      { provide: PermissionsService, useValue: permissionsService },
+      { provide: FeatureFlagService, useValue: featureFlagService },
+    ],
+  }).compile();
+
+  return module.get(AccessPolicyService);
+};
 
 const buildPrincipalOnlyPolicy = (
   authPrincipals: AuthPrincipalGuardConfig,
@@ -756,16 +773,16 @@ describe('AccessPolicyGuard', () => {
       };
     });
 
-    const canActivateSession = () =>
+    const canActivateSession = async () =>
       canActivateOverHttp(
         {
           authPrincipals: ACCEPT_EVERY_PRINCIPAL,
           requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
         },
         sessionRequest,
-        buildAccessPolicyService(
-          mockPermissionsService as unknown as PermissionsService,
-        ),
+        await buildAccessPolicyServiceWithMocks({
+          permissionsService: mockPermissionsService,
+        }),
       );
 
     it.each([
@@ -791,9 +808,9 @@ describe('AccessPolicyGuard', () => {
             requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
           },
           REQUEST_BY_PRINCIPAL_VARIANT.apiKey,
-          buildAccessPolicyService(
-            mockPermissionsService as unknown as PermissionsService,
-          ),
+          await buildAccessPolicyServiceWithMocks({
+            permissionsService: mockPermissionsService,
+          }),
         ),
       ).rejects.toThrow(AUTH_PRINCIPAL_REFUSED_MESSAGE);
       expect(
@@ -839,7 +856,7 @@ describe('AccessPolicyGuard', () => {
       mockFeatureFlagService = { getWorkspaceFeatureFlagsMap: jest.fn() };
     });
 
-    const canActivateWithPolicy = (accessPolicy: AccessPolicy) =>
+    const canActivateWithPolicy = async (accessPolicy: AccessPolicy) =>
       canActivateOverHttp(
         accessPolicy,
         {
@@ -848,10 +865,10 @@ describe('AccessPolicyGuard', () => {
           userWorkspaceId: 'user-workspace-id',
           tokenType: JwtTokenTypeEnum.ACCESS,
         },
-        buildAccessPolicyService(
-          mockPermissionsService as unknown as PermissionsService,
-          mockFeatureFlagService as unknown as FeatureFlagService,
-        ),
+        await buildAccessPolicyServiceWithMocks({
+          permissionsService: mockPermissionsService,
+          featureFlagService: mockFeatureFlagService,
+        }),
       );
 
     const FLAGGED_POLICY: AccessPolicy = {

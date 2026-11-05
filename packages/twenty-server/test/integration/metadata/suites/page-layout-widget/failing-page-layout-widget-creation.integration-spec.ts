@@ -182,7 +182,7 @@ describe('Page layout widget creation should fail', () => {
           configuration: {
             ...INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
             configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-          } as unknown as CreatePageLayoutWidgetInput['configuration'],
+          },
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -200,7 +200,7 @@ describe('Page layout widget creation should fail', () => {
           configuration: {
             ...INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
             configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-          } as unknown as CreatePageLayoutWidgetInput['configuration'],
+          },
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -217,8 +217,7 @@ describe('Page layout widget creation should fail', () => {
           title: 'Widget With Missing Fields',
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.GRAPH,
-          configuration:
-            INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS as unknown as CreatePageLayoutWidgetInput['configuration'],
+          configuration: INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -233,8 +232,7 @@ describe('Page layout widget creation should fail', () => {
           title: 'Widget With Bad UUID',
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.GRAPH,
-          configuration:
-            INVALID_NUMBER_CHART_CONFIG_BAD_UUID as unknown as CreatePageLayoutWidgetInput['configuration'],
+          configuration: INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -251,8 +249,7 @@ describe('Page layout widget creation should fail', () => {
           title: 'Vertical Bar Chart Missing Group By',
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.GRAPH,
-          configuration:
-            INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as CreatePageLayoutWidgetInput['configuration'],
+          configuration: INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -267,8 +264,7 @@ describe('Page layout widget creation should fail', () => {
           title: 'Horizontal Bar Chart Missing Group By',
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.GRAPH,
-          configuration:
-            INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as CreatePageLayoutWidgetInput['configuration'],
+          configuration: INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -285,8 +281,7 @@ describe('Page layout widget creation should fail', () => {
           title: 'Widget With Null Config',
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.IFRAME,
-          configuration:
-            null as unknown as CreatePageLayoutWidgetInput['configuration'],
+          configuration: null,
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -303,7 +298,7 @@ describe('Page layout widget creation should fail', () => {
           type: WidgetType.IFRAME,
           configuration: {
             someField: 'value',
-          } as unknown as CreatePageLayoutWidgetInput['configuration'],
+          },
           position: DEFAULT_GRID_POSITION,
         },
       });
@@ -321,7 +316,7 @@ describe('Page layout widget creation should fail', () => {
           configuration: {
             configurationType: 'UNSUPPORTED_TYPE',
             someField: 'value',
-          } as unknown as CreatePageLayoutWidgetInput['configuration'],
+          },
           position: DEFAULT_GRID_POSITION,
         },
       });
