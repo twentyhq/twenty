@@ -39,8 +39,6 @@ const removeAiContentFromErrorData = (
   };
 };
 
-// extraErrorDataIntegration copies every error property into contexts, including prompts and model output,
-// and nests a wrapped error's properties under the outer error's `cause`
 export const removeAiContentFromSentryEvent = (
   event: ErrorEvent,
 ): ErrorEvent => {

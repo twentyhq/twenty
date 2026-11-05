@@ -638,7 +638,6 @@ export class AiModelRegistryService {
     );
   }
 
-  // a pin applies only while its model resolves, is enabled and meets the data policy, so a tier never goes dark
   private resolveModelForTier(
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,
