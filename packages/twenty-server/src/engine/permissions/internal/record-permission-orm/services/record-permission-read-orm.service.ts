@@ -14,6 +14,10 @@ import { RecordPermissionQueryService } from 'src/engine/permissions/internal/re
 import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/record-permission-orm/types/private-record-state-row.type';
 import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-private-record-states-query.util';
 import { buildFindRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-record-shares-query.util';
+import {
+  buildFindRuleRecordSharesQuery,
+  type RuleRecordSharesScope,
+} from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-rule-record-shares-query.util';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-record-share-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
 import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/record-permission-orm/utils/index-private-record-states-by-record-id.util';
@@ -52,6 +56,30 @@ export class RecordPermissionReadOrmService {
         }),
         objectMetadataId,
         recordIds,
+      }),
+    });
+  }
+
+  findRuleRecordShares({
+    workspaceId,
+    objectMetadataId,
+    scope,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    scope: RuleRecordSharesScope;
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<RecordShare[]> {
+    return this.recordPermissionQueryService.execute<RecordShare>({
+      workspaceId,
+      transactionScope,
+      query: buildFindRuleRecordSharesQuery({
+        recordShareTableExpression: buildRecordShareTableExpression({
+          workspaceId,
+        }),
+        objectMetadataId,
+        scope,
       }),
     });
   }

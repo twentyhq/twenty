@@ -23,7 +23,6 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
@@ -130,11 +129,6 @@ export class WorkspaceOrmManager {
       await this.principalPermissionsService.buildPermissionsPrincipals({
         authContext,
       });
-    const recordsPermissions = isDefined(permissionsPrincipals)
-      ? await this.recordPermissionsService.findPrincipalsRecordsPermissions({
-          principals: permissionsPrincipals,
-        })
-      : NO_ROLE_RECORDS_PERMISSIONS;
     const recordReadRestrictions = isDefined(permissionsPrincipals)
       ? await this.recordPermissionsService.findRecordReadRestrictions({
           principals: permissionsPrincipals,
@@ -163,7 +157,6 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       permissionsPrincipals,
-      recordsPermissions,
       recordReadRestrictions,
     };
   }
@@ -199,7 +192,6 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPrincipals: undefined,
-      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     };
   }

@@ -5,7 +5,7 @@ import {
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -30,9 +30,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
@@ -142,17 +140,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.options = options;
   }
 
-  get recordsPermissions(): RoleRecordsPermissions {
-    const { permissionsPrincipals, shouldBypassPermissionChecks } =
-      this.options;
-
-    if (shouldBypassPermissionChecks || !isDefined(permissionsPrincipals)) {
-      return NO_ROLE_RECORDS_PERMISSIONS;
-    }
-
-    return this.options.internalContext.recordsPermissions;
-  }
-
   private get recordReadRestrictions(): RecordReadRestrictions {
     const { permissionsPrincipals, shouldBypassPermissionChecks } =
       this.options;
@@ -223,48 +210,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind: MutationKind,
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder, kind);
-  }
-
-  async findRecordIdsAllowedForOperation({
-    recordIds,
-    operationType,
-    updatedColumns = [],
-    withDeleted = false,
-  }: {
-    recordIds: string[];
-    operationType: ObjectRecordsOperationType;
-    updatedColumns?: string[];
-    withDeleted?: boolean;
-  }): Promise<string[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-    try {
-      if (operationType !== 'select') {
-        await this.validateWriteIsPermitted({
-          operationType,
-          columnsToReturn: ['id'],
-          updatedColumns,
-        });
-      }
-      const queryBuilder = this.createQueryBuilder()
-        .select(['id'])
-        .where({ id: In(recordIds) });
-      if (withDeleted) {
-        queryBuilder.withDeleted();
-      }
-      await this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
-      const records = await queryBuilder.getMany<ObjectRecord>();
-      return records.map(({ id }) => id);
-    } catch (error) {
-      if (
-        error instanceof PermissionsException &&
-        error.code === PermissionsExceptionCode.PERMISSION_DENIED
-      ) {
-        return [];
-      }
-      throw error;
-    }
   }
 
   get internalContext(): WorkspaceInternalContext {
@@ -1961,143 +1906,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableAlias: alias,
       },
     );
-  }
-
-  // Applies the checks of findRecordIdsAllowedForOperation to several
-  // operations in one query, with a boolean column per gated operation;
-  // deleted records are included
-  async findRecordIdsAllowedForOperations<
-    TOperationType extends ObjectRecordsOperationType,
-  >({
-    recordIds,
-    operationTypes,
-  }: {
-    recordIds: string[];
-    operationTypes: TOperationType[];
-  }): Promise<Record<TOperationType, Set<string>>> {
-    const allowedRecordIdsByOperationType = Object.fromEntries(
-      operationTypes.map((operationType) => [operationType, new Set<string>()]),
-    ) as Record<TOperationType, Set<string>>;
-
-    if (recordIds.length === 0) {
-      return allowedRecordIdsByOperationType;
-    }
-
-    const tableAlias = this.options.tableShape.nameSingular;
-    const recordAccesses = await Promise.all(
-      operationTypes.map(async (operationType, index) => ({
-        operationType,
-        access: await this.resolveRecordAccessForOperation({
-          operationType,
-          tableAlias,
-        }),
-        columnAlias: `isAllowed_${index}`,
-      })),
-    );
-
-    if (recordAccesses.every(({ access }) => access === false)) {
-      return allowedRecordIdsByOperationType;
-    }
-
-    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
-      .where({ id: In(recordIds) })
-      .withDeleted()
-      .select([])
-      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
-
-    for (const { access, columnAlias } of recordAccesses) {
-      if (typeof access === 'boolean') {
-        continue;
-      }
-
-      queryBuilder
-        .addSelect(
-          `CASE WHEN ${access.sql} THEN TRUE ELSE FALSE END`,
-          columnAlias,
-        )
-        .setParameters(access.parameters);
-    }
-
-    const rows = await queryBuilder.getRawMany<Record<string, unknown>>();
-
-    for (const row of rows) {
-      for (const { operationType, access, columnAlias } of recordAccesses) {
-        if (access === true || row[columnAlias] === true) {
-          allowedRecordIdsByOperationType[operationType].add(String(row.id));
-        }
-      }
-    }
-
-    return allowedRecordIdsByOperationType;
-  }
-
-  private async resolveRecordAccessForOperation({
-    operationType,
-    tableAlias,
-  }: {
-    operationType: ObjectRecordsOperationType;
-    tableAlias: string;
-  }): Promise<boolean | SqlCondition> {
-    if (this.options.shouldBypassPermissionChecks) {
-      return true;
-    }
-
-    try {
-      if (operationType !== 'select') {
-        await this.validateWriteIsPermitted({
-          operationType,
-          columnsToReturn: ['id'],
-          updatedColumns: [],
-        });
-      }
-
-      await this.validateQueryIsPermitted(
-        this.createQueryBuilder(tableAlias).select(['id']),
-      );
-
-      return await this.buildPermissionsConditionForAlias({
-        alias: tableAlias,
-        isMainAlias: true,
-        flatObjectMetadata: this.options.flatObjectMetadata,
-        operationType,
-      });
-    } catch (error) {
-      if (
-        error instanceof PermissionsException &&
-        error.code === PermissionsExceptionCode.PERMISSION_DENIED
-      ) {
-        return false;
-      }
-      throw error;
-    }
-  }
-
-  // Whether the role alone permits the operation, regardless of any record
-  // grant that may reach beyond it
-  isObjectOperationPermittedByRole(
-    operationType: ObjectRecordsOperationType,
-  ): boolean {
-    return (
-      this.options.shouldBypassPermissionChecks ||
-      this.isObjectOperationPermitted({
-        flatObjectMetadata: this.options.flatObjectMetadata,
-        operationType,
-      })
-    );
-  }
-
-  private isObjectOperationPermitted({
-    flatObjectMetadata,
-    operationType,
-  }: {
-    flatObjectMetadata: FlatObjectMetadata;
-    operationType: ObjectRecordsOperationType;
-  }): boolean {
-    return canReachSomeRecords({
-      objectRecordsPermissions:
-        this.recordsPermissions.objects[flatObjectMetadata.id],
-      operationType,
-    });
   }
 
   private async assertObjectOperationIsAccessibleOrThrow({

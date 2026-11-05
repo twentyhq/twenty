@@ -5,7 +5,6 @@ import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -22,7 +21,6 @@ export type ORMWorkspaceContext = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
-  recordsPermissions: RoleRecordsPermissions;
   recordReadRestrictions: RecordReadRestrictions;
   flatValidationRuleMaps?: FlatValidationRuleMaps;
 };

@@ -125,21 +125,6 @@ const buildRepository = ({
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       coreDataSource: new DataSource({ type: 'postgres' }),
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-      recordsPermissions: {
-        canReadAllRecords: true,
-        canUpdateAllRecords: true,
-        canSoftDeleteAllRecords: true,
-        canDestroyAllRecords: true,
-        objects: {
-          [OBJECT_METADATA_ID]: {
-            canReadAllRecords: true,
-            canUpdateAllRecords: true,
-            canSoftDeleteAllRecords: true,
-            canDestroyAllRecords: true,
-            restrictedFields: {},
-          },
-        },
-      },
     },
     authContext: {
       type: 'apiKey',

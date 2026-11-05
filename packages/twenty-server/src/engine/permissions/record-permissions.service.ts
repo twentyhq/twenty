@@ -15,7 +15,6 @@ import {
   type RecordOperationQuestion,
 } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -81,16 +80,6 @@ export class RecordPermissionsService {
           canSoftDelete: isAllowed(recordId, 'soft-delete'),
         },
       ]),
-    );
-  }
-
-  public findPrincipalsRecordsPermissions({
-    principals,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-  }): Promise<RoleRecordsPermissions> {
-    return this.recordAccessDecisionService.findPrincipalsRecordsPermissions(
-      principals,
     );
   }
 
@@ -235,6 +224,17 @@ export class RecordPermissionsService {
     return this.coversEveryRecord({ question, operationType: 'update' });
   }
 
+  public findGrantedRecordIdsForOperation({
+    operationType,
+    ...question
+  }: RecordsQuestion & {
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findGrantedRecordIdsOnReadableObject(
+      { ...question, operationType },
+    );
+  }
+
   public findUnreadableFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
@@ -274,6 +274,17 @@ export class RecordPermissionsService {
     return this.recordAccessDecisionService.findReadableEvents(question);
   }
 
+  public canRoleReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
   public findRoleIdsUnableToReadObject(question: {
     workspaceId: string;
     roleIds: string[];
@@ -285,14 +296,14 @@ export class RecordPermissionsService {
     });
   }
 
-  public canRoleReadSomeRecords({
+  public canRoleCreateSomeRecords({
     principals,
     objectMetadataId,
   }: ObjectQuestion): Promise<boolean> {
     return this.recordAccessDecisionService.canRoleReachSomeRecords({
       principals,
       objectMetadataId,
-      operationType: 'select',
+      operationType: 'insert',
     });
   }
 
