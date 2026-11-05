@@ -3,7 +3,10 @@ import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 
 type SettingsAiAssistantAvatarOptionPreviewProps = {
-  value: AiChatAssistantProfile;
+  value: Pick<
+    AiChatAssistantProfile,
+    'avatarColor' | 'avatarShape' | 'avatarFace'
+  >;
   isColorPreview: boolean;
 };
 
