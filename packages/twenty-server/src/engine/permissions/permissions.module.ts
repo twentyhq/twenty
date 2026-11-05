@@ -31,7 +31,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
-    PermissionsMetadataMapsService,
     PrincipalPermissionsService,
     RecordPermissionsService,
     RecordSharingPermissionsService,

@@ -20,6 +20,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
@@ -262,6 +263,39 @@ export class RecordAccessDecisionService {
       objectRecordsPermissions: objects[objectMetadataId],
       operationType,
     });
+  }
+
+  async findRoleIdsUnableToReachObject({
+    workspaceId,
+    roleIds,
+    objectMetadataId,
+    operationType,
+  }: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    const metadataMaps = await this.permissionsMetadataMapsService.load({
+      workspaceId,
+    });
+
+    return new Set(
+      roleIds.filter(
+        (roleId) =>
+          !canReachSomeRecords({
+            objectRecordsPermissions:
+              getPermissionsPrincipalsRecordsPermissions({
+                principals: buildRolePermissionsPrincipals({
+                  workspaceId,
+                  roleId,
+                }),
+                metadataMaps,
+              }).objects[objectMetadataId],
+            operationType,
+          }),
+      ),
+    );
   }
 
   async findGrantedRecordIdsByOperationType({

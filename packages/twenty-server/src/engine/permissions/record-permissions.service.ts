@@ -274,6 +274,17 @@ export class RecordPermissionsService {
     });
   }
 
+  public findRoleIdsUnableToReadObject(question: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findRoleIdsUnableToReachObject({
+      ...question,
+      operationType: 'select',
+    });
+  }
+
   public canRoleCreateSomeRecords({
     principals,
     objectMetadataId,
