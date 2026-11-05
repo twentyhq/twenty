@@ -1,0 +1,2 @@
+export const ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.57.0_AddAiDataPolicyToWorkspaceFastInstanceCommand_1793903847000';
