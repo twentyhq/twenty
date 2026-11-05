@@ -1,16 +1,17 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
 
@@ -25,7 +26,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     private readonly applyMessagesVisibilityRestrictionsService: ApplyMessagesVisibilityRestrictionsService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit() {
@@ -53,13 +54,19 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     }
 
     // targetMessageId only exists once the workspace upgrade has run
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(
         authContext.workspace.id,
+        ['flatFieldMetadataMaps'],
       );
 
-    if (!isMessageAttachmentEnabled) {
+    if (
+      !isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier
+        ],
+      )
+    ) {
       return;
     }
 

@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -23,7 +23,7 @@ export class MessagingMessageCleanerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -36,11 +36,8 @@ export class MessagingMessageCleanerService {
     messageChannelId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -110,7 +107,7 @@ export class MessagingMessageCleanerService {
                 where: { id: In(orphanMessageIds) },
               });
 
-              if (isMessageAttachmentEnabled) {
+              if (hasMessageAttachmentTarget) {
                 await attachmentRepository.delete({
                   targetMessageId: In(orphanMessageIds),
                 });
@@ -200,11 +197,8 @@ export class MessagingMessageCleanerService {
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -251,7 +245,7 @@ export class MessagingMessageCleanerService {
                   ),
                 ];
 
-                if (isMessageAttachmentEnabled) {
+                if (hasMessageAttachmentTarget) {
                   await attachmentRepository.delete({
                     targetMessageId: In(ids),
                   });
@@ -301,6 +295,22 @@ export class MessagingMessageCleanerService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  // targetMessageId only exists once the workspace upgrade has run
+  private async hasMessageAttachmentTarget(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier
+      ],
     );
   }
 
