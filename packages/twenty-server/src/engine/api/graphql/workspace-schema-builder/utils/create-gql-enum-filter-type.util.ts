@@ -7,12 +7,13 @@ import {
 } from 'graphql';
 
 import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
+import { getGqlEnumFilterTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-gql-enum-filter-type-name.util';
 
 export const createGqlEnumFilterType = (
   enumType: GraphQLEnumType,
 ): GraphQLInputType => {
   return new GraphQLInputObjectType({
-    name: `${enumType.name}Filter`,
+    name: getGqlEnumFilterTypeName(enumType.name),
     fields: () => ({
       eq: { type: enumType },
       neq: { type: enumType },

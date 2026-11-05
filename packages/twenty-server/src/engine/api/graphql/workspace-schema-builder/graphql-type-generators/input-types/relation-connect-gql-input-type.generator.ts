@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { getUniqueConstraintsFields, pascalCase } from 'twenty-shared/utils';
+import { pascalCase } from 'twenty-shared/utils';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
@@ -17,7 +17,8 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { getObjectMetadataUniqueConstraints } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-object-metadata-unique-constraints.util';
+import { getCompositeUniqueWhereInputTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-unique-where-input-type-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -69,11 +70,11 @@ export class RelationConnectGqlInputTypeGenerator {
           [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
             type: new GraphQLInputObjectType({
               name: `${pascalCase(flatObjectMetadata.nameSingular)}ConnectInput`,
-              fields: this.generateRelationWhereInputType(
+              fields: this.generateRelationWhereInputType({
                 flatObjectMetadata,
                 fields,
                 context,
-              ),
+              }),
             }),
             description: `Connect to a ${flatObjectMetadata.nameSingular} record`,
           },
@@ -90,32 +91,22 @@ export class RelationConnectGqlInputTypeGenerator {
     });
   }
 
-  private generateRelationWhereInputType(
-    flatObjectMetadata: FlatObjectMetadata,
-    fields: FlatFieldMetadata[],
-    context: SchemaGenerationContext,
-  ): Record<string, GraphQLInputFieldConfig> {
+  private generateRelationWhereInputType({
+    flatObjectMetadata,
+    fields,
+    context,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    fields: FlatFieldMetadata[];
+    context: SchemaGenerationContext;
+  }): Record<string, GraphQLInputFieldConfig> {
     const { flatIndexMaps } = context;
 
-    const indexMetadatas = findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityIds: flatObjectMetadata.indexMetadataIds,
-      flatEntityMaps: flatIndexMaps,
-    }).map((flatIndex) => ({
-      id: flatIndex.id,
-      isUnique: flatIndex.isUnique,
-      indexFieldMetadatas: flatIndex.flatIndexFieldMetadatas,
-    }));
-
-    const objectWithIndexes = {
-      id: flatObjectMetadata.id,
-      indexMetadatas,
+    const uniqueConstraints = getObjectMetadataUniqueConstraints({
+      flatObjectMetadata,
       fields,
-    };
-
-    const uniqueConstraints = getUniqueConstraintsFields<
-      FlatFieldMetadata,
-      typeof objectWithIndexes
-    >(objectWithIndexes);
+      flatIndexMaps,
+    });
 
     const inputFields: Record<
       string,
@@ -156,7 +147,10 @@ export class RelationConnectGqlInputTypeGenerator {
             });
 
             const compositeInputType = new GraphQLInputObjectType({
-              name: `${pascalCase(flatObjectMetadata.nameSingular)}${pascalCase(field.name)}WhereInput`,
+              name: getCompositeUniqueWhereInputTypeName({
+                objectName: flatObjectMetadata.nameSingular,
+                fieldName: field.name,
+              }),
               fields: () => compositeFields,
             });
 

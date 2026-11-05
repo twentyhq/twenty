@@ -5,10 +5,11 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
+import { getFieldMetadataGqlEnumTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-field-metadata-gql-enum-type-name.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -36,15 +37,21 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
           flatObjectMetadata.nameSingular,
           fieldMetadata.name,
         ),
-        this.generateEnum(flatObjectMetadata.nameSingular, fieldMetadata),
+        this.generateEnum({
+          objectName: flatObjectMetadata.nameSingular,
+          fieldMetadata,
+        }),
       );
     }
   }
 
-  private generateEnum(
-    objectName: string,
-    fieldMetadata: FlatFieldMetadata,
-  ): GraphQLEnumType {
+  private generateEnum({
+    objectName,
+    fieldMetadata,
+  }: {
+    objectName: string;
+    fieldMetadata: FlatFieldMetadata;
+  }): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
     const enumOptions = transformEnumValue(
@@ -65,7 +72,10 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
     }
 
     return new GraphQLEnumType({
-      name: `${pascalCase(objectName)}${pascalCase(fieldMetadata.name)}Enum`,
+      name: getFieldMetadataGqlEnumTypeName({
+        objectName,
+        fieldName: fieldMetadata.name,
+      }),
       description: fieldMetadata.description,
       values: enumOptions.reduce(
         (acc, enumOption) => {
