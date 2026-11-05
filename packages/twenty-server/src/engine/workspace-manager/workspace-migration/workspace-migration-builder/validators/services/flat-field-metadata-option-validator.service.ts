@@ -36,8 +36,59 @@ const buildNotFoundError = (): FlatEntityValidationError => ({
   userFriendlyMessage: msg`Field option not found`,
 });
 
+type FinalFlatFieldMetadataOptionsByUniversalIdentifier =
+  MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>['byUniversalIdentifier'];
+
 @Injectable()
 export class FlatFieldMetadataOptionValidatorService {
+  // One build validates every option against the same final maps, so they are grouped by field once.
+  private readonly finalOptionsByFieldCache = new WeakMap<
+    FinalFlatFieldMetadataOptionsByUniversalIdentifier,
+    Map<string, UniversalFlatFieldMetadataOption[]>
+  >();
+
+  private getFinalOptionsOfField({
+    finalOptionsByUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    finalOptionsByUniversalIdentifier: FinalFlatFieldMetadataOptionsByUniversalIdentifier;
+    fieldMetadataUniversalIdentifier: string;
+  }): UniversalFlatFieldMetadataOption[] {
+    let finalOptionsByField = this.finalOptionsByFieldCache.get(
+      finalOptionsByUniversalIdentifier,
+    );
+
+    if (!isDefined(finalOptionsByField)) {
+      finalOptionsByField = new Map();
+
+      for (const finalOption of Object.values(
+        finalOptionsByUniversalIdentifier,
+      )) {
+        if (!isDefined(finalOption)) {
+          continue;
+        }
+
+        const fieldOptions =
+          finalOptionsByField.get(
+            finalOption.fieldMetadataUniversalIdentifier,
+          ) ?? [];
+
+        fieldOptions.push(finalOption);
+        finalOptionsByField.set(
+          finalOption.fieldMetadataUniversalIdentifier,
+          fieldOptions,
+        );
+      }
+
+      this.finalOptionsByFieldCache.set(
+        finalOptionsByUniversalIdentifier,
+        finalOptionsByField,
+      );
+    }
+
+    return finalOptionsByField.get(fieldMetadataUniversalIdentifier) ?? [];
+  }
+
   private collectOptionErrors({
     universalFlatFieldMetadataOption,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
@@ -113,15 +164,14 @@ export class FlatFieldMetadataOptionValidatorService {
     ];
 
     // Checked against the final state so value swaps within one migration stay valid.
-    const hasDuplicateValue = Object.values(
-      finalFlatEntityMaps.byUniversalIdentifier,
-    ).some(
+    const hasDuplicateValue = this.getFinalOptionsOfField({
+      finalOptionsByUniversalIdentifier:
+        finalFlatEntityMaps.byUniversalIdentifier,
+      fieldMetadataUniversalIdentifier,
+    }).some(
       (otherFlatFieldMetadataOption) =>
-        isDefined(otherFlatFieldMetadataOption) &&
         otherFlatFieldMetadataOption.universalIdentifier !==
           universalFlatFieldMetadataOption.universalIdentifier &&
-        otherFlatFieldMetadataOption.fieldMetadataUniversalIdentifier ===
-          fieldMetadataUniversalIdentifier &&
         otherFlatFieldMetadataOption.value === value,
     );
 
