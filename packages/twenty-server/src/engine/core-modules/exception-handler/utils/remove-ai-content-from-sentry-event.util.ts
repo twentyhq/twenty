@@ -1,5 +1,5 @@
 import { type ErrorEvent } from '@sentry/node';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const AI_SDK_ERROR_NAME_PREFIX = 'AI_';
 
@@ -10,7 +10,37 @@ const AI_SDK_ERROR_DIAGNOSTIC_KEYS = [
   'url',
 ];
 
-// extraErrorDataIntegration copies every error property into contexts, including prompts and model output
+const removeAiContentFromErrorData = (
+  errorName: string,
+  errorData: Record<string, unknown>,
+): Record<string, unknown> => {
+  if (errorName.startsWith(AI_SDK_ERROR_NAME_PREFIX)) {
+    return Object.fromEntries(
+      Object.entries(errorData).filter(([key]) =>
+        AI_SDK_ERROR_DIAGNOSTIC_KEYS.includes(key),
+      ),
+    );
+  }
+
+  if (!isPlainObject(errorData.cause)) {
+    return errorData;
+  }
+
+  return {
+    ...errorData,
+    cause: Object.fromEntries(
+      Object.entries(errorData.cause).map(([causeName, causeData]) => [
+        causeName,
+        isPlainObject(causeData)
+          ? removeAiContentFromErrorData(causeName, causeData)
+          : causeData,
+      ]),
+    ),
+  };
+};
+
+// extraErrorDataIntegration copies every error property into contexts, including prompts and model output,
+// and nests a wrapped error's properties under the outer error's `cause`
 export const removeAiContentFromSentryEvent = (
   event: ErrorEvent,
 ): ErrorEvent => {
@@ -21,12 +51,8 @@ export const removeAiContentFromSentryEvent = (
   const contexts = Object.fromEntries(
     Object.entries(event.contexts).map(([errorName, context]) => [
       errorName,
-      errorName.startsWith(AI_SDK_ERROR_NAME_PREFIX) && isDefined(context)
-        ? Object.fromEntries(
-            Object.entries(context).filter(([key]) =>
-              AI_SDK_ERROR_DIAGNOSTIC_KEYS.includes(key),
-            ),
-          )
+      isDefined(context)
+        ? removeAiContentFromErrorData(errorName, context)
         : context,
     ]),
   );
