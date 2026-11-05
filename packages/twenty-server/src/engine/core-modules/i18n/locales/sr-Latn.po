@@ -5841,6 +5841,7 @@ msgstr "Datoteka"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Datoteka {fileId} je već povezana sa trajnim poljem za datoteke. Ponovo otpremite datoteku."
 

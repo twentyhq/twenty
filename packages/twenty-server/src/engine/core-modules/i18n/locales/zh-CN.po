@@ -5841,6 +5841,7 @@ msgstr "文件"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "文件 {fileId} 已与永久文件字段关联。请重新上传该文件。"
 
