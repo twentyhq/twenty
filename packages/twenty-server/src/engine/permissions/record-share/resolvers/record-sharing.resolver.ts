@@ -14,6 +14,7 @@ import {
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
@@ -40,6 +41,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 export class RecordSharingResolver {
   constructor(
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -57,7 +59,7 @@ export class RecordSharingResolver {
     @Args('isPrivate', { type: () => Boolean }) isPrivate: boolean,
   ) {
     return this.handleRecordShareException(() =>
-      this.recordSharingWriteService.setPrivate({
+      this.privateRecordWriteService.changeRecordPrivacy({
         ...target,
         isPrivate,
         authContext: this.getUserContext(),
