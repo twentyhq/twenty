@@ -101,11 +101,6 @@ export class RecordAccessDecisionService {
     Promise<RoleRecordsPermissions>
   >();
 
-  private readonly recordReadRestrictionsByPrincipals = new WeakMap<
-    PermissionsPrincipalsWithRolesContext,
-    Promise<RecordReadRestrictions>
-  >();
-
   private readonly sharedAccessLevelsByPrincipals = new WeakMap<
     PermissionsPrincipalsWithRolesContext,
     Promise<Map<string, RecordShareAccessLevel[]>>
@@ -268,28 +263,13 @@ export class RecordAccessDecisionService {
     return objects[objectMetadataId]?.restrictedFields ?? {};
   }
 
-  findRecordReadRestrictions(
+  async findRecordReadRestrictions(
     principals: PermissionsPrincipalsWithRolesContext,
   ): Promise<RecordReadRestrictions> {
-    const cachedRecordReadRestrictions =
-      this.recordReadRestrictionsByPrincipals.get(principals);
-
-    if (isDefined(cachedRecordReadRestrictions)) {
-      return cachedRecordReadRestrictions;
-    }
-
-    const recordReadRestrictions = this.findPrincipalsRecordsPermissions(
-      principals,
-    ).then((recordsPermissions) =>
-      buildRecordReadRestrictions({ recordsPermissions }),
-    );
-
-    this.recordReadRestrictionsByPrincipals.set(
-      principals,
-      recordReadRestrictions,
-    );
-
-    return recordReadRestrictions;
+    return buildRecordReadRestrictions({
+      recordsPermissions:
+        await this.findPrincipalsRecordsPermissions(principals),
+    });
   }
 
   async findGrantedRecordIdsByOperationType({
