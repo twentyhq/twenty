@@ -303,3 +303,59 @@ describe('evaluateValidationRuleExpression', () => {
     expect(evaluate('stage ==', { stage: 'WON' }).status).toBe('errored');
   });
 });
+
+const A_TO_B_TO_C =
+  'stage == previous.stage or (isEmpty(previous.stage) and stage == "A") or (previous.stage == "A" and stage == "B") or (previous.stage == "B" and stage == "C")';
+
+describe('evaluateValidationRuleExpression with previous values', () => {
+  const evaluateTransition = (
+    previousRecord: Record<string, unknown> | undefined,
+    record: Record<string, unknown>,
+  ) =>
+    evaluateValidationRuleExpression({
+      expression: A_TO_B_TO_C,
+      record,
+      previousRecord,
+      fields: FIELDS,
+      now: NOW,
+    });
+
+  it('should pass a step to the next stage', () => {
+    expect(evaluateTransition({ stage: 'A' }, { stage: 'B' })).toEqual({
+      status: 'passed',
+    });
+  });
+
+  it('should fail a skipped stage', () => {
+    expect(evaluateTransition({ stage: 'A' }, { stage: 'C' })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should pass an update that leaves the stage as it was', () => {
+    expect(evaluateTransition({ stage: 'C' }, { stage: 'C' })).toEqual({
+      status: 'passed',
+    });
+  });
+
+  it('should read every previous value as empty without a stored record', () => {
+    expect(evaluateTransition(undefined, { stage: 'A' })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluateTransition(undefined, { stage: 'B' })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should compare a composite subfield with its previous value', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'amount.amountMicros >= previous.amount.amountMicros',
+        record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
+        previousRecord: { amount: { amountMicros: 1000, currencyCode: 'USD' } },
+        fields: FIELDS,
+        now: NOW,
+      }),
+    ).toEqual({ status: 'failed' });
+  });
+});

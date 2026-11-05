@@ -1,4 +1,5 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
@@ -77,13 +78,17 @@ const descendIntoContainer = (
   return ownedCopy;
 };
 
+const PREVIOUS_PATH_PREFIX = `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`;
+
 export const buildValidationRuleEvaluationContext = ({
   record,
+  previousRecord,
   fieldByName,
   identifierPaths,
   now,
 }: {
   record: Record<string, unknown>;
+  previousRecord?: Record<string, unknown>;
   fieldByName: ReadonlyMap<string, ValidationRuleFieldDescriptor>;
   identifierPaths: string[];
   now: string;
@@ -91,11 +96,29 @@ export const buildValidationRuleEvaluationContext = ({
   const context: EvaluationContainer = {};
   const ownedContainers = new WeakSet<object>();
 
+  const previousValuePaths = identifierPaths
+    .filter((path) => path.startsWith(PREVIOUS_PATH_PREFIX))
+    .map((path) => path.slice(PREVIOUS_PATH_PREFIX.length));
+
+  // No stored record yet (a creation) reads every previous value as empty
+  if (previousValuePaths.length > 0) {
+    context[VALIDATION_RULE_PREVIOUS_VARIABLE_NAME] =
+      buildValidationRuleEvaluationContext({
+        record: previousRecord ?? {},
+        fieldByName,
+        identifierPaths: previousValuePaths,
+        now,
+      });
+  }
+
   for (const path of identifierPaths) {
     const segments = path.split('.');
     const [rootSegment] = segments;
 
-    if (!isDefined(rootSegment)) {
+    if (
+      !isDefined(rootSegment) ||
+      rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME
+    ) {
       continue;
     }
 

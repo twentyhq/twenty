@@ -99,6 +99,30 @@ describe('computeValidationRuleAfterFieldChanges', () => {
     });
   });
 
+  it('should rename a field read through its previous value', () => {
+    expect(
+      computeValidationRuleAfterFieldChanges({
+        validationRule: {
+          ...RULE,
+          expression: 'stage == previous.stage or previous.stage != "WON"',
+          bindings: {
+            stage: STAGE_UNIVERSAL_IDENTIFIER,
+            'previous.stage': STAGE_UNIVERSAL_IDENTIFIER,
+          },
+        },
+        fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, 'dealStage')],
+      }),
+    ).toMatchObject({
+      expression:
+        'dealStage == previous.dealStage or previous.dealStage != "WON"',
+      bindings: {
+        dealStage: STAGE_UNIVERSAL_IDENTIFIER,
+        'previous.dealStage': STAGE_UNIVERSAL_IDENTIFIER,
+      },
+      isActive: true,
+    });
+  });
+
   it('should apply a rename and a deletion of two fields of the same rule together', () => {
     expect(
       computeValidationRuleAfterFieldChanges({

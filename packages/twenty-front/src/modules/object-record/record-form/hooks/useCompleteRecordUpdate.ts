@@ -19,6 +19,7 @@ import { useCallback } from 'react';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import {
   compileValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
   isDefined,
 } from 'twenty-shared/utils';
 import { FindManyValidationRulesDocument } from '~/generated-metadata/graphql';
@@ -113,10 +114,19 @@ export const useCompleteRecordUpdate = ({
           },
         );
 
+        // A previous value is read from the stored record alone, before the update
         const isEveryBindingPathLoadedIn = (record: Partial<ObjectRecord>) =>
-          bindingPathsReadByRules.every((path) =>
-            isRecordPathLoaded({ record: { ...record, ...updateInput }, path }),
-          );
+          bindingPathsReadByRules.every((path) => {
+            const previousValueFieldPath =
+              getValidationRulePreviousValueFieldPath(path);
+
+            return isDefined(previousValueFieldPath)
+              ? isRecordPathLoaded({ record, path: previousValueFieldPath })
+              : isRecordPathLoaded({
+                  record: { ...record, ...updateInput },
+                  path,
+                });
+          });
 
         // Views load only the fields they show, so a rule may read one the store does not have yet
         const currentRecord = isEveryBindingPathLoadedIn(storedRecord)
@@ -151,6 +161,7 @@ export const useCompleteRecordUpdate = ({
         const completedFields = await requestRecordUpdateFormCompletion({
           objectMetadataItem,
           draftRecord,
+          previousRecord: currentRecord,
           fieldMetadataIds,
           violations,
         });

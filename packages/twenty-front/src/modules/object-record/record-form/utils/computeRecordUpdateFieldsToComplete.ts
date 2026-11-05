@@ -14,6 +14,7 @@ import {
 export const computeRecordUpdateFieldsToComplete = ({
   validationRules,
   currentRecord,
+  previousRecord = currentRecord,
   updateInput,
   fields,
   fieldMetadataItems,
@@ -22,6 +23,7 @@ export const computeRecordUpdateFieldsToComplete = ({
 }: {
   validationRules: ValidationRule[];
   currentRecord: Partial<ObjectRecord>;
+  previousRecord?: Partial<ObjectRecord>;
   updateInput: Partial<ObjectRecord>;
   fields: ValidationRuleFieldDescriptor[];
   fieldMetadataItems: Pick<
@@ -63,6 +65,7 @@ export const computeRecordUpdateFieldsToComplete = ({
   const violations = computeDraftValidationRuleViolations({
     validationRules,
     draftRecord,
+    previousRecord,
     fields,
     fieldMetadataItems,
     now,

@@ -3,7 +3,10 @@ import { isRecordPathLoaded } from '@/object-record/record-form/utils/isRecordPa
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { compileValidationRuleExpression } from 'twenty-shared/utils';
+import {
+  compileValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
+} from 'twenty-shared/utils';
 
 // Only rules whose error field is this select can rule a value out: a rule that
 // blames another field (a missing Lost reason) is completed after the pick, not
@@ -48,7 +51,12 @@ export const computeSelectValuesBlockedByValidationRules = ({
         Object.keys(compilationResult.bindings).every(
           (bindingPath) =>
             bindingPath === fieldMetadataItem.name ||
-            isRecordPathLoaded({ record, path: bindingPath }),
+            isRecordPathLoaded({
+              record,
+              path:
+                getValidationRulePreviousValueFieldPath(bindingPath) ??
+                bindingPath,
+            }),
         )
       );
     },
@@ -62,6 +70,7 @@ export const computeSelectValuesBlockedByValidationRules = ({
     computeDraftValidationRuleViolations({
       validationRules: evaluableRulesBlamingField,
       draftRecord: { ...record, [fieldMetadataItem.name]: value },
+      previousRecord: record,
       fields,
       fieldMetadataItems,
       now,

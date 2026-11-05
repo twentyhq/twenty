@@ -7,6 +7,7 @@ import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
@@ -202,6 +203,8 @@ export const SettingsValidationRulePreview = ({
     ? evaluateValidationRuleExpression({
         expression,
         record,
+        // Previewed as an update that changes nothing, so previous values equal current ones
+        previousRecord: record,
         fields,
         now: new Date().toISOString(),
       })
@@ -300,7 +303,10 @@ export const SettingsValidationRulePreview = ({
                   ? getIcon(editorField.iconName)
                   : undefined;
                 const formattedValue = formatValidationRulePreviewValue(
-                  getValidationRulePreviewValue(record, path),
+                  getValidationRulePreviewValue(
+                    record,
+                    getValidationRulePreviousValueFieldPath(path) ?? path,
+                  ),
                 );
 
                 return (

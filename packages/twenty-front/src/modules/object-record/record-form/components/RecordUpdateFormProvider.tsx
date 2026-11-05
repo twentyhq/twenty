@@ -66,6 +66,7 @@ export const RecordUpdateFormProvider = ({
     ({
       objectMetadataItem,
       draftRecord,
+      previousRecord,
       fieldMetadataIds,
       violations,
     }: RecordUpdateFormCompletionRequest) => {
@@ -87,6 +88,7 @@ export const RecordUpdateFormProvider = ({
           requestId,
           objectMetadataId: objectMetadataItem.id,
           draftRecord,
+          previousRecord,
           fieldMetadataIds,
           violations,
         },
