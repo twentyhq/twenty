@@ -83,11 +83,7 @@ export class McpCoreController {
     application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
     @Req() request: Request,
-    @Res({ passthrough: true })
-    res: Pick<
-      Response,
-      'status' | 'setHeader' | 'write' | 'end' | 'headersSent'
-    >,
+    @Res({ passthrough: true }) res: Response,
     @Query('mode') mode?: string,
   ) {
     const { method: mcpMethod, toolName: mcpToolName } =

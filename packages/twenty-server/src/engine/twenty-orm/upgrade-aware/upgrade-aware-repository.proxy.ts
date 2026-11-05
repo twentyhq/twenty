@@ -10,11 +10,6 @@ import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/up
 
 const logger = new Logger('UpgradeAwareRepositoryProxy');
 
-type UpgradeAwareAvailabilityState = Pick<
-  UpgradeAwareRepositoryState,
-  'getHiddenColumnPropertyNames' | 'isEntityAvailable'
->;
-
 type RepositoryMethodBehavior =
   | {
       kind: 'short-circuit-read';
@@ -116,7 +111,7 @@ const METHODS_THAT_ACCEPT_FIND_OPTIONS = new Set<string>([
 
 const stripUnavailableSelect = (
   entityClass: Function,
-  state: UpgradeAwareAvailabilityState,
+  state: UpgradeAwareRepositoryState,
   options: unknown,
 ): unknown => {
   if (!isDefined(options) || typeof options !== 'object') {
@@ -181,7 +176,7 @@ const buildSkippedUpdateResult = (): UpdateResult => {
 
 const stripUnavailableUpdateValues = (
   entityClass: Function,
-  state: UpgradeAwareAvailabilityState,
+  state: UpgradeAwareRepositoryState,
   values: unknown,
 ): unknown => {
   if (
@@ -220,7 +215,7 @@ const stripUnavailableUpdateValues = (
 
 const stripUnavailableRelations = (
   metadata: EntityMetadata,
-  state: UpgradeAwareAvailabilityState,
+  state: UpgradeAwareRepositoryState,
   options: unknown,
 ): unknown => {
   if (!isDefined(options) || typeof options !== 'object') {
@@ -264,7 +259,7 @@ const stripUnavailableRelations = (
 
 const isRelationAvailable = (
   metadata: EntityMetadata,
-  state: UpgradeAwareAvailabilityState,
+  state: UpgradeAwareRepositoryState,
   relationPropertyName: string,
 ): boolean => {
   const relation = metadata.relations.find(
@@ -305,7 +300,7 @@ export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
 }: {
   repository: Repository<Entity>;
   entityClass: Function;
-  state: UpgradeAwareAvailabilityState;
+  state: UpgradeAwareRepositoryState;
 }): Repository<Entity> =>
   new Proxy(repository, {
     get(target, prop, receiver) {
@@ -347,7 +342,7 @@ const handleRepositoryMethodCall = <Entity extends object>({
   target: Repository<Entity>;
   methodName: string;
   entityClass: Function;
-  state: UpgradeAwareAvailabilityState;
+  state: UpgradeAwareRepositoryState;
   behavior: RepositoryMethodBehavior;
   args: unknown[];
 }): unknown => {
