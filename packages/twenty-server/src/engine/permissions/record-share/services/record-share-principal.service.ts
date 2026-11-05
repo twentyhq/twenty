@@ -15,6 +15,7 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
+import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,50 +32,6 @@ export class RecordSharePrincipalService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly permissionsService: PermissionsService,
   ) {}
-
-  // Undefined for everyone, and for a member who left or whose membership is gone
-  async resolveRoleIds({
-    workspaceId,
-    principals,
-  }: {
-    workspaceId: string;
-    principals: RecordSharePrincipal[];
-  }): Promise<(string | undefined)[]> {
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-        'userWorkspaceRoleMap',
-      ]);
-
-    return principals.map((principal) => {
-      switch (principal.principalType) {
-        case RecordSharePrincipalType.ROLE:
-          return principal.principalId;
-        case RecordSharePrincipalType.WORKSPACE_MEMBER: {
-          const flatWorkspaceMember =
-            flatWorkspaceMemberMaps.byId[principal.principalId];
-
-          if (
-            !isDefined(flatWorkspaceMember) ||
-            isDefined(flatWorkspaceMember.deletedAt)
-          ) {
-            return undefined;
-          }
-
-          const userWorkspaceId =
-            flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
-              flatWorkspaceMember.userId
-            ];
-
-          return isDefined(userWorkspaceId)
-            ? userWorkspaceRoleMap[userWorkspaceId]
-            : undefined;
-        }
-        default:
-          return undefined;
-      }
-    });
-  }
 
   // Without reach beyond roles, a grant the recipient's role cannot use would
   // be stored without ever taking effect. Runs after the grants are written:
@@ -107,9 +64,15 @@ export class RecordSharePrincipalService {
       return;
     }
 
-    const roleIds = await this.resolveRoleIds({
-      workspaceId,
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'userWorkspaceRoleMap',
+      ]);
+    const roleIds = resolveRecordSharePrincipalRoleIds({
       principals: namedPrincipals,
+      flatWorkspaceMemberMaps,
+      userWorkspaceRoleMap,
     });
     const metadataMaps = await this.permissionsMetadataMapsService.load({
       workspaceId,

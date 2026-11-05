@@ -4,6 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
+import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
+import { UserRoleReadService } from 'src/engine/permissions/role-assignment/user-role-read.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
@@ -16,7 +20,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity, RoleTargetEntity, ApiKeyEntity]),
+    TypeOrmModule.forFeature([
+      RoleEntity,
+      RoleTargetEntity,
+      ApiKeyEntity,
+      UserWorkspaceEntity,
+    ]),
     WorkspaceCacheModule,
     RoleTargetModule,
     RecordPermissionOrmModule,
@@ -27,6 +36,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsMetadataMapsService,
     PermissionsPrincipalsService,
     RecordAccessPolicyService,
+    RecordPermissionsService,
+    RecordSharingReadService,
+    UserRoleReadService,
     provideWorkspaceScopedRepository(ApiKeyEntity),
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(RoleTargetEntity),
@@ -34,7 +46,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     PermissionsMetadataMapsService,
     PermissionsService,
-    PermissionsPrincipalsService,
     ApiKeyRoleService,
   ],
 })

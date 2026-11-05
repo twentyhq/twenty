@@ -38,7 +38,9 @@ export class DeleteRoleTool extends BaseTool<typeof deleteRoleInputSchema> {
     const deletedRole = await this.roleService.deleteRole({
       roleId: input.roleId,
       workspaceId,
-      actingRoleIds: await this.permissionsService.getRoleIds(authContext),
+      actingRoleIds: await this.permissionsService.findRoleIds({
+        authContext: authContext,
+      }),
     });
 
     return {

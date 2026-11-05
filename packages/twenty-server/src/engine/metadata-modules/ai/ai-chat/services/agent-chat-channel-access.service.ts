@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -20,7 +19,7 @@ type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 export class AgentChatChannelAccessService {
   constructor(
     private readonly channelMetadataService: AgentChatChannelMetadataService,
-    private readonly recordSharePrincipalService: RecordSharePrincipalService,
+    private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -61,14 +60,9 @@ export class AgentChatChannelAccessService {
     workspaceMemberId,
   }: MemberArgs): Promise<FlatRole | undefined> {
     const [[roleId], { flatRoleMaps }] = await Promise.all([
-      this.recordSharePrincipalService.resolveRoleIds({
+      this.permissionsService.findWorkspaceMemberRoleIds({
         workspaceId,
-        principals: [
-          {
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            principalId: workspaceMemberId,
-          },
-        ],
+        workspaceMemberIds: [workspaceMemberId],
       }),
       this.workspaceCacheService.getOrRecompute(workspaceId, ['flatRoleMaps']),
     ]);

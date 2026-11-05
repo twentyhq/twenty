@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -36,7 +35,7 @@ export class AgentChatAssistantPolicyService {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async resolveAssistantMessageDecision({
@@ -169,11 +168,12 @@ export class AgentChatAssistantPolicyService {
       return AgentChatAudience.CONVERSATION;
     }
 
-    const [threadShares, audienceMemberCount] = await Promise.all([
-      this.recordPermissionReadOrmService.findRecordShares({
+    const [hasSharedAudience, audienceMemberCount] = await Promise.all([
+      this.permissionsService.isRecordSharedBeyondMember({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
-        recordIds: [thread.id],
+        recordId: thread.id,
+        workspaceMemberId: thread.workspaceMemberId,
       }),
       this.participantService.countMembers({
         workspaceId,
@@ -185,11 +185,6 @@ export class AgentChatAssistantPolicyService {
         ],
       }),
     ]);
-    const hasSharedAudience = threadShares.some(
-      ({ principalType, principalId }) =>
-        principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
-        principalId !== thread.workspaceMemberId,
-    );
 
     return !hasSharedAudience && audienceMemberCount <= 1
       ? AgentChatAudience.ASSISTANT_CHAT
