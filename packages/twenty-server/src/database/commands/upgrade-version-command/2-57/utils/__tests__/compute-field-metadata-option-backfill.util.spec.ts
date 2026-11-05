@@ -1,4 +1,4 @@
-import { computeFieldMetadataOptionBackfill } from 'src/database/commands/upgrade-version-command/2-56/utils/compute-field-metadata-option-backfill.util';
+import { computeFieldMetadataOptionBackfill } from 'src/database/commands/upgrade-version-command/2-57/utils/compute-field-metadata-option-backfill.util';
 
 const FIELD_ID = '20202020-0000-4000-8000-000000000001';
 const OTHER_FIELD_ID = '20202020-0000-4000-8000-000000000002';
