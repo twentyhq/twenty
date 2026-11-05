@@ -26,11 +26,16 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  runInTransaction<TResult>(
-    workspaceId: string,
-    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
-  ): Promise<TResult> {
-    return this.transactionService.run(workspaceId, work);
+  runInTransaction<TResult>({
+    workspaceId,
+    threadId,
+    work,
+  }: {
+    workspaceId: string;
+    threadId: string | null;
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
+  }): Promise<TResult> {
+    return this.transactionService.run({ workspaceId, threadId, work });
   }
 
   // the message is replaced whole, so no reader or crash ever finds it without its parts
@@ -49,23 +54,30 @@ export class AgentConversationWriterService {
   }): Promise<void> {
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
 
-    await this.transactionService.run(workspaceId, async (scope) => {
-      await scope.upsert(
-        'agentMessage',
-        {
-          id,
-          threadId,
-          turnId,
-          role: AgentMessageRole.ASSISTANT,
-          processedAt: new Date().toISOString(),
-        },
-        ['id'],
-      );
-      await scope.delete('agentMessagePart', { messageId: id });
+    await this.transactionService.run({
+      workspaceId,
+      threadId,
+      work: async (scope) => {
+        await scope.upsert({
+          name: 'agentMessage',
+          values: {
+            id,
+            threadId,
+            turnId,
+            role: AgentMessageRole.ASSISTANT,
+            processedAt: new Date().toISOString(),
+          },
+          conflictPaths: ['id'],
+        });
+        await scope.delete({
+          name: 'agentMessagePart',
+          where: { messageId: id },
+        });
 
-      if (dbParts.length > 0) {
-        await scope.insert('agentMessagePart', dbParts);
-      }
+        if (dbParts.length > 0) {
+          await scope.insert({ name: 'agentMessagePart', values: dbParts });
+        }
+      },
     });
   }
 
@@ -98,12 +110,15 @@ export class AgentConversationWriterService {
 
     const turnId = id ?? randomUUID();
     const write = (transactionScope: AgentHistoryTransactionScope) =>
-      transactionScope.insert('agentTurn', { id: turnId, ...values });
+      transactionScope.insert({
+        name: 'agentTurn',
+        values: { id: turnId, ...values },
+      });
 
     if (isDefined(scope)) {
       await write(scope);
     } else {
-      await this.transactionService.run(workspaceId, write);
+      await this.transactionService.run({ workspaceId, threadId, work: write });
     }
 
     return turnId;
@@ -117,14 +132,16 @@ export class AgentConversationWriterService {
     turnId,
     contextMessageId,
     context,
+    scope,
   }: {
     workspaceId: string;
     threadId: string;
     turnId?: string;
     contextMessageId?: string;
     context: string;
+    scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
-    return this.transactionService.run(workspaceId, async (scope) => {
+    const write = async (scope: AgentHistoryTransactionScope) => {
       const insertedTurnId = await this.insertTurn({
         workspaceId,
         threadId,
@@ -147,7 +164,13 @@ export class AgentConversationWriterService {
       });
 
       return insertedTurnId;
-    });
+    };
+
+    if (isDefined(scope)) {
+      return write(scope);
+    }
+
+    return this.transactionService.run({ workspaceId, threadId, work: write });
   }
 
   // The message and its parts are written together, so a message that
@@ -188,34 +211,40 @@ export class AgentConversationWriterService {
     });
 
     const write = async (transactionScope: AgentHistoryTransactionScope) => {
-      await transactionScope.insert('agentMessage', {
-        id: messageId,
-        threadId,
-        turnId,
-        role,
-        agentId,
-        processedAt: (processedAt ?? new Date()).toISOString(),
-        ...(isDefined(senderWorkspaceMemberId)
-          ? { senderWorkspaceMemberId }
-          : {}),
-        ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
+      await transactionScope.insert({
+        name: 'agentMessage',
+        values: {
+          id: messageId,
+          threadId,
+          turnId,
+          role,
+          agentId,
+          processedAt: (processedAt ?? new Date()).toISOString(),
+          ...(isDefined(senderWorkspaceMemberId)
+            ? { senderWorkspaceMemberId }
+            : {}),
+          ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
+        },
       });
 
       const dbParts = mapUIMessagePartsToDBParts(parts, messageId);
 
       if (dbParts.length > 0) {
-        await transactionScope.insert('agentMessagePart', dbParts);
+        await transactionScope.insert({
+          name: 'agentMessagePart',
+          values: dbParts,
+        });
       }
 
       if (!isAwaitingAnswer) {
         return;
       }
 
-      const claimedThreadCount = await transactionScope.update(
-        'agentChatThread',
-        { id: threadId, pendingQuestionMessageId: IsNull() },
-        { pendingQuestionMessageId: messageId },
-      );
+      const claimedThreadCount = await transactionScope.update({
+        name: 'agentChatThread',
+        where: { id: threadId, pendingQuestionMessageId: IsNull() },
+        values: { pendingQuestionMessageId: messageId },
+      });
 
       if (claimedThreadCount === 0) {
         throw new AiException(
@@ -224,17 +253,17 @@ export class AgentConversationWriterService {
         );
       }
 
-      await transactionScope.update(
-        'agentTurn',
-        { id: turnId },
-        { status: AgentTurnStatus.WAITING_FOR_INPUT, endedAt: null },
-      );
+      await transactionScope.update({
+        name: 'agentTurn',
+        where: { id: turnId },
+        values: { status: AgentTurnStatus.WAITING_FOR_INPUT, endedAt: null },
+      });
     };
 
     if (isDefined(scope)) {
       await write(scope);
     } else {
-      await this.transactionService.run(workspaceId, write);
+      await this.transactionService.run({ workspaceId, threadId, work: write });
     }
 
     return messageId;

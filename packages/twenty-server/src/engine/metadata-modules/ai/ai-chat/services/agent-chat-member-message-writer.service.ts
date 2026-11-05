@@ -77,9 +77,10 @@ export class AgentChatMemberMessageWriterService {
       },
     );
     const persistedMessage =
-      await this.conversationWriterService.runInTransaction(
-        actor.workspaceId,
-        async (transactionScope) => {
+      await this.conversationWriterService.runInTransaction({
+        workspaceId: actor.workspaceId,
+        threadId: thread.id,
+        work: async (transactionScope) => {
           await this.threadParticipantService.resolveMentionInTransaction({
             ...threadAccess,
             scope: transactionScope,
@@ -124,18 +125,21 @@ export class AgentChatMemberMessageWriterService {
             senderApplicationId: resolveMessageSenderApplicationId(actor),
           };
 
-          await transactionScope.insert('agentMessage', queuedMemberMessage);
-          await transactionScope.insert(
-            'agentMessagePart',
-            mapUIMessagePartsToDBParts(
+          await transactionScope.insert({
+            name: 'agentMessage',
+            values: queuedMemberMessage,
+          });
+          await transactionScope.insert({
+            name: 'agentMessagePart',
+            values: mapUIMessagePartsToDBParts(
               messagePartsWithReplyContext,
               queuedMemberMessage.id,
             ),
-          );
+          });
 
           return queuedMemberMessage;
         },
-      );
+      });
     let delivery: AgentChatInboxDeliveryResult = {
       deliveredMentionWorkspaceMemberIds: [],
       deliveredRecipientWorkspaceMemberIds: [],

@@ -42,6 +42,7 @@ import { createAttachConversationToRecordTool } from 'src/engine/metadata-module
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
+import { type AgentChatAuthorizedConversation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-authorized-conversation.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -57,6 +58,8 @@ import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/
 import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
@@ -70,8 +73,7 @@ type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   sender: AgentChatSender;
-  authorization: Awaited<ReturnType<AgentChatActorService['authorize']>>;
-  threadId: string;
+  authorizedConversation: AgentChatAuthorizedConversation;
   streamId: string;
   turnId: string;
   messages: ExtendedUIMessage[];
@@ -129,8 +131,7 @@ export class ChatExecutionService {
     workspace,
     userWorkspaceId,
     sender,
-    authorization,
-    threadId,
+    authorizedConversation,
     streamId,
     turnId,
     messages,
@@ -142,21 +143,29 @@ export class ChatExecutionService {
     conversationSizeTokens,
     onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const getAuthorization = createTurnAuthorizer({
+    const { authContext, thread } = authorizedConversation;
+    const threadId = thread.id;
+    const getAuthorizedConversation = createTurnAuthorizer({
       authorize: () =>
-        this.chatActorService.authorize({
+        this.chatActorService.resolveAuthorizedConversation({
           workspaceId: workspace.id,
           threadId,
           sender,
         }),
-      authorization,
+      authorization: authorizedConversation,
       maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
     });
-    const resolveExecutionContext = async (): Promise<ToolContext> => ({
-      ...toolContext,
-      ...(await getAuthorization()),
-      resolveExecutionContext: undefined,
-    });
+    const resolveExecutionContext = async (): Promise<ToolContext> => {
+      const { authContext: currentAuthContext } =
+        await getAuthorizedConversation();
+
+      return {
+        ...toolContext,
+        authContext: currentAuthContext,
+        application: getAuthContextApplication(currentAuthContext),
+        resolveExecutionContext: undefined,
+      };
+    };
     const { actorContext, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
@@ -173,16 +182,15 @@ export class ChatExecutionService {
       threadId,
       locale,
       onCodeExecutionUpdate,
-      ...authorization,
-      application: getAuthContextApplication(authorization.authContext),
+      authContext,
+      application: getAuthContextApplication(authContext),
       resolveExecutionContext,
     };
 
     const executionProfile = await this.buildExecutionProfile({
-      isDirectMessage: authorization.isDirectMessage,
+      thread,
       workspaceId: workspace.id,
       userWorkspaceId,
-      threadId,
       messages,
       browsingContext,
       toolContext,
@@ -208,7 +216,7 @@ export class ChatExecutionService {
             messages,
             modelConfig,
             browsingContext: executionProfile.browsingContext,
-            workspaceMemberId: authorization.authContext.workspaceMemberId,
+            workspaceMemberId: authContext.workspaceMemberId,
             timezone: userContext.timezone,
           },
         );
@@ -286,7 +294,7 @@ export class ChatExecutionService {
         turnId,
         streamId,
       },
-      beforeStep: getAuthorization,
+      beforeStep: getAuthorizedConversation,
       metricsScope: 'chat',
       onError: (error) => {
         lastUnderlyingStreamError = error;
@@ -300,23 +308,23 @@ export class ChatExecutionService {
   }
 
   private async buildExecutionProfile({
-    isDirectMessage,
+    thread,
     workspaceId,
     userWorkspaceId,
-    threadId,
     messages,
     browsingContext,
     toolContext,
   }: {
-    isDirectMessage: boolean;
+    thread: AgentChatThreadWorkspaceEntity;
     workspaceId: string;
     userWorkspaceId: string;
-    threadId: string;
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
   }): Promise<ChatExecutionProfile> {
-    if (isDirectMessage) {
+    if (
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return {
         toolset: {
           registryAccess: { type: 'none' },
@@ -334,7 +342,7 @@ export class ChatExecutionService {
     }
 
     const isWorkspaceSetupConversation =
-      threadId ===
+      thread.id ===
       buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId });
     const isWorkspaceSetupThread =
       isWorkspaceSetupConversation &&

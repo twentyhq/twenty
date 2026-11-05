@@ -1,7 +1,5 @@
 import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { Injectable } from '@nestjs/common';
-import { isNonEmptyString } from '@sniptt/guards';
-import { IsNull } from 'typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -65,43 +63,22 @@ export class AgentChatDirectMessageIdentityService {
       firstWorkspaceMemberId,
       secondWorkspaceMemberId,
     });
-    const title = [
-      pair.directMessageFirstWorkspaceMemberId,
-      pair.directMessageSecondWorkspaceMemberId,
-    ]
-      .map((workspaceMemberId) => {
-        const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-
-        if (!isDefined(member)) {
-          return throwAgentChatThreadNotFound();
-        }
-
-        const name = `${member.name.firstName} ${member.name.lastName}`.trim();
-
-        return isNonEmptyString(name) ? name : member.userEmail;
-      })
-      .join(', ');
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
-              {
-                workspaceId,
-                transactionScope,
-                threadId,
-                conversationObjectName: 'agentChatThread',
-                conversationRecordIds: [threadId],
-              },
-            );
-            await transactionScope
-              .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                'agentChatThread',
-                { shouldSkipEventEmission: true },
-              )
-              .update({ id: threadId, title: IsNull() }, { title });
-          },
+        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
+          this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+            {
+              workspaceId,
+              transactionScope,
+              pair: [
+                pair.directMessageFirstWorkspaceMemberId,
+                pair.directMessageSecondWorkspaceMemberId,
+              ],
+              conversationObjectName: 'agentChatThread',
+              conversationRecordIds: [threadId],
+            },
+          ),
         ),
       buildSystemAuthContext(workspaceId),
       { lite: true },
@@ -171,7 +148,10 @@ export class AgentChatDirectMessageIdentityService {
                 {
                   workspaceId,
                   transactionScope,
-                  threadId: createdThreadId,
+                  pair: [
+                    pair.directMessageFirstWorkspaceMemberId,
+                    pair.directMessageSecondWorkspaceMemberId,
+                  ],
                   conversationObjectName: 'agentChatThread',
                   conversationRecordIds: [createdThreadId],
                 },

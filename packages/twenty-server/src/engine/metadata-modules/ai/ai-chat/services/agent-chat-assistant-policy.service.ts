@@ -126,13 +126,24 @@ export class AgentChatAssistantPolicyService {
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (
-      thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
-      return (
-        workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC
-      );
+      return this.resolveDirectMessageAssistantMode({
+        workspaceId,
+        configuredMode: workspace.aiChatDirectMessageAssistantMode,
+      });
     }
 
+    return workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC;
+  }
+
+  private async resolveDirectMessageAssistantMode({
+    workspaceId,
+    configuredMode,
+  }: {
+    workspaceId: string;
+    configuredMode: AiChatAssistantMode;
+  }): Promise<AiChatAssistantMode> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['featureFlagsMap'],
@@ -142,10 +153,7 @@ export class AgentChatAssistantPolicyService {
       return AiChatAssistantMode.NEVER;
     }
 
-    return (
-      workspace.aiChatDirectMessageAssistantMode ??
-      AiChatAssistantMode.MENTION_ONLY
-    );
+    return configuredMode ?? AiChatAssistantMode.MENTION_ONLY;
   }
 
   private async resolveChatAudience({

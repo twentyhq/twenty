@@ -1,15 +1,16 @@
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { isArray, isNull, isString } from '@sniptt/guards';
-import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { Inject, Injectable } from '@nestjs/common';
-import { In, type ObjectLiteral } from 'typeorm';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isString } from '@sniptt/guards';
+import { type ObjectLiteral } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { deleteAgentHistoryRecordsWithShares } from 'src/engine/metadata-modules/ai/ai-history/utils/delete-agent-history-records-with-shares.util';
+import { validateAgentHistoryConversationRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/validate-agent-history-conversation-records-or-throw.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 @Injectable()
 export class AgentHistoryTransactionService {
@@ -18,21 +19,21 @@ export class AgentHistoryTransactionService {
     @Inject(AgentChatDirectMessageConversationPrivacyService)
     private readonly directMessageConversationPrivacyService: Pick<
       AgentChatDirectMessageConversationPrivacyService,
-      | 'isDirectMessageIdentityEnabled'
+      | 'findDirectMessagePairOfThread'
       | 'makeConversationRecordsPrivateToPair'
       | 'deletePairSharesOfConversationRecords'
     >,
   ) {}
 
-  async run<TResult>(
-    workspaceId: string,
-    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
-  ): Promise<TResult> {
-    const isDirectMessageIdentityEnabled =
-      await this.directMessageConversationPrivacyService.isDirectMessageIdentityEnabled(
-        workspaceId,
-      );
-
+  async run<TResult>({
+    workspaceId,
+    threadId,
+    work,
+  }: {
+    workspaceId: string;
+    threadId: string | null;
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
+  }): Promise<TResult> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -42,125 +43,86 @@ export class AgentHistoryTransactionService {
                 shouldSkipEventEmission: true,
               });
 
-            const directMessagePairsByThreadId = new Map<
-              string,
-              readonly [string, string] | null
-            >();
-            const threadIdsByMessageId = new Map<string, string>();
+            const writtenMessageIds = new Set<string>();
+            let directMessagePair: Promise<readonly [string, string] | null>;
 
-            const makeDirectMessageConversationRecordsPrivate = async ({
+            const resolveDirectMessagePair = () => {
+              directMessagePair ??= isDefined(threadId)
+                ? this.directMessageConversationPrivacyService.findDirectMessagePairOfThread(
+                    { workspaceId, transactionScope, threadId },
+                  )
+                : Promise.resolve(null);
+
+              return directMessagePair;
+            };
+
+            const shareInsertedRecords = async ({
               name,
-              values,
               identifiers,
             }: {
               name: AgentHistoryObjectName;
-              values: ObjectLiteral | ObjectLiteral[];
               identifiers: ObjectLiteral[];
-            }): Promise<void> => {
-              if (!isDirectMessageIdentityEnabled) {
-                return;
-              }
-
-              const records = isArray(values) ? values : [values];
-
-              const missingMessageIds = [
-                ...new Set(
-                  records.map(({ messageId }) => messageId).filter(isString),
-                ),
-              ].filter((messageId) => !threadIdsByMessageId.has(messageId));
-
-              if (isNonEmptyArray(missingMessageIds)) {
-                const messages = await transactionScope
-                  .getRepositoryWithoutPermissionChecks<AgentMessageWorkspaceEntity>(
-                    'agentMessage',
-                    { shouldSkipEventEmission: true },
-                  )
-                  .find({
-                    where: { id: In(missingMessageIds) },
-                    select: ['id', 'threadId'],
-                    withDeleted: true,
-                  });
-
-                for (const message of messages) {
-                  threadIdsByMessageId.set(message.id, message.threadId);
-                }
-              }
-
-              const conversationRecordIdsByThreadId = new Map<
-                string,
-                string[]
-              >();
-
-              for (const [index, record] of records.entries()) {
-                const recordId = identifiers[index]?.id;
-                let threadId = record.threadId;
-
-                if (name === 'agentChatThread') {
-                  threadId = recordId;
-                }
-
-                if (name === 'agentMessagePart' && isString(record.messageId)) {
-                  threadId = threadIdsByMessageId.get(record.messageId);
-                }
-
-                if (name === 'agentTurn' && isNull(threadId)) {
-                  continue;
-                }
-
-                if (!isString(recordId) || !isString(threadId)) {
+            }) => {
+              const recordIds = identifiers.map(({ id }) => {
+                if (!isString(id)) {
                   return throwAgentChatThreadNotFound();
                 }
 
-                if (name === 'agentMessage') {
-                  threadIdsByMessageId.set(recordId, threadId);
+                return id;
+              });
+
+              if (name === 'agentMessage') {
+                for (const recordId of recordIds) {
+                  writtenMessageIds.add(recordId.toLowerCase());
                 }
-
-                const conversationRecordIds =
-                  conversationRecordIdsByThreadId.get(threadId) ?? [];
-
-                conversationRecordIds.push(recordId);
-                conversationRecordIdsByThreadId.set(
-                  threadId,
-                  conversationRecordIds,
-                );
               }
 
-              for (const [
-                threadId,
-                conversationRecordIds,
-              ] of conversationRecordIdsByThreadId) {
-                await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
-                  {
-                    workspaceId,
-                    transactionScope,
-                    threadId,
-                    conversationObjectName: name,
-                    conversationRecordIds,
-                    directMessagePairsByThreadId,
-                  },
-                );
+              const pair = await resolveDirectMessagePair();
+
+              if (!isDefined(pair)) {
+                return;
               }
+
+              await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+                {
+                  workspaceId,
+                  transactionScope,
+                  pair,
+                  conversationObjectName: name,
+                  conversationRecordIds: recordIds,
+                },
+              );
             };
 
             return work({
+              threadId,
               executeRawQuery: transactionScope.executeRawQuery,
-              insert: async (name, values) => {
+              insert: async ({ name, values }) => {
+                validateAgentHistoryConversationRecordsOrThrow({
+                  name,
+                  values,
+                  threadId,
+                  writtenMessageIds,
+                });
+
                 const { identifiers } =
                   await getRepository(name).insert(values);
 
-                await makeDirectMessageConversationRecordsPrivate({
-                  name,
-                  values,
-                  identifiers,
-                });
+                await shareInsertedRecords({ name, identifiers });
               },
-              update: async (name, where, values) => {
+              update: async ({ name, where, values }) => {
                 const result = await getRepository(name).update(where, values);
 
                 return result.generatedMaps.length;
               },
-              upsert: async (name, values, conflictPaths) => {
-                // workspace upsert selects before inserting, so concurrent writers of one identity take turns
+              upsert: async ({ name, values, conflictPaths }) => {
+                validateAgentHistoryConversationRecordsOrThrow({
+                  name,
+                  values,
+                  threadId,
+                  writtenMessageIds,
+                });
+
                 const identity = [...conflictPaths]
                   .sort()
                   .map((field) => [field, values[field]]);
@@ -171,33 +133,33 @@ export class AgentHistoryTransactionService {
                     `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
                   ],
                 );
+
                 const { identifiers } = await getRepository(name).upsert(
                   values,
                   conflictPaths,
                 );
-                await makeDirectMessageConversationRecordsPrivate({
-                  name,
-                  values,
-                  identifiers,
-                });
-              },
-              delete: async (name, where) => {
-                const { raw } = await getRepository(name).delete(where);
 
-                if (!isDirectMessageIdentityEnabled) {
-                  return;
+                await shareInsertedRecords({ name, identifiers });
+              },
+              delete: async ({ name, where }) => {
+                const pair = await resolveDirectMessagePair();
+
+                if (!isDefined(pair)) {
+                  const { raw } = await getRepository(name).delete(where);
+
+                  return raw.length;
                 }
 
-                await this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
-                  {
-                    workspaceId,
-                    transactionScope,
-                    conversationObjectName: name,
-                    conversationRecordIds: raw.map(
-                      ({ id }: { id: string }) => id,
+                return deleteAgentHistoryRecordsWithShares({
+                  workspaceId,
+                  transactionScope,
+                  name,
+                  where,
+                  deleteShares: (records) =>
+                    this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
+                      { workspaceId, transactionScope, ...records },
                     ),
-                  },
-                );
+                });
               },
               afterCommit: transactionScope.afterCommit,
             });

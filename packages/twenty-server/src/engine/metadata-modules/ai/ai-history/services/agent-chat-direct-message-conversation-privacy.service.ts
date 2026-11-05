@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -44,30 +45,18 @@ export class AgentChatDirectMessageConversationPrivacyService {
   async makeConversationRecordsPrivateToPair({
     workspaceId,
     transactionScope,
-    threadId,
+    pair,
     conversationObjectName,
     conversationRecordIds,
-    directMessagePairsByThreadId,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
-    threadId: string;
+    pair: DirectMessagePair;
     conversationObjectName: AgentHistoryObjectName;
     conversationRecordIds: string[];
-    directMessagePairsByThreadId?: Map<string, DirectMessagePair | null>;
-  }): Promise<boolean> {
-    const pair = await this.findDirectMessagePairOfThread({
-      transactionScope,
-      threadId,
-      directMessagePairsByThreadId,
-    });
-
-    if (!isDefined(pair)) {
-      return false;
-    }
-
+  }): Promise<void> {
     const conversationObjectMetadata =
-      await this.findConversationObjectMetadataOrThrow({
+      await this.getHistoryObjectMetadataOrThrow({
         workspaceId,
         conversationObjectName,
       });
@@ -104,8 +93,6 @@ export class AgentChatDirectMessageConversationPrivacyService {
         })),
       ),
     });
-
-    return true;
   }
 
   async deletePairSharesOfConversationRecords({
@@ -124,7 +111,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
     }
 
     const conversationObjectMetadata =
-      await this.findConversationObjectMetadataOrThrow({
+      await this.getHistoryObjectMetadataOrThrow({
         workspaceId,
         conversationObjectName,
       });
@@ -137,7 +124,70 @@ export class AgentChatDirectMessageConversationPrivacyService {
     });
   }
 
-  private async findConversationObjectMetadataOrThrow({
+  async findDirectMessagePairOfThread({
+    workspaceId,
+    transactionScope,
+    threadId,
+  }: {
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+    threadId: string;
+  }): Promise<DirectMessagePair | null> {
+    const isDirectMessageIdentityEnabled =
+      await this.isDirectMessageIdentityEnabled(workspaceId);
+
+    const thread = await transactionScope
+      .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+        'agentChatThread',
+      )
+      .findOne({
+        where: { id: threadId },
+        withDeleted: true,
+        select: isDirectMessageIdentityEnabled
+          ? [
+              'id',
+              'conversationType',
+              'directMessageFirstWorkspaceMemberId',
+              'directMessageSecondWorkspaceMemberId',
+            ]
+          : ['id', 'conversationType'],
+      });
+
+    if (!isDefined(thread)) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    if (
+      thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
+      return null;
+    }
+
+    const {
+      directMessageFirstWorkspaceMemberId,
+      directMessageSecondWorkspaceMemberId,
+    } = thread;
+
+    if (
+      !isDirectMessageIdentityEnabled ||
+      !isDefined(directMessageFirstWorkspaceMemberId) ||
+      !isDefined(directMessageSecondWorkspaceMemberId)
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    const pair = normalizeAgentChatDirectMessagePairOrThrow({
+      firstWorkspaceMemberId: directMessageFirstWorkspaceMemberId,
+      secondWorkspaceMemberId: directMessageSecondWorkspaceMemberId,
+    });
+
+    return [
+      pair.directMessageFirstWorkspaceMemberId,
+      pair.directMessageSecondWorkspaceMemberId,
+    ];
+  }
+
+  private async getHistoryObjectMetadataOrThrow({
     workspaceId,
     conversationObjectName,
   }: {
@@ -163,70 +213,5 @@ export class AgentChatDirectMessageConversationPrivacyService {
     }
 
     return conversationObjectMetadata;
-  }
-
-  private async findDirectMessagePairOfThread({
-    transactionScope,
-    threadId,
-    directMessagePairsByThreadId,
-  }: {
-    transactionScope: WorkspaceTransactionScope;
-    threadId: string;
-    directMessagePairsByThreadId?: Map<string, DirectMessagePair | null>;
-  }): Promise<DirectMessagePair | null> {
-    if (
-      isDefined(directMessagePairsByThreadId) &&
-      directMessagePairsByThreadId.has(threadId)
-    ) {
-      return directMessagePairsByThreadId.get(threadId) ?? null;
-    }
-
-    const thread = await transactionScope
-      .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
-      )
-      .findOne({
-        where: { id: threadId },
-        withDeleted: true,
-        select: [
-          'id',
-          'conversationType',
-          'directMessageFirstWorkspaceMemberId',
-          'directMessageSecondWorkspaceMemberId',
-        ],
-      });
-
-    if (!isDefined(thread)) {
-      return throwAgentChatThreadNotFound();
-    }
-
-    if (
-      thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
-      directMessagePairsByThreadId?.set(threadId, null);
-
-      return null;
-    }
-
-    const {
-      directMessageFirstWorkspaceMemberId,
-      directMessageSecondWorkspaceMemberId,
-    } = thread;
-
-    if (
-      !isDefined(directMessageFirstWorkspaceMemberId) ||
-      !isDefined(directMessageSecondWorkspaceMemberId)
-    ) {
-      return throwAgentChatThreadNotFound();
-    }
-
-    const pair: DirectMessagePair = [
-      directMessageFirstWorkspaceMemberId,
-      directMessageSecondWorkspaceMemberId,
-    ];
-
-    directMessagePairsByThreadId?.set(threadId, pair);
-
-    return pair;
   }
 }

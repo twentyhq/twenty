@@ -18,6 +18,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -175,6 +176,7 @@ export class AgentChatStreamingService {
         }
 
         await this.agentChatService.deleteAssistantMessagesForTurn({
+          threadId,
           turnId,
           workspaceId,
         });
@@ -317,7 +319,7 @@ export class AgentChatStreamingService {
     const [thread, messages] = await Promise.all([
       this.threadRepository.findOneOrFail(workspaceId, {
         where: { id: threadId },
-        select: ['id', 'title', 'conversationSize'],
+        select: ['id', 'title', 'conversationType', 'conversationSize'],
       }),
       this.loadMessagesFromDB(threadId, workspaceId, workspaceMemberId),
     ]);
@@ -339,7 +341,10 @@ export class AgentChatStreamingService {
             ?.parts.find((part): part is TextUIPart => part.type === 'text')
             ?.text ??
           '',
-        hasTitle: isNonEmptyString(thread.title),
+        hasTitle:
+          thread.conversationType ===
+            AgentChatThreadConversationType.DIRECT_MESSAGE ||
+          isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
       },
       {
@@ -393,16 +398,17 @@ export class AgentChatStreamingService {
           threadId,
           messageId: message.id,
         });
-        const authorization = await this.actorService.authorize({
-          workspaceId,
-          threadId,
-          sender,
-        });
+        const { authContext } =
+          await this.actorService.resolveAuthorizedConversation({
+            workspaceId,
+            threadId,
+            sender,
+          });
 
         return {
           message,
           userWorkspaceId: sender.userWorkspaceId,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
+          workspaceMemberId: authContext.workspaceMemberId,
         };
       } catch (error) {
         // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker

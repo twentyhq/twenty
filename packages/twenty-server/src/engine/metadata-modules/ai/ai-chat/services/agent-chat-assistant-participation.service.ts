@@ -104,14 +104,14 @@ export class AgentChatAssistantParticipationService {
     const persistParticipationWithinTransaction = async (
       transactionScope: AgentHistoryTransactionScope,
     ) => {
-      const updatedThreadCount = await transactionScope.update(
-        'agentChatThread',
-        {
+      const updatedThreadCount = await transactionScope.update({
+        name: 'agentChatThread',
+        where: {
           id: thread.id,
           isAssistantParticipant: !isAssistantParticipant,
         },
-        { isAssistantParticipant },
-      );
+        values: { isAssistantParticipant },
+      });
 
       if (updatedThreadCount > 0 && shouldEmitEvent) {
         transactionScope.afterCommit(() =>
@@ -129,9 +129,10 @@ export class AgentChatAssistantParticipationService {
       return;
     }
 
-    await this.conversationWriterService.runInTransaction(
+    await this.conversationWriterService.runInTransaction({
       workspaceId,
-      persistParticipationWithinTransaction,
-    );
+      threadId: thread.id,
+      work: persistParticipationWithinTransaction,
+    });
   }
 }
