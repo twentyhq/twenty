@@ -1,8 +1,6 @@
 import { type CatalogSpec } from '../types/catalog-spec.type';
-import {
-  type CanonicalCatalog,
-  projectCatalog,
-} from '../utils/project-catalog.util';
+import { type CanonicalCatalog } from '../types/canonical-catalog.type';
+import { projectCatalog } from '../utils/project-catalog.util';
 
 const canonicalCatalog: CanonicalCatalog = {
   openai: {
