@@ -113,11 +113,13 @@ export const buildQueryBuilder = ({
   const queryBuilder = new WorkspaceSelectQueryBuilder('person', {
     tableShape,
     executor: {
-      execute: async (statement) => {
-        executedStatements.push(statement);
+      execute: jest
+        .fn()
+        .mockImplementation(async (statement: CompiledStatement) => {
+          executedStatements.push(statement);
 
-        return rows as never;
-      },
+          return rows;
+        }),
     },
     recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
     tableShapeByObjectMetadataId: () => companyTableShape,

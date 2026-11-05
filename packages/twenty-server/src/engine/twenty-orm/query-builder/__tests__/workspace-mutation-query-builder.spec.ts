@@ -78,11 +78,13 @@ const buildBuilders = ({
   const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: {
-      execute: async (statement) => {
-        executedStatements.push(statement);
+      execute: jest
+        .fn()
+        .mockImplementation(async (statement: CompiledStatement) => {
+          executedStatements.push(statement);
 
-        return rows as never;
-      },
+          return rows;
+        }),
     },
     recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
     tableShapeByObjectMetadataId: () => companyTableShape,
