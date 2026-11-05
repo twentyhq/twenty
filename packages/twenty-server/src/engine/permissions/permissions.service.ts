@@ -194,22 +194,22 @@ export class PermissionsService {
     });
   }
 
-  public findUnreadableFieldMetadataIds({
+  public findUnreadableFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
   }: FieldsQuestion): Promise<Set<string>> {
-    return this.recordAccessPolicyService.findDeniedFieldMetadataIds({
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
       principals,
       objectMetadataId,
       fieldPermission: 'canRead',
     });
   }
 
-  public findNonUpdatableFieldMetadataIds({
+  public findNonUpdatableFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
   }: FieldsQuestion): Promise<Set<string>> {
-    return this.recordAccessPolicyService.findDeniedFieldMetadataIds({
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIdsOrThrow({
       principals,
       objectMetadataId,
       fieldPermission: 'canUpdate',

@@ -104,7 +104,7 @@ export class CommonApiContextBuilderService {
     }
 
     const unreadableFieldMetadataIds =
-      await this.permissionsService.findUnreadableFieldMetadataIds({
+      await this.permissionsService.findUnreadableFieldMetadataIdsOrThrow({
         principals,
         objectMetadataId: flatObjectMetadata.id,
       });

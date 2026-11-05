@@ -73,7 +73,7 @@ export class CommonSelectFieldsBuilder {
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([flatObjectMetadata.id, ...readableObjectMetadataIds])].map(
         (objectMetadataId) =>
-          this.permissionsService.findUnreadableFieldMetadataIds({
+          this.permissionsService.findUnreadableFieldMetadataIdsOrThrow({
             principals,
             objectMetadataId,
           }),

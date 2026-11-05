@@ -142,8 +142,12 @@ describe('DatabaseToolProvider', () => {
       canUpdateSomeRecords: canOperateOnSomeRecords('update'),
       canSoftDeleteSomeRecords: canOperateOnSomeRecords('soft-delete'),
       canDestroySomeRecords: canOperateOnSomeRecords('delete'),
-      findUnreadableFieldMetadataIds: jest.fn().mockResolvedValue(new Set()),
-      findNonUpdatableFieldMetadataIds: jest.fn().mockResolvedValue(new Set()),
+      findUnreadableFieldMetadataIdsOrThrow: jest
+        .fn()
+        .mockResolvedValue(new Set()),
+      findNonUpdatableFieldMetadataIdsOrThrow: jest
+        .fn()
+        .mockResolvedValue(new Set()),
     } as unknown as PermissionsService;
 
     const provider = new DatabaseToolProvider(

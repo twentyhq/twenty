@@ -244,7 +244,7 @@ describe('PermissionsService', () => {
       expect(await permissionsService.canUpdateField(question)).toBe(false);
 
       const unreadableFieldMetadataIds =
-        await permissionsService.findUnreadableFieldMetadataIds({
+        await permissionsService.findUnreadableFieldMetadataIdsOrThrow({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
@@ -252,7 +252,7 @@ describe('PermissionsService', () => {
       expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
       expect(
-        await permissionsService.findNonUpdatableFieldMetadataIds({
+        await permissionsService.findNonUpdatableFieldMetadataIdsOrThrow({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         }),
@@ -275,7 +275,7 @@ describe('PermissionsService', () => {
         objectMetadataId: personFlatObjectMetadata.id,
       };
       const nonUpdatableFieldMetadataIds =
-        await permissionsService.findNonUpdatableFieldMetadataIds(
+        await permissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
           objectQuestion,
         );
 
@@ -284,7 +284,9 @@ describe('PermissionsService', () => {
         jobTitleFieldMetadataId,
       );
       expect(
-        await permissionsService.findUnreadableFieldMetadataIds(objectQuestion),
+        await permissionsService.findUnreadableFieldMetadataIdsOrThrow(
+          objectQuestion,
+        ),
       ).not.toContain(introFieldMetadataId);
     });
 

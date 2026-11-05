@@ -253,16 +253,18 @@ export class RecordAccessPolicyService {
       return false;
     }
 
-    const deniedFieldMetadataIds = await this.findDeniedFieldMetadataIds({
-      principals,
-      objectMetadataId,
-      fieldPermission,
-    });
+    const deniedFieldMetadataIds = await this.findDeniedFieldMetadataIdsOrThrow(
+      {
+        principals,
+        objectMetadataId,
+        fieldPermission,
+      },
+    );
 
     return !deniedFieldMetadataIds.has(fieldMetadataId);
   }
 
-  async findDeniedFieldMetadataIds({
+  async findDeniedFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
     fieldPermission,
