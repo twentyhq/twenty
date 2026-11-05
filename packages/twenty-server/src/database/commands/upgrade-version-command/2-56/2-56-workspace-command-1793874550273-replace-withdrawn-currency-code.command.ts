@@ -127,49 +127,6 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       flatObjectMetadataMaps,
     });
 
-    const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow<unknown>) =>
-      replaceWithdrawnCurrencyCodeInFilterValue(value);
-
-    const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
-    const recordFilterWhereParameters = [
-      workspaceId,
-      [...currencyFieldMetadataIds],
-    ];
-
-    const viewFilterCount = await this.rewriteRowsOrThrow({
-      dataSource,
-      isDryRun,
-      tableName: 'core."viewFilter"',
-      columnName: 'value',
-      whereClause: `${recordFilterWhereClause} AND COALESCE("relationTargetFieldMetadataId", "fieldMetadataId") = ANY($2::uuid[])`,
-      whereParameters: recordFilterWhereParameters,
-      mapRow: mapStoredRecordFilterRow,
-    });
-
-    const rowLevelPermissionPredicateCount = await this.rewriteRowsOrThrow({
-      dataSource,
-      isDryRun,
-      tableName: 'core."rowLevelPermissionPredicate"',
-      columnName: 'value',
-      whereClause: `${recordFilterWhereClause} AND "fieldMetadataId" = ANY($2::uuid[])`,
-      whereParameters: recordFilterWhereParameters,
-      mapRow: mapStoredRecordFilterRow,
-    });
-
-    const chartWidgetCount = await this.rewriteRowsOrThrow({
-      dataSource,
-      isDryRun,
-      tableName: 'core."pageLayoutWidget"',
-      columnName: 'configuration',
-      whereClause: `"workspaceId" = $1 AND configuration -> 'filter' -> 'recordFilters' IS NOT NULL`,
-      whereParameters: [workspaceId],
-      mapRow: ({ value }) =>
-        replaceWithdrawnCurrencyCodeInChartConfiguration({
-          configuration: value,
-          currencyFieldMetadataIds,
-        }),
-    });
-
     const mapWorkflowVersionStepsRow = ({ value }: StoredJsonbRow<unknown>) =>
       replaceWithdrawnCurrencyCodeInWorkflowSteps({
         steps: value,
@@ -182,31 +139,19 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         JSON.stringify([{ type }]),
       );
 
-    const coreWorkflowVersionCount = await this.rewriteRowsOrThrow({
+    const {
+      viewFilterCount,
+      rowLevelPermissionPredicateCount,
+      chartWidgetCount,
+      coreWorkflowVersionCount,
+      coreWorkflowVersionTriggersCount,
+    } = await this.replaceInCachedCoreRows({
       dataSource,
       isDryRun,
-      tableName: 'core."workflowVersion"',
-      columnName: 'steps',
-      whereClause: `"workspaceId" = $1 AND steps @> ANY($2::jsonb[])`,
-      whereParameters: [workspaceId, workflowStepTypeContainments],
-      mapRow: mapWorkflowVersionStepsRow,
-    });
-
-    const coreWorkflowVersionTriggersCount = await this.rewriteRowsOrThrow({
-      dataSource,
-      isDryRun,
-      tableName: 'core."workflowVersion"',
-      columnName: 'triggers',
-      whereClause: `"workspaceId" = $1 AND triggers @> $2::jsonb`,
-      whereParameters: [
-        workspaceId,
-        JSON.stringify([{ type: WorkflowTriggerType.DATABASE_EVENT }]),
-      ],
-      mapRow: ({ value }) =>
-        replaceWithdrawnCurrencyCodeInWorkflowTriggers({
-          triggers: value,
-          currencyFieldMetadataIds,
-        }),
+      workspaceId,
+      currencyFieldMetadataIds,
+      workflowStepTypeContainments,
+      mapWorkflowVersionStepsRow,
     });
 
     const {
@@ -223,29 +168,6 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     });
 
     if (
-      !isDryRun &&
-      viewFilterCount +
-        rowLevelPermissionPredicateCount +
-        chartWidgetCount +
-        coreWorkflowVersionCount +
-        coreWorkflowVersionTriggersCount >
-        0
-    ) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatViewFilterMaps',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatPageLayoutWidgetMaps',
-        'flatWorkflowVersionMaps',
-      ]);
-    }
-
-    if (!isDryRun && coreWorkflowVersionTriggersCount > 0) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'workflowAutomatedTriggerMaps',
-      ]);
-    }
-
-    if (
       fieldDefaultValueCount +
         recordCount +
         viewFilterCount +
@@ -260,6 +182,113 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       this.logger.log(
         `${isDryRun ? '[DRY RUN] ' : ''}Replaced ${WITHDRAWN_CURRENCY_CODE} with ${REPLACEMENT_CURRENCY_CODE} in workspace ${workspaceId}: ${fieldDefaultValueCount} field default value(s), ${recordCount} record(s), ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version step(s), ${coreWorkflowVersionTriggersCount} core workflow version trigger(s), ${workspaceWorkflowVersionCount} workflow version step(s), ${workspaceWorkflowVersionTriggerCount} workflow version trigger(s)`,
       );
+    }
+  }
+
+  private async replaceInCachedCoreRows({
+    dataSource,
+    isDryRun,
+    workspaceId,
+    currencyFieldMetadataIds,
+    workflowStepTypeContainments,
+    mapWorkflowVersionStepsRow,
+  }: {
+    dataSource: DataSource;
+    isDryRun: boolean;
+    workspaceId: string;
+    currencyFieldMetadataIds: Set<string>;
+    workflowStepTypeContainments: string[];
+    mapWorkflowVersionStepsRow: RewriteRowsArgs['mapRow'];
+  }) {
+    // Refresh even on failure or a no-op rerun, as earlier runs may have committed rewrites
+    try {
+      const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow<unknown>) =>
+        replaceWithdrawnCurrencyCodeInFilterValue(value);
+
+      const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
+      const recordFilterWhereParameters = [
+        workspaceId,
+        [...currencyFieldMetadataIds],
+      ];
+
+      const viewFilterCount = await this.rewriteRowsOrThrow({
+        dataSource,
+        isDryRun,
+        tableName: 'core."viewFilter"',
+        columnName: 'value',
+        whereClause: `${recordFilterWhereClause} AND COALESCE("relationTargetFieldMetadataId", "fieldMetadataId") = ANY($2::uuid[])`,
+        whereParameters: recordFilterWhereParameters,
+        mapRow: mapStoredRecordFilterRow,
+      });
+
+      const rowLevelPermissionPredicateCount = await this.rewriteRowsOrThrow({
+        dataSource,
+        isDryRun,
+        tableName: 'core."rowLevelPermissionPredicate"',
+        columnName: 'value',
+        whereClause: `${recordFilterWhereClause} AND "fieldMetadataId" = ANY($2::uuid[])`,
+        whereParameters: recordFilterWhereParameters,
+        mapRow: mapStoredRecordFilterRow,
+      });
+
+      const chartWidgetCount = await this.rewriteRowsOrThrow({
+        dataSource,
+        isDryRun,
+        tableName: 'core."pageLayoutWidget"',
+        columnName: 'configuration',
+        whereClause: `"workspaceId" = $1 AND configuration -> 'filter' -> 'recordFilters' IS NOT NULL`,
+        whereParameters: [workspaceId],
+        mapRow: ({ value }) =>
+          replaceWithdrawnCurrencyCodeInChartConfiguration({
+            configuration: value,
+            currencyFieldMetadataIds,
+          }),
+      });
+
+      const coreWorkflowVersionCount = await this.rewriteRowsOrThrow({
+        dataSource,
+        isDryRun,
+        tableName: 'core."workflowVersion"',
+        columnName: 'steps',
+        whereClause: `"workspaceId" = $1 AND steps @> ANY($2::jsonb[])`,
+        whereParameters: [workspaceId, workflowStepTypeContainments],
+        mapRow: mapWorkflowVersionStepsRow,
+      });
+
+      const coreWorkflowVersionTriggersCount = await this.rewriteRowsOrThrow({
+        dataSource,
+        isDryRun,
+        tableName: 'core."workflowVersion"',
+        columnName: 'triggers',
+        whereClause: `"workspaceId" = $1 AND triggers @> $2::jsonb`,
+        whereParameters: [
+          workspaceId,
+          JSON.stringify([{ type: WorkflowTriggerType.DATABASE_EVENT }]),
+        ],
+        mapRow: ({ value }) =>
+          replaceWithdrawnCurrencyCodeInWorkflowTriggers({
+            triggers: value,
+            currencyFieldMetadataIds,
+          }),
+      });
+
+      return {
+        viewFilterCount,
+        rowLevelPermissionPredicateCount,
+        chartWidgetCount,
+        coreWorkflowVersionCount,
+        coreWorkflowVersionTriggersCount,
+      };
+    } finally {
+      if (!isDryRun) {
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatViewFilterMaps',
+          'flatRowLevelPermissionPredicateMaps',
+          'flatPageLayoutWidgetMaps',
+          'flatWorkflowVersionMaps',
+          'workflowAutomatedTriggerMaps',
+        ]);
+      }
     }
   }
 
@@ -500,8 +529,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     return flatObjectMetadata;
   }
 
-  // Compare-and-set skips rows edited since they were read, so re-read them
-  // until none still hold the withdrawn code
+  // Compare-and-set skips rows edited mid-run, so re-read until none hold the withdrawn code
   private async rewriteRowsOrThrow(args: RewriteRowsArgs): Promise<number> {
     let rewrittenRowCount = 0;
     let remainingRowCount = 0;

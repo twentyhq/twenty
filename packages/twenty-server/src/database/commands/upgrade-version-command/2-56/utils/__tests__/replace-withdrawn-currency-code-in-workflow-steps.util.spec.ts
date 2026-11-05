@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { type StepFilter, ViewFilterOperand } from 'twenty-shared/types';
 import { type RecordFilter } from 'twenty-shared/utils';
 
 import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
@@ -190,16 +190,16 @@ describe.each(['CREATE_RECORD', 'UPDATE_RECORD', 'UPSERT_RECORD'])(
 describe.each(['FILTER', 'IF_ELSE'])(
   'replaceWithdrawnCurrencyCodeInWorkflowSteps for %s steps',
   (type) => {
-    const buildStep = (stepFilter: Record<string, unknown>) => ({
+    const buildStep = (stepFilter: StepFilter) => ({
       type,
       settings: { input: { stepFilterGroups: [], stepFilters: [stepFilter] } },
     });
 
-    const currencyCodeStepFilter = {
+    const currencyCodeStepFilter: StepFilter = {
       id: 'step-filter-id',
       type: 'CURRENCY',
       stepOutputKey: '{{trigger.properties.after.amount}}',
-      operand: 'IS',
+      operand: ViewFilterOperand.IS,
       value: '["ANG","USD"]',
       stepFilterGroupId: 'step-filter-group-id',
       fieldMetadataId: CURRENCY_FIELD_ID,
