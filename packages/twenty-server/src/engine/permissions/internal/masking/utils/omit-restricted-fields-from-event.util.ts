@@ -2,8 +2,8 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { filterFieldNamesInEventProperties } from 'src/engine/permissions/internal/masking/utils/filter-field-names-in-event-properties.util';
-import { getFieldNamesInEventProperties } from 'src/engine/permissions/internal/masking/utils/get-field-names-in-event-properties.util';
+import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
+import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';

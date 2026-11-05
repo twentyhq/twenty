@@ -11,7 +11,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/internal/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
@@ -38,7 +38,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   }
 
   for (const record of records) {
-    const matchesRLS = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const matchesRLS = isRecordMatchingFilter({
       record: record as unknown as ObjectRecord,
       filter: recordFilter,
       flatObjectMetadata: objectMetadata,

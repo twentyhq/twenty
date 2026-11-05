@@ -32,7 +32,7 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/internal/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
@@ -496,7 +496,7 @@ export class ObjectRecordEventPublisher {
         : [deliveredRecord];
 
     return candidateRecords.some((record) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record,
         filter: queryFilter,
         flatObjectMetadata: objectMetadata,
