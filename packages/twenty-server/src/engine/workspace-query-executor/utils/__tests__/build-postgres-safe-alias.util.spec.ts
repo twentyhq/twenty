@@ -1,4 +1,4 @@
-import { buildPostgresSafeAlias } from 'src/engine/twenty-orm/sql/utils/build-postgres-safe-alias.util';
+import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 
 const OUTER_ALIAS =
   'customLeafRecord_parentCollectionId_containerId_securityGroupId';

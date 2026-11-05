@@ -19,9 +19,9 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 
 const ALWAYS_TRUE_CONDITION = '1=1';
 
@@ -175,9 +175,9 @@ const renderFieldCondition = (
     });
 
   if (!isDefined(fieldMetadata)) {
-    throw new TwentyOrmException(
+    throw new PermissionsException(
       `Cannot render row level permission predicate: field "${fieldNameOrJoinColumnName}" does not exist on object "${tableAlias}"`,
-      TwentyOrmExceptionCode.MALFORMED_METADATA,
+      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
     );
   }
 
@@ -185,9 +185,9 @@ const renderFieldCondition = (
     isReferencedByFieldName &&
     isMorphOrRelationFlatFieldMetadata(fieldMetadata)
   ) {
-    throw new TwentyOrmException(
+    throw new PermissionsException(
       `Cannot render row level permission predicate on relation "${fieldNameOrJoinColumnName}": traversing a relation requires an additional join, which a join condition cannot express`,
-      TwentyOrmExceptionCode.MALFORMED_METADATA,
+      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
     );
   }
 
@@ -230,9 +230,9 @@ const renderCompositeFieldCondition = (
   );
 
   if (!isDefined(compositeType)) {
-    throw new TwentyOrmException(
+    throw new PermissionsException(
       `Cannot render row level permission predicate: composite type definition not found for type "${fieldMetadata.type}"`,
-      TwentyOrmExceptionCode.MALFORMED_METADATA,
+      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
     );
   }
 
@@ -249,9 +249,9 @@ const renderCompositeFieldCondition = (
     );
 
     if (!isKnownSubField) {
-      throw new TwentyOrmException(
+      throw new PermissionsException(
         `Cannot render row level permission predicate: "${subFieldName}" is not a sub field of composite type "${fieldMetadata.type}"`,
-        TwentyOrmExceptionCode.MALFORMED_METADATA,
+        PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
       );
     }
 

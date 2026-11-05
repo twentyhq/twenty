@@ -89,7 +89,7 @@ export class WorkspaceMutationQueryBuilder {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildStatement();
-    const compiled = compileTwentyOrmStatement(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -100,7 +100,7 @@ export class WorkspaceMutationQueryBuilder {
 
   async execute(): Promise<MutationResult> {
     const { sql, parameters } = this.buildStatement();
-    const compiled = compileTwentyOrmStatement(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
     const rows = await this.context.executor.execute(compiled);
 
     const columnNameByResultAlias = buildColumnNameByResultAlias(

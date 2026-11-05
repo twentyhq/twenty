@@ -35,10 +35,6 @@ import {
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
@@ -603,9 +599,9 @@ export class RecordAccessDecisionService {
         (id) => !updatableRecordIdsAfter.has(id),
       )
     ) {
-      throw new TwentyOrmException(
+      throw new PermissionsException(
         'Updated record does not satisfy row-level security constraints of your current role',
-        TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
+        PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
     }
   }
