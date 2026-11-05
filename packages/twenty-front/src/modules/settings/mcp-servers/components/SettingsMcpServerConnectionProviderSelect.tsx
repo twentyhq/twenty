@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { Select } from '@/ui/input/components/Select';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ApplicationConnectionProvidersDocument } from '~/generated-metadata/graphql';
 
 type SettingsMcpServerConnectionProviderSelectProps = {
@@ -20,18 +21,20 @@ export const SettingsMcpServerConnectionProviderSelect = ({
     variables: { applicationId },
   });
 
-  const options = (data?.applicationConnectionProviders ?? []).map(
-    (connectionProvider) => ({
-      value: connectionProvider.id,
-      label: connectionProvider.displayName,
-    }),
-  );
+  const options: SelectOption<string | null>[] = [
+    { value: null, label: t`None` },
+    ...(data?.applicationConnectionProviders ?? []).map(
+      (connectionProvider) => ({
+        value: connectionProvider.id,
+        label: connectionProvider.displayName,
+      }),
+    ),
+  ];
 
   return (
     <Select<string | null>
       dropdownId="mcp-server-connection-provider-select"
       options={options}
-      emptyOption={{ value: null, label: t`None` }}
       value={value}
       onChange={onChange}
       disabled={loading}
