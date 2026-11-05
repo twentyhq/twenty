@@ -31,7 +31,7 @@ const mockEditor = {} as Editor;
 const createTestLifecycle = () =>
   createSuggestionRenderLifecycle<TestItem, TestMenuProps>(
     {
-      component: (() => null) as unknown as React.ComponentType<TestMenuProps>,
+      component: () => null,
       getMenuProps: ({ items, onSelect, editor, range }) => ({
         items,
         onSelect,
@@ -193,8 +193,7 @@ describe('createSuggestionRenderLifecycle', () => {
         TestMenuProps
       >(
         {
-          component: (() =>
-            null) as unknown as React.ComponentType<TestMenuProps>,
+          component: () => null,
           getMenuProps: ({ items, onSelect, editor, range }) => ({
             items,
             onSelect,

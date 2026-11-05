@@ -5,6 +5,7 @@ import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('buildFieldSelection', () => {
   const createMockField = (
@@ -19,14 +20,13 @@ describe('buildFieldSelection', () => {
       workspaceId: 'workspace-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       label: overrides.name,
       ...overrides,
     }) as FlatFieldMetadata;
@@ -54,7 +54,7 @@ describe('buildFieldSelection', () => {
   });
 
   const buildFlatObjectMetadata = (fieldIds: string[]): FlatObjectMetadata =>
-    ({
+    getFlatObjectMetadataMock({
       id: 'object-id',
       workspaceId: 'workspace-id',
       nameSingular: 'testObject',
@@ -64,14 +64,13 @@ describe('buildFieldSelection', () => {
       isRemote: false,
       isActive: true,
       isSystem: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'object-id',
       fieldIds: fieldIds,
       indexMetadataIds: [],
       viewIds: [],
-      applicationId: null,
-    }) as unknown as FlatObjectMetadata;
+    });
 
   it('should return all fields as selectable when no restrictions', () => {
     const field1 = createMockField({

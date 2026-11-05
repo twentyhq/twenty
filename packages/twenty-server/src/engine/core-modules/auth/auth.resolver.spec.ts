@@ -39,7 +39,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -228,7 +228,7 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: PermissionsService,
+          provide: SettingPermissionsService,
           useValue: {},
         },
         AccessPolicyService,

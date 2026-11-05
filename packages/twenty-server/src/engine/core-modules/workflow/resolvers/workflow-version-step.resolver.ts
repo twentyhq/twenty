@@ -270,6 +270,7 @@ export class WorkflowVersionStepResolver {
       await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
         workspaceId,
         userWorkspaceId,
+        callerApplication: undefined,
         coreWorkflowVersionId: workflowVersionId,
       });
 

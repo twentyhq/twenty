@@ -380,14 +380,14 @@ export class UserService {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
+    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToSuccessor(
       {
         removedUserWorkspace: userWorkspace,
         actingUserWorkspaceId,
       },
     );
 
-    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
+    await this.recordShareOwnershipTransferService.transferRecordSharesToSuccessor(
       {
         removedUserWorkspace: userWorkspace,
         removedWorkspaceMemberId: workspaceMember.id,

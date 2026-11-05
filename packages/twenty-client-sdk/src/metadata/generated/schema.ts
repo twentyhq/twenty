@@ -1544,7 +1544,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1760,7 +1760,10 @@ export type GettingStartedStepActionKey = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MO
 export interface GettingStartedStepDefinition {
     actionKey: GettingStartedStepActionKey
     description: Scalars['String']
+    doneChatThreadId?: Scalars['String']
+    doneDescription: Scalars['String']
     doneTitle: Scalars['String']
+    doneWorkflowId?: Scalars['String']
     icon: Scalars['String']
     iconColor: Scalars['String']
     kind: GettingStartedStepKind
@@ -1898,6 +1901,7 @@ export interface IngestAppMessagesOutput {
 
 export interface IngestedAppMessage {
     externalId: Scalars['String']
+    hasAttachments: Scalars['Boolean']
     messageId: Scalars['UUID']
     messageThreadId: Scalars['UUID']
     __typename: 'IngestedAppMessage'
@@ -4714,9 +4718,11 @@ export interface AppKeyValueGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AppMessageAttachmentInput {fileId: Scalars['UUID'],label: Scalars['String']}
+
 export interface AppMessageFolderInput {externalId: Scalars['String'],isSynced?: (Scalars['Boolean'] | null),name: Scalars['String']}
 
-export interface AppMessageInput {externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
+export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
 
@@ -6406,7 +6412,10 @@ export interface GettingStartedProgressGenqlSelection{
 export interface GettingStartedStepDefinitionGenqlSelection{
     actionKey?: boolean | number
     description?: boolean | number
+    doneChatThreadId?: boolean | number
+    doneDescription?: boolean | number
     doneTitle?: boolean | number
+    doneWorkflowId?: boolean | number
     icon?: boolean | number
     iconColor?: boolean | number
     kind?: boolean | number
@@ -6558,6 +6567,7 @@ export interface IngestAppMessagesOutputGenqlSelection{
 
 export interface IngestedAppMessageGenqlSelection{
     externalId?: boolean | number
+    hasAttachments?: boolean | number
     messageId?: boolean | number
     messageThreadId?: boolean | number
     __typename?: boolean | number
@@ -8612,7 +8622,7 @@ update: UpdateFrontComponentInputUpdates}
 
 export interface UpdateFrontComponentInputUpdates {description?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
-export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
+export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),completedStepChatThreadId?: (Scalars['String'] | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -12754,6 +12764,7 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
+   IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,

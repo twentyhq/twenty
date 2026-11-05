@@ -346,6 +346,13 @@ msgstr "{0, plural, one {Du har inte behörighet att komma åt {fieldsList} fäl
 msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
 msgstr "{0, plural, one {Din inbjudan har inte skickats ännu} other {Dina # inbjudningar har inte skickats ännu}}"
 
+#. js-lingui-id: 2UOALe
+#. placeholder {0}: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[preset.avatarShape])
+#. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "{0} · {1}"
+msgstr ""
+
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
@@ -573,6 +580,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} API-nyckel} other {{apiKeyCount
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} vill göra följande:"
+
+#. js-lingui-id: y+Uv96
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "{appLabel} installed"
+msgstr ""
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -822,6 +834,11 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} installation} other {{1} installationer}}"
 
+#. js-lingui-id: XcDI87
+#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
+msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
+msgstr ""
+
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -1009,16 +1026,6 @@ msgstr "{remainingCount} till"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Inga fler utkast efter detta} one {# ytterligare utkast efter detta} other {# ytterligare utkast efter detta}}"
-
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, one {Slutför # steg senast {formattedTrialEnd}} other {Slutför # steg senast {formattedTrialEnd}}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, one {Slutför # steg} other {Slutför # steg}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1558,11 +1565,6 @@ msgstr "500 Fel - {duration}ms"
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 msgid "90 days"
 msgstr "90 dagar"
-
-#. js-lingui-id: 81nnG3
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "A CSV or Excel export from any tool"
-msgstr "En CSV- eller Excel-export från valfritt verktyg"
 
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3009,6 +3011,11 @@ msgstr "AI-krediter förnyas om {0, plural, one {# dag} other {# dagar}}."
 msgid "AI settings"
 msgstr "AI-inställningar"
 
+#. js-lingui-id: JDoLSS
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "AI shapes your workspace around your data."
+msgstr ""
+
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection.tsx
@@ -3319,11 +3326,6 @@ msgstr "Alla inställningar"
 msgid "All Sources"
 msgstr "Alla källor"
 
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "Alla steg är klara"
-
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -3630,6 +3632,12 @@ msgstr "Och"
 #: src/modules/ai/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "och {hiddenCount} till"
+
+#. js-lingui-id: 2qLe/y
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Animate"
+msgstr ""
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -4039,6 +4047,11 @@ msgstr "Appar där du är utvecklare"
 msgid "Arabic"
 msgstr "Arabic"
 
+#. js-lingui-id: DzER9P
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Arch"
+msgstr ""
+
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Archive files cannot be previewed. Please download the file to access its contents."
@@ -4331,6 +4344,16 @@ msgstr "Tilldelning"
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "Assistent"
+
+#. js-lingui-id: FwlE5m
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Assistant avatar"
+msgstr ""
+
+#. js-lingui-id: iHgLrg
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Assistant name"
+msgstr ""
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4652,6 +4675,7 @@ msgstr "Tillgängliga tider"
 #. js-lingui-id: kfcRb0
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Avatar"
 msgstr "Avatar"
 
@@ -4696,10 +4720,10 @@ msgstr "Tillbaka till {text}"
 msgid "Back to content"
 msgstr "Tillbaka till innehåll"
 
-#. js-lingui-id: +cSNzs
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "Back to current step"
-msgstr "Tillbaka till aktuellt steg"
+#. js-lingui-id: K35/lm
+#: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
+msgid "Back to customization"
+msgstr ""
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -4941,6 +4965,7 @@ msgstr "blockcitat"
 #. js-lingui-id: Zn5crm
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Blue"
 msgstr "Blå"
 
@@ -5142,6 +5167,7 @@ msgstr "Paketerad med {applicationName}"
 
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Burst"
 msgstr "Toppbelastning"
 
@@ -6181,6 +6207,11 @@ msgstr "Välj vilka webbplatser som är inbäddade i iframe-widgetar och kan beg
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
 msgstr "Välj dina inställningar för de appar som administratören har installerat på din arbetsyta"
 
+#. js-lingui-id: 7xMmki
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Circle"
+msgstr ""
+
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "citation"
@@ -6466,10 +6497,20 @@ msgstr "Stäng sidopanelen"
 msgid "Close video"
 msgstr "Stäng video"
 
+#. js-lingui-id: XLMJ7O
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Cloud"
+msgstr ""
+
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Cloudflare may expect a name relative to the zone rather than the full hostname; avoid appending the domain twice. Show me the proposed changes and ask for confirmation before saving them."
 msgstr "Cloudflare kan förvänta sig ett namn i förhållande till zonen i stället för det fullständiga värdnamnet. Undvik att lägga till domänen två gånger. Visa mig de föreslagna ändringarna och be om bekräftelse innan du sparar dem."
+
+#. js-lingui-id: ExH3eu
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Clover"
+msgstr ""
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6589,6 +6630,8 @@ msgstr "hopfällbar"
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Color"
 msgstr "Färg"
 
@@ -7402,6 +7445,11 @@ msgstr "Konversationer som du kan öppna visas här."
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Cook"
 msgstr "Cook"
+
+#. js-lingui-id: SB9yVb
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Cookie"
+msgstr ""
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8695,9 +8743,16 @@ msgstr "Anpassning"
 
 #. js-lingui-id: srRMnJ
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Customize"
 msgstr "Anpassa"
+
+#. js-lingui-id: 9p/HFu
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+msgid "Customize assistant"
+msgstr ""
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -9104,6 +9159,7 @@ msgstr "Minska värde"
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/experience/components/UiScalePicker.tsx
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
@@ -10242,6 +10298,16 @@ msgstr "Släpp fälten här"
 msgid "Drop file here..."
 msgstr "Släpp filen här..."
 
+#. js-lingui-id: 3DHZvz
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop to start your import"
+msgstr ""
+
+#. js-lingui-id: kIz73Z
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop your CSV or Excel from any tool"
+msgstr ""
+
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -11127,6 +11193,11 @@ msgstr "Ange ett JSON-objekt"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter a JSON value"
 msgstr "Ange ett JSON-värde"
+
+#. js-lingui-id: 0mwDxe
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -12123,11 +12194,6 @@ msgstr "Exportera ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Exportera ({percentageValue}%)"
 
-#. js-lingui-id: YkvQVd
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Export a CSV from"
-msgstr "Exportera en CSV från"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12208,6 +12274,12 @@ msgstr "Extra snabb"
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Smart"
 msgstr "Extra smart"
+
+#. js-lingui-id: PF860N
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Face"
+msgstr ""
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -13312,6 +13384,11 @@ msgstr "Åtgärda betalningsproblemet för att återställa dina premiumfunktion
 msgid "Flow"
 msgstr "Flöde"
 
+#. js-lingui-id: abEdHK
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Flower"
+msgstr ""
+
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
 #: src/modules/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel.ts
@@ -13669,6 +13746,11 @@ msgstr "Funktioner"
 msgid "Functions - Settings"
 msgstr "Funktioner - Inställningar"
 
+#. js-lingui-id: WFxtuG
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Gem"
+msgstr ""
+
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Gemini CLI"
@@ -13992,6 +14074,7 @@ msgstr "Gräs"
 #. js-lingui-id: qS5//Q
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Gray"
 msgstr "Grå"
 
@@ -14008,6 +14091,7 @@ msgstr "Greek"
 #. js-lingui-id: VmkjGB
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Green"
 msgstr "Grön"
 
@@ -14114,6 +14198,11 @@ msgstr "h6"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Handle"
 msgstr "Identifierare"
+
+#. js-lingui-id: halrRh
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Happy"
+msgstr ""
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14271,6 +14360,11 @@ msgstr "hej, världen"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Help center"
 msgstr "Hjälpcenter"
+
+#. js-lingui-id: tIb8bD
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Hexagon"
+msgstr ""
 
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14852,10 +14946,10 @@ msgstr "Importera endast valda mappar/etiketter"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importera eller lägg till MCP-konfigurationen från JetBrains-inställningarna."
 
-#. js-lingui-id: e2aT+Z
+#. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
-msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr "Importera de bifogade filerna till Twenty. Ta reda på vilka poster de innehåller, skapa dem och länka ihop dem."
+msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
+msgstr ""
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -17065,6 +17159,11 @@ msgstr "loop"
 msgid "Lost your authenticator? Use a recovery code"
 msgstr "Har du förlorat din autentiserare? Använd en återställningskod"
 
+#. js-lingui-id: GpMARg
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Love"
+msgstr ""
+
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Low"
@@ -17651,6 +17750,11 @@ msgstr "Meddelande"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
 msgstr "Meddelande {recipientName}"
+
+#. js-lingui-id: 6H0up8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message attachments"
+msgstr ""
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -18380,6 +18484,11 @@ msgstr "navigationsmenyalternativ"
 msgid "Navigation modes"
 msgstr "Navigeringslägen"
 
+#. js-lingui-id: hUbvfC
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Need an export? Get one from"
+msgstr ""
+
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
 msgid "Needs a Date field"
@@ -18758,6 +18867,11 @@ msgstr "Nästa begäran"
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Next screenshot"
 msgstr "Nästa skärmbild"
+
+#. js-lingui-id: e3GOIZ
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Next step"
+msgstr ""
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -20481,7 +20595,7 @@ msgid "Only you"
 msgstr "Bara du"
 
 #. js-lingui-id: P5aFS1
-#: src/modules/onboarding/components/import-contacts/OnboardingImportPrivacyNote.tsx
+#: src/pages/onboarding/ImportContacts.tsx
 msgid "Only you will be able to see your emails and events"
 msgstr "Endast du kommer att kunna se dina e-postmeddelanden och händelser"
 
@@ -20496,6 +20610,12 @@ msgstr "Endast du kommer att kunna se dina e-postmeddelanden och händelser"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "Öppna"
+
+#. js-lingui-id: awIyH2
+#. placeholder {0}: account.handle
+#: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
+msgid "Open {0} settings"
+msgstr ""
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20664,11 +20784,6 @@ msgstr "Öppna inställningar"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "Öppna sidopanelen"
-
-#. js-lingui-id: Cq4Ta5
-#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
-msgid "Open the workflow"
-msgstr "Öppna arbetsflödet"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20839,6 +20954,7 @@ msgstr "Eller"
 #. js-lingui-id: 4OE5Sf
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Orange"
 msgstr "Orange"
 
@@ -21199,8 +21315,16 @@ msgstr "Parametrar"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 msgid "Partner"
 msgstr "Samarbetspartner"
+
+#. js-lingui-id: gHz5zY
+#: src/utils/title-utils.ts
+msgid "Partner - Settings"
+msgstr ""
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21211,6 +21335,11 @@ msgstr "Partnerkod"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
 msgstr "Partnerkod tillämpad"
+
+#. js-lingui-id: 0w8/Qw
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner codes can only be added during the free trial."
+msgstr ""
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21537,6 +21666,11 @@ msgstr "Välj ett datum"
 msgid "Pick a send time in the future."
 msgstr "Välj en sändningstid i framtiden."
 
+#. js-lingui-id: Lu0MSt
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Pick a starting point, then make it yours"
+msgstr ""
+
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Pick a time in the future"
@@ -21585,6 +21719,11 @@ msgstr "Bild"
 msgid "Pie Chart"
 msgstr "Cirkeldiagram"
 
+#. js-lingui-id: qoLYkj
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Pill"
+msgstr ""
+
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Pin"
@@ -21598,6 +21737,7 @@ msgstr "Fäst flik"
 #. js-lingui-id: 2FIjLb
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Pink"
 msgstr "Rosa"
 
@@ -21928,6 +22068,11 @@ msgstr "Föregående begäran"
 msgid "Previous screenshot"
 msgstr "Föregående skärmbild"
 
+#. js-lingui-id: VbggDE
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Previous step"
+msgstr ""
+
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
@@ -22171,6 +22316,7 @@ msgstr "Köp"
 #. js-lingui-id: mF9LxA
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Purple"
 msgstr "Lila"
 
@@ -22795,6 +22941,7 @@ msgstr "Återställningskoden har återkallats."
 #. js-lingui-id: wRTiSD
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Red"
 msgstr "Röd"
 
@@ -22817,11 +22964,6 @@ msgstr "Omdirigerings-URL kopierad till urklipp"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirection URI"
 msgstr "Omdirigerings-URI"
-
-#. js-lingui-id: cfgOip
-#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
-msgid "Referred by a Twenty partner? Add their code"
-msgstr "Hänvisad av en Twenty-partner? Lägg till partnerns kod"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -23468,6 +23610,11 @@ msgstr "Återställs om {daysUntilReset, plural, one {# dag} other {# dagar}} ({
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
 msgid "Reset record page layout"
 msgstr "Återställ postsidans layout"
+
+#. js-lingui-id: Oi+lSL
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Reset to Ada"
+msgstr ""
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24156,6 +24303,11 @@ msgstr "Spara dina ändringar först"
 #: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Sparad i Workspace-appen"
+
+#. js-lingui-id: LRlHXj
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Saving assistant settings..."
+msgstr ""
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -25683,6 +25835,17 @@ msgstr "Ställ in din 2FA"
 msgid "Seventh"
 msgstr "Sjunde"
 
+#. js-lingui-id: WkbAmY
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Shape"
+msgstr ""
+
+#. js-lingui-id: KBYPKo
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+msgid "Shape, color, face"
+msgstr ""
+
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -26097,7 +26260,6 @@ msgstr "Färdigheter"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Hoppa över"
@@ -26126,8 +26288,14 @@ msgstr "Överhoppad"
 
 #. js-lingui-id: BIZl8w
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Sky"
 msgstr "Himmelsblå"
+
+#. js-lingui-id: u9Z+qJ
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Sleepy"
+msgstr ""
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26462,11 +26630,6 @@ msgstr "Dela upp flera värden"
 msgid "Split view"
 msgstr "Delad vy"
 
-#. js-lingui-id: jAoGz1
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Spreadsheet"
-msgstr "Kalkylblad"
-
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -26725,6 +26888,11 @@ msgstr "Lagring"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Spara ett möte som synkroniserats av flera kalendrar från samma leverantör en gång, i stället för en gång per kalender."
+
+#. js-lingui-id: YbaJNn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
+msgstr ""
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -27083,6 +27251,11 @@ msgstr "Stödda indataformat"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Supports reasoning"
 msgstr "Stöder resonemang"
+
+#. js-lingui-id: e0Wwlk
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Surprised"
+msgstr ""
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -29137,6 +29310,7 @@ msgstr "Gör true till false och false till true."
 
 #. js-lingui-id: EdHWDU
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Turquoise"
 msgstr "Turkos"
 
@@ -30135,7 +30309,6 @@ msgid "Upload a file or an image"
 msgstr "Ladda upp en fil eller en bild"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -30175,6 +30348,11 @@ msgstr "Ladda upp profilbild"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Ladda upp XML-filen med dina anslutningsuppgifter"
+
+#. js-lingui-id: /w70rp
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Upload your CRM export"
+msgstr ""
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -30376,11 +30554,6 @@ msgstr "Använd endast bokstäver, siffror, understreck, punkter eller bindestre
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Använd vår API eller lägg till ditt första {objectLabel} manuellt"
-
-#. js-lingui-id: zwL0lf
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Use the import wizard instead"
-msgstr "Använd importguiden i stället"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -31504,6 +31677,11 @@ msgstr "Kommer att få detta e-postmeddelande"
 msgid "Windsurf / Cascade"
 msgstr "Windsurf / Cascade"
 
+#. js-lingui-id: Z4dSVG
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Wink"
+msgstr ""
+
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
@@ -31688,6 +31866,7 @@ msgstr "Arbetstider börjar"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceBlocklist.tsx
@@ -31976,6 +32155,7 @@ msgstr "år"
 #. js-lingui-id: QyCqHT
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Yellow"
 msgstr "Gul"
 

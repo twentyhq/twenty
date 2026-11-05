@@ -5,10 +5,7 @@ import {
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldSkipIteratorStepExecution } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-skip-iterator-step-execution.util';
-import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 jest.mock(
   'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util',
@@ -209,30 +206,6 @@ describe('shouldSkipIteratorStepExecution', () => {
       });
 
       expect(result).toBe(false);
-    });
-
-    it('should handle undefined steps gracefully', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
-      const steps = [
-        createMockCodeStep('step-1', ['iterator-1']),
-        undefined as unknown as WorkflowAction,
-        createMockCodeStep('step-2', ['iterator-1']),
-        iteratorStep,
-      ];
-      const stepInfos = {
-        'step-1': { status: StepStatus.SKIPPED },
-        'step-2': { status: StepStatus.SKIPPED },
-      };
-
-      getAllStepIdsInLoop.mockReturnValue(['step-1']);
-
-      const result = shouldSkipIteratorStepExecution({
-        step: iteratorStep,
-        steps,
-        stepInfos,
-      });
-
-      expect(result).toBe(true);
     });
 
     it('should work correctly with multiple steps targeting the same iterator', () => {

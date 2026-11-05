@@ -26,6 +26,7 @@ export enum SettingsPath {
   BillingLimits = 'billing/limits',
   BillingNewLimit = 'billing/limits/new',
   BillingLimitEdit = 'billing/limits/:usageLimitId/edit',
+  Partner = 'partner',
   Enterprise = 'enterprise',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',

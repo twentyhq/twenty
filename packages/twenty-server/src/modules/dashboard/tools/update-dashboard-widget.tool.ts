@@ -44,10 +44,16 @@ const updateDashboardWidgetSchema = z.object({
 });
 
 export const createUpdateDashboardWidgetTool = (
-  deps: Pick<
-    DashboardToolDependencies,
-    'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
-  >,
+  deps: {
+    pageLayoutWidgetService: Pick<
+      DashboardToolDependencies['pageLayoutWidgetService'],
+      'findByIdOrThrow' | 'update'
+    >;
+    flatEntityMapsCacheService: Pick<
+      DashboardToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+  },
   context: DashboardToolContext,
 ) => ({
   name: 'update_dashboard_widget' as const,

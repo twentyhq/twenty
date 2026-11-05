@@ -1,4 +1,3 @@
-import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-agent-chat';
@@ -7,7 +6,7 @@ const mutation = vi.fn();
 
 const metadataClient = {
   mutation,
-} as unknown as InstanceType<typeof MetadataApiClient>;
+};
 
 const UPLOAD_TARGET = {
   fileId: 'pending-file-id',

@@ -1,6 +1,7 @@
-import { type DataSource } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillWorkspaceWorkflowIdOnWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789350000002-backfill-workspace-workflow-id-on-workflows.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -8,14 +9,14 @@ const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const isUpdate = (sql: unknown) =>
   typeof sql === 'string' && sql.trimStart().startsWith('UPDATE');
 
-const setup = ({
+const setup = async ({
   total = 0,
   hasCoreWorkflowIdColumn = true,
 }: {
   total?: number;
   hasCoreWorkflowIdColumn?: boolean;
 } = {}) => {
-  const query = jest.fn(async (...args: unknown[]) => {
+  const query = jest.fn().mockImplementation(async (...args: unknown[]) => {
     const sql = args[0] as string;
 
     if (sql.includes('information_schema.columns')) {
@@ -28,19 +29,21 @@ const setup = ({
     return [];
   });
 
-  const queryRunner = {
-    connect: jest.fn(),
-    release: jest.fn(),
-    query,
-  };
+  const dataSource = new DataSource({ type: 'postgres' });
+  const queryRunner = dataSource.createQueryRunner();
 
-  const dataSource = {
-    createQueryRunner: () => queryRunner,
-  } as unknown as DataSource;
+  queryRunner.connect = jest.fn();
+  queryRunner.release = jest.fn();
+  queryRunner.query = query;
+  dataSource.createQueryRunner = () => queryRunner;
 
-  const command = new BackfillWorkspaceWorkflowIdOnWorkflowsCommand(
-    {} as WorkspaceIteratorService,
-  );
+  const module = await Test.createTestingModule({
+    providers: [
+      BackfillWorkspaceWorkflowIdOnWorkflowsCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+    ],
+  }).compile();
+  const command = module.get(BackfillWorkspaceWorkflowIdOnWorkflowsCommand);
 
   const run = (dryRun = false) =>
     command.runOnWorkspace({
@@ -58,7 +61,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('backfills the workspaces that have rows left to fill', async () => {
-    const { run, query, queryRunner } = setup({ total: 3 });
+    const { run, query, queryRunner } = await setup({ total: 3 });
 
     await run();
 
@@ -71,7 +74,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   });
 
   it('skips a workspace whose workflow table has no coreWorkflowId column', async () => {
-    const { run, query, queryRunner } = setup({
+    const { run, query, queryRunner } = await setup({
       total: 3,
       hasCoreWorkflowIdColumn: false,
     });
@@ -87,7 +90,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   });
 
   it('does not update on a dry run', async () => {
-    const { run, query } = setup({ total: 3 });
+    const { run, query } = await setup({ total: 3 });
 
     await run(true);
 
@@ -95,7 +98,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   });
 
   it('is a no-op when every row is already backfilled', async () => {
-    const { run, query } = setup({ total: 0 });
+    const { run, query } = await setup({ total: 0 });
 
     await run();
 
@@ -103,7 +106,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   });
 
   it('releases the query runner when the update throws', async () => {
-    const { run, queryRunner, query } = setup({ total: 3 });
+    const { run, queryRunner, query } = await setup({ total: 3 });
 
     query.mockImplementation(async (...args: unknown[]) => {
       const sql = args[0] as string;

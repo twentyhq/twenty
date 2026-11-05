@@ -1,4 +1,5 @@
 import { type ExecutionContext } from '@nestjs/common';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { AuthGuard } from '@nestjs/passport';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -11,13 +12,9 @@ import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SsoConfiguration } from 'src/engine/core-modules/sso/types/sso-configurations.type';
 import { type WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
-const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {
-  return {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn().mockReturnValue(mockedRequest),
-    }),
-  } as unknown as ExecutionContext;
-};
+const createMockExecutionContext = (
+  mockedRequest: ReturnType<typeof createMockedRequest>,
+): ExecutionContext => new ExecutionContextHost([mockedRequest]);
 
 const createMockedRequest = (params = {}, query = {}) => ({
   params,
@@ -72,11 +69,7 @@ describe('OidcAuthGuard', () => {
     guardRedirectService =
       module.get<GuardRedirectService>(GuardRedirectService);
 
-    mockExecutionContext = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn(),
-      }),
-    } as unknown as ExecutionContext;
+    mockExecutionContext = new ExecutionContextHost([]);
   });
 
   it('should activate when identity provider exists and is valid', async () => {

@@ -21,6 +21,9 @@ export class GettingStartedStepDefinitionDTO {
   description: string;
 
   @Field(() => String)
+  doneDescription: string;
+
+  @Field(() => String)
   icon: string;
 
   @Field(() => String)
@@ -31,4 +34,10 @@ export class GettingStartedStepDefinitionDTO {
 
   @Field(() => String, { nullable: true })
   prompt: string | null;
+
+  @Field(() => String, { nullable: true })
+  doneChatThreadId: string | null;
+
+  @Field(() => String, { nullable: true })
+  doneWorkflowId: string | null;
 }

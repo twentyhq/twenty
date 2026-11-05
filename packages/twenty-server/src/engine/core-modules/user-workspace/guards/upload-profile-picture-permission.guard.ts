@@ -15,11 +15,13 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class UploadProfilePicturePermissionGuard implements CanActivate {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
@@ -52,7 +54,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     }
 
     const hasWorkspaceMembersPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
@@ -66,7 +68,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     }
 
     const hasProfileInformationPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
+      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.PROFILE_INFORMATION,

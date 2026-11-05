@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveSlackFileDetails } from 'src/logic-functions/utils/resolve-slack-file-details';
@@ -7,7 +6,7 @@ const filesInfo = vi.fn();
 
 const slackClient = {
   files: { info: filesInfo },
-} as unknown as WebClient;
+};
 
 const STUB_FILE = {
   id: 'F1',

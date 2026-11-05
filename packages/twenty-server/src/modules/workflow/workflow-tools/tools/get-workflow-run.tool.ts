@@ -20,7 +20,12 @@ const FAILED_STEP_STATUSES: StepStatus[] = [
 ];
 
 export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+  deps: {
+    workspaceOrmManager: Pick<
+      WorkflowToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
