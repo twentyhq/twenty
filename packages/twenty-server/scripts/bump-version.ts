@@ -134,8 +134,7 @@ const updateNpmPackageVersions = (version: string): void => {
   );
 };
 
-// Patched rather than regenerated: generate-ui-reference.ts needs dependencies
-// the release workflow's focused install does not provide.
+// Patched because the release install lacks generate-ui-reference.ts dependencies
 const updateUiDocumentationVersion = (version: string): void => {
   const uiDocumentation = JSON.parse(
     readFileSync(UI_DOCUMENTATION_PATH, 'utf-8'),
