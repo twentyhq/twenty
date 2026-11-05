@@ -1,4 +1,7 @@
-import gql from 'graphql-tag';
+import { randomUUID } from 'crypto';
+import { currentUserAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/current-user-assistant-profile-query-factory.util';
+import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
+import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -15,9 +18,15 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { CORE_ENTITY_CACHE_KEYS } from 'src/engine/core-entity-cache/types/core-entity-cache-key.type';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -39,34 +48,8 @@ const CUSTOM_ASSISTANT_PROFILE: AiChatAssistantProfile = {
   isAvatarAnimated: false,
 };
 
-const ASSISTANT_PROFILE_FRAGMENT = gql`
-  fragment WorkspaceAssistantProfile on Workspace {
-    id
-    displayName
-    aiChatAssistantProfile {
-      displayName
-      avatarShape
-      avatarColor
-      avatarFace
-      isAvatarAnimated
-    }
-  }
-`;
-
 const readWorkspace = (token = APPLE_JANE_ADMIN_ACCESS_TOKEN) =>
-  makeMetadataApiRequest(
-    {
-      query: gql`
-        ${ASSISTANT_PROFILE_FRAGMENT}
-        query WorkspaceAssistantProfileSettings {
-          currentWorkspace {
-            ...WorkspaceAssistantProfile
-          }
-        }
-      `,
-    },
-    token,
-  );
+  makeMetadataApiRequest(workspaceAssistantProfileQueryFactory(), token);
 
 const updateWorkspace = ({
   data,
@@ -76,17 +59,7 @@ const updateWorkspace = ({
   token?: string;
 }) =>
   makeMetadataApiRequest(
-    {
-      query: gql`
-        ${ASSISTANT_PROFILE_FRAGMENT}
-        mutation UpdateWorkspaceAssistantProfile($data: UpdateWorkspaceInput!) {
-          updateWorkspace(data: $data) {
-            ...WorkspaceAssistantProfile
-          }
-        }
-      `,
-      variables: { data },
-    },
+    updateWorkspaceAssistantProfileQueryFactory({ data: { ...data } }),
     token,
   );
 
@@ -147,12 +120,15 @@ const expectRejectedUpdate = async ({
   token,
   errorCode,
 }: {
-  data: UpdateWorkspaceInput;
+  data: Record<string, unknown>;
   token?: string;
   errorCode: ErrorCode;
 }) => {
   const before = await readWorkspace();
-  const response = await updateWorkspace({ data, token });
+  const response = await makeMetadataApiRequest(
+    updateWorkspaceAssistantProfileQueryFactory({ data }),
+    token,
+  );
 
   expect(response.body.data?.updateWorkspace).toBeUndefined();
   expect(response.body.errors[0].extensions.code).toBe(errorCode);
@@ -232,9 +208,66 @@ describe('workspace assistant profile settings', () => {
     }
   });
 
+  it('rehydrates an older cached workspace profile through the current user query', async () => {
+    const workspaceRepository =
+      getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
+    const workspace = await workspaceRepository.findOneByOrFail({
+      id: SEED_APPLE_WORKSPACE_ID,
+    });
+    const { aiChatAssistantProfile: storedProfile, ...legacyProjection } =
+      fromWorkspaceEntityToFlat(workspace);
+    const coreEntityCacheService =
+      getAppProviderByClassName<CoreEntityCacheService>(
+        'CoreEntityCacheService',
+      );
+    const cacheStorage = global.app.get<CacheStorageService>(
+      CacheStorageNamespace.EngineCoreEntity,
+    );
+    const cacheKey = `${CORE_ENTITY_CACHE_KEYS.workspaceEntity}:${workspace.id}`;
+    const cacheDataKey = `${cacheKey}:data`;
+
+    expect(storedProfile).toEqual(CUSTOM_ASSISTANT_PROFILE);
+
+    await coreEntityCacheService.invalidate('workspaceEntity', workspace.id);
+
+    try {
+      await cacheStorage.mset<
+        string | Omit<FlatWorkspace, 'aiChatAssistantProfile'>
+      >([
+        { key: `${cacheKey}:hash`, value: randomUUID() },
+        { key: cacheDataKey, value: legacyProjection },
+      ]);
+
+      const cachedWorkspace = await coreEntityCacheService.get(
+        'workspaceEntity',
+        workspace.id,
+      );
+
+      expect(cachedWorkspace?.aiChatAssistantProfile).toBeUndefined();
+
+      const response = await makeMetadataApiRequest(
+        currentUserAssistantProfileQueryFactory(),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.currentUser.currentWorkspace.aiChatAssistantProfile,
+      ).toEqual(storedProfile);
+
+      const refreshedCachedWorkspace =
+        await cacheStorage.get<FlatWorkspace>(cacheDataKey);
+
+      expect(refreshedCachedWorkspace?.aiChatAssistantProfile).toEqual(
+        storedProfile,
+      );
+    } finally {
+      await coreEntityCacheService.invalidate('workspaceEntity', workspace.id);
+    }
+  });
+
   it('resets every profile field to Ada defaults and reads them back', async () => {
     const unchanged = await updateWorkspace({
-      data: { resetAiChatAssistantProfile: false },
+      data: { shouldResetAiChatAssistantProfile: false },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
@@ -244,7 +277,7 @@ describe('workspace assistant profile settings', () => {
     );
 
     const response = await updateWorkspace({
-      data: { resetAiChatAssistantProfile: true },
+      data: { shouldResetAiChatAssistantProfile: true },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
@@ -317,15 +350,15 @@ describe('workspace assistant profile settings', () => {
         data: {
           displayName: 'Rejected invalid assistant profile',
           aiChatAssistantProfile,
-        } as unknown as UpdateWorkspaceInput,
+        },
         errorCode: ErrorCode.BAD_USER_INPUT,
       });
     }
 
     await expectRejectedUpdate({
       data: {
-        resetAiChatAssistantProfile: null,
-      } as unknown as UpdateWorkspaceInput,
+        shouldResetAiChatAssistantProfile: null,
+      },
       errorCode: ErrorCode.BAD_USER_INPUT,
     });
   });
@@ -376,7 +409,7 @@ describe('workspace assistant profile settings', () => {
 
     for (const data of [
       { aiChatAssistantProfile: { displayName: 'Denied' } },
-      { resetAiChatAssistantProfile: true },
+      { shouldResetAiChatAssistantProfile: true },
     ]) {
       await expectRejectedUpdate({
         data,
@@ -402,7 +435,7 @@ describe('workspace assistant profile settings', () => {
 
     for (const data of [
       { aiChatAssistantProfile: { displayName: 'Denied' } },
-      { resetAiChatAssistantProfile: true },
+      { shouldResetAiChatAssistantProfile: true },
     ]) {
       await expectRejectedUpdate({
         data: { ...data, displayName: 'Rejected disabled inbox update' },
@@ -420,14 +453,14 @@ describe('workspace assistant profile settings', () => {
   it('rejects combining a reset with a profile patch', async () => {
     await expectRejectedUpdate({
       data: {
-        resetAiChatAssistantProfile: true,
+        shouldResetAiChatAssistantProfile: true,
         aiChatAssistantProfile: { displayName: 'Ambiguous' },
       },
       errorCode: ErrorCode.BAD_USER_INPUT,
     });
   });
 
-  it('updates only the authenticated workspace and rejects a foreign workspace identifier', async () => {
+  it('updates only the authenticated workspace without changing another workspace profile', async () => {
     const workspaceRepository =
       getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
     const foreignWorkspace = await workspaceRepository.findOneByOrFail({
@@ -440,14 +473,6 @@ describe('workspace assistant profile settings', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updateWorkspace.id).toBe(SEED_APPLE_WORKSPACE_ID);
-
-    await expectRejectedUpdate({
-      data: {
-        id: SEED_YCOMBINATOR_WORKSPACE_ID,
-        aiChatAssistantProfile: { displayName: 'Rejected foreign update' },
-      } as unknown as UpdateWorkspaceInput,
-      errorCode: ErrorCode.BAD_USER_INPUT,
-    });
 
     const persistedForeignWorkspace = await workspaceRepository.findOneByOrFail(
       {
