@@ -2,7 +2,7 @@ import { Any, Equal } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';

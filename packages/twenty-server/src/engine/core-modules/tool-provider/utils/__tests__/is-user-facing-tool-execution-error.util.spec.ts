@@ -45,7 +45,7 @@ import {
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import {

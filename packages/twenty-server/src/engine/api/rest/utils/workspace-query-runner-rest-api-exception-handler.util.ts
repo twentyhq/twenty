@@ -14,7 +14,7 @@ import { UsageLimitException } from 'src/engine/core-modules/usage-limit/excepti
 import { usageLimitToRestApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-rest-api-exception-handler.util';
 import { RecordValidationRuleHttpException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule-http.exception';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {

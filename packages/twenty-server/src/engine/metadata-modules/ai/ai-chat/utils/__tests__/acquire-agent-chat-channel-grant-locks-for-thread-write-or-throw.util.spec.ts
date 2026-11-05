@@ -1,6 +1,6 @@
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeTwentyOrmException } from 'src/engine/workspace-query-executor/error-handling/compute-twenty-orm-exception.util';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const FIRST_CHANNEL_ID = '20202020-0000-4000-8000-00000000000a';

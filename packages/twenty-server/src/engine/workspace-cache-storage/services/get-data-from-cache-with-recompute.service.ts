@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 type CacheResult<T, U> = {
   version: T;

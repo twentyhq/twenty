@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { type Pool, type PoolClient } from 'pg';
 
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeTwentyOrmException } from 'src/engine/workspace-query-executor/error-handling/compute-twenty-orm-exception.util';
 
 const logger = new Logger('runInRollbackSafeTransaction');
 

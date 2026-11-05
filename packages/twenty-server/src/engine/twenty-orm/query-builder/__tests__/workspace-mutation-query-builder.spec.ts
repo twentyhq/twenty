@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';

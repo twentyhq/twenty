@@ -1,5 +1,5 @@
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeTwentyOrmException } from 'src/engine/workspace-query-executor/error-handling/compute-twenty-orm-exception.util';
 
 describe('formatErrorWithCause', () => {
   it('shows the Postgres error the ORM hides behind a generic message', () => {

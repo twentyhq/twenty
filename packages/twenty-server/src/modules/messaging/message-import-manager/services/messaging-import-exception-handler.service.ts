@@ -13,7 +13,7 @@ import {
 import {
   type TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';

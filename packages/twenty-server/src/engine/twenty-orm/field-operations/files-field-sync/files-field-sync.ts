@@ -16,7 +16,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
@@ -25,7 +25,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 type FileItem = {

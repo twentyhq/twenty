@@ -1,4 +1,4 @@
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 describe('compileNamedParameters', () => {

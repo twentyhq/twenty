@@ -8,7 +8,7 @@ import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-co
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { type FindOptionsLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 

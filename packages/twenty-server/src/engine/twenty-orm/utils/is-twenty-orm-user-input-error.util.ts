@@ -1,7 +1,7 @@
 import {
   type TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 // Codes that describe a problem with the caller's input rather than a server
 // fault; the API layers surface them as user input errors (400) instead of 500

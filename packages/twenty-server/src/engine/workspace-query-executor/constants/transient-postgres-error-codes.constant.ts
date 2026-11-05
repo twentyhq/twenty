@@ -1,4 +1,4 @@
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 
 export const TRANSIENT_POSTGRESQL_ERROR_CODES: string[] = [
   POSTGRESQL_ERROR_CODES.CONNECTION_EXCEPTION,

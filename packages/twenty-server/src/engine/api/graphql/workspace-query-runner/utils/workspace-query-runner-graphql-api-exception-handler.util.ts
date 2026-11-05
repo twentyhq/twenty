@@ -24,7 +24,7 @@ import { RecordShareException } from 'src/engine/permissions/record-share/record
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { recordValidationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/record-validation-rule-graphql-api-exception-handler.util';
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { twentyOrmGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';

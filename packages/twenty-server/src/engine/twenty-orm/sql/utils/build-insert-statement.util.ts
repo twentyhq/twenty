@@ -2,7 +2,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 export type InsertRowValue =

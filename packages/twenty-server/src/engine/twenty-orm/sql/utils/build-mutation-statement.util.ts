@@ -2,7 +2,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
   quoteColumn,

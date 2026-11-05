@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,

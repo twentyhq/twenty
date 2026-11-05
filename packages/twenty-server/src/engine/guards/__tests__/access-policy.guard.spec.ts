@@ -22,7 +22,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,

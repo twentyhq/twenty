@@ -3,7 +3,7 @@ import { type QueryConfig } from 'pg';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 export type NamedParameters = Record<string, unknown>;
 

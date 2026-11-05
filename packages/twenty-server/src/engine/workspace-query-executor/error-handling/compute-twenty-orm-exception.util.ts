@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constant';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/transient-postgres-error-codes.constant';
 import {
   CONNECTION_TERMINATED_MESSAGE,
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
@@ -11,12 +11,12 @@ import {
   QUERY_READ_TIMEOUT_MESSAGE,
   QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+} from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
+import { PostgresException } from 'src/engine/workspace-query-executor/exceptions/postgres-exception';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 const KNOWN_POSTGRES_ERROR_CODES: string[] = Object.values(

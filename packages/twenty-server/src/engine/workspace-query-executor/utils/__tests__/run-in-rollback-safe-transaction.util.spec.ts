@@ -1,9 +1,9 @@
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 const buildClient = () => ({
   query: jest.fn().mockResolvedValue({ rows: [] }),

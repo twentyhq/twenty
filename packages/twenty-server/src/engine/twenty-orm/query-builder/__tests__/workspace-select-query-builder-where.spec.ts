@@ -2,7 +2,7 @@ import { runInNewContext } from 'node:vm';
 
 import { And, Equal, In, LessThan, Not } from 'typeorm';
 
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
 describe('WorkspaceSelectQueryBuilder where', () => {

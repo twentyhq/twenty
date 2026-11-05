@@ -16,7 +16,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';

@@ -39,7 +39,7 @@ import {
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WebhookException } from 'src/engine/metadata-modules/webhook/webhook.exception';
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import {

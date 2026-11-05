@@ -4,7 +4,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import {
   type TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 
 interface DuplicateKeyErrorWithMetadata extends TwentyOrmException {

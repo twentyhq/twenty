@@ -1,10 +1,10 @@
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
+import { PostgresException } from 'src/engine/workspace-query-executor/exceptions/postgres-exception';
+import { computeTwentyOrmException } from 'src/engine/workspace-query-executor/error-handling/compute-twenty-orm-exception.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 const buildPostgresError = (message: string, code: string): Error =>
   Object.assign(new Error(message), { code });

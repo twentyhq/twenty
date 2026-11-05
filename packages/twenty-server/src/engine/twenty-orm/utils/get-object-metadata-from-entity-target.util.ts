@@ -7,7 +7,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
   entityTarget: EntityTarget<T>,

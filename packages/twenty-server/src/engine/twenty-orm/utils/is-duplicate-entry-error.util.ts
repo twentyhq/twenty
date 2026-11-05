@@ -1,7 +1,7 @@
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
 
 export const isDuplicateEntryError = (error: unknown): boolean =>
   error instanceof TwentyOrmException &&
