@@ -13,7 +13,10 @@ export const resolveRecordSharePrincipalRoleIds = ({
   userWorkspaceRoleMap,
 }: {
   principals: Pick<RecordShare, 'principalType' | 'principalId'>[];
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatWorkspaceMemberMaps: Pick<
+    FlatWorkspaceMemberMaps,
+    'byId' | 'userWorkspaceIdByUserId'
+  >;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
 }): (string | undefined)[] =>
   principals.map((principal) => {
