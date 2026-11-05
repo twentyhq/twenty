@@ -20,6 +20,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 
 @Processor(MessageQueue.cronQueue)
@@ -31,6 +32,7 @@ export class BillingLimitOverrideExpiryCronJob {
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Process(BillingLimitOverrideExpiryCronJob.name)
@@ -39,6 +41,10 @@ export class BillingLimitOverrideExpiryCronJob {
     BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN,
   )
   async handle(): Promise<void> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
     const expiredLimitOverrides = await this.billingArrangementRepository
       .createQueryBuilder('billingArrangement')
       .innerJoin(
