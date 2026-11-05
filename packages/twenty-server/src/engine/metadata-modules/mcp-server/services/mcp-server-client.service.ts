@@ -7,6 +7,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 import {
   type CallToolResult,
+  CallToolResultSchema,
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +29,7 @@ const LIST_TOOLS_TIMEOUT_MS = 20_000;
 const CALL_TOOL_TIMEOUT_MS = 60_000;
 const LIST_TOOLS_MAX_PAGES = 10;
 
-export type McpServerTarget = Pick<
+type McpServerTarget = Pick<
   FlatMcpServer,
   'url' | 'connectionProviderId' | 'workspaceId'
 > & { userWorkspaceId?: string };
@@ -63,11 +64,14 @@ export class McpServerClientService {
     return this.withConnectedClient(
       { target, timeoutMs: CALL_TOOL_TIMEOUT_MS },
       ({ client, signal }) =>
-        client.callTool(
-          { name: toolName, arguments: toolArguments },
-          undefined,
+        client.request(
+          {
+            method: 'tools/call',
+            params: { name: toolName, arguments: toolArguments },
+          },
+          CallToolResultSchema,
           { signal },
-        ) as Promise<CallToolResult>,
+        ),
     );
   }
 
@@ -82,7 +86,7 @@ export class McpServerClientService {
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: this.buildFetch(target.workspaceId, timeoutMs),
+      fetch: this.buildFetch({ workspaceId: target.workspaceId, timeoutMs }),
       requestInit: isDefined(accessToken)
         ? { headers: { Authorization: `Bearer ${accessToken}` } }
         : undefined,
@@ -132,7 +136,13 @@ export class McpServerClientService {
   }
 
   // The SDK reads SSE from a WHATWG Response, which the axios client yields whatever globalThis.fetch is.
-  private buildFetch(workspaceId: string, timeoutMs: number): FetchLike {
+  private buildFetch({
+    workspaceId,
+    timeoutMs,
+  }: {
+    workspaceId: string;
+    timeoutMs: number;
+  }): FetchLike {
     const axiosFetch = buildAxiosFetch(
       this.secureHttpClientService.getHttpClient(
         { timeout: timeoutMs },

@@ -36,6 +36,31 @@ describe('fromCallToolResultToToolOutput', () => {
     });
   });
 
+  it('keeps the text of an embedded resource and drops its blob', () => {
+    expect(
+      fromCallToolResultToToolOutput({
+        toolName: 'read_page',
+        result: {
+          content: [
+            {
+              type: 'resource',
+              resource: { uri: 'docs://pricing', text: 'Pricing page' },
+            },
+            {
+              type: 'resource',
+              resource: { uri: 'docs://logo', blob: 'aGVsbG8=' },
+            },
+          ],
+        },
+      }).result,
+    ).toEqual({
+      content: [
+        { type: 'resource', uri: 'docs://pricing', text: 'Pricing page' },
+        { type: 'resource', uri: 'docs://logo' },
+      ],
+    });
+  });
+
   it('turns an error result into a failed output with the server text', () => {
     expect(
       fromCallToolResultToToolOutput({

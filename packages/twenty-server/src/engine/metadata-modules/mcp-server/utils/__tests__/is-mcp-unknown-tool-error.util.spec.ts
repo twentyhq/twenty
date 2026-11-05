@@ -17,12 +17,16 @@ describe('isMcpUnknownToolError', () => {
     ).toBe(true);
   });
 
-  it('ignores other invalid params errors and plain errors', () => {
+  it('ignores other invalid params errors', () => {
     expect(
       isMcpUnknownToolError(
         new McpError(ErrorCode.InvalidParams, 'owner is required'),
       ),
     ).toBe(false);
-    expect(isMcpUnknownToolError(new Error('Tool not found'))).toBe(false);
+    expect(
+      isMcpUnknownToolError(
+        new McpError(ErrorCode.InvalidParams, 'Record not found'),
+      ),
+    ).toBe(false);
   });
 });

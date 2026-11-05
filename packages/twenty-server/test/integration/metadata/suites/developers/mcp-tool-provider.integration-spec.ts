@@ -26,6 +26,15 @@ const GET_TOOL_INPUT_SCHEMA_QUERY = gql`
   }
 `;
 
+const TOOL_CONTEXT = {
+  workspaceId: SEED_APPLE_WORKSPACE_ID,
+  userId: USER_DATA_SEED_IDS.JANE,
+  userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+};
+
+const getToolRegistryService = () =>
+  getAppProviderByClassName<ToolRegistryService>('ToolRegistryService');
+
 describe('MCP tools in the tool registry (e2e)', () => {
   let fakeMcpServer: FakeMcpServer;
   let mcpServerId: string;
@@ -43,7 +52,7 @@ describe('MCP tools in the tool registry (e2e)', () => {
         value: ['127.0.0.1'],
       },
     });
-    fakeMcpServer = await startFakeMcpServer();
+    fakeMcpServer = await startFakeMcpServer({ isDeletePageOffered: true });
     mcpServerName = `fake_${uuidv4().slice(0, 8)}`;
 
     const response = await createMcpServer({
@@ -89,24 +98,69 @@ describe('MCP tools in the tool registry (e2e)', () => {
   });
 
   it('runs the tool on the remote server and returns its content', async () => {
-    const toolRegistryService = getAppProviderByClassName<ToolRegistryService>(
-      'ToolRegistryService',
-    );
-
-    const output = await toolRegistryService.resolveAndExecute(
+    const output = await getToolRegistryService().resolveAndExecute(
       `mcp_${mcpServerName}_search_docs`,
       { query: 'invoices' },
-      {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        userId: USER_DATA_SEED_IDS.JANE,
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      },
+      TOOL_CONTEXT,
     );
 
     expect(output).toEqual({
       success: true,
       message: `MCP tool mcp_${mcpServerName}_search_docs executed`,
       result: { content: [{ type: 'text', text: 'results for invoices' }] },
+    });
+  });
+
+  it('only runs a destructive tool once the user approved it', async () => {
+    const toolName = `mcp_${mcpServerName}_delete_page`;
+
+    const unapprovedOutput = await getToolRegistryService().resolveAndExecute(
+      toolName,
+      { pageId: 'page-1' },
+      TOOL_CONTEXT,
+    );
+
+    expect(unapprovedOutput).toEqual({
+      success: false,
+      message: `Tool ${toolName} requires approval`,
+      error: expect.stringContaining('propose_tool_call'),
+    });
+
+    const approvedOutput = await getToolRegistryService().resolveAndExecute(
+      toolName,
+      { pageId: 'page-1' },
+      { ...TOOL_CONTEXT, approvedToolName: toolName },
+    );
+
+    expect(approvedOutput).toEqual({
+      success: true,
+      message: `MCP tool ${toolName} executed`,
+      result: { content: [{ type: 'text', text: 'deleted page-1' }] },
+    });
+  });
+
+  it('refreshes the cached tools when the server no longer offers one', async () => {
+    const toolName = `mcp_${mcpServerName}_search_docs`;
+
+    fakeMcpServer.stopOfferingSearchDocs();
+
+    const output = await getToolRegistryService().resolveAndExecute(
+      toolName,
+      { query: 'invoices' },
+      TOOL_CONTEXT,
+    );
+
+    expect(output).toEqual({
+      success: false,
+      message: expect.stringContaining('its tool list was refreshed'),
+      error: expect.stringContaining('search_docs not found'),
+    });
+
+    const { data } = await getToolIndex({});
+
+    expect(data.getToolIndex).not.toContainEqual({
+      name: toolName,
+      category: 'MCP',
     });
   });
 });

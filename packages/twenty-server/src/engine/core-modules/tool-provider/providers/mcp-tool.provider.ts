@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ToolCategory } from 'twenty-shared/ai';
+import { McpError } from '@modelcontextprotocol/sdk/types.js';
+import { PROPOSE_TOOL_CALL_TOOL_NAME, ToolCategory } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,23 +10,30 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type McpToolTarget } from 'src/engine/core-modules/tool-provider/types/mcp-tool-target.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { buildMcpToolName } from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-name.util';
+import { buildMcpToolTargets } from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-targets.util';
+import { fromMcpToolTargetToToolIndexEntry } from 'src/engine/core-modules/tool-provider/utils/from-mcp-tool-target-to-tool-index-entry.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
+import {
+  McpServerException,
+  McpServerExceptionCode,
+} from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
-import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.type';
 import { fromCallToolResultToToolOutput } from 'src/engine/metadata-modules/mcp-server/utils/from-call-tool-result-to-tool-output.util';
+import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
+import { isMcpServerDueForToolSync } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-server-due-for-tool-sync.util';
 import { isMcpUnknownToolError } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-error.util';
+import { isMcpUnknownToolMessage } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-message.util';
 
-const MCP_TOOL_ICON = 'IconSparkles';
-// A server that failed its last sync is retried from chat at most this often.
-const UNSYNCED_SERVER_RETRY_MS = 5 * 60 * 1000;
-
-type McpToolTarget = { mcpServer: FlatMcpServer; tool: McpServerTool };
+type RemoteToolCallOutcome = {
+  output: ToolOutput;
+  isToolUnknownToServer: boolean;
+};
 
 @Injectable()
 export class McpToolProvider implements ToolProvider {
@@ -56,15 +64,13 @@ export class McpToolProvider implements ToolProvider {
       ? await this.findReachableMcpServers(context)
       : mcpServers;
 
-    return upToDateMcpServers.flatMap((mcpServer) =>
-      mcpServer.tools.map((tool) => {
-        const base = this.buildIndexEntry({ mcpServer, tool });
+    return buildMcpToolTargets(upToDateMcpServers).map((target) => {
+      const indexEntry = fromMcpToolTargetToToolIndexEntry(target);
 
-        return includeSchemas
-          ? { ...base, inputSchema: tool.inputSchema }
-          : base;
-      }),
-    );
+      return includeSchemas
+        ? { ...indexEntry, inputSchema: target.tool.inputSchema }
+        : indexEntry;
+    });
   }
 
   async executeStaticTool(
@@ -72,7 +78,9 @@ export class McpToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const target = await this.findToolTarget(toolName, context);
+    const target = buildMcpToolTargets(
+      await this.findReachableMcpServers(context),
+    ).find(({ name }) => name === toolName);
 
     if (!isDefined(target)) {
       return {
@@ -83,31 +91,91 @@ export class McpToolProvider implements ToolProvider {
     }
 
     const { mcpServer, tool } = target;
-    const serverTarget = {
-      ...mcpServer,
-      userWorkspaceId: context.userWorkspaceId,
-    };
 
-    try {
-      const result = await this.mcpServerClientService.callTool({
-        target: serverTarget,
-        toolName: tool.name,
-        toolArguments: args,
-      });
-
-      return fromCallToolResultToToolOutput({ toolName, result });
-    } catch (error) {
-      if (!isMcpUnknownToolError(error)) {
-        throw error;
-      }
-
-      await this.mcpServerToolSyncService.syncTools(serverTarget);
-
+    if (
+      isDestructiveMcpServerTool(tool) &&
+      context.approvedToolName !== toolName
+    ) {
       return {
         success: false,
-        message: `MCP server ${mcpServer.label} no longer offers ${tool.name}; its tool list was refreshed`,
-        error: 'Unknown MCP tool',
+        message: `Tool ${toolName} requires approval`,
+        error: `${toolName} is destructive: propose it with ${PROPOSE_TOOL_CALL_TOOL_NAME} and let the user approve it.`,
       };
+    }
+
+    const { output, isToolUnknownToServer } = await this.callRemoteTool({
+      target,
+      toolArguments: args,
+      userWorkspaceId: context.userWorkspaceId,
+    });
+
+    if (!isToolUnknownToServer) {
+      return output;
+    }
+
+    await this.mcpServerToolSyncService.syncTools({
+      ...mcpServer,
+      userWorkspaceId: context.userWorkspaceId,
+    });
+
+    return {
+      success: false,
+      message: `MCP server ${mcpServer.label} does not know ${tool.name}; its tool list was refreshed, learn its tools again`,
+      error: output.error,
+    };
+  }
+
+  private async callRemoteTool({
+    target: { name, mcpServer, tool },
+    toolArguments,
+    userWorkspaceId,
+  }: {
+    target: McpToolTarget;
+    toolArguments: Record<string, unknown>;
+    userWorkspaceId: string | undefined;
+  }): Promise<RemoteToolCallOutcome> {
+    try {
+      const output = fromCallToolResultToToolOutput({
+        toolName: name,
+        result: await this.mcpServerClientService.callTool({
+          target: { ...mcpServer, userWorkspaceId },
+          toolName: tool.name,
+          toolArguments,
+        }),
+      });
+
+      return {
+        output,
+        isToolUnknownToServer:
+          !output.success && isMcpUnknownToolMessage(output.error ?? ''),
+      };
+    } catch (error) {
+      if (error instanceof McpError) {
+        return {
+          output: {
+            success: false,
+            message: `MCP tool ${name} failed`,
+            error: error.message,
+          },
+          isToolUnknownToServer: isMcpUnknownToolError(error),
+        };
+      }
+
+      if (
+        error instanceof McpServerException &&
+        error.code === McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED
+      ) {
+        return {
+          output: {
+            success: false,
+            message: `MCP tool ${name} failed`,
+            error: `Connect an account for the ${mcpServer.label} MCP server before using its tools.`,
+          },
+          isToolUnknownToServer: false,
+        };
+      }
+
+      throw error;
     }
   }
 
@@ -136,80 +204,30 @@ export class McpToolProvider implements ToolProvider {
     );
   }
 
-  // A server created before its account existed has an empty list: fill it once the caller can connect.
   private async syncServersNeverSynced(
     mcpServers: FlatMcpServer[],
     context: ToolProviderContext,
   ): Promise<boolean> {
-    const dueServers = mcpServers.filter(
-      (mcpServer) =>
-        !isDefined(mcpServer.toolsSyncedAt) &&
-        (!isDefined(mcpServer.toolsSyncError) ||
-          Date.now() - new Date(mcpServer.updatedAt).getTime() >
-            UNSYNCED_SERVER_RETRY_MS),
+    const now = new Date();
+    const syncOutcomes = await Promise.all(
+      mcpServers
+        .filter((mcpServer) => isMcpServerDueForToolSync({ mcpServer, now }))
+        .map(async (mcpServer) => {
+          const target = {
+            ...mcpServer,
+            userWorkspaceId: context.userWorkspaceId,
+          };
+
+          if (!(await this.mcpServerClientService.canCallerConnect(target))) {
+            return false;
+          }
+
+          await this.mcpServerToolSyncService.syncTools(target);
+
+          return true;
+        }),
     );
 
-    let hasSyncedAny = false;
-
-    for (const mcpServer of dueServers) {
-      const target = { ...mcpServer, userWorkspaceId: context.userWorkspaceId };
-
-      if (!(await this.mcpServerClientService.canCallerConnect(target))) {
-        continue;
-      }
-
-      await this.mcpServerToolSyncService.syncTools(target);
-      hasSyncedAny = true;
-    }
-
-    return hasSyncedAny;
-  }
-
-  private async findToolTarget(
-    toolName: string,
-    context: ToolProviderContext,
-  ): Promise<McpToolTarget | undefined> {
-    for (const mcpServer of await this.findReachableMcpServers(context)) {
-      const tool = mcpServer.tools.find(
-        (candidate) =>
-          buildMcpToolName({
-            mcpServerName: mcpServer.name,
-            toolName: candidate.name,
-          }) === toolName,
-      );
-
-      if (isDefined(tool)) {
-        return { mcpServer, tool };
-      }
-    }
-
-    return undefined;
-  }
-
-  private buildIndexEntry({ mcpServer, tool }: McpToolTarget): ToolIndexEntry {
-    const name = buildMcpToolName({
-      mcpServerName: mcpServer.name,
-      toolName: tool.name,
-    });
-    const isDestructive =
-      tool.annotations?.destructiveHint === true &&
-      tool.annotations?.readOnlyHint !== true;
-
-    return {
-      name,
-      label: tool.annotations?.title ?? tool.name,
-      description: [
-        tool.description ?? tool.name,
-        `(MCP server: ${mcpServer.label})`,
-        ...(isDestructive
-          ? [
-              'Destructive: propose it with propose_tool_call and wait for approval before running it.',
-            ]
-          : []),
-      ].join(' '),
-      category: ToolCategory.MCP,
-      executionRef: { kind: 'static', toolId: name },
-      icon: MCP_TOOL_ICON,
-    };
+    return syncOutcomes.some((hasSynced) => hasSynced);
   }
 }

@@ -1,10 +1,9 @@
 import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 
-const UNKNOWN_TOOL_MESSAGE_PATTERN = /not found|unknown tool/i;
+import { isMcpUnknownToolMessage } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-message.util';
 
-// The SDK server answers an unknown tool with InvalidParams, other servers with MethodNotFound.
-export const isMcpUnknownToolError = (error: unknown): boolean =>
-  error instanceof McpError &&
-  (error.code === ErrorCode.MethodNotFound ||
-    (error.code === ErrorCode.InvalidParams &&
-      UNKNOWN_TOOL_MESSAGE_PATTERN.test(error.message)));
+// The spec answers an unknown tool with InvalidParams, some servers with MethodNotFound.
+export const isMcpUnknownToolError = (error: McpError): boolean =>
+  error.code === ErrorCode.MethodNotFound ||
+  (error.code === ErrorCode.InvalidParams &&
+    isMcpUnknownToolMessage(error.message));

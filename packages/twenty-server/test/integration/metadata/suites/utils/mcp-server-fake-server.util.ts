@@ -9,23 +9,48 @@ import { z } from 'zod';
 export type FakeMcpServer = {
   url: string;
   receivedAuthorizationHeaders: (string | undefined)[];
+  stopOfferingSearchDocs: () => void;
   close: () => Promise<void>;
 };
 
-const createMcpServer = (): McpServer => {
+type FakeMcpServerState = {
+  isSearchDocsOffered: boolean;
+  isDeletePageOffered: boolean;
+};
+
+const createMcpServer = ({
+  isSearchDocsOffered,
+  isDeletePageOffered,
+}: FakeMcpServerState): McpServer => {
   const mcpServer = new McpServer({ name: 'fake', version: '1.0.0' });
 
-  mcpServer.registerTool(
-    'search_docs',
-    {
-      description: 'Search the documentation',
-      inputSchema: { query: z.string() },
-      annotations: { readOnlyHint: true },
-    },
-    async ({ query }) => ({
-      content: [{ type: 'text', text: `results for ${query}` }],
-    }),
-  );
+  if (isSearchDocsOffered) {
+    mcpServer.registerTool(
+      'search_docs',
+      {
+        description: 'Search the documentation',
+        inputSchema: { query: z.string() },
+        annotations: { readOnlyHint: true },
+      },
+      async ({ query }) => ({
+        content: [{ type: 'text', text: `results for ${query}` }],
+      }),
+    );
+  }
+
+  if (isDeletePageOffered) {
+    mcpServer.registerTool(
+      'delete_page',
+      {
+        description: 'Delete a documentation page',
+        inputSchema: { pageId: z.string() },
+        annotations: { destructiveHint: true },
+      },
+      async ({ pageId }) => ({
+        content: [{ type: 'text', text: `deleted ${pageId}` }],
+      }),
+    );
+  }
   mcpServer.registerTool(
     'docs.search',
     { description: 'Dropped by the sanitizer' },
@@ -36,25 +61,36 @@ const createMcpServer = (): McpServer => {
 };
 
 // A stateless transport is single-use, so every request gets its own server and transport.
-const handleMcpRequest = async (
-  request: http.IncomingMessage,
-  response: http.ServerResponse,
-): Promise<void> => {
+const handleMcpRequest = async ({
+  request,
+  response,
+  state,
+}: {
+  request: http.IncomingMessage;
+  response: http.ServerResponse;
+  state: FakeMcpServerState;
+}): Promise<void> => {
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
   });
 
-  await createMcpServer().connect(transport);
+  await createMcpServer(state).connect(transport);
   await transport.handleRequest(request, response);
 };
 
-export const startFakeMcpServer = (): Promise<FakeMcpServer> =>
+export const startFakeMcpServer = ({
+  isDeletePageOffered = false,
+}: { isDeletePageOffered?: boolean } = {}): Promise<FakeMcpServer> =>
   new Promise((resolve, reject) => {
     const receivedAuthorizationHeaders: (string | undefined)[] = [];
+    const state: FakeMcpServerState = {
+      isSearchDocsOffered: true,
+      isDeletePageOffered,
+    };
 
     const server = http.createServer((request, response) => {
       receivedAuthorizationHeaders.push(request.headers.authorization);
-      handleMcpRequest(request, response).catch(() => {
+      handleMcpRequest({ request, response, state }).catch(() => {
         response.writeHead(500).end();
       });
     });
@@ -71,6 +107,9 @@ export const startFakeMcpServer = (): Promise<FakeMcpServer> =>
       resolve({
         url: `http://127.0.0.1:${address.port}/mcp`,
         receivedAuthorizationHeaders,
+        stopOfferingSearchDocs: () => {
+          state.isSearchDocsOffered = false;
+        },
         close: () =>
           new Promise((resolveClose) => {
             server.closeAllConnections();
