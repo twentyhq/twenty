@@ -1,4 +1,4 @@
-import { type DataSource, type QueryRunner } from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789000000001-migrate-workspace-models-to-tiers';
 
@@ -7,33 +7,39 @@ const buildFakeRunner = ({
 }: {
   hasLegacyColumns: boolean;
 }): {
-  runner: DataSource & QueryRunner;
+  dataSource: DataSource;
+  queryRunner: QueryRunner;
   queries: string[];
 } => {
   const queries: string[] = [];
 
-  const runner = {
-    query: jest.fn(async (sql: string) => {
-      queries.push(sql);
+  const query = jest.fn().mockImplementation(async (sql: string) => {
+    queries.push(sql);
 
-      if (sql.includes('information_schema.columns')) {
-        return hasLegacyColumns ? [{ '?column?': 1 }] : [];
-      }
+    if (sql.includes('information_schema.columns')) {
+      return hasLegacyColumns ? [{ '?column?': 1 }] : [];
+    }
 
-      return [];
-    }),
-  } as unknown as DataSource & QueryRunner;
+    return [];
+  });
+  const dataSource = new DataSource({ type: 'postgres' });
+  const queryRunner = dataSource.createQueryRunner();
 
-  return { runner, queries };
+  dataSource.query = query;
+  queryRunner.query = query;
+
+  return { dataSource, queryRunner, queries };
 };
 
 describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
   it('is a no-op once the legacy columns are gone', async () => {
-    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: false });
+    const { dataSource, queryRunner, queries } = buildFakeRunner({
+      hasLegacyColumns: false,
+    });
     const command = new MigrateWorkspaceModelsToTiersSlowInstanceCommand();
 
-    await command.runDataMigration(runner);
-    await command.up(runner);
+    await command.runDataMigration(dataSource);
+    await command.up(queryRunner);
 
     expect(queries.every((sql) => sql.includes('information_schema'))).toBe(
       true,
@@ -41,10 +47,10 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
   });
 
   it('pins the concrete models a workspace had chosen and turns automatic selection off', async () => {
-    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
+    const { dataSource, queries } = buildFakeRunner({ hasLegacyColumns: true });
 
     await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().runDataMigration(
-      runner,
+      dataSource,
     );
 
     const workspaceUpdate = queries.find((sql) =>
@@ -58,10 +64,10 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
   });
 
   it('keeps a workspace that picked its smart model on the Smart tier', async () => {
-    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
+    const { dataSource, queries } = buildFakeRunner({ hasLegacyColumns: true });
 
     await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().runDataMigration(
-      runner,
+      dataSource,
     );
 
     const workspaceUpdate = queries.find((sql) =>
@@ -77,10 +83,10 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
   });
 
   it('moves agents on the old smart default or the legacy auto id onto the workspace tier', async () => {
-    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
+    const { dataSource, queries } = buildFakeRunner({ hasLegacyColumns: true });
 
     await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().runDataMigration(
-      runner,
+      dataSource,
     );
 
     expect(queries).toContainEqual(
@@ -91,9 +97,13 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
   });
 
   it('drops every legacy column in the schema step', async () => {
-    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
+    const { queryRunner, queries } = buildFakeRunner({
+      hasLegacyColumns: true,
+    });
 
-    await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().up(runner);
+    await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().up(
+      queryRunner,
+    );
 
     const dropStatement = queries.find((sql) => sql.includes('DROP COLUMN'));
 
