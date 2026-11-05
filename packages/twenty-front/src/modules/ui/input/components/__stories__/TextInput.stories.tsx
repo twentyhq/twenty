@@ -69,6 +69,31 @@ export const WithRightAdornment: Story = {
   },
 };
 
+export const WithError: Story = {
+  args: {
+    value: 'moblank',
+    label: 'Subdomain',
+    hint: 'Choose your workspace address',
+    rightAdornment: '.twenty.com',
+    error: 'Subdomain already taken',
+    fullWidth: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Subdomain' });
+    const hint = canvas.getByText('Choose your workspace address');
+    const errorMessage = canvas.getByText('Subdomain already taken');
+
+    await expect(errorMessage).toBeVisible();
+    await expect(
+      errorMessage.getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(input.getBoundingClientRect().bottom);
+    await expect(
+      errorMessage.getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(hint.getBoundingClientRect().bottom);
+  },
+};
+
 export const ForwardsNativeInputProps: Story = {
   args: {
     label: 'Address',
