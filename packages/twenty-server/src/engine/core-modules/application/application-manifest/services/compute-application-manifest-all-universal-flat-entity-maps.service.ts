@@ -157,6 +157,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           now,
         },
       )) {
+        // The field validator reports an option id reused across fields.
+        if (
+          isDefined(
+            allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps
+              .byUniversalIdentifier[
+              universalFlatFieldMetadataOption.universalIdentifier
+            ],
+          )
+        ) {
+          continue;
+        }
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: universalFlatFieldMetadataOption,
           universalFlatEntityMapsToMutate:
