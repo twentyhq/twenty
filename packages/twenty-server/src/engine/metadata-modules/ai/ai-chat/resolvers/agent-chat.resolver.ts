@@ -128,9 +128,10 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
-    // The channel a chat's first message files it in; ignored afterwards
+    // A chat's first message files it in this channel, or in none when null.
+    // Omitted, the chat keeps its channel.
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
-    channelId: string | null,
+    channelId: string | null | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -148,7 +149,7 @@ export class AgentChatResolver {
   ): Promise<SendChatMessageResultDTO> {
     const result = await this.memberMessageSenderService.sendMemberMessage({
       actor: { workspaceId: workspace.id, workspaceMemberId, userWorkspaceId },
-      target: { threadId, channelId: channelId ?? undefined },
+      target: { threadId, channelId },
       message: {
         id: messageId,
         text,

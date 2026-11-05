@@ -137,7 +137,7 @@ export const useAgentChat = () => {
         serializedContentToSend,
       );
     const channelId = isNewChat
-      ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
+      ? store.get(agentChatNewThreadChannelIdState.atom)
       : undefined;
     const initialRecipients = getAgentChatInitialRecipients({
       recipientWorkspaceMemberIds:

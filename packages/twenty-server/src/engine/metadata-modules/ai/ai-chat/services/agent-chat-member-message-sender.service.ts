@@ -3,7 +3,7 @@ import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -104,7 +104,7 @@ export class AgentChatMemberMessageSenderService {
 
     await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
-      channelId: target.channelId,
+      channelId: target.channelId ?? undefined,
       shouldApplyAssistantParticipation: false,
     });
 
@@ -119,12 +119,13 @@ export class AgentChatMemberMessageSenderService {
       threadId: target.threadId,
       excludedMessage: storedMessage ?? undefined,
     }));
-    const thread = isInitialMessage
-      ? await this.chatThreadService.moveOwnThreadToChannel({
-          ...threadAccess,
-          channelId: target.channelId ?? null,
-        })
-      : await this.chatThreadService.getWritableThread(threadAccess);
+    const thread =
+      isInitialMessage && !isUndefined(target.channelId)
+        ? await this.chatThreadService.moveOwnThreadToChannel({
+            ...threadAccess,
+            channelId: target.channelId,
+          })
+        : await this.chatThreadService.getWritableThread(threadAccess);
     const participation =
       await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,

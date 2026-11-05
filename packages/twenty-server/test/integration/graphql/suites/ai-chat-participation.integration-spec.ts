@@ -368,7 +368,7 @@ describe('Chat participation through the authenticated API', () => {
 
   it('allows revised initial choices after a failed send leaves an empty thread', async () => {
     const threadId = context.registerThread();
-    const generalChannelId = await context.findGeneralChannelId();
+    const generalChannelId = await context.findGeneralChannelIdOrThrow();
     const failed = await sendChatParticipationMessage({
       threadId,
       channelId: generalChannelId,
@@ -390,16 +390,35 @@ describe('Chat participation through the authenticated API', () => {
 
     const retried = await sendChatParticipationMessage({
       threadId,
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
 
     expect(retried.body.errors).toBeUndefined();
-    expect(retried.body.data.sendChatMessage.streamId).toBeNull();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      streamId: null,
+      recipientParticipantWorkspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ],
+    });
     expect(await context.readThread(threadId)).toMatchObject({
       isAssistantParticipant: false,
       channelId: null,
     });
+  });
+
+  it('keeps a channel chat in its channel when its first message omits the channel', async () => {
+    const threadId = await context.createChannelThread();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      shouldAssistantReply: false,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect((await context.readThread(threadId)).channelId).toBe(
+      await context.findGeneralChannelIdOrThrow(),
+    );
   });
 
   it('keeps Ada excluded for a cached client that omits the mention signal', async () => {

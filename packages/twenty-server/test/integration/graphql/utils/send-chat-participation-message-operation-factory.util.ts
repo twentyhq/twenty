@@ -27,7 +27,7 @@ export const sendChatParticipationMessageOperationFactory = ({
   isAssistantMentioned?: boolean | null;
   mentionedWorkspaceMemberIds?: string[];
   recipientWorkspaceMemberIds?: string[];
-  channelId?: string;
+  channelId?: string | null;
   attachments?: AiChatFileAttachment[];
 }) => ({
   query: gql`

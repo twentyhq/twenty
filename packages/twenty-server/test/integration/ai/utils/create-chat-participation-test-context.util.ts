@@ -155,7 +155,7 @@ export const createChatParticipationTestContext = async () => {
 
     return threadId;
   };
-  const findGeneralChannelId = async () => {
+  const findGeneralChannelIdOrThrow = async () => {
     const channel = await getCoreRepository<AgentChatChannelEntity>(
       AgentChatChannelEntity,
     ).findOneByOrFail({
@@ -173,7 +173,7 @@ export const createChatParticipationTestContext = async () => {
       id: threadId,
       workspaceId,
       workspaceMemberId,
-      channelId: await findGeneralChannelId(),
+      channelId: await findGeneralChannelIdOrThrow(),
     });
 
     return threadId;
@@ -286,7 +286,7 @@ export const createChatParticipationTestContext = async () => {
     setConversationType,
     registerThread,
     createThread,
-    findGeneralChannelId,
+    findGeneralChannelIdOrThrow,
     createChannelThread,
     readThread,
     readParticipants,
