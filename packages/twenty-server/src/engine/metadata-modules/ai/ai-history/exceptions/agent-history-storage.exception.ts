@@ -7,7 +7,13 @@ type AgentHistoryStorageExceptionCode =
   | 'RECORD_NOT_FOUND';
 
 export class AgentHistoryStorageException extends CustomException<AgentHistoryStorageExceptionCode> {
-  constructor(code: AgentHistoryStorageExceptionCode, message: string) {
+  constructor({
+    code,
+    message,
+  }: {
+    code: AgentHistoryStorageExceptionCode;
+    message: string;
+  }) {
     super(message, code, {
       userFriendlyMessage:
         code === 'RECORD_NOT_FOUND'

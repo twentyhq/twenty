@@ -77,10 +77,12 @@ export class AgentChatDirectMessageRecordsService {
       ];
 
     if (!isDefined(flatObjectMetadata)) {
-      throw new AgentHistoryStorageException(
-        'OBJECT_METADATA_NOT_FOUND',
-        doNotTranslate(`Object metadata for ${objectName} was not found`),
-      );
+      throw new AgentHistoryStorageException({
+        code: 'OBJECT_METADATA_NOT_FOUND',
+        message: doNotTranslate(
+          `Object metadata for ${objectName} was not found`,
+        ),
+      });
     }
 
     const activePair = pair.filter((workspaceMemberId) => {
