@@ -68,8 +68,8 @@ export class WorkflowExecutionContextService {
     ]);
 
     if (
-      this.getRunApplicationId(workflowRun, flatWorkflowMaps) ===
-      workspace.workspaceCustomApplicationId
+      this.getRunWorkflowOrThrow(workflowRun, flatWorkflowMaps)
+        .applicationId === workspace.workspaceCustomApplicationId
     ) {
       return null;
     }
@@ -117,8 +117,10 @@ export class WorkflowExecutionContextService {
         'flatWorkflowMaps',
       ]);
 
+    const workflow = this.getRunWorkflowOrThrow(workflowRun, flatWorkflowMaps);
+
     const application = resolveWorkflowRunApplicationOrThrow({
-      applicationId: this.getRunApplicationId(workflowRun, flatWorkflowMaps),
+      applicationId: workflow.applicationId,
       applicationsById: flatApplicationMaps.byId,
     });
 
@@ -146,14 +148,15 @@ export class WorkflowExecutionContextService {
       initiator: workflowRun.createdBy,
       authContext,
       application,
-      workflowId: workflowRun.coreWorkflowId ?? undefined,
+      // Same id the executor bills node charges to, so a run's usage stays under one workflow
+      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
     };
   }
 
-  private getRunApplicationId(
+  private getRunWorkflowOrThrow(
     workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>,
     flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>,
-  ): string {
+  ): FlatWorkflow {
     const workflow = isDefined(workflowRun.coreWorkflowId)
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: workflowRun.coreWorkflowId,
@@ -168,7 +171,7 @@ export class WorkflowExecutionContextService {
       );
     }
 
-    return workflow.applicationId;
+    return workflow;
   }
 
   private async buildMemberAuthContext({
