@@ -53,8 +53,7 @@ export const computeFieldMetadataOptionOperationsForField = ({
     return operations;
   }
 
-  // Another app's field without rows awaits the backfill, which gives them the field's app;
-  // rows created here would belong to the caller and collide with that app's next sync.
+  // Caller-owned rows here would collide with the field app's sync; the backfill creates them.
   if (
     !isNonEmptyArray(existingOptions) &&
     isDefined(targetUniversalFlatFieldMetadata) &&
