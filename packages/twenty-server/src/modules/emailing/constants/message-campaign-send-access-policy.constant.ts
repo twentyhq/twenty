@@ -2,8 +2,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-// Only callers acting for a workspace member, whose email quota the send checks use
-export const MESSAGE_CAMPAIGN_SEND_PREVIEW_ACCESS_POLICY: AccessPolicy = {
+// Campaign sends run for a workspace member and use their email quota
+export const MESSAGE_CAMPAIGN_SEND_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
       standard: true,
