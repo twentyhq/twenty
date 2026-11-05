@@ -25,7 +25,6 @@ import {
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
@@ -390,9 +389,10 @@ export class RecordAccessPolicyService {
     const metadataMaps = await loadMetadataMaps();
 
     if (
-      getPermissionsPrincipalsRoleIds(principals).some(
-        (roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]),
-      )
+      !arePermissionsPrincipalsRolesCached({
+        principals,
+        rolesPermissions: metadataMaps.rolesPermissions,
+      })
     ) {
       return [];
     }
