@@ -92,7 +92,7 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
           );
         }
 
-        // Rows the new code already created for edited fields are kept as they are.
+        // Rows the new code already created are kept; the deferred value constraint cannot arbitrate ON CONFLICT.
         const insertedRows: { id: string }[] =
           optionRowsToInsert.length === 0
             ? []
@@ -101,7 +101,11 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
                   ("workspaceId", "universalIdentifier", "applicationId", "fieldMetadataId", value, label, color, position)
                   SELECT $1, row."universalIdentifier", row."applicationId", row."fieldMetadataId", row.value, row.label, row.color, row.position
                   FROM jsonb_to_recordset($2::jsonb) AS row("universalIdentifier" uuid, "applicationId" uuid, "fieldMetadataId" uuid, value varchar, label varchar, color varchar, position double precision)
-                  ON CONFLICT DO NOTHING
+                  WHERE NOT EXISTS (
+                    SELECT 1 FROM core."fieldMetadataOption" existing
+                    WHERE existing."fieldMetadataId" = row."fieldMetadataId" AND existing.value = row.value
+                  )
+                  ON CONFLICT ("workspaceId", "universalIdentifier") DO NOTHING
                   RETURNING id`,
                 [workspaceId, JSON.stringify(optionRowsToInsert)],
               );
