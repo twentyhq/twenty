@@ -7,7 +7,7 @@ import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useIsTwentyCloud } from '@/settings/privacy/hooks/useIsTwentyCloud';
-import { useUpdateWorkspaceAiDataPolicy } from '@/settings/privacy/hooks/useUpdateWorkspaceAiDataPolicy';
+import { useUpdateWorkspaceAiDataPolicyField } from '@/settings/privacy/hooks/useUpdateWorkspaceAiDataPolicyField';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -15,7 +15,8 @@ export const SettingsPrivacySharingWithTwenty = () => {
   const { t } = useLingui();
   const isTwentyCloud = useIsTwentyCloud();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { updateWorkspaceAiDataPolicy } = useUpdateWorkspaceAiDataPolicy();
+  const { updateWorkspaceAiDataPolicyField } =
+    useUpdateWorkspaceAiDataPolicyField();
 
   return (
     <Section.Root>
@@ -35,9 +36,10 @@ export const SettingsPrivacySharingWithTwenty = () => {
                 .isProductImprovementDataSharingEnabled
             }
             onChange={(checked) =>
-              updateWorkspaceAiDataPolicy({
-                isProductImprovementDataSharingEnabled: checked,
-              })
+              updateWorkspaceAiDataPolicyField(
+                'isProductImprovementDataSharingEnabled',
+                checked,
+              )
             }
           />
         )}

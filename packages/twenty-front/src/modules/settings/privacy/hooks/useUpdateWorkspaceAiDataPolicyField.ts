@@ -12,7 +12,7 @@ import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 // an update replaces the whole policy, so saves must reach the server one at a time
 let lastAiDataPolicySave: Promise<void> = Promise.resolve();
 
-export const useUpdateWorkspaceAiDataPolicy = () => {
+export const useUpdateWorkspaceAiDataPolicyField = () => {
   const { enqueueToast } = useToast();
   const store = useStore();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
@@ -25,10 +25,13 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
   const readStoredAiDataPolicy = () =>
     getWorkspaceAiDataPolicy(store.get(currentWorkspaceState.atom));
 
-  const updateWorkspaceAiDataPolicy = (changes: Partial<AiDataPolicy>) => {
-    const previousAiDataPolicy = readStoredAiDataPolicy();
+  const updateWorkspaceAiDataPolicyField = <TField extends keyof AiDataPolicy>(
+    field: TField,
+    value: AiDataPolicy[TField],
+  ) => {
+    const previousValue = readStoredAiDataPolicy()[field];
 
-    setStoredAiDataPolicy({ ...previousAiDataPolicy, ...changes });
+    setStoredAiDataPolicy({ ...readStoredAiDataPolicy(), [field]: value });
 
     lastAiDataPolicySave = lastAiDataPolicySave.then(async () => {
       try {
@@ -36,7 +39,10 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
           variables: { input: { aiDataPolicy: readStoredAiDataPolicy() } },
         });
       } catch (error) {
-        setStoredAiDataPolicy(previousAiDataPolicy);
+        setStoredAiDataPolicy({
+          ...readStoredAiDataPolicy(),
+          [field]: previousValue,
+        });
         enqueueToast(getToastOptionsFromError({ error }));
       }
     });
@@ -44,5 +50,5 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
     return lastAiDataPolicySave;
   };
 
-  return { updateWorkspaceAiDataPolicy };
+  return { updateWorkspaceAiDataPolicyField };
 };
