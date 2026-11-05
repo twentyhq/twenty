@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type MessageDescriptor } from '@lingui/core';
@@ -43,7 +44,6 @@ import {
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -449,15 +449,11 @@ export class WorkspaceService {
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
-    apiKey,
     application,
-    agentId,
   }: {
     payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
-    apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
-    agentId?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -468,10 +464,7 @@ export class WorkspaceService {
     await this.validateWorkspaceUpdatePermissions({
       payload,
       userWorkspaceId,
-      workspaceId: workspace.id,
-      apiKey,
       application,
-      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -1289,18 +1282,12 @@ export class WorkspaceService {
   private async validateWorkspaceUpdatePermissions({
     payload,
     userWorkspaceId,
-    workspaceId,
-    apiKey,
     application,
-    agentId,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
-    workspaceId: string;
-    apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
-    agentId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1380,13 +1367,9 @@ export class WorkspaceService {
 
     for (const [permission, fields] of fieldsByPermission.entries()) {
       const hasPermission =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          setting: permission,
-          apiKeyId: apiKey?.id,
-          applicationId: application?.id,
-          agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: permission,
         });
 
       if (!hasPermission) {
