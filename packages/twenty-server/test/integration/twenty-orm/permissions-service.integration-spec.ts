@@ -110,7 +110,7 @@ describe('PermissionsService', () => {
     });
 
   describe('canReadRecords and canUpdateRecords', () => {
-    it('grants a role reading and updating an existing record it permits', async () => {
+    it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
           authContext: adminAuthContext,
@@ -146,7 +146,7 @@ describe('PermissionsService', () => {
   });
 
   describe('findReadableRecordIds', () => {
-    it('keeps only the records the principal is admitted to', async () => {
+    it('keeps only the records the principal can read', async () => {
       expect(
         await permissionsService.findReadableRecordIds({
           principals: await permissionsService.buildPermissionsPrincipals({

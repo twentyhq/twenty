@@ -5,7 +5,9 @@ import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constan
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 
 type FrontComponentGeometryTrackerEffectProps = {
-  thread: FrontComponentThread;
+  thread: {
+    imports: Pick<FrontComponentThread['imports'], 'pushGeometryUpdates'>;
+  };
   geometryTracker: GeometryTracker;
 };
 

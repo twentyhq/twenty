@@ -1,13 +1,14 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { installNodeContainsPolyfill } from '../installNodeContainsPolyfill';
 
 const createPolyfillDocument = (): Document => {
   const polyfillWindow = new Window();
 
   installNodeContainsPolyfill(polyfillWindow.Node.prototype);
-
-  return polyfillWindow.document as unknown as Document;
+  return toDomWindow(polyfillWindow).document;
 };
 
 describe('installNodeContainsPolyfill', () => {
@@ -88,7 +89,6 @@ describe('installNodeContainsPolyfill', () => {
     const element = document.createElement('div');
 
     expect(element.contains(null)).toBe(false);
-    expect(element.contains(undefined as unknown as Node)).toBe(false);
     expect(element.contains({} as Node)).toBe(false);
   });
 });

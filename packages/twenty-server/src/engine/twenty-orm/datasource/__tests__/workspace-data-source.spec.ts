@@ -93,6 +93,10 @@ const sumPetColumn = ({
       flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
       rolesPermissions: {},
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
+      recordPermissionReadOrm: {
+        findRecordShares: jest.fn().mockResolvedValue([]),
+        findPrivateRecordStates: jest.fn().mockResolvedValue(new Map()),
+      },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

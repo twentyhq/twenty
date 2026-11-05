@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -16,6 +17,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockGettingStartedStepDefinitions } from '~/testing/mock-data/gettingStartedSteps';
 
 const CHAT_THREAD_ID = '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90';
@@ -101,6 +103,34 @@ export const InviteDone: Story = {
   },
 };
 
+export const Import: Story = {
+  args: {
+    stepDefinition: getMockStepDefinition(
+      GettingStartedStepActionKey.IMPORT_DATA,
+    ),
+    isCompleted: false,
+  },
+  decorators: [ToastDecorator],
+  beforeEach: () => {
+    jotaiStore.set(aiModelsState.atom, [
+      { modelId: 'story-model', label: 'Story model' },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Upload your CRM export' }),
+    ).toHaveTextContent('Drop your CSV or Excel from any tool');
+    await expect(
+      canvas.getByRole('button', { name: 'HubSpot' }),
+    ).toHaveAttribute(
+      'href',
+      'https://knowledge.hubspot.com/import-and-export/export-records',
+    );
+  },
+};
+
 export const ImportDone: Story = {
   args: {
     stepDefinition: {
@@ -122,9 +152,8 @@ export const ImportDone: Story = {
       name: /Import HubSpot contacts/,
     });
 
-    await expect(importThreadCard).toHaveTextContent('Last update:');
     await expect(
-      canvas.queryByRole('button', { name: 'Upload file' }),
+      canvas.queryByRole('button', { name: 'Upload your CRM export' }),
     ).not.toBeInTheDocument();
 
     await userEvent.click(importThreadCard);

@@ -469,9 +469,10 @@ describe('core workflow API with application credentials (integration)', () => {
     expect(memberCatalog[ToolCategory.WORKFLOW]?.length).toBeGreaterThan(0);
   });
 
-  it('should let the application read a workflow a member created', async () => {
-    const workflowName = `Member workflow read by app ${crypto.randomUUID()}`;
-    const coreWorkflowId = await createCoreWorkflowAsMember(workflowName);
+  it('should not let the application read a workflow a member created', async () => {
+    const coreWorkflowId = await createCoreWorkflowAsMember(
+      `Member workflow hidden from app ${crypto.randomUUID()}`,
+    );
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
@@ -482,7 +483,6 @@ describe('core workflow API with application credentials (integration)', () => {
     );
 
     expect(readResponse.body.errors).toBeUndefined();
-    expect(readResponse.body.data?.coreWorkflowById?.id).toBe(coreWorkflowId);
-    expect(readResponse.body.data?.coreWorkflowById?.name).toBe(workflowName);
+    expect(readResponse.body.data?.coreWorkflowById).toBeNull();
   });
 });

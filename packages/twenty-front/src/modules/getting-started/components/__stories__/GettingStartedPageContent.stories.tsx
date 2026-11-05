@@ -7,9 +7,14 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
+import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -191,6 +196,63 @@ export const Trial: Story = {
   },
 };
 
+export const MailboxStep: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, true);
+
+    return () => {
+      jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
+      jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+    };
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: { data: { gettingStartedProgress: TRIAL_PROGRESS } },
+      },
+      {
+        request: { query: GET_MY_CONNECTED_ACCOUNTS },
+        maxUsageCount: Infinity,
+        result: { data: { myConnectedAccounts: [] } },
+      },
+      {
+        request: { query: GET_MY_MESSAGE_CHANNELS },
+        maxUsageCount: Infinity,
+        result: { data: { myMessageChannels: [] } },
+      },
+      {
+        request: { query: GET_MY_CALENDAR_CHANNELS },
+        maxUsageCount: Infinity,
+        result: { data: { myCalendarChannels: [] } },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const mailboxStepCard = await canvas.findByRole('region', {
+      name: 'Import your contacts',
+    });
+
+    await expect(
+      await within(mailboxStepCard).findByText('Dylan Field'),
+    ).toBeVisible();
+    await expect(
+      within(mailboxStepCard).getByText(
+        'Teammates see who you talk to, not what you write.',
+      ),
+    ).toBeVisible();
+    await expect(
+      within(mailboxStepCard).getByRole('button', {
+        name: 'Continue with Google',
+      }),
+    ).toBeVisible();
+  },
+};
+
 export const AllDone: Story = {
   parameters: {
     apolloMocks: [
@@ -212,9 +274,12 @@ export const AllDone: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
-    await expect(
-      await within(canvasElement).findByText('All steps done'),
-    ).toBeVisible();
+    const canvas = within(canvasElement);
+    const mailboxStepCard = await canvas.findByRole('region', {
+      name: 'Mailbox connected',
+    });
+
+    await waitFor(() => expect(mailboxStepCard).toBeVisible());
   },
 };
 

@@ -26,6 +26,9 @@ import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/w
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
@@ -36,7 +39,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { DataSource, IsNull, type Repository } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -119,6 +122,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
+        recordPermissionReadOrm: {
+          findRecordShares: async () => [],
+          findPrivateRecordStates: async () => new Map(),
+        },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -1302,12 +1309,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
               [where.id],
             )
           )[0],
-      } as unknown as Repository<WorkspaceEntity>;
-      const chat = new AdminPanelChatService(
-        workspaceRepository,
-        threads,
-        messages,
-      );
+      };
+      const module = await Test.createTestingModule({
+        providers: [
+          AdminPanelChatService,
+          {
+            provide: getRepositoryToken(WorkspaceEntity),
+            useValue: workspaceRepository,
+          },
+          {
+            provide: getAgentHistoryRepositoryToken('agentChatThread'),
+            useValue: threads,
+          },
+          {
+            provide: getAgentHistoryRepositoryToken('agentMessage'),
+            useValue: messages,
+          },
+        ],
+      }).compile();
+      const chat = module.get(AdminPanelChatService);
       expect(
         await chat.getChatThreadMessages({
           workspaceId: WORKSPACE_ID,

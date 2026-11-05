@@ -1,6 +1,6 @@
 import {
   getLegacySettingsMenuItemUniversalIdentifier,
-  type Manifest,
+  type SettingsMenuItemManifest,
 } from 'twenty-shared/application';
 
 import { getLegacySettingsMenuItemManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-settings-menu-item-manifests.util';
@@ -15,26 +15,25 @@ const buildManifest = ({
   frontComponentUniversalIdentifiers = [FRONT_COMPONENT_UNIVERSAL_IDENTIFIER],
 }: {
   settingsFrontComponentUniversalIdentifier?: string;
-  settingsMenuItems?: unknown[];
+  settingsMenuItems?: SettingsMenuItemManifest[];
   frontComponentUniversalIdentifiers?: string[];
-}) =>
-  ({
-    application: {
-      universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      displayName: 'Stripe',
-      ...(settingsFrontComponentUniversalIdentifier === undefined
-        ? {}
-        : {
-            settingsFrontComponent: {
-              universalIdentifier: settingsFrontComponentUniversalIdentifier,
-            },
-          }),
-    },
-    frontComponents: frontComponentUniversalIdentifiers.map(
-      (universalIdentifier) => ({ universalIdentifier }),
-    ),
-    settingsMenuItems,
-  }) as unknown as Manifest;
+}) => ({
+  application: {
+    universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    displayName: 'Stripe',
+    ...(settingsFrontComponentUniversalIdentifier === undefined
+      ? {}
+      : {
+          settingsFrontComponent: {
+            universalIdentifier: settingsFrontComponentUniversalIdentifier,
+          },
+        }),
+  },
+  frontComponents: frontComponentUniversalIdentifiers.map(
+    (universalIdentifier) => ({ universalIdentifier }),
+  ),
+  settingsMenuItems,
+});
 
 describe('getLegacySettingsMenuItemManifests', () => {
   it('should synthesize an item for the component the deprecated pointer names', () => {
@@ -93,7 +92,14 @@ describe('getLegacySettingsMenuItemManifests', () => {
         buildManifest({
           settingsFrontComponentUniversalIdentifier:
             FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-          settingsMenuItems: [{ universalIdentifier: 'declared' }],
+          settingsMenuItems: [
+            {
+              universalIdentifier: 'declared',
+              frontComponentUniversalIdentifier:
+                FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+              title: 'Declared',
+            },
+          ],
         }),
       ),
     ).toEqual([]);

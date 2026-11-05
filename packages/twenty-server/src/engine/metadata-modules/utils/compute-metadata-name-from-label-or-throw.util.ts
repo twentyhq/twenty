@@ -6,7 +6,9 @@ import {
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
-export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
+export const computeMetadataNameFromLabelOrThrow = (
+  label: string | undefined,
+): string => {
   if (!isDefined(label)) {
     throw new InvalidMetadataException(
       'Label is required',

@@ -11,6 +11,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -56,7 +57,7 @@ describe('Chat participation through the authenticated API', () => {
 
     await context.setConversationType({
       threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     await addJonyAsParticipant(threadId);
 

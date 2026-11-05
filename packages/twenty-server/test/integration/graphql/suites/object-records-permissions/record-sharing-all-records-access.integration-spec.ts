@@ -30,6 +30,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
+import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -57,6 +58,7 @@ const SET_PRIVATE = parse(
 describe('Access to all records and ownership transfer', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
+  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
 
   const target = (recordId: string) => ({ objectMetadataId, recordId });
 
@@ -110,7 +112,7 @@ describe('Access to all records and ownership transfer', () => {
 
   const findMemberGrants = async (workspaceMemberId: string) =>
     (
-      await shares.findByRecordIds({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RESTRICTED_RECORD_ID, SHARED_RECORD_ID],
@@ -131,6 +133,10 @@ describe('Access to all records and ownership transfer', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
+    recordPermissionReadOrmService =
+      getAppProviderByClassName<RecordPermissionReadOrmService>(
+        'RecordPermissionReadOrmService',
+      );
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -308,7 +314,7 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
-  it('should hand the records a removed member managed to the custodian', async () => {
+  it('should hand the records a removed member managed to the successor', async () => {
     await setShare({
       recordId: SHARED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
@@ -354,7 +360,7 @@ describe('Access to all records and ownership transfer', () => {
     try {
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.PHIL }),
@@ -378,11 +384,12 @@ describe('Access to all records and ownership transfer', () => {
         await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
       ).toEqual([]);
 
-      const chatThreadShares = await shares.findByRecordIds({
-        workspaceId,
-        objectMetadataId: chatThreadObjectMetadataId,
-        recordIds: [privateChatThreadId],
-      });
+      const chatThreadShares =
+        await recordPermissionReadOrmService.findRecordShares({
+          workspaceId,
+          objectMetadataId: chatThreadObjectMetadataId,
+          recordIds: [privateChatThreadId],
+        });
 
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -390,7 +397,7 @@ describe('Access to all records and ownership transfer', () => {
 
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.JONY }),

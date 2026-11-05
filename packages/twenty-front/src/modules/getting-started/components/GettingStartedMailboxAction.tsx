@@ -1,6 +1,7 @@
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedConnectedAccountsTable } from '@/getting-started/components/GettingStartedConnectedAccountsTable';
+import { OnboardingImportPreview } from '@/onboarding/components/import-contacts/OnboardingImportPreview';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -8,9 +9,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconGoogle, IconLock, IconMicrosoft } from 'twenty-ui/icon';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -22,17 +23,6 @@ const StyledColumn = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPrivacyNote = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[10]};
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
 const StyledProviderButtons = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
@@ -41,7 +31,6 @@ const StyledProviderButtons = styled.div`
 
 export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const { accounts, hasLoaded } = useMyConnectedAccounts();
   const activeAccounts = accounts.filter(
@@ -72,10 +61,9 @@ export const GettingStartedMailboxAction = () => {
 
   return (
     <StyledColumn>
-      <StyledPrivacyNote>
-        <IconLock size={theme.icon.size.md} />
-        {t`Teammates see who you talk to, not what you write.`}
-      </StyledPrivacyNote>
+      <OnboardingImportPreview
+        privacyNote={t`Teammates see who you talk to, not what you write.`}
+      />
       <StyledProviderButtons>
         <Button
           fullWidth

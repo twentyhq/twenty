@@ -294,7 +294,7 @@ describe('A restricted record on an object open by default', () => {
       throw new Error('Company object metadata is missing');
     }
 
-    const admittedRecordIds =
+    const readableRecordIds =
       await getAppProviderByClassName<PermissionsService>(
         'PermissionsService',
       ).findReadableEventRecordIds({
@@ -313,7 +313,7 @@ describe('A restricted record on an object open by default', () => {
         },
       });
 
-    expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
+    expect([...readableRecordIds]).toEqual([OPEN_COMPANY_ID]);
   });
 
   it('should leave it untouched by bulk updates and deletes that match it', async () => {

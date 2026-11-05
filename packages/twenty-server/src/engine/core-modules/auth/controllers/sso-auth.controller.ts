@@ -112,7 +112,10 @@ export class SsoAuthController {
     PublicEndpointGuard,
     NoPermissionGuard,
   )
-  async oidcAuthCallback(@Req() req: OidcRequest, @Res() res: Response) {
+  async oidcAuthCallback(
+    @Req() req: OidcRequest,
+    @Res() res: Pick<Response, 'redirect'>,
+  ) {
     return await this.authCallback(req, res);
   }
 
@@ -123,7 +126,10 @@ export class SsoAuthController {
     PublicEndpointGuard,
     NoPermissionGuard,
   )
-  async samlAuthCallback(@Req() req: SamlRequest, @Res() res: Response) {
+  async samlAuthCallback(
+    @Req() req: SamlRequest,
+    @Res() res: Pick<Response, 'redirect'>,
+  ) {
     try {
       return await this.authCallback(req, res);
     } catch (err) {
@@ -134,7 +140,10 @@ export class SsoAuthController {
     }
   }
 
-  private async authCallback(req: OidcRequest | SamlRequest, res: Response) {
+  private async authCallback(
+    req: OidcRequest | SamlRequest,
+    res: Pick<Response, 'redirect'>,
+  ) {
     const workspaceIdentityProvider =
       await this.workspaceSsoIdentityProviderRepository.findOne({
         where: { id: req.user.identityProviderId },
