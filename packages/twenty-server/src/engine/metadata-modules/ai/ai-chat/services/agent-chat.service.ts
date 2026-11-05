@@ -12,7 +12,7 @@ import {
   isNonEmptyArray,
   isNonEmptyString,
 } from 'twenty-shared/utils';
-import { In, Not } from 'typeorm';
+import { In, IsNull, Not, Or } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -215,13 +215,19 @@ export class AgentChatService {
   async hasMessages({
     threadId,
     workspaceId,
+    excludedMessage,
   }: {
     threadId: string;
     workspaceId: string;
+    excludedMessage?: Pick<AgentMessageWorkspaceEntity, 'id' | 'turnId'>;
   }): Promise<boolean> {
     return this.messageRepository.existsBy(workspaceId, {
       threadId,
       role: Not(AgentMessageRole.SYSTEM),
+      ...(isDefined(excludedMessage) ? { id: Not(excludedMessage.id) } : {}),
+      ...(isDefined(excludedMessage?.turnId)
+        ? { turnId: Or(IsNull(), Not(excludedMessage.turnId)) }
+        : {}),
     });
   }
 

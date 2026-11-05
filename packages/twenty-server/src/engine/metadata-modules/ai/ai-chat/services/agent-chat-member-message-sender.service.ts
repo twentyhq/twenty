@@ -9,6 +9,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
@@ -25,20 +26,28 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-actor.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
-import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
-import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+type AssistantReplyPolicyInput = {
+  actor: AgentChatMemberMessageActor;
+  thread: AgentChatThreadWorkspaceEntity;
+  participation: AgentChatAssistantParticipation;
+  isInboxEnabled: boolean;
+  text: string;
+};
 
 @Injectable()
 export class AgentChatMemberMessageSenderService {
@@ -60,6 +69,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly replyPolicyService: AgentChatReplyPolicyService,
     private readonly agentChatService: AgentChatService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async sendMemberMessage({
@@ -104,12 +114,11 @@ export class AgentChatMemberMessageSenderService {
           messageId: message.id,
         })
       : null;
-    const isInitialMessage =
-      await this.assistantParticipationService.isInitialMessage({
-        workspaceId: actor.workspaceId,
-        threadId: target.threadId,
-        messageTurnId: storedMessage?.turnId,
-      });
+    const isInitialMessage = !(await this.agentChatService.hasMessages({
+      workspaceId: actor.workspaceId,
+      threadId: target.threadId,
+      excludedMessage: storedMessage ?? undefined,
+    }));
     const thread = isInitialMessage
       ? await this.chatThreadService.moveOwnThreadToChannel({
           ...threadAccess,
@@ -125,48 +134,31 @@ export class AgentChatMemberMessageSenderService {
         ...assistantParticipationInput,
         isReplyRequested: assistant.isReplyRequested,
       });
+    const assistantReplyPolicyInput = {
+      actor,
+      thread,
+      participation,
+      isInboxEnabled,
+      text: message.text,
+    };
 
-    if (isDefined(storedMessage)) {
-      return this.replayStoredMessage({
-        threadAccess,
-        thread,
+    if (isInitialMessage && isDefined(storedMessage)) {
+      return this.replayStoredFirstMessage({
+        ...assistantReplyPolicyInput,
         storedMessage,
-        participation,
-        addressing: {
-          mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-          initialRecipientWorkspaceMemberIds:
-            isInboxEnabled && isInitialMessage
-              ? addressing.initialRecipientWorkspaceMemberIds
-              : [],
-        },
+        execution,
+        addressing: isInboxEnabled
+          ? addressing
+          : { ...addressing, initialRecipientWorkspaceMemberIds: [] },
       });
     }
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      !isInboxEnabled ||
-      (await this.replyPolicyService.shouldReply({
-        decision: replyDecision,
-        threadId: thread.id,
-        pendingQuestionMessageId: thread.pendingQuestionMessageId,
-        workspaceId: actor.workspaceId,
-        userWorkspaceId: actor.userWorkspaceId,
-        text: message.text,
-      }));
+      await this.shouldGenerateAssistantReply(assistantReplyPolicyInput);
 
     if (shouldGenerateAssistantReply) {
-      const workspace = await this.coreEntityCacheService.get(
-        'workspaceEntity',
-        actor.workspaceId,
-      );
-
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-      await this.turnPreflightService.assertCanRunAgentTurn({
-        workspace,
-        userWorkspaceId: actor.userWorkspaceId,
-        modelId: execution.modelId,
-      });
+      await this.getWorkspaceReadyForAgentTurnOrThrow({ actor, execution });
     }
 
     if (isDefined(thread.deletedAt)) {
@@ -239,42 +231,119 @@ export class AgentChatMemberMessageSenderService {
     return result;
   }
 
-  private async replayStoredMessage({
-    threadAccess,
+  private async shouldGenerateAssistantReply({
+    actor,
     thread,
-    storedMessage,
     participation,
+    isInboxEnabled,
+    text,
+  }: AssistantReplyPolicyInput): Promise<boolean> {
+    if (!isInboxEnabled) {
+      return true;
+    }
+
+    return this.replyPolicyService.shouldReply({
+      decision: participation.replyDecision,
+      threadId: thread.id,
+      pendingQuestionMessageId: thread.pendingQuestionMessageId,
+      workspaceId: actor.workspaceId,
+      userWorkspaceId: actor.userWorkspaceId,
+      text,
+    });
+  }
+
+  private async getWorkspaceReadyForAgentTurnOrThrow({
+    actor,
+    execution,
+  }: Pick<
+    AgentChatMemberMessageSendArguments,
+    'actor' | 'execution'
+  >): Promise<FlatWorkspace> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      actor.workspaceId,
+    );
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    await this.turnPreflightService.assertCanRunAgentTurn({
+      workspace,
+      userWorkspaceId: actor.userWorkspaceId,
+      modelId: execution.modelId,
+    });
+
+    return workspace;
+  }
+
+  private async replayStoredFirstMessage({
+    storedMessage,
+    execution,
     addressing,
-  }: {
-    threadAccess: AgentChatThreadAccessArgs;
-    thread: AgentChatThreadWorkspaceEntity;
-    storedMessage: AgentMessageWorkspaceEntity;
-    participation: AgentChatAssistantParticipation;
-    addressing: AgentChatMessageAddressing;
-  }): Promise<AgentChatMemberMessageResult> {
+    ...assistantReplyPolicyInput
+  }: AssistantReplyPolicyInput &
+    Pick<AgentChatMemberMessageSendArguments, 'execution' | 'addressing'> & {
+      storedMessage: AgentMessageWorkspaceEntity;
+    }): Promise<AgentChatMemberMessageResult> {
+    const { actor, thread, participation } = assistantReplyPolicyInput;
+
     await this.assistantParticipationService.persistAssistantParticipation({
-      workspaceId: threadAccess.workspaceId,
+      workspaceId: actor.workspaceId,
       thread,
       participation,
     });
 
-    const delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
-      ...threadAccess,
+    const storedResult = {
       messageId: storedMessage.id,
-      ...addressing,
-    });
+      isQueued: storedMessage.status === AgentMessageStatus.QUEUED,
+      delivery: await this.inboxDeliveryService.deliverMessageToInboxes({
+        workspaceId: actor.workspaceId,
+        workspaceMemberId: actor.workspaceMemberId,
+        threadId: thread.id,
+        messageId: storedMessage.id,
+        ...addressing,
+      }),
+    };
+    const storedTurn = isDefined(storedMessage.turnId)
+      ? await this.turnRecorderService.findTurn({
+          workspaceId: actor.workspaceId,
+          turnId: storedMessage.turnId,
+        })
+      : null;
 
-    if (storedMessage.status === AgentMessageStatus.QUEUED) {
-      return { messageId: storedMessage.id, isQueued: true, delivery };
+    if (
+      storedTurn?.status === AgentTurnStatus.RUNNING &&
+      isNonEmptyString(thread.activeStreamId)
+    ) {
+      return {
+        ...storedResult,
+        streamId: thread.activeStreamId,
+        turnId: storedTurn.id,
+      };
     }
 
+    if (
+      storedTurn?.status !== AgentTurnStatus.FAILED ||
+      !(await this.shouldGenerateAssistantReply(assistantReplyPolicyInput))
+    ) {
+      return storedResult;
+    }
+
+    const restartedTurn = await this.chatStreamingService.retryLastFailedTurn({
+      threadId: thread.id,
+      userWorkspaceId: actor.userWorkspaceId,
+      workspaceMemberId: actor.workspaceMemberId,
+      workspace: await this.getWorkspaceReadyForAgentTurnOrThrow({
+        actor,
+        execution,
+      }),
+      modelId: execution.modelId,
+      browsingContext: execution.browsingContext,
+    });
+
     return {
-      messageId: storedMessage.id,
-      isQueued: false,
-      streamId: isNonEmptyString(thread.activeStreamId)
-        ? thread.activeStreamId
-        : undefined,
-      delivery,
+      ...storedResult,
+      streamId: restartedTurn.streamId,
+      turnId: restartedTurn.turnId,
     };
   }
 

@@ -6,6 +6,7 @@ import { createChatParticipationTestContext } from 'test/integration/ai/utils/cr
 import { runWithRejectedChatWrite } from 'test/integration/ai/utils/run-with-rejected-chat-write.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -15,6 +16,7 @@ import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enu
 import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -204,6 +206,12 @@ describe('Chat message participation with real storage', () => {
         threadId,
       }),
     ).toEqual([expect.objectContaining({ id: messageId })]);
+    expect(
+      await global.testDataSource.query(
+        `SELECT id FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
+        [threadId],
+      ),
+    ).toHaveLength(1);
     expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
       false,
     );
@@ -212,6 +220,44 @@ describe('Chat message participation with real storage', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       }),
     );
+  });
+
+  it("restarts Ada's failed reply when a stored first message is sent again", async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    const retried = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: expect.any(String),
+    });
+    await waitForAllJobsToFinish();
+    expect(
+      await context.chatService.getMessagesForThread({
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        threadId,
+      }),
+    ).toEqual([
+      expect.objectContaining({ id: messageId }),
+      expect.objectContaining({ role: AgentMessageRole.ASSISTANT }),
+    ]);
   });
 
   it('delivers valid initial recipients when sharing with a mentioned member fails', async () => {
