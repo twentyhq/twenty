@@ -201,16 +201,27 @@ export class AdminPanelQueueService {
     });
 
     try {
-      if (jobIds.length === 0) {
+      const isMemoryLimitingEnabled =
+        this.buildJobMemoryLimiters(queue).jobMemoryLimiter.isEnabled();
+
+      if (jobIds.length === 0 && !isMemoryLimitingEnabled) {
         await queue.retryJobs({ state: 'failed' });
 
         return { retriedCount: -1, results: [] };
       }
 
+      // A bulk retry must pass the same memory checks as a selected one
+      const jobIdsToRetry =
+        jobIds.length > 0
+          ? jobIds
+          : (await queue.getJobs(['failed']))
+              .map((failedJob) => failedJob.id)
+              .filter(isNonEmptyString);
+
       const results: JobOperationResult[] = [];
       let retriedCount = 0;
 
-      for (const jobId of jobIds) {
+      for (const jobId of jobIdsToRetry) {
         const job = await queue.getJob(jobId);
 
         if (!job) {
