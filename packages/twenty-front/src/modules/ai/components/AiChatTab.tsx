@@ -35,7 +35,7 @@ export const AiChatTab = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread ?? '',
+    currentAiChatThread,
   );
 
   const { uploadFiles } = useAiChatFileUpload();

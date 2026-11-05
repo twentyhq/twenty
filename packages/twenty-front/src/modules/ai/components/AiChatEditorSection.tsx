@@ -173,7 +173,7 @@ const EditableAiChatEditorSection = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread ?? '',
+    currentAiChatThread,
   );
 
   const { editor } = useAiChatEditor();

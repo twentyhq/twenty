@@ -254,7 +254,7 @@ export const AiChatMessage = ({
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread ?? '',
+    currentAiChatThread,
   );
 
   if (

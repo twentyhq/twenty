@@ -17,7 +17,7 @@ export const useIsAiChatComposerCentered = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread ?? '',
+    currentAiChatThread,
   );
 
   return (

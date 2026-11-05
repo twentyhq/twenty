@@ -49,7 +49,7 @@ export const useAiChatEditor = () => {
   const { uploadFiles } = useAiChatFileUpload();
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread ?? '',
+    currentAiChatThread,
   );
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
