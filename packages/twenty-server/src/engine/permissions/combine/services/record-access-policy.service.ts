@@ -231,9 +231,7 @@ export class RecordAccessPolicyService {
     });
   }
 
-  async findGrantedRecordIdsByOperationType<
-    TOperationType extends ObjectRecordsOperationType,
-  >({
+  async findGrantedRecordIdsByOperationType({
     authContext,
     objectNameSingular,
     recordIds,
@@ -242,15 +240,8 @@ export class RecordAccessPolicyService {
     authContext: WorkspaceAuthContext;
     objectNameSingular: string;
     recordIds: string[];
-    operationTypes: TOperationType[];
-  }): Promise<Record<TOperationType, Set<string>>> {
-    const emptyRecordIdsByOperationType = () =>
-      Object.fromEntries(
-        operationTypes.map((operationType) => [
-          operationType,
-          new Set<string>(),
-        ]),
-      ) as Record<TOperationType, Set<string>>;
+    operationTypes: ObjectRecordsOperationType[];
+  }): Promise<Map<ObjectRecordsOperationType, Set<string>>> {
     const workspaceId = authContext.workspace.id;
     const isSystem = isSystemAuthContext(authContext);
     const principals = isSystem
@@ -260,7 +251,7 @@ export class RecordAccessPolicyService {
         );
 
     if (recordIds.length === 0 || (!isSystem && !isDefined(principals))) {
-      return emptyRecordIdsByOperationType();
+      return new Map();
     }
 
     const metadataMaps = isDefined(principals)
@@ -273,7 +264,7 @@ export class RecordAccessPolicyService {
       .find(({ nameSingular }) => nameSingular === objectNameSingular);
 
     if (!isDefined(flatObjectMetadata)) {
-      return emptyRecordIdsByOperationType();
+      return new Map();
     }
 
     const conditions = operationTypes.map((operationType) =>
@@ -296,12 +287,12 @@ export class RecordAccessPolicyService {
         },
       );
 
-    return Object.fromEntries(
+    return new Map(
       operationTypes.map((operationType, index) => [
         operationType,
         recordIdsByCondition[index],
       ]),
-    ) as Record<TOperationType, Set<string>>;
+    );
   }
 
   private buildSelectableRecordsCondition({
