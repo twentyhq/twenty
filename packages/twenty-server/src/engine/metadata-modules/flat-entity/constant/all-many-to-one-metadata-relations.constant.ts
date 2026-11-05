@@ -631,6 +631,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
     },
   },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'fieldMetadataUniversalIdentifier',
+    },
+  },
   relatedRecordPath: {
     workspace: null,
     application: null,

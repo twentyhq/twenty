@@ -2031,7 +2031,7 @@ msgstr "请先添加收件人再发送"
 #. js-lingui-id: erAaSc
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "Add a recipient or a channel before sending."
-msgstr ""
+msgstr "请先添加收件人或频道再发送。"
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2413,7 +2413,7 @@ msgstr "添加付款方式"
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Add people or a channel"
-msgstr ""
+msgstr "添加人员或频道"
 
 #. js-lingui-id: px+kkc
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
@@ -12881,6 +12881,11 @@ msgstr "字段名称"
 msgid "Field on destination"
 msgstr "目的地字段"
 
+#. js-lingui-id: 5Lk6iG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field option"
+msgstr "字段选项"
+
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
@@ -19404,7 +19409,7 @@ msgstr "本周期内未触发速率限制"
 #. js-lingui-id: UW90md
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
-msgstr ""
+msgstr "未找到收件人"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -20392,7 +20397,7 @@ msgstr "仅为可安全运行两次的步骤启用：失败的尝试可能已经
 #. js-lingui-id: KsHGCA
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Only if a Twenty partner referred you. Once applied, it can't be changed."
-msgstr ""
+msgstr "仅当由 Twenty 合作伙伴推荐您时才可填写。提交后无法更改。"
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -20762,7 +20767,7 @@ msgstr "选项 1"
 #. js-lingui-id: LLAa/9
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Optional"
-msgstr ""
+msgstr "可选"
 
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21193,17 +21198,17 @@ msgstr "参数"
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner"
-msgstr ""
+msgstr "合作伙伴"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code"
-msgstr ""
+msgstr "合作伙伴代码"
 
 #. js-lingui-id: bG8G5t
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
-msgstr ""
+msgstr "合作伙伴代码已应用"
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -22497,7 +22502,7 @@ msgstr "无法获取收件人数量"
 #. js-lingui-id: ar7XM1
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
-msgstr ""
+msgstr "无法验证是否可向收件人送达。请检查聊天参与者。"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -22814,7 +22819,7 @@ msgstr "重定向 URI"
 #. js-lingui-id: cfgOip
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Referred by a Twenty partner? Add their code"
-msgstr ""
+msgstr "由 Twenty 合作伙伴推荐？添加其代码"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -23050,7 +23055,7 @@ msgstr "移除 {displayName}"
 #. js-lingui-id: HND1q3
 #: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
 msgid "Remove {label}"
-msgstr ""
+msgstr "移除 {label}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -24556,7 +24561,7 @@ msgstr "搜索选项"
 #. js-lingui-id: /iXEpl
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Search recipients"
-msgstr ""
+msgstr "搜索收件人"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -25155,7 +25160,7 @@ msgstr "选择选项"
 #. js-lingui-id: TC9hnQ
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 msgid "Select recipients"
-msgstr ""
+msgstr "选择收件人"
 
 #. js-lingui-id: V8W7vI
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
@@ -27565,7 +27570,7 @@ msgstr "该代码允许 {memberName} 在不使用身份验证器应用的情况�
 #. js-lingui-id: G3XY+D
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
-msgstr ""
+msgstr "推荐您的 Twenty 合作伙伴的代码"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx

@@ -272,7 +272,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -3948,7 +3948,11 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
+    /** @deprecated Use objectRecordsPermissions */
+    objectPermissions?: ObjectPermission[]
     objectRecordsPermissions?: ObjectRecordsPermissions[]
+    /** @deprecated Use objectRecordsPermissions */
+    objectsPermissions?: ObjectPermission[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -8999,7 +9003,11 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
+    /** @deprecated Use objectRecordsPermissions */
+    objectPermissions?: ObjectPermissionGenqlSelection
     objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
+    /** @deprecated Use objectRecordsPermissions */
+    objectsPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -12420,6 +12428,7 @@ export const enumAllMetadataName = {
    commandMenuItem: 'commandMenuItem' as const,
    connectionProvider: 'connectionProvider' as const,
    fieldMetadata: 'fieldMetadata' as const,
+   fieldMetadataOption: 'fieldMetadataOption' as const,
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,
    index: 'index' as const,

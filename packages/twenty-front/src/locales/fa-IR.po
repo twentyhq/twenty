@@ -2031,7 +2031,7 @@ msgstr "پیش از ارسال، یک گیرنده اضافه کنید"
 #. js-lingui-id: erAaSc
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "Add a recipient or a channel before sending."
-msgstr ""
+msgstr "پیش از ارسال، یک گیرنده یا یک کانال اضافه کنید."
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2413,7 +2413,7 @@ msgstr "افزودن روش پرداخت"
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Add people or a channel"
-msgstr ""
+msgstr "افراد یا یک کانال اضافه کنید"
 
 #. js-lingui-id: px+kkc
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
@@ -12881,6 +12881,11 @@ msgstr "نام فیلد"
 msgid "Field on destination"
 msgstr "میدان در مقصد"
 
+#. js-lingui-id: 5Lk6iG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field option"
+msgstr "گزینه فیلد"
+
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
@@ -19404,7 +19409,7 @@ msgstr "در این دوره به محدودیت نرخ نرسیده‌اید"
 #. js-lingui-id: UW90md
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
-msgstr ""
+msgstr "هیچ گیرنده‌ای یافت نشد"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -20392,7 +20397,7 @@ msgstr "فقط برای مراحلی فعال کنید که اجرای دوبا�
 #. js-lingui-id: KsHGCA
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Only if a Twenty partner referred you. Once applied, it can't be changed."
-msgstr ""
+msgstr "فقط اگر یکی از شرکای Twenty شما را معرفی کرده باشد. پس از اعمال، قابل تغییر نیست."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -20762,7 +20767,7 @@ msgstr "گزینه ۱"
 #. js-lingui-id: LLAa/9
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Optional"
-msgstr ""
+msgstr "اختیاری"
 
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21193,17 +21198,17 @@ msgstr "پارامترها"
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner"
-msgstr ""
+msgstr "شریک"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code"
-msgstr ""
+msgstr "کد شریک"
 
 #. js-lingui-id: bG8G5t
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
-msgstr ""
+msgstr "کد شریک اعمال شد"
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -22497,7 +22502,7 @@ msgstr "تعداد گیرندگان در دسترس نیست"
 #. js-lingui-id: ar7XM1
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
-msgstr ""
+msgstr "تحویل به گیرنده تأیید نشد. شرکت‌کنندگان گفت‌وگو را بررسی کنید."
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -22814,7 +22819,7 @@ msgstr "URI تغییرمسیر"
 #. js-lingui-id: cfgOip
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Referred by a Twenty partner? Add their code"
-msgstr ""
+msgstr "توسط یکی از شرکای Twenty معرفی شده‌اید؟ کد او را اضافه کنید"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -23050,7 +23055,7 @@ msgstr "حذف {displayName}"
 #. js-lingui-id: HND1q3
 #: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
 msgid "Remove {label}"
-msgstr ""
+msgstr "حذف {label}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -24556,7 +24561,7 @@ msgstr "گزینه‌های جستجو"
 #. js-lingui-id: /iXEpl
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Search recipients"
-msgstr ""
+msgstr "جستجوی گیرندگان"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -25155,7 +25160,7 @@ msgstr "گزینه‌ها را انتخاب کنید"
 #. js-lingui-id: TC9hnQ
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 msgid "Select recipients"
-msgstr ""
+msgstr "گیرندگان را انتخاب کنید"
 
 #. js-lingui-id: V8W7vI
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
@@ -27565,7 +27570,7 @@ msgstr "این کد به {memberName} اجازه می‌دهد یک‌بار ب�
 #. js-lingui-id: G3XY+D
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
-msgstr ""
+msgstr "کد شریک Twenty که شما را معرفی کرده است"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx

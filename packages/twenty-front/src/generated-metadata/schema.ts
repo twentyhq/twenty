@@ -348,6 +348,7 @@ export enum AllMetadataName {
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',
+  fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
@@ -8369,7 +8370,11 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
+  /** @deprecated Use objectRecordsPermissions */
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
+  /** @deprecated Use objectRecordsPermissions */
+  objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];

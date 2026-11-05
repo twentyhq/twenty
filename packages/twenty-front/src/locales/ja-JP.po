@@ -2031,7 +2031,7 @@ msgstr "送信前に受信者を追加してください"
 #. js-lingui-id: erAaSc
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "Add a recipient or a channel before sending."
-msgstr ""
+msgstr "送信する前に、受信者またはチャンネルを追加してください。"
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2413,7 +2413,7 @@ msgstr "お支払い方法を追加"
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Add people or a channel"
-msgstr ""
+msgstr "ユーザーまたはチャンネルを追加"
 
 #. js-lingui-id: px+kkc
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
@@ -12881,6 +12881,11 @@ msgstr "フィールド名"
 msgid "Field on destination"
 msgstr "宛先のフィールド"
 
+#. js-lingui-id: 5Lk6iG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field option"
+msgstr "フィールドオプション"
+
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
@@ -19404,7 +19409,7 @@ msgstr "この期間にレートリミットに達したことはありません
 #. js-lingui-id: UW90md
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
-msgstr ""
+msgstr "受信者が見つかりません"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -20392,7 +20397,7 @@ msgstr "2 回実行しても安全なステップに対してのみ有効にし�
 #. js-lingui-id: KsHGCA
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Only if a Twenty partner referred you. Once applied, it can't be changed."
-msgstr ""
+msgstr "Twenty パートナーから紹介を受けた場合にのみ入力してください。一度適用すると、変更できません。"
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -20762,7 +20767,7 @@ msgstr "オプション 1"
 #. js-lingui-id: LLAa/9
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Optional"
-msgstr ""
+msgstr "任意"
 
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21193,17 +21198,17 @@ msgstr "パラメーター"
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner"
-msgstr ""
+msgstr "パートナー"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code"
-msgstr ""
+msgstr "パートナーコード"
 
 #. js-lingui-id: bG8G5t
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
-msgstr ""
+msgstr "パートナーコードが適用されました"
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -22497,7 +22502,7 @@ msgstr "受信者数を取得できません"
 #. js-lingui-id: ar7XM1
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
-msgstr ""
+msgstr "受信者への配信を確認できませんでした。チャットの参加者を確認してください。"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -22814,7 +22819,7 @@ msgstr "リダイレクションURI"
 #. js-lingui-id: cfgOip
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Referred by a Twenty partner? Add their code"
-msgstr ""
+msgstr "Twenty パートナーから紹介を受けましたか？そのコードを追加してください"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -23050,7 +23055,7 @@ msgstr "{displayName} を削除"
 #. js-lingui-id: HND1q3
 #: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
 msgid "Remove {label}"
-msgstr ""
+msgstr "{label} を削除"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -24556,7 +24561,7 @@ msgstr "検索オプション"
 #. js-lingui-id: /iXEpl
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Search recipients"
-msgstr ""
+msgstr "受信者を検索"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -25155,7 +25160,7 @@ msgstr "オプションを選択"
 #. js-lingui-id: TC9hnQ
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 msgid "Select recipients"
-msgstr ""
+msgstr "受信者を選択"
 
 #. js-lingui-id: V8W7vI
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
@@ -27565,7 +27570,7 @@ msgstr "このコードを使用すると、{memberName} は認証アプリを�
 #. js-lingui-id: G3XY+D
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
-msgstr ""
+msgstr "紹介者である Twenty パートナーのコード"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx

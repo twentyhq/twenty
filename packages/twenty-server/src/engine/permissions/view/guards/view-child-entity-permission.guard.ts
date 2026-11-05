@@ -40,10 +40,10 @@ export const ViewChildEntityPermissionGuard = (
           )
         : null;
 
-      return this.viewAccessService.canUserModifyView(
+      return this.viewAccessService.canUserModifyView({
         viewId,
-        resolveViewAccessContext(request),
-      );
+        accessContext: resolveViewAccessContext(request),
+      });
     }
   }
 
