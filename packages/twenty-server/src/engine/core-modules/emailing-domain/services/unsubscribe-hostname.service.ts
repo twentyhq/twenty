@@ -96,7 +96,10 @@ export class UnsubscribeHostnameService {
           unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
         });
       case 'missing':
-        if (await this.isRestartAllowed({ hostname, isUserTriggered })) {
+        if (
+          !isNonEmptyString(emailingDomain.unsubscribeHostnameId) ||
+          (await this.isRestartAllowed({ hostname, isUserTriggered }))
+        ) {
           return this.register({
             emailingDomain,
             hostname,
