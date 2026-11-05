@@ -9,7 +9,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { MetadataToolIdentifierService } from 'src/engine/metadata-modules/object-metadata/tools/services/metadata-tool-identifier.service';
-import { VALIDATION_RULE_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-read-access-policy.constant';
+import { VALIDATION_RULE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-write-access-policy.constant';
 import { VALIDATION_RULE_OBJECT_NAME_DESCRIPTION } from 'src/engine/metadata-modules/validation-rule/tools/constants/validation-rule-object-name-description.constant';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
 
@@ -23,7 +23,7 @@ const validateValidationRuleExpressionInputSchema = z.object({
 @DefineTool({
   name: 'validate_validation_rule_expression',
   category: ToolCategory.METADATA,
-  accessPolicy: VALIDATION_RULE_READ_ACCESS_POLICY,
+  accessPolicy: VALIDATION_RULE_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',
   description:
     'Check a validation rule expression against an object without saving anything. An invalid expression is rejected with the reason.',

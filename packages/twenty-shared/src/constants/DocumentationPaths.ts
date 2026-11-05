@@ -143,6 +143,8 @@ export const DOCUMENTATION_PATHS = {
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_CODE_EDITOR_CODE_EDITOR:
     '/ui/components/code-editor/code-editor',
+  UI_COMPONENTS_DATA_DISPLAY_ASSISTANT_AVATAR:
+    '/ui/components/data-display/assistant-avatar',
   UI_COMPONENTS_DATA_DISPLAY_AVATAR_GROUP:
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:

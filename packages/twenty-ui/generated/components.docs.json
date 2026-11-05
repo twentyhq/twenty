@@ -14147,6 +14147,83 @@
     ]
   },
   {
+    "name": "AssistantAvatar",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/assistant-avatar",
+    "props": [
+      {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Explicitly hides or exposes the character. Takes precedence over the name-based default."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name for a standalone character. Adds the image role; omit it beside a visible name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of an element naming a standalone character. Adds the image role."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the span root."
+      },
+      {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"pink\" | \"purple\" | \"red\" | \"sky\" | \"turquoise\" | \"yellow\"",
+        "required": false,
+        "defaultValue": "blue",
+        "description": "Theme palette used for the body and face. Follows the surrounding light or dark theme."
+      },
+      {
+        "name": "face",
+        "type": "\"default\" | \"happy\" | \"love\" | \"sleepy\" | \"surprised\" | \"wink\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Expression displayed over the body."
+      },
+      {
+        "name": "isAnimated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Plays the selected expression's idle loop. Displays the static expression when the browser prefers reduced motion."
+      },
+      {
+        "name": "shape",
+        "type": "\"arch\" | \"burst\" | \"circle\" | \"cloud\" | \"clover\" | \"cookie\" | \"flower\" | \"gem\" | \"hexagon\" | \"pill\"",
+        "required": false,
+        "defaultValue": "circle",
+        "description": "Body shape of the assistant character."
+      },
+      {
+        "name": "size",
+        "type": "14 | 16 | 20 | 24 | 40",
+        "required": false,
+        "defaultValue": "24",
+        "description": "Width and height in pixels: 14, 16, 20, 24, or 40."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root. Explicit styles override its dimensions and palette defaults."
+      }
+    ]
+  },
+  {
     "name": "AvatarGroup",
     "entryPoint": "twenty-ui/components/data-display",
     "slug": "components/data-display/avatar-group",

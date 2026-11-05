@@ -23,7 +23,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -37,7 +37,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -76,11 +76,6 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate(
-        workspaceEventBatch,
-      );
-
     for (const [
       applicationId,
       logicFunctions,
@@ -95,13 +90,13 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const admittedEvents = await eventRecordAccessGate.resolveReadableEvents({
+      const admittedEvents = await this.permissionsService.findReadableEvents({
         authContext: {
           type: 'application',
           workspace: { id: workspaceEventBatch.workspaceId },
           application,
         },
-        events: workspaceEventBatch.events,
+        eventBatch: workspaceEventBatch,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,

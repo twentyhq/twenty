@@ -1,5 +1,6 @@
 export const ALL_METADATA_NAME = {
   fieldMetadata: 'fieldMetadata',
+  fieldMetadataOption: 'fieldMetadataOption',
   objectMetadata: 'objectMetadata',
   view: 'view',
   viewField: 'viewField',
