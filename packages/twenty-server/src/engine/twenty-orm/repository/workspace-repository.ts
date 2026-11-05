@@ -39,7 +39,7 @@ import {
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
-import { findPermittedRecordIds } from 'src/engine/permissions/combine/utils/find-permitted-record-ids.util';
+import { findGrantedRecordIds } from 'src/engine/permissions/combine/utils/find-granted-record-ids.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principals.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
@@ -1736,7 +1736,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // An update must not move a record out of the update policy. Records it
-  // did not permit before are left to the update query, which skips them
+  // did not grant before are left to the update query, which skips them
   private async validateRLSPredicatesForUpdatedRecords(
     updates: {
       rawRecordBefore: ObjectRecord;
@@ -1766,7 +1766,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updates.map(({ rawRecordBefore }) => String(rawRecordBefore.id)),
     );
     const evaluate = (records: ObjectRecord[]) =>
-      findPermittedRecordIds({
+      findGrantedRecordIds({
         principals,
         metadataMaps,
         flatObjectMetadata: this.options.flatObjectMetadata,
@@ -1777,13 +1777,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         context,
       });
 
-    const permittedRecordIdsBefore = await evaluate(
+    const updatableRecordIdsBefore = await evaluate(
       updates.map(({ rawRecordBefore }) => rawRecordBefore),
     );
-    const permittedRecordIdsAfter = await evaluate(
+    const updatableRecordIdsAfter = await evaluate(
       updates
         .filter(({ rawRecordBefore }) =>
-          permittedRecordIdsBefore.has(String(rawRecordBefore.id)),
+          updatableRecordIdsBefore.has(String(rawRecordBefore.id)),
         )
         .map(({ rawRecordBefore, setColumns }) => ({
           ...rawRecordBefore,
@@ -1792,8 +1792,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
 
     if (
-      [...permittedRecordIdsBefore].some(
-        (id) => !permittedRecordIdsAfter.has(id),
+      [...updatableRecordIdsBefore].some(
+        (id) => !updatableRecordIdsAfter.has(id),
       )
     ) {
       throw new TwentyOrmException(

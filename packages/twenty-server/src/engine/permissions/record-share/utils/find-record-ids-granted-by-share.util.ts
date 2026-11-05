@@ -7,7 +7,7 @@ import { findRecordIdsByPrivacy } from 'src/engine/permissions/private-record/ut
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
 
-export const findRecordIdsPermittedByShare = async ({
+export const findRecordIdsGrantedByShare = async ({
   records,
   context,
   ...request
@@ -27,16 +27,16 @@ export const findRecordIdsPermittedByShare = async ({
     principalIds: shareGrant.principalIds,
     accessLevels: shareGrant.accessLevels,
   });
-  const permittedRecordIds = recordIds.filter((recordId) =>
+  const shareGrantedRecordIds = recordIds.filter((recordId) =>
     sharedRecordIds.has(recordId),
   );
 
   return shareGrant.isLimitedToPrivateRecords
     ? findRecordIdsByPrivacy({
-        recordIds: permittedRecordIds,
+        recordIds: shareGrantedRecordIds,
         flatObjectMetadata: request.flatObjectMetadata,
         context,
         isPrivate: true,
       })
-    : permittedRecordIds;
+    : shareGrantedRecordIds;
 };

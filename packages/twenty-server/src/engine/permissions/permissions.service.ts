@@ -165,23 +165,23 @@ export class PermissionsService {
   }
 
   public canReadRecords(question: RecordsQuestion): Promise<boolean> {
-    return this.isPermittedOnEveryRecord({ question, operationType: 'select' });
+    return this.coversEveryRecord({ question, operationType: 'select' });
   }
 
   public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
-    return this.isPermittedOnEveryRecord({ question, operationType: 'update' });
+    return this.coversEveryRecord({ question, operationType: 'update' });
   }
 
   public async findReadableRecordIds(
     question: RecordsQuestion,
   ): Promise<string[]> {
-    const permittedRecordIds = await this.findPermittedRecordIds({
+    const readableRecordIds = await this.findGrantedRecordIds({
       question,
       operationType: 'select',
     });
 
     return [...new Set(question.recordIds)].filter((recordId) =>
-      permittedRecordIds.has(recordId.toLowerCase()),
+      readableRecordIds.has(recordId.toLowerCase()),
     );
   }
 
@@ -426,14 +426,14 @@ export class PermissionsService {
       : [];
   }
 
-  private async isPermittedOnEveryRecord({
+  private async coversEveryRecord({
     question,
     operationType,
   }: {
     question: RecordsQuestion;
     operationType: ObjectRecordsOperationType;
   }): Promise<boolean> {
-    const permittedRecordIds = await this.findPermittedRecordIds({
+    const grantedRecordIds = await this.findGrantedRecordIds({
       question,
       operationType,
     });
@@ -441,12 +441,12 @@ export class PermissionsService {
     return (
       question.recordIds.length > 0 &&
       question.recordIds.every((recordId) =>
-        permittedRecordIds.has(recordId.toLowerCase()),
+        grantedRecordIds.has(recordId.toLowerCase()),
       )
     );
   }
 
-  private findPermittedRecordIds({
+  private findGrantedRecordIds({
     question: {
       principals,
       objectMetadataId,
@@ -459,7 +459,7 @@ export class PermissionsService {
     question: RecordsQuestion;
     operationType: ObjectRecordsOperationType;
   }): Promise<Set<string>> {
-    return this.recordAccessPolicyService.findPermittedRecordIds({
+    return this.recordAccessPolicyService.findGrantedRecordIds({
       principals,
       objectMetadataId,
       operationType,

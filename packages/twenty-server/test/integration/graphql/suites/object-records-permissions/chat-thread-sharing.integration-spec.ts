@@ -976,7 +976,7 @@ describe('Conversations through the record API', () => {
     );
   };
 
-  const isPermittedByDestroyEvent = async ({
+  const isReadableFromDestroyEvent = async ({
     batch,
     threadId,
     userWorkspaceId,
@@ -995,7 +995,7 @@ describe('Conversations through the record API', () => {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
-    const permittedRecordIds =
+    const readableRecordIds =
       await getAppProviderByClassName<PermissionsService>(
         'PermissionsService',
       ).findReadableEventRecordIds({
@@ -1006,7 +1006,7 @@ describe('Conversations through the record API', () => {
         eventBatch: batch,
       });
 
-    return permittedRecordIds.has(threadId);
+    return readableRecordIds.has(threadId);
   };
 
   it.each([false, true])(
@@ -1060,7 +1060,7 @@ describe('Conversations through the record API', () => {
 
         expect(await readStoredThread(threadId)).toBeNull();
         expect(
-          await isPermittedByDestroyEvent({
+          await isReadableFromDestroyEvent({
             batch,
             threadId,
             userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
@@ -1068,7 +1068,7 @@ describe('Conversations through the record API', () => {
           }),
         ).toBe(true);
         expect(
-          await isPermittedByDestroyEvent({
+          await isReadableFromDestroyEvent({
             batch,
             threadId,
             userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
@@ -1076,7 +1076,7 @@ describe('Conversations through the record API', () => {
           }),
         ).toBe(true);
         expect(
-          await isPermittedByDestroyEvent({
+          await isReadableFromDestroyEvent({
             batch,
             threadId,
             userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,

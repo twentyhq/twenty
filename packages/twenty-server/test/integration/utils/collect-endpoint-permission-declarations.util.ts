@@ -22,7 +22,7 @@ import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
-import { withAgentsAllowed } from 'src/engine/permissions/access-policy/utils/with-agents-allowed.util';
+import { withAgentsAdmitted } from 'src/engine/permissions/access-policy/utils/with-agents-admitted.util';
 
 type UserSessionVariant = Extract<
   AuthPrincipalVariant,
@@ -186,7 +186,7 @@ const toToolPermissionDeclarations = ({
   requiredFeatureFlags = [],
 }: AccessPolicy): EndpointPermissionDeclarations => ({
   acceptedAuthPrincipals: toAcceptedAuthPrincipals([
-    withAgentsAllowed(authPrincipals),
+    withAgentsAdmitted(authPrincipals),
   ]),
   requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
   requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
