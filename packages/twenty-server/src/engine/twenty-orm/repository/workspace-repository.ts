@@ -122,7 +122,7 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
 };
 
 type WrittenRecordsValidator = {
-  readsRecordsBeforeWrite: boolean;
+  shouldReadRecordsBeforeWrite: boolean;
   validate: (args: {
     writtenRecords: ObjectRecord[];
     recordsBeforeWrite: ObjectRecord[];
@@ -797,15 +797,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return write(this);
     }
 
-    const readsRecordsBeforeWrite = validationRules.some((validationRule) =>
-      Object.keys(validationRule.bindings).some(
-        isValidationRulePreviousValuePath,
-      ),
+    const shouldReadRecordsBeforeWrite = validationRules.some(
+      (validationRule) =>
+        Object.keys(validationRule.bindings).some(
+          isValidationRulePreviousValuePath,
+        ),
     );
 
     return this.runAtomically((repository) =>
       write(repository, {
-        readsRecordsBeforeWrite,
+        shouldReadRecordsBeforeWrite,
         validate: ({ writtenRecords, recordsBeforeWrite }) =>
           validateRecordsAgainstValidationRulesOrThrow({
             repository,
@@ -1179,7 +1180,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         input.id,
       ]);
 
-      if (writtenRecordsValidator?.readsRecordsBeforeWrite === true) {
+      if (writtenRecordsValidator?.shouldReadRecordsBeforeWrite) {
         recordBeforeQueryBuilder.forUpdate();
       }
 
@@ -1576,7 +1577,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
       this.options.shouldSkipEventEmission &&
-      writtenRecordsValidator?.readsRecordsBeforeWrite !== true &&
+      !writtenRecordsValidator?.shouldReadRecordsBeforeWrite &&
       !(
         kind === 'update' &&
         isDefined(data) &&
@@ -1589,7 +1590,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
-    if (writtenRecordsValidator?.readsRecordsBeforeWrite === true) {
+    if (writtenRecordsValidator?.shouldReadRecordsBeforeWrite) {
       eventSelectQueryBuilder.forUpdate();
     }
 
@@ -1671,7 +1672,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (isDefined(writtenRecordsValidator)) {
       await writtenRecordsValidator.validate({
         writtenRecords: mutationResult.generatedMaps,
-        recordsBeforeWrite: writtenRecordsValidator.readsRecordsBeforeWrite
+        recordsBeforeWrite: writtenRecordsValidator.shouldReadRecordsBeforeWrite
           ? this.formatResult<ObjectRecord[]>(recordsBefore)
           : [],
       });

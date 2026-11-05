@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 
@@ -140,10 +141,13 @@ describe('computeRecordValidationRuleViolations with previous values', () => {
     errorFieldMetadataId: 'stage-field-metadata-id',
   };
 
-  const computeTransition = (
-    previousStage: string | undefined,
-    stage: string,
-  ) =>
+  const computeTransition = ({
+    previousStage,
+    stage,
+  }: {
+    previousStage?: string;
+    stage: string;
+  }) =>
     computeRecordValidationRuleViolations({
       records: [{ id: 'deal', stage }],
       validationRules: [NO_SKIPPED_STAGE_RULE],
@@ -151,22 +155,26 @@ describe('computeRecordValidationRuleViolations with previous values', () => {
       now: '2026-09-23T10:00:00.000Z',
       inputIndexByRecordId: new Map(),
       previousRecordById: new Map(
-        previousStage === undefined
-          ? []
-          : [['deal', { id: 'deal', stage: previousStage }]],
+        isDefined(previousStage)
+          ? [['deal', { id: 'deal', stage: previousStage }]]
+          : [],
       ),
       maxViolations: 100,
     }).violations.map((violation) => violation.ruleId);
 
   it('should reject a record that skips a stage since its stored version', () => {
-    expect(computeTransition('NEW', 'WON')).toEqual(['rule-no-skipped-stage']);
+    expect(computeTransition({ previousStage: 'NEW', stage: 'WON' })).toEqual([
+      'rule-no-skipped-stage',
+    ]);
   });
 
   it('should accept a record that moves to the next stage', () => {
-    expect(computeTransition('NEW', 'MEETING')).toEqual([]);
+    expect(
+      computeTransition({ previousStage: 'NEW', stage: 'MEETING' }),
+    ).toEqual([]);
   });
 
   it('should read every previous value as empty for a created record', () => {
-    expect(computeTransition(undefined, 'WON')).toEqual([]);
+    expect(computeTransition({ stage: 'WON' })).toEqual([]);
   });
 });

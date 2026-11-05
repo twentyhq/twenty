@@ -348,7 +348,7 @@ describe('Validation rules reading previous values should be enforced on updates
     return opportunityId;
   };
 
-  const updateStage = (id: string, stage: string) =>
+  const updateStage = ({ id, stage }: { id: string; stage: string }) =>
     makeGraphqlApiRequest({
       query: gql(`
         mutation UpdateOpportunity($id: UUID!) {
@@ -429,7 +429,10 @@ describe('Validation rules reading previous values should be enforced on updates
   it('should reject an update that skips the stage the rule requires before it', async () => {
     const opportunityId = await createOpportunity('Previous value skipped');
 
-    const response = await updateStage(opportunityId, 'PROPOSAL');
+    const response = await updateStage({
+      id: opportunityId,
+      stage: 'PROPOSAL',
+    });
 
     expect(response.body.errors[0].extensions.subCode).toBe(
       'VALIDATION_RULE_VIOLATION',
@@ -442,12 +445,12 @@ describe('Validation rules reading previous values should be enforced on updates
   it('should accept the same stage once the required one comes first', async () => {
     const opportunityId = await createOpportunity('Previous value followed');
 
-    expect((await updateStage(opportunityId, 'MEETING')).body.errors).toBe(
-      undefined,
-    );
-    expect((await updateStage(opportunityId, 'PROPOSAL')).body.errors).toBe(
-      undefined,
-    );
+    expect(
+      (await updateStage({ id: opportunityId, stage: 'MEETING' })).body.errors,
+    ).toBe(undefined);
+    expect(
+      (await updateStage({ id: opportunityId, stage: 'PROPOSAL' })).body.errors,
+    ).toBe(undefined);
     expect(await findOpportunitiesByName('Previous value followed')).toEqual([
       { id: opportunityId, stage: 'PROPOSAL' },
     ]);

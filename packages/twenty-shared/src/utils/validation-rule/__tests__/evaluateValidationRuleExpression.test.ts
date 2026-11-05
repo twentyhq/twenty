@@ -308,10 +308,13 @@ const A_TO_B_TO_C =
   'stage == previous.stage or (isEmpty(previous.stage) and stage == "A") or (previous.stage == "A" and stage == "B") or (previous.stage == "B" and stage == "C")';
 
 describe('evaluateValidationRuleExpression with previous values', () => {
-  const evaluateTransition = (
-    previousRecord: Record<string, unknown> | undefined,
-    record: Record<string, unknown>,
-  ) =>
+  const evaluateTransition = ({
+    previousRecord,
+    record,
+  }: {
+    previousRecord?: Record<string, unknown>;
+    record: Record<string, unknown>;
+  }) =>
     evaluateValidationRuleExpression({
       expression: A_TO_B_TO_C,
       record,
@@ -321,28 +324,43 @@ describe('evaluateValidationRuleExpression with previous values', () => {
     });
 
   it('should pass a step to the next stage', () => {
-    expect(evaluateTransition({ stage: 'A' }, { stage: 'B' })).toEqual({
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'A' },
+        record: { stage: 'B' },
+      }),
+    ).toEqual({
       status: 'passed',
     });
   });
 
   it('should fail a skipped stage', () => {
-    expect(evaluateTransition({ stage: 'A' }, { stage: 'C' })).toEqual({
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'A' },
+        record: { stage: 'C' },
+      }),
+    ).toEqual({
       status: 'failed',
     });
   });
 
   it('should pass an update that leaves the stage as it was', () => {
-    expect(evaluateTransition({ stage: 'C' }, { stage: 'C' })).toEqual({
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'C' },
+        record: { stage: 'C' },
+      }),
+    ).toEqual({
       status: 'passed',
     });
   });
 
   it('should read every previous value as empty without a stored record', () => {
-    expect(evaluateTransition(undefined, { stage: 'A' })).toEqual({
+    expect(evaluateTransition({ record: { stage: 'A' } })).toEqual({
       status: 'passed',
     });
-    expect(evaluateTransition(undefined, { stage: 'B' })).toEqual({
+    expect(evaluateTransition({ record: { stage: 'B' } })).toEqual({
       status: 'failed',
     });
   });

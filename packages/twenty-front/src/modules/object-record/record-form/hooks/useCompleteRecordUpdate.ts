@@ -119,18 +119,23 @@ export const useCompleteRecordUpdate = ({
           },
         );
 
-        // A previous value is read from the stored record alone, before the update
         const isEveryBindingPathLoadedIn = (record: Partial<ObjectRecord>) =>
           bindingPathsReadByRules.every((path) => {
             const previousValueFieldPath =
               getValidationRulePreviousValueFieldPath(path);
 
-            return isDefined(previousValueFieldPath)
-              ? isRecordPathLoaded({ record, path: previousValueFieldPath })
-              : isRecordPathLoaded({
-                  record: { ...record, ...updateInput },
-                  path,
-                });
+            // A previous value is read from the stored record alone, before the update
+            if (isDefined(previousValueFieldPath)) {
+              return isRecordPathLoaded({
+                record,
+                path: previousValueFieldPath,
+              });
+            }
+
+            return isRecordPathLoaded({
+              record: { ...record, ...updateInput },
+              path,
+            });
           });
 
         // Views load only the fields they show, so a rule may read one the store does not have yet
