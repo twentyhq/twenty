@@ -102,7 +102,7 @@ export class AccessPolicyService {
       if (
         !(await this.settingPermissionsService.hasPermissionFlag({
           authContext,
-          setting: permissionFlag,
+          permissionFlag: permissionFlag,
         }))
       ) {
         return false;

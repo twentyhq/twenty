@@ -153,7 +153,7 @@ export class SettingPermissionsService {
       roleIds: isDefined(agentId)
         ? [...callerRoleIds, flatRoleTargetByAgentIdMaps[agentId]?.roleId]
         : callerRoleIds,
-      setting,
+      permissionFlag: setting,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
     });
@@ -161,10 +161,10 @@ export class SettingPermissionsService {
 
   public async hasPermissionFlag({
     authContext,
-    setting,
+    permissionFlag,
   }: {
     authContext: WorkspaceAuthContext | undefined;
-    setting: PermissionFlagType;
+    permissionFlag: PermissionFlagType;
   }): Promise<boolean> {
     if (!isDefined(authContext)) {
       return false;
@@ -193,25 +193,77 @@ export class SettingPermissionsService {
 
     return (
       (!isDefined(aiRunScope) ||
-        (aiRunScope.permissionFlags[setting] ?? false)) &&
+        (aiRunScope.permissionFlags[permissionFlag] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalsRoleIds(principals),
-        setting,
+        permissionFlag,
         flatRoleMaps,
         flatRolePermissionFlagMaps,
       })
     );
   }
 
+  public async userWorkspaceHasPermissionFlag({
+    workspaceId,
+    userWorkspaceId,
+    permissionFlag,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    permissionFlag: PermissionFlagType;
+  }): Promise<boolean> {
+    const { userWorkspaceRoleMap, flatRoleMaps, flatRolePermissionFlagMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatRoleMaps',
+        'flatRolePermissionFlagMaps',
+      ]);
+
+    return this.isPermissionFlagGrantedToRoles({
+      roleIds: [userWorkspaceRoleMap[userWorkspaceId]],
+      permissionFlag,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+    });
+  }
+
+  public async applicationHasPermissionFlag({
+    workspaceId,
+    applicationId,
+    permissionFlag,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    permissionFlag: PermissionFlagType;
+  }): Promise<boolean> {
+    const { flatApplicationMaps, flatRoleMaps, flatRolePermissionFlagMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatRoleMaps',
+        'flatRolePermissionFlagMaps',
+      ]);
+    const application = this.findActiveApplication({
+      applicationId,
+      flatApplicationMaps,
+    });
+
+    return this.isPermissionFlagGrantedToRoles({
+      roleIds: [application?.defaultRoleId ?? undefined],
+      permissionFlag,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+    });
+  }
+
   // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag
   private isPermissionFlagGrantedToRoles({
     roleIds,
-    setting,
+    permissionFlag,
     flatRoleMaps,
     flatRolePermissionFlagMaps,
   }: {
     roleIds: (string | undefined)[];
-    setting: PermissionFlagType;
+    permissionFlag: PermissionFlagType;
     flatRoleMaps: FlatRoleMaps;
     flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
   }): boolean {
@@ -229,7 +281,7 @@ export class SettingPermissionsService {
           isDefined(flatRole) &&
           isPermissionFlagGrantedToFlatRole({
             flatRole,
-            permissionFlag: setting,
+            permissionFlag,
             flatRolePermissionFlagMaps,
           })
         );

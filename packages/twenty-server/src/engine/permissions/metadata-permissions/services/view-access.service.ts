@@ -173,7 +173,7 @@ export class ViewAccessService {
     if (isDefined(authContext)) {
       return this.settingPermissionsService.hasPermissionFlag({
         authContext,
-        setting: PermissionFlagType.VIEWS,
+        permissionFlag: PermissionFlagType.VIEWS,
       });
     }
 

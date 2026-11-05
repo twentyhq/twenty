@@ -695,12 +695,9 @@ export class AgentChatSharingService {
         throw error;
       });
     if (
-      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        workspaceId: args.workspaceId,
-        userWorkspaceId: authContext.userWorkspaceId,
-        setting: PermissionFlagType.AI,
-        applicationId: authContext.application?.id,
-        agentId: authContext.agentId,
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
+        permissionFlag: PermissionFlagType.AI,
       }))
     ) {
       return throwAgentChatThreadNotFound();

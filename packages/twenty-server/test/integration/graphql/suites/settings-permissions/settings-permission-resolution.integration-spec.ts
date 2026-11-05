@@ -20,6 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
+import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -407,6 +408,47 @@ describe('Settings permission resolution', () => {
           }),
         ),
       );
+    });
+  });
+
+  describe('application asked about by id', () => {
+    const askAboutApplication = (applicationId: string) =>
+      getAppProviderByClassName<SettingPermissionsService>(
+        'SettingPermissionsService',
+      ).applicationHasPermissionFlag({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId,
+        permissionFlag: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      });
+
+    it('answers true when its default role has the flag', async () => {
+      expect(await askAboutApplication(grantedApplication.id)).toBe(true);
+    });
+
+    it('answers false when its default role lacks the flag', async () => {
+      expect(await askAboutApplication(deniedApplication.id)).toBe(false);
+    });
+
+    it('answers false without a default role', async () => {
+      expect(await askAboutApplication(rolelessApplication.id)).toBe(false);
+    });
+
+    it('answers false once the application is soft deleted', async () => {
+      const setDeletedAt = async (deletedAt: Date | null) => {
+        await globalThis.testDataSource.query(
+          'UPDATE core."application" SET "deletedAt" = $1 WHERE id = $2',
+          [deletedAt, grantedApplication.id],
+        );
+        await invalidateWorkspaceCache(['flatApplicationMaps']);
+      };
+
+      await setDeletedAt(new Date());
+
+      try {
+        expect(await askAboutApplication(grantedApplication.id)).toBe(false);
+      } finally {
+        await setDeletedAt(null);
+      }
     });
   });
 });
