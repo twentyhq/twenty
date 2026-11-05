@@ -9,13 +9,13 @@ import {
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
 export const buildMessageStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -483,14 +483,16 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  attachments: createStandardFieldFlatMetadata({
+  attachments: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
-      type: FieldMetadataType.FILES,
+      isSystemSideEffect: true,
       label: i18nLabel(
-        msg({ message: `Attachments`, context: 'fieldMetadata.label' }),
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
       ),
       description: i18nLabel(
         msg({
@@ -498,11 +500,14 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           context: 'fieldMetadata.description',
         }),
       ),
-      icon: 'IconPaperclip',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       isUIEditable: false,
+      targetObjectName: 'attachment',
+      targetFieldName: 'targetMessage',
       settings: {
-        maxNumberOfValues: MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES,
+        relationType: RelationType.ONE_TO_MANY,
       },
     },
     standardObjectMetadataRelatedEntityIds,
