@@ -144,6 +144,39 @@ describe('Assistant reply selection with stored conversation participants', () =
       userWorkspaceId: context.userWorkspaceId,
     });
 
+  it('stops DM admission and queued replies when the Inbox rollout is disabled', async () => {
+    models.enableEvaluation();
+    const threadId = await createDirectMessage();
+
+    await context.setAssistantModes({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
+    });
+    await expect(
+      shouldReply({ threadId, isAssistantMentioned: true }),
+    ).resolves.toBe(true);
+
+    const { messageId } = await saveMessageWithReplyContext({
+      threadId,
+      assistantReplyContext: {
+        isAssistantMentioned: true,
+        isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
+      },
+    });
+
+    await expect(shouldExecute({ threadId, messageId })).resolves.toBe(true);
+    await context.featureFlagService.upsertWorkspaceFeatureFlag({
+      workspaceId: context.workspaceId,
+      featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      value: false,
+    });
+    await expect(shouldExecute({ threadId, messageId })).resolves.toBe(false);
+    await expect(
+      shouldReply({ threadId, isAssistantMentioned: true }),
+    ).resolves.toBe(false);
+    expect(models.evaluate).not.toHaveBeenCalled();
+  });
+
   it('does not invoke the evaluator while Ada is absent', async () => {
     models.enableEvaluation();
     const threadId = await createGroup(false);

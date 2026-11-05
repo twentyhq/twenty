@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
+import { FeatureFlagKey, RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -125,14 +125,25 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    if (thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE) {
+    if (thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE) {
       return (
-        workspace.aiChatDirectMessageAssistantMode ??
-        AiChatAssistantMode.MENTION_ONLY
+        workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC
       );
     }
 
-    return workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC;
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]) {
+      return AiChatAssistantMode.NEVER;
+    }
+
+    return (
+      workspace.aiChatDirectMessageAssistantMode ??
+      AiChatAssistantMode.MENTION_ONLY
+    );
   }
 
   private async resolveChatAudience({
