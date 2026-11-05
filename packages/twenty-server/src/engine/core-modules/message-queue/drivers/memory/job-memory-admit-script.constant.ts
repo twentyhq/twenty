@@ -1,11 +1,10 @@
 export const JOB_MEMORY_ADMIT_SCRIPT = `
-local shouldChargeOnRefusal = ARGV[1] == '1'
-local capacity = tonumber(ARGV[2])
-local usedMemory = tonumber(ARGV[3])
-local share = tonumber(ARGV[4])
-local ttl = tonumber(ARGV[5])
-local keyCount = tonumber(ARGV[6])
-local jobCount = tonumber(ARGV[7])
+local capacity = tonumber(ARGV[1])
+local usedMemory = tonumber(ARGV[2])
+local share = tonumber(ARGV[3])
+local ttl = tonumber(ARGV[4])
+local keyCount = tonumber(ARGV[5])
+local jobCount = tonumber(ARGV[6])
 
 local used = {}
 local requested = {}
@@ -16,7 +15,7 @@ for keyIndex = 1, keyCount do
 end
 
 local jobs = {}
-local cursor = 8
+local cursor = 7
 
 for jobIndex = 1, jobCount do
   local member = ARGV[cursor]
@@ -57,7 +56,7 @@ for keyIndex = 1, keyCount do
   usedAfter[keyIndex] = used[keyIndex]
 end
 
-if refused == 0 or shouldChargeOnRefusal then
+if refused == 0 then
   for _, job in ipairs(jobs) do
     for _, keyIndex in ipairs(job[3]) do
       if redis.call('HSETNX', KEYS[2 * keyIndex], job[1], job[2]) == 1 then

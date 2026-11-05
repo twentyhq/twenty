@@ -21,7 +21,6 @@ export const reportJobMemoryLimitRefusal = ({
     attributes: {
       queue: refusal.queueName,
       reason: refusal.reason,
-      mode: refusal.mode,
     },
     shouldStoreInCache: false,
   });

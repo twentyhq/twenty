@@ -16,12 +16,13 @@ export const createJobMemoryLimiters = ({
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
 }): { jobSizeLimiter: JobSizeLimiter; jobMemoryLimiter: JobMemoryLimiter } => {
-  const getMode = () => twentyConfigService.get('JOB_QUEUE_MEMORY_LIMIT_MODE');
+  const isEnabled = () =>
+    twentyConfigService.get('IS_REDIS_MEMORY_FAIRNESS_ENABLED');
 
   return {
     jobSizeLimiter: new JobSizeLimiter({
       metricsService,
-      getMode,
+      isEnabled,
       getMaxJobSizeBytes: () =>
         twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES'),
     }),
@@ -29,7 +30,7 @@ export const createJobMemoryLimiters = ({
       getClient,
       keyPrefix,
       metricsService,
-      getMode,
+      isEnabled,
       getShare: () => twentyConfigService.get('JOB_QUEUE_MEMORY_SHARE'),
       getReserve: () => twentyConfigService.get('JOB_QUEUE_MEMORY_RESERVE'),
     }),

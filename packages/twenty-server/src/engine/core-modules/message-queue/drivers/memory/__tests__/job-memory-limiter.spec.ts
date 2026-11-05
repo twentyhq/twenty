@@ -8,7 +8,6 @@ import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
-import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -21,13 +20,13 @@ const usedKeyOf = (groupKey: string) => `${KEY_PREFIX}:jobmem:used:${groupKey}`;
 const jobsKeyOf = (groupKey: string) => `${KEY_PREFIX}:jobmem:jobs:${groupKey}`;
 
 const createLimiter = async ({
-  mode = 'observe',
+  isEnabled = true,
   maxMemoryBytes = 10_000,
   usedMemoryBytes = 0,
   share = 0.1,
   reserve = 0,
 }: {
-  mode?: JobQueueMemoryLimitMode;
+  isEnabled?: boolean;
   maxMemoryBytes?: number;
   usedMemoryBytes?: number;
   share?: number;
@@ -66,7 +65,7 @@ const createLimiter = async ({
     getClient: async () => client as never,
     keyPrefix: KEY_PREFIX,
     metricsService: metricsService as never,
-    getMode: () => mode,
+    isEnabled: () => isEnabled,
     getShare: () => share,
     getReserve: () => reserve,
   });
@@ -127,26 +126,8 @@ describe('JobMemoryLimiter', () => {
     expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
   });
 
-  it('counts a refusal but still charges in observe', async () => {
-    const { redis, limiter, metricsService } = await createLimiter();
-
-    const admission = await limiter.admit({
-      queueName: QUEUE,
-      jobs: [{ jobId: 'job-1', sizeBytes: 1_500, groupKeys: [WORKSPACE_1] }],
-    });
-
-    expect(admission).toEqual({ isCharged: true, availableBytes: 0 });
-    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(1_500);
-    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
-      key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: QUEUE, reason: 'share', mode: 'observe' },
-      shouldStoreInCache: false,
-    });
-  });
-
-  it('refuses the whole batch without charging it in enforce', async () => {
+  it('refuses the whole batch without charging it', async () => {
     const { redis, limiter, metricsService } = await createLimiter({
-      mode: 'enforce',
       usedMemoryBytes: 600,
     });
 
@@ -176,13 +157,13 @@ describe('JobMemoryLimiter', () => {
     );
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: QUEUE, reason: 'share', mode: 'enforce' },
+      attributes: { queue: QUEUE, reason: 'share' },
       shouldStoreInCache: false,
     });
   });
 
-  it('admits a batch within the limit in enforce', async () => {
-    const { limiter } = await createLimiter({ mode: 'enforce' });
+  it('admits a batch within the limit', async () => {
+    const { limiter } = await createLimiter();
 
     const admission = await limiter.admit({
       queueName: QUEUE,
@@ -192,7 +173,7 @@ describe('JobMemoryLimiter', () => {
     expect(admission).toEqual({ isCharged: true, availableBytes: 600 });
   });
 
-  it('admits when Redis cannot be reached in enforce', async () => {
+  it('admits when Redis cannot be reached', async () => {
     const brokenLimiter = new JobMemoryLimiter({
       getClient: async () =>
         ({
@@ -203,7 +184,7 @@ describe('JobMemoryLimiter', () => {
         }) as never,
       keyPrefix: KEY_PREFIX,
       metricsService: { incrementCounterForEvent: jest.fn() } as never,
-      getMode: () => 'enforce',
+      isEnabled: () => true,
       getShare: () => 0.1,
       getReserve: () => 0,
     });
@@ -223,7 +204,7 @@ describe('JobMemoryLimiter', () => {
 
     await limiter.admit({
       queueName: QUEUE,
-      jobs: [{ jobId: 'job-1', sizeBytes: 1_000, groupKeys: [WORKSPACE_1] }],
+      jobs: [{ jobId: 'job-1', sizeBytes: 900, groupKeys: [WORKSPACE_1] }],
     });
     metricsService.incrementCounterForEvent.mockClear();
 
@@ -318,7 +299,7 @@ describe('JobMemoryLimiter', () => {
   });
 
   it.each<{ name: string; options: Parameters<typeof createLimiter>[0] }>([
-    { name: 'off', options: { mode: 'off' } },
+    { name: 'disabled', options: { isEnabled: false } },
     { name: 'maxmemory is unset', options: { maxMemoryBytes: 0 } },
   ])('does not charge when $name', async ({ options }) => {
     const { redis, limiter } = await createLimiter(options);

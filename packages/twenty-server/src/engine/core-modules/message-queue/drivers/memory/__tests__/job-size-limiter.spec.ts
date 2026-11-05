@@ -4,16 +4,15 @@ import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
-import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const MAX_JOB_SIZE_BYTES = 100;
 
-const buildLimiter = (mode: JobQueueMemoryLimitMode) => {
+const buildLimiter = (isEnabled: boolean) => {
   const metricsService = { incrementCounterForEvent: jest.fn() };
   const limiter = new JobSizeLimiter({
     metricsService: metricsService as never,
-    getMode: () => mode,
+    isEnabled: () => isEnabled,
     getMaxJobSizeBytes: () => MAX_JOB_SIZE_BYTES,
   });
 
@@ -27,8 +26,8 @@ const JOBS = [
 ];
 
 describe('JobSizeLimiter', () => {
-  it('ignores sizes when off', () => {
-    const { limiter, metricsService } = buildLimiter('off');
+  it('ignores sizes when disabled', () => {
+    const { limiter, metricsService } = buildLimiter(false);
 
     expect(() =>
       limiter.checkJobSizes({
@@ -39,29 +38,8 @@ describe('JobSizeLimiter', () => {
     expect(metricsService.incrementCounterForEvent).not.toHaveBeenCalled();
   });
 
-  it('counts each oversized job without refusing in observe', () => {
-    const { limiter, metricsService } = buildLimiter('observe');
-
-    expect(() =>
-      limiter.checkJobSizes({
-        queueName: MessageQueue.workspaceQueue,
-        jobs: JOBS,
-      }),
-    ).not.toThrow();
-    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(2);
-    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
-      key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: {
-        queue: MessageQueue.workspaceQueue,
-        reason: 'size',
-        mode: 'observe',
-      },
-      shouldStoreInCache: false,
-    });
-  });
-
-  it('refuses the batch on the first oversized job in enforce', () => {
-    const { limiter } = buildLimiter('enforce');
+  it('refuses the batch on the first oversized job and counts it once', () => {
+    const { limiter, metricsService } = buildLimiter(true);
 
     let thrownError: unknown;
 
@@ -80,10 +58,16 @@ describe('JobSizeLimiter', () => {
       statusCode: 413,
       details: { index: 3, sizeBytes: 150, maxBytes: MAX_JOB_SIZE_BYTES },
     });
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
+      key: MetricsKeys.JobMemoryLimitRefused,
+      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
+      shouldStoreInCache: false,
+    });
   });
 
-  it('admits jobs at the limit in enforce', () => {
-    const { limiter } = buildLimiter('enforce');
+  it('admits jobs at the limit', () => {
+    const { limiter } = buildLimiter(true);
 
     expect(() =>
       limiter.checkJobSizes({

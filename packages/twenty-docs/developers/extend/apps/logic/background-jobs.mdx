@@ -126,7 +126,7 @@ Queued jobs live in memory until they finish, so each workspace and each applica
 | `jobs` | Each enqueued job's `jobId` and `sizeBytes`. |
 | `availableBytes` | Memory your application and workspace can still enqueue, as of this call. `null` when the server does not limit queue memory. It is a snapshot, not a reservation. |
 
-When a limit is enforced, the whole call is refused and nothing is enqueued:
+When a limit is reached, the whole call is refused and nothing is enqueued:
 
 | Error `subCode` | When | Details |
 |-----------------|------|---------|

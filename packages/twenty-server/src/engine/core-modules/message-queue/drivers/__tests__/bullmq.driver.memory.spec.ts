@@ -55,7 +55,7 @@ const buildApplicationJob = ({
   applicationUniversalIdentifier: 'app-1',
 });
 
-const createDriver = async (mode: string) => {
+const createDriver = async (isEnabled: boolean) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
@@ -79,7 +79,7 @@ const createDriver = async (mode: string) => {
   };
 
   const configValues: Record<string, unknown> = {
-    JOB_QUEUE_MEMORY_LIMIT_MODE: mode,
+    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MAX_JOB_SIZE_BYTES: 1_048_576,
     JOB_QUEUE_MEMORY_SHARE: 0.1,
     JOB_QUEUE_MEMORY_RESERVE: 0,
@@ -121,7 +121,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('reports job sizes and the memory still available', async () => {
-    const { driver, readUsedBytes } = await createDriver('observe');
+    const { driver, readUsedBytes } = await createDriver(true);
 
     const report = await driver.bulkAddWithReport(QUEUE, 'job', [
       buildApplicationJob({ workspaceId: 'ws-1' }),
@@ -146,8 +146,8 @@ describe('BullMQDriver job memory', () => {
     });
   });
 
-  it('returns a null availability and charges nothing when off', async () => {
-    const { driver, readUsedBytes } = await createDriver('off');
+  it('returns a null availability and charges nothing when disabled', async () => {
+    const { driver, readUsedBytes } = await createDriver(false);
 
     const report = await driver.bulkAddWithReport(QUEUE, 'job', [
       { ...buildApplicationJob({ workspaceId: 'ws-1' }), jobId: 'job-1' },
@@ -158,7 +158,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('does not charge a job id that BullMQ still holds', async () => {
-    const { driver, redis, readUsedBytes } = await createDriver('observe');
+    const { driver, redis, readUsedBytes } = await createDriver(true);
 
     await redis.hset(`${KEY_PREFIX}:${QUEUE}:finished-job`, 'name', 'job');
 
@@ -183,7 +183,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('releases the charge of a job deduplicated into another one', async () => {
-    const { driver, readUsedBytes } = await createDriver('observe');
+    const { driver, readUsedBytes } = await createDriver(true);
 
     mockAdd.mockResolvedValue({ id: 'existing-job' });
 
@@ -202,7 +202,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('releases the charges of jobs that were not added when the add fails', async () => {
-    const { driver, readUsedBytes } = await createDriver('observe');
+    const { driver, readUsedBytes } = await createDriver(true);
 
     mockAddBulk.mockRejectedValue(new Error('connection lost'));
     mockGetJob.mockResolvedValue(undefined);
@@ -216,7 +216,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('keeps the charge when the outcome of a failed add is unknown', async () => {
-    const { driver, readUsedBytes } = await createDriver('observe');
+    const { driver, readUsedBytes } = await createDriver(true);
 
     mockAddBulk.mockRejectedValue(new Error('connection lost'));
     mockGetJob.mockRejectedValue(new Error('connection lost'));
@@ -230,7 +230,7 @@ describe('BullMQDriver job memory', () => {
   });
 
   it('follows payload updates and releases on completion or final failure only', async () => {
-    const { driver, readUsedBytes } = await createDriver('observe');
+    const { driver, readUsedBytes } = await createDriver(true);
 
     await driver.bulkAdd(QUEUE, 'job', [
       buildApplicationJob({ workspaceId: 'ws-1' }),

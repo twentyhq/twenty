@@ -6,7 +6,6 @@ export const buildJobMemoryLimitRefusalLogMessage = ({
   queueName,
   groupKey,
   reason,
-  mode,
   requestedBytes,
   usedBytes,
   limitBytes,
@@ -14,7 +13,6 @@ export const buildJobMemoryLimitRefusalLogMessage = ({
   const fields = [
     `key=${groupKey}`,
     `reason=${reason}`,
-    `mode=${mode}`,
     `requestedBytes=${requestedBytes}`,
     ...(isDefined(usedBytes) ? [`usedBytes=${usedBytes}`] : []),
     `limitBytes=${limitBytes}`,

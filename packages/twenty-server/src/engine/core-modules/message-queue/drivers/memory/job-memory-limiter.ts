@@ -7,7 +7,6 @@ import {
   JOB_MEMORY_INFO_CACHE_MS,
   JOB_MEMORY_UNCHARGED_GROUP_KEY,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
-import { JOB_QUEUE_MEMORY_LIMIT_MODE } from 'src/engine/core-modules/message-queue/constants/job-queue-memory-limit-mode.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
 import { JOB_MEMORY_RESIZE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-resize-script.constant';
@@ -17,7 +16,6 @@ import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
-import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import { computeJobMemoryAvailableBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-available-bytes.util';
 import { computeJobMemoryCapacityBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-capacity-bytes.util';
 import {
@@ -51,7 +49,7 @@ type JobMemoryLimiterOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisScriptClient>;
   keyPrefix: string;
   metricsService: MetricsService;
-  getMode: () => JobQueueMemoryLimitMode;
+  isEnabled: () => boolean;
   getShare: () => number;
   getReserve: () => number;
 };
@@ -76,12 +74,7 @@ export class JobMemoryLimiter {
   constructor(private readonly options: JobMemoryLimiterOptions) {}
 
   isEnabled(): boolean {
-    const mode = this.options.getMode();
-
-    return (
-      mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ||
-      mode === JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    );
+    return this.options.isEnabled();
   }
 
   async admit({
@@ -91,12 +84,7 @@ export class JobMemoryLimiter {
     queueName: MessageQueue;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    const mode = this.options.getMode();
-
-    if (
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE &&
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    ) {
+    if (!this.isEnabled()) {
       return NOT_CHARGED;
     }
 
@@ -133,7 +121,6 @@ export class JobMemoryLimiter {
         script: JOB_MEMORY_ADMIT_SCRIPT,
         keys: groupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
         args: [
-          mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ? 1 : 0,
           capacityBytes,
           memoryInfo.usedMemoryBytes,
           this.options.getShare(),
@@ -172,7 +159,6 @@ export class JobMemoryLimiter {
             queueName,
             groupKey: admission.groupKey,
             reason: 'share',
-            mode,
             requestedBytes: admission.requestedBytes,
             usedBytes: admission.usedBytes,
             limitBytes: admission.limitBytes,
@@ -188,7 +174,7 @@ export class JobMemoryLimiter {
       })),
     );
 
-    if (isRefused && mode === JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE) {
+    if (isRefused) {
       const requestedBytes = chargedJobs.reduce(
         (total, { sizeBytes }) => total + sizeBytes,
         0,
