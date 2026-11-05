@@ -98,7 +98,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
@@ -122,7 +122,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toEqual([]);
@@ -143,7 +143,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(effectiveSelectedFields).toHaveProperty('id');
@@ -162,7 +162,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -181,7 +181,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(1);
@@ -202,7 +202,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(warnings).toHaveLength(2);
@@ -221,7 +221,7 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
         selectedFields: defaultSelectedFields,
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       expect(effectiveSelectedFields).not.toHaveProperty('searchVector');
@@ -239,7 +239,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
           selectableRelationFields: {},
-          readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+          unreadableFieldMetadataIds: new Set<string>(),
         });
 
       expect(warnings).toHaveLength(1);
@@ -263,7 +263,7 @@ describe('buildEffectiveSelectedFields', () => {
           richText: { blocknote: true, markdown: true },
         },
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       const richTextFields =
@@ -301,7 +301,7 @@ describe('buildEffectiveSelectedFields', () => {
           richText: { blocknote: true, markdown: true },
         },
         selectableRelationFields: {},
-        readableFieldMetadataIds: new Set(defaultFlatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
       });
 
       const richTextFields =
@@ -430,7 +430,7 @@ describe('buildEffectiveSelectedFields', () => {
       },
     });
 
-    const buildReadableFieldMetadataIds = (
+    const buildUnreadableFieldMetadataIds = (
       recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>,
     ) =>
       new Set(
@@ -440,7 +440,7 @@ describe('buildEffectiveSelectedFields', () => {
               (fieldId) =>
                 recordsPermissions.objects[objectMetadata.id]?.restrictedFields[
                   fieldId
-                ]?.canRead !== false,
+                ]?.canRead === false,
             ),
         ),
       );
@@ -455,8 +455,8 @@ describe('buildEffectiveSelectedFields', () => {
         }),
         flatObjectMetadataMaps: relationObjectMaps,
         flatFieldMetadataMaps: relationFieldMaps,
-        readableFieldMetadataIds:
-          buildReadableFieldMetadataIds(recordsPermissions),
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
         readableObjectMetadataIds: new Set(
           Object.entries(recordsPermissions.objects)
             .filter(([, objectRecordsPermissions]) =>
@@ -486,8 +486,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          readableFieldMetadataIds:
-            buildReadableFieldMetadataIds(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -513,8 +513,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          readableFieldMetadataIds:
-            buildReadableFieldMetadataIds(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -540,8 +540,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          readableFieldMetadataIds:
-            buildReadableFieldMetadataIds(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(warnings).toEqual([]);
@@ -569,8 +569,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          readableFieldMetadataIds:
-            buildReadableFieldMetadataIds(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
@@ -596,8 +596,8 @@ describe('buildEffectiveSelectedFields', () => {
           selectedFields: { id: true, name: true, fund: true },
           selectableRelationFields:
             buildSelectableRelationFields(recordsPermissions),
-          readableFieldMetadataIds:
-            buildReadableFieldMetadataIds(recordsPermissions),
+          unreadableFieldMetadataIds:
+            buildUnreadableFieldMetadataIds(recordsPermissions),
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
@@ -620,8 +620,8 @@ describe('buildEffectiveSelectedFields', () => {
         selectedFields: { id: true, name: true, fund: true },
         selectableRelationFields:
           buildSelectableRelationFields(recordsPermissions),
-        readableFieldMetadataIds:
-          buildReadableFieldMetadataIds(recordsPermissions),
+        unreadableFieldMetadataIds:
+          buildUnreadableFieldMetadataIds(recordsPermissions),
       });
 
       expect(warnings).toHaveLength(1);

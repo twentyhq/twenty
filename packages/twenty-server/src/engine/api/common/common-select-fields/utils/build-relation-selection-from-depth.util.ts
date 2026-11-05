@@ -37,7 +37,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatFields,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
   readableObjectMetadataIds,
   depth,
   onlyUseLabelIdentifierFieldsInRelations = false,
@@ -47,7 +47,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadataMaps: FlatEntityMaps<RelationsSelectFlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
   flatFields: readonly RelationsSelectFlatFieldMetadata[];
-  readableFieldMetadataIds: ReadonlySet<string>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
   readableObjectMetadataIds: ReadonlySet<string>;
   depth: SelectionDepth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
@@ -66,7 +66,7 @@ export const buildRelationSelectionFromDepth = ({
       continue;
     }
 
-    if (!readableFieldMetadataIds.has(flatField.id)) {
+    if (unreadableFieldMetadataIds.has(flatField.id)) {
       continue;
     }
 
@@ -104,7 +104,7 @@ export const buildRelationSelectionFromDepth = ({
     });
 
     const relationFieldSelectFields = buildFieldSelection({
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       flatObjectMetadata: relationTargetObjectMetadata,
       flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,
@@ -129,7 +129,7 @@ export const buildRelationSelectionFromDepth = ({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatFields: relationFlatFields,
-        readableFieldMetadataIds,
+        unreadableFieldMetadataIds,
         readableObjectMetadataIds,
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations,

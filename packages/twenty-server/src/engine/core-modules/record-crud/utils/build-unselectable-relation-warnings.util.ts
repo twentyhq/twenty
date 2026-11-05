@@ -15,7 +15,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   selectableRelationFields,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
 }: {
   objectName: string;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
@@ -43,7 +43,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
     >
   >;
   selectableRelationFields: CommonSelectedFields;
-  readableFieldMetadataIds: ReadonlySet<string>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();
 
@@ -65,7 +65,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       continue;
     }
 
-    if (!readableFieldMetadataIds.has(field.id)) {
+    if (unreadableFieldMetadataIds.has(field.id)) {
       warningsByFieldName.set(
         field.name,
         `Field '${field.name}' on ${objectName} cannot be selected because your role restricts access to this field.`,

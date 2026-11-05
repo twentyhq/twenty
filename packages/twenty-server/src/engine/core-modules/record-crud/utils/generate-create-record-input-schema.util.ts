@@ -7,17 +7,17 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateCreateRecordInputSchema = ({
   objectMetadata,
-  updatableFieldMetadataIds,
+  nonUpdatableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  updatableFieldMetadataIds?: ReadonlySet<string>;
+  nonUpdatableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   return buildObjectJsonSchema({
     ...generateRecordPropertiesJsonSchema({
       objectMetadata,
-      updatableFieldMetadataIds,
+      nonUpdatableFieldMetadataIds,
       definitions,
     }),
     definitions,

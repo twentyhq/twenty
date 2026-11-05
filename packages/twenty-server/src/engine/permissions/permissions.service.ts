@@ -59,6 +59,12 @@ type FieldQuestion = ObjectQuestion & {
   fieldMetadataId: string;
 };
 
+// An empty denied set means every field is allowed, so it cannot answer for a missing principal
+type FieldsQuestion = {
+  principals: PermissionsPrincipalsWithRolesContext;
+  objectMetadataId: string;
+};
+
 @Injectable()
 export class PermissionsService {
   constructor(
@@ -167,42 +173,48 @@ export class PermissionsService {
     );
   }
 
-  public async canReadField({
+  public canReadField({
     principals,
     objectMetadataId,
     fieldMetadataId,
   }: FieldQuestion): Promise<boolean> {
-    return (
-      await this.findReadableFieldMetadataIds({ principals, objectMetadataId })
-    ).includes(fieldMetadataId);
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canRead',
+    });
   }
 
-  public async canUpdateField({
+  public canUpdateField({
     principals,
     objectMetadataId,
     fieldMetadataId,
   }: FieldQuestion): Promise<boolean> {
-    return (
-      await this.findUpdatableFieldMetadataIds({ principals, objectMetadataId })
-    ).includes(fieldMetadataId);
+    return this.recordAccessPolicyService.hasFieldPermission({
+      principals,
+      objectMetadataId,
+      fieldMetadataId,
+      fieldPermission: 'canUpdate',
+    });
   }
 
-  public findReadableFieldMetadataIds({
+  public findUnreadableFieldMetadataIds({
     principals,
     objectMetadataId,
-  }: ObjectQuestion): Promise<string[]> {
-    return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIds({
       principals,
       objectMetadataId,
       fieldPermission: 'canRead',
     });
   }
 
-  public findUpdatableFieldMetadataIds({
+  public findNonUpdatableFieldMetadataIds({
     principals,
     objectMetadataId,
-  }: ObjectQuestion): Promise<string[]> {
-    return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
+  }: FieldsQuestion): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findDeniedFieldMetadataIds({
       principals,
       objectMetadataId,
       fieldPermission: 'canUpdate',

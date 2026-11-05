@@ -22,7 +22,7 @@ describe('CommonSelectFieldsBuilder', () => {
   const buildFromDepth = (
     args: Omit<
       Parameters<CommonSelectFieldsBuilder['buildFromDepth']>[0],
-      'readableObjectMetadataIds' | 'readableFieldMetadataIds'
+      'readableObjectMetadataIds' | 'unreadableFieldMetadataIds'
     > & { recordsPermissions: Pick<RoleRecordsPermissions, 'objects'> },
   ) => {
     const { recordsPermissions } = args;
@@ -39,7 +39,7 @@ describe('CommonSelectFieldsBuilder', () => {
           )
           .map(([objectMetadataId]) => objectMetadataId),
       ),
-      readableFieldMetadataIds: new Set(
+      unreadableFieldMetadataIds: new Set(
         Object.values(args.flatFieldMetadataMaps.byUniversalIdentifier)
           .filter(isDefined)
           .filter((field) => {
@@ -47,8 +47,8 @@ describe('CommonSelectFieldsBuilder', () => {
               recordsPermissions.objects[field.objectMetadataId];
 
             return (
-              isDefined(objectRecordsPermissions) &&
-              objectRecordsPermissions.restrictedFields[field.id]?.canRead !==
+              !isDefined(objectRecordsPermissions) ||
+              objectRecordsPermissions.restrictedFields[field.id]?.canRead ===
                 false
             );
           })

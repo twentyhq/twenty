@@ -36,12 +36,12 @@ const LOGICAL_FILTER_PROPERTIES: Record<string, JSONSchema7> = {
 
 export const generateRecordFilterJsonSchema = ({
   objectMetadata,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
   definitions,
   additionalExcludedFieldNames = [],
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
   additionalExcludedFieldNames?: string[];
 }): { properties: Record<string, JSONSchema7>; reference: JSONSchema7 } => {
@@ -54,7 +54,7 @@ export const generateRecordFilterJsonSchema = ({
         isSystem: field.isSystem,
         additionalExcludedFieldNames,
       }) ||
-      readableFieldMetadataIds?.has(field.id) === false
+      unreadableFieldMetadataIds?.has(field.id) === true
     ) {
       continue;
     }

@@ -37,6 +37,11 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { loadPermissionsMetadataMaps } from 'src/engine/permissions/combine/utils/load-permissions-metadata-maps.util';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
@@ -228,46 +233,79 @@ export class RecordAccessPolicyService {
     });
   }
 
-  // Ids of the object's fields the intersected roles do not restrict for this permission
-  async findPermittedFieldMetadataIds({
+  async hasFieldPermission({
     principals,
     objectMetadataId,
+    fieldMetadataId,
     fieldPermission,
   }: {
     principals: PermissionsPrincipalsWithRolesContext | undefined;
     objectMetadataId: string;
+    fieldMetadataId: string;
     fieldPermission: keyof RestrictedFieldPermissions;
-  }): Promise<string[]> {
+  }): Promise<boolean> {
     if (!isDefined(principals)) {
-      return [];
+      return false;
     }
 
-    const metadataMaps = await this.findPrincipalsMetadataMaps(principals);
     const flatObjectMetadata = this.findFlatObjectMetadata({
-      metadataMaps,
+      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
       objectMetadataId,
     });
+
+    if (!flatObjectMetadata?.fieldIds.includes(fieldMetadataId)) {
+      return false;
+    }
+
+    const deniedFieldMetadataIds = await this.findDeniedFieldMetadataIds({
+      principals,
+      objectMetadataId,
+      fieldPermission,
+    });
+
+    return !deniedFieldMetadataIds.has(fieldMetadataId);
+  }
+
+  // Fails closed: an empty set would allow every field, so an unknown object throws
+  async findDeniedFieldMetadataIds({
+    principals,
+    objectMetadataId,
+    fieldPermission,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    fieldPermission: keyof RestrictedFieldPermissions;
+  }): Promise<Set<string>> {
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+      objectMetadataId,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     const objectRecordsPermissions = (
       await this.findPrincipalsRecordsPermissions(principals)
     ).objects[objectMetadataId];
 
-    if (
-      !isDefined(flatObjectMetadata) ||
-      !isDefined(objectRecordsPermissions)
-    ) {
-      return [];
+    if (!isDefined(objectRecordsPermissions)) {
+      return new Set(flatObjectMetadata.fieldIds);
     }
 
-    return flatObjectMetadata.fieldIds.filter((fieldMetadataId) => {
-      const restrictedField =
-        objectRecordsPermissions.restrictedFields[fieldMetadataId];
-
-      // a field the principal cannot read is never writable
-      return (
-        restrictedField?.canRead !== false &&
-        restrictedField?.[fieldPermission] !== false
-      );
-    });
+    return new Set(
+      Object.entries(objectRecordsPermissions.restrictedFields)
+        // a field the principal cannot read is never writable
+        .filter(
+          ([, restrictedField]) =>
+            restrictedField.canRead === false ||
+            restrictedField[fieldPermission] === false,
+        )
+        .map(([fieldMetadataId]) => fieldMetadataId),
+    );
   }
 
   async findReadableEventRecordIds({

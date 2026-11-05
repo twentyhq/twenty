@@ -31,11 +31,7 @@ const COMPANY_FIELDS = [
 const generateSchema = (unreadableFieldMetadataIds: string[] = []) =>
   generateFindToolInputSchema({
     objectMetadata: { fields: COMPANY_FIELDS },
-    readableFieldMetadataIds: new Set(
-      COMPANY_FIELDS.map((field) => field.id).filter(
-        (fieldId) => !unreadableFieldMetadataIds.includes(fieldId),
-      ),
-    ),
+    unreadableFieldMetadataIds: new Set(unreadableFieldMetadataIds),
   });
 
 const DIRECTION_REFERENCE = { $ref: '#/$defs/OrderByDirection' };

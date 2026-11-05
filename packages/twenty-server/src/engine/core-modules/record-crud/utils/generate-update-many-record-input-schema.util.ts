@@ -8,25 +8,25 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateUpdateManyRecordInputSchema = ({
   objectMetadata,
-  readableFieldMetadataIds,
-  updatableFieldMetadataIds,
+  unreadableFieldMetadataIds,
+  nonUpdatableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
-  updatableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
+  nonUpdatableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   const { reference: filterReference } = generateRecordFilterJsonSchema({
     objectMetadata,
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
     definitions,
     additionalExcludedFieldNames: ['createdAt', 'updatedAt'],
   });
 
   const { properties } = generateRecordPropertiesJsonSchema({
     objectMetadata,
-    updatableFieldMetadataIds,
+    nonUpdatableFieldMetadataIds,
     definitions,
     isPartial: true,
   });

@@ -76,20 +76,16 @@ export class GroupByArgProcessorService {
   getAvailableAggregations({
     flatObjectMetadata,
     flatFieldMetadataMaps,
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    readableFieldMetadataIds?: ReadonlySet<string>;
+    unreadableFieldMetadataIds?: ReadonlySet<string>;
   }): Record<string, AggregationField> {
     const objectFields = findManyFlatEntityByIdInFlatEntityMaps({
       flatEntityIds: flatObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
-    }).filter(
-      (field) =>
-        !isDefined(readableFieldMetadataIds) ||
-        readableFieldMetadataIds.has(field.id),
-    );
+    }).filter((field) => unreadableFieldMetadataIds?.has(field.id) !== true);
 
     return getAvailableAggregationsFromObjectFields(objectFields);
   }

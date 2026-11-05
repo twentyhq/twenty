@@ -61,11 +61,7 @@ describe('generateRecordPropertiesJsonSchema', () => {
       generateRecordPropertiesJsonSchema({
         objectMetadata: { fields: FIELDS },
         definitions: {},
-        updatableFieldMetadataIds: new Set(
-          FIELDS.map((field) => field.id).filter(
-            (fieldId) => fieldId !== 'field-id-name',
-          ),
-        ),
+        nonUpdatableFieldMetadataIds: new Set(['field-id-name']),
       }).properties,
     ).not.toHaveProperty('name');
   });

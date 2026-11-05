@@ -294,7 +294,7 @@ export class ObjectRecordEventPublisher {
       }
     }
 
-    const { readableObjectMetadataIds, readableFieldMetadataIds } =
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
       await this.commonSelectFieldsBuilder.findReadableMetadataIds({
         authContext: permissionsAuthContext,
         flatObjectMetadata: objectMetadata,
@@ -304,7 +304,7 @@ export class ObjectRecordEventPublisher {
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds,
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       depth: 1,
       flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,

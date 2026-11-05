@@ -215,14 +215,23 @@ describe('PermissionsService', () => {
       ]);
     });
 
-    const buildApiKeyPrincipals = (apiKey: ApiKeyWithObjectRecordGrants) =>
-      permissionsService.buildPermissionsPrincipals({
+    const buildApiKeyPrincipals = async (
+      apiKey: ApiKeyWithObjectRecordGrants,
+    ) => {
+      const principals = await permissionsService.buildPermissionsPrincipals({
         authContext: {
           type: 'apiKey',
           workspace: { id: SEED_APPLE_WORKSPACE_ID },
           apiKey: { id: apiKey.apiKeyId },
         },
       });
+
+      if (!isDefined(principals)) {
+        throw new Error('Expected the API key to hold a role');
+      }
+
+      return principals;
+    };
 
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
@@ -235,14 +244,20 @@ describe('PermissionsService', () => {
       expect(await permissionsService.canReadField(question)).toBe(false);
       expect(await permissionsService.canUpdateField(question)).toBe(false);
 
-      const readableFieldMetadataIds =
-        await permissionsService.findReadableFieldMetadataIds({
+      const unreadableFieldMetadataIds =
+        await permissionsService.findUnreadableFieldMetadataIds({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
 
-      expect(readableFieldMetadataIds).toContain(jobTitleFieldMetadataId);
-      expect(readableFieldMetadataIds).not.toContain(introFieldMetadataId);
+      expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
+      expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
+      expect(
+        await permissionsService.findNonUpdatableFieldMetadataIds({
+          principals,
+          objectMetadataId: personFlatObjectMetadata.id,
+        }),
+      ).toContain(introFieldMetadataId);
     });
 
     it('keeps a read-only field readable but not updatable', async () => {
@@ -255,23 +270,46 @@ describe('PermissionsService', () => {
 
       expect(await permissionsService.canReadField(question)).toBe(true);
       expect(await permissionsService.canUpdateField(question)).toBe(false);
+
+      const objectQuestion = {
+        principals,
+        objectMetadataId: personFlatObjectMetadata.id,
+      };
+      const nonUpdatableFieldMetadataIds =
+        await permissionsService.findNonUpdatableFieldMetadataIds(
+          objectQuestion,
+        );
+
+      expect(nonUpdatableFieldMetadataIds).toContain(introFieldMetadataId);
+      expect(nonUpdatableFieldMetadataIds).not.toContain(
+        jobTitleFieldMetadataId,
+      );
       expect(
-        await permissionsService.findUpdatableFieldMetadataIds({
-          principals,
-          objectMetadataId: personFlatObjectMetadata.id,
-        }),
-      ).toContain(jobTitleFieldMetadataId);
+        await permissionsService.findUnreadableFieldMetadataIds(objectQuestion),
+      ).not.toContain(introFieldMetadataId);
     });
 
     it('denies every field to an API key with no role', async () => {
-      expect(
-        await permissionsService.findReadableFieldMetadataIds({
-          principals: await permissionsService.buildPermissionsPrincipals({
-            authContext: missingRoleAuthContext,
-          }),
-          objectMetadataId: personFlatObjectMetadata.id,
+      const question = {
+        principals: await permissionsService.buildPermissionsPrincipals({
+          authContext: missingRoleAuthContext,
         }),
-      ).toEqual([]);
+        objectMetadataId: personFlatObjectMetadata.id,
+        fieldMetadataId: jobTitleFieldMetadataId,
+      };
+
+      expect(await permissionsService.canReadField(question)).toBe(false);
+      expect(await permissionsService.canUpdateField(question)).toBe(false);
+    });
+
+    it('denies a field the object does not have', async () => {
+      expect(
+        await permissionsService.canReadField({
+          principals: await buildApiKeyPrincipals(updateRestricted),
+          objectMetadataId: personFlatObjectMetadata.id,
+          fieldMetadataId: randomUUID(),
+        }),
+      ).toBe(false);
     });
   });
 });

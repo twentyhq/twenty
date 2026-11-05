@@ -172,7 +172,7 @@ const buildArgs = (
     flatFields: fields.filter((field) =>
       opportunity.fieldIds.includes(field.id),
     ),
-    readableFieldMetadataIds: new Set(fields.map((field) => field.id)),
+    unreadableFieldMetadataIds: new Set<string>(),
     readableObjectMetadataIds: new Set(objects.map((object) => object.id)),
     depth,
   };

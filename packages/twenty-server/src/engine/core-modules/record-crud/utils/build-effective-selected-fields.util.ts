@@ -173,7 +173,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps,
   selectedFields,
   selectableRelationFields,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
 }: {
   select: string[];
   filter?:
@@ -188,7 +188,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectedFields: CommonSelectedFields;
   selectableRelationFields: CommonSelectedFields;
-  readableFieldMetadataIds: ReadonlySet<string>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): { effectiveSelectedFields: CommonSelectedFields; warnings: string[] } => {
   const filterFieldNames = extractFilterFieldNames(filter);
   const orderByFieldNames = extractOrderByFieldNames(orderBy);
@@ -209,7 +209,7 @@ export const buildEffectiveSelectedFields = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       selectableRelationFields,
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
     });
 
   const {

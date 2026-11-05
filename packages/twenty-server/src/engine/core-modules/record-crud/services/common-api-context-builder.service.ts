@@ -30,7 +30,7 @@ export type CommonApiContext = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  readableFieldMetadataIds: ReadonlySet<string>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 };
 
 @Injectable()
@@ -103,15 +103,14 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const readableFieldMetadataIds = new Set(
-      await this.permissionsService.findReadableFieldMetadataIds({
+    const unreadableFieldMetadataIds =
+      await this.permissionsService.findUnreadableFieldMetadataIds({
         principals,
         objectMetadataId: flatObjectMetadata.id,
-      }),
-    );
+      });
 
     const selectedFields = buildFieldSelection({
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -132,7 +131,7 @@ export class CommonApiContextBuilderService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
     };
   }
 }

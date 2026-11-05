@@ -69,17 +69,17 @@ const buildSingleKeyObject = ({
 
 const buildGroupByEntries = ({
   objectMetadata,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
   definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
 }): { schema: JSONSchema7; label: string }[] =>
   objectMetadata.fields
     .filter(
       (field) =>
-        readableFieldMetadataIds?.has(field.id) !== false &&
+        unreadableFieldMetadataIds?.has(field.id) !== true &&
         isFieldMetadataSupportedInGroupBy(field),
     )
     .flatMap((field) => {
@@ -169,16 +169,16 @@ const buildGroupByEntries = ({
 
 export const generateGroupByToolInputSchema = ({
   objectMetadata,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 | null => {
   const definitions: JsonSchemaDefinitions = {};
 
   const groupByEntries = buildGroupByEntries({
     objectMetadata,
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
@@ -188,13 +188,13 @@ export const generateGroupByToolInputSchema = ({
 
   const { properties: filterProperties } = generateRecordFilterJsonSchema({
     objectMetadata,
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
   const availableAggregations = getAvailableAggregationsFromObjectFields(
     objectMetadata.fields.filter(
-      (field) => readableFieldMetadataIds?.has(field.id) !== false,
+      (field) => unreadableFieldMetadataIds?.has(field.id) !== true,
     ),
   );
 

@@ -154,12 +154,12 @@ const getPropertyJsonSchema = ({
 
 export const generateRecordPropertiesJsonSchema = ({
   objectMetadata,
-  updatableFieldMetadataIds,
+  nonUpdatableFieldMetadataIds,
   definitions,
   isPartial = false,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  updatableFieldMetadataIds?: ReadonlySet<string>;
+  nonUpdatableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
   isPartial?: boolean;
 }): { properties: Record<string, JSONSchema7>; required: string[] } => {
@@ -170,7 +170,7 @@ export const generateRecordPropertiesJsonSchema = ({
     if (
       SYSTEM_MANAGED_FIELD_NAMES.has(field.name) ||
       field.type === FieldMetadataType.TS_VECTOR ||
-      updatableFieldMetadataIds?.has(field.id) === false
+      nonUpdatableFieldMetadataIds?.has(field.id) === true
     ) {
       continue;
     }

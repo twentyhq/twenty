@@ -8,16 +8,16 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateFindToolInputSchema = ({
   objectMetadata,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   const { properties: filterProperties } = generateRecordFilterJsonSchema({
     objectMetadata,
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
@@ -37,7 +37,7 @@ export const generateFindToolInputSchema = ({
       },
       orderBy: generateRecordOrderByJsonSchema({
         objectMetadata,
-        readableFieldMetadataIds,
+        unreadableFieldMetadataIds,
         definitions,
       }),
       select: {

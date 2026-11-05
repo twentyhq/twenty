@@ -88,7 +88,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+      unreadableFieldMetadataIds: new Set<string>(),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -117,7 +117,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      readableFieldMetadataIds: new Set(['field-1']),
+      unreadableFieldMetadataIds: new Set(['field-2']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -158,7 +158,7 @@ describe('buildFieldSelection', () => {
     ]);
 
     const result = buildFieldSelection({
-      readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+      unreadableFieldMetadataIds: new Set<string>(),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -195,7 +195,7 @@ describe('buildFieldSelection', () => {
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
     const result = buildFieldSelection({
-      readableFieldMetadataIds: new Set(['field-1']),
+      unreadableFieldMetadataIds: new Set(['field-2']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -243,7 +243,7 @@ describe('buildFieldSelection', () => {
     ]);
 
     const result = buildFieldSelection({
-      readableFieldMetadataIds: new Set(['field-1', 'field-3']),
+      unreadableFieldMetadataIds: new Set(['field-2', 'field-4']),
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -301,7 +301,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -361,7 +361,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -409,7 +409,7 @@ describe('buildFieldSelection', () => {
       };
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(['field-id', 'field-2']),
+        unreadableFieldMetadataIds: new Set(['field-1']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -453,7 +453,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -493,7 +493,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(['field-1']),
+        unreadableFieldMetadataIds: new Set(['field-2']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -531,7 +531,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -570,7 +570,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -591,7 +591,7 @@ describe('buildFieldSelection', () => {
       const flatObjectMetadata = buildFlatObjectMetadata([]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
+        unreadableFieldMetadataIds: new Set<string>(),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -624,7 +624,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set<string>(),
+        unreadableFieldMetadataIds: new Set(flatObjectMetadata.fieldIds),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,
@@ -657,7 +657,7 @@ describe('buildFieldSelection', () => {
       ]);
 
       const result = buildFieldSelection({
-        readableFieldMetadataIds: new Set(['field-1']),
+        unreadableFieldMetadataIds: new Set(['field-2']),
         flatObjectMetadata,
         flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.fieldIds,

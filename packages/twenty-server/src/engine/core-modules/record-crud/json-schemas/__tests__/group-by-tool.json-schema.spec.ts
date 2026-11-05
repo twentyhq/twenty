@@ -101,11 +101,7 @@ describe('generateGroupByToolInputSchema', () => {
     expect(
       generateGroupByToolInputSchema({
         objectMetadata: { fields: FIELDS },
-        readableFieldMetadataIds: new Set(
-          FIELDS.map((field) => field.id).filter(
-            (fieldId) => fieldId !== 'field-id-tags',
-          ),
-        ),
+        unreadableFieldMetadataIds: new Set(['field-id-tags']),
       }),
     ).toMatchObject({
       properties: {

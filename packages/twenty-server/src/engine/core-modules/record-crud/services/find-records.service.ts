@@ -62,7 +62,7 @@ export class FindRecordsService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        readableFieldMetadataIds,
+        unreadableFieldMetadataIds,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
@@ -79,7 +79,7 @@ export class FindRecordsService {
               flatFieldMetadataMaps,
               flatObjectMetadataMaps,
               selectedFields: allSelectableFields,
-              readableFieldMetadataIds,
+              unreadableFieldMetadataIds,
               selectableRelationFields:
                 await this.buildSelectableRelationFields({
                   authContext,
@@ -154,7 +154,7 @@ export class FindRecordsService {
     'flatObjectMetadata' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   > &
     Pick<FindRecordsParams, 'authContext'>): Promise<CommonSelectedFields> {
-    const { readableObjectMetadataIds, readableFieldMetadataIds } =
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
       await this.commonSelectFieldsBuilder.findReadableMetadataIds({
         authContext,
         flatObjectMetadata,
@@ -169,7 +169,7 @@ export class FindRecordsService {
       }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       readableObjectMetadataIds,
       depth: 1,
       onlyUseLabelIdentifierFieldsInRelations: true,

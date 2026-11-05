@@ -33,12 +33,12 @@ type SelectableFieldsStructured = Record<
 >;
 
 export const buildFieldSelection = ({
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
   flatObjectMetadata,
   flatFields,
   onlyUseLabelIdentifierFieldsInRelations = false,
 }: {
-  readableFieldMetadataIds: ReadonlySet<string>;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
     | 'fieldIds'
@@ -53,7 +53,7 @@ export const buildFieldSelection = ({
 
   for (const flatField of flatFields) {
     if (
-      !readableFieldMetadataIds.has(flatField.id) ||
+      unreadableFieldMetadataIds.has(flatField.id) ||
       isMorphRelationHead(flatField)
     ) {
       continue;

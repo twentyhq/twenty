@@ -23,11 +23,11 @@ const ORDER_BY_DIRECTION_JSON_SCHEMA: JSONSchema7 = {
 // resolver accepts for this object
 export const generateRecordOrderByJsonSchema = ({
   objectMetadata,
-  readableFieldMetadataIds,
+  unreadableFieldMetadataIds,
   definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  readableFieldMetadataIds?: ReadonlySet<string>;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
 }): JSONSchema7 => {
   const direction = referenceJsonSchemaDefinition({
@@ -47,7 +47,7 @@ export const generateRecordOrderByJsonSchema = ({
         isSystem: false,
         excludeId: false,
       }) ||
-      readableFieldMetadataIds?.has(field.id) === false
+      unreadableFieldMetadataIds?.has(field.id) === true
     ) {
       continue;
     }

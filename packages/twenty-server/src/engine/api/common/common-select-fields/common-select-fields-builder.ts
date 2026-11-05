@@ -38,7 +38,7 @@ export class CommonSelectFieldsBuilder {
     shouldIncludeRelationTargets: boolean;
   }): Promise<{
     readableObjectMetadataIds: Set<string>;
-    readableFieldMetadataIds: Set<string>;
+    unreadableFieldMetadataIds: Set<string>;
   }> {
     const principals = await this.permissionsService.buildPermissionsPrincipals(
       { authContext },
@@ -70,10 +70,10 @@ export class CommonSelectFieldsBuilder {
         .map((readableObjectMetadata) => readableObjectMetadata.id),
     );
 
-    const readableFieldMetadataIdsPerObject = await Promise.all(
+    const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([flatObjectMetadata.id, ...readableObjectMetadataIds])].map(
         (objectMetadataId) =>
-          this.permissionsService.findReadableFieldMetadataIds({
+          this.permissionsService.findUnreadableFieldMetadataIds({
             principals,
             objectMetadataId,
           }),
@@ -82,14 +82,16 @@ export class CommonSelectFieldsBuilder {
 
     return {
       readableObjectMetadataIds,
-      readableFieldMetadataIds: new Set(
-        readableFieldMetadataIdsPerObject.flat(),
+      unreadableFieldMetadataIds: new Set(
+        unreadableFieldMetadataIdsPerObject.flatMap((fieldMetadataIds) => [
+          ...fieldMetadataIds,
+        ]),
       ),
     };
   }
 
   buildFromDepth({
-    readableFieldMetadataIds,
+    unreadableFieldMetadataIds,
     readableObjectMetadataIds,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -100,7 +102,7 @@ export class CommonSelectFieldsBuilder {
     requestedFields,
     maximumDefaultFieldCount,
   }: {
-    readableFieldMetadataIds: ReadonlySet<string>;
+    unreadableFieldMetadataIds: ReadonlySet<string>;
     readableObjectMetadataIds: ReadonlySet<string>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -116,7 +118,7 @@ export class CommonSelectFieldsBuilder {
     const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
-    }).filter((flatField) => readableFieldMetadataIds.has(flatField.id));
+    }).filter((flatField) => !unreadableFieldMetadataIds.has(flatField.id));
 
     const fieldsFromDepth = readableFlatFields.filter(
       (field) =>
@@ -151,7 +153,7 @@ export class CommonSelectFieldsBuilder {
     const relationsSelectFields = buildRelationSelectionFromDepth({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       readableObjectMetadataIds,
       depth,
       onlyUseLabelIdentifierFieldsInRelations,
@@ -160,7 +162,7 @@ export class CommonSelectFieldsBuilder {
     });
 
     const selectableFields = buildFieldSelection({
-      readableFieldMetadataIds,
+      unreadableFieldMetadataIds,
       flatObjectMetadata,
       flatFields,
     });

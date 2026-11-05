@@ -156,6 +156,16 @@ export class DatabaseToolProvider implements ToolProvider {
         isExplicitlyGranted('canDestroyObjectRecords') &&
         (await this.permissionsService.canDestroySomeRecords(objectQuestion));
 
+      if (
+        !canCreateRecords &&
+        !canReadRecords &&
+        !canUpdateRecords &&
+        !canSoftDeleteRecords &&
+        !canDestroyRecords
+      ) {
+        continue;
+      }
+
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
 
@@ -170,18 +180,15 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const [readableFieldMetadataIds, updatableFieldMetadataIds] = (
+      const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.permissionsService.findReadableFieldMetadataIds({
-            principals,
-            objectMetadataId: flatObject.id,
-          }),
-          this.permissionsService.findUpdatableFieldMetadataIds({
-            principals,
-            objectMetadataId: flatObject.id,
-          }),
-        ])
-      ).map((fieldMetadataIds) => new Set(fieldMetadataIds));
+          this.permissionsService.findUnreadableFieldMetadataIds(
+            objectQuestion,
+          ),
+          this.permissionsService.findNonUpdatableFieldMetadataIds(
+            objectQuestion,
+          ),
+        ]);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });
@@ -203,7 +210,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: generateFindToolInputSchema({
               objectMetadata,
-              readableFieldMetadataIds,
+              unreadableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -244,7 +251,7 @@ export class DatabaseToolProvider implements ToolProvider {
         const groupBySchema = shouldIncludeGroupBySchema
           ? generateGroupByToolInputSchema({
               objectMetadata,
-              readableFieldMetadataIds,
+              unreadableFieldMetadataIds,
             })
           : null;
 
@@ -286,7 +293,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
             inputSchema: generateCreateRecordInputSchema({
               objectMetadata,
-              updatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -313,7 +320,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
             inputSchema: generateCreateManyRecordInputSchema({
               objectMetadata,
-              updatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -341,7 +348,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
             inputSchema: generateUpdateRecordInputSchema({
               objectMetadata,
-              updatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -368,8 +375,8 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
             inputSchema: generateUpdateManyRecordInputSchema({
               objectMetadata,
-              readableFieldMetadataIds,
-              updatableFieldMetadataIds,
+              unreadableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -397,7 +404,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
             inputSchema: generateCreateManyRecordInputSchema({
               objectMetadata,
-              updatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -449,7 +456,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`delete_many_${snakePlural}`) && {
             inputSchema: generateBulkDeleteToolInputSchema({
               objectMetadata,
-              readableFieldMetadataIds,
+              unreadableFieldMetadataIds,
             }),
           }),
           executionRef: {
