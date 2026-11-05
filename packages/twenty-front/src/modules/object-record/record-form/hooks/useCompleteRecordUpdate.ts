@@ -118,12 +118,10 @@ export const useCompleteRecordUpdate = ({
             isRecordPathLoaded({ record: { ...record, ...updateInput }, path }),
           );
 
-        // Views load only the fields they show, so a rule may read one the store does not have yet
         const currentRecord = isEveryBindingPathLoadedIn(storedRecord)
           ? storedRecord
           : await fetchRecordWithRelations(recordId);
 
-        // A value missing even from the fetched record cannot be checked here, so the server decides
         if (
           !isDefined(currentRecord) ||
           !isEveryBindingPathLoadedIn(currentRecord)
@@ -159,7 +157,6 @@ export const useCompleteRecordUpdate = ({
           ? { ...updateInput, ...completedFields }
           : null;
       } catch {
-        // The server enforces the rules either way, so a failed check just sends the update as is
         return updateInput;
       }
     },
