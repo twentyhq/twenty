@@ -46,10 +46,10 @@ export class AgentChatThreadParticipantEventService {
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
       ]);
-    const objectMetadata = findAgentChatFlatObjectMetadata(
+    const objectMetadata = findAgentChatFlatObjectMetadata({
       flatObjectMetadataMaps,
-      'agentChatThreadParticipant',
-    );
+      standardObjectName: 'agentChatThreadParticipant',
+    });
 
     if (!isDefined(objectMetadata)) {
       return;

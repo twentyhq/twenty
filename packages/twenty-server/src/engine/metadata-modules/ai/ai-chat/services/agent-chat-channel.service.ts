@@ -9,7 +9,7 @@ import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
+import { assertAgentChatChannelExistsOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists-or-throw.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
@@ -237,7 +237,11 @@ export class AgentChatChannelService {
     return this.threadRepository.query(
       workspaceId,
       async ({ manager, table }) => {
-        await assertAgentChatChannelExists({ manager, workspaceId, channelId });
+        await assertAgentChatChannelExistsOrThrow({
+          manager,
+          workspaceId,
+          channelId,
+        });
 
         const threadsBefore = await manager.query<
           AgentChatThreadWorkspaceEntity[]
@@ -280,6 +284,7 @@ export class AgentChatChannelService {
         await this.channelGrantService.rewriteThreadGrantsInTransaction({
           manager,
           workspaceId,
+          threadTableExpression: table('agentChatThread'),
           threadIds: threadsAfter.map(({ id }) => id),
           affectedChannelIds: [channelId, destinationChannelId],
         });

@@ -196,10 +196,10 @@ export class AgentChatThreadRecordEventService {
       ]);
 
     return {
-      objectMetadata: findAgentChatFlatObjectMetadata(
+      objectMetadata: findAgentChatFlatObjectMetadata({
         flatObjectMetadataMaps,
-        'agentChatThread',
-      ),
+        standardObjectName: 'agentChatThread',
+      }),
       flatFieldMetadataMaps,
     };
   }

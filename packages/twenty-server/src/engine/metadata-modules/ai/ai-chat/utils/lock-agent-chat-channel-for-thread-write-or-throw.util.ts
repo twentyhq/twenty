@@ -1,6 +1,6 @@
 import { type EntityManager } from 'typeorm';
 
-import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
+import { assertAgentChatChannelExistsOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists-or-throw.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
 
@@ -9,7 +9,7 @@ export const lockAgentChatChannelForThreadWriteOrThrow = async ({
   workspaceId,
   channelId,
 }: {
-  manager: Pick<EntityManager, 'query'>;
+  manager: Pick<EntityManager, 'query' | 'getRepository'>;
   workspaceId: string;
   channelId: string;
 }): Promise<void> => {
@@ -22,5 +22,9 @@ export const lockAgentChatChannelForThreadWriteOrThrow = async ({
     throwAgentChatChannelBusy();
   }
 
-  await assertAgentChatChannelExists({ manager, workspaceId, channelId });
+  await assertAgentChatChannelExistsOrThrow({
+    manager,
+    workspaceId,
+    channelId,
+  });
 };

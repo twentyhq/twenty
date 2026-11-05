@@ -16,6 +16,7 @@ import { buildAgentChatChannelAccessQuery } from 'src/engine/metadata-modules/ai
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -52,11 +53,13 @@ export class AgentChatChannelGrantService {
     workspaceId,
     threadIds,
     affectedChannelIds,
+    threadTableExpression,
   }: {
     manager: EntityManager;
     workspaceId: string;
     threadIds: string[];
     affectedChannelIds: (string | null | undefined)[];
+    threadTableExpression: string;
   }): Promise<void> {
     if (!isNonEmptyArray(threadIds)) {
       return;
@@ -72,6 +75,7 @@ export class AgentChatChannelGrantService {
       manager,
       workspaceId,
       scope: { threadIds },
+      threadTableExpression,
     });
   }
 
@@ -82,20 +86,24 @@ export class AgentChatChannelGrantService {
     workspaceId: string;
     channelId: string;
   }): Promise<void> {
-    await this.threadRepository.query(workspaceId, async ({ manager }) => {
-      await acquireAgentChatChannelGrantLocks({
-        manager,
-        workspaceId,
-        channelIds: [channelId],
-        mode: 'exclusive',
-      });
+    await this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        await acquireAgentChatChannelGrantLocks({
+          manager,
+          workspaceId,
+          channelIds: [channelId],
+          mode: 'exclusive',
+        });
 
-      await this.replaceGrantsInTransaction({
-        manager,
-        workspaceId,
-        scope: { channelId },
-      });
-    });
+        await this.replaceGrantsInTransaction({
+          manager,
+          workspaceId,
+          scope: { channelId },
+          threadTableExpression: table('agentChatThread'),
+        });
+      },
+    );
   }
 
   async rewriteAllChannelGrants({
@@ -106,10 +114,11 @@ export class AgentChatChannelGrantService {
     const channels = await this.threadRepository.query(
       workspaceId,
       ({ manager }) =>
-        manager.query<{ id: string }[]>(
-          `SELECT id FROM core."agentChatChannel" WHERE "workspaceId" = $1 ORDER BY id`,
-          [workspaceId],
-        ),
+        manager.getRepository(AgentChatChannelEntity).find({
+          select: { id: true },
+          where: { workspaceId },
+          order: { id: 'ASC' },
+        }),
     );
 
     for (const { id: channelId } of channels) {
@@ -121,10 +130,12 @@ export class AgentChatChannelGrantService {
     manager,
     workspaceId,
     scope,
+    threadTableExpression,
   }: {
     manager: EntityManager;
     workspaceId: string;
     scope: AgentChatChannelGrantScope;
+    threadTableExpression: string;
   }): Promise<void> {
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const isThreadScope = 'threadIds' in scope;
@@ -135,6 +146,7 @@ export class AgentChatChannelGrantService {
       ? 'record_share."recordId" = ANY($3::uuid[])'
       : 'record_share."sourceId" = $3::uuid';
     const channelAccessQuery = buildAgentChatChannelAccessQuery({
+      manager,
       workspaceIdParameter: '$1',
     });
     const parameters = [
@@ -153,7 +165,7 @@ export class AgentChatChannelGrantService {
          AND ${recordShareScopeCondition}
          AND NOT EXISTS (
            SELECT 1
-           FROM ${schema}."agentChatThread" thread
+           FROM ${threadTableExpression} thread
            JOIN (${channelAccessQuery}) channel_access
              ON channel_access.channel_id = thread."channelId"
            WHERE ${threadScopeCondition}
@@ -169,7 +181,7 @@ export class AgentChatChannelGrantService {
       `INSERT INTO ${schema}."recordShare"
          ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
        SELECT thread_object.id, thread.id, channel_access.role_id, 'ROLE', 'READ_WRITE', 'RULE', thread."channelId"
-       FROM ${schema}."agentChatThread" thread
+       FROM ${threadTableExpression} thread
        JOIN (${channelAccessQuery}) channel_access
          ON channel_access.channel_id = thread."channelId"
        JOIN core."objectMetadata" thread_object

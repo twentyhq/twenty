@@ -43,6 +43,8 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveAgentChatObjectMetadataOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-object-metadata-or-throw.util';
 
 type BuildParticipantWriteQuery = (tables: {
   participantTable: string;
@@ -233,14 +235,17 @@ export class AgentChatThreadParticipantService {
       }
     };
 
-    return this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
-      INBOX_ACTION_QUERIES[action],
-      isSnooze ? [snoozeEnd] : [],
-      action === AgentChatInboxAction.UNSUBSCRIBE
-        ? assertIsNotAssignee
-        : writeThread,
-    );
+    return this.write({
+      ...memberArgs,
+      threadIds: uniqueThreadIds,
+      isEveryRowRequired: true,
+      buildQuery: INBOX_ACTION_QUERIES[action],
+      extraParameters: isSnooze ? [snoozeEnd] : [],
+      writeThread:
+        action === AgentChatInboxAction.UNSUBSCRIBE
+          ? assertIsNotAssignee
+          : writeThread,
+    });
   }
 
   async resolveMention({
@@ -249,12 +254,12 @@ export class AgentChatThreadParticipantService {
   }: AgentChatThreadAccessArgs & {
     writeResponse: AgentChatThreadWriteStep;
   }): Promise<void> {
-    await this.write(
-      { ...args, threadIds: [args.threadId] },
-      buildMentionResolutionQuery,
-      [],
-      writeResponse,
-    );
+    await this.write({
+      ...args,
+      threadIds: [args.threadId],
+      buildQuery: buildMentionResolutionQuery,
+      writeThread: writeResponse,
+    });
   }
 
   async resolveMentionInTransaction({
@@ -272,7 +277,10 @@ export class AgentChatThreadParticipantService {
     ]);
     await scope.executeRawQuery(
       buildMentionResolutionQuery({
-        participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
+        participantTable: getAgentChatThreadParticipantTable({
+          workspaceId: args.workspaceId,
+          flatObjectMetadataMaps: getWorkspaceContext().flatObjectMetadataMaps,
+        }),
       }),
       [args.threadId, args.workspaceMemberId],
     );
@@ -291,9 +299,10 @@ export class AgentChatThreadParticipantService {
     isSelfAssigned: boolean;
     writeAssignment: AgentChatThreadWriteStep;
   }): Promise<void> {
-    await this.write(
-      { ...args, threadIds: [threadId] },
-      ({ participantTable, threadTable }) =>
+    await this.write({
+      ...args,
+      threadIds: [threadId],
+      buildQuery: ({ participantTable, threadTable }) =>
         `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt")
          SELECT thread.id, $2, true, CASE WHEN $3::boolean THEN thread."lastActivityAt" END
          FROM ${threadTable} thread WHERE thread.id = $1
@@ -304,9 +313,9 @@ export class AgentChatThreadParticipantService {
            "isSubscribed" = true,
            "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,
-      [isSelfAssigned],
-      writeAssignment,
-    );
+      extraParameters: [isSelfAssigned],
+      writeThread: writeAssignment,
+    });
   }
 
   // A snooze ends by moving the chat back to the inbox. The snooze stays
@@ -346,20 +355,18 @@ export class AgentChatThreadParticipantService {
     }
 
     // A snooze the member replaced or cleared since has nothing to end
-    await this.write(
-      {
-        workspaceId: args.workspaceId,
-        workspaceMemberId: args.workspaceMemberId,
-        threadIds: [args.threadId],
-      },
-      ({ participantTable }) =>
+    await this.write({
+      workspaceId: args.workspaceId,
+      workspaceMemberId: args.workspaceMemberId,
+      threadIds: [args.threadId],
+      buildQuery: ({ participantTable }) =>
         `UPDATE ${participantTable} AS participant
          SET "archivedAt" = NULL, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2
            AND "snoozedUntil" = $3 AND "archivedAt" IS NOT NULL
          RETURNING *`,
-      [snoozedUntil],
-    );
+      extraParameters: [snoozedUntil],
+    });
   }
 
   async isFollowing(args: AgentChatThreadAccessArgs): Promise<boolean> {
@@ -369,7 +376,15 @@ export class AgentChatThreadParticipantService {
 
     const participant = await this.threadRepository.query(
       args.workspaceId,
-      ({ manager }) => this.findOne({ manager, ...args }),
+      ({ manager, flatObjectMetadataMaps }) =>
+        this.findOne({
+          manager,
+          participantTable: getAgentChatThreadParticipantTable({
+            workspaceId: args.workspaceId,
+            flatObjectMetadataMaps,
+          }),
+          ...args,
+        }),
     );
 
     return participant?.isSubscribed ?? false;
@@ -383,7 +398,15 @@ export class AgentChatThreadParticipantService {
 
     const participant = await this.threadRepository.query(
       args.workspaceId,
-      ({ manager }) => this.findOne({ manager, ...args }),
+      ({ manager, flatObjectMetadataMaps }) =>
+        this.findOne({
+          manager,
+          participantTable: getAgentChatThreadParticipantTable({
+            workspaceId: args.workspaceId,
+            flatObjectMetadataMaps,
+          }),
+          ...args,
+        }),
     );
 
     if (!isDefined(participant)) {
@@ -407,15 +430,19 @@ export class AgentChatThreadParticipantService {
   }: AgentChatThreadAccessArgs & {
     text: string;
   }): Promise<AgentChatThreadActivity> {
-    const participantTable = getAgentChatThreadParticipantTable(workspaceId);
     const participantObjectMetadataId =
       await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const { rows, before, after } = await this.threadRepository.query(
       workspaceId,
-      async ({ manager, table }) => {
+      async ({ manager, table, flatObjectMetadataMaps }) => {
+        const participantTable = getAgentChatThreadParticipantTable({
+          workspaceId,
+          flatObjectMetadataMaps,
+        });
         const before = await this.findOne({
           manager,
+          participantTable,
           workspaceId,
           workspaceMemberId,
           threadId,
@@ -452,6 +479,7 @@ export class AgentChatThreadParticipantService {
 
         const after = await this.findOne({
           manager,
+          participantTable,
           workspaceId,
           workspaceMemberId,
           threadId,
@@ -487,11 +515,11 @@ export class AgentChatThreadParticipantService {
   }): Promise<number> {
     const [{ memberCount }] = await this.threadRepository.query(
       workspaceId,
-      ({ manager }) =>
+      ({ manager, flatObjectMetadataMaps }) =>
         manager.query<{ memberCount: number }[]>(
           `SELECT COUNT(DISTINCT member)::int AS "memberCount" FROM (
              SELECT "workspaceMemberId" AS member
-             FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+             FROM ${getAgentChatThreadParticipantTable({ workspaceId, flatObjectMetadataMaps })}
              WHERE "threadId" = $1
              UNION SELECT unnest($2::uuid[])
            ) members`,
@@ -520,8 +548,13 @@ export class AgentChatThreadParticipantService {
 
     const [summary] = await this.workspaceOrmManager
       .executeInWorkspaceContext(() => {
-        const repository =
-          this.workspaceOrmManager.getRepository('agentChatThread');
+        const { flatObjectMetadataMaps } = getWorkspaceContext();
+        const repository = this.workspaceOrmManager.getRepository(
+          resolveAgentChatObjectMetadataOrThrow({
+            objectName: 'agentChatThread',
+            flatObjectMetadataMaps,
+          }).nameSingular,
+        );
         const readableThreads = repository
           .createQueryBuilder('thread')
           .select([])
@@ -545,7 +578,7 @@ export class AgentChatThreadParticipantService {
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
-             JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
+             JOIN ${getAgentChatThreadParticipantTable({ workspaceId, flatObjectMetadataMaps })} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
              WHERE ${IS_IN_INBOX}
            )
@@ -600,12 +633,14 @@ export class AgentChatThreadParticipantService {
 
   private async findOne({
     manager,
+    participantTable,
     workspaceId,
     workspaceMemberId,
     threadId,
     lock = false,
   }: AgentChatThreadAccessArgs & {
     manager: EntityManager;
+    participantTable: string;
     lock?: boolean;
   }): Promise<AgentChatThreadParticipantRow | null> {
     // Also taken when the row does not exist yet, so two first writes cannot
@@ -622,7 +657,7 @@ export class AgentChatThreadParticipantService {
 
     const [participant] = await manager.query<AgentChatThreadParticipantRow[]>(
       `SELECT ${PARTICIPANT_COLUMNS}
-       FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+       FROM ${participantTable}
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, workspaceMemberId],
     );
@@ -665,31 +700,35 @@ export class AgentChatThreadParticipantService {
 
   // Each row is locked while it is read and written, so the change sent is
   // the one this write made; one transaction writes all of them or none
-  private async write(
-    {
-      workspaceId,
-      workspaceMemberId,
-      threadIds,
-      isEveryRowRequired = false,
-    }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
-      threadIds: string[];
-      isEveryRowRequired?: boolean;
-    },
-    buildQuery: BuildParticipantWriteQuery,
-    extraParameters: unknown[] = [],
-    writeThread?: AgentChatThreadWriteStep,
-  ): Promise<AgentChatThreadParticipantRow[]> {
+  private async write({
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+    isEveryRowRequired = false,
+    buildQuery,
+    extraParameters = [],
+    writeThread,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+    isEveryRowRequired?: boolean;
+    buildQuery: BuildParticipantWriteQuery;
+    extraParameters?: unknown[];
+    writeThread?: AgentChatThreadWriteStep;
+  }): Promise<AgentChatThreadParticipantRow[]> {
     const objectMetadataId =
       await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const writes = await this.threadRepository.query(
       workspaceId,
-      async ({ manager, table }) => {
+      async ({ manager, table, flatObjectMetadataMaps }) => {
+        const participantTable = getAgentChatThreadParticipantTable({
+          workspaceId,
+          flatObjectMetadataMaps,
+        });
         const parameterCount = extraParameters.length + 3;
         const query = `WITH written_participant AS (
              ${buildQuery({
-               participantTable:
-                 getAgentChatThreadParticipantTable(workspaceId),
+               participantTable,
                threadTable: table('agentChatThread'),
              })}
            ), owner_share AS (
@@ -705,13 +744,19 @@ export class AgentChatThreadParticipantService {
         for (const threadId of threadIds) {
           const before = await this.findOne({
             manager,
+            participantTable,
             workspaceId,
             workspaceMemberId,
             threadId,
             lock: true,
           });
 
-          await writeThread?.({ manager, table, threadId });
+          await writeThread?.({
+            manager,
+            table,
+            flatObjectMetadataMaps,
+            threadId,
+          });
 
           const [after] = await manager.query<AgentChatThreadParticipantRow[]>(
             query,

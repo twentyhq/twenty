@@ -1,5 +1,15 @@
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { getAgentChatObjectTableOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-object-table-or-throw.util';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
 
-export const getAgentMessageReactionTable = (workspaceId: string) =>
-  `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier('agentMessageReaction')}`;
+export const getAgentMessageReactionTable = ({
+  workspaceId,
+  flatObjectMetadataMaps,
+}: {
+  workspaceId: string;
+  flatObjectMetadataMaps: Pick<FlatObjectMetadataMaps, 'byUniversalIdentifier'>;
+}) =>
+  getAgentChatObjectTableOrThrow({
+    workspaceId,
+    flatObjectMetadataMaps,
+    objectName: 'agentMessageReaction',
+  });

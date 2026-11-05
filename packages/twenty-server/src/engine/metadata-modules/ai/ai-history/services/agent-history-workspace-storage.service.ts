@@ -47,6 +47,7 @@ export class AgentHistoryWorkspaceStorageService {
 
     return {
       manager: this.dataSource.manager,
+      flatObjectMetadataMaps,
       table: (objectName) =>
         `${schemaName}.${escapeIdentifier(
           resolveAgentHistoryObjectNameOrThrow({
@@ -61,8 +62,12 @@ export class AgentHistoryWorkspaceStorageService {
     workspaceId: string,
     work: (context: AgentHistoryStorageContext) => Promise<TResult>,
   ): Promise<TResult> {
-    const { table } = await this.getContext({ workspaceId });
+    const { table, flatObjectMetadataMaps } = await this.getContext({
+      workspaceId,
+    });
 
-    return this.dataSource.transaction((manager) => work({ manager, table }));
+    return this.dataSource.transaction((manager) =>
+      work({ manager, table, flatObjectMetadataMaps }),
+    );
   }
 }

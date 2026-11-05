@@ -542,6 +542,7 @@ export class AgentChatThreadService {
 
         await this.channelGrantService.rewriteThreadGrantsInTransaction({
           manager,
+          threadTableExpression: table('agentChatThread'),
           workspaceId: args.workspaceId,
           threadIds: movedThreads.map(({ id }) => id),
           affectedChannelIds: [lockedThread.channelId, channelId],

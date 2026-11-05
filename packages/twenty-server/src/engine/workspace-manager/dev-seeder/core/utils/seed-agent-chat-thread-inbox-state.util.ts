@@ -9,7 +9,7 @@ import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/
 // Seeded chats are inserted directly, so they get the last activity, last
 // message and owner read state a chat created through the app starts with
 export const seedAgentChatThreadInboxState = async ({
-  context: { manager, table },
+  context: { manager, table, flatObjectMetadataMaps },
   workspaceId,
 }: {
   context: AgentHistoryStorageContext;
@@ -65,7 +65,7 @@ export const seedAgentChatThreadInboxState = async ({
   );
 
   await manager.query(
-    `INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt")
+    `INSERT INTO ${getAgentChatThreadParticipantTable({ workspaceId, flatObjectMetadataMaps })} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt")
      SELECT thread.id, thread."workspaceMemberId", true, thread."lastActivityAt"
      FROM ${table('agentChatThread')} thread
      WHERE thread."workspaceMemberId" IS NOT NULL
@@ -76,7 +76,10 @@ export const seedAgentChatThreadInboxState = async ({
   await manager.query(
     buildAgentChatThreadParticipantOwnerShareInsert({
       workspaceId,
-      participantSource: getAgentChatThreadParticipantTable(workspaceId),
+      participantSource: getAgentChatThreadParticipantTable({
+        workspaceId,
+        flatObjectMetadataMaps,
+      }),
       objectMetadataIdParameter: `(SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2)`,
     }),
     [

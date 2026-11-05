@@ -1,3 +1,5 @@
+import { resolveAgentChatObjectMetadataOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-object-metadata-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,8 +17,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME = 'agentChatThreadTarget';
 
 type RecordReference = {
   objectNameSingular: string;
@@ -88,7 +88,10 @@ export class AgentChatThreadTargetService {
 
   private getThreadTargetRepository() {
     return this.workspaceOrmManager.getRepository(
-      AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+      resolveAgentChatObjectMetadataOrThrow({
+        objectName: 'agentChatThreadTarget',
+        flatObjectMetadataMaps: getWorkspaceContext().flatObjectMetadataMaps,
+      }).nameSingular,
     );
   }
 

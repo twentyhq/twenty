@@ -154,9 +154,15 @@ export class AgentChatMessageReactionService {
       return new Map();
     }
 
+    const { manager, flatObjectMetadataMaps } =
+      await this.storageService.getContext({ workspaceId });
+
     return this.findReactionSummaries({
-      manager: (await this.storageService.getContext({ workspaceId })).manager,
-      workspaceId,
+      manager,
+      reactionTable: getAgentMessageReactionTable({
+        workspaceId,
+        flatObjectMetadataMaps,
+      }),
       messageIds,
     });
   }
@@ -205,7 +211,11 @@ export class AgentChatMessageReactionService {
 
     const { changedCount, reactions, revision } = await this.storageService.run(
       workspaceId,
-      async ({ manager, table }) => {
+      async ({ manager, table, flatObjectMetadataMaps }) => {
+        const reactionTable = getAgentMessageReactionTable({
+          workspaceId,
+          flatObjectMetadataMaps,
+        });
         // Serializes the reactions to one message so each change sees the ones before it
         const lockedMessages = await manager.query<{ id: string }[]>(
           `SELECT id FROM ${table('agentMessage')} WHERE id = $1 FOR NO KEY UPDATE`,
@@ -221,17 +231,19 @@ export class AgentChatMessageReactionService {
           `SELECT floor(extract(epoch FROM clock_timestamp()) * 1000000)::bigint AS revision`,
         );
 
-        const { query, parameters } = buildQuery(
-          getAgentMessageReactionTable(workspaceId),
-          { messageId, emoji, workspaceMemberId, agentId },
-        );
+        const { query, parameters } = buildQuery(reactionTable, {
+          messageId,
+          emoji,
+          workspaceMemberId,
+          agentId,
+        });
         const [{ changedCount }] = await manager.query<
           { changedCount: number }[]
         >(query, parameters);
 
         const reactionsByMessageId = await this.findReactionSummaries({
           manager,
-          workspaceId,
+          reactionTable,
           messageIds: [messageId],
         });
 
@@ -258,11 +270,11 @@ export class AgentChatMessageReactionService {
 
   private async findReactionSummaries({
     manager,
-    workspaceId,
+    reactionTable,
     messageIds,
   }: {
     manager: EntityManager;
-    workspaceId: string;
+    reactionTable: string;
     messageIds: string[];
   }): Promise<Map<string, AgentMessageReactionSummary[]>> {
     const rows = await manager.query<AgentMessageReactionSummaryRow[]>(
@@ -278,7 +290,7 @@ export class AgentChatMessageReactionService {
          ) AS "agentIds",
          bool_or("workspaceMemberId" IS NULL AND "agentId" IS NULL)
            AS "hasAssistantReacted"
-       FROM ${getAgentMessageReactionTable(workspaceId)}
+       FROM ${reactionTable}
        WHERE "messageId" = ANY($1::uuid[]) AND "deletedAt" IS NULL
        GROUP BY "messageId", emoji
        ORDER BY "messageId", MIN("createdAt"), emoji`,

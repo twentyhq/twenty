@@ -55,6 +55,7 @@ import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/_
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const DATABASE_URL = process.env.AGENT_HISTORY_TEST_DATABASE_URL;
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -770,7 +771,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
-    it('preserves history reads and writes after object and table renames', async () => {
+    it('shares history reads and writes across renamed tables and compatibility views', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
@@ -780,36 +781,70 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       const renamedMetadata = structuredClone(metadata);
 
-      for (const { universalIdentifier, previousName, nameSingular } of [
-        {
-          universalIdentifier:
-            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-          previousName: 'agentChatThread',
-          nameSingular: 'inboxThread',
-        },
-        {
-          universalIdentifier:
-            STANDARD_OBJECTS.agentMessage.universalIdentifier,
-          previousName: 'agentMessage',
-          nameSingular: 'inboxMessage',
-        },
-        {
-          universalIdentifier:
-            STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-          previousName: 'agentMessagePart',
-          nameSingular: 'inboxMessagePart',
-        },
-      ]) {
-        const objectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: renamedMetadata.flatObjectMetadataMaps,
-          universalIdentifier,
-        });
+      const queryRunner = dataSource.createQueryRunner();
+      await queryRunner.connect();
+      try {
+        for (const { universalIdentifier, previousName, nameSingular } of [
+          {
+            universalIdentifier:
+              STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+            previousName: 'agentChatThread',
+            nameSingular: 'inboxThread',
+          },
+          {
+            universalIdentifier:
+              STANDARD_OBJECTS.agentMessage.universalIdentifier,
+            previousName: 'agentMessage',
+            nameSingular: 'inboxMessage',
+          },
+          {
+            universalIdentifier:
+              STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+            previousName: 'agentMessagePart',
+            nameSingular: 'inboxMessagePart',
+          },
+        ]) {
+          const objectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+            flatEntityMaps: renamedMetadata.flatObjectMetadataMaps,
+            universalIdentifier,
+          });
+          const flatFieldMetadatas = Object.values(
+            renamedMetadata.flatFieldMetadataMaps.byUniversalIdentifier,
+          )
+            .filter(isDefined)
+            .filter((field) => field.objectMetadataId === objectMetadata.id);
 
-        objectMetadata.nameSingular = nameSingular;
-        objectMetadata.namePlural = `${nameSingular}s`;
-        await dataSource.query(
-          `ALTER TABLE "${SCHEMA}"."${previousName}" RENAME TO "${nameSingular}"`,
-        );
+          await new WorkspaceSchemaTableManagerService().renameTable({
+            queryRunner,
+            schemaName: SCHEMA,
+            oldTableName: previousName,
+            newTableName: nameSingular,
+          });
+          for (const enumOperation of collectEnumOperationsForObject({
+            flatFieldMetadatas,
+            tableName: previousName,
+            operation: EnumOperation.RENAME,
+            options: { newTableName: nameSingular },
+          })) {
+            if (enumOperation.operation !== EnumOperation.RENAME) {
+              continue;
+            }
+
+            await new WorkspaceSchemaEnumManagerService().renameEnum({
+              queryRunner,
+              schemaName: SCHEMA,
+              oldEnumName: enumOperation.fromName,
+              newEnumName: enumOperation.toName,
+            });
+          }
+          await queryRunner.query(
+            `CREATE VIEW ${escapeIdentifier(SCHEMA)}.${escapeIdentifier(previousName)} WITH (security_invoker = true) AS SELECT * FROM ${escapeIdentifier(SCHEMA)}.${escapeIdentifier(nameSingular)}`,
+          );
+          objectMetadata.nameSingular = nameSingular;
+          objectMetadata.namePlural = `${nameSingular}s`;
+        }
+      } finally {
+        await queryRunner.release();
       }
 
       const renamedStorage = new AgentHistoryWorkspaceStorageService(
@@ -841,6 +876,20 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         turnId: TURN_ID,
         parts: [{ id: originalPart.id, textContent: 'Hidden setup context' }],
       });
+      await threads.update(
+        WORKSPACE_ID,
+        { id: THREAD_ID },
+        { title: 'Original context conversation' },
+      );
+      await expect(
+        renamedThreads.findOneOrFail(WORKSPACE_ID, {
+          where: { id: THREAD_ID },
+        }),
+      ).resolves.toMatchObject({
+        id: THREAD_ID,
+        title: 'Original context conversation',
+        totalInputCredits: '9007199254740993',
+      });
       await renamedThreads.update(
         WORKSPACE_ID,
         { id: THREAD_ID },
@@ -852,13 +901,26 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         renamedOrm,
       );
 
+      const originalTransactions = new AgentHistoryTransactionService(orm);
+
+      await Promise.all(
+        [originalTransactions, renamedTransactions].map((transactionService) =>
+          transactionService.run(WORKSPACE_ID, (scope) =>
+            scope.upsert(
+              'agentMessage',
+              {
+                id: insertedMessageId,
+                threadId: THREAD_ID,
+                turnId: TURN_ID,
+                role: AgentMessageRole.ASSISTANT,
+                status: AgentMessageStatus.SENT,
+              },
+              ['id'],
+            ),
+          ),
+        ),
+      );
       await renamedTransactions.run(WORKSPACE_ID, async (scope) => {
-        await scope.insert('agentMessage', {
-          id: insertedMessageId,
-          threadId: THREAD_ID,
-          turnId: TURN_ID,
-          role: AgentMessageRole.ASSISTANT,
-        });
         await scope.insert('agentMessagePart', {
           messageId: insertedMessageId,
           orderIndex: 0,
@@ -867,6 +929,31 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         });
       });
 
+      await expect(
+        messages.findOneOrFail(WORKSPACE_ID, {
+          where: {
+            id: insertedMessageId,
+            role: AgentMessageRole.ASSISTANT,
+            status: AgentMessageStatus.SENT,
+          },
+          relations: { parts: true },
+        }),
+      ).resolves.toMatchObject({
+        id: insertedMessageId,
+        threadId: THREAD_ID,
+        turnId: TURN_ID,
+        parts: [{ textContent: 'Message after rename' }],
+      });
+      await expect(
+        messages.count(WORKSPACE_ID, { where: { id: insertedMessageId } }),
+      ).resolves.toBe(1);
+      await expect(
+        threads.findOneOrFail(WORKSPACE_ID, { where: { id: THREAD_ID } }),
+      ).resolves.toMatchObject({
+        id: THREAD_ID,
+        title: 'Renamed inbox conversation',
+        totalInputCredits: '9007199254740993',
+      });
       await expect(
         renamedStorage.run(WORKSPACE_ID, ({ manager, table }) =>
           manager.query(

@@ -156,10 +156,10 @@ export class AgentChatAssistantPolicyService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
-    const threadObjectMetadata = findAgentChatFlatObjectMetadata(
+    const threadObjectMetadata = findAgentChatFlatObjectMetadata({
       flatObjectMetadataMaps,
-      'agentChatThread',
-    );
+      standardObjectName: 'agentChatThread',
+    });
 
     if (!isDefined(threadObjectMetadata)) {
       return AgentChatAudience.CONVERSATION;

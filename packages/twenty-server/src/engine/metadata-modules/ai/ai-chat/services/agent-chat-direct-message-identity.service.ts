@@ -1,3 +1,5 @@
+import { resolveAgentChatObjectMetadataOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-object-metadata-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -66,10 +68,10 @@ export class AgentChatDirectMessageIdentityService {
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
 
     const threadObjectMetadata =
-      findAgentChatFlatObjectMetadata(
+      findAgentChatFlatObjectMetadata({
         flatObjectMetadataMaps,
-        'agentChatThread',
-      ) ?? throwAgentChatThreadNotFound();
+        standardObjectName: 'agentChatThread',
+      }) ?? throwAgentChatThreadNotFound();
 
     const createdThreadId =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -78,7 +80,11 @@ export class AgentChatDirectMessageIdentityService {
             async (transactionScope) => {
               const { identifiers } = await transactionScope
                 .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                  'agentChatThread',
+                  resolveAgentChatObjectMetadataOrThrow({
+                    objectName: 'agentChatThread',
+                    flatObjectMetadataMaps:
+                      getWorkspaceContext().flatObjectMetadataMaps,
+                  }).nameSingular,
                   { shouldSkipEventEmission: true },
                 )
                 .insert(

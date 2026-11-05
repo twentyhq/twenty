@@ -261,7 +261,7 @@ export class DevSeederWorkspaceService {
   }) {
     await this.agentHistoryStorageService.run(
       workspaceId,
-      async ({ manager, table }) => {
+      async ({ manager, table, flatObjectMetadataMaps }) => {
         await seedAgents({
           queryRunner: manager.queryRunner!,
           schemaName: getWorkspaceSchemaName(workspaceId),
@@ -274,7 +274,7 @@ export class DevSeederWorkspaceService {
           threadTableExpression: table('agentChatThread'),
         });
         await seedAgentChatThreadInboxState({
-          context: { manager, table },
+          context: { manager, table, flatObjectMetadataMaps },
           workspaceId,
         });
       },

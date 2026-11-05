@@ -1,3 +1,6 @@
+import { resolveAgentChatObjectMetadataOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-object-metadata-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { getAgentChatObjectTableOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-object-table-or-throw.util';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -22,8 +25,6 @@ import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 
@@ -210,19 +211,24 @@ export class AgentChatChannelThreadsService {
     ...args
   }: MemberArgs & { buildQuery: ReadableThreadsQuery }): Promise<TRow[]> {
     const authContext = await this.sharingService.getAuthContext(args);
-    const schema = escapeIdentifier(getWorkspaceSchemaName(args.workspaceId));
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository =
-        this.workspaceOrmManager.getRepository('agentChatThread');
+      const { flatObjectMetadataMaps } = getWorkspaceContext();
+      const threadObjectMetadata = resolveAgentChatObjectMetadataOrThrow({
+        objectName: 'agentChatThread',
+        flatObjectMetadataMaps,
+      });
+      const repository = this.workspaceOrmManager.getRepository(
+        threadObjectMetadata.nameSingular,
+      );
       const readableThreadQueryBuilder = repository
         .createQueryBuilder('readableThread')
         .select('"readableThread"."id"', 'id')
         .applyRowLevelPermissions();
 
       const { sql, parameters } = buildQuery({
-        fromClause: `FROM ${schema}."agentChatThread" thread
-          LEFT JOIN ${getAgentChatThreadParticipantTable(args.workspaceId)} participant
+        fromClause: `FROM ${getAgentChatObjectTableOrThrow({ workspaceId: args.workspaceId, objectName: 'agentChatThread', flatObjectMetadataMaps })} thread
+          LEFT JOIN ${getAgentChatThreadParticipantTable({ workspaceId: args.workspaceId, flatObjectMetadataMaps })} participant
             ON participant."threadId" = thread.id
             AND participant."workspaceMemberId" = :channelThreadsWorkspaceMemberId::uuid
           WHERE thread."deletedAt" IS NULL

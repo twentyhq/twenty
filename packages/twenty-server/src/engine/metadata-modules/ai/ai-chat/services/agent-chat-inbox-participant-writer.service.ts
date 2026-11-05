@@ -1,3 +1,5 @@
+import { resolveAgentChatObjectMetadataOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-object-metadata-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -13,7 +15,6 @@ import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-module
 import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
 import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-last-mentioned-at.util';
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
@@ -21,7 +22,6 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentChatInboxParticipantWriterService {
@@ -29,7 +29,6 @@ export class AgentChatInboxParticipantWriterService {
     private readonly sharingService: AgentChatSharingService,
     private readonly participantEventService: AgentChatThreadParticipantEventService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
@@ -61,21 +60,17 @@ export class AgentChatInboxParticipantWriterService {
 
     await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
-      ]);
-    const participantObjectMetadata =
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThreadParticipant',
-      ) ?? throwAgentChatThreadNotFound();
-
     const participantWrites =
       await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
+        () => {
+          const participantObjectMetadata =
+            resolveAgentChatObjectMetadataOrThrow({
+              objectName: 'agentChatThreadParticipant',
+              flatObjectMetadataMaps:
+                getWorkspaceContext().flatObjectMetadataMaps,
+            });
+
+          return this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
             this.upsertParticipantInboxState({
               scope,
               workspaceId,
@@ -84,7 +79,8 @@ export class AgentChatInboxParticipantWriterService {
               reason,
               participantObjectMetadata,
             }),
-          ),
+          );
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );
@@ -137,7 +133,7 @@ export class AgentChatInboxParticipantWriterService {
   }): Promise<AgentChatThreadParticipantWrite[]> {
     const participantRepository =
       scope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
-        'agentChatThreadParticipant',
+        participantObjectMetadata.nameSingular,
         { shouldSkipEventEmission: true },
       );
     const findParticipants = () =>
