@@ -58,7 +58,10 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED:
       return 500;
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID:
+      return 400;
     default:
       return assertUnreachable(code);
   }

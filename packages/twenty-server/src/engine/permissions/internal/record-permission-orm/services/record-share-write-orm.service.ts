@@ -20,7 +20,7 @@ import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/uti
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import {
   compileNamedParameters,
@@ -211,7 +211,7 @@ export class RecordShareWriteOrmService {
         },
       );
     } catch (error) {
-      throw toTwentyOrmException(error);
+      throw toPermissionsException(error);
     }
   }
 }

@@ -16,7 +16,7 @@ import {
   resolveRecordSharingObjectOrThrow,
 } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -119,7 +119,7 @@ export class RecordSharingChangeService {
         },
       );
     } catch (error) {
-      throw toTwentyOrmException(error);
+      throw toPermissionsException(error);
     }
 
     return this.recordSharingPermissionsService.findRecordSharingAfterChange(

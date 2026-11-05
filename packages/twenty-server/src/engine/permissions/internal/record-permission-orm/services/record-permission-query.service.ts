@@ -11,9 +11,8 @@ import {
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
-import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
-import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
-import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 @Injectable()
 export class RecordPermissionQueryService {
@@ -32,8 +31,6 @@ export class RecordPermissionQueryService {
     transactionScope?: RecordPermissionTransactionScope;
     query: RecordPermissionQuery;
   }): Promise<TRow[]> {
-    const statement = compileTwentyOrmStatement(query.sql, query.parameters);
-
     if (
       isDefined(transactionScope) &&
       transactionScope.workspaceId !== workspaceId
@@ -44,19 +41,21 @@ export class RecordPermissionQueryService {
       );
     }
 
-    const rows = await this.executeStatement({ statement, transactionScope });
+    const rows = await this.executeQuery({ query, transactionScope });
 
     return rows as TRow[];
   }
 
-  private async executeStatement({
-    statement,
+  private async executeQuery({
+    query,
     transactionScope,
   }: {
-    statement: CompiledStatement;
+    query: RecordPermissionQuery;
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Record<string, unknown>[]> {
     try {
+      const statement = compileNamedParameters(query.sql, query.parameters);
+
       return isDefined(transactionScope)
         ? await transactionScope.executeRawQuery(
             statement.text,
@@ -66,7 +65,7 @@ export class RecordPermissionQueryService {
             .getPrimaryQueryExecutorOrThrow()
             .execute(statement);
     } catch (error) {
-      throw toTwentyOrmException(error);
+      throw toPermissionsException(error);
     }
   }
 }
