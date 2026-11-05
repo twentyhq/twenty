@@ -1734,7 +1734,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    await this.options.internalContext.recordPermissions.assertUpdatesStayGrantedOrThrow(
+    await this.options.internalContext.recordPermissions.assertUpdatesKeepRecordAccessOrThrow(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata: this.options.flatObjectMetadata,

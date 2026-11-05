@@ -32,7 +32,7 @@ export interface WorkspaceInternalContext {
     | 'assertColumnsReadableAndUpdatableOrThrow'
     | 'buildRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
-    | 'assertUpdatesStayGrantedOrThrow'
+    | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,

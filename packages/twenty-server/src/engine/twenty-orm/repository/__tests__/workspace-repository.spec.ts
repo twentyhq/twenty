@@ -113,7 +113,7 @@ const buildRepository = ({
         assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
         buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
-        assertUpdatesStayGrantedOrThrow: jest.fn(),
+        assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),

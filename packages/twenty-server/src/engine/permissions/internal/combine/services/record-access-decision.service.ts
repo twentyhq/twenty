@@ -227,7 +227,7 @@ export class RecordAccessDecisionService {
     });
   }
 
-  async isOperationPermittedByRole({
+  async canRoleReachSomeRecords({
     principals,
     objectMetadataId,
     operationType,
@@ -455,7 +455,7 @@ export class RecordAccessDecisionService {
 
   // An update must not move a record out of the update policy. Records it
   // did not grant before are left to the update query, which skips them
-  async assertUpdatesStayGrantedOrThrow({
+  async assertUpdatesKeepRecordAccessOrThrow({
     principals,
     flatObjectMetadata,
     updates,

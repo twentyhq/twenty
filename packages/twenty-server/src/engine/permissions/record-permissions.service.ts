@@ -135,7 +135,7 @@ export class RecordPermissionsService {
     );
   }
 
-  public assertUpdatesStayGrantedOrThrow(question: {
+  public assertUpdatesKeepRecordAccessOrThrow(question: {
     principals: PermissionsPrincipalsWithRolesContext;
     flatObjectMetadata: FlatObjectMetadata;
     updates: {
@@ -145,7 +145,7 @@ export class RecordPermissionsService {
     formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    return this.recordAccessDecisionService.assertUpdatesStayGrantedOrThrow(
+    return this.recordAccessDecisionService.assertUpdatesKeepRecordAccessOrThrow(
       question,
     );
   }
@@ -252,11 +252,11 @@ export class RecordPermissionsService {
     return this.recordAccessDecisionService.findReadableEvents(question);
   }
 
-  public isUpdatePermittedByRole({
+  public canRoleUpdateSomeRecords({
     principals,
     objectMetadataId,
   }: ObjectQuestion): Promise<boolean> {
-    return this.recordAccessDecisionService.isOperationPermittedByRole({
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
       principals,
       objectMetadataId,
       operationType: 'update',
