@@ -6,6 +6,12 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+
+const asAttachments = (
+  files: FieldFilesValue[],
+): EmailThreadMessageWithSender['attachments'] =>
+  files.map((file) => ({ id: `attachment-${file.fileId}`, file: [file] }));
 
 const buildMessage = (
   overrides: Partial<EmailThreadMessageWithSender>,
@@ -53,7 +59,7 @@ describe('ChatThreadMessageGroup', () => {
           messages: [
             buildMessage({
               text: '',
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'image-file-id',
                   label: 'photo.png',
@@ -72,7 +78,7 @@ describe('ChatThreadMessageGroup', () => {
                   extension: '.m4a',
                   url: 'https://files.test/voice-note.m4a',
                 },
-              ],
+              ]),
             }),
           ],
         }}
@@ -101,14 +107,14 @@ describe('ChatThreadMessageGroup', () => {
           isOutgoing: true,
           messages: [
             buildMessage({
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'document-file-id',
                   label: 'offer.pdf',
                   extension: '.pdf',
                   url: 'https://files.test/offer.pdf',
                 },
-              ],
+              ]),
             }),
           ],
         }}
@@ -130,14 +136,14 @@ describe('ChatThreadMessageGroup', () => {
           messages: [
             buildMessage({
               text: '',
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'image-file-id',
                   label: 'photo.png',
                   extension: '.png',
                   url: 'https://files.test/photo.png',
                 },
-              ],
+              ]),
             }),
           ],
         }}
@@ -161,14 +167,14 @@ describe('ChatThreadMessageGroup', () => {
           messages: [
             buildMessage({
               text: '',
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'video-file-id',
                   label: 'clip.wmv',
                   extension: '.wmv',
                   url: 'https://files.test/clip.wmv',
                 },
-              ],
+              ]),
             }),
           ],
         }}
@@ -191,14 +197,14 @@ describe('ChatThreadMessageGroup', () => {
           messages: [
             buildMessage({
               text: '',
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'video-file-id',
                   label: 'clip.mp4',
                   extension: '.mp4',
                   url,
                 },
-              ],
+              ]),
             }),
           ],
         }}
@@ -228,14 +234,14 @@ describe('ChatThreadMessageGroup', () => {
           isOutgoing: true,
           messages: [
             buildMessage({
-              attachments: [
+              attachments: asAttachments([
                 {
                   fileId: 'document-file-id',
                   label: 'offer.pdf',
                   extension: '.pdf',
                   url: '',
                 },
-              ],
+              ]),
             }),
           ],
         }}

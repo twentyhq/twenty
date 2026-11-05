@@ -68,12 +68,13 @@ export const ChatThreadMessageGroup = ({
           );
         }
 
-        const attachments = message.attachments ?? [];
+        const files = (message.attachments ?? []).flatMap(
+          (attachment) => attachment.file ?? [],
+        );
 
         return (
           <Fragment key={message.id}>
-            {(isNonEmptyString(message.text) ||
-              !isNonEmptyArray(attachments)) && (
+            {(isNonEmptyString(message.text) || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isOutgoing={group.isOutgoing}>
                 <Linkify
                   options={{ target: '_blank', rel: 'noopener noreferrer' }}
@@ -82,11 +83,8 @@ export const ChatThreadMessageGroup = ({
                 </Linkify>
               </StyledChatMessageBubble>
             )}
-            {attachments.map((attachment) => (
-              <ChatThreadMessageAttachment
-                key={attachment.fileId}
-                file={attachment}
-              />
+            {files.map((file) => (
+              <ChatThreadMessageAttachment key={file.fileId} file={file} />
             ))}
           </Fragment>
         );

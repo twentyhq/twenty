@@ -1,7 +1,7 @@
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { type MessageThread } from '@/activities/emails/types/MessageThread';
-import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export type EmailThreadMessage = {
   id: string;
@@ -17,6 +17,6 @@ export type EmailThreadMessage = {
   >[];
   messageThread: MessageThread;
   isDraft: boolean;
-  attachments?: FieldFilesValue[] | null;
+  attachments?: Pick<Attachment, 'id' | 'file'>[];
   __typename: 'EmailThreadMessage';
 };
