@@ -76,12 +76,14 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
     const modelId =
       parameters.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
 
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+        workspaceId,
+      );
+
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId,
-      aiDataPolicy:
-        await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
-          workspaceId,
-        ),
+      aiDataPolicy,
     });
 
     const agent = await this.agentService.createOneAgent(
