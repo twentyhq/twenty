@@ -12,6 +12,7 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFieldMetadataInputOptions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util';
+import { validateOptionIdsAreUniversalIdentifiers } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util';
 import { validateOptionIdsNotUsedByOtherFields } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-not-used-by-other-fields.util';
 import { validateSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-select-option-colors.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -158,6 +159,13 @@ export const validateEnumSelectFlatFieldMetadata = ({
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
     : [];
 
+  // Only written options must be universal identifiers; legacy ids wait for the backfill to regenerate them.
+  const optionUniversalIdentifierValidationErrors = isWritingOptions
+    ? validateOptionIdsAreUniversalIdentifiers(
+        universalFlatFieldMetadataToValidate,
+      )
+    : [];
+
   const optionIdValidationErrors = isWritingOptions
     ? validateOptionIdsNotUsedByOtherFields({
         universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
@@ -180,6 +188,7 @@ export const validateEnumSelectFlatFieldMetadata = ({
   return [
     ...optionsValidationErrors,
     ...optionColorValidationErrors,
+    ...optionUniversalIdentifierValidationErrors,
     ...optionIdValidationErrors,
     ...defaultValueValidationErrors,
   ];
