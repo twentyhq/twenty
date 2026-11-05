@@ -149,6 +149,24 @@ describe('message visibility restrictions (e2e)', () => {
     );
   });
 
+  it('should mask the attachment of a message without channel associations when queried directly', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'attachment',
+        objectMetadataPluralName: 'attachments',
+        gqlFields: 'id name file { fileId }',
+        filter: { id: { eq: UNASSOCIATED_MESSAGE_ATTACHMENT_ID } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.attachments.edges).toHaveLength(1);
+    expect(response.body.data.attachments.edges[0].node).toMatchObject({
+      name: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      file: [],
+    });
+  });
+
   it('should mask a message without channel associations fetched through a relation', async () => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
