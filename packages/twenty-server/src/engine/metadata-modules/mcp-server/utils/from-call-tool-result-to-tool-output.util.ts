@@ -1,4 +1,5 @@
 import { type CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -46,8 +47,9 @@ export const fromCallToolResultToToolOutput = ({
     return {
       success: false,
       message: `MCP tool ${toolName} failed`,
-      error:
-        errorText.length > 0 ? errorText : 'The MCP server reported an error',
+      error: isNonEmptyString(errorText)
+        ? errorText
+        : 'The MCP server reported an error',
     };
   }
 

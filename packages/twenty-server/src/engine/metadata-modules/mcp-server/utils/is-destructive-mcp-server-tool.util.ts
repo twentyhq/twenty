@@ -3,4 +3,4 @@ import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types
 export const isDestructiveMcpServerTool = ({
   annotations,
 }: Pick<McpServerTool, 'annotations'>): boolean =>
-  annotations?.readOnlyHint !== true && annotations?.destructiveHint !== false;
+  !annotations?.readOnlyHint && annotations?.destructiveHint !== false;

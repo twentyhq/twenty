@@ -61,7 +61,7 @@ export class McpToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
     const mcpServers = await this.findReachableMcpServers(context);
-    const hasSyncedAny = await this.syncServersNeverSynced({
+    const hasSyncedAny = await this.syncServersDueForToolSync({
       mcpServers,
       userWorkspaceId: context.userWorkspaceId,
     });
@@ -214,7 +214,7 @@ export class McpToolProvider implements ToolProvider {
     );
   }
 
-  private async syncServersNeverSynced({
+  private async syncServersDueForToolSync({
     mcpServers,
     userWorkspaceId,
   }: {

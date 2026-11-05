@@ -1,4 +1,5 @@
 import { getToolIndex } from 'test/integration/graphql/suites/application-role-intersection/utils/get-tool-index.util';
+import { getToolInputSchemaQueryFactory } from 'test/integration/metadata/suites/utils/get-tool-input-schema-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   createMcpServer,
@@ -12,7 +13,6 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import gql from 'graphql-tag';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,12 +22,6 @@ import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-
-const GET_TOOL_INPUT_SCHEMA_QUERY = gql`
-  query GetToolInputSchema($toolName: String!) {
-    getToolInputSchema(toolName: $toolName)
-  }
-`;
 
 const TOOL_CONTEXT = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -86,10 +80,11 @@ describe('MCP tools in the tool registry (e2e)', () => {
   });
 
   it('serves the cached input schema on demand', async () => {
-    const response = await makeMetadataApiRequest({
-      query: GET_TOOL_INPUT_SCHEMA_QUERY,
-      variables: { toolName: `mcp_${mcpServerName}_search_docs` },
-    });
+    const response = await makeMetadataApiRequest(
+      getToolInputSchemaQueryFactory({
+        toolName: `mcp_${mcpServerName}_search_docs`,
+      }),
+    );
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.getToolInputSchema).toEqual(

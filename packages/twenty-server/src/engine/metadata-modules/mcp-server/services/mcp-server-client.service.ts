@@ -52,10 +52,11 @@ export class McpServerClientService {
     target: McpServerTarget;
     timeoutMs?: number;
   }): Promise<Tool[]> {
-    return this.withConnectedClient(
-      { target, timeoutMs },
-      ({ client, signal }) => this.listToolPages({ client, signal }),
-    );
+    return this.withConnectedClient({
+      target,
+      timeoutMs,
+      run: ({ client, signal }) => this.listToolPages({ client, signal }),
+    });
   }
 
   async callTool({
@@ -67,9 +68,10 @@ export class McpServerClientService {
     toolName: string;
     toolArguments: Record<string, unknown>;
   }): Promise<CallToolResult> {
-    return this.withConnectedClient(
-      { target, timeoutMs: CALL_TOOL_TIMEOUT_MS },
-      ({ client, signal }) =>
+    return this.withConnectedClient({
+      target,
+      timeoutMs: CALL_TOOL_TIMEOUT_MS,
+      run: ({ client, signal }) =>
         client.request(
           {
             method: 'tools/call',
@@ -78,16 +80,21 @@ export class McpServerClientService {
           CallToolResultSchema,
           { signal },
         ),
-    );
+    });
   }
 
-  private async withConnectedClient<TResult>(
-    { target, timeoutMs }: { target: McpServerTarget; timeoutMs: number },
+  private async withConnectedClient<TResult>({
+    target,
+    timeoutMs,
+    run,
+  }: {
+    target: McpServerTarget;
+    timeoutMs: number;
     run: (connection: {
       client: Client;
       signal: AbortSignal;
-    }) => Promise<TResult>,
-  ): Promise<TResult> {
+    }) => Promise<TResult>;
+  }): Promise<TResult> {
     const accessToken = await this.resolveAccessToken(target);
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
