@@ -71,9 +71,11 @@ export const useCompleteRecordUpdate = ({
     async ({
       recordId,
       updateInput,
+      recordBeforeUpdate,
     }: {
       recordId: string;
       updateInput: Partial<ObjectRecord>;
+      recordBeforeUpdate?: Partial<ObjectRecord>;
     }): Promise<Partial<ObjectRecord> | null> => {
       if (!hasValidationRulesEntitlement) {
         return updateInput;
@@ -98,8 +100,11 @@ export const useCompleteRecordUpdate = ({
           objectMetadataItems,
         });
 
+        // A caller that already shows the new value in the store passes the record as it was
         const storedRecord =
-          store.get(recordStoreFamilyState.atomFamily(recordId)) ?? {};
+          recordBeforeUpdate ??
+          store.get(recordStoreFamilyState.atomFamily(recordId)) ??
+          {};
 
         const bindingPathsReadByRules = activeValidationRules.flatMap(
           (validationRule) => {

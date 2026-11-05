@@ -347,6 +347,27 @@ describe('evaluateValidationRuleExpression with previous values', () => {
     });
   });
 
+  it('should read a previous Boolean as empty without a stored record', () => {
+    const evaluateFrozenQualification = (
+      previousRecord: Record<string, unknown> | undefined,
+    ) =>
+      evaluateValidationRuleExpression({
+        expression:
+          'isEmpty(previous.isQualified) or previous.isQualified == isQualified',
+        record: { isQualified: true },
+        previousRecord,
+        fields: FIELDS,
+        now: NOW,
+      });
+
+    expect(evaluateFrozenQualification(undefined)).toEqual({
+      status: 'passed',
+    });
+    expect(evaluateFrozenQualification({ isQualified: false })).toEqual({
+      status: 'failed',
+    });
+  });
+
   it('should compare a composite subfield with its previous value', () => {
     expect(
       evaluateValidationRuleExpression({

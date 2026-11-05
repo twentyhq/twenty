@@ -94,6 +94,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
   private offsetValue?: number;
+  private isLockedForUpdate = false;
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
@@ -148,6 +149,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
     cloned.offsetValue = this.offsetValue;
+    cloned.isLockedForUpdate = this.isLockedForUpdate;
     cloned.includeDeleted = this.includeDeleted;
     cloned.explicitSelection =
       this.explicitSelection === undefined
@@ -553,6 +555,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   offset(count: number): this {
     this.offsetValue = count;
+
+    return this;
+  }
+
+  // Holds the selected rows until the transaction ends, so a concurrent write waits instead of racing
+  forUpdate(): this {
+    this.isLockedForUpdate = true;
 
     return this;
   }
@@ -1277,6 +1286,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       allowPlainToManyJoins: options?.allowPlainToManyJoins ?? false,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
+      isLockedForUpdate: this.isLockedForUpdate,
     };
   }
 }

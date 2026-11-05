@@ -1175,9 +1175,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
 
     for (const input of writableInputs) {
-      const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
+      const recordBeforeQueryBuilder = this.buildIdsEventSnapshotQueryBuilder([
         input.id,
-      ]).getMany<ObjectRecord>({ noFormatting: true });
+      ]);
+
+      if (writtenRecordsValidator?.readsRecordsBeforeWrite === true) {
+        recordBeforeQueryBuilder.forUpdate();
+      }
+
+      const rawBefore = await recordBeforeQueryBuilder.getMany<ObjectRecord>({
+        noFormatting: true,
+      });
 
       rawBeforeByInputIndex.push(rawBefore);
 
@@ -1580,6 +1588,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
+
+    if (writtenRecordsValidator?.readsRecordsBeforeWrite === true) {
+      eventSelectQueryBuilder.forUpdate();
+    }
 
     const recordsBefore = canSkipBeforeImage
       ? []

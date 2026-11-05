@@ -100,12 +100,12 @@ export const buildValidationRuleEvaluationContext = ({
     .filter((path) => path.startsWith(PREVIOUS_PATH_PREFIX))
     .map((path) => path.slice(PREVIOUS_PATH_PREFIX.length));
 
-  // No stored record yet (a creation) reads every previous value as empty
+  // Without a stored record (a creation) every previous value is empty, Booleans included
   if (previousValuePaths.length > 0) {
     context[VALIDATION_RULE_PREVIOUS_VARIABLE_NAME] =
       buildValidationRuleEvaluationContext({
         record: previousRecord ?? {},
-        fieldByName,
+        fieldByName: isDefined(previousRecord) ? fieldByName : new Map(),
         identifierPaths: previousValuePaths,
         now,
       });
