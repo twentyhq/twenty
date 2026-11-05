@@ -193,15 +193,19 @@ describe('projectCatalog', () => {
   });
 
   it('cannot restate what a model is, only which models a route serves', () => {
-    const spec = {
+    const modelRestatingItsModalities = {
+      model: 'gpt-5.6-luna',
+      modalities: ['image'],
+    };
+    const spec: CatalogSpec = {
       providers: [
         {
           name: 'azure-foundry',
           npm: '@ai-sdk/azure',
-          models: [{ model: 'gpt-5.6-luna', modalities: ['image'] }],
+          models: [modelRestatingItsModalities],
         },
       ],
-    } as unknown as CatalogSpec;
+    };
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 

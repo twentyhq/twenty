@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -36,7 +37,10 @@ const updateAgentInputSchema = z.object({
 @DefineTool({
   name: 'update_agent',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Update an AI agent. Only the fields you pass are changed.
 
 To pause an agent without deleting it, set isActive to false on its triggers. Confirm changes to the role or triggers with the user first.`,

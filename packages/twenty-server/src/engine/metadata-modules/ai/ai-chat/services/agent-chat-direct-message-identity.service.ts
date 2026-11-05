@@ -7,6 +7,7 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -83,13 +84,15 @@ export class AgentChatDirectMessageIdentityService {
                 )
                 .insert(
                   {
-                    conversationType: 'DIRECT_MESSAGE',
+                    conversationType:
+                      AgentChatThreadConversationType.DIRECT_MESSAGE,
                     ...pair,
                     isAssistantParticipant: false,
                   },
                   { onConflictDoNothing: true },
                 );
 
+              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
               await this.privateRecordStorageService.setPrivate({
                 workspaceId,
                 flatObjectMetadata: threadObjectMetadata,

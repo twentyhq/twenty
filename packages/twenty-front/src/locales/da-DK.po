@@ -320,7 +320,7 @@ msgstr "{0, plural, one {Få {formattedInviteTeamCreditsRewardPerUser} gratis kr
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {seat} other {seats}}"
-msgstr ""
+msgstr "{0, plural, one {sæde} other {sæder}}"
 
 #. js-lingui-id: QaXvAD
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
@@ -574,6 +574,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} API-nøgle} other {{apiKeyCount
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} vil gerne:"
 
+#. js-lingui-id: y+Uv96
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "{appLabel} installed"
+msgstr ""
+
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
@@ -821,6 +826,11 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} installation} other {{1} installationer}}"
+
+#. js-lingui-id: XcDI87
+#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
+msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
+msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -2031,7 +2041,7 @@ msgstr "Tilføj en modtager før afsendelse"
 #. js-lingui-id: erAaSc
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "Add a recipient or a channel before sending."
-msgstr ""
+msgstr "Tilføj en modtager eller en kanal, før du sender."
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2413,7 +2423,7 @@ msgstr "Tilføj betalingsmetode"
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Add people or a channel"
-msgstr ""
+msgstr "Tilføj personer eller en kanal"
 
 #. js-lingui-id: px+kkc
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
@@ -2425,7 +2435,7 @@ msgstr "Tilføj personer eller alle"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Add permission"
-msgstr "Tilføj adgang"
+msgstr "Tilføj tilladelse"
 
 #. js-lingui-id: 7RdLYg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -12584,7 +12594,7 @@ msgstr "Kunne ikke gemme layouttilpasningen"
 #. js-lingui-id: y3HIOa
 #: src/modules/object-core/agents/hooks/useCoreAgentSave.ts
 msgid "Failed to save role permissions: {errorMessage}"
-msgstr ""
+msgstr "Kunne ikke gemme rollerettigheder: {errorMessage}"
 
 #. js-lingui-id: bH624/
 #: src/modules/settings/applications/hooks/useApplicationVariablesDraft.ts
@@ -12881,6 +12891,11 @@ msgstr "Felt navn"
 msgid "Field on destination"
 msgstr "Felt på destination"
 
+#. js-lingui-id: 5Lk6iG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field option"
+msgstr "feltindstilling"
+
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
@@ -13026,7 +13041,7 @@ msgstr "Filen \"{fileName}\" blev uploadet"
 #. js-lingui-id: EYl2hs
 #: src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
 msgid "File field not found for attachment object"
-msgstr ""
+msgstr "Filfeltet blev ikke fundet for vedhæftningsobjekt"
 
 #. js-lingui-id: ZLG0oh
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
@@ -14076,19 +14091,19 @@ msgstr "Gæster"
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
-msgstr ""
+msgstr "h1"
 
 #. js-lingui-id: DM6L2V
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h2"
-msgstr ""
+msgstr "h2"
 
 #. js-lingui-id: aNHeda
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h3"
-msgstr ""
+msgstr "h3"
 
 #. js-lingui-id: Cr5XLk
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14175,7 +14190,7 @@ msgstr "Header-input"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "heading"
-msgstr ""
+msgstr "overskrift"
 
 #. js-lingui-id: zgPjoD
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14188,7 +14203,7 @@ msgstr "Overskrift"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 1"
-msgstr ""
+msgstr "Overskrift 1"
 
 #. js-lingui-id: El7NbA
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
@@ -14196,7 +14211,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 2"
-msgstr ""
+msgstr "Overskrift 2"
 
 #. js-lingui-id: SFN6dN
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
@@ -14204,7 +14219,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 3"
-msgstr ""
+msgstr "Overskrift 3"
 
 #. js-lingui-id: nJeKmw
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14407,7 +14422,7 @@ msgstr "Hjem"
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
-msgstr ""
+msgstr "Horisontalt søjlediagram"
 
 #. js-lingui-id: 8e0cQ8
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14732,7 +14747,7 @@ msgstr "IMAP Server"
 #. js-lingui-id: atF3YG
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Username (Optional)"
-msgstr ""
+msgstr "IMAP Brugernavn (Valgfrit)"
 
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -15142,7 +15157,7 @@ msgstr "Undersøg datamodellen, forespørg poster, og send rå API-anmodninger."
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
-msgstr ""
+msgstr "Installér"
 
 #. js-lingui-id: XOHdRf
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -15200,7 +15215,7 @@ msgstr "Installation"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Installed"
-msgstr ""
+msgstr "Installeret"
 
 #. js-lingui-id: OMxM9j
 #: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
@@ -15924,7 +15939,7 @@ msgstr "Stor overskrift, der skjuler sit indhold"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
-msgstr ""
+msgstr "Stort afsnit overskrift"
 
 #. js-lingui-id: ke14uo
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -16102,7 +16117,7 @@ msgstr "Seneste besked"
 #: src/modules/settings/members/components/MemberNameFields.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name"
-msgstr ""
+msgstr "Efternavn"
 
 #. js-lingui-id: UXBCwc
 #: src/modules/object-record/record-field/ui/form-types/components/FormFullNameFieldInput.tsx
@@ -16143,6 +16158,12 @@ msgstr "Sidst logget ind"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last update"
 msgstr "Sidste opdatering"
+
+#. js-lingui-id: LYb3OD
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneCard.tsx
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneCard.tsx
+msgid "Last update: {lastUpdate}"
+msgstr ""
 
 #. js-lingui-id: C3yOz3
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -16332,7 +16353,7 @@ msgstr "Navn på juridisk enhed"
 #. js-lingui-id: MP1v+1
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Legend"
-msgstr ""
+msgstr "Forklaring"
 
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -16448,12 +16469,12 @@ msgstr "Lime"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
-msgstr ""
+msgstr "Grænse"
 
 #. js-lingui-id: JoxPqI
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
-msgstr ""
+msgstr "Grænsen må ikke overskride {maxRecordsFormatted} poster."
 
 #. js-lingui-id: lvAOAE
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
@@ -16478,7 +16499,7 @@ msgstr "Begræns hvor mange værdier der kan tilføjes til dette felt"
 #. js-lingui-id: a4SJUE
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit must be greater than 0."
-msgstr ""
+msgstr "Grænsen skal være større end 0."
 
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -16621,7 +16642,7 @@ msgstr "Links"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
-msgstr ""
+msgstr "liste"
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint.ts
@@ -17094,7 +17115,7 @@ msgstr "Vedligeholdelsestilstand"
 #. js-lingui-id: MOLprz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Make HTTP requests to external APIs"
-msgstr ""
+msgstr "Foretag HTTP anmodninger til eksterne API'er"
 
 #. js-lingui-id: sOv4bh
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -17500,7 +17521,7 @@ msgstr "Mellemstor overskrift, der skjuler sit indhold"
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Medium section heading"
-msgstr ""
+msgstr "Mellemstor afsnit overskrift"
 
 #. js-lingui-id: OvoEq7
 #: src/modules/ai/components/AiChatThreadAvatar.tsx
@@ -17528,7 +17549,7 @@ msgstr "Medlemspræference"
 #. js-lingui-id: cNIHA/
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Member removed from workspace"
-msgstr ""
+msgstr "Medlem fjernet fra arbejdsområdet"
 
 #. js-lingui-id: wlQNTg
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
@@ -17977,7 +17998,7 @@ msgstr "Månedligt"
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "months"
-msgstr ""
+msgstr "måneder"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -18664,7 +18685,7 @@ msgstr "Ny webhook"
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "New widget"
-msgstr ""
+msgstr "Nyt widget"
 
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
@@ -19165,7 +19186,7 @@ msgstr "Intet felt er konfigureret"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 msgid "No fields available"
-msgstr ""
+msgstr "Ingen felter tilgængelige"
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
@@ -19178,7 +19199,7 @@ msgstr "Ingen felter fundet"
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
-msgstr ""
+msgstr "Ingen felter valgt"
 
 #. js-lingui-id: eiEb25
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
@@ -19404,7 +19425,7 @@ msgstr "Ingen hastighedsgrænse ramt i denne periode"
 #. js-lingui-id: UW90md
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
-msgstr ""
+msgstr "Ingen modtagere fundet"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -20392,7 +20413,7 @@ msgstr "Aktivér kun for trin, der er sikre at køre to gange: et mislykket fors
 #. js-lingui-id: KsHGCA
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Only if a Twenty partner referred you. Once applied, it can't be changed."
-msgstr ""
+msgstr "Kun hvis en Twenty-partner har henvist dig. Når den er anvendt, kan den ikke ændres."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -20489,6 +20510,12 @@ msgstr "Kun du vil kunne se dine e-mails og begivenheder"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "Åben"
+
+#. js-lingui-id: awIyH2
+#. placeholder {0}: account.handle
+#: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
+msgid "Open {0} settings"
+msgstr ""
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20658,11 +20685,6 @@ msgstr "Åbn indstillinger"
 msgid "Open side panel"
 msgstr "Åbn sidepanelet"
 
-#. js-lingui-id: Cq4Ta5
-#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
-msgid "Open the workflow"
-msgstr "Åbn arbejdsgangen"
-
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20762,7 +20784,7 @@ msgstr "Mulighed 1"
 #. js-lingui-id: LLAa/9
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Optional"
-msgstr ""
+msgstr "Valgfrit"
 
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21192,17 +21214,30 @@ msgstr "Parametre"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 msgid "Partner"
+msgstr "Partner"
+
+#. js-lingui-id: gHz5zY
+#: src/utils/title-utils.ts
+msgid "Partner - Settings"
 msgstr ""
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code"
-msgstr ""
+msgstr "Partnerkode"
 
 #. js-lingui-id: bG8G5t
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
+msgstr "Partnerkode anvendt"
+
+#. js-lingui-id: 0w8/Qw
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner codes can only be added during the free trial."
 msgstr ""
 
 #. js-lingui-id: mPkInZ
@@ -22497,7 +22532,7 @@ msgstr "Antal modtagere er ikke tilgængeligt"
 #. js-lingui-id: ar7XM1
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
-msgstr ""
+msgstr "Levering til modtageren kunne ikke bekræftes. Tjek chatdeltagerne."
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -22811,11 +22846,6 @@ msgstr "Omdirigerings-URL kopieret til udklipsholder"
 msgid "Redirection URI"
 msgstr "Omdirigerings-URI"
 
-#. js-lingui-id: cfgOip
-#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
-msgid "Referred by a Twenty partner? Add their code"
-msgstr ""
-
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -23050,7 +23080,7 @@ msgstr "Fjern {displayName}"
 #. js-lingui-id: HND1q3
 #: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
 msgid "Remove {label}"
-msgstr ""
+msgstr "Fjern {label}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -24101,6 +24131,7 @@ msgstr "Lørdag"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Save"
@@ -24556,7 +24587,7 @@ msgstr "Søg i valgmuligheder"
 #. js-lingui-id: /iXEpl
 #: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Search recipients"
-msgstr ""
+msgstr "Søg efter modtagere"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -25155,7 +25186,7 @@ msgstr "Vælg valgmuligheder"
 #. js-lingui-id: TC9hnQ
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 msgid "Select recipients"
-msgstr ""
+msgstr "Vælg modtagere"
 
 #. js-lingui-id: V8W7vI
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
@@ -27565,7 +27596,7 @@ msgstr "Koden lader {memberName} logge ind på dette arbejdsområde én gang ude
 #. js-lingui-id: G3XY+D
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
-msgstr ""
+msgstr "Koden på den Twenty-partner, der henviste dig"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx
@@ -29847,6 +29878,13 @@ msgstr "opdater"
 msgid "Update"
 msgstr "Opdater"
 
+#. js-lingui-id: L/gNNk
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/modules/object-record/record-form/components/RecordUpdateFormProvider.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
+msgid "Update {0}"
+msgstr "Opdater {0}"
+
 #. js-lingui-id: ymv+je
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
@@ -30357,11 +30395,6 @@ msgstr "Brug kun bogstaver, tal, understregninger, punktummer eller bindestreger
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Brug vores API eller tilføj din første {objectLabel} manuelt"
-
-#. js-lingui-id: zwL0lf
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Use the import wizard instead"
-msgstr "Brug importguiden i stedet"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -31669,6 +31702,7 @@ msgstr "Arbejdstid starter"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceBlocklist.tsx

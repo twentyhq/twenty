@@ -103,6 +103,10 @@
   background: var(--t-background-tertiary);
 }
 
+.card[data-checked] {
+  border-color: var(--t-color-blue);
+}
+
 .card > .control {
   inset-block-start: var(--t-spacing-2);
   inset-inline-end: var(--t-spacing-2);

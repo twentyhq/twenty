@@ -426,7 +426,7 @@ export class UserRoleService {
     }
   }
 
-  async resolveCustodianUserWorkspace({
+  async resolveSuccessorUserWorkspace({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {

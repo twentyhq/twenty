@@ -1,12 +1,14 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectRecordsPermissions,
+} from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -80,7 +82,7 @@ const filter = ({
 }) =>
   filterReadableEvents({
     events,
-    admittedRecordIds: new Set(['record-1', 'record-2']),
+    readableRecordIds: new Set(['record-1', 'record-2']),
     objectMetadata: invoice,
     recordsPermissions,
     metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
@@ -98,7 +100,7 @@ const SECRET_HIDDEN: Pick<RoleRecordsPermissions, 'objects'> = {
 };
 
 describe('filterReadableEvents', () => {
-  it('should drop events on records that were not admitted', () => {
+  it('should drop events on records that are not readable', () => {
     const events = filter({
       events: [
         buildUpdateEvent({ recordId: 'record-1', updatedFields: ['name'] }),

@@ -200,8 +200,9 @@ export type {
 } from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
+export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
+export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';
-export type { ObjectsPermissions } from './ObjectsPermissions';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
@@ -323,6 +324,7 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
+export type { RowLevelRecordsPermissions } from './RowLevelRecordsPermissions';
 export type { SerializedRelation } from './SerializedRelation';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation';
 export { ServerFileFolder } from './ServerFileFolder';

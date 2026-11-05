@@ -3,7 +3,7 @@
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 
-// Partial, so it only holds the few private records a creator or custodian lookup reads
+// Partial, so it only holds the few private records a creator or successor lookup reads
 export const buildPrivateRecordIndexDefinition = ({
   objectMetadataId,
 }: {

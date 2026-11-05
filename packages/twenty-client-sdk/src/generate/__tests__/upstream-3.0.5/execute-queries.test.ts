@@ -84,7 +84,7 @@ const executeOperation = async (
     rootValue: queryRootValue,
   });
 
-const executableFetch = vi.fn(
+const executableFetch = vi.fn<typeof globalThis.fetch>(
   async (_url: RequestInfo | URL, requestInit?: RequestInit) => {
     const body = JSON.parse(String(requestInit?.body)) as
       | GraphqlOperation
@@ -99,7 +99,7 @@ const executableFetch = vi.fn(
       headers: { 'Content-Type': 'application/json' },
     });
   },
-) as unknown as typeof globalThis.fetch;
+);
 
 const URL_PLACEHOLDER = 'http://executable-schema.test/graphql';
 

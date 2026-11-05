@@ -311,6 +311,7 @@ enum AllMetadataName {
   commandMenuItem
   connectionProvider
   fieldMetadata
+  fieldMetadataOption
   fieldPermission
   frontComponent
   index
@@ -2688,7 +2689,10 @@ enum GettingStartedStepActionKey {
 type GettingStartedStepDefinition {
   actionKey: GettingStartedStepActionKey!
   description: String!
+  doneChatThreadId: String
+  doneDescription: String!
   doneTitle: String!
+  doneWorkflowId: String
   icon: String!
   iconColor: String!
   kind: GettingStartedStepKind!
@@ -5265,6 +5269,7 @@ input UpdateFrontComponentInputUpdates {
 
 input UpdateGettingStartedInput {
   completedStepActionKey: GettingStartedStepActionKey
+  completedStepChatThreadId: String
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
@@ -6059,7 +6064,9 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
+  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   objectRecordsPermissions: [ObjectRecordsPermissions!]
+  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!

@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import {
   RecordShareException,
@@ -20,8 +20,10 @@ export const validateShareWithPrincipalsOrThrow = ({
   flatRoleMaps,
 }: {
   shareWith: ShareWithInput[];
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
-  flatRoleMaps: FlatRoleMaps;
+  flatWorkspaceMemberMaps: {
+    byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'deletedAt'>>>;
+  };
+  flatRoleMaps: Pick<FlatRoleMaps, 'universalIdentifierById'>;
 }): Pick<RecordShareInput, 'principalId' | 'principalType' | 'accessLevel'>[] =>
   shareWith.map((shareWithEntry) => {
     const resolvedPrincipal = resolveShareWithPrincipalOrThrow(shareWithEntry);

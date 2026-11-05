@@ -3,10 +3,86 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
-import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
-import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
+import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
+import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/permissions/role/utils/resolve-user-workspace-ids-with-permission-flag.util';
+
+const FLAT_ENTITY_DEFAULTS = {
+  universalIdentifier: 'universal-identifier',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  workspaceId: 'workspace-id',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+};
+
+const buildFlatRole = (
+  flatRole: Pick<
+    FlatRole,
+    | 'id'
+    | 'canUpdateAllSettings'
+    | 'canAccessAllTools'
+    | 'rolePermissionFlagIds'
+    | 'roleTargetIds'
+  >,
+): FlatRole => ({
+  ...FLAT_ENTITY_DEFAULTS,
+  label: 'Role',
+  canAccessAllAgentChatChannels: false,
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  description: null,
+  icon: null,
+  isEditable: true,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
+  canBeAssignedToApplications: true,
+  objectPermissionIds: [],
+  fieldPermissionIds: [],
+  agentChatChannelRoleIds: [],
+  rowLevelPermissionPredicateIds: [],
+  rowLevelPermissionPredicateGroupIds: [],
+  roleTargetUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
+  rolePermissionFlagUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
+  agentChatChannelRoleUniversalIdentifiers: [],
+  rowLevelPermissionPredicateUniversalIdentifiers: [],
+  rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+  ...flatRole,
+});
+
+const buildFlatRolePermissionFlag = (
+  flatRolePermissionFlag: Pick<
+    FlatRolePermissionFlag,
+    'id' | 'permissionFlagUniversalIdentifier'
+  >,
+): FlatRolePermissionFlag => ({
+  ...FLAT_ENTITY_DEFAULTS,
+  roleId: 'role-id',
+  permissionFlagId: 'permission-flag-id',
+  roleUniversalIdentifier: 'role-universal-identifier',
+  ...flatRolePermissionFlag,
+});
+
+const buildFlatRoleTarget = (
+  flatRoleTarget: Pick<FlatRoleTarget, 'id' | 'roleId' | 'userWorkspaceId'>,
+): FlatRoleTarget => ({
+  ...FLAT_ENTITY_DEFAULTS,
+  agentId: null,
+  apiKeyId: null,
+  webhookId: null,
+  targetApplicationId: null,
+  targetApplicationUniversalIdentifier: null,
+  agentUniversalIdentifier: null,
+  webhookUniversalIdentifier: null,
+  roleUniversalIdentifier: 'role-universal-identifier',
+  ...flatRoleTarget,
+});
 
 const buildInput = ({
   permissionFlag = PermissionFlagType.WORKFLOWS,
@@ -40,7 +116,7 @@ const buildInput = ({
       byUniversalIdentifier: Object.fromEntries(
         roles.map((role) => [
           role.id,
-          {
+          buildFlatRole({
             id: role.id,
             canUpdateAllSettings: role.canUpdateAllSettings ?? false,
             canAccessAllTools: role.canAccessAllTools ?? false,
@@ -50,18 +126,21 @@ const buildInput = ({
             roleTargetIds: roleTargets.flatMap((roleTarget, index) =>
               roleTarget.roleId === role.id ? [`role-target-${index}`] : [],
             ),
-          },
+          }),
         ]),
       ),
-    } as unknown as FlatRoleMaps,
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    },
     flatRolePermissionFlagMaps: {
       byUniversalIdentifier: Object.fromEntries(
         rolePermissionFlagMaps.map((entry) => [
           entry.rolePermissionFlagId,
-          {
+          buildFlatRolePermissionFlag({
+            id: entry.rolePermissionFlagId,
             permissionFlagUniversalIdentifier:
               entry.permissionFlagUniversalIdentifier,
-          },
+          }),
         ]),
       ),
       universalIdentifierById: Object.fromEntries(
@@ -70,12 +149,13 @@ const buildInput = ({
           entry.rolePermissionFlagId,
         ]),
       ),
-    } as unknown as FlatRolePermissionFlagMaps,
+      universalIdentifiersByApplicationId: {},
+    },
     flatRoleTargetMaps: {
       byUniversalIdentifier: Object.fromEntries(
         roleTargets.map((roleTarget, index) => [
           `role-target-${index}`,
-          roleTarget,
+          buildFlatRoleTarget({ id: `role-target-${index}`, ...roleTarget }),
         ]),
       ),
       universalIdentifierById: Object.fromEntries(
@@ -84,7 +164,8 @@ const buildInput = ({
           `role-target-${index}`,
         ]),
       ),
-    } as unknown as FlatRoleTargetMaps,
+      universalIdentifiersByApplicationId: {},
+    },
   };
 };
 

@@ -9,8 +9,6 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-
 describe('Field metadata isSearchable toggling', () => {
   const OBJECT_NAME_SINGULAR = 'searchableToggleObject';
   const OBJECT_NAME_PLURAL = 'searchableToggleObjects';
@@ -244,15 +242,13 @@ describe('Field metadata isSearchable toggling', () => {
   it('should reject an explicit isSearchable null on the label identifier', async () => {
     await findSearchFieldMetadataList();
 
-    const nullIsSearchablePayload = {
-      isSearchable: null,
-    } as unknown as Omit<UpdateFieldInput, 'workspaceId' | 'id'>;
-
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
       input: {
         idToUpdate: labelIdentifierFieldMetadataId,
-        updatePayload: nullIsSearchablePayload,
+        updatePayload: {
+          isSearchable: null,
+        },
       },
       gqlFields: `id`,
     });

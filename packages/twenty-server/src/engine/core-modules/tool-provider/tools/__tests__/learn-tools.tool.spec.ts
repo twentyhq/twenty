@@ -1,4 +1,3 @@
-import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { createLearnToolsTool } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
@@ -11,7 +10,8 @@ describe('createLearnToolsTool', () => {
       suggestSimilarToolNames: jest
         .fn()
         .mockResolvedValue({ group_by_person: ['group_by_people'] }),
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -38,7 +38,8 @@ describe('createLearnToolsTool', () => {
           { name: 'group_by_people', description: 'Group people' },
         ]),
       suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -62,7 +63,8 @@ describe('createLearnToolsTool', () => {
           { name: 'group_by_people' },
         ]),
       suggestSimilarToolNames: jest.fn(),
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -81,7 +83,8 @@ describe('createLearnToolsTool', () => {
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([]),
       suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       isToolAllowed: (toolName) => toolName !== 'code_interpreter',
@@ -106,7 +109,8 @@ describe('createLearnToolsTool', () => {
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([{ name: 'find_many_people' }]),
       suggestSimilarToolNames,
-    } as unknown as ToolRegistryService;
+      spillToolOutputIfTooLarge: jest.fn(),
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       isToolAllowed: (toolName) => toolName === 'find_many_people',
@@ -136,7 +140,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context);
 
@@ -160,7 +164,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,
@@ -216,7 +220,7 @@ describe('createLearnToolsTool', () => {
         .fn()
         .mockResolvedValue({ group_by_person: ['group_by_people'] }),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,
@@ -254,7 +258,7 @@ describe('createLearnToolsTool', () => {
         ]),
       suggestSimilarToolNames: jest.fn(),
       spillToolOutputIfTooLarge,
-    } as unknown as ToolRegistryService;
+    };
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
       spillLargeOutput: true,

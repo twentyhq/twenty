@@ -5,12 +5,6 @@ describe('parseApplicationLogLines', () => {
     expect(parseApplicationLogLines('')).toEqual([]);
   });
 
-  it('should return an empty array for undefined-ish input', () => {
-    expect(parseApplicationLogLines(undefined as unknown as string)).toEqual(
-      [],
-    );
-  });
-
   it('should parse a structured INFO log line', () => {
     const raw = '2024-06-15T10:30:00.123Z INFO Hello world';
 

@@ -1,3 +1,5 @@
+import { Test } from '@nestjs/testing';
+
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -5,18 +7,27 @@ import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/up
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
 describe('2-47 fast instance command 1791720497488 - DropUsageLimitMeterFastInstanceCommand (integration)', () => {
   const flush = jest.fn();
-  const command = new DropUsageLimitMeterFastInstanceCommand({
-    flush,
-  } as unknown as WorkspaceCacheService);
+  let command: DropUsageLimitMeterFastInstanceCommand;
   let queryRunner: QueryRunner;
   let spenderId: string;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        DropUsageLimitMeterFastInstanceCommand,
+        { provide: WorkspaceCacheService, useValue: { flush } },
+      ],
+    }).compile();
+
+    command = module.get(DropUsageLimitMeterFastInstanceCommand);
+  });
 
   const insertUsageLimit = async ({
     resourceType,

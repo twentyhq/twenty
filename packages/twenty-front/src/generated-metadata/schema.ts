@@ -348,6 +348,7 @@ export enum AllMetadataName {
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',
+  fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
@@ -2845,7 +2846,10 @@ export type GettingStartedStepDefinition = {
   __typename?: 'GettingStartedStepDefinition';
   actionKey: GettingStartedStepActionKey;
   description: Scalars['String']['output'];
+  doneChatThreadId?: Maybe<Scalars['String']['output']>;
+  doneDescription: Scalars['String']['output'];
   doneTitle: Scalars['String']['output'];
+  doneWorkflowId?: Maybe<Scalars['String']['output']>;
   icon: Scalars['String']['output'];
   iconColor: Scalars['String']['output'];
   kind: GettingStartedStepKind;
@@ -7644,6 +7648,7 @@ export type UpdateFrontComponentInputUpdates = {
 
 export type UpdateGettingStartedInput = {
   completedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
+  completedStepChatThreadId?: InputMaybe<Scalars['String']['input']>;
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
@@ -8412,7 +8417,11 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
+  /** @deprecated Use objectRecordsPermissions */
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
+  /** @deprecated Use objectRecordsPermissions */
+  objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];

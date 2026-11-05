@@ -2,66 +2,28 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
+import { RecordPrivacyWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-privacy-write-orm.service';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
 export class PrivateRecordStorageService {
   constructor(
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly recordPrivacyWriteOrmService: RecordPrivacyWriteOrmService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
-
-  async findStates({
-    workspaceId,
-    flatObjectMetadata,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
-  }): Promise<Map<string, PrivateRecordState>> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return this.withRepository({
-      workspaceId,
-      flatObjectMetadata,
-      transactionScope,
-      work: (repository) =>
-        findPrivateRecordStates({
-          repository,
-          tableExpression: buildTableExpression({
-            workspaceId,
-            flatObjectMetadata,
-          }),
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          recordIds,
-        }),
-    });
-  }
 
   async grantPrivateRecordsCreatedBy({
     workspaceId,
@@ -110,7 +72,7 @@ export class PrivateRecordStorageService {
     });
   }
 
-  async setPrivate({
+  setPrivate({
     workspaceId,
     flatObjectMetadata,
     recordIds,
@@ -123,54 +85,13 @@ export class PrivateRecordStorageService {
     isPrivate: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    if (!isNonEmptyArray(recordIds)) {
-      return;
-    }
-
-    await this.withRepository({
+    return this.recordPrivacyWriteOrmService.setRecordsPrivate({
       workspaceId,
       flatObjectMetadata,
+      recordIds,
+      isPrivate,
       transactionScope,
-      work: (repository) =>
-        repository.executeRaw(
-          `UPDATE ${buildTableExpression({ workspaceId, flatObjectMetadata })} SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = :isPrivate WHERE "id" = ANY(:recordIds)`,
-          { isPrivate, recordIds },
-        ),
     });
-  }
-
-  private async withRepository<TResult>({
-    workspaceId,
-    flatObjectMetadata,
-    transactionScope,
-    work,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
-    transactionScope?: WorkspaceTransactionScope;
-    work: (repository: WorkspaceRepository) => Promise<TResult>;
-  }): Promise<TResult> {
-    if (isDefined(transactionScope)) {
-      return work(
-        transactionScope.getRepositoryWithoutPermissionChecks(
-          flatObjectMetadata.nameSingular,
-          {
-            shouldSkipEventEmission: true,
-          },
-        ),
-      );
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        work(
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-            flatObjectMetadata.nameSingular,
-            { shouldSkipEventEmission: true },
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-    );
   }
 }
 
@@ -181,4 +102,7 @@ const buildTableExpression = ({
   workspaceId: string;
   flatObjectMetadata: Parameters<typeof computeObjectTargetTable>[0];
 }): string =>
-  `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))}`;
+  buildWorkspaceTableExpression({
+    workspaceId,
+    tableName: computeObjectTargetTable(flatObjectMetadata),
+  });

@@ -13,7 +13,7 @@ import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-r
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 export const rescheduleCallRecordingBot = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<void> => {
   const externalBotId = callRecording.externalBotId;
