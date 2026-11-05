@@ -17,6 +17,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
+import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-rule-record-shares-query.util';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
@@ -132,6 +133,15 @@ export class RecordSharingPermissionsService {
     }).has(recordId);
   }
 
+  findRuleRecordShares(question: {
+    workspaceId: string;
+    objectMetadataId: string;
+    scope: RuleRecordSharesScope;
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<RecordShare[]> {
+    return this.recordPermissionReadOrmService.findRuleRecordShares(question);
+  }
+
   async isRecordSharedBeyondMember({
     workspaceId,
     objectMetadataId,
@@ -176,7 +186,7 @@ export class RecordSharingPermissionsService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordAccessDecisionService.isOperationPermittedByRole({
+      (await this.recordAccessDecisionService.canRoleReachSomeRecords({
         principals:
           await this.principalPermissionsService.buildPermissionsPrincipals({
             authContext: args.authContext,

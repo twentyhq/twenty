@@ -1,4 +1,4 @@
-import { resolveViewChildEntityId } from 'src/engine/permissions/view/utils/resolve-view-child-entity-id.util';
+import { resolveViewChildEntityId } from 'src/engine/metadata-modules/view/utils/resolve-view-child-entity-id.util';
 
 describe('resolveViewChildEntityId', () => {
   it('reads the top-level id a mutation is routed by', () => {
