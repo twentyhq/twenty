@@ -1,26 +1,26 @@
 import gql from 'graphql-tag';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 // The seeded member role cannot update settings, so it lacks DATA_MODEL
 describe('Object metadata read without DATA_MODEL should succeed', () => {
   let companyObjectMetadataId: string;
 
   beforeAll(async () => {
-    companyObjectMetadataId = (
-      await getCoreRepository<ObjectMetadataEntity>(
-        ObjectMetadataEntity,
-      ).findOneOrFail({
-        where: {
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          nameSingular: 'company',
-        },
-      })
-    ).id;
+    const { objects } = await findManyObjectMetadata({
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id nameSingular',
+      expectToFail: false,
+    });
+
+    const companyObjectMetadata = objects.find(
+      ({ nameSingular }) => nameSingular === 'company',
+    );
+
+    jestExpectToBeDefined(companyObjectMetadata);
+    companyObjectMetadataId = companyObjectMetadata.id;
   });
 
   it('should read an object through GraphQL', async () => {
