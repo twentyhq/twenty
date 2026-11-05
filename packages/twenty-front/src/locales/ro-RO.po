@@ -351,7 +351,7 @@ msgstr "{0, plural, one {Invitația ta nu a fost trimisă încă} few {Cele # in
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
-msgstr ""
+msgstr "{0} · {1}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -584,7 +584,7 @@ msgstr "{appDisplayName} ar dori să:"
 #. js-lingui-id: y+Uv96
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
-msgstr ""
+msgstr "{appLabel} instalată"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -837,7 +837,7 @@ msgstr "{installCount, plural, one {{0} instalare} few {{1} instalări} other {{
 #. js-lingui-id: XcDI87
 #: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
 msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr ""
+msgstr "{invitationCount, plural, one {# invitație trimisă} few {# invitații trimise} other {# de invitații trimise}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -3014,7 +3014,7 @@ msgstr "Setări IA"
 #. js-lingui-id: JDoLSS
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "AI shapes your workspace around your data."
-msgstr ""
+msgstr "IA îți configurează spațiul de lucru în funcție de datele tale."
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -3637,7 +3637,7 @@ msgstr "și încă {hiddenCount}"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Animate"
-msgstr ""
+msgstr "Animează"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -4050,7 +4050,7 @@ msgstr "Arabă"
 #. js-lingui-id: DzER9P
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Arch"
-msgstr ""
+msgstr "Arc"
 
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -4348,12 +4348,12 @@ msgstr "Asistent"
 #. js-lingui-id: FwlE5m
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Assistant avatar"
-msgstr ""
+msgstr "Avatarul asistentului"
 
 #. js-lingui-id: iHgLrg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Assistant name"
-msgstr ""
+msgstr "Numele asistentului"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4723,7 +4723,7 @@ msgstr "Înapoi la conținut"
 #. js-lingui-id: K35/lm
 #: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
 msgid "Back to customization"
-msgstr ""
+msgstr "Înapoi la personalizare"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -6210,7 +6210,7 @@ msgstr "Alege preferințele pentru aplicațiile instalate în spațiul tău de l
 #. js-lingui-id: 7xMmki
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Circle"
-msgstr ""
+msgstr "Cerc"
 
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6500,7 +6500,7 @@ msgstr "Închide videoclipul"
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -6510,7 +6510,7 @@ msgstr "Cloudflare poate aștepta un nume relativ la zonă, nu numele de gazdă 
 #. js-lingui-id: ExH3eu
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Clover"
-msgstr ""
+msgstr "Trifoi"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -7449,7 +7449,7 @@ msgstr "Cook"
 #. js-lingui-id: SB9yVb
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cookie"
-msgstr ""
+msgstr "Biscuit"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8752,7 +8752,7 @@ msgstr "Personalizează"
 #. js-lingui-id: 9p/HFu
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Customize assistant"
-msgstr ""
+msgstr "Personalizați asistentul"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -10301,12 +10301,12 @@ msgstr "Trageți fișierul aici..."
 #. js-lingui-id: 3DHZvz
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Drop to start your import"
-msgstr ""
+msgstr "Plasează pentru a începe importul"
 
 #. js-lingui-id: kIz73Z
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Drop your CSV or Excel from any tool"
-msgstr ""
+msgstr "Plasează fișierul CSV sau Excel din orice instrument"
 
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
@@ -11197,7 +11197,7 @@ msgstr "Introdu o valoare JSON"
 #. js-lingui-id: 0mwDxe
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "Introduceți un nume cuprins între 1 și {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractere."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -12279,7 +12279,7 @@ msgstr "Foarte inteligent"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Face"
-msgstr ""
+msgstr "Față"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -13387,7 +13387,7 @@ msgstr "Flux"
 #. js-lingui-id: abEdHK
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Flower"
-msgstr ""
+msgstr "Floare"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
@@ -13749,7 +13749,7 @@ msgstr "Funcții - Setări"
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Gem"
-msgstr ""
+msgstr "Piatră prețioasă"
 
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14202,7 +14202,7 @@ msgstr "Identificator"
 #. js-lingui-id: halrRh
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
-msgstr ""
+msgstr "Vesel"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14364,7 +14364,7 @@ msgstr "Centru de ajutor"
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Hexagon"
-msgstr ""
+msgstr "Hexagon"
 
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14949,7 +14949,7 @@ msgstr "Importați sau adăugați configurația MCP din setările JetBrains."
 #. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
 msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
-msgstr ""
+msgstr "Importă fișierele atașate în Twenty. Stabilește ce înregistrări conțin și configurează spațiul de lucru în funcție de acestea: reutilizează obiectele și câmpurile potrivite, adaugă-le pe cele lipsă, apoi creează înregistrările și le asociază între ele."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -17162,7 +17162,7 @@ msgstr "Ți-ai pierdut autentificatorul? Folosește un cod de recuperare"
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Love"
-msgstr ""
+msgstr "Îndrăgostit"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17754,7 +17754,7 @@ msgstr "Trimite mesaj lui {recipientName}"
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message attachments"
-msgstr ""
+msgstr "Atașamente la mesaje"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -18485,7 +18485,7 @@ msgstr "Moduri de navigare"
 #. js-lingui-id: hUbvfC
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Need an export? Get one from"
-msgstr ""
+msgstr "Aveți nevoie de un export? Obțineți unul de la"
 
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
@@ -18869,7 +18869,7 @@ msgstr "Următoarea captură de ecran"
 #. js-lingui-id: e3GOIZ
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Next step"
-msgstr ""
+msgstr "Pasul următor"
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -20613,7 +20613,7 @@ msgstr "Deschis"
 #. placeholder {0}: account.handle
 #: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
 msgid "Open {0} settings"
-msgstr ""
+msgstr "Deschide setările {0}"
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21322,7 +21322,7 @@ msgstr "Partener"
 #. js-lingui-id: gHz5zY
 #: src/utils/title-utils.ts
 msgid "Partner - Settings"
-msgstr ""
+msgstr "Partener - Setări"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21337,7 +21337,7 @@ msgstr "Cod de partener aplicat"
 #. js-lingui-id: 0w8/Qw
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner codes can only be added during the free trial."
-msgstr ""
+msgstr "Codurile de partener pot fi adăugate doar în timpul perioadei de probă gratuite."
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21667,7 +21667,7 @@ msgstr "Alege un moment de trimitere în viitor."
 #. js-lingui-id: Lu0MSt
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Pick a starting point, then make it yours"
-msgstr ""
+msgstr "Alegeți un punct de plecare, apoi personalizați-l"
 
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -21720,7 +21720,7 @@ msgstr "Grafic circular"
 #. js-lingui-id: qoLYkj
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Pill"
-msgstr ""
+msgstr "Capsulă"
 
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -22069,7 +22069,7 @@ msgstr "Captura de ecran anterioară"
 #. js-lingui-id: VbggDE
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Previous step"
-msgstr ""
+msgstr "Pasul anterior"
 
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
@@ -23612,7 +23612,7 @@ msgstr "Resetează dispunerea paginii de înregistrare"
 #. js-lingui-id: Oi+lSL
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Reset to Ada"
-msgstr ""
+msgstr "Resetează la Ada"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24303,7 +24303,7 @@ msgstr "Salvat în aplicația Workspace"
 #. js-lingui-id: LRlHXj
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Saving assistant settings..."
-msgstr ""
+msgstr "Salvarea setărilor asistentului..."
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -25835,12 +25835,12 @@ msgstr "Al șaptelea"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
-msgstr ""
+msgstr "Formă"
 
 #. js-lingui-id: KBYPKo
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Shape, color, face"
-msgstr ""
+msgstr "Formă, culoare, față"
 
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -26291,7 +26291,7 @@ msgstr "Cer"
 #. js-lingui-id: u9Z+qJ
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Sleepy"
-msgstr ""
+msgstr "Somnoros"
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26888,7 +26888,7 @@ msgstr "Stocați o întâlnire sincronizată de mai multe calendare ale aceluia�
 #. js-lingui-id: YbaJNn
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Stocați și afișați fișierele atașate mesajelor. Activat după finalizarea actualizării spațiului de lucru."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -27249,7 +27249,7 @@ msgstr "Suportă raționare"
 #. js-lingui-id: e0Wwlk
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Surprised"
-msgstr ""
+msgstr "Surprins"
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -30344,7 +30344,7 @@ msgstr "Încărcați fișierul XML cu informațiile conexiunii"
 #. js-lingui-id: /w70rp
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Upload your CRM export"
-msgstr ""
+msgstr "Încărcați exportul CRM"
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -31672,7 +31672,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: Z4dSVG
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Wink"
-msgstr ""
+msgstr "Face cu ochiul"
 
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
