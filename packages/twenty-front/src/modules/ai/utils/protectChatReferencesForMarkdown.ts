@@ -2,7 +2,11 @@ import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatRef
 import { escapeMarkdownForChatReference } from '@/ai/utils/escapeMarkdownForChatReference';
 import { formatChatReference } from '@/ai/utils/formatChatReference';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
-import { getChatReferencesInMarkdownText } from '@/ai/utils/getChatReferencesInMarkdownText';
+import { getMarkdownTextChatReferences } from 'twenty-shared/markdown';
+
+// Markdown must not read the brackets as a link, since the shared reader treats each reference as one unit.
+const escapeChatReferenceBrackets = (reference: string): string =>
+  `\\[\\[${reference.slice(2, -2)}\\]\\]`;
 
 export const protectChatReferencesForMarkdown = (text: string): string => {
   const unmarkedText = text.replaceAll(PROTECTED_CHAT_REFERENCE_MARKER, '');
@@ -12,11 +16,8 @@ export const protectChatReferencesForMarkdown = (text: string): string => {
     return segments[0];
   }
 
-  const referencesInMarkdownText = new Set(
-    getChatReferencesInMarkdownText({
-      text: unmarkedText,
-      references: segments.filter((segment) => typeof segment !== 'string'),
-    }),
+  const markdownTextReferenceIndexes = new Set(
+    getMarkdownTextChatReferences(unmarkedText).map(({ index }) => index),
   );
 
   return segments
@@ -25,14 +26,16 @@ export const protectChatReferencesForMarkdown = (text: string): string => {
         return segment;
       }
 
-      if (!referencesInMarkdownText.has(segment)) {
+      if (!markdownTextReferenceIndexes.has(segment.index)) {
         return segment.fullMatch;
       }
 
-      return `${PROTECTED_CHAT_REFERENCE_MARKER}${formatChatReference({
-        ...segment,
-        displayName: escapeMarkdownForChatReference(segment.displayName),
-      })}`;
+      return `${PROTECTED_CHAT_REFERENCE_MARKER}${escapeChatReferenceBrackets(
+        formatChatReference({
+          ...segment,
+          displayName: escapeMarkdownForChatReference(segment.displayName),
+        }),
+      )}`;
     })
     .join('');
 };

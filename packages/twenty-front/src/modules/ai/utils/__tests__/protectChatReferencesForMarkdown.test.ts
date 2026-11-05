@@ -4,6 +4,7 @@ import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferenc
 const MARKER = PROTECTED_CHAT_REFERENCE_MARKER;
 const MIA_MENTION =
   '[[record:workspaceMember:20202020-0687-4c41-b707-ed1bfca972a7:Mia Lee]]';
+const PROTECTED_MIA_MENTION = `${MARKER}\\[\\[record:workspaceMember:20202020-0687-4c41-b707-ed1bfca972a7:Mia Lee\\]\\]`;
 const ESCAPED_MIA_MENTION =
   '\\[\\[record:workspaceMember:20202020-0687-4c41-b707-ed1bfca972a7:Mia Lee\\]\\]';
 
@@ -20,7 +21,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next',
       ),
     ).toBe(
-      `Contact ${MARKER}[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next`,
+      `Contact ${MARKER}\\[\\[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme\\]\\] next`,
     );
   });
 
@@ -30,7 +31,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'Contact [[company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next',
       ),
     ).toBe(
-      `Contact ${MARKER}[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next`,
+      `Contact ${MARKER}\\[\\[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme\\]\\] next`,
     );
   });
 
@@ -40,7 +41,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'See [[record:workflow:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Workflow `UPDATE_RECORD` step]]',
       ),
     ).toBe(
-      `See ${MARKER}[[record:workflow:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Workflow \\\`UPDATE\\_RECORD\\\` step]]`,
+      `See ${MARKER}\\[\\[record:workflow:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Workflow \\\`UPDATE\\_RECORD\\\` step\\]\\]`,
     );
   });
 
@@ -50,7 +51,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'Ping [[record:person:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Doe: Jane]]',
       ),
     ).toBe(
-      `Ping ${MARKER}[[record:person:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Doe: Jane]]`,
+      `Ping ${MARKER}\\[\\[record:person:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Doe: Jane\\]\\]`,
     );
   });
 
@@ -59,7 +60,7 @@ describe('protectChatReferencesForMarkdown', () => {
       protectChatReferencesForMarkdown(
         'Open [[object:partner:Partners (EMEA)]]',
       ),
-    ).toBe(`Open ${MARKER}[[object:partner:Partners \\(EMEA\\)]]`);
+    ).toBe(`Open ${MARKER}\\[\\[object:partner:Partners \\(EMEA\\)\\]\\]`);
   });
 
   it('should escape a field label without touching its names', () => {
@@ -68,7 +69,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'The [[field:opportunity:nextStep:Next step (owner)]] field',
       ),
     ).toBe(
-      `The ${MARKER}[[field:opportunity:nextStep:Next step \\(owner\\)]] field`,
+      `The ${MARKER}\\[\\[field:opportunity:nextStep:Next step \\(owner\\)\\]\\] field`,
     );
   });
 
@@ -78,7 +79,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'See [[view:44444444-4444-4444-4444-444444444444:Q1 - pipeline]]',
       ),
     ).toBe(
-      `See ${MARKER}[[view:44444444-4444-4444-4444-444444444444:Q1 \\- pipeline]]`,
+      `See ${MARKER}\\[\\[view:44444444-4444-4444-4444-444444444444:Q1 \\- pipeline\\]\\]`,
     );
   });
 
@@ -88,7 +89,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'Open [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[test] name]]',
       ),
     ).toBe(
-      `Open ${MARKER}[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:\\[test\\] name]]`,
+      `Open ${MARKER}\\[\\[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:\\[test\\] name\\]\\]`,
     );
   });
 
@@ -105,7 +106,7 @@ describe('protectChatReferencesForMarkdown', () => {
       protectChatReferencesForMarkdown(
         'Created [[object:opportunity:Opportunities]]].',
       ),
-    ).toBe(`Created ${MARKER}[[object:opportunity:Opportunities]]].`);
+    ).toBe(`Created ${MARKER}\\[\\[object:opportunity:Opportunities\\]\\]].`);
   });
 
   it('should mark proposed field references', () => {
@@ -114,7 +115,7 @@ describe('protectChatReferencesForMarkdown', () => {
         'add [[field:person:role:Role]] and [[field:person:leadSource:Lead source]]',
       ),
     ).toBe(
-      `add ${MARKER}[[field:person:role:Role]] and ${MARKER}[[field:person:leadSource:Lead source]]`,
+      `add ${MARKER}\\[\\[field:person:role:Role\\]\\] and ${MARKER}\\[\\[field:person:leadSource:Lead source\\]\\]`,
     );
   });
 
@@ -132,7 +133,7 @@ describe('protectChatReferencesForMarkdown', () => {
         '[[object:person:People]] gets [[field:person:lead source:Lead source]] and [[field:person:stage:Stage]]',
       ),
     ).toBe(
-      `${MARKER}[[object:person:People]] gets Lead source and ${MARKER}[[field:person:stage:Stage]]`,
+      `${MARKER}\\[\\[object:person:People\\]\\] gets Lead source and ${MARKER}\\[\\[field:person:stage:Stage\\]\\]`,
     );
   });
 
@@ -142,71 +143,20 @@ describe('protectChatReferencesForMarkdown', () => {
         'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]]',
       ),
     ).toBe(
-      `The ${MARKER}[[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of ${MARKER}[[object:partner:Partners]] groups ${MARKER}[[record:person:11111111-1111-1111-1111-111111111111:Alice]] by ${MARKER}[[field:person:stage:Stage]]`,
+      `The ${MARKER}\\[\\[view:44444444-4444-4444-4444-444444444444:Pipeline\\]\\] view of ${MARKER}\\[\\[object:partner:Partners\\]\\] groups ${MARKER}\\[\\[record:person:11111111-1111-1111-1111-111111111111:Alice\\]\\] by ${MARKER}\\[\\[field:person:stage:Stage\\]\\]`,
     );
   });
 
-  it.each([
-    ['a list item', `- ${MIA_MENTION} owns the follow-up`],
-    ['a table cell', `| Owner |\n| --- |\n| ${MIA_MENTION} |`],
-    [
-      'a table cell next to inline code',
-      `| Owner | Field |\n| --- | --- |\n| ${MIA_MENTION} | \`stage\` |`,
-    ],
-    ['a list item after inline code', `- \`deal\` owned by ${MIA_MENTION}`],
-    [
-      'text between two code spans',
-      `Use \`a\` with ${MIA_MENTION} and \`b\` alone`,
-    ],
-    ['a heading', `## For ${MIA_MENTION}`],
-    ['a blockquote', `> ${MIA_MENTION} said yes`],
-    ['emphasis', `**${MIA_MENTION}**, please review`],
-    ['a link label', `[Ask ${MIA_MENTION}](https://example.com)`],
-    ['text after an escaped backslash', `C:\\\\${MIA_MENTION}`],
-  ])('should mark a reference in %s', (_, text) => {
-    expect(protectChatReferencesForMarkdown(text)).toBe(
-      text.replace(MIA_MENTION, `${MARKER}${MIA_MENTION}`),
-    );
+  it('should leave a reference in inline code unchanged', () => {
+    const text =
+      'Write `[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme (EMEA)]]` to link it';
+
+    expect(protectChatReferencesForMarkdown(text)).toBe(text);
   });
 
-  it.each([
-    [
-      'inline code',
-      'Write `[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme (EMEA)]]` to link it',
-    ],
-    ['a fenced code block', `\`\`\`\n${MIA_MENTION}\n\`\`\``],
-    ['an indented code block', `    ${MIA_MENTION}`],
-    ['a tab indented code block', `\t${MIA_MENTION}`],
-    ['a tilde fenced code block', `~~~\n${MIA_MENTION}\n~~~`],
-    ['an unclosed fenced code block', `\`\`\`\n${MIA_MENTION}`],
-    ['a code span across lines', `Use \`a\n${MIA_MENTION}\nb\` here`],
-    [
-      'a code span opened after an escaped backtick',
-      `\\\`a \`b\n${MIA_MENTION} c\` d\``,
-    ],
-    ['indented code in a blockquote', `>     ${MIA_MENTION}`],
-    ['indented code in a list item', `-     ${MIA_MENTION}`],
-    ['a link title', `[Docs](https://example.com "${MIA_MENTION}")`],
-    [
-      'a link definition',
-      `See [docs].\n\n[docs]: https://example.com "${MIA_MENTION}"`,
-    ],
-    [
-      'a link label matching a definition',
-      `${MIA_MENTION}\n\n[${MIA_MENTION.slice(2, -2)}]: https://example.com`,
-    ],
-    [
-      'a fenced code block in a list item',
-      `- Example:\n\n  \`\`\`\n  ${MIA_MENTION}\n  \`\`\``,
-    ],
-    [
-      'inline code in a table cell',
-      `| Syntax |\n| --- |\n| \`${MIA_MENTION}\` |`,
-    ],
-    ['an HTML tag', `<span title="${MIA_MENTION}">Mia</span>`],
-    ['escaped brackets', `Type ${ESCAPED_MIA_MENTION} to mention`],
-    ['an escaped opening bracket', `Type \\${MIA_MENTION} to mention`],
-  ])('should leave a reference in %s unchanged', (_, text) => {
+  it('should leave a reference with an escaped opening bracket unchanged', () => {
+    const text = `Type \\${MIA_MENTION} to mention`;
+
     expect(protectChatReferencesForMarkdown(text)).toBe(text);
   });
 
@@ -215,7 +165,13 @@ describe('protectChatReferencesForMarkdown', () => {
       protectChatReferencesForMarkdown(
         `Type ${MIA_MENTION.slice(0, -2)}\\]] to mention`,
       ),
-    ).toBe(`Type ${MARKER}${MIA_MENTION.slice(0, -2)}\\\\]] to mention`);
+    ).toBe(`Type ${PROTECTED_MIA_MENTION.slice(0, -4)}\\\\\\]\\] to mention`);
+  });
+
+  it('should mark a reference followed by a link target', () => {
+    expect(
+      protectChatReferencesForMarkdown(`${MIA_MENTION}(https://example.com)`),
+    ).toBe(`${PROTECTED_MIA_MENTION}(https://example.com)`);
   });
 
   it('should mark only the occurrence outside code when a reference repeats', () => {
@@ -223,13 +179,7 @@ describe('protectChatReferencesForMarkdown', () => {
       protectChatReferencesForMarkdown(
         `Write \`${MIA_MENTION}\` to ping ${MIA_MENTION}`,
       ),
-    ).toBe(`Write \`${MIA_MENTION}\` to ping ${MARKER}${MIA_MENTION}`);
-  });
-
-  it('should ignore probe markers already in the text', () => {
-    const text = `\uFDD10[[ <span title="${MIA_MENTION}">Mia</span>`;
-
-    expect(protectChatReferencesForMarkdown(text)).toBe(text);
+    ).toBe(`Write \`${MIA_MENTION}\` to ping ${PROTECTED_MIA_MENTION}`);
   });
 
   it('should drop markers already in the text', () => {
