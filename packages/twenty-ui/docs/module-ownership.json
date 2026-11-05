@@ -47,6 +47,7 @@
   ],
   "components": [
     "AnimatedIconCrossfade",
+    "AssistantAvatar",
     "AvatarGroup",
     "Callout",
     "CodeEditor",
