@@ -190,14 +190,11 @@ export class RecordAccessDecisionService {
       return new Set();
     }
 
-    const condition = buildPermissionsCondition({
+    const condition = this.buildSelectableRecordsCondition({
       principals: request.principals,
       metadataMaps: request.metadataMaps,
       flatObjectMetadata: request.flatObjectMetadata,
       operationType: request.operationType,
-      recordShareTableExpression: buildRecordShareTableExpression({
-        workspaceId: principals.workspaceId,
-      }),
       hypotheticalRecordShareAccessLevel,
     });
 
@@ -300,11 +297,13 @@ export class RecordAccessDecisionService {
     metadataMaps,
     flatObjectMetadata,
     operationType,
+    hypotheticalRecordShareAccessLevel,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
     metadataMaps: PermissionsMetadataMaps;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: ObjectRecordsOperationType;
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): SqlCondition | boolean {
     try {
       validateOperationIsPermittedOrThrow({
@@ -341,6 +340,7 @@ export class RecordAccessDecisionService {
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: principals.workspaceId,
       }),
+      hypotheticalRecordShareAccessLevel,
     });
   }
 
