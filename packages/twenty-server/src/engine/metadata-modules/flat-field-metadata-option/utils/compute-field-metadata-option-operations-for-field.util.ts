@@ -4,6 +4,7 @@ import {
   getTargetOptionColumnsByUniversalIdentifier,
   type FieldMetadataOptionColumns,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { isFieldMetadataOptionSyncSkipped } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-sync-skipped.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
@@ -28,13 +29,11 @@ const hasOptionColumnsChanged = ({
 
 // A row's universal identifier is its option id.
 export const computeFieldMetadataOptionOperationsForField = ({
-  fieldMetadataUniversalIdentifier,
   targetUniversalFlatFieldMetadata,
   existingOptions,
   isUniversalIdentifierUsedByOtherField,
   applicationUniversalIdentifier,
 }: {
-  fieldMetadataUniversalIdentifier: string;
   targetUniversalFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
   existingOptions: UniversalFlatFieldMetadataOption[];
   isUniversalIdentifierUsedByOtherField: (
@@ -92,28 +91,27 @@ export const computeFieldMetadataOptionOperationsForField = ({
     existingOptions.map(({ universalIdentifier }) => universalIdentifier),
   );
 
-  for (const [
-    universalIdentifier,
-    targetOptionColumns,
-  ] of targetOptionColumnsByUniversalIdentifier) {
+  if (!isDefined(targetUniversalFlatFieldMetadata)) {
+    return operations;
+  }
+
+  for (const targetOption of buildUniversalFlatFieldMetadataOptionsForField({
+    universalFlatFieldMetadata: targetUniversalFlatFieldMetadata,
+    applicationUniversalIdentifier,
+    now,
+  })) {
     // The field validator reports an option id reused across fields.
     if (
-      existingOptionUniversalIdentifiers.has(universalIdentifier) ||
-      isUniversalIdentifierUsedByOtherField(universalIdentifier)
+      existingOptionUniversalIdentifiers.has(
+        targetOption.universalIdentifier,
+      ) ||
+      isUniversalIdentifierUsedByOtherField(targetOption.universalIdentifier)
     ) {
       continue;
     }
 
-    operations.flatEntityToCreate[universalIdentifier] = {
-      universalIdentifier,
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-      ...targetOptionColumns,
-      isActive: true,
-      overrides: null,
-      createdAt: now,
-      updatedAt: now,
-    };
+    operations.flatEntityToCreate[targetOption.universalIdentifier] =
+      targetOption;
   }
 
   return operations;
