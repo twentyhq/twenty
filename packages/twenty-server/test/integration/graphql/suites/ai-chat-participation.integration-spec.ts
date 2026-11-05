@@ -126,13 +126,16 @@ describe('Chat participation through the authenticated API', () => {
       expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
         shouldReply,
       );
-      expect(models.evaluate).toHaveBeenCalledTimes(evaluationCalls);
 
-      if (mode !== AiChatAssistantMode.AUTOMATIC) {
-        return;
+      if (shouldReply) {
+        await waitForAllJobsToFinish();
       }
 
-      await waitForAllJobsToFinish();
+      expect(models.evaluate).toHaveBeenCalledTimes(evaluationCalls);
+
+      if (!shouldReply) {
+        return;
+      }
 
       const assistantRecords = await global.testDataSource.query<
         { objectName: string; isPrivate: boolean; principalIds: string[] }[]
