@@ -1,4 +1,5 @@
-import { ModulesContainer } from '@nestjs/core';
+type ProviderWrapper = { instance: unknown };
+type ContainerModule = { providers: Map<unknown, ProviderWrapper> };
 
 export const getAppProviderByClassName = <T>(className: string): T => {
   if (!global.app) {
@@ -7,9 +8,13 @@ export const getAppProviderByClassName = <T>(className: string): T => {
     );
   }
 
-  const modulesContainer = global.app.get(ModulesContainer);
+  const container = (
+    global.app as unknown as {
+      container: { getModules: () => Map<string, ContainerModule> };
+    }
+  ).container;
 
-  for (const containerModule of modulesContainer.values()) {
+  for (const containerModule of container.getModules().values()) {
     for (const [token, wrapper] of containerModule.providers) {
       if (
         typeof token === 'function' &&

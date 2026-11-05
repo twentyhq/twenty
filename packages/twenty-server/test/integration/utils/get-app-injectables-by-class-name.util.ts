@@ -1,4 +1,5 @@
-import { ModulesContainer } from '@nestjs/core';
+type InjectableWrapper = { instance: unknown };
+type ContainerModule = { injectables: Map<unknown, InjectableWrapper> };
 
 export const getAppInjectablesByClassName = <T>(className: string): T[] => {
   if (!global.app) {
@@ -7,9 +8,13 @@ export const getAppInjectablesByClassName = <T>(className: string): T[] => {
     );
   }
 
-  const modulesContainer = global.app.get(ModulesContainer);
+  const container = (
+    global.app as unknown as {
+      container: { getModules: () => Map<string, ContainerModule> };
+    }
+  ).container;
 
-  return [...modulesContainer.values()].flatMap((containerModule) =>
+  return [...container.getModules().values()].flatMap((containerModule) =>
     [...containerModule.injectables].flatMap(([token, wrapper]) =>
       typeof token === 'function' &&
       token.name === className &&
