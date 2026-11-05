@@ -104,8 +104,8 @@ export class BullMQDriver
     });
     this.jobSizeLimiter = new JobSizeLimiter({
       metricsService,
-      getMode: () =>
-        this.twentyConfigService.get('JOB_QUEUE_MEMORY_LIMIT_MODE'),
+      isEnabled: () =>
+        this.twentyConfigService.get('IS_REDIS_MEMORY_FAIRNESS_ENABLED'),
       getMaxJobSizeBytes: () =>
         this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES'),
     });

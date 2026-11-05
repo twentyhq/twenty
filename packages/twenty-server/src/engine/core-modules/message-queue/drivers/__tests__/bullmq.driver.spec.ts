@@ -815,9 +815,9 @@ describe('BullMQDriver job size limit', () => {
   const SMALL_DATA = { workspaceId: 'ws-1' };
   const LARGE_DATA = { workspaceId: 'ws-1', blob: 'x'.repeat(4096) };
 
-  const buildDriver = (mode: string) => {
+  const buildDriver = (isEnabled: boolean) => {
     const configValues: Record<string, unknown> = {
-      JOB_QUEUE_MEMORY_LIMIT_MODE: mode,
+      IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
       JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
     };
     const metricsService = {
@@ -845,8 +845,8 @@ describe('BullMQDriver job size limit', () => {
     );
   });
 
-  it('refuses the whole batch before adding when a job is too large in enforce', async () => {
-    const { driver } = buildDriver('enforce');
+  it('refuses the whole batch before adding when a job is too large when enabled', async () => {
+    const { driver } = buildDriver(true);
 
     await expect(
       driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
@@ -862,7 +862,7 @@ describe('BullMQDriver job size limit', () => {
   });
 
   it('reports the index of the oversized job in the caller batch', async () => {
-    const { driver } = buildDriver('enforce');
+    const { driver } = buildDriver(true);
 
     mockGetRanges.mockResolvedValue(['waiting-job']);
 
@@ -878,8 +878,8 @@ describe('BullMQDriver job size limit', () => {
     ).rejects.toMatchObject({ details: { index: 1 } });
   });
 
-  it('refuses a single job that is too large in enforce', async () => {
-    const { driver } = buildDriver('enforce');
+  it('refuses a single job that is too large when enabled', async () => {
+    const { driver } = buildDriver(true);
 
     await expect(
       driver.add(
@@ -892,30 +892,26 @@ describe('BullMQDriver job size limit', () => {
     expect(mockAdd).not.toHaveBeenCalled();
   });
 
-  it('still adds a job that is too large in observe and counts the refusal', async () => {
-    const { driver, metricsService } = buildDriver('observe');
+  it('counts the refusal of a job that is too large', async () => {
+    const { driver, metricsService } = buildDriver(true);
 
-    await driver.add(
-      MessageQueue.workspaceQueue,
-      'job',
-      LARGE_DATA,
-      buildWorkspaceJobScope('ws-1'),
-    );
-
-    expect(mockAdd).toHaveBeenCalledTimes(1);
+    await expect(
+      driver.add(
+        MessageQueue.workspaceQueue,
+        'job',
+        LARGE_DATA,
+        buildWorkspaceJobScope('ws-1'),
+      ),
+    ).rejects.toBeInstanceOf(MessageQueueException);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: {
-        queue: MessageQueue.workspaceQueue,
-        reason: 'size',
-        mode: 'observe',
-      },
+      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
       shouldStoreInCache: false,
     });
   });
 
-  it('adds a job that is too large when off', async () => {
-    const { driver, metricsService } = buildDriver('off');
+  it('adds a job that is too large when disabled', async () => {
+    const { driver, metricsService } = buildDriver(false);
 
     await driver.add(
       MessageQueue.workspaceQueue,
@@ -931,7 +927,7 @@ describe('BullMQDriver job size limit', () => {
   });
 
   it('fails a job permanently when it enqueues a job that is too large', async () => {
-    const { driver } = buildDriver('enforce');
+    const { driver } = buildDriver(true);
 
     driver.work(MessageQueue.workspaceQueue, async () => {
       throw new MessageQueueException(
