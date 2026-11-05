@@ -56,7 +56,6 @@ const getInlineTextRaws = (tokens: Token[]): string[] =>
       return [token.raw];
     }
 
-    // Alt text is never shown as text
     if (token.type === 'image') {
       return [];
     }
@@ -174,7 +173,6 @@ const replaceReferencesWithPlaceholders = ({
   );
 };
 
-// Each reference is read as a placeholder, so its label never changes how the text around it is read
 export const getMarkdownTextChatReferences = (
   text: string,
 ): MarkdownTextChatReference[] => {
