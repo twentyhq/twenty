@@ -8,7 +8,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -427,19 +427,26 @@ export class RecordSharingService {
           ),
       )
       .map(({ id, label }) => {
-        const roleObjectsPermissions = rolesPermissions[id];
+        const roleRecordsPermissions = rolesPermissions[id];
 
-        if (!isDefined(roleObjectsPermissions)) {
+        if (!isDefined(roleRecordsPermissions)) {
           return { id, label, canRead: null, canUpdate: null };
         }
 
-        const objectPermissions = roleObjectsPermissions[objectMetadataId];
+        const objectRecordsPermissions =
+          roleRecordsPermissions.objects[objectMetadataId];
 
         return {
           id,
           label,
-          canRead: objectPermissions?.canReadObjectRecords ?? false,
-          canUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
+          canRead: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'select',
+          }),
+          canUpdate: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'update',
+          }),
         };
       });
   }

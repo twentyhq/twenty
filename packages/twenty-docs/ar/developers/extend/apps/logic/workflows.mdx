@@ -101,7 +101,7 @@ export default defineWorkflow({
 
 ## الخطوات
 
-تدعم سير عمل التطبيق أنواع الخطوات التالية: `LOGIC_FUNCTION`، `AI_AGENT`، `HTTP_REQUEST`، `CLASSIFY`، `CREATE_RECORD`، `UPDATE_RECORD`، `UPSERT_RECORD`، `DELETE_RECORD`، `FIND_RECORDS`، `PICK_RECORD`، `FILTER`، `IF_ELSE`، `ITERATOR`، `FORM`، `DELAY`، `WAIT_FOR_EVENT`، `SEND_EMAIL`، `DRAFT_EMAIL`، `CREATE_CALENDAR_EVENT`، `SEND_CHAT_MESSAGE` و`EMPTY`.
+تدعم تدفقات عمل التطبيق أنواع الخطوات التالية: `LOGIC_FUNCTION` و`CODE` و`AI_AGENT` و`HTTP_REQUEST` و`CLASSIFY` و`CREATE_RECORD` و`UPDATE_RECORD` و`UPSERT_RECORD` و`DELETE_RECORD` و`FIND_RECORDS` و`PICK_RECORD` و`FILTER` و`IF_ELSE` و`ITERATOR` و`FORM` و`DELAY` و`WAIT_FOR_EVENT` و`SEND_EMAIL` و`DRAFT_EMAIL` و`CREATE_CALENDAR_EVENT` و`SEND_CHAT_MESSAGE` و`EMPTY`.
 
 تتطابق مدخلاتها مع خطوات [منشئ سير العمل](/ar/user-guide/workflows/capabilities/workflow-actions)، مع استخدام المعرّفات العامة بدلًا من الأسماء:
 
@@ -109,7 +109,20 @@ export default defineWorkflow({
 * تشير عوامل التصفية والفرز إلى الحقول باستخدام `fieldMetadataUniversalIdentifier`.
 * تأخذ معاملات عامل التصفية قيم `ViewFilterOperand`، المُصدَّرة بواسطة `twenty-sdk/define`. تأخذ عوامل مجموعات التصفية قيماً نصية مثل `'AND'` أو `'OR'`.
 * تسمي حقول النموذج من النوع `RECORD` كائنها باستخدام `settings.objectUniversalIdentifier`. توفّر الحقول من النوعين `SELECT` و`MULTI_SELECT` خيارات حقل موجود من النوع نفسه، تمت تسميته باستخدام `settings.selectedFieldUniversalIdentifier`.
-* لتشغيل التعليمات البرمجية الخاصة بك، استخدم خطوة `LOGIC_FUNCTION`. خطوة التعليمات البرمجية في المنشئ غير متاحة.
+* تحمل خطوة `CODE` مصدر TypeScript الخاص بها في `input.code`: وحدة تصدّر دالة `main` تتلقى `input.logicFunctionInput`. لمشاركة التعليمات البرمجية عبر تدفقات العمل، استخدم خطوة `LOGIC_FUNCTION` بدلاً من ذلك.
+
+  يكتب `twenty app pull` مصدر كل خطوة برمجية في ملف خاص بها، بجانب تدفق العمل، ويقرأه تدفق العمل عند إنشاء التطبيق:
+
+  ```ts src/workflows/greet-new-pets.workflow.ts
+  import { readFileSync } from 'node:fs';
+  import { join } from 'node:path';
+
+  // in the step
+  input: {
+    code: readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8'),
+    logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+  },
+  ```
 * تأتي خطوات `AI_AGENT` بنوعين لا يمكنك مزجهما:
 
   * لا تحتوي خطوة Generate على وكيل. تحمل `instructions` و`modelId` و`modelConfiguration` و`scope` الخاصة بها، وتعمل مرة واحدة: دون محادثة أو إدخال بشري أو انتظار.
@@ -136,8 +149,8 @@ export default defineWorkflow({
 
 يمتلك تطبيق Custom الخاص بمساحة العمل مهام سير العمل المُنشأة في منشئ مهام سير العمل، وتكون الشيفرة مرجعًا موثوقًا لها بقدر ما يكون المنشئ كذلك:
 
-* `twenty app pull` يكتب كل واحد منها من نسخته النشطة، وهي النسخة التي نشرها المنشئ آخر مرة. يتم الإبلاغ عن سير عمل تستخدم نسخته النشطة إعدادات لا يمكن لملف `defineWorkflow()` التعبير عنها، مثل خطوة Code، ويُترك في مكانه.
-* يحتفظ سير العمل المسحوب بما خزّنته أداة الإنشاء: مشغّل من دون `universalIdentifier`، واسم المشغّل في أداة الإنشاء، و`position` بقيمة `null` لعقدة لم تضعها أداة الإنشاء مطلقًا، و`outputSchema` يختلف عن المخطط المحسوب. تتطلب هذه الحقول twenty-sdk 2.53.0 أو إصدارًا أحدث، مطبقًا على خادم بإصدار 2.53.0 أو أحدث: ترفضها الإصدارات الأقدم باعتبارها مفاتيح غير معروفة.
+* `twenty app pull` يكتب كل واحد منها من نسخته النشطة، وهي النسخة التي نشرها المنشئ آخر مرة. يتم الإبلاغ عن تدفق العمل الذي تستخدم نسخته النشطة إعدادات لا يمكن لملف `defineWorkflow()` التعبير عنها، مثل عامل تصفية للسجلات في حقل سجل مرتبط، ويُترك في مكانه. وينطبق الأمر نفسه على خطوة برمجية أُنشئت قبل أن تخزّن الخطوات مصدرها، إلى أن تُحرَّر مرة واحدة في أداة الإنشاء أو تُرقّى.
+* يحتفظ سير العمل المسحوب بما خزّنته أداة الإنشاء: مشغّل من دون `universalIdentifier`، واسم المشغّل في أداة الإنشاء، و`position` بقيمة `null` لعقدة لم تضعها أداة الإنشاء مطلقًا، و`outputSchema` يختلف عن المخطط المحسوب. تتطلب هذه الحقول twenty-sdk 2.53.0 أو إصدارًا أحدث، مطبقًا على خادم بإصدار 2.53.0 أو أحدث: ترفضها الإصدارات الأقدم باعتبارها مفاتيح غير معروفة. تتطلب خطوات الكود twenty-sdk 2.56.0 أو إصدارًا أحدث، وأن تُطبَّق على خادم يعمل بالإصدار 2.56.0 أو أحدث: إذ ترفضها الإصدارات الأقدم باعتبارها نوع خطوة غير مدعوم.
 * `twenty app apply` ينشر مثل المنشئ. يُترك سير العمل الذي يتطابق تعريفه مع نسخته النشطة دون تغيير. وإلا، تُؤرشف النسخة النشطة ويصبح التعريف نسخة نشطة جديدة، بحيث تحتفظ عمليات التشغيل السابقة بالنسخة التي شُغِّلت بها.
 * يواصل المستخدمون تحرير مسارات العمل هذه في أداة الإنشاء، ويجلب السحب التالي تغييراتهم مرة أخرى.
 

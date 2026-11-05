@@ -1,8 +1,7 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
-  type ObjectPermissions,
-  type ObjectsPermissions,
+  type ObjectRecordsPermissions,
 } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -10,6 +9,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
 
@@ -44,14 +44,12 @@ const flatFieldMetadataMaps = [
   createEmptyFlatEntityMaps(),
 );
 
-const READ_ACCESS: ObjectPermissions = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
+const READ_ACCESS: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const buildUpdateEvent = ({
@@ -77,24 +75,26 @@ const buildUpdateEvent = ({
 
 const filter = ({
   events,
-  objectsPermissions,
+  recordsPermissions,
 }: {
   events: ObjectRecordUpdateEvent[];
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
 }) =>
   filterReadableEvents({
     events,
     admittedRecordIds: new Set(['record-1', 'record-2']),
     objectMetadata: invoice,
-    objectsPermissions,
+    recordsPermissions,
     metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
   });
 
-const SECRET_HIDDEN: ObjectsPermissions = {
-  [OBJECT_METADATA_ID]: {
-    ...READ_ACCESS,
-    restrictedFields: {
-      'secret-field-id': { canRead: false, canUpdate: false },
+const SECRET_HIDDEN: Pick<RoleRecordsPermissions, 'objects'> = {
+  objects: {
+    [OBJECT_METADATA_ID]: {
+      ...READ_ACCESS,
+      restrictedFields: {
+        'secret-field-id': { canRead: false, canUpdate: false },
+      },
     },
   },
 };
@@ -106,7 +106,7 @@ describe('filterReadableEvents', () => {
         buildUpdateEvent({ recordId: 'record-1', updatedFields: ['name'] }),
         buildUpdateEvent({ recordId: 'record-3', updatedFields: ['name'] }),
       ],
-      objectsPermissions: { [OBJECT_METADATA_ID]: READ_ACCESS },
+      recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
     });
 
     expect(events.map((event) => event.recordId)).toEqual(['record-1']);
@@ -120,7 +120,7 @@ describe('filterReadableEvents', () => {
           updatedFields: ['name', 'secret'],
         }),
       ],
-      objectsPermissions: SECRET_HIDDEN,
+      recordsPermissions: SECRET_HIDDEN,
     });
 
     expect(event.properties.after).toEqual({ id: 'record-1', name: 'New' });
@@ -133,7 +133,7 @@ describe('filterReadableEvents', () => {
         events: [
           buildUpdateEvent({ recordId: 'record-2', updatedFields: ['secret'] }),
         ],
-        objectsPermissions: SECRET_HIDDEN,
+        recordsPermissions: SECRET_HIDDEN,
       }),
     ).toEqual([]);
   });

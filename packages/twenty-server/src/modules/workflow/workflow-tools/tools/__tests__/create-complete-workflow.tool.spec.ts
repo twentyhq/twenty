@@ -139,17 +139,76 @@ describe('createCreateCompleteWorkflowTool', () => {
     });
   });
 
-  it('refuses CODE steps without creating anything', async () => {
+  it('refuses CODE steps without inline code, creating nothing', async () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = await tool.execute(
-      buildInput({ steps: [buildStep({ type: 'CODE' })] }),
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { logicFunctionId: STEP_ID, logicFunctionInput: {} },
+          }),
+        ],
+      }),
     );
 
     expect(result.success).toBe(false);
     expect(
       coreWorkflowMutationService.createWorkflowWithContent,
     ).not.toHaveBeenCalled();
+  });
+
+  it('refuses CODE steps with empty inline code, creating nothing', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    const result = await tool.execute(
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { code: '', logicFunctionInput: {} },
+          }),
+        ],
+      }),
+    );
+
+    expect(result.success).toBe(false);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('creates CODE steps carrying their source inline', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+    const code = 'export const main = async () => ({});';
+
+    const result = await tool.execute(
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { code, logicFunctionInput: {} },
+          }),
+        ],
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: [
+          expect.objectContaining({
+            type: 'CODE',
+            settings: expect.objectContaining({
+              input: expect.objectContaining({ code }),
+            }),
+          }),
+        ],
+      }),
+    );
   });
 
   it('creates AI_AGENT steps, which need no agent', async () => {

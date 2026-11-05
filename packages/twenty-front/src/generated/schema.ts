@@ -360,6 +360,27 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
+export type LogicFunctionExecutionResult = {
+  __typename?: 'LogicFunctionExecutionResult';
+  /** Execution result in JSON format */
+  data?: Maybe<Scalars['JSON']['output']>;
+  /** Execution duration in milliseconds */
+  duration: Scalars['Float']['output'];
+  /** Execution error in JSON format */
+  error?: Maybe<Scalars['JSON']['output']>;
+  /** Execution Logs */
+  logs: Scalars['String']['output'];
+  /** Execution status */
+  status: LogicFunctionExecutionStatus;
+};
+
+/** Status of the logic function execution */
+export enum LogicFunctionExecutionStatus {
+  ERROR = 'ERROR',
+  IDLE = 'IDLE',
+  SUCCESS = 'SUCCESS'
+}
+
 export enum MessageChannelType {
   APP = 'APP',
   EMAIL = 'EMAIL',
@@ -397,6 +418,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  testWorkflowCodeStep: LogicFunctionExecutionResult;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
@@ -511,6 +533,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationTestWorkflowCodeStepArgs = {
+  input: TestWorkflowCodeStepInput;
+};
+
+
 export type MutationUpdateCoreWorkflowArgs = {
   input: UpdateCoreWorkflowInput;
 };
@@ -581,6 +608,7 @@ export type Query = {
   search: SearchResultConnection;
   searchTimelineCalendarEvents: TimelineCalendarEventSearchResult;
   searchTimelineThreads: TimelineThreadSearchResult;
+  workflowCodeStepAvailablePackages: Scalars['JSON']['output'];
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
 };
 
@@ -716,6 +744,11 @@ export type QuerySearchTimelineThreadsArgs = {
 };
 
 
+export type QueryWorkflowCodeStepAvailablePackagesArgs = {
+  workflowVersionId: Scalars['UUID']['input'];
+};
+
+
 export type QueryWorkflowStepConnectedAccountHandleArgs = {
   connectedAccountId: Scalars['UUID']['input'];
 };
@@ -799,6 +832,15 @@ export type TestHttpRequestInput = {
   method: Scalars['String']['input'];
   /** URL to make the request to */
   url: Scalars['String']['input'];
+};
+
+export type TestWorkflowCodeStepInput = {
+  /** TypeScript source of the code step */
+  code: Scalars['String']['input'];
+  /** Payload in JSON format */
+  payload: Scalars['JSON']['input'];
+  /** Workflow version the code step belongs to */
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type TimelineCalendarEvent = {

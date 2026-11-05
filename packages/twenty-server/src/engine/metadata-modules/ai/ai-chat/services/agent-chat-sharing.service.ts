@@ -16,6 +16,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -23,7 +24,6 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -47,16 +47,10 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
-
-const AGENT_CHAT_REPLY_OPERATION_TYPES = [
-  'select',
-  'update',
-] as const satisfies OperationType[];
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -76,7 +70,6 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -160,7 +153,7 @@ export class AgentChatSharingService {
     operationType,
     ...args
   }: AgentChatThreadAccessArgs & {
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }) {
     const authContext = await this.getAuthContext(args);
     const thread = await this.threadRepository.findOne(args.workspaceId, {
@@ -320,23 +313,26 @@ export class AgentChatSharingService {
       (
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
-            const grants = await Promise.all(
-              AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                this.recordAccessPolicyService.hasAccessToRecords({
-                  authContext: {
-                    type: 'user',
-                    workspace: { id: workspaceId },
-                    workspaceMemberId: memberId,
-                  },
-                  flatObjectMetadata: threadFlatObjectMetadata,
-                  recordIds: [threadId],
-                  operationType,
-                  hypotheticalRecordShareAccessLevel,
-                }),
-              ),
-            );
+            const principals =
+              await this.permissionsService.buildPermissionsPrincipals({
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: memberId,
+                },
+              });
+            const question = {
+              principals,
+              objectMetadataId: threadFlatObjectMetadata.id,
+              recordIds: [threadId],
+              hypotheticalRecordShareAccessLevel,
+            };
+            const [canReadThread, canUpdateThread] = await Promise.all([
+              this.permissionsService.canReadRecords(question),
+              this.permissionsService.canUpdateRecords(question),
+            ]);
 
-            return grants.every(Boolean) ? memberId : undefined;
+            return canReadThread && canUpdateThread ? memberId : undefined;
           }),
         )
       ).filter(isDefined),
@@ -657,7 +653,7 @@ export class AgentChatSharingService {
   // must run inside the caller's workspace context
   private async assertOperationAllowed(
     threadId: string,
-    operationType: OperationType,
+    operationType: ObjectRecordsOperationType,
   ): Promise<void> {
     const allowedIds = await this.workspaceOrmManager
       .getRepository('agentChatThread')

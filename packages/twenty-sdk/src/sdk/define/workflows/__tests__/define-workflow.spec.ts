@@ -98,6 +98,29 @@ describe('defineWorkflow', () => {
     expect(defineWorkflow(definition).errors).toEqual([]);
   });
 
+  it('accepts a code step with its source', () => {
+    const definition: WorkflowManifest = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        steps: [
+          {
+            universalIdentifier: STEP_ID,
+            name: 'Format the name',
+            type: 'CODE',
+            input: {
+              code: 'export const main = async () => ({ ok: true });',
+              logicFunctionInput: {},
+            },
+            nextStepIds: [],
+          },
+        ],
+      },
+    };
+
+    expect(defineWorkflow(definition).errors).toEqual([]);
+  });
+
   it.each([
     {
       problem: 'an email step naming its account by both id and handle',
@@ -110,9 +133,9 @@ describe('defineWorkflow', () => {
     },
     {
       problem: 'a step type applications cannot use',
-      definition: withStep({ type: 'CODE' }),
+      definition: withStep({ type: 'TRANSLATE' }),
       error:
-        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, SEND_CHAT_MESSAGE, AI_AGENT',
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, CODE, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, SEND_CHAT_MESSAGE, AI_AGENT',
     },
     {
       problem: 'an unknown trigger type',

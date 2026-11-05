@@ -6,13 +6,13 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { createViewSortInputSchema } from 'src/engine/metadata-modules/view-sort/tools/schemas/create-view-sort-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 @DefineTool({
   name: 'create_view_sort',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:
     'Add a sort to a view. Use get_field_metadata to get fieldMetadataId values.',
 })
@@ -23,20 +23,18 @@ export class CreateViewSortTool extends BaseTool<
 
   constructor(
     private readonly viewSortService: ViewSortService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewSortInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableViewOrThrow({
       viewId: input.viewId,
-      workspaceId,
-      userWorkspaceId,
-      operation: 'update',
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const sort = await this.viewSortService.createOne({

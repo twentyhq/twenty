@@ -48,7 +48,7 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   return errors;
 };
 
-const validateMetadataOptionLabel = (
+export const validateMetadataOptionLabel = (
   sanitizedLabel: string,
 ): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
@@ -113,7 +113,7 @@ const validateMetadataOptionLabel = (
   return errors;
 };
 
-const validateMetadataOptionValue = (
+export const validateMetadataOptionValue = (
   sanitizedValue: string,
 ): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];

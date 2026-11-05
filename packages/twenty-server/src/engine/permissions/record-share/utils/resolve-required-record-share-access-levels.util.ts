@@ -1,11 +1,12 @@
 /* @license Enterprise */
 
-import { RecordShareAccessLevel } from 'twenty-shared/types';
-
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import {
+  RecordShareAccessLevel,
+  type ObjectRecordsOperationType,
+} from 'twenty-shared/types';
 
 const REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE: Record<
-  OperationType,
+  ObjectRecordsOperationType,
   RecordShareAccessLevel[]
 > = {
   select: [
@@ -23,6 +24,6 @@ const REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE: Record<
 };
 
 export const resolveRequiredRecordShareAccessLevels = (
-  operationType: OperationType,
+  operationType: ObjectRecordsOperationType,
 ): RecordShareAccessLevel[] =>
   REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE[operationType];

@@ -6,6 +6,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -107,9 +108,9 @@ const FIND_THREAD_LINKS_QUERY = {};
 const useFindManyRecordsQuery = jest.fn((_params: unknown) => ({
   findManyRecordsQuery: FIND_THREAD_LINKS_QUERY,
 }));
-const useObjectPermissionsForObject = jest.fn(() => ({
-  canReadObjectRecords: true,
-}));
+const useObjectPermissionsForObject = jest.fn(() =>
+  getDefaultObjectPermissions(),
+);
 const QUERY_IDENTIFIER = 'chat-threads-for-record-query';
 const findManyRecordsResult = {
   records: LINKS,
@@ -207,9 +208,9 @@ describe('useChatThreadsForRecord', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useFindManyRecords.mockReturnValue(findManyRecordsResult);
-    useObjectPermissionsForObject.mockReturnValue({
-      canReadObjectRecords: true,
-    });
+    useObjectPermissionsForObject.mockReturnValue(
+      getDefaultObjectPermissions(),
+    );
     query.mockResolvedValue(
       buildLinksPage({ linkIds: ['link-1', 'link-3', 'link-4'] }),
     );
@@ -319,7 +320,8 @@ describe('useChatThreadsForRecord', () => {
 
   it('does not read conversation links without object read permission', async () => {
     useObjectPermissionsForObject.mockReturnValue({
-      canReadObjectRecords: false,
+      ...getDefaultObjectPermissions(),
+      canReadAllRecords: false,
     });
     const result = renderChatThreadsForRecord();
 
