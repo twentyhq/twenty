@@ -67,10 +67,6 @@ type RecordsQuestion = ObjectQuestion & {
   transactionScope?: WorkspaceTransactionScope;
 };
 
-type FieldQuestion = ObjectQuestion & {
-  fieldMetadataId: string;
-};
-
 type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
   principals: PermissionsPrincipalsWithRolesContext;
 };

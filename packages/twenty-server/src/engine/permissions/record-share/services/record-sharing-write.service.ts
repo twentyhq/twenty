@@ -123,6 +123,30 @@ export class RecordSharingWriteService {
     );
   }
 
+  insertRecordShares(
+    args: Parameters<RecordShareStorageService['insertMany']>[0],
+  ): Promise<void> {
+    return this.recordShareStorageService.insertMany(args);
+  }
+
+  deleteRecordSharesByRecordIds(
+    args: Parameters<RecordShareStorageService['deleteByRecordIds']>[0],
+  ): Promise<void> {
+    return this.recordShareStorageService.deleteByRecordIds(args);
+  }
+
+  deleteRecordSharesMatching(
+    args: Parameters<RecordShareStorageService['deleteMatching']>[0],
+  ): Promise<void> {
+    return this.recordShareStorageService.deleteMatching(args);
+  }
+
+  setRecordsPrivate(
+    args: Parameters<PrivateRecordStorageService['setPrivate']>[0],
+  ): Promise<void> {
+    return this.privateRecordStorageService.setPrivate(args);
+  }
+
   private async changeSharing(
     args: RecordSharingArgs,
     write: (change: RecordSharingChange) => Promise<void>,

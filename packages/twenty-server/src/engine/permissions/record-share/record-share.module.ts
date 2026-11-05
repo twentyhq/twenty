@@ -19,7 +19,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordSharingResolver,
   ],
   exports: [
-    RecordShareStorageModule,
     ShareWithService,
     RecordSharePrincipalService,
     RecordSharingWriteService,

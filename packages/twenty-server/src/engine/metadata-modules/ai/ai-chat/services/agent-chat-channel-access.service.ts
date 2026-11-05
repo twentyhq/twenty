@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsService } from 'src/engine/permissions/permissions.service';

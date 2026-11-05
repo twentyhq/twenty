@@ -24,7 +24,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -43,7 +42,6 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -69,13 +67,11 @@ export class AgentChatSharingService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
-    private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -407,20 +403,20 @@ export class AgentChatSharingService {
                 ? { channelId: args.channelId }
                 : {}),
             });
-            await this.privateRecordStorageService.setPrivate({
+            await this.recordSharingWriteService.setRecordsPrivate({
               workspaceId: args.workspaceId,
               flatObjectMetadata: objectMetadata,
               recordIds: [threadId],
               isPrivate: true,
               transactionScope,
             });
-            await this.recordShareStorageService.deleteByRecordIds({
+            await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
               workspaceId: args.workspaceId,
               objectMetadataId: objectMetadata.id,
               recordIds: [threadId],
               transactionScope,
             });
-            await this.recordShareStorageService.insertMany({
+            await this.recordSharingWriteService.insertRecordShares({
               workspaceId: args.workspaceId,
               recordShares: [
                 {
@@ -619,7 +615,7 @@ export class AgentChatSharingService {
       ({ id }) => id,
     );
 
-    await this.privateRecordStorageService.setPrivate({
+    await this.recordSharingWriteService.setRecordsPrivate({
       workspaceId,
       flatObjectMetadata: participantObjectMetadata,
       recordIds: insertedParticipantIds,
@@ -627,7 +623,7 @@ export class AgentChatSharingService {
       transactionScope,
     });
 
-    await this.recordShareStorageService.insertMany({
+    await this.recordSharingWriteService.insertRecordShares({
       workspaceId,
       recordShares: buildAgentChatThreadParticipantOwnerShares({
         participants: insertedParticipantIds.map((id) => ({

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
