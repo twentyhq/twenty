@@ -359,6 +359,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'tsVectorFieldMetadataId',
     },
   },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
+    },
+  },
   relatedRecordPath: {
     workspace: null,
     application: null,

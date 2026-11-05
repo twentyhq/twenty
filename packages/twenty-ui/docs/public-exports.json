@@ -35,6 +35,7 @@
   "components/data-display": {
     "reExports": [],
     "values": {
+      "AssistantAvatar": "components/data-display/AssistantAvatar/AssistantAvatar",
       "AvatarGroup": "components/data-display/AvatarGroup/AvatarGroup",
       "CommandBlock": "components/data-display/CommandBlock/CommandBlock",
       "DetailsRow": "components/data-display/DetailsRow/DetailsRow",
@@ -45,6 +46,11 @@
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
+      "AssistantAvatarColor": "components/data-display/AssistantAvatar/types/AssistantAvatarColor",
+      "AssistantAvatarFace": "components/data-display/AssistantAvatar/types/AssistantAvatarFace",
+      "AssistantAvatarProps": "components/data-display/AssistantAvatar/types/AssistantAvatarProps",
+      "AssistantAvatarShape": "components/data-display/AssistantAvatar/types/AssistantAvatarShape",
+      "AssistantAvatarSize": "components/data-display/AssistantAvatar/types/AssistantAvatarSize",
       "AvatarGroupProps": "components/data-display/AvatarGroup/types/AvatarGroupProps",
       "CommandBlockProps": "components/data-display/CommandBlock/types/CommandBlockProps",
       "DetailsRowProps": "components/data-display/DetailsRow/types/DetailsRowProps",

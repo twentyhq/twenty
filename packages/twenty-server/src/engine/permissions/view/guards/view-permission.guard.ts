@@ -6,6 +6,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ViewVisibility } from 'twenty-shared/types';
 
 import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { resolveViewAccessContext } from 'src/engine/permissions/view/utils/resolve-view-access-context.util';
@@ -22,9 +23,13 @@ export class ViewPermissionGuard implements CanActivate {
     const viewId =
       [args?.id, request.params?.id].find(isNonEmptyString) ?? null;
 
-    return this.viewAccessService.canUserModifyView(
+    const nextVisibility: ViewVisibility | undefined =
+      args?.input?.visibility ?? request.body?.visibility;
+
+    return this.viewAccessService.canUserModifyView({
       viewId,
-      resolveViewAccessContext(request),
-    );
+      accessContext: resolveViewAccessContext(request),
+      nextVisibility,
+    });
   }
 }

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
@@ -181,6 +182,8 @@ const fromActionInput = ({
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }): unknown => {
   const input: unknown = action.settings.input;
+  // stored versions can hold a step type this server no longer knows
+  const storedType: string = action.type;
 
   switch (action.type) {
     case WorkflowActionType.LOGIC_FUNCTION:
@@ -246,6 +249,18 @@ const fromActionInput = ({
         }),
       };
     }
+    case WorkflowActionType.CODE: {
+      const { code, logicFunctionInput } = toRecord(input);
+
+      // the 2.56 upgrade backfills code but keeps logicFunctionId until 2.57, so the id is dropped here
+      if (!isNonEmptyString(code)) {
+        return resolvers.markUnsupported(
+          'code step not yet migrated to inline source; edit it once or run the 2.56 upgrade',
+        );
+      }
+
+      return { code, logicFunctionInput };
+    }
     case WorkflowActionType.HTTP_REQUEST:
     case WorkflowActionType.SEND_CHAT_MESSAGE:
     case WorkflowActionType.CLASSIFY:
@@ -256,7 +271,7 @@ const fromActionInput = ({
       return input;
     default:
       return resolvers.markUnsupported(
-        `${action.type} steps are not supported in application workflows`,
+        `${storedType} steps are not supported in application workflows`,
       );
   }
 };

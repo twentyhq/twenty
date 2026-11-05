@@ -1,13 +1,11 @@
 import { type QueryConfig, types } from 'pg';
-import {
-  type FeatureFlagKey,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 import {
   TwentyOrmException,
@@ -67,7 +65,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
-  objectRecordsPermissions: ObjectsPermissions;
+  recordsPermissions: RoleRecordsPermissions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
@@ -79,7 +77,7 @@ export type QueryBuilderContext = {
 export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
-  readonly objectRecordsPermissions: ObjectsPermissions;
+  readonly recordsPermissions: RoleRecordsPermissions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
@@ -103,7 +101,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
-    this.objectRecordsPermissions = context.objectRecordsPermissions;
+    this.recordsPermissions = context.recordsPermissions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }

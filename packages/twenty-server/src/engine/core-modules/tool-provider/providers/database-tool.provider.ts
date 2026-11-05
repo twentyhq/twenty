@@ -1,3 +1,4 @@
+import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
@@ -7,7 +8,11 @@ import {
 } from 'twenty-shared/application';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import {
+  camelToSnakeCase,
+  canReachSomeRecords,
+  isDefined,
+} from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -36,7 +41,6 @@ import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -87,13 +91,13 @@ export class DatabaseToolProvider implements ToolProvider {
     const recordAccessPolicy = isDefined(context.authContext)
       ? this.recordAccessPolicyService.forAuthContext(context.authContext)
       : undefined;
-    const objectPermissions =
-      await recordAccessPolicy?.findObjectsPermissions();
+    const recordsPermissions =
+      await recordAccessPolicy?.findRecordsPermissions();
 
     if (
       !isDefined(recordAccessPolicy) ||
-      !isDefined(objectPermissions) ||
-      Object.keys(objectPermissions).length === 0
+      !isDefined(recordsPermissions) ||
+      Object.keys(recordsPermissions.objects).length === 0
     ) {
       return descriptors;
     }
@@ -131,13 +135,14 @@ export class DatabaseToolProvider implements ToolProvider {
       : () => [];
 
     for (const flatObject of allFlatObjects) {
-      const permission = objectPermissions[flatObject.id];
+      const objectRecordsPermissions =
+        recordsPermissions.objects[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
         flatObject.id,
       );
 
       if (
-        !permission ||
+        !isDefined(objectRecordsPermissions) ||
         (requireExplicitObjectGrants && !isDefined(explicitPermission))
       ) {
         continue;
@@ -146,15 +151,19 @@ export class DatabaseToolProvider implements ToolProvider {
       const isExplicitlyGranted = (objectPermission: ObjectPermissionAction) =>
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
-      const hasAccessToSomeRecords = async (operationType: OperationType) =>
+      const hasAccessToSomeRecords = async (
+        operationType: ObjectRecordsOperationType,
+      ) =>
         recordAccessPolicy.hasAccessToSomeRecords({
           flatObjectMetadata: flatObject,
           operationType,
         });
 
       const canCreateRecords =
-        permission.canUpdateObjectRecords &&
-        isExplicitlyGranted('canUpdateObjectRecords');
+        canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'update',
+        }) && isExplicitlyGranted('canUpdateObjectRecords');
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
         (await hasAccessToSomeRecords('select'));
@@ -182,7 +191,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const restrictedFields = permission.restrictedFields;
+      const restrictedFields = objectRecordsPermissions.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });

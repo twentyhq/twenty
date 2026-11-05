@@ -23,7 +23,7 @@ export const createUpdateWorkflowVersionStepTool = (
 ) => ({
   name: 'update_workflow_version_step' as const,
   description:
-    'Update an existing step in a workflow version. This modifies the step configuration. Call validate_workflow once after your edits are done, not after every change.',
+    'Update an existing step in a workflow version. This modifies the step configuration. For a CODE step, write its TypeScript source in settings.input.code: it must export `main` as an async arrow function, `export const main = async (params: { ... }) => { ... }`, whose params receive settings.input.logicFunctionInput. Call validate_workflow once after your edits are done, not after every change.',
   inputSchema: updateWorkflowVersionStepSchema,
   execute: async (parameters: {
     coreWorkflowVersionId: string;
