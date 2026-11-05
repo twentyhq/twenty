@@ -227,6 +227,27 @@ export class RecordAccessDecisionService {
     });
   }
 
+  // Answers for the operation on each record, and also requires the object itself to be readable
+  async findGrantedRecordIdsOnReadableObject(
+    request: PrincipalsRecordsAccessRequest,
+  ): Promise<Set<string>> {
+    const readRequest = await this.findObjectAccessRequest({
+      principals: request.principals,
+      objectMetadataId: request.objectMetadataId,
+      operationType: 'select',
+    });
+
+    if (
+      !isDefined(readRequest) ||
+      (!isObjectOperationDisabledToPrincipals(readRequest) &&
+        isObjectOperationDeniedToPrincipals(readRequest))
+    ) {
+      return new Set();
+    }
+
+    return this.findGrantedRecordIds(request);
+  }
+
   async canRoleReachSomeRecords({
     principals,
     objectMetadataId,

@@ -11,6 +11,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -27,7 +28,6 @@ import { diffAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/a
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -42,6 +42,7 @@ export class AgentChatChannelGrantService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
@@ -170,11 +171,6 @@ export class AgentChatChannelGrantService {
         'agentChatThread',
         { shouldSkipEventEmission: true },
       );
-    const recordShareRepository =
-      transactionScope.getRepositoryWithoutPermissionChecks<RecordShare>(
-        'recordShare',
-        { shouldSkipEventEmission: true },
-      );
 
     const scopeThreads = await threadRepository.find({
       select: ['id', 'channelId'],
@@ -194,16 +190,16 @@ export class AgentChatChannelGrantService {
       threads: scopeThreads,
       ruleRoleIdsByChannelId,
     });
-    const existingChannelRuleGrants = await recordShareRepository.find({
-      select: ['id', 'recordId', 'principalId', 'sourceId'],
-      where: {
+    const existingChannelRuleGrants =
+      await this.recordSharingPermissionsService.findRuleRecordShares({
+        workspaceId,
         objectMetadataId: threadObjectMetadata.id,
-        rowCause: RecordShareRowCause.RULE,
-        ...('threadIds' in scope
-          ? { recordId: Any(scope.threadIds) }
-          : { sourceId: scope.channelId }),
-      },
-    });
+        scope:
+          'threadIds' in scope
+            ? { recordIds: scope.threadIds }
+            : { sourceId: scope.channelId },
+        transactionScope,
+      });
     const { obsoleteGrantIds, missingGrants } = diffAgentChatChannelRuleGrants({
       channelRuleGrants,
       existingChannelRuleGrants,

@@ -213,6 +213,17 @@ export class RecordPermissionsService {
     return this.coversEveryRecord({ question, operationType: 'update' });
   }
 
+  public findGrantedRecordIdsForOperation({
+    operationType,
+    ...question
+  }: RecordsQuestion & {
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findGrantedRecordIdsOnReadableObject(
+      { ...question, operationType },
+    );
+  }
+
   public findUnreadableFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
@@ -250,6 +261,28 @@ export class RecordPermissionsService {
     events?: TEvent[];
   }): Promise<TEvent[]> {
     return this.recordAccessDecisionService.findReadableEvents(question);
+  }
+
+  public canRoleReadSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public canRoleCreateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'insert',
+    });
   }
 
   public canRoleUpdateSomeRecords({
