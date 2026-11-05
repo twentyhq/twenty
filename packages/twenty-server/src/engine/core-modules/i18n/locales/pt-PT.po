@@ -219,11 +219,6 @@ msgstr "Um negócio é ganho"
 msgid "A DNS manager error occurred."
 msgstr "Ocorreu um erro no gerenciador de DNS."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Uma entrada duplicada foi detectada."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Está faltando um campo obrigatório."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Falta um campo obrigatório. Forneça todos os valores obrigatórios e tente novamente."
 
@@ -1063,6 +1058,16 @@ msgstr "Conversas de chat de IA detidas pelo membro do espaço de trabalho"
 msgid "AI component builder is disabled."
 msgstr "O construtor de componentes de IA está desativado."
 
+#. js-lingui-id: 1G2GHA
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not available until the upgrade has completed."
+msgstr "A política de dados de IA não está disponível até que a atualização seja concluída."
+
+#. js-lingui-id: gt0M4i
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not enabled for this workspace."
+msgstr "A política de dados de IA não está ativada para este ambiente de trabalho."
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1173,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "Ocorreu um erro com os dados de autenticação de dois fatores."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1823,7 +1828,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Autenticação não está ativada com este provedor."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "É necessário autenticação para acessar este recurso. Por favor, faça login e tente novamente."
 
@@ -2966,7 +2971,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Escolha um tipo de atividade da linha do tempo existente para substituir"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Escolha uma pessoa ou uma função com quem partilhar."
 
@@ -3025,6 +3030,11 @@ msgstr "Token de reivindicação"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "A reivindicação não está configurada neste servidor. Peça a um administrador para configurar o aplicativo OAuth do GitHub."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "A classificação não está disponível com as configurações de privacidade deste ambiente de trabalho."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3353,7 +3363,7 @@ msgstr "Connect não é permitido para {connectFieldName} em {objectMetadataName
 #. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
-msgstr ""
+msgstr "Ligue o seu e-mail e calendário para ver instantaneamente toda a sua rede. Demora apenas 30 segundos."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3829,7 +3839,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Metadados de campo criado, metadados do objeto pai não encontrados"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "A criação de um registo de um objeto privado requer o argumento shareWith"
 
@@ -4067,7 +4077,7 @@ msgstr "Painéis"
 #. js-lingui-id: lJDD6I
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Data imported"
-msgstr ""
+msgstr "Dados importados"
 
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4082,6 +4092,7 @@ msgid "Data Model"
 msgstr "Modelo de dados"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Estrutura de dados inválida."
@@ -4183,7 +4194,7 @@ msgstr "Negócio"
 #. js-lingui-id: jlACtx
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Deal follow-ups on track"
-msgstr ""
+msgstr "Acompanhamentos de negócios em dia"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4746,14 +4757,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Cada campo do caminho de registro relacionado deve pertencer ao objeto alcançado pela relação anterior"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Cada entrada de shareWith deve visar exatamente um de workspaceMemberId, roleId ou everyone"
 
 #. js-lingui-id: +mARCF
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Each week, every deal about to close gets a follow-up draft."
-msgstr ""
+msgstr "Toda semana, cada negócio prestes a ser fechado recebe um rascunho de acompanhamento."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5935,7 +5946,7 @@ msgstr "Arquivos"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Files attached to the message"
-msgstr ""
+msgstr "Arquivos anexados à mensagem"
 
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
@@ -6446,7 +6457,7 @@ msgstr "\"handlerName\" deve ser um identificador JavaScript válido ou um camin
 #. js-lingui-id: xeZiA6
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Handover ready"
-msgstr ""
+msgstr "Transferência pronta"
 
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -6636,7 +6647,7 @@ msgstr "Importar {objectLabelPlural}"
 #. js-lingui-id: vXTVX9
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your contacts"
-msgstr ""
+msgstr "Importe os seus contactos"
 
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
@@ -6775,8 +6786,8 @@ msgid "Internal name of the campaign"
 msgstr "Nome interno da campanha"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Nível de acesso inválido."
 
@@ -7043,7 +7054,7 @@ msgid "Invalid filter parameter."
 msgstr "Parâmetro de filtro inválido."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Valor de filtro inválido"
 
@@ -7155,9 +7166,9 @@ msgid "Invalid input for application registration."
 msgstr "Entrada inválida para o registo da aplicação."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Entrada inválida fornecida."
 
@@ -7494,8 +7505,8 @@ msgstr "Formato de URL inválido."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Formato de UUID inválido."
 
@@ -7748,7 +7759,7 @@ msgstr "Convide a sua equipa"
 #. js-lingui-id: z9L5cr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invites are out. Bring in more people anytime."
-msgstr ""
+msgstr "Os convites foram enviados. Convide mais pessoas a qualquer momento."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8389,7 +8400,7 @@ msgstr "Tornar fluxo de trabalho privado"
 #. js-lingui-id: 0NPa8y
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Manage your apps in settings."
-msgstr ""
+msgstr "Gerencie seus aplicativos nas configurações."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9339,6 +9350,11 @@ msgstr "A configuração de novo espaço de trabalho está desativada"
 msgid "No"
 msgstr "Não"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "Nenhum modelo de IA atende às configurações de privacidade deste ambiente de trabalho."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9878,7 +9894,7 @@ msgstr "ObjectMetadataId é obrigatório ao criar uma visualização"
 #. js-lingui-id: rmu9zf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Objects, fields and views adapt to the way your team works."
-msgstr ""
+msgstr "Objetos, campos e visualizações se adaptam à forma como sua equipe trabalha."
 
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -11117,11 +11133,6 @@ msgstr "A execução da consulta falhou."
 msgid "Query failed."
 msgstr "Falha na consulta."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Tempo da consulta esgotado. Tente novamente."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11252,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Registo ao qual está anexado um tópico de chat do agente"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "O registro não satisfaz as restrições de segurança."
 
@@ -12647,17 +12658,17 @@ msgid "Shared record"
 msgstr "Registro compartilhado"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith indica uma função que não pertence a este espaço de trabalho"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith indica um membro do espaço de trabalho que não pertence a este espaço de trabalho"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith indica o mesmo principal mais de uma vez"
 
@@ -13609,7 +13620,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "O agente que você está procurando não pôde ser encontrado. Pode ter sido excluído ou você pode não ter acesso a ele."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "A chave API não tem um papel válido atribuído. Verifique a configuração da sua chave API."
 
@@ -13625,7 +13636,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "O canal de origem da aplicação não corresponde ao tipo esperado."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "A aplicação não tem uma função válida atribuída. Verifique a configuração da sua aplicação."
 
@@ -14177,6 +14188,11 @@ msgstr "O segundo membro no par fixo de mensagens diretas"
 msgid "The selected model has been disabled by the administrator."
 msgstr "O modelo selecionado foi desativado pelo administrador."
 
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "O modelo selecionado não é permitido pelas configurações de privacidade deste ambiente de trabalho."
+
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
@@ -14383,12 +14399,12 @@ msgid "The workspace member who last updated the record"
 msgstr "O membro do espaço de trabalho que atualizou o registro pela última vez"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "A função dessa pessoa não pode aceder a estes registos, e este objeto só é partilhado com funções que podem."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "A função dessa pessoa não pode ver este registo, e este objeto só é partilhado com pessoas que podem."
 
@@ -14933,7 +14949,7 @@ msgid "This operation is not supported."
 msgstr "Esta operação não é suportada."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Esta operação referencia um registo que não existe ou que não pode ser modificado devido a relações existentes."
 
@@ -14984,12 +15000,12 @@ msgid "This public domain is already registered."
 msgstr "Este domínio público já está registrado."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Este registro já existe. Verifique seus dados e tente novamente."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Este registo não pode ser eliminado porque ainda é referenciado por outros registos."
 
@@ -15772,7 +15788,7 @@ msgstr "Turno"
 #. js-lingui-id: 57tP4r
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Turn it on and won deals move to delivery on their own."
-msgstr ""
+msgstr "Ative e os negócios ganhos serão movidos para entrega automaticamente."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16911,8 +16927,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Os campos monitorizados aplicam-se apenas a acionadores de evento da base de dados \"updated\""
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Estamos a enfrentar um problema temporário com a nossa base de dados. Por favor, tente novamente mais tarde."
 
@@ -17624,7 +17640,7 @@ msgstr "O espaço de trabalho não existe."
 #. js-lingui-id: fPWuXm
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workspace fit to your process"
-msgstr ""
+msgstr "Espaço de trabalho adaptado ao seu processo"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -18225,7 +18241,7 @@ msgstr "Não foi possível adicionar os créditos que adquiriu. Contacte o supor
 #. js-lingui-id: V6omJV
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Your records are in, organized around how you work."
-msgstr ""
+msgstr "Seus registros foram importados e organizados conforme sua forma de trabalhar."
 
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -18233,7 +18249,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Sua função não pode excluir alguns destes registros, portanto eles não podem ser mesclados."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Seu papel nesta área de trabalho não pôde ser encontrado. Por favor, entre em contato com o administrador da área de trabalho."

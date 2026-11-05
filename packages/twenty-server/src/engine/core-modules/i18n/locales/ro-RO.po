@@ -219,11 +219,6 @@ msgstr "O oportunitate este câștigată"
 msgid "A DNS manager error occurred."
 msgstr "A apărut o eroare la managerul DNS."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "A fost detectată o înregistrare duplicată."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Lipsește un câmp necesar."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Lipsește un câmp obligatoriu. Vă rugăm să furnizați toate valorile obligatorii și să încercați din nou."
 
@@ -1063,6 +1058,16 @@ msgstr "Fire de conversație AI deținute de membrul spațiului de lucru"
 msgid "AI component builder is disabled."
 msgstr "Generatorul de componente AI este dezactivat."
 
+#. js-lingui-id: 1G2GHA
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not available until the upgrade has completed."
+msgstr "Politica de date AI nu este disponibilă până la finalizarea actualizării."
+
+#. js-lingui-id: gt0M4i
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not enabled for this workspace."
+msgstr "Politica de date AI nu este activată pentru acest spațiu de lucru."
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1173,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "A apărut o eroare la datele de autentificare în doi pași."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1823,7 +1828,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Autentificarea nu este activată cu acest furnizor."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Este necesară autentificarea pentru a accesa această funcție. Vă rugăm să vă conectați și să încercați din nou."
 
@@ -2966,7 +2971,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Alegeți un tip existent de activitate din cronologie pe care să îl suprascrieți."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Alegeți o persoană sau un rol cu care să partajați."
 
@@ -3025,6 +3030,11 @@ msgstr "Token de revendicare"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "Revendicarea nu este configurată pe acest server. Cere unui administrator să configureze aplicația GitHub OAuth."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "Classify nu este disponibil cu setările de confidențialitate ale acestui spațiu de lucru."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3353,7 +3363,7 @@ msgstr "Conectarea nu este permisă pentru {connectFieldName} la {objectMetadata
 #. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
-msgstr ""
+msgstr "Conectați-vă e-mailul și calendarul pentru a vă vedea instant întreaga rețea. Durează doar 30 de secunde."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3829,7 +3839,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Metadatele câmpului creat, metadatele obiectului părinte nu au fost găsite"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Crearea unei înregistrări a unui obiect privat necesită argumentul shareWith"
 
@@ -4067,7 +4077,7 @@ msgstr "Tablouri de Bord"
 #. js-lingui-id: lJDD6I
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Data imported"
-msgstr ""
+msgstr "Date importate"
 
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4082,6 +4092,7 @@ msgid "Data Model"
 msgstr "Model de date"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Structura datelor este nevalidă."
@@ -4183,7 +4194,7 @@ msgstr "Oportunitate"
 #. js-lingui-id: jlACtx
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Deal follow-ups on track"
-msgstr ""
+msgstr "Acțiunile de urmărire ale tranzacțiilor sunt în grafic"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4746,14 +4757,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Fiecare câmp din calea înregistrării asociate trebuie să aparțină obiectului atins prin relația anterioară"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Fiecare intrare shareWith trebuie să vizeze exact unul dintre workspaceMemberId, roleId sau everyone"
 
 #. js-lingui-id: +mARCF
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Each week, every deal about to close gets a follow-up draft."
-msgstr ""
+msgstr "În fiecare săptămână, fiecare tranzacție care urmează să se încheie primește o schiță de acțiune de urmărire."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5935,7 +5946,7 @@ msgstr "Fișiere"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Files attached to the message"
-msgstr ""
+msgstr "Fișiere atașate mesajului"
 
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
@@ -6446,7 +6457,7 @@ msgstr "„handlerName” trebuie să fie un identificator JavaScript valid sau 
 #. js-lingui-id: xeZiA6
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Handover ready"
-msgstr ""
+msgstr "Pregătit pentru predare"
 
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -6636,7 +6647,7 @@ msgstr "Importă {objectLabelPlural}"
 #. js-lingui-id: vXTVX9
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your contacts"
-msgstr ""
+msgstr "Importați-vă contactele"
 
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
@@ -6775,8 +6786,8 @@ msgid "Internal name of the campaign"
 msgstr "Nume intern al campaniei"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Nivel de acces nevalid."
 
@@ -7043,7 +7054,7 @@ msgid "Invalid filter parameter."
 msgstr "Parametru de filtrare invalid."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Valoare de filtru invalidă"
 
@@ -7155,9 +7166,9 @@ msgid "Invalid input for application registration."
 msgstr "Date de intrare nevalide pentru înregistrarea aplicației."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "A fost furnizată o intrare invalidă."
 
@@ -7494,8 +7505,8 @@ msgstr "Format de URL invalid."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Format de UUID invalid."
 
@@ -7748,7 +7759,7 @@ msgstr "Invită-ți echipa"
 #. js-lingui-id: z9L5cr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invites are out. Bring in more people anytime."
-msgstr ""
+msgstr "Invitațiile au fost trimise. Poți adăuga mai multe persoane oricând."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8389,7 +8400,7 @@ msgstr "Faceți fluxul de lucru privat"
 #. js-lingui-id: 0NPa8y
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Manage your apps in settings."
-msgstr ""
+msgstr "Administrează-ți aplicațiile din setări."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9339,6 +9350,11 @@ msgstr "Configurarea unui spațiu de lucru nou este dezactivată"
 msgid "No"
 msgstr "Nu"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "Niciun model AI nu îndeplinește setările de confidențialitate ale acestui spațiu de lucru."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9878,7 +9894,7 @@ msgstr "ObjectMetadataId este necesar când se creează o vizualizare"
 #. js-lingui-id: rmu9zf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Objects, fields and views adapt to the way your team works."
-msgstr ""
+msgstr "Obiectele, câmpurile și vizualizările se adaptează modului în care lucrează echipa ta."
 
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -11117,11 +11133,6 @@ msgstr "Execuția interogării a eșuat."
 msgid "Query failed."
 msgstr "Interogarea a eșuat."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Timpul pentru interogare a expirat. Vă rugăm să încercați din nou."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11252,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Înregistrare la care este atașat un fir de conversație al agentului"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "Înregistrarea nu îndeplinește constrângerile de securitate."
 
@@ -12647,17 +12658,17 @@ msgid "Shared record"
 msgstr "Înregistrare partajată"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith specifică un rol care nu aparține acestui spațiu de lucru"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith specifică un membru al spațiului de lucru care nu aparține acestui spațiu de lucru"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith specifică același principal de mai multe ori"
 
@@ -13609,7 +13620,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Agentul pe care îl căutați nu a putut fi găsit. Este posibil să fi fost șters sau este posibil să nu aveți acces la el."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Cheia API nu are un rol valid alocat. Vă rugăm să verificați configurarea cheii API."
 
@@ -13625,7 +13636,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Canalul sursă al aplicației nu corespunde tipului așteptat."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Aplicația nu are un rol valid alocat. Vă rugăm să verificați configurarea aplicației."
 
@@ -14177,6 +14188,11 @@ msgstr "Al doilea membru din perechea fixă de mesaje directe"
 msgid "The selected model has been disabled by the administrator."
 msgstr "Modelul selectat a fost dezactivat de administrator."
 
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "Modelul selectat nu este permis de setările de confidențialitate ale acestui spațiu de lucru."
+
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
@@ -14383,12 +14399,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Membrul spațiului de lucru care a actualizat ultima dată înregistrarea"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rolul lor nu poate accesa aceste înregistrări, iar acest obiect este partajat numai cu roluri care le pot accesa."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rolul lor nu poate vedea această înregistrare, iar acest obiect este partajat numai cu persoane care o pot vedea."
 
@@ -14933,7 +14949,7 @@ msgid "This operation is not supported."
 msgstr "Această operațiune nu este acceptată."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Această operațiune face referire la o înregistrare care nu există sau nu poate fi modificată din cauza relațiilor existente."
 
@@ -14984,12 +15000,12 @@ msgid "This public domain is already registered."
 msgstr "Acest domeniu public este deja înregistrat."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr ""
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Această înregistrare nu poate fi ștearsă deoarece este încă referită de alte înregistrări."
 
@@ -15772,7 +15788,7 @@ msgstr "Tur"
 #. js-lingui-id: 57tP4r
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Turn it on and won deals move to delivery on their own."
-msgstr ""
+msgstr "Activează funcția, iar tranzacțiile câștigate trec singure la livrare."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16911,8 +16927,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Câmpurile urmărite se aplică numai declanșatoarelor de evenimente ale bazei de date \"updated\""
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Întâmpinăm o problemă temporară cu baza de date. Vă rugăm să încercați din nou mai târziu."
 
@@ -17624,7 +17640,7 @@ msgstr "Spațiul de lucru nu există."
 #. js-lingui-id: fPWuXm
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workspace fit to your process"
-msgstr ""
+msgstr "Spațiu de lucru adaptat procesului tău"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -18225,7 +18241,7 @@ msgstr "Creditele achiziționate nu au putut fi adăugate. Contactați asistenț
 #. js-lingui-id: V6omJV
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Your records are in, organized around how you work."
-msgstr ""
+msgstr "Înregistrările tale sunt aici, organizate în funcție de modul în care lucrezi."
 
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -18233,7 +18249,7 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Rolul tău nu poate șterge unele dintre aceste înregistrări, deci acestea nu pot fi fuzionate."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Rolul dvs. în acest spațiu de lucru nu a putut fi găsit. Vă rugăm să contactați administratorul spațiului de lucru."
