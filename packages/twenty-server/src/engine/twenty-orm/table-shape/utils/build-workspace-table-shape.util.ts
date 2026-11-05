@@ -13,7 +13,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {

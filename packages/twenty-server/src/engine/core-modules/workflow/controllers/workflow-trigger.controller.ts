@@ -22,7 +22,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/uti
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';

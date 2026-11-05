@@ -18,7 +18,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';

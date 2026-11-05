@@ -1,7 +1,7 @@
 import {
   type TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 // Codes that describe a problem with the caller's input rather than a server
 // fault; the API layers surface them as user input errors (400) instead of 500
@@ -17,7 +17,6 @@ export const isTwentyOrmUserInputError = (
     case TwentyOrmExceptionCode.UNSUPPORTED_OPERATION:
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
     case TwentyOrmExceptionCode.ENTITY_NOT_FOUND:
-    case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
     case TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND:
     case TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED:
     case TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR:

@@ -4,7 +4,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { GraphqlQueryRunnerException } from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
   buildOrderByFromLeaves,
   checkIfLeafCanCarryCursorValue,

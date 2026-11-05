@@ -27,7 +27,7 @@ import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <

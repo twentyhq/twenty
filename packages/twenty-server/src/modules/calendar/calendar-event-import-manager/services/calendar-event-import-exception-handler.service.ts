@@ -7,9 +7,9 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import {
-  type TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+  type WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
@@ -42,7 +42,7 @@ export class CalendarEventImportErrorHandlerService {
   public async handleDriverException(
     exception:
       | CalendarEventImportDriverException
-      | TwentyOrmException
+      | WorkspaceQueryExecutorException
       | ConnectedAccountRefreshAccessTokenException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelEntity, 'id' | 'throttleFailureCount'>,
@@ -56,8 +56,8 @@ export class CalendarEventImportErrorHandlerService {
           workspaceId,
         );
         break;
-      case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
-      case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
+      case WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT:
+      case WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
       case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         await this.handleTemporaryException(

@@ -10,7 +10,7 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 

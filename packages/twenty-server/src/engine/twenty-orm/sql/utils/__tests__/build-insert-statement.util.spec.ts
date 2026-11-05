@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildInsertStatement } from 'src/engine/twenty-orm/sql/utils/build-insert-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 

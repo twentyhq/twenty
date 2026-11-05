@@ -3,10 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
-import {
-  INVALID_INPUT_USER_FRIENDLY_MESSAGE,
-  TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
+import { INVALID_INPUT_USER_FRIENDLY_MESSAGE } from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyOrmExceptionCode {
@@ -23,17 +20,12 @@ export enum TwentyOrmExceptionCode {
   MISSING_MAIN_ALIAS_TARGET = 'MISSING_MAIN_ALIAS_TARGET',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   ENUM_TYPE_NAME_NOT_FOUND = 'ENUM_TYPE_NAME_NOT_FOUND',
-  QUERY_READ_TIMEOUT = 'QUERY_READ_TIMEOUT',
-  TRANSIENT_DATABASE_ERROR = 'TRANSIENT_DATABASE_ERROR',
-  DUPLICATE_ENTRY_DETECTED = 'DUPLICATE_ENTRY_DETECTED',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
-  MISSING_PARAMETER = 'MISSING_PARAMETER',
   INVALID_PARAMETER = 'INVALID_PARAMETER',
-  MALFORMED_SQL = 'MALFORMED_SQL',
   UNKNOWN_OBJECT = 'UNKNOWN_OBJECT',
   UNKNOWN_COLUMN = 'UNKNOWN_COLUMN',
   UNKNOWN_RELATION = 'UNKNOWN_RELATION',
@@ -71,12 +63,6 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return msg`Missing main alias target.`;
     case TwentyOrmExceptionCode.METHOD_NOT_ALLOWED:
       return msg`This operation is not allowed.`;
-    case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
-      return msg`Query timed out. Please try again.`;
-    case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
-      return TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE;
-    case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
-      return msg`A duplicate entry was detected.`;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:
@@ -87,9 +73,7 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return msg`No role found for user.`;
     case TwentyOrmExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
     case TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED:
-    case TwentyOrmExceptionCode.MISSING_PARAMETER:
     case TwentyOrmExceptionCode.INVALID_PARAMETER:
-    case TwentyOrmExceptionCode.MALFORMED_SQL:
     case TwentyOrmExceptionCode.UNKNOWN_OBJECT:
     case TwentyOrmExceptionCode.UNKNOWN_COLUMN:
     case TwentyOrmExceptionCode.UNKNOWN_RELATION:

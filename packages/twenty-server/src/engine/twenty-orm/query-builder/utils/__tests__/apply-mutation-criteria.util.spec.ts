@@ -2,7 +2,7 @@ import { runInNewContext } from 'node:vm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { applyMutationCriteriaToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-mutation-criteria.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';

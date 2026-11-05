@@ -11,9 +11,9 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import {
-  type TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+  type WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -45,7 +45,7 @@ export class MessageImportExceptionHandlerService {
     exception:
       | MessageImportDriverException
       | Error
-      | TwentyOrmException
+      | WorkspaceQueryExecutorException
       | ConnectedAccountRefreshAccessTokenException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
@@ -72,8 +72,8 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
-        case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
-        case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
+        case WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT:
+        case WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:

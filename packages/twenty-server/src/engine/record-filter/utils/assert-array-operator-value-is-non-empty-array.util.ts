@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+  RecordFilterException,
+  RecordFilterExceptionCode,
+} from 'src/engine/record-filter/exceptions/record-filter.exception';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
@@ -20,9 +20,9 @@ export const assertArrayOperatorValueIsNonEmptyArray = ({
     ARRAY_OPERATORS.includes(operator) &&
     (!Array.isArray(value) || value.length === 0)
   ) {
-    throw new GraphqlQueryRunnerException(
+    throw new RecordFilterException(
       `Invalid filter value for field ${key}. Expected non-empty array`,
-      GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      RecordFilterExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: msg`Invalid filter value` },
     );
   }

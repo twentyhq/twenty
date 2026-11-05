@@ -4,7 +4,11 @@ import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-r
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
 import { GraphqlDirectExecutionException } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
 import { graphqlDirectExecutionToGraphqlApiExceptionHandler } from 'src/engine/api/graphql/direct-execution/utils/graphql-direct-execution-to-graphql-api-exception-handler.util';
-import { GraphqlQueryRunnerException } from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { RecordFilterException } from 'src/engine/record-filter/exceptions/record-filter.exception';
+import { recordFilterGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/record-filter-graphql-api-exception-handler.util';
+import { WorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
+import { workspaceQueryExecutorGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-executor-graphql-api-exception-handler.util';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
@@ -24,7 +28,7 @@ import { RecordShareException } from 'src/engine/permissions/record-share/record
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { recordValidationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/record-validation-rule-graphql-api-exception-handler.util';
-import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { twentyOrmGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';
@@ -47,6 +51,10 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return graphqlQueryRunnerExceptionHandler(error);
     case error instanceof TwentyOrmException:
       return twentyOrmGraphqlApiExceptionHandler(error);
+    case error instanceof WorkspaceQueryExecutorException:
+      return workspaceQueryExecutorGraphqlApiExceptionHandler(error);
+    case error instanceof RecordFilterException:
+      return recordFilterGraphqlApiExceptionHandler(error);
     case error instanceof RecordValidationRuleException:
       return recordValidationRuleGraphqlApiExceptionHandler(error);
     case error instanceof CommonQueryRunnerException:

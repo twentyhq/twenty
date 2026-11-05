@@ -2,7 +2,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';

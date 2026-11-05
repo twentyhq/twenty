@@ -1,4 +1,4 @@
-import { TwentyOrmException } from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
   SCHEMA_NAME,
   buildQueryBuilder,

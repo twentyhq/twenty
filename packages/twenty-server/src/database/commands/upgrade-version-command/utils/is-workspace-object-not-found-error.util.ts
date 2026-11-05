@@ -3,7 +3,7 @@ import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoun
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
-} from 'src/engine/workspace-query-executor/exceptions/twenty-orm.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 // A workspace object can be absent when upgrading from a version that predates it.
 // The v1 GlobalWorkspaceDataSource throws EntityMetadataNotFoundError, while the v2

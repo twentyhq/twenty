@@ -7,7 +7,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
   ActorFromAuthContextService,
