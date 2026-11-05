@@ -18,7 +18,7 @@ import { buildRecordShareTableExpression } from 'src/engine/permissions/record-p
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
 import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/record-permission-orm/utils/index-private-record-states-by-record-id.util';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -37,7 +37,7 @@ export class RecordPermissionReadOrmService {
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<RecordShare[]> {
     if (recordIds.length === 0) {
       return [];
@@ -99,7 +99,7 @@ export class RecordPermissionReadOrmService {
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     recordIds: string[];
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Map<string, PrivateRecordState>> {
     if (recordIds.length === 0) {
       return new Map();
@@ -134,7 +134,7 @@ export class RecordPermissionReadOrmService {
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
     condition: SqlCondition | true;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Set<string>> {
     const tableExpression = buildWorkspaceTableExpression({
       workspaceId,

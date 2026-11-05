@@ -9,7 +9,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
@@ -25,7 +25,7 @@ export class RecordPermissionQueryService {
     query,
   }: {
     workspaceId: string;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
     query: RecordPermissionQuery;
   }): Promise<TRow[]> {
     const statement = compileNamedParameters(query.sql, query.parameters);

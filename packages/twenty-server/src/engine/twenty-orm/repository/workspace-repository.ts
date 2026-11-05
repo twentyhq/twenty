@@ -16,10 +16,6 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { type PrivateRecordStateRow } from 'src/engine/permissions/record-permission-orm/types/private-record-state-row.type';
-import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-private-record-states-query.util';
-import { buildFindRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-find-record-shares-query.util';
-import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/record-permission-orm/utils/index-private-record-states-by-record-id.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -38,6 +34,7 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/record-permission-orm/types/record-permission-transaction-scope.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/combine/utils/find-granted-record-ids.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
@@ -1822,7 +1819,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
-          this.selectRecordShareGrants({ objectMetadataId, recordIds });
+          this.options.internalContext.recordPermissionReadOrm.findRecordShares(
+            {
+              workspaceId: this.options.internalContext.workspaceId,
+              objectMetadataId,
+              recordIds,
+              transactionScope: this.buildRecordPermissionTransactionScope(),
+            },
+          );
 
         recordShareGrantsByObjectMetadataId.set(
           objectMetadataId,
@@ -1836,49 +1840,31 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         );
       },
       findPrivateRecordStates: async () =>
-        (privateRecordStates ??= this.selectPrivateRecordStates(recordIds)),
+        (privateRecordStates ??=
+          this.options.internalContext.recordPermissionReadOrm.findPrivateRecordStates(
+            {
+              workspaceId: this.options.internalContext.workspaceId,
+              flatObjectMetadata: this.options.flatObjectMetadata,
+              flatFieldMetadataMaps:
+                this.options.internalContext.flatFieldMetadataMaps,
+              recordIds,
+              transactionScope: this.buildRecordPermissionTransactionScope(),
+            },
+          )),
     };
   }
 
-  private async selectRecordShareGrants({
-    objectMetadataId,
-    recordIds,
-  }: {
-    objectMetadataId: string;
-    recordIds: string[];
-  }): Promise<RecordShareGrant[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-
-    const { sql, parameters } = buildFindRecordSharesQuery({
-      recordShareTableExpression: this.getRecordShareTableExpression(),
-      objectMetadataId,
-      recordIds,
-    });
-
-    return this.executeRaw<RecordShareGrant>(sql, parameters);
-  }
-
-  private async selectPrivateRecordStates(
-    recordIds: string[],
-  ): Promise<Map<string, PrivateRecordState>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
-    const { sql, parameters } = buildFindPrivateRecordStatesQuery({
-      tableExpression: this.getTableExpression(
-        this.options.flatObjectMetadata.id,
-      ),
-      flatObjectMetadata: this.options.flatObjectMetadata,
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-      recordIds,
-    });
-
-    return indexPrivateRecordStatesByRecordId(
-      await this.executeRaw<PrivateRecordStateRow>(sql, parameters),
-    );
+  private buildRecordPermissionTransactionScope(): RecordPermissionTransactionScope {
+    return {
+      workspaceId: this.options.internalContext.workspaceId,
+      executeRawQuery: <
+        TRow extends Record<string, unknown> = Record<string, unknown>,
+      >(
+        sql: string,
+        parameters: unknown[] = [],
+      ) =>
+        this.options.executor.execute<TRow>({ text: sql, values: parameters }),
+    };
   }
 
   private emitMutationEvent({

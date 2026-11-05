@@ -119,6 +119,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
+        recordPermissionReadOrm: {
+          findRecordShares: async () => [],
+          findPrivateRecordStates: async () => new Map(),
+        },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
