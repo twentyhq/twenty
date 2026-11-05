@@ -73,8 +73,8 @@ export class CheckEmailingDomainVerificationCronJob {
 
   private async refreshDueDomains(): Promise<void> {
     const recentlyCreatedCondition = Raw(
-      (alias) =>
-        `${alias} > NOW() - INTERVAL '${EMAILING_DOMAIN_HOURLY_CHECK_PERIOD}'`,
+      (alias) => `${alias} > NOW() - CAST(:hourlyCheckPeriod AS INTERVAL)`,
+      { hourlyCheckPeriod: EMAILING_DOMAIN_HOURLY_CHECK_PERIOD },
     );
 
     const dueDomains = await this.emailingDomainRepository.find({
