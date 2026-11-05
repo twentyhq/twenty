@@ -11,7 +11,6 @@ import { RecordShareStorageModule } from 'src/engine/permissions/record-share/re
 import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
 import { RecordPermissionsModule } from 'src/engine/permissions/record-permissions/record-permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { DirectMessageContentService } from 'src/engine/permissions/record-share/services/direct-message-content.service';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { DirectMessageContentService } from 'src/engine/permissions/record-share
     ShareWithService,
     RecordSharePrincipalService,
     RecordSharingService,
-    DirectMessageContentService,
     RecordSharingResolver,
   ],
   exports: [

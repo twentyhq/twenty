@@ -92,6 +92,7 @@ export class AgentChatDirectMessageIdentityService {
                   { onConflictDoNothing: true },
                 );
 
+              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
               await this.privateRecordStorageService.setPrivate({
                 workspaceId,
                 flatObjectMetadata: threadObjectMetadata,

@@ -8,7 +8,6 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -33,7 +32,6 @@ import {
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
-import { DirectMessageContentService } from 'src/engine/permissions/record-share/services/direct-message-content.service';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -76,7 +74,6 @@ export class RecordSharingService {
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
-    private readonly directMessageContentService: DirectMessageContentService,
   ) {}
 
   async getSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
@@ -219,21 +216,6 @@ export class RecordSharingService {
             if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
               throw new NotFoundError('Record not found');
             }
-
-            if (
-              await this.directMessageContentService.isRecordDirectMessageContent(
-                {
-                  authContext: args.authContext,
-                  recordId: args.recordId,
-                  objectUniversalIdentifier:
-                    flatObjectMetadata.universalIdentifier,
-                  transactionScope,
-                },
-              )
-            ) {
-              throw new NotFoundError(doNotTranslate('Record not found'));
-            }
-
             await write({
               workspaceId,
               transactionScope,
@@ -357,11 +339,6 @@ export class RecordSharingService {
       (await this.isUpdatePermittedByRole({
         authContext: args.authContext,
         flatObjectMetadata,
-      })) &&
-      !(await this.directMessageContentService.isRecordDirectMessageContent({
-        authContext: args.authContext,
-        recordId: args.recordId,
-        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       }));
     const grants = shares.filter(
       (share) =>
