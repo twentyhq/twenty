@@ -210,13 +210,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     };
     const conversationWriter = new AgentConversationWriterService(
       new AgentHistoryTransactionService(orm as never, {
-        isEnabled: jest.fn().mockResolvedValue(false),
-        share: jest
+        isDirectMessageIdentityEnabled: jest.fn().mockResolvedValue(false),
+        makeConversationRecordsPrivateToPair: jest
           .fn()
           .mockRejectedValue(
             new Error('DM identity is disabled for the migration fixture'),
           ),
-        unshare: jest
+        deletePairSharesOfConversationRecords: jest
           .fn()
           .mockRejectedValue(
             new Error('DM identity is disabled for the migration fixture'),

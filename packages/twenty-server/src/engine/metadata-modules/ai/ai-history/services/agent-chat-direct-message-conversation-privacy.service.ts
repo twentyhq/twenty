@@ -23,14 +23,14 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type DirectMessagePair = readonly [string, string];
 
 @Injectable()
-export class AgentChatDirectMessageRecordsService {
+export class AgentChatDirectMessageConversationPrivacyService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  async isEnabled(workspaceId: string): Promise<boolean> {
+  async isDirectMessageIdentityEnabled(workspaceId: string): Promise<boolean> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['featureFlagsMap'],
@@ -41,22 +41,22 @@ export class AgentChatDirectMessageRecordsService {
     ];
   }
 
-  async share({
+  async makeConversationRecordsPrivateToPair({
     workspaceId,
     transactionScope,
     threadId,
-    objectName,
-    recordIds,
+    conversationObjectName,
+    conversationRecordIds,
     directMessagePairsByThreadId,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
     threadId: string;
-    objectName: AgentHistoryObjectName;
-    recordIds: string[];
+    conversationObjectName: AgentHistoryObjectName;
+    conversationRecordIds: string[];
     directMessagePairsByThreadId?: Map<string, DirectMessagePair | null>;
   }): Promise<boolean> {
-    const pair = await this.findPair({
+    const pair = await this.findDirectMessagePairOfThread({
       transactionScope,
       threadId,
       directMessagePairsByThreadId,
@@ -66,16 +66,17 @@ export class AgentChatDirectMessageRecordsService {
       return false;
     }
 
-    const flatObjectMetadata = await this.findFlatObjectMetadataOrThrow({
-      workspaceId,
-      objectName,
-    });
+    const conversationObjectMetadata =
+      await this.findConversationObjectMetadataOrThrow({
+        workspaceId,
+        conversationObjectName,
+      });
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
 
-    const activePair = pair.filter((workspaceMemberId) => {
+    const activePairWorkspaceMemberIds = pair.filter((workspaceMemberId) => {
       const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
 
       return isDefined(member) && !isDefined(member.deletedAt);
@@ -83,23 +84,23 @@ export class AgentChatDirectMessageRecordsService {
 
     await this.privateRecordStorageService.setPrivate({
       workspaceId,
-      flatObjectMetadata,
-      recordIds,
+      flatObjectMetadata: conversationObjectMetadata,
+      recordIds: conversationRecordIds,
       isPrivate: true,
       transactionScope,
     });
     await this.recordShareStorageService.insertMany({
       workspaceId,
       transactionScope,
-      recordShares: recordIds.flatMap((recordId) =>
-        activePair.map((principalId) => ({
-          objectMetadataId: flatObjectMetadata.id,
-          recordId,
+      recordShares: conversationRecordIds.flatMap((conversationRecordId) =>
+        activePairWorkspaceMemberIds.map((principalId) => ({
+          objectMetadataId: conversationObjectMetadata.id,
+          recordId: conversationRecordId,
           principalId,
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           accessLevel: RecordShareAccessLevel.READ_WRITE,
           rowCause: RecordShareRowCause.OWNER,
-          sourceId: recordId,
+          sourceId: conversationRecordId,
         })),
       ),
     });
@@ -107,63 +108,64 @@ export class AgentChatDirectMessageRecordsService {
     return true;
   }
 
-  async unshare({
+  async deletePairSharesOfConversationRecords({
     workspaceId,
     transactionScope,
-    objectName,
-    recordIds,
+    conversationObjectName,
+    conversationRecordIds,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
-    objectName: AgentHistoryObjectName;
-    recordIds: string[];
+    conversationObjectName: AgentHistoryObjectName;
+    conversationRecordIds: string[];
   }): Promise<void> {
-    if (!isNonEmptyArray(recordIds)) {
+    if (!isNonEmptyArray(conversationRecordIds)) {
       return;
     }
 
-    const flatObjectMetadata = await this.findFlatObjectMetadataOrThrow({
-      workspaceId,
-      objectName,
-    });
+    const conversationObjectMetadata =
+      await this.findConversationObjectMetadataOrThrow({
+        workspaceId,
+        conversationObjectName,
+      });
 
     await this.recordShareStorageService.deleteByRecordIds({
       workspaceId,
-      objectMetadataId: flatObjectMetadata.id,
-      recordIds,
+      objectMetadataId: conversationObjectMetadata.id,
+      recordIds: conversationRecordIds,
       transactionScope,
     });
   }
 
-  private async findFlatObjectMetadataOrThrow({
+  private async findConversationObjectMetadataOrThrow({
     workspaceId,
-    objectName,
+    conversationObjectName,
   }: {
     workspaceId: string;
-    objectName: AgentHistoryObjectName;
+    conversationObjectName: AgentHistoryObjectName;
   }) {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
-    const flatObjectMetadata =
+    const conversationObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS[objectName].universalIdentifier
+        STANDARD_OBJECTS[conversationObjectName].universalIdentifier
       ];
 
-    if (!isDefined(flatObjectMetadata)) {
+    if (!isDefined(conversationObjectMetadata)) {
       throw new AgentHistoryStorageException({
         code: 'OBJECT_METADATA_NOT_FOUND',
         message: doNotTranslate(
-          `Object metadata for ${objectName} was not found`,
+          `Object metadata for ${conversationObjectName} was not found`,
         ),
       });
     }
 
-    return flatObjectMetadata;
+    return conversationObjectMetadata;
   }
 
-  private async findPair({
+  private async findDirectMessagePairOfThread({
     transactionScope,
     threadId,
     directMessagePairsByThreadId,

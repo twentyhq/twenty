@@ -1,6 +1,6 @@
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { isArray, isNull, isString } from '@sniptt/guards';
-import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
+import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { In, type ObjectLiteral } from 'typeorm';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -15,10 +15,12 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 export class AgentHistoryTransactionService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @Inject(AgentChatDirectMessageRecordsService)
-    private readonly directMessageRecordsService: Pick<
-      AgentChatDirectMessageRecordsService,
-      'isEnabled' | 'share' | 'unshare'
+    @Inject(AgentChatDirectMessageConversationPrivacyService)
+    private readonly directMessageConversationPrivacyService: Pick<
+      AgentChatDirectMessageConversationPrivacyService,
+      | 'isDirectMessageIdentityEnabled'
+      | 'makeConversationRecordsPrivateToPair'
+      | 'deletePairSharesOfConversationRecords'
     >,
   ) {}
 
@@ -26,8 +28,10 @@ export class AgentHistoryTransactionService {
     workspaceId: string,
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
   ): Promise<TResult> {
-    const shouldShareDirectMessageRecords =
-      await this.directMessageRecordsService.isEnabled(workspaceId);
+    const isDirectMessageIdentityEnabled =
+      await this.directMessageConversationPrivacyService.isDirectMessageIdentityEnabled(
+        workspaceId,
+      );
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -44,7 +48,7 @@ export class AgentHistoryTransactionService {
             >();
             const threadIdsByMessageId = new Map<string, string>();
 
-            const shareDirectMessageRecords = async ({
+            const makeDirectMessageConversationRecordsPrivate = async ({
               name,
               values,
               identifiers,
@@ -53,7 +57,7 @@ export class AgentHistoryTransactionService {
               values: ObjectLiteral | ObjectLiteral[];
               identifiers: ObjectLiteral[];
             }): Promise<void> => {
-              if (!shouldShareDirectMessageRecords) {
+              if (!isDirectMessageIdentityEnabled) {
                 return;
               }
 
@@ -82,7 +86,10 @@ export class AgentHistoryTransactionService {
                 }
               }
 
-              const recordIdsByThreadId = new Map<string, string[]>();
+              const conversationRecordIdsByThreadId = new Map<
+                string,
+                string[]
+              >();
 
               for (const [index, record] of records.entries()) {
                 const recordId = identifiers[index]?.id;
@@ -108,21 +115,30 @@ export class AgentHistoryTransactionService {
                   threadIdsByMessageId.set(recordId, threadId);
                 }
 
-                const recordIds = recordIdsByThreadId.get(threadId) ?? [];
+                const conversationRecordIds =
+                  conversationRecordIdsByThreadId.get(threadId) ?? [];
 
-                recordIds.push(recordId);
-                recordIdsByThreadId.set(threadId, recordIds);
+                conversationRecordIds.push(recordId);
+                conversationRecordIdsByThreadId.set(
+                  threadId,
+                  conversationRecordIds,
+                );
               }
 
-              for (const [threadId, recordIds] of recordIdsByThreadId) {
-                await this.directMessageRecordsService.share({
-                  workspaceId,
-                  transactionScope,
-                  threadId,
-                  objectName: name,
-                  recordIds,
-                  directMessagePairsByThreadId,
-                });
+              for (const [
+                threadId,
+                conversationRecordIds,
+              ] of conversationRecordIdsByThreadId) {
+                await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+                  {
+                    workspaceId,
+                    transactionScope,
+                    threadId,
+                    conversationObjectName: name,
+                    conversationRecordIds,
+                    directMessagePairsByThreadId,
+                  },
+                );
               }
             };
 
@@ -132,7 +148,11 @@ export class AgentHistoryTransactionService {
                 const { identifiers } =
                   await getRepository(name).insert(values);
 
-                await shareDirectMessageRecords({ name, values, identifiers });
+                await makeDirectMessageConversationRecordsPrivate({
+                  name,
+                  values,
+                  identifiers,
+                });
               },
               update: async (name, where, values) => {
                 const result = await getRepository(name).update(where, values);
@@ -155,7 +175,7 @@ export class AgentHistoryTransactionService {
                   values,
                   conflictPaths,
                 );
-                await shareDirectMessageRecords({
+                await makeDirectMessageConversationRecordsPrivate({
                   name,
                   values,
                   identifiers,
@@ -164,16 +184,20 @@ export class AgentHistoryTransactionService {
               delete: async (name, where) => {
                 const { raw } = await getRepository(name).delete(where);
 
-                if (!shouldShareDirectMessageRecords) {
+                if (!isDirectMessageIdentityEnabled) {
                   return;
                 }
 
-                await this.directMessageRecordsService.unshare({
-                  workspaceId,
-                  transactionScope,
-                  objectName: name,
-                  recordIds: raw.map(({ id }: { id: string }) => id),
-                });
+                await this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
+                  {
+                    workspaceId,
+                    transactionScope,
+                    conversationObjectName: name,
+                    conversationRecordIds: raw.map(
+                      ({ id }: { id: string }) => id,
+                    ),
+                  },
+                );
               },
               afterCommit: transactionScope.afterCommit,
             });
