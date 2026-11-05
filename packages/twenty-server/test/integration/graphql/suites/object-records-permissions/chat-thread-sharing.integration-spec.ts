@@ -48,7 +48,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
@@ -696,7 +696,7 @@ describe('Conversation sharing through the authenticated API', () => {
       threadId: randomUUID(),
     };
     const cleanup = jest
-      .spyOn(shareService, 'deleteByRecordIdsInTransaction')
+      .spyOn(shareService, 'deleteByRecordIds')
       .mockRejectedValueOnce(new Error('Grant storage unavailable'));
     try {
       await expect(
@@ -996,16 +996,15 @@ describe('Conversations through the record API', () => {
     }
 
     const admittedRecordIds =
-      await getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      )
-        .buildEventRecordAccessGate(batch)
-        .resolveAdmittedRecordIds(
-          await resolveWorkspaceMemberAuthContext({
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
-            workspaceMemberId,
-          }),
-        );
+      await getAppProviderByClassName<PermissionsService>(
+        'PermissionsService',
+      ).findReadableEventRecordIds({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId,
+        }),
+        eventBatch: batch,
+      });
 
     return admittedRecordIds.has(threadId);
   };

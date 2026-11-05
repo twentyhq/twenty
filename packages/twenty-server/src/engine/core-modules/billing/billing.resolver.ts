@@ -85,6 +85,21 @@ const BILLING_CHECKOUT_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 
+const BILLING_PARTNER_CODE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: false,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
+
 const BILLING_PLAN_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
@@ -135,37 +150,19 @@ export class BillingResolver {
   }
 
   @Query(() => BillingPartnerCodeDTO)
-  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
   async billingPartnerCode(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
-    await this.validateCanCheckoutSessionPermissionOrThrow({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      applicationId: application?.id,
-      workspaceActivationStatus: workspace.activationStatus,
-    });
-
     return this.billingPartnerCodeService.getPartnerCode(workspace.id);
   }
 
   @Mutation(() => BillingPartnerCodeDTO)
-  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
   async setBillingPartnerCode(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { partnerCode }: BillingSetPartnerCodeInput,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
-    await this.validateCanCheckoutSessionPermissionOrThrow({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      applicationId: application?.id,
-      workspaceActivationStatus: workspace.activationStatus,
-    });
-
     return this.billingPartnerCodeService.setPartnerCode({
       workspaceId: workspace.id,
       partnerCode,

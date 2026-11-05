@@ -1198,6 +1198,11 @@ msgstr "이 작업 공간에서는 이미 내보내기가 실행 중입니다."
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "이 작업공간에서 이미 내보내기가 실행 중입니다. 완료될 때까지 기다려 주세요."
 
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "외부 서비스의 응답 시간이 너무 오래 걸렸습니다."
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
