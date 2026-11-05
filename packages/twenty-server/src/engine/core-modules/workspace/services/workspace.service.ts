@@ -82,6 +82,7 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AiDataPolicyInput } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.input';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
@@ -242,6 +243,24 @@ export class WorkspaceService {
         { userFriendlyMessage },
       );
     }
+  }
+
+  private buildAiDataPolicy({
+    aiDataPolicyInput,
+    storedAiDataPolicy,
+  }: {
+    aiDataPolicyInput: AiDataPolicyInput;
+    storedAiDataPolicy: AiDataPolicy;
+  }): AiDataPolicy {
+    return {
+      ...NO_AI_DATA_POLICY,
+      ...storedAiDataPolicy,
+      ...aiDataPolicyInput,
+      isProductImprovementDataSharingEnabled:
+        aiDataPolicyInput.isProductImprovementDataSharingEnabled ??
+        storedAiDataPolicy.isProductImprovementDataSharingEnabled ??
+        NO_AI_DATA_POLICY.isProductImprovementDataSharingEnabled,
+    };
   }
 
   private validateAiModelIdByTier({
@@ -631,18 +650,12 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
-        ...(isDefined(payload.aiDataPolicy)
-          ? {
-              aiDataPolicy: {
-                ...payload.aiDataPolicy,
-                isProductImprovementDataSharingEnabled:
-                  payload.aiDataPolicy.isProductImprovementDataSharingEnabled ??
-                  workspace.aiDataPolicy
-                    ?.isProductImprovementDataSharingEnabled ??
-                  NO_AI_DATA_POLICY.isProductImprovementDataSharingEnabled,
-              },
-            }
-          : {}),
+        ...(isDefined(payload.aiDataPolicy) && {
+          aiDataPolicy: this.buildAiDataPolicy({
+            aiDataPolicyInput: payload.aiDataPolicy,
+            storedAiDataPolicy: workspace.aiDataPolicy,
+          }),
+        }),
         ...(payload.customDomain === null
           ? { isCustomDomainEnabled: false }
           : {}),

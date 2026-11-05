@@ -20,7 +20,9 @@ export class AiDataPolicyInput {
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @ValidateIf(
-    ({ isProductImprovementDataSharingEnabled }: AiDataPolicyInput) =>
+    ({
+      isProductImprovementDataSharingEnabled,
+    }: Pick<AiDataPolicyInput, 'isProductImprovementDataSharingEnabled'>) =>
       !isUndefined(isProductImprovementDataSharingEnabled),
   )
   isProductImprovementDataSharingEnabled?: boolean;

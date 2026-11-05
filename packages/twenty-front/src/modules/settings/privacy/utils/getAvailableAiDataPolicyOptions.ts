@@ -7,7 +7,6 @@ import {
 
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// hide options no served model satisfies, but keep a restriction in force listed so it can be lifted
 export const getAvailableAiDataPolicyOptions = ({
   aiModels,
   aiDataPolicy,
