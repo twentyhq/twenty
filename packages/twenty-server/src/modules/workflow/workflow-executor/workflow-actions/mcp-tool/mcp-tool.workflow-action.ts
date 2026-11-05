@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { stripEmptyValues } from 'src/engine/core-modules/tool-provider/output-transforms/strip-empty-values.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
-import { fromCallToolResultToToolOutput } from 'src/engine/metadata-modules/mcp-server/utils/from-call-tool-result-to-tool-output.util';
+import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -18,12 +18,11 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { isWorkflowMcpToolAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/guards/is-workflow-mcp-tool-action.guard';
-import { type WorkflowMcpToolActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/types/workflow-mcp-tool-action-input.type';
 
 @Injectable()
 export class McpToolWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly mcpServerClientService: McpServerClientService,
+    private readonly mcpServerToolCallService: McpServerToolCallService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
@@ -43,10 +42,7 @@ export class McpToolWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { mcpServerId, toolName, toolInput } = resolveInput(
-      step.settings.input,
-      context,
-    ) as WorkflowMcpToolActionInput;
+    const { mcpServerId, toolName, toolInput } = step.settings.input;
     const { workspaceId } = runInfo;
 
     const { flatMcpServerMaps } =
@@ -61,12 +57,22 @@ export class McpToolWorkflowAction implements WorkflowAction {
     if (!isDefined(mcpServer)) {
       throw new WorkflowStepExecutorException(
         `MCP server with id ${mcpServerId} not found`,
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
     if (!mcpServer.isActive) {
-      return { error: `MCP server ${mcpServer.label} is inactive` };
+      throw new WorkflowStepExecutorException(
+        `MCP server ${mcpServer.label} is inactive`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    if (!mcpServer.tools.some((tool) => tool.name === toolName)) {
+      throw new WorkflowStepExecutorException(
+        `MCP server ${mcpServer.label} no longer offers the tool ${toolName}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
     }
 
     const { authContext, application } =
@@ -80,12 +86,14 @@ export class McpToolWorkflowAction implements WorkflowAction {
       },
     );
 
-    const result = await this.mcpServerClientService.callTool({
-      target: { ...mcpServer, ...getUserFromAuthContext(authContext) },
+    const filledToolInput = stripEmptyValues(resolveInput(toolInput, context));
+
+    const { output } = await this.mcpServerToolCallService.callTool({
+      mcpServer,
       toolName,
-      toolArguments: toolInput ?? {},
+      toolArguments: isPlainObject(filledToolInput) ? filledToolInput : {},
+      userWorkspaceId: getUserFromAuthContext(authContext).userWorkspaceId,
     });
-    const output = fromCallToolResultToToolOutput({ toolName, result });
 
     if (!output.success) {
       return { error: output.error ?? output.message };
