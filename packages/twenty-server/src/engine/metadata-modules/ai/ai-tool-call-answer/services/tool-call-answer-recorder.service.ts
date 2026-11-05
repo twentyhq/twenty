@@ -8,7 +8,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-context.type';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
 import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';

@@ -1,5 +1,25 @@
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { getStandardFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({
+    getWorkspaceContext: () => ({
+      flatObjectMetadataMaps: {
+        byUniversalIdentifier: {
+          [STANDARD_OBJECTS.agentChatThread.universalIdentifier]:
+            getStandardFlatObjectMetadataMock({
+              universalIdentifier:
+                STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+              nameSingular: 'agentChatThread',
+            }),
+        },
+      },
+    }),
+  }),
+);
 
 it('reads native workspace fields and precision from workspace storage', async () => {
   const record = {
@@ -39,6 +59,9 @@ it('reads native workspace fields and precision from workspace storage', async (
       order: { archivedAt: { order: 'DESC', nulls: 'NULLS LAST' } },
     }),
   );
-  expect(storage.getContext).toHaveBeenCalledWith('workspace');
+  expect(storage.getContext).toHaveBeenCalledWith({
+    workspaceId: 'workspace',
+    flatObjectMetadataMaps: expect.anything(),
+  });
   expect(storage.getContext).toHaveBeenCalledTimes(2);
 });

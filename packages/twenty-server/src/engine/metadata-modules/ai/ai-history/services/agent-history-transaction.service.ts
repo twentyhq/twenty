@@ -1,13 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { resolveAgentHistoryObjectNameOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-history-object-name-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class AgentHistoryTransactionService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    @Inject(WorkspaceOrmManager)
+    private readonly workspaceOrmManager: Pick<
+      WorkspaceOrmManager,
+      'executeInWorkspaceContext' | 'runInWorkspaceTransaction'
+    >,
+  ) {}
 
   async run<TResult>(
     workspaceId: string,
@@ -17,10 +25,15 @@ export class AgentHistoryTransactionService {
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           (transactionScope) => {
+            const { flatObjectMetadataMaps } = getWorkspaceContext();
             const getRepository = (name: AgentHistoryObjectName) =>
-              transactionScope.getRepositoryWithoutPermissionChecks(name, {
-                shouldSkipEventEmission: true,
-              });
+              transactionScope.getRepositoryWithoutPermissionChecks(
+                resolveAgentHistoryObjectNameOrThrow({
+                  objectName: name,
+                  flatObjectMetadataMaps,
+                }),
+                { shouldSkipEventEmission: true },
+              );
 
             return work({
               executeRawQuery: transactionScope.executeRawQuery,

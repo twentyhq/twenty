@@ -10,10 +10,10 @@ import { type FindOptionsWhere } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type AgentHistoryWorkspaceStorageService,
-  type AgentHistoryStorageContext,
-} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-context.type';
+import { resolveAgentHistoryObjectNameOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-history-object-name-or-throw.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
@@ -42,19 +42,27 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
       context: AgentHistoryStorageContext,
     ) => Promise<TResult>,
   ): Promise<TResult> {
-    const context = this.storageService.getContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        work(
+      async () => {
+        const { flatObjectMetadataMaps } = getWorkspaceContext();
+        const context = await this.storageService.getContext({
+          workspaceId,
+          flatObjectMetadataMaps,
+        });
+
+        return work(
           this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<TRecord>(
-            this.name,
+            resolveAgentHistoryObjectNameOrThrow({
+              objectName: this.name,
+              flatObjectMetadataMaps,
+            }),
             {
               shouldSkipEventEmission: true,
             },
           ),
           context,
-        ),
+        );
+      },
       buildSystemAuthContext(workspaceId),
       { lite: true },
     );

@@ -155,7 +155,7 @@ export class AgentChatMessageReactionService {
     }
 
     return this.findReactionSummaries({
-      manager: this.storageService.getContext(workspaceId).manager,
+      manager: (await this.storageService.getContext({ workspaceId })).manager,
       workspaceId,
       messageIds,
     });

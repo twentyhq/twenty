@@ -1,4 +1,4 @@
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-context.type';
 
 // Runs in a participant write's transaction, after the participant row is
 // locked, in the order member activity takes the two locks

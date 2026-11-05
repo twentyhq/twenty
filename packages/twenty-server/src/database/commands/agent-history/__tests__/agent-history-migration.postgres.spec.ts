@@ -29,10 +29,16 @@ import { Logger } from '@nestjs/common';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
+import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-enum-manager.service';
+import {
+  collectEnumOperationsForObject,
+  EnumOperation,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -69,9 +75,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       synchronize: false,
     });
     const storage = new AgentHistoryUpgradeStorageService(dataSource);
-    const workspaceStorage = new AgentHistoryWorkspaceStorageService(
-      dataSource,
-    );
     const migrationState = new AgentHistoryMigrationStateService();
     const migration = new AgentHistoryMigrationService(
       dataSource,
@@ -96,6 +99,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         .filter((field) => field.objectMetadataId === object.id)
         .map((field) => field.id);
     }
+    const workspaceStorage = new AgentHistoryWorkspaceStorageService(
+      dataSource,
+      { getOrRecompute: jest.fn().mockResolvedValue(metadata) },
+    );
     const emitDatabaseBatchEvent = jest.fn();
     const workspaceDataSourceOptions = {
       pool,
@@ -134,6 +141,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ...workspaceDataSourceOptions.internalContext,
           flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
           flatFieldMetadataMaps: maps.flatFieldMetadataMaps,
+          flatIndexMaps: maps.flatIndexMaps,
+          objectIdByNameSingular: buildObjectIdByNameMaps(
+            maps.flatObjectMetadataMaps,
+          ).idByNameSingular,
         },
       };
       const workspaceDataSource = new WorkspaceDataSource(options);
@@ -346,6 +357,23 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             ).filter(isDefined),
             ...legacyFields,
           ].filter((field) => field.objectMetadataId === object.id);
+          for (const enumOperation of collectEnumOperationsForObject({
+            flatFieldMetadatas: fields,
+            tableName: table.name,
+            operation: EnumOperation.CREATE,
+          })) {
+            if (enumOperation.operation !== EnumOperation.CREATE) {
+              continue;
+            }
+
+            await new WorkspaceSchemaEnumManagerService().createEnum({
+              queryRunner: runner,
+              schemaName: SCHEMA,
+              enumName: enumOperation.enumName,
+              values: enumOperation.values,
+            });
+          }
+
           await new WorkspaceSchemaTableManagerService().createTable({
             queryRunner: runner,
             schemaName: SCHEMA,
@@ -739,6 +767,122 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           where: { messageId: checkpointId },
         }),
       ).toBe(1);
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+    });
+
+    it('preserves history reads and writes after object and table renames', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const originalPart = await messageParts.findOneOrFail(WORKSPACE_ID, {
+        where: { messageId: MESSAGE_ID },
+      });
+      const renamedMetadata = structuredClone(metadata);
+
+      for (const { universalIdentifier, previousName, nameSingular } of [
+        {
+          universalIdentifier:
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+          previousName: 'agentChatThread',
+          nameSingular: 'inboxThread',
+        },
+        {
+          universalIdentifier:
+            STANDARD_OBJECTS.agentMessage.universalIdentifier,
+          previousName: 'agentMessage',
+          nameSingular: 'inboxMessage',
+        },
+        {
+          universalIdentifier:
+            STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+          previousName: 'agentMessagePart',
+          nameSingular: 'inboxMessagePart',
+        },
+      ]) {
+        const objectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+          flatEntityMaps: renamedMetadata.flatObjectMetadataMaps,
+          universalIdentifier,
+        });
+
+        objectMetadata.nameSingular = nameSingular;
+        objectMetadata.namePlural = `${nameSingular}s`;
+        await dataSource.query(
+          `ALTER TABLE "${SCHEMA}"."${previousName}" RENAME TO "${nameSingular}"`,
+        );
+      }
+
+      const renamedStorage = new AgentHistoryWorkspaceStorageService(
+        dataSource,
+        { getOrRecompute: jest.fn().mockResolvedValue(renamedMetadata) },
+      );
+      const renamedOrm = createOrm(renamedMetadata);
+      const renamedThreads =
+        new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
+          'agentChatThread',
+          renamedStorage,
+          renamedOrm,
+        );
+      const renamedMessages =
+        new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
+          'agentMessage',
+          renamedStorage,
+          renamedOrm,
+        );
+
+      await expect(
+        renamedMessages.findOneOrFail(WORKSPACE_ID, {
+          where: { id: MESSAGE_ID },
+          relations: { parts: true },
+        }),
+      ).resolves.toMatchObject({
+        id: MESSAGE_ID,
+        threadId: THREAD_ID,
+        turnId: TURN_ID,
+        parts: [{ id: originalPart.id, textContent: 'Hidden setup context' }],
+      });
+      await renamedThreads.update(
+        WORKSPACE_ID,
+        { id: THREAD_ID },
+        { title: 'Renamed inbox conversation' },
+      );
+
+      const insertedMessageId = '20202020-8888-4888-8888-888888888888';
+      const renamedTransactions = new AgentHistoryTransactionService(
+        renamedOrm,
+      );
+
+      await renamedTransactions.run(WORKSPACE_ID, async (scope) => {
+        await scope.insert('agentMessage', {
+          id: insertedMessageId,
+          threadId: THREAD_ID,
+          turnId: TURN_ID,
+          role: AgentMessageRole.ASSISTANT,
+        });
+        await scope.insert('agentMessagePart', {
+          messageId: insertedMessageId,
+          orderIndex: 0,
+          type: 'text',
+          textContent: 'Message after rename',
+        });
+      });
+
+      await expect(
+        renamedStorage.run(WORKSPACE_ID, ({ manager, table }) =>
+          manager.query(
+            `SELECT thread.id, thread.title, thread."totalInputCredits", message.id AS "messageId", part."textContent" FROM ${table('agentChatThread')} thread JOIN ${table('agentMessage')} message ON message."threadId" = thread.id JOIN ${table('agentMessagePart')} part ON part."messageId" = message.id WHERE message.id = $1`,
+            [insertedMessageId],
+          ),
+        ),
+      ).resolves.toEqual([
+        {
+          id: THREAD_ID,
+          title: 'Renamed inbox conversation',
+          totalInputCredits: '9007199254740993',
+          messageId: insertedMessageId,
+          textContent: 'Message after rename',
+        },
+      ]);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
