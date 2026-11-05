@@ -14,7 +14,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.57.0', 1793899027652)
+@RegisteredWorkspaceCommand('2.57.0', 1793916608344)
 @Command({
   name: 'upgrade:2-57:backfill-field-metadata-options',
   description:
