@@ -56,9 +56,9 @@ export const SettingsMcpServerToolsTable = ({
       </TableRow>
       <StyledTableBodyContainer>
         <TableBody>
-          {tools.map((tool) => (
+          {tools.map((tool, toolIndex) => (
             <TableRow
-              key={tool.name}
+              key={`${tool.name}-${toolIndex}`}
               gridTemplateColumns={
                 MCP_SERVER_TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS
               }
