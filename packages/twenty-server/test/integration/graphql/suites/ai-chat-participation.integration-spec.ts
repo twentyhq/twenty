@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { retryChatMessageOperationFactory } from 'test/integration/graphql/utils/retry-chat-message-operation-factory.util';
 import { saveDirectMessageAssistantModeOperationFactory } from 'test/integration/graphql/utils/save-direct-message-assistant-mode-operation-factory.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -14,6 +15,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -160,6 +162,45 @@ describe('Chat participation through the authenticated API', () => {
       }
     },
   );
+
+  it('retries a failed direct message assistant turn', async () => {
+    const threadId = await createDirectMessage();
+    const sent = await sendChatParticipationMessage({
+      threadId,
+      isAssistantMentioned: true,
+    });
+
+    expect(sent.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
+    const { messageId } = sent.body.data.sendChatMessage;
+
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentTurn" SET status = $2
+       WHERE id = (SELECT "turnId" FROM "${context.schema}"."agentMessage" WHERE id = $1)`,
+      [messageId, AgentTurnStatus.FAILED],
+    );
+
+    const retried = await makeMetadataApiRequest(
+      retryChatMessageOperationFactory(threadId),
+    );
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.retryChatMessage.streamId).toEqual(
+      expect.any(String),
+    );
+    await waitForAllJobsToFinish();
+
+    const [turn] = await global.testDataSource.query<
+      { status: AgentTurnStatus }[]
+    >(
+      `SELECT status FROM "${context.schema}"."agentTurn"
+       WHERE id = (SELECT "turnId" FROM "${context.schema}"."agentMessage" WHERE id = $1)`,
+      [messageId],
+    );
+
+    expect(turn.status).toBe(AgentTurnStatus.COMPLETED);
+  });
 
   it('answers an Ada-only chat despite both Never settings and client opt-outs', async () => {
     await context.setAssistantModes({
