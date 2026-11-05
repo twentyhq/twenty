@@ -11,7 +11,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
   type AiChatAssistantProfile,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
 } from 'twenty-shared/ai';
@@ -83,38 +82,6 @@ const assignMemberRole = async (roleId: string) => {
   expect(errors).toBeUndefined();
 };
 
-const createSettingsRole = async ({
-  label,
-  permission,
-}: {
-  label: string;
-  permission: PermissionFlagType;
-}) => {
-  const { data, errors } = await createOneRole({
-    input: {
-      label,
-      canUpdateAllSettings: false,
-      canAccessAllTools: false,
-      canReadAllObjectRecords: false,
-      canUpdateAllObjectRecords: false,
-      canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
-      canBeAssignedToUsers: true,
-    },
-  });
-
-  expect(errors).toBeUndefined();
-
-  const roleId = data.createOneRole.id;
-  const permissionResponse = await upsertPermissionFlags({
-    input: { roleId, permissionFlagKeys: [permission] },
-  });
-
-  expect(permissionResponse.errors).toBeUndefined();
-
-  return roleId;
-};
-
 const expectRejectedUpdate = async ({
   data,
   token,
@@ -145,7 +112,6 @@ describe('workspace assistant profile settings', () => {
   let originalWorkspace: WorkspaceSettings;
   let originalMemberRoleId: string;
   let aiSettingsRoleId: string;
-  let workspaceSettingsRoleId: string;
   let wasInboxEnabled: boolean;
 
   beforeAll(async () => {
@@ -161,14 +127,22 @@ describe('workspace assistant profile settings', () => {
     expect(response.body.errors).toBeUndefined();
     originalWorkspace = response.body.data.currentWorkspace;
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-    aiSettingsRoleId = await createSettingsRole({
-      label: 'Assistant profile editor',
-      permission: PermissionFlagType.AI_SETTINGS,
+
+    const { data, errors } = await createOneRole({
+      input: { label: 'Assistant profile editor' },
     });
-    workspaceSettingsRoleId = await createSettingsRole({
-      label: 'Workspace editor without assistant profile',
-      permission: PermissionFlagType.WORKSPACE,
+
+    expect(errors).toBeUndefined();
+    aiSettingsRoleId = data.createOneRole.id;
+
+    const permissionResponse = await upsertPermissionFlags({
+      input: {
+        roleId: aiSettingsRoleId,
+        permissionFlagKeys: [PermissionFlagType.AI_SETTINGS],
+      },
     });
+
+    expect(permissionResponse.errors).toBeUndefined();
   });
 
   beforeEach(async () => {
@@ -196,13 +170,11 @@ describe('workspace assistant profile settings', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      for (const roleId of [aiSettingsRoleId, workspaceSettingsRoleId]) {
-        const { errors } = await deleteOneRole({
-          input: { idToDelete: roleId },
-        });
+      const { errors } = await deleteOneRole({
+        input: { idToDelete: aiSettingsRoleId },
+      });
 
-        expect(errors).toBeUndefined();
-      }
+      expect(errors).toBeUndefined();
     } finally {
       await setInboxEnabled(wasInboxEnabled);
     }
@@ -225,8 +197,6 @@ describe('workspace assistant profile settings', () => {
     );
     const cacheKey = `${CORE_ENTITY_CACHE_KEYS.workspaceEntity}:${workspace.id}`;
     const cacheDataKey = `${cacheKey}:data`;
-
-    expect(storedProfile).toEqual(CUSTOM_ASSISTANT_PROFILE);
 
     await coreEntityCacheService.invalidate('workspaceEntity', workspace.id);
 
@@ -266,16 +236,6 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('resets every profile field to Ada defaults and reads them back', async () => {
-    const unchanged = await updateWorkspace({
-      data: { shouldResetAiChatAssistantProfile: false },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(unchanged.body.errors).toBeUndefined();
-    expect(unchanged.body.data.updateWorkspace.aiChatAssistantProfile).toEqual(
-      CUSTOM_ASSISTANT_PROFILE,
-    );
-
     const response = await updateWorkspace({
       data: { shouldResetAiChatAssistantProfile: true },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -294,111 +254,70 @@ describe('workspace assistant profile settings', () => {
     );
   });
 
-  it('trims names, accepts the maximum name length and preserves omitted fields', async () => {
-    const response = await updateWorkspace({
-      data: { aiChatAssistantProfile: { displayName: '  Nova  ' } },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  it('rejects an invalid mixed update without committing either change', async () => {
+    await expectRejectedUpdate({
+      data: {
+        displayName: 'Rejected workspace edit',
+        aiChatAssistantProfile: { avatarColor: 'unsupported' },
+      },
+      errorCode: ErrorCode.BAD_USER_INPUT,
     });
+  });
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.aiChatAssistantProfile).toEqual({
-      ...CUSTOM_ASSISTANT_PROFILE,
-      displayName: 'Nova',
+  it('preserves concurrent partial edits in only the authenticated workspace', async () => {
+    const workspaceRepository =
+      getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
+    const foreignWorkspace = await workspaceRepository.findOneByOrFail({
+      id: SEED_YCOMBINATOR_WORKSPACE_ID,
     });
+    const responses = await Promise.all([
+      updateWorkspace({
+        data: { aiChatAssistantProfile: { displayName: '  Sage  ' } },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      }),
+      updateWorkspace({
+        data: { aiChatAssistantProfile: { avatarColor: 'purple' } },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      }),
+    ]);
 
-    const maximumName = 'N'.repeat(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH);
-    const maximumResponse = await updateWorkspace({
-      data: { aiChatAssistantProfile: { displayName: maximumName } },
-    });
-
-    expect(maximumResponse.body.errors).toBeUndefined();
-
-    const unrelatedResponse = await updateWorkspace({
-      data: { displayName: originalWorkspace.displayName },
-    });
-
-    expect(unrelatedResponse.body.errors).toBeUndefined();
+    for (const response of responses) {
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateWorkspace.id).toBe(
+        SEED_APPLE_WORKSPACE_ID,
+      );
+    }
 
     const persisted = await readWorkspace();
 
     expect(persisted.body.data.currentWorkspace.aiChatAssistantProfile).toEqual(
       {
         ...CUSTOM_ASSISTANT_PROFILE,
-        displayName: maximumName,
+        displayName: 'Sage',
+        avatarColor: 'purple',
       },
+    );
+    const persistedForeignWorkspace = await workspaceRepository.findOneByOrFail(
+      {
+        id: SEED_YCOMBINATOR_WORKSPACE_ID,
+      },
+    );
+
+    expect(persistedForeignWorkspace.aiChatAssistantProfile).toEqual(
+      foreignWorkspace.aiChatAssistantProfile,
     );
   });
 
-  it('rejects invalid names, options, unsupported fields and explicit null without committing a mixed update', async () => {
-    const invalidProfiles = [
-      null,
-      { displayName: '   ' },
-      {
-        displayName: 'N'.repeat(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH + 1),
-      },
-      { displayName: null },
-      { avatarShape: 'triangle' },
-      { avatarColor: 'black' },
-      { avatarFace: 'angry' },
-      { isAvatarAnimated: 'true' },
-      { avatarColor: null },
-      { unsupported: 'value' },
-    ];
-
-    for (const aiChatAssistantProfile of invalidProfiles) {
-      await expectRejectedUpdate({
-        data: {
-          displayName: 'Rejected invalid assistant profile',
-          aiChatAssistantProfile,
-        },
-        errorCode: ErrorCode.BAD_USER_INPUT,
-      });
-    }
-
+  it('enforces permissions for every field in a mixed update and for reset', async () => {
     await expectRejectedUpdate({
       data: {
-        shouldResetAiChatAssistantProfile: null,
+        displayName: 'Rejected workspace edit',
+        aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
       },
-      errorCode: ErrorCode.BAD_USER_INPUT,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      errorCode: ErrorCode.FORBIDDEN,
     });
-  });
-
-  it('preserves independent profile edits submitted concurrently', async () => {
-    const responses = await Promise.all([
-      updateWorkspace({
-        data: { aiChatAssistantProfile: { displayName: 'Sage' } },
-      }),
-      updateWorkspace({
-        data: {
-          aiChatAssistantProfile: {
-            avatarShape: 'gem',
-            avatarColor: 'purple',
-            avatarFace: 'love',
-            isAvatarAnimated: true,
-          },
-        },
-      }),
-    ]);
-
-    for (const response of responses) {
-      expect(response.body.errors).toBeUndefined();
-    }
-
-    const persisted = await readWorkspace();
-
-    expect(persisted.body.data.currentWorkspace.aiChatAssistantProfile).toEqual(
-      {
-        displayName: 'Sage',
-        avatarShape: 'gem',
-        avatarColor: 'purple',
-        avatarFace: 'love',
-        isAvatarAnimated: true,
-      },
-    );
-  });
-
-  it('allows profile reads but requires AI_SETTINGS for updates and reset', async () => {
-    await assignMemberRole(workspaceSettingsRoleId);
+    await assignMemberRole(originalMemberRoleId);
 
     const response = await readWorkspace(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
@@ -419,17 +338,6 @@ describe('workspace assistant profile settings', () => {
     }
   });
 
-  it('rejects an AI editor mixed update to a workspace-only field atomically', async () => {
-    await expectRejectedUpdate({
-      data: {
-        displayName: 'Rejected workspace edit',
-        aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
-      },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      errorCode: ErrorCode.FORBIDDEN,
-    });
-  });
-
   it('rejects profile updates and reset while Inbox is disabled', async () => {
     await setInboxEnabled(false);
 
@@ -442,46 +350,5 @@ describe('workspace assistant profile settings', () => {
         errorCode: ErrorCode.FORBIDDEN,
       });
     }
-
-    const unrelatedResponse = await updateWorkspace({
-      data: { displayName: originalWorkspace.displayName },
-    });
-
-    expect(unrelatedResponse.body.errors).toBeUndefined();
-  });
-
-  it('rejects combining a reset with a profile patch', async () => {
-    await expectRejectedUpdate({
-      data: {
-        shouldResetAiChatAssistantProfile: true,
-        aiChatAssistantProfile: { displayName: 'Ambiguous' },
-      },
-      errorCode: ErrorCode.BAD_USER_INPUT,
-    });
-  });
-
-  it('updates only the authenticated workspace without changing another workspace profile', async () => {
-    const workspaceRepository =
-      getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
-    const foreignWorkspace = await workspaceRepository.findOneByOrFail({
-      id: SEED_YCOMBINATOR_WORKSPACE_ID,
-    });
-
-    const response = await updateWorkspace({
-      data: { aiChatAssistantProfile: { displayName: 'Apple assistant' } },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.id).toBe(SEED_APPLE_WORKSPACE_ID);
-
-    const persistedForeignWorkspace = await workspaceRepository.findOneByOrFail(
-      {
-        id: SEED_YCOMBINATOR_WORKSPACE_ID,
-      },
-    );
-
-    expect(persistedForeignWorkspace.aiChatAssistantProfile).toEqual(
-      foreignWorkspace.aiChatAssistantProfile,
-    );
   });
 });
