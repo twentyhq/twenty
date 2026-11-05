@@ -42,6 +42,18 @@ export const buildFieldMetadataOptionSideEffectResult = ({
     fieldMetadataUniversalIdentifier,
     targetUniversalFlatFieldMetadata,
     existingOptions,
+    isUniversalIdentifierUsedByOtherField: (universalIdentifier) => {
+      const existingOption =
+        relatedFlatEntityMaps.flatFieldMetadataOptionMaps.byUniversalIdentifier[
+          universalIdentifier
+        ];
+
+      return (
+        isDefined(existingOption) &&
+        existingOption.fieldMetadataUniversalIdentifier !==
+          fieldMetadataUniversalIdentifier
+      );
+    },
     applicationUniversalIdentifier:
       context.buildOptions.applicationUniversalIdentifier,
   });
