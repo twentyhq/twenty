@@ -232,14 +232,6 @@ export class CoreWorkflowVersionListService {
       return null;
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-      },
-    );
-
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
       {
@@ -258,6 +250,14 @@ export class CoreWorkflowVersionListService {
     ) {
       return null;
     }
+
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
+      },
+    );
 
     const versionRank = await this.computeCoreWorkflowVersionRank({
       workspaceId,

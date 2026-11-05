@@ -21,6 +21,7 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { WorkflowVisibility } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -328,6 +329,16 @@ const LEGACY_CORE_WORKFLOW_READS = `
   }
 `;
 
+const UPDATE_CORE_WORKFLOW_VISIBILITY = `
+  mutation UpdateCoreWorkflowVisibility(
+    $input: UpdateCoreWorkflowVisibilityInput!
+  ) {
+    updateCoreWorkflowVisibility(input: $input) {
+      id
+    }
+  }
+`;
+
 const COMPUTE_STEP_OUTPUT_SCHEMA = `
   mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
     computeStepOutputSchema(input: $input)
@@ -369,6 +380,19 @@ const buildJaneTokenThroughApplication = async (
   return applicationAccessToken.token;
 };
 
+const buildTimTokenThroughApplication = async (
+  applicationUniversalIdentifier: string,
+): Promise<string> => {
+  const { applicationAccessToken } = await generateApplicationTokenPair({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    applicationId: await findApplicationId(applicationUniversalIdentifier),
+    userId: USER_DATA_SEED_IDS.TIM,
+    userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+  });
+
+  return applicationAccessToken.token;
+};
+
 const buildApplicationTokenWithoutUser = async (
   applicationUniversalIdentifier: string,
 ): Promise<string> => {
@@ -405,6 +429,13 @@ const readCoreWorkflow = async (
   expect(response.body.errors).toBeUndefined();
 
   return response.body.data;
+};
+
+type MemberWorkflow = {
+  coreWorkflowId: string;
+  coreWorkflowVersionId: string;
+  workspaceWorkflowId: string;
+  workspaceWorkflowVersionId: string;
 };
 
 const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
@@ -870,23 +901,42 @@ describe('application workflow execution permissions', () => {
       coreWorkflowVersionById: null,
     };
 
+    const UNREADABLE_LEGACY_WORKFLOW = {
+      coreWorkflow: null,
+      coreWorkflowVersions: [],
+      coreWorkflowVersion: null,
+    };
+
     let applicationWorkflowIds: string[];
     let applicationWorkflow: {
       coreWorkflowId: string;
       coreWorkflowVersionId: string;
     };
-    let workspaceWorkflow: {
-      coreWorkflowId: string;
-      coreWorkflowVersionId: string;
-      workspaceWorkflowId: string;
-      workspaceWorkflowVersionId: string;
+    let workspaceWorkflow: MemberWorkflow;
+    let privateWorkflow: MemberWorkflow;
+
+    const createMemberWorkflow = async (
+      name: string,
+    ): Promise<MemberWorkflow> => {
+      const { coreWorkflowId, coreWorkflowVersionId } =
+        await createCoreWorkflow({ name });
+      const {
+        workspaceWorkflowId,
+        workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+      } = await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId });
+
+      return {
+        coreWorkflowId,
+        coreWorkflowVersionId,
+        workspaceWorkflowId,
+        workspaceWorkflowVersionId,
+      };
     };
 
-    const readWorkspaceWorkflowByLegacyIds = async (token: string) => {
+    const readByLegacyIds = async (token: string, workflow: MemberWorkflow) => {
       const response = await graphqlAs(token, LEGACY_CORE_WORKFLOW_READS, {
-        workspaceWorkflowId: workspaceWorkflow.workspaceWorkflowId,
-        workspaceWorkflowVersionId:
-          workspaceWorkflow.workspaceWorkflowVersionId,
+        workspaceWorkflowId: workflow.workspaceWorkflowId,
+        workspaceWorkflowVersionId: workflow.workspaceWorkflowVersionId,
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -906,26 +956,32 @@ describe('application workflow execution permissions', () => {
         CREATE_COMPANY_WORKFLOW,
       );
 
-      const { coreWorkflowId, coreWorkflowVersionId } =
-        await createCoreWorkflow({
-          name: `${RUN_PREFIX} workspace workflow read through applications`,
-        });
-      const {
-        workspaceWorkflowId,
-        workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-      } = await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId });
+      workspaceWorkflow = await createMemberWorkflow(
+        `${RUN_PREFIX} workspace workflow read through applications`,
+      );
+      privateWorkflow = await createMemberWorkflow(
+        `${RUN_PREFIX} private workflow read through applications`,
+      );
 
-      workspaceWorkflow = {
-        coreWorkflowId,
-        coreWorkflowVersionId,
-        workspaceWorkflowId,
-        workspaceWorkflowVersionId,
-      };
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_VISIBILITY,
+        {
+          input: {
+            coreWorkflowId: privateWorkflow.coreWorkflowId,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
     });
 
     afterAll(async () => {
       await deleteCoreWorkflows({
-        coreWorkflowIds: [workspaceWorkflow.coreWorkflowId],
+        coreWorkflowIds: [
+          workspaceWorkflow.coreWorkflowId,
+          privateWorkflow.coreWorkflowId,
+        ],
       });
     });
 
@@ -987,11 +1043,46 @@ describe('application workflow execution permissions', () => {
             coreWorkflowVersionId: workspaceWorkflow.coreWorkflowVersionId,
           }),
         ).toEqual(UNREADABLE_WORKFLOW);
-        expect(await readWorkspaceWorkflowByLegacyIds(token)).toEqual({
-          coreWorkflow: null,
-          coreWorkflowVersions: [],
-          coreWorkflowVersion: null,
-        });
+        expect(await readByLegacyIds(token, workspaceWorkflow)).toEqual(
+          UNREADABLE_LEGACY_WORKFLOW,
+        );
+      },
+    );
+
+    // An unreachable workflow must read as missing even when it is also private, without naming it in an error.
+    it.each([
+      [
+        'another member through the application',
+        buildTimTokenThroughApplication,
+      ],
+      ['the application alone', buildApplicationTokenWithoutUser],
+    ] as const)(
+      'reads nothing of a private member workflow, called by %s',
+      async (_, buildToken) => {
+        const token = await buildToken(APP_ID);
+
+        expect(await readCoreWorkflow(token, privateWorkflow)).toEqual(
+          UNREADABLE_WORKFLOW,
+        );
+        expect(await readByLegacyIds(token, privateWorkflow)).toEqual(
+          UNREADABLE_LEGACY_WORKFLOW,
+        );
+
+        const computeStepOutputSchema = await graphqlAs(
+          token,
+          COMPUTE_STEP_OUTPUT_SCHEMA,
+          {
+            input: {
+              step: { type: 'MANUAL', settings: { outputSchema: {} } },
+              coreWorkflowVersionId: privateWorkflow.coreWorkflowVersionId,
+            },
+          },
+        );
+
+        expect(computeStepOutputSchema.body.errors).toBeDefined();
+        expect(JSON.stringify(computeStepOutputSchema.body)).not.toContain(
+          privateWorkflow.coreWorkflowId,
+        );
       },
     );
 
@@ -1075,8 +1166,9 @@ describe('application workflow execution permissions', () => {
         applicationWorkflow.coreWorkflowVersionId,
       );
 
-      const legacyReads = await readWorkspaceWorkflowByLegacyIds(
+      const legacyReads = await readByLegacyIds(
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        workspaceWorkflow,
       );
 
       expect(legacyReads.coreWorkflow).toEqual({
