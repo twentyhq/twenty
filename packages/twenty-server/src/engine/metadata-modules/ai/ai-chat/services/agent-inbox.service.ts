@@ -364,7 +364,8 @@ export class AgentInboxService {
     }
   }
 
-  // One transaction, so a failed send leaves neither the message nor its mentions
+  // One transaction, so a failed send leaves neither the message nor its mentions.
+  // Shares and participants come after the thread row, the order sharing changes and replies lock them in.
   private async writeMessage({
     workspaceId,
     thread,
@@ -388,35 +389,30 @@ export class AgentInboxService {
       await this.conversationWriterService.runInTransaction(
         workspaceId,
         async (scope) => {
-          const writeMessageWithActivity = async () => {
-            await this.conversationWriterService.insertMessage({
-              ...message,
-              workspaceId,
-              threadId: thread.id,
-              role: AgentMessageRole.ASSISTANT,
-              agentId: null,
-              senderUserWorkspaceId: null,
-              scope,
-            });
-            await this.threadService.recordThreadActivityInTransactionOrThrow({
-              scope,
-              workspaceId,
-              threadBefore: thread,
-              text,
-              addedWriterWorkspaceMemberIds:
-                mentionDelivery?.addedWorkspaceMemberIds ?? [],
-            });
-          };
-
-          if (!isDefined(mentionDelivery)) {
-            return writeMessageWithActivity();
-          }
-
-          return this.inboxDeliveryService.deliverMentionsInTransaction({
-            scope: scope.workspaceTransactionScope,
-            mentionDelivery,
-            writeMessage: writeMessageWithActivity,
+          await this.conversationWriterService.insertMessage({
+            ...message,
+            workspaceId,
+            threadId: thread.id,
+            role: AgentMessageRole.ASSISTANT,
+            agentId: null,
+            senderUserWorkspaceId: null,
+            scope,
           });
+          await this.threadService.recordThreadActivityInTransactionOrThrow({
+            scope: scope.workspaceTransactionScope,
+            workspaceId,
+            threadBefore: thread,
+            text,
+            addedWriterWorkspaceMemberIds:
+              mentionDelivery?.addedWorkspaceMemberIds ?? [],
+          });
+
+          if (isDefined(mentionDelivery)) {
+            await this.inboxDeliveryService.deliverMentionsInTransaction({
+              scope: scope.workspaceTransactionScope,
+              mentionDelivery,
+            });
+          }
         },
       );
 

@@ -274,7 +274,6 @@ export class AgentChatSharingService {
     );
   }
 
-  // Under the lock generic sharing takes first, so a share changed since the check is neither missed nor downgraded
   async shareThreadWithMembersInTransactionOrThrow({
     scope,
     memberIds,
@@ -286,18 +285,6 @@ export class AgentChatSharingService {
     const objectMetadata = await this.getThreadObjectMetadata(
       access.workspaceId,
     );
-
-    await scope.executeRawQuery(
-      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-      [
-        buildRecordShareLockKey({
-          workspaceId: access.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordId: access.threadId,
-        }),
-      ],
-    );
-
     const threadShares = await this.recordShareStorageService.findByRecordIds({
       workspaceId: access.workspaceId,
       objectMetadataId: objectMetadata.id,

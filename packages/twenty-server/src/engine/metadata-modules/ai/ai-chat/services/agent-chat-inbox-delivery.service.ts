@@ -7,7 +7,6 @@ import { Equal, IsNull, Or } from 'typeorm';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatMentionDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-mention-delivery.type';
@@ -29,7 +28,6 @@ export class AgentChatInboxDeliveryService {
     private readonly sharingService: AgentChatSharingService,
     private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
-    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   async deliverMessageToInboxes({
@@ -217,7 +215,6 @@ export class AgentChatInboxDeliveryService {
     };
   }
 
-  // Locks record shares, then participants, then the thread, in the order every other writer takes them
   async deliverMentionsInTransaction({
     scope,
     mentionDelivery: {
@@ -227,11 +224,9 @@ export class AgentChatInboxDeliveryService {
       participantObjectMetadata,
       ...access
     },
-    writeMessage,
   }: {
     scope: WorkspaceTransactionScope;
     mentionDelivery: AgentChatMentionDelivery;
-    writeMessage: () => Promise<void>;
   }): Promise<void> {
     if (canManageSharing) {
       await this.sharingService.shareThreadWithMembersInTransactionOrThrow({
@@ -240,15 +235,6 @@ export class AgentChatInboxDeliveryService {
         memberIds: addedWorkspaceMemberIds,
       });
     }
-
-    await this.participantService.lockParticipantsInTransaction({
-      scope,
-      workspaceId: access.workspaceId,
-      threadId: access.threadId,
-      workspaceMemberIds: mentionedWorkspaceMemberIds,
-    });
-
-    await writeMessage();
 
     await this.inboxParticipantWriterService.writeParticipantInboxStateInTransaction(
       {

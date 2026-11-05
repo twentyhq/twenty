@@ -58,9 +58,6 @@ const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" I
 const PARTICIPANT_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
-const PARTICIPANT_LOCKS_QUERY =
-  'SELECT pg_advisory_xact_lock(hashtextextended(lock_key, 0)) FROM unnest($1::text[]) AS lock_key';
-
 // Saved as ended when already due, since its queued end may have run before this write
 const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
   `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "archivedAt", "snoozedUntil", "isSubscribed")
@@ -279,27 +276,6 @@ export class AgentChatThreadParticipantService {
       }),
       [args.threadId, args.workspaceMemberId],
     );
-  }
-
-  // Sorted, so two writes reaching the same members lock them in one order
-  async lockParticipantsInTransaction({
-    scope,
-    workspaceId,
-    threadId,
-    workspaceMemberIds,
-  }: Omit<AgentChatThreadAccessArgs, 'workspaceMemberId'> & {
-    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
-    workspaceMemberIds: string[];
-  }): Promise<void> {
-    await scope.executeRawQuery(PARTICIPANT_LOCKS_QUERY, [
-      [...new Set(workspaceMemberIds)].sort().map((workspaceMemberId) =>
-        buildAgentChatThreadParticipantLockKey({
-          workspaceId,
-          threadId,
-          workspaceMemberId,
-        }),
-      ),
-    ]);
   }
 
   // An assignee follows the chat and finds it in their inbox, unread unless
