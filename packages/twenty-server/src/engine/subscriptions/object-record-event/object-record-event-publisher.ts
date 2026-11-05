@@ -295,7 +295,7 @@ export class ObjectRecordEventPublisher {
     }
 
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIds({
+      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
         authContext: permissionsAuthContext,
         flatObjectMetadata: objectMetadata,
         flatObjectMetadataMaps,

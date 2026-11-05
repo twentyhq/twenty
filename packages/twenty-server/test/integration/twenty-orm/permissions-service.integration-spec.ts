@@ -216,7 +216,7 @@ describe('PermissionsService', () => {
     });
 
     const buildApiKeyPrincipals = async (
-      apiKey: ApiKeyWithObjectRecordGrants,
+      apiKey: Pick<ApiKeyWithObjectRecordGrants, 'apiKeyId'>,
     ) => {
       const principals = await permissionsService.buildPermissionsPrincipals({
         authContext: {

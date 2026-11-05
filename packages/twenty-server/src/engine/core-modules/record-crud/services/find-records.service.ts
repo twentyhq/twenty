@@ -155,7 +155,7 @@ export class FindRecordsService {
   > &
     Pick<FindRecordsParams, 'authContext'>): Promise<CommonSelectedFields> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIds({
+      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
         authContext,
         flatObjectMetadata,
         flatObjectMetadataMaps,

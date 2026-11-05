@@ -85,7 +85,7 @@ export class GroupByArgProcessorService {
     const objectFields = findManyFlatEntityByIdInFlatEntityMaps({
       flatEntityIds: flatObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
-    }).filter((field) => unreadableFieldMetadataIds?.has(field.id) !== true);
+    }).filter((field) => !unreadableFieldMetadataIds?.has(field.id));
 
     return getAvailableAggregationsFromObjectFields(objectFields);
   }

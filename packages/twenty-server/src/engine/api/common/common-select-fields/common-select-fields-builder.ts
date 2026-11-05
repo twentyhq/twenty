@@ -26,7 +26,7 @@ export class CommonSelectFieldsBuilder {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
-  async findReadableMetadataIds({
+  async findReadableMetadataIdsOrThrow({
     authContext,
     flatObjectMetadata,
     flatObjectMetadataMaps,

@@ -54,7 +54,7 @@ export const generateRecordFilterJsonSchema = ({
         isSystem: field.isSystem,
         additionalExcludedFieldNames,
       }) ||
-      unreadableFieldMetadataIds?.has(field.id) === true
+      unreadableFieldMetadataIds?.has(field.id)
     ) {
       continue;
     }

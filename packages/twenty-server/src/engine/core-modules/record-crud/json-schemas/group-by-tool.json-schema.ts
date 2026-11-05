@@ -79,7 +79,7 @@ const buildGroupByEntries = ({
   objectMetadata.fields
     .filter(
       (field) =>
-        unreadableFieldMetadataIds?.has(field.id) !== true &&
+        !unreadableFieldMetadataIds?.has(field.id) &&
         isFieldMetadataSupportedInGroupBy(field),
     )
     .flatMap((field) => {
@@ -194,7 +194,7 @@ export const generateGroupByToolInputSchema = ({
 
   const availableAggregations = getAvailableAggregationsFromObjectFields(
     objectMetadata.fields.filter(
-      (field) => unreadableFieldMetadataIds?.has(field.id) !== true,
+      (field) => !unreadableFieldMetadataIds?.has(field.id),
     ),
   );
 

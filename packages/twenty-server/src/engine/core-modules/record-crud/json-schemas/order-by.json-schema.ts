@@ -47,7 +47,7 @@ export const generateRecordOrderByJsonSchema = ({
         isSystem: false,
         excludeId: false,
       }) ||
-      unreadableFieldMetadataIds?.has(field.id) === true
+      unreadableFieldMetadataIds?.has(field.id)
     ) {
       continue;
     }

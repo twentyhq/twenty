@@ -83,7 +83,7 @@ export abstract class RestApiBaseHandler {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIds({
+      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
         authContext,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -120,7 +120,7 @@ export abstract class RestApiBaseHandler {
     selectedFields: CommonSelectedFields;
   }> {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
-      await this.commonSelectFieldsBuilder.findReadableMetadataIds({
+      await this.commonSelectFieldsBuilder.findReadableMetadataIdsOrThrow({
         authContext,
         flatObjectMetadata,
         flatObjectMetadataMaps,
