@@ -48,24 +48,9 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
 import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
-import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-
-const FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
-  authPrincipals: {
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  },
-  requiredPermissionFlags: [],
-};
 
 // structural type so ResolverValidationPipe skips FieldMetadataDTO decorators on loaded parents
 type FieldMetadataStandardOverrideParent = Pick<
@@ -89,7 +74,7 @@ export class FieldMetadataResolver {
     private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
   ) {}
 
-  @UseGuards(AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
   @Query(() => FieldConnectionDTO)
   async fields(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -137,7 +122,7 @@ export class FieldMetadataResolver {
     };
   }
 
-  @UseGuards(AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
   @Query(() => FieldMetadataDTO)
   async field(
     @Args('id', {

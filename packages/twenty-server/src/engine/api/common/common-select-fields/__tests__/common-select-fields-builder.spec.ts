@@ -1,4 +1,4 @@
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { Test, type TestingModule } from '@nestjs/testing';
 import {
   FieldMetadataType,
@@ -7,14 +7,13 @@ import {
 } from 'twenty-shared/types';
 
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 describe('CommonSelectFieldsBuilder', () => {
@@ -23,13 +22,15 @@ describe('CommonSelectFieldsBuilder', () => {
   const buildFromDepth = (
     args: Omit<
       Parameters<CommonSelectFieldsBuilder['buildFromDepth']>[0],
-      'readableObjectMetadataIds'
-    >,
-  ) =>
-    handler.buildFromDepth({
+      'readableObjectMetadataIds' | 'unreadableFieldMetadataIds'
+    > & { recordsPermissions: Pick<RoleRecordsPermissions, 'objects'> },
+  ) => {
+    const { recordsPermissions } = args;
+
+    return handler.buildFromDepth({
       ...args,
       readableObjectMetadataIds: new Set(
-        Object.entries(args.recordsPermissions.objects)
+        Object.entries(recordsPermissions.objects)
           .filter(([, objectRecordsPermissions]) =>
             canReachSomeRecords({
               objectRecordsPermissions,
@@ -38,7 +39,23 @@ describe('CommonSelectFieldsBuilder', () => {
           )
           .map(([objectMetadataId]) => objectMetadataId),
       ),
+      unreadableFieldMetadataIds: new Set(
+        Object.values(args.flatFieldMetadataMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .filter((field) => {
+            const objectRecordsPermissions =
+              recordsPermissions.objects[field.objectMetadataId];
+
+            return (
+              !isDefined(objectRecordsPermissions) ||
+              objectRecordsPermissions.restrictedFields[field.id]?.canRead ===
+                false
+            );
+          })
+          .map((field) => field.id),
+      ),
     });
+  };
 
   const createMockField = (
     overrides: Partial<FlatFieldMetadata> & {
@@ -149,7 +166,7 @@ describe('CommonSelectFieldsBuilder', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommonSelectFieldsBuilder,
-        { provide: RecordAccessPolicyService, useValue: {} },
+        { provide: PermissionsService, useValue: {} },
       ],
     }).compile();
 
@@ -436,34 +453,6 @@ describe('CommonSelectFieldsBuilder', () => {
         name: true,
         email: true,
       });
-    });
-
-    it('should deny when the object has no permissions entry', () => {
-      const nameField = createMockField({
-        id: 'field-1',
-        name: 'name',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: 'person-id',
-      });
-      const personObject = createMockObjectMetadata({
-        id: 'person-id',
-        nameSingular: 'person',
-        fieldIds: ['field-1'],
-      });
-
-      expect(() =>
-        buildFromDepth({
-          recordsPermissions: { objects: {} },
-          flatObjectMetadataMaps: buildFlatObjectMetadataMaps([personObject]),
-          flatFieldMetadataMaps: buildFlatFieldMetadataMaps([nameField]),
-          flatObjectMetadata: personObject,
-          depth: undefined,
-        }),
-      ).toThrow(
-        expect.objectContaining({
-          code: PermissionsExceptionCode.PERMISSION_DENIED,
-        }),
-      );
     });
 
     it('should include relation fields when depth is 1', () => {

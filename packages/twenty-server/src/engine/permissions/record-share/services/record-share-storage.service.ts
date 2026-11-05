@@ -8,7 +8,7 @@ import chunk from 'lodash.chunk';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, type EntityManager, type FindOptionsWhere } from 'typeorm';
+import { In, Not, type FindOptionsWhere } from 'typeorm';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -101,27 +101,6 @@ export class RecordShareStorageService {
 
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.delete({ objectMetadataId, recordId: In(recordIds) }),
-    );
-  }
-
-  async deleteByRecordIdsInTransaction({
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-    manager,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-    manager: EntityManager;
-  }): Promise<void> {
-    if (recordIds.length === 0) {
-      return;
-    }
-    // History transactions span core and workspace tables, so they must reuse their connection.
-    await manager.query(
-      `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
-      [objectMetadataId, recordIds],
     );
   }
 

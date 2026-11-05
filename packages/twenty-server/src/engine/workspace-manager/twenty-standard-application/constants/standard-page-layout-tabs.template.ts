@@ -116,7 +116,7 @@ export const TAB_PROPS = {
       msg({ message: `Conversations`, context: 'pageLayoutTab.title' }),
     ),
     position: 65,
-    icon: 'IconMessage',
+    icon: 'IconInbox',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   chat: {

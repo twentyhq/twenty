@@ -6,8 +6,9 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
@@ -27,7 +28,8 @@ type RecordSharePrincipal = Pick<
 export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   // Undefined for everyone, and for a member who left or whose membership is gone
@@ -109,10 +111,9 @@ export class RecordSharePrincipalService {
       workspaceId,
       principals: namedPrincipals,
     });
-    const metadataMaps =
-      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
-        workspaceId,
-      );
+    const metadataMaps = await this.permissionsMetadataMapsService.load({
+      workspaceId,
+    });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
@@ -124,11 +125,10 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
+      const rolePrincipals = buildRolePermissionsPrincipals({
         workspaceId,
-        mainPrincipal: { type: 'role', roleId },
-        applicationPrincipal: { type: 'customApplication' },
-      };
+        roleId,
+      });
 
       if (
         !isRolePermittingOperation({
@@ -153,14 +153,15 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
-        authContext: {
-          type: 'user',
-          workspace: { id: workspaceId },
-          workspaceMemberId: principal.principalId,
-        },
-        flatObjectMetadata,
-        operationType: 'select',
+      const hasGrant = await this.permissionsService.canReadRecords({
+        principals: await this.permissionsService.buildPermissionsPrincipals({
+          authContext: {
+            type: 'user',
+            workspace: { id: workspaceId },
+            workspaceMemberId: principal.principalId,
+          },
+        }),
+        objectMetadataId: flatObjectMetadata.id,
         recordIds,
         transactionScope,
       });

@@ -1760,7 +1760,10 @@ export type GettingStartedStepActionKey = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MO
 export interface GettingStartedStepDefinition {
     actionKey: GettingStartedStepActionKey
     description: Scalars['String']
+    doneChatThreadId?: Scalars['String']
+    doneDescription: Scalars['String']
     doneTitle: Scalars['String']
+    doneWorkflowId?: Scalars['String']
     icon: Scalars['String']
     iconColor: Scalars['String']
     kind: GettingStartedStepKind
@@ -3948,7 +3951,11 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
+    /** @deprecated Use objectRecordsPermissions */
+    objectPermissions?: ObjectPermission[]
     objectRecordsPermissions?: ObjectRecordsPermissions[]
+    /** @deprecated Use objectRecordsPermissions */
+    objectsPermissions?: ObjectPermission[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -6402,7 +6409,10 @@ export interface GettingStartedProgressGenqlSelection{
 export interface GettingStartedStepDefinitionGenqlSelection{
     actionKey?: boolean | number
     description?: boolean | number
+    doneChatThreadId?: boolean | number
+    doneDescription?: boolean | number
     doneTitle?: boolean | number
+    doneWorkflowId?: boolean | number
     icon?: boolean | number
     iconColor?: boolean | number
     kind?: boolean | number
@@ -8608,7 +8618,7 @@ update: UpdateFrontComponentInputUpdates}
 
 export interface UpdateFrontComponentInputUpdates {description?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
-export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
+export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),completedStepChatThreadId?: (Scalars['String'] | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -8999,7 +9009,11 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
+    /** @deprecated Use objectRecordsPermissions */
+    objectPermissions?: ObjectPermissionGenqlSelection
     objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
+    /** @deprecated Use objectRecordsPermissions */
+    objectsPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
