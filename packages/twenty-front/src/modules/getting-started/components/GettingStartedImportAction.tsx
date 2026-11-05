@@ -1,28 +1,19 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
-import {
-  GettingStartedStepActionKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -37,12 +28,6 @@ const StyledUploadField = styled.div`
   gap: ${themeCssVariables.spacing['0.5']};
 `;
 
-const StyledHelperRow = styled.div`
-  align-items: baseline;
-  display: flex;
-  justify-content: space-between;
-`;
-
 const StyledExportRow = styled.div`
   align-items: center;
   display: flex;
@@ -54,32 +39,25 @@ export const GettingStartedImportAction = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { updateGettingStarted } = useUpdateGettingStarted();
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: StandardObjectNameSingular.Person,
-  });
-  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID,
-  );
-  const { openObjectRecordsSpreadsheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog(
-      StandardObjectNameSingular.Person,
-    );
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
-  const canImportWithAi = hasAiPermission && canSendAgentChatMessage;
 
-  const importFilesWithAi = (files: File[]) => {
-    void openAskAiPageWithPreprompt({
+  const importFilesWithAi = async (files: File[]) => {
+    const chatThreadId = await openAskAiPageWithPreprompt({
       serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
         t(GETTING_STARTED_IMPORT_PROMPT),
       ),
       mode: 'SEND',
       files,
     });
+
+    if (!isDefined(chatThreadId)) {
+      return;
+    }
+
     void updateGettingStarted({
       completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,
+      completedStepChatThreadId: chatThreadId,
     });
   };
 
@@ -87,7 +65,7 @@ export const GettingStartedImportAction = () => {
     multiple: true,
     noClick: true,
     noKeyboard: true,
-    disabled: !canImportWithAi,
+    disabled: !canSendAgentChatMessage,
     accept: {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
@@ -95,26 +73,13 @@ export const GettingStartedImportAction = () => {
       ],
       'text/csv': ['.csv'],
     },
-    onDropAccepted: importFilesWithAi,
+    onDropAccepted: (files) => void importFilesWithAi(files),
     onDropRejected: () =>
       enqueueToast({
         status: 'error',
         children: t`Only CSV and Excel files are supported`,
       }),
   });
-
-  const openImportDialog = () => {
-    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
-    openObjectRecordsSpreadsheetImportDialog({
-      uploadStepHook: async (importedRows) => {
-        void updateGettingStarted({
-          completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,
-        });
-
-        return importedRows;
-      },
-    });
-  };
 
   return (
     <StyledColumn
@@ -130,20 +95,13 @@ export const GettingStartedImportAction = () => {
         <Button
           fullWidth
           startIcon={<IconUpload />}
-          onClick={canImportWithAi ? open : openImportDialog}
+          disabled={!canSendAgentChatMessage}
+          onClick={open}
         >{t`Upload file`}</Button>
-        <StyledHelperRow>
-          <Text
-            size="sm"
-            color="light"
-          >{t`A CSV or Excel export from any tool`}</Text>
-          {canImportWithAi && (
-            <Button
-              variant="link"
-              onClick={openImportDialog}
-            >{t`Use the import wizard instead`}</Button>
-          )}
-        </StyledHelperRow>
+        <Text
+          size="sm"
+          color="light"
+        >{t`A CSV or Excel export from any tool`}</Text>
       </StyledUploadField>
       <StyledExportRow>
         <Text size="sm" color="tertiary">{t`Export a CSV from`}</Text>

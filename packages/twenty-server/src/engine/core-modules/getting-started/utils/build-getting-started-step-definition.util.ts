@@ -11,14 +11,25 @@ import { type GettingStartedStepActionKey } from 'src/engine/core-modules/gettin
 export const buildGettingStartedStepDefinition = ({
   stepActionKey,
   companyEnrichment,
+  doneChatThreadId,
+  doneWorkflowId,
   translate,
 }: {
   stepActionKey: GettingStartedStepActionKey;
   companyEnrichment: WorkspaceCompanyEnrichment | null;
+  doneChatThreadId: string | null;
+  doneWorkflowId: string | null;
   translate: (descriptor: MessageDescriptor) => string;
 }): GettingStartedStepDefinitionDTO => {
-  const { title, doneTitle, description, icon, iconColor, prompt } =
-    GETTING_STARTED_STEP_CONTENT[stepActionKey];
+  const {
+    title,
+    doneTitle,
+    description,
+    doneDescription,
+    icon,
+    iconColor,
+    prompt,
+  } = GETTING_STARTED_STEP_CONTENT[stepActionKey];
 
   return {
     actionKey: stepActionKey,
@@ -30,11 +41,14 @@ export const buildGettingStartedStepDefinition = ({
     title: translate(title),
     doneTitle: translate(doneTitle),
     description: translate(description),
+    doneDescription: translate(doneDescription ?? description),
     icon,
     iconColor,
     promptLabel: isDefined(prompt) ? translate(prompt.label) : null,
     prompt: isDefined(prompt)
       ? translate(prompt.getText(companyEnrichment))
       : null,
+    doneChatThreadId,
+    doneWorkflowId,
   };
 };

@@ -5492,7 +5492,16 @@ export default {
             "description": [
                 1
             ],
+            "doneChatThreadId": [
+                1
+            ],
+            "doneDescription": [
+                1
+            ],
             "doneTitle": [
+                1
+            ],
+            "doneWorkflowId": [
                 1
             ],
             "icon": [
@@ -14013,6 +14022,9 @@ export default {
         "UpdateGettingStartedInput": {
             "completedStepActionKey": [
                 299
+            ],
+            "completedStepChatThreadId": [
+                1
             ],
             "isHidden": [
                 4

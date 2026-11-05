@@ -20,19 +20,37 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
         companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toEqual({
       actionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
       kind: GettingStartedStepKind.WORKFLOW,
       title: 'Hand over won deals',
-      doneTitle: 'Workflow enabled',
+      doneTitle: 'Handover ready',
       description: 'Start the handover when a deal is won.',
+      doneDescription:
+        'Turn it on and won deals move to delivery on their own.',
       icon: 'IconSettingsAutomation',
       iconColor: 'gray',
       promptLabel: null,
       prompt: null,
+      doneChatThreadId: null,
+      doneWorkflowId: null,
     });
+  });
+
+  it('should return the chat thread the step was completed with', () => {
+    expect(
+      buildGettingStartedStepDefinition({
+        stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+        companyEnrichment: null,
+        doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+        doneWorkflowId: null,
+        translate,
+      }).doneChatThreadId,
+    ).toBe('20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90');
   });
 
   it('should define a step with a prompt as a prompt step', () => {
@@ -40,6 +58,8 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toMatchObject({
@@ -70,6 +90,8 @@ describe('buildGettingStartedStepDefinition', () => {
           region: null,
           country: null,
         },
+        doneChatThreadId: null,
+        doneWorkflowId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -82,6 +104,8 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -89,11 +113,25 @@ describe('buildGettingStartedStepDefinition', () => {
     );
   });
 
+  it('should fall back to the description when a step has no done description', () => {
+    expect(
+      buildGettingStartedStepDefinition({
+        stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
+        companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
+        translate,
+      }).doneDescription,
+    ).toBe('Companies and people fill in from your emails and meetings.');
+  });
+
   it('should define any other step as a custom step', () => {
     expect(
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toMatchObject({
