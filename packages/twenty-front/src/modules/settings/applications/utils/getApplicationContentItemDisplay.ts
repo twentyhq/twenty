@@ -17,7 +17,9 @@ export const getApplicationContentItemDisplay = ({
 }: {
   contentType: ApplicationContentType;
   item: Pick<ApplicationContentItem, 'label' | 'icon'>;
-  object: ResolvedApplicationContentObject | undefined;
+  object:
+    | Pick<ResolvedApplicationContentObject, 'label' | 'labelSingular' | 'icon'>
+    | undefined;
   fallbackLabelPlural: string;
   fallbackLabelSingular: string;
 }) => {

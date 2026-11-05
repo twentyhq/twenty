@@ -6,7 +6,7 @@ import { type ApplicationContentFilterKey } from '@/settings/applications/types/
 import { type ApplicationContentFilterOption } from '@/settings/applications/types/ApplicationContentFilterOption';
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
-import { type ResolvedApplicationContentObject } from '@/settings/applications/types/ResolvedApplicationContentObject';
+import { type ApplicationContentObjectResolver } from '@/settings/applications/types/ApplicationContentObjectResolver';
 
 export type ApplicationContentFilter = {
   key: ApplicationContentFilterKey;
@@ -23,9 +23,7 @@ const getParentOptions = ({
 }: {
   items: ApplicationContentItem[];
   parents: ApplicationContentItem[];
-  resolveObject: (
-    objectUniversalIdentifier: string | null | undefined,
-  ) => ResolvedApplicationContentObject | undefined;
+  resolveObject: ApplicationContentObjectResolver;
 }): ApplicationContentFilterOption[] => {
   const optionsByUniversalIdentifier = new Map<
     string,
@@ -65,9 +63,7 @@ export const getApplicationContentFilters = ({
 }: {
   contentType: ApplicationContentType;
   content: ApplicationContent;
-  resolveObject: (
-    objectUniversalIdentifier: string | null | undefined,
-  ) => ResolvedApplicationContentObject | undefined;
+  resolveObject: ApplicationContentObjectResolver;
 }): ApplicationContentFilter[] => {
   const items = content[contentType];
 
