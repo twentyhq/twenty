@@ -18,6 +18,7 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { buildAgentChatThreadLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-last-message-text.util';
+import { buildNextAgentChatThreadActivityAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-activity-at.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -664,7 +665,12 @@ export class AgentChatThreadService {
 
     while (true) {
       const thread = await threadRepository.findOne({
-        select: ['writerWorkspaceMemberIds', 'pendingQuestionMessageId'],
+        select: [
+          'lastActivityAt',
+          'updatedAt',
+          'writerWorkspaceMemberIds',
+          'pendingQuestionMessageId',
+        ],
         where: { id: threadBefore.id },
       });
 
@@ -684,7 +690,7 @@ export class AgentChatThreadService {
             ...newWriterWorkspaceMemberIds,
           ]
         : thread.writerWorkspaceMemberIds;
-      const recordedAt = new Date();
+      const recordedAt = buildNextAgentChatThreadActivityAt(thread);
 
       const { generatedMaps: updatedThreads } = await threadRepository.update(
         {
