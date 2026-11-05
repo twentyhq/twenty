@@ -6,6 +6,7 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -79,7 +80,10 @@ export const useAiChatFileUpload = () => {
       ),
     );
 
-    if (currentThread?.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      currentThread?.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return [];
     }
 

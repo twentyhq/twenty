@@ -3,6 +3,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
@@ -62,7 +63,7 @@ describe('useAiChatFileUpload', () => {
     jotaiStore.set(directMessageAtom, {
       id: DIRECT_MESSAGE_THREAD_ID,
       __typename: 'AgentChatThread',
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     jotaiStore.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
     const { result } = renderHook(() => useAiChatFileUpload(), {

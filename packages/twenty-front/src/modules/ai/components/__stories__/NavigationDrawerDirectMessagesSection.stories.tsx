@@ -4,6 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { graphql, HttpResponse } from 'msw';
 import { useLocation } from 'react-router-dom';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -254,7 +255,8 @@ export const OpenMemberConversation: Story = {
                       __typename: 'AgentChatThread',
                       id: DIRECT_MESSAGE_THREAD_ID,
                       title: 'Alice Example',
-                      conversationType: 'DIRECT_MESSAGE',
+                      conversationType:
+                        AgentChatThreadConversationType.DIRECT_MESSAGE,
                       createdAt: '2026-11-04T12:00:00.000Z',
                       updatedAt: '2026-11-04T12:00:00.000Z',
                       deletedAt: null,
