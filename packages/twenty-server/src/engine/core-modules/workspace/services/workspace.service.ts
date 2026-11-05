@@ -104,6 +104,7 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -250,7 +251,10 @@ export class WorkspaceService {
   }: {
     aiModelIdByTier: Partial<Record<AiModelTier, string>>;
     storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
-    aiDataPolicy: AiDataPolicy;
+    aiDataPolicy: Pick<
+      AiDataPolicy,
+      'dataResidency' | 'isZeroDataRetentionRequired'
+    >;
   }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
       if (!isAiModelTier(tier)) {
@@ -627,6 +631,18 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(isDefined(payload.aiDataPolicy)
+          ? {
+              aiDataPolicy: {
+                ...payload.aiDataPolicy,
+                isProductImprovementDataSharingEnabled:
+                  payload.aiDataPolicy.isProductImprovementDataSharingEnabled ??
+                  workspace.aiDataPolicy
+                    ?.isProductImprovementDataSharingEnabled ??
+                  NO_AI_DATA_POLICY.isProductImprovementDataSharingEnabled,
+              },
+            }
+          : {}),
         ...(payload.customDomain === null
           ? { isCustomDomainEnabled: false }
           : {}),
@@ -1295,7 +1311,8 @@ export class WorkspaceService {
     agentId,
     workspaceActivationStatus,
   }: {
-    payload: Partial<WorkspaceEntity>;
+    payload: Omit<Partial<WorkspaceEntity>, 'aiDataPolicy'> &
+      Pick<UpdateWorkspaceInput, 'aiDataPolicy'>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;

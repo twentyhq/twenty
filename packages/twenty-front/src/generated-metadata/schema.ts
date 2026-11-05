@@ -322,7 +322,7 @@ export type AiDataPolicy = {
 
 export type AiDataPolicyInput = {
   dataResidency?: InputMaybe<Scalars['String']['input']>;
-  isProductImprovementDataSharingEnabled: Scalars['Boolean']['input'];
+  isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
 };
 

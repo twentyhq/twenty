@@ -169,6 +169,35 @@ describe('workspace AI data policy', () => {
     ).toBe(false);
   });
 
+  it('keeps the stored sharing choice when an update leaves it out', async () => {
+    await updateAiDataPolicy({
+      data: {
+        aiDataPolicy: {
+          ...NO_POLICY,
+          isProductImprovementDataSharingEnabled: false,
+        },
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    const response = await updateAiDataPolicy({
+      data: {
+        aiDataPolicy: {
+          dataResidency: 'eu',
+          isZeroDataRetentionRequired: true,
+        },
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
+      dataResidency: 'eu',
+      isZeroDataRetentionRequired: true,
+      isProductImprovementDataSharingEnabled: false,
+    });
+  });
+
   describe('with the feature flag off', () => {
     it('refuses to set a policy', async () => {
       await setAiDataPolicyFlag(false);

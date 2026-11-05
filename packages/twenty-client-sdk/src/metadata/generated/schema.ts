@@ -4647,7 +4647,7 @@ export interface AiDataPolicyGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AiDataPolicyInput {dataResidency?: (Scalars['String'] | null),isProductImprovementDataSharingEnabled: Scalars['Boolean'],isZeroDataRetentionRequired: Scalars['Boolean']}
+export interface AiDataPolicyInput {dataResidency?: (Scalars['String'] | null),isProductImprovementDataSharingEnabled?: (Scalars['Boolean'] | null),isZeroDataRetentionRequired: Scalars['Boolean']}
 
 export interface AiRunUsageGenqlSelection{
     inputTokens?: boolean | number

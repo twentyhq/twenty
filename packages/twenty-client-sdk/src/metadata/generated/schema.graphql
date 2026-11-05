@@ -287,7 +287,7 @@ type AiDataPolicy {
 
 input AiDataPolicyInput {
   dataResidency: String
-  isProductImprovementDataSharingEnabled: Boolean!
+  isProductImprovementDataSharingEnabled: Boolean
   isZeroDataRetentionRequired: Boolean!
 }
 

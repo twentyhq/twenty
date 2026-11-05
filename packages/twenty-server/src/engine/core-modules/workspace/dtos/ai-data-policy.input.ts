@@ -1,14 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsIn } from 'class-validator';
+import { isUndefined } from '@sniptt/guards';
+import { IsBoolean, IsIn, ValidateIf } from 'class-validator';
 import {
   AI_DATA_RESIDENCY_POLICIES,
-  type AiDataPolicy,
   type AiDataResidencyPolicy,
 } from 'twenty-shared/ai';
 
 @InputType()
-export class AiDataPolicyInput implements AiDataPolicy {
+export class AiDataPolicyInput {
   @Field(() => String, { nullable: true })
   @IsIn([...AI_DATA_RESIDENCY_POLICIES, null])
   dataResidency: AiDataResidencyPolicy | null;
@@ -17,7 +17,11 @@ export class AiDataPolicyInput implements AiDataPolicy {
   @IsBoolean()
   isZeroDataRetentionRequired: boolean;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
-  isProductImprovementDataSharingEnabled: boolean;
+  @ValidateIf(
+    ({ isProductImprovementDataSharingEnabled }: AiDataPolicyInput) =>
+      !isUndefined(isProductImprovementDataSharingEnabled),
+  )
+  isProductImprovementDataSharingEnabled?: boolean;
 }
