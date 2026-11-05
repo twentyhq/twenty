@@ -203,9 +203,10 @@ describe('Agent tools', () => {
     });
 
     it('only offers list_agents without the AI settings permission', async () => {
-      const { listToolNames, executeTool, agentService } = await buildAgentTools({
-        grantedPermissionFlags: [PermissionFlagType.AI],
-      });
+      const { listToolNames, executeTool, agentService } =
+        await buildAgentTools({
+          grantedPermissionFlags: [PermissionFlagType.AI],
+        });
 
       await expect(listToolNames()).resolves.toEqual(['list_agents']);
       await expect(
@@ -221,9 +222,10 @@ describe('Agent tools', () => {
     });
 
     it('is not available without the AI permission', async () => {
-      const { listToolNames, executeTool, agentService } = await buildAgentTools({
-        grantedPermissionFlags: [PermissionFlagType.AI_SETTINGS],
-      });
+      const { listToolNames, executeTool, agentService } =
+        await buildAgentTools({
+          grantedPermissionFlags: [PermissionFlagType.AI_SETTINGS],
+        });
 
       await expect(listToolNames()).resolves.toEqual([]);
       await expect(
