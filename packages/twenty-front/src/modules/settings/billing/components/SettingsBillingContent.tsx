@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
+import { SettingsBillingPartnerCodeForm } from '@/settings/billing/components/SettingsBillingPartnerCodeForm';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
@@ -91,6 +92,12 @@ export const SettingsBillingContent = () => {
         )}
       {hasNotCanceledCurrentSubscription && (
         <SettingsBillingUserCreditsSection />
+      )}
+      {subscriptionStatus === SubscriptionStatus.Trialing && (
+        <SettingsBillingPartnerCodeForm
+          instanceId="settings-billing-partner-code"
+          variant="settings"
+        />
       )}
       <Section.Root>
         <Section.Header

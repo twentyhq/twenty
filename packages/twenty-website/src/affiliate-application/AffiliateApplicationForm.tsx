@@ -27,6 +27,8 @@ import {
   TextField,
 } from '@/ui';
 
+import { PARTNER_COUNTRY_OPTIONS } from '@/partner-application/data/partner-country-options';
+
 import { AFFILIATE_APPLICATION_COPY } from './affiliate-application-copy';
 import { affiliateApplicationRequestSchema } from './affiliate-application-request-schema';
 import {
@@ -286,10 +288,17 @@ export function AffiliateApplicationForm() {
         />
       </Field>
       <Field label={i18n._(COPY.fields.country)}>
-        <TextField
+        <Select
           ariaLabel={i18n._(COPY.fields.country)}
-          name="country"
+          emptyLabel={i18n._(COPY.fields.countrySearchEmpty)}
           onValueChange={(value) => setField('country', value)}
+          options={PARTNER_COUNTRY_OPTIONS.map((option) => ({
+            label: i18n._(option.label),
+            value: option.value,
+          }))}
+          placeholder={i18n._(COPY.fields.countryPlaceholder)}
+          searchable
+          searchPlaceholder={i18n._(COPY.fields.countrySearchPlaceholder)}
           value={state.country}
         />
       </Field>
@@ -335,7 +344,7 @@ export function AffiliateApplicationForm() {
                   <TermsLink
                     href={localizeHref(locale, '/affiliate-partners/terms')}
                   >
-                    affiliate program terms
+                    Affiliate Program Terms
                   </TermsLink>
                 </Trans>
               </span>

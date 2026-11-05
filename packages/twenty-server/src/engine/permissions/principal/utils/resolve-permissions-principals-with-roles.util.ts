@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
@@ -222,6 +222,8 @@ const getPermissionsIdentitiesFromAuthContext = (
     case 'system':
     case 'pendingActivationUser':
       return undefined;
+    default:
+      return assertUnreachable(authContext);
   }
 };
 

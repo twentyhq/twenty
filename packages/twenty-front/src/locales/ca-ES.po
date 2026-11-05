@@ -549,16 +549,6 @@ msgstr "{0}: {1}"
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} norma avançada} other {{advancedFilterCount} normes avançades}}"
 
-#. js-lingui-id: li5AzH
-#: src/modules/ai/components/AiModelTierDropdown.tsx
-msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} està desactivat"
-
-#. js-lingui-id: YivcDn
-#: src/modules/ai/components/AiModelTierDropdown.tsx
-msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} respon"
-
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
@@ -2038,6 +2028,11 @@ msgstr "Afegeix primer una persona amb una adreça electrònica a aquesta empres
 msgid "Add a recipient before sending"
 msgstr "Afegeix un destinatari abans d'enviar"
 
+#. js-lingui-id: erAaSc
+#: src/modules/ai/hooks/useAgentChat.ts
+msgid "Add a recipient or a channel before sending."
+msgstr "Afegeix un destinatari o un canal abans d'enviar."
+
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add a recipient to {label}"
@@ -2413,6 +2408,12 @@ msgstr "Afegeix camí"
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
 msgstr "Afegiu un mètode de pagament"
+
+#. js-lingui-id: bL/gCs
+#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+msgid "Add people or a channel"
+msgstr "Afegeix persones o un canal"
 
 #. js-lingui-id: px+kkc
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
@@ -3947,6 +3948,7 @@ msgstr "S'aplica a"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Aplica"
 
@@ -5782,6 +5784,7 @@ msgid "channel"
 msgstr "canal"
 
 #. js-lingui-id: HdE1If
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -12878,6 +12881,11 @@ msgstr "Nom del camp"
 msgid "Field on destination"
 msgstr "Camp a la destinació"
 
+#. js-lingui-id: 5Lk6iG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field option"
+msgstr "opció de camp"
+
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
@@ -19398,6 +19406,11 @@ msgstr "No s'ha trobat cap atestació de procedència per a aquest paquet. Publi
 msgid "No rate limit hit in this period"
 msgstr "No s'ha assolit cap límit de taxa durant aquest període"
 
+#. js-lingui-id: UW90md
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+msgid "No recipients found"
+msgstr "No s'ha trobat cap destinatari"
+
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
@@ -20381,6 +20394,11 @@ msgstr "Només la data i els participants seran compartits amb el teu equip."
 msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
 msgstr "Activa-ho només per als passos que sigui segur executar dues vegades: és possible que un intent fallit ja hagi escrit dades o enviat missatges."
 
+#. js-lingui-id: KsHGCA
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Only if a Twenty partner referred you. Once applied, it can't be changed."
+msgstr "Només si un soci de Twenty us ha recomanat. Un cop aplicat, no es pot canviar."
+
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
@@ -20745,6 +20763,11 @@ msgstr "Nom de l'opció {0}"
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
 msgid "Option 1"
 msgstr "Opció 1"
+
+#. js-lingui-id: LLAa/9
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Optional"
+msgstr "Opcional"
 
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21171,6 +21194,21 @@ msgstr ""
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Parameters"
 msgstr "Paràmetres"
+
+#. js-lingui-id: 71zZ31
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner"
+msgstr "Soci"
+
+#. js-lingui-id: Bv0t+0
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner code"
+msgstr "Codi de soci"
+
+#. js-lingui-id: bG8G5t
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner code applied"
+msgstr "Codi de soci aplicat"
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -22461,12 +22499,18 @@ msgstr "Destinatari"
 msgid "Recipient count unavailable"
 msgstr "El recompte de destinataris no està disponible"
 
+#. js-lingui-id: ar7XM1
+#: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+msgid "Recipient delivery could not be verified. Check the chat participants."
+msgstr "No s'ha pogut verificar el lliurament al destinatari. Comproveu els participants del xat."
+
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
 msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -22772,6 +22816,11 @@ msgstr "URL de redirecció copiat al porta-retalls"
 msgid "Redirection URI"
 msgstr "URI de redirecció"
 
+#. js-lingui-id: cfgOip
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Referred by a Twenty partner? Add their code"
+msgstr "Us ha recomanat un soci de Twenty? Afegiu-ne el codi"
+
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -23002,6 +23051,11 @@ msgstr "Elimina {address}"
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Elimina {displayName}"
+
+#. js-lingui-id: HND1q3
+#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+msgid "Remove {label}"
+msgstr "Elimina {label}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -24052,6 +24106,7 @@ msgstr "Dissabte"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Save"
@@ -24503,6 +24558,11 @@ msgstr "Cerca operacions"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Opcions de cerca"
+
+#. js-lingui-id: /iXEpl
+#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+msgid "Search recipients"
+msgstr "Cerca destinataris"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -25097,6 +25157,11 @@ msgstr "Selecciona l'operand"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Select options"
 msgstr "Selecciona opcions"
+
+#. js-lingui-id: TC9hnQ
+#: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
+msgid "Select recipients"
+msgstr "Selecciona destinataris"
 
 #. js-lingui-id: V8W7vI
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
@@ -27503,6 +27568,11 @@ msgstr "S'està processant la gravació de la trucada…"
 msgid "The code lets {memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email."
 msgstr "El codi permet a {memberName} iniciar sessió una vegada en aquest espai de treball sense la seva aplicació d'autenticació. En utilitzar-lo, s'elimina el seu autenticador actual i se li tanca la sessió de les altres sessions que té aquí. Rebrà una notificació per correu electrònic."
 
+#. js-lingui-id: G3XY+D
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "The code of the Twenty partner who referred you"
+msgstr "El codi del soci de Twenty que us ha recomanat"
+
 #. js-lingui-id: aXzQ65
 #: src/modules/ai/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
@@ -29781,6 +29851,13 @@ msgstr "actualitza"
 msgid "Update"
 msgstr "Actualitza"
 
+#. js-lingui-id: L/gNNk
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/modules/object-record/record-form/components/RecordUpdateFormProvider.tsx
+#: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
+msgid "Update {0}"
+msgstr "Actualitza {0}"
+
 #. js-lingui-id: ymv+je
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
@@ -31222,7 +31299,7 @@ msgid "Welcome to Twenty"
 msgstr "Benvingut a Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Benvingut al teu espai de treball"
