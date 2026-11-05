@@ -309,7 +309,7 @@ export class AgentChatSharingService {
       shouldConsiderNewShares && canManageSharing
         ? RecordShareAccessLevel.READ_WRITE
         : undefined;
-    const admittedMemberIds = new Set(
+    const permittedMemberIds = new Set(
       (
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
@@ -339,7 +339,7 @@ export class AgentChatSharingService {
     );
 
     return candidateMemberIds.filter((memberId) =>
-      admittedMemberIds.has(memberId),
+      permittedMemberIds.has(memberId),
     );
   }
 

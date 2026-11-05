@@ -18,7 +18,7 @@ import {
   type RowAccessEvaluationContext,
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import { findPermittedRecordIds } from 'src/engine/permissions/combine/utils/find-permitted-record-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
@@ -140,7 +140,7 @@ const buildContext = (): RowAccessEvaluationContext => ({
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
 });
 
-const findAdmitted = ({
+const findPermitted = ({
   principals,
   featureFlagKeys = [],
   context = buildContext(),
@@ -149,7 +149,7 @@ const findAdmitted = ({
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>
-  findPermissionsAdmittedRecordIds({
+  findPermittedRecordIds({
     principals,
     metadataMaps: {
       flatFieldMetadataMaps,
@@ -173,19 +173,19 @@ const findAdmitted = ({
     context,
   });
 
-describe('findPermissionsAdmittedRecordIds', () => {
+describe('findPermittedRecordIds', () => {
   beforeEach(() => {
     jest.mocked(resolveRowLevelPermissionRecordFilter).mockReturnValue(null);
   });
 
-  it('admits no record to a role without access', async () => {
-    expect(await findAdmitted({ principals: deniedPrincipals })).toEqual(
+  it('permits no record to a role without access', async () => {
+    expect(await findPermitted({ principals: deniedPrincipals })).toEqual(
       new Set(),
     );
   });
 
   it('keeps the role to public records, treating a record it cannot find as public', async () => {
-    expect(await findAdmitted({ principals: rolePrincipals })).toEqual(
+    expect(await findPermitted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared', 'archived-shared']),
     );
   });
@@ -193,41 +193,41 @@ describe('findPermissionsAdmittedRecordIds', () => {
   it('matches the role filter on public record values', async () => {
     filterByStatus('active');
 
-    expect(await findAdmitted({ principals: rolePrincipals })).toEqual(
+    expect(await findPermitted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared']),
     );
   });
 
-  it('admits records shared with or created by the member beyond the role', async () => {
+  it('permits records shared with or created by the member beyond the role', async () => {
     expect(
-      await findAdmitted({
+      await findPermitted({
         principals: deniedPrincipals,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
-  it('admits private records to their creator within the role filter', async () => {
+  it('permits private records to their creator within the role filter', async () => {
     filterByStatus('none');
 
-    expect(await findAdmitted({ principals: memberPrincipals })).toEqual(
+    expect(await findPermitted({ principals: memberPrincipals })).toEqual(
       new Set(),
     );
 
     filterByStatus('active');
 
-    expect(await findAdmitted({ principals: memberPrincipals })).toEqual(
+    expect(await findPermitted({ principals: memberPrincipals })).toEqual(
       new Set(['active-shared', 'active-private']),
     );
   });
 
-  it('only asks shares about records the role did not admit', async () => {
+  it('only asks shares about records the role did not permit', async () => {
     const context = buildContext();
 
     filterByStatus('active');
 
     expect(
-      await findAdmitted({
+      await findPermitted({
         principals: memberPrincipals,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
         context,

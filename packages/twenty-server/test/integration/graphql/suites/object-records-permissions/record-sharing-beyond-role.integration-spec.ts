@@ -501,7 +501,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should deliver events of the records named for the member only', async () => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
-    const resolveAdmittedRecordIds = async () => {
+    const resolvePermittedRecordIds = async () => {
       const { flatObjectMetadataMaps } =
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
@@ -535,12 +535,14 @@ describe('Records shared beyond the role that can access their object', () => {
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
+    expect([...(await resolvePermittedRecordIds())]).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect([...(await resolvePermittedRecordIds())]).toEqual([
+      SHARED_RECORD_ID,
+    ]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {

@@ -40,7 +40,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
-import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import { findPermittedRecordIds } from 'src/engine/permissions/combine/utils/find-permitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -60,7 +60,7 @@ type PrincipalsRecordsAccessRequest = PrincipalsObjectAccessRequest & {
 
 type EventBatchAccessLoaders = {
   loadMetadataMaps: () => Promise<PermissionsMetadataMaps>;
-  findAdmittedRecordIds: (
+  findPermittedEventRecordIds: (
     principals: PermissionsPrincipalsWithRolesContext,
   ) => Promise<Set<string>>;
 };
@@ -180,7 +180,7 @@ export class RecordAccessPolicyService {
     );
   }
 
-  async findAdmittedRecordIds({
+  async findPermittedRecordIds({
     principals,
     objectMetadataId,
     operationType,
@@ -316,9 +316,9 @@ export class RecordAccessPolicyService {
     const principals = await this.resolvePrincipalsWithRoles(authContext);
 
     return isDefined(principals)
-      ? this.findEventBatchAccessLoaders(eventBatch).findAdmittedRecordIds(
-          principals,
-        )
+      ? this.findEventBatchAccessLoaders(
+          eventBatch,
+        ).findPermittedEventRecordIds(principals)
       : new Set<string>();
   }
 
@@ -337,7 +337,7 @@ export class RecordAccessPolicyService {
       return [];
     }
 
-    const { loadMetadataMaps, findAdmittedRecordIds } =
+    const { loadMetadataMaps, findPermittedEventRecordIds } =
       this.findEventBatchAccessLoaders(eventBatch);
     const metadataMaps = await loadMetadataMaps();
 
@@ -351,7 +351,7 @@ export class RecordAccessPolicyService {
 
     return filterReadableEvents({
       events,
-      admittedRecordIds: await findAdmittedRecordIds(principals),
+      permittedRecordIds: await findPermittedEventRecordIds(principals),
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
         principals,
@@ -453,10 +453,10 @@ export class RecordAccessPolicyService {
           }),
       ));
 
-    const findAdmittedRecordIds = async (
+    const findPermittedEventRecordIds = async (
       principals: PermissionsPrincipalsWithRolesContext,
     ) =>
-      findPermissionsAdmittedRecordIds({
+      findPermittedRecordIds({
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
@@ -469,7 +469,7 @@ export class RecordAccessPolicyService {
         },
       });
 
-    const loaders = { loadMetadataMaps, findAdmittedRecordIds };
+    const loaders = { loadMetadataMaps, findPermittedEventRecordIds };
 
     this.accessLoadersByEventBatch.set(eventBatch, loaders);
 
@@ -549,10 +549,12 @@ export class RecordAccessPolicyService {
     }
 
     const sharedAccessLevels =
-      this.recordPermissionOrmService.findRecordShareAccessLevelsByObjectMetadataId({
-        workspaceId: principals.workspaceId,
-        principalIds: getPermissionsPrincipalsShareKeys(principals),
-      });
+      this.recordPermissionOrmService.findRecordShareAccessLevelsByObjectMetadataId(
+        {
+          workspaceId: principals.workspaceId,
+          principalIds: getPermissionsPrincipalsShareKeys(principals),
+        },
+      );
 
     this.sharedAccessLevelsByPrincipals.set(principals, sharedAccessLevels);
 

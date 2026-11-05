@@ -146,7 +146,7 @@ describe('PermissionsService', () => {
   });
 
   describe('findReadableRecordIds', () => {
-    it('keeps only the records the principal is admitted to', async () => {
+    it('keeps only the records the principal is permitted on', async () => {
       expect(
         await permissionsService.findReadableRecordIds({
           principals: await permissionsService.buildPermissionsPrincipals({
