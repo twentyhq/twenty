@@ -8,7 +8,10 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -89,6 +92,19 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindMarketplaceAppDetail', () =>
           HttpResponse.json({
             data: { findMarketplaceAppDetail: CLAUDE_MARKETPLACE_APP_DETAIL },
+          }),
+        ),
+        // The page reloads the current user, which would replace the seeded workspace and drop its flags
+        graphql.query('GetCurrentUser', () =>
+          HttpResponse.json({
+            data: {
+              currentUser: {
+                ...mockedUserData,
+                currentWorkspace:
+                  jotaiStore.get(currentWorkspaceState.atom) ??
+                  mockCurrentWorkspace,
+              },
+            },
           }),
         ),
         graphql.query('FindOneApplicationByUniversalIdentifier', () =>
