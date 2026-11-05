@@ -97,7 +97,7 @@ const BILLING_PARTNER_CODE_ACCESS_POLICY: AccessPolicy = {
     oauthClient: false,
     application: false,
   },
-  requiredPermissionFlags: [PermissionFlagType.BILLING],
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
 };
 
 const BILLING_PLAN_READ_ACCESS_POLICY: AccessPolicy = {

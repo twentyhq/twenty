@@ -52,6 +52,9 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/billing/plans')).toBe(
       'Billing - Settings',
     );
+    expect(getPageTitleFromPath('/settings/partner')).toBe(
+      'Partner - Settings',
+    );
     expect(getPageTitleFromPath('/settings/members')).toBe(
       'Members - Settings',
     );
