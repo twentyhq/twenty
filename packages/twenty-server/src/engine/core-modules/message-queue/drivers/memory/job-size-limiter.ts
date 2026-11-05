@@ -28,12 +28,16 @@ export class JobSizeLimiter {
   constructor(private readonly options: JobSizeLimiterOptions) {}
 
   isEnabled(): boolean {
+    return isDefined(this.getActiveMode());
+  }
+
+  private getActiveMode(): JobMemoryLimitRefusal['mode'] | undefined {
     const mode = this.options.getMode();
 
-    return (
-      mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ||
+    return mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ||
       mode === JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    );
+      ? mode
+      : undefined;
   }
 
   checkJobSizes({
@@ -43,12 +47,9 @@ export class JobSizeLimiter {
     queueName: MessageQueue;
     jobs: SizedJob[];
   }): void {
-    const mode = this.options.getMode();
+    const mode = this.getActiveMode();
 
-    if (
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE &&
-      mode !== JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE
-    ) {
+    if (!isDefined(mode)) {
       return;
     }
 
