@@ -1,4 +1,3 @@
-// KEYS: (used, jobs) per group key. Idempotent: only a job still in a key's hash is released
 export const JOB_MEMORY_RELEASE_SCRIPT = `
 local member = ARGV[1]
 local released = 0

@@ -49,7 +49,6 @@ export class AdminPanelQueueService {
     return isNonEmptyArray(memoryGroupKeys) ? memoryGroupKeys : [];
   }
 
-  // A failed job released its memory, so a retry is a new enqueue and must pass the limits again
   private async retryJob({
     queueName,
     queue,
@@ -210,7 +209,6 @@ export class AdminPanelQueueService {
         return { retriedCount: -1, results: [] };
       }
 
-      // A bulk retry must pass the same memory checks as a selected one
       const jobIdsToRetry =
         jobIds.length > 0
           ? jobIds

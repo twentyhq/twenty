@@ -1,4 +1,3 @@
-// KEYS: (used, jobs) per group key; see compute-job-memory-limit-bytes.util for the limit
 export const JOB_MEMORY_ADMIT_SCRIPT = `
 local shouldChargeOnRefusal = ARGV[1] == '1'
 local capacity = tonumber(ARGV[2])

@@ -1,4 +1,3 @@
-// KEYS: (used, jobs) per group key. Moves a charged job to its new size, ignores uncharged jobs
 export const JOB_MEMORY_RESIZE_SCRIPT = `
 local member = ARGV[1]
 local size = tonumber(ARGV[2])
