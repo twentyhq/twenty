@@ -1,8 +1,8 @@
 import { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from '@/ai/constants/ChatReferenceIdentityShapeByKind';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
-import { isAgentChatAssistantReference } from 'twenty-shared/ai';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { parseAgentChatAssistantReferenceBody } from 'twenty-shared/ai';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type ParsedChatReferenceBody = ChatReferenceIdentity & { displayName: string };
 
@@ -70,42 +70,17 @@ const parseSegments = ({
   };
 };
 
-const parseAssistantRecordReference = (
-  segments: string[],
-): ParsedChatReferenceBody | undefined => {
-  if (segments.length !== 3) {
-    return undefined;
-  }
-
-  const [objectNameSingular, recordId, encodedDisplayName] = segments;
-
-  try {
-    return {
-      kind: 'record',
-      objectNameSingular,
-      recordId,
-      displayName: decodeURIComponent(encodedDisplayName),
-    };
-  } catch {
-    return undefined;
-  }
-};
-
 export const parseChatReferenceBody = (
   body: string,
 ): ParsedChatReferenceBody | undefined => {
+  const assistantReference = parseAgentChatAssistantReferenceBody(body);
+
+  if (isDefined(assistantReference)) {
+    return assistantReference;
+  }
+
   const segments = body.split(':');
   const [kindPrefix, ...identityAndLabel] = segments;
-  const isExplicitAssistantReference =
-    kindPrefix === 'record' &&
-    isAgentChatAssistantReference({
-      objectNameSingular: identityAndLabel[0],
-      recordId: identityAndLabel[1],
-    });
-
-  if (isExplicitAssistantReference) {
-    return parseAssistantRecordReference(identityAndLabel);
-  }
 
   // A known prefix with a malformed identity is a retired marker, so it must not fall through to the unprefixed record form.
   if (isChatReferenceKind(kindPrefix)) {
