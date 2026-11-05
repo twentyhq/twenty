@@ -143,12 +143,8 @@ export class WorkspaceDataSource {
               repositoryOptions?.shouldSkipEventEmission ?? false,
             internalContext: transactionalInternalContext,
           }),
-        executeRawQuery: <
-          TRow extends Record<string, unknown> = Record<string, unknown>,
-        >(
-          sql: string,
-          parameters: unknown[] = [],
-        ) => executor.execute<TRow>({ text: sql, values: parameters }),
+        executeRawQuery: (sql, parameters = []) =>
+          executor.execute({ text: sql, values: parameters }),
         afterCommit,
       }),
     );

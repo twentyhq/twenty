@@ -19,7 +19,9 @@ export class RecordPermissionQueryService {
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
   ) {}
 
-  execute<TRow extends Record<string, unknown> = Record<string, unknown>>({
+  async execute<
+    TRow extends Record<string, unknown> = Record<string, unknown>,
+  >({
     workspaceId,
     transactionScope,
     query,
@@ -31,9 +33,11 @@ export class RecordPermissionQueryService {
     const statement = compileNamedParameters(query.sql, query.parameters);
 
     if (!isDefined(transactionScope)) {
-      return this.workspaceQueryExecutorService
+      const rows = await this.workspaceQueryExecutorService
         .getPrimaryQueryExecutorOrThrow()
-        .execute<TRow>(statement);
+        .execute(statement);
+
+      return rows as TRow[];
     }
 
     if (transactionScope.workspaceId !== workspaceId) {
@@ -43,9 +47,11 @@ export class RecordPermissionQueryService {
       );
     }
 
-    return transactionScope.executeRawQuery<TRow>(
+    const rows = await transactionScope.executeRawQuery(
       statement.text,
       statement.values,
     );
+
+    return rows as TRow[];
   }
 }

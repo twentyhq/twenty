@@ -179,7 +179,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<T[]> {
     const compiled = compileNamedParameters(sql, parameters);
 
-    return this.options.executor.execute<T>(compiled);
+    return this.options.executor.execute(compiled) as Promise<T[]>;
   }
 
   createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
@@ -1857,13 +1857,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private buildRecordPermissionTransactionScope(): RecordPermissionTransactionScope {
     return {
       workspaceId: this.options.internalContext.workspaceId,
-      executeRawQuery: <
-        TRow extends Record<string, unknown> = Record<string, unknown>,
-      >(
-        sql: string,
-        parameters: unknown[] = [],
-      ) =>
-        this.options.executor.execute<TRow>({ text: sql, values: parameters }),
+      executeRawQuery: (sql, parameters = []) =>
+        this.options.executor.execute({ text: sql, values: parameters }),
     };
   }
 

@@ -11,13 +11,13 @@ export class ClientQueryExecutor implements QueryExecutor {
     this.client = client;
   }
 
-  async execute<TRow extends Record<string, unknown> = Record<string, unknown>>(
+  async execute(
     statement: CompiledStatement,
-  ): Promise<TRow[]> {
+  ): Promise<Record<string, unknown>[]> {
     try {
-      const result = await this.client.query<TRow>(statement);
+      const result = await this.client.query(statement);
 
-      return result.rows;
+      return result.rows as Record<string, unknown>[];
     } catch (error) {
       throw computeTwentyOrmException(error);
     }
