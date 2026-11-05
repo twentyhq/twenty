@@ -279,6 +279,16 @@ type AiChatUserCreditsUsage {
   periodEnd: DateTime!
 }
 
+type AiDataPolicy {
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
+}
+
+input AiDataPolicyInput {
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
+}
+
 enum AiModelTier {
   balanced
   extraFast
@@ -2346,6 +2356,7 @@ enum FeatureFlagKey {
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
+  IS_AI_DATA_POLICY_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -5626,6 +5637,7 @@ input UpdateWorkspaceInput {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
+  aiDataPolicy: AiDataPolicyInput
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -6398,6 +6410,7 @@ type Workspace {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
+  aiDataPolicy: AiDataPolicy
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!

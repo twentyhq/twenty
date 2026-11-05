@@ -289,6 +289,7 @@ import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/comman
 import { AddWorkspaceAssistantProfileSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-slow-1793810534548-add-workspace-assistant-profile';
 import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793814954654-add-field-metadata-option-table';
 import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793898855453-make-field-metadata-option-value-unique-deferred';
+import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -580,4 +581,5 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceAssistantProfileSlowInstanceCommand,
   AddFieldMetadataOptionTableFastInstanceCommand,
   MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand,
+  AddAiDataPolicyToWorkspaceSlowInstanceCommand,
 ];

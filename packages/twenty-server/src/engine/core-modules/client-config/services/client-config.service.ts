@@ -157,7 +157,8 @@ export class ClientConfigService {
         }));
 
     const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
-      const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
+      const model =
+        this.aiModelRegistryService.findInstanceDefaultModelForTier(tier);
 
       return isDefined(model) ? [{ tier, modelId: model.modelId }] : [];
     });

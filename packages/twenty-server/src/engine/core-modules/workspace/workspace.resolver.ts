@@ -41,6 +41,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProvidersDTO,
@@ -278,6 +279,19 @@ export class WorkspaceResolver {
     return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
+  }
+
+  @ResolveField(() => AiDataPolicyDTO, { nullable: true })
+  async aiDataPolicy(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<AiDataPolicyDTO | null> {
+    const isAiDataPolicyEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspace.id,
+      );
+
+    return isAiDataPolicyEnabled ? (workspace.aiDataPolicy ?? null) : null;
   }
 
   @Mutation(() => WorkspaceEntity)
