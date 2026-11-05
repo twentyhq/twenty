@@ -17,7 +17,10 @@ import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
+import {
+  type FetchedCalendarEvent,
+  type FetchedCalendarEventParticipant,
+} from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 @Injectable()
 export class CalDavCreateEventService implements CalendarEventCreationDriver {
@@ -110,7 +113,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const now = new Date().toISOString();
 
-      const attendeeParticipants = input.attendees
+      const participants: FetchedCalendarEventParticipant[] = input.attendees
         .filter(
           (attendee) =>
             attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
@@ -121,6 +124,15 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
           responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
           isOrganizer: false,
         }));
+
+      if (isDefined(organizerEmail)) {
+        participants.unshift({
+          displayName: organizerEmail,
+          handle: organizerEmail.toLowerCase(),
+          responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
+          isOrganizer: true,
+        });
+      }
 
       return {
         id,
@@ -140,17 +152,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         conferenceSolution: '',
         externalCreatedAt: now,
         externalUpdatedAt: now,
-        participants: isDefined(organizerEmail)
-          ? [
-              {
-                displayName: organizerEmail,
-                handle: organizerEmail.toLowerCase(),
-                responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
-                isOrganizer: true,
-              },
-              ...attendeeParticipants,
-            ]
-          : attendeeParticipants,
+        participants,
       };
     } catch (error) {
       if (error instanceof CalendarEventCreationException) {
