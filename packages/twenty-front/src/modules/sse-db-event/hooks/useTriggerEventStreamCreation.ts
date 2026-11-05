@@ -11,6 +11,7 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { lastSseEventReceivedTimestampState } from '@/sse-db-event/states/lastSseEventReceivedTimestampState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { sseEventStreamCreatedAtTimestampState } from '@/sse-db-event/states/sseEventStreamCreatedAtTimestampState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { isCurrentEventStream } from '@/sse-db-event/utils/isCurrentEventStream';
@@ -71,6 +72,7 @@ export const useTriggerEventStreamCreation = () => {
 
     store.set(sseEventStreamIdState.atom, newSseEventStreamId);
     store.set(sseEventStreamReadyState.atom, false);
+    store.set(sseEventStreamCreatedAtTimestampState.atom, Date.now());
 
     const isRecreatedEventStream = isDefined(
       store.get(lastSseEventReceivedTimestampState.atom),

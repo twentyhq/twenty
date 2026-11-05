@@ -7,6 +7,7 @@ import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEve
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
+import { sseEventStreamEarliestCreationTimestampState } from '@/sse-db-event/states/sseEventStreamEarliestCreationTimestampState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,6 +28,9 @@ export const SSEEventStreamEffect = () => {
   );
   const isDestroyingEventStream = useAtomStateValue(
     isDestroyingEventStreamState,
+  );
+  const sseEventStreamEarliestCreationTimestamp = useAtomStateValue(
+    sseEventStreamEarliestCreationTimestampState,
   );
 
   const isLogged = useIsLogged();
@@ -56,10 +60,27 @@ export const SSEEventStreamEffect = () => {
 
     if (willDestroyEventStream) {
       triggerEventStreamDestroy();
-    } else if (willCreateEventStream) {
-      triggerEventStreamCreation();
+
+      return;
     }
+
+    if (!willCreateEventStream) {
+      return;
+    }
+
+    const waitTimeInMs = sseEventStreamEarliestCreationTimestamp - Date.now();
+
+    if (waitTimeInMs <= 0) {
+      triggerEventStreamCreation();
+
+      return;
+    }
+
+    const timeout = setTimeout(triggerEventStreamCreation, waitTimeInMs);
+
+    return () => clearTimeout(timeout);
   }, [
+    sseEventStreamEarliestCreationTimestamp,
     isCreatingSseEventStream,
     triggerEventStreamCreation,
     isLogged,
