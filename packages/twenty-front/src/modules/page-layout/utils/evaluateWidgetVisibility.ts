@@ -1,4 +1,7 @@
-import jsonLogic, { type RulesLogic } from 'json-logic-js';
+import jsonLogic, {
+  type AdditionalOperation,
+  type RulesLogic,
+} from 'json-logic-js';
 import {
   evaluateConditionalAvailabilityExpression,
   isDefined,
@@ -8,7 +11,7 @@ import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibili
 
 type EvaluateWidgetVisibilityParams = {
   conditionalAvailabilityExpression: string | null | undefined;
-  conditionalDisplay: RulesLogic | undefined;
+  conditionalDisplay: RulesLogic<AdditionalOperation> | undefined;
   context: WidgetVisibilityContext;
 };
 

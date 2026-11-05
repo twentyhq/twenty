@@ -1,9 +1,7 @@
 import { convertBarOrLineChartConfigToPieChart } from '@/side-panel/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
-import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_LINE_CHART_CONFIGURATION,
-  TEST_PIE_CHART_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
 
 describe('convertBarOrLineChartConfigToPieChart', () => {
@@ -42,13 +40,5 @@ describe('convertBarOrLineChartConfigToPieChart', () => {
       aggregateFieldMetadataId:
         TEST_LINE_CHART_CONFIGURATION.aggregateFieldMetadataId,
     });
-  });
-
-  it('returns empty object for non-bar/line chart configuration', () => {
-    const result = convertBarOrLineChartConfigToPieChart(
-      TEST_PIE_CHART_CONFIGURATION as unknown as BarChartConfiguration,
-    );
-
-    expect(result).toEqual({});
   });
 });

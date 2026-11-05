@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cleanupOrphanedRecallBots } from 'src/logic-functions/flows/cleanup-orphaned-recall-bots.util';
@@ -42,8 +41,8 @@ class FakeCoreApiClient {
   }
 }
 
-const buildClient = (callRecordings: CallRecordingNode[]): CoreApiClient =>
-  new FakeCoreApiClient(callRecordings) as unknown as CoreApiClient;
+const buildClient = (callRecordings: CallRecordingNode[]) =>
+  new FakeCoreApiClient(callRecordings);
 
 const buildAccessToken = (payload: Record<string, unknown>): string =>
   [
