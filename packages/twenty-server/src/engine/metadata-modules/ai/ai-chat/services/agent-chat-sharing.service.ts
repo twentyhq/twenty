@@ -352,29 +352,19 @@ export class AgentChatSharingService {
               objectMetadataId: threadFlatObjectMetadata.id,
               hypotheticalRecordShareAccessLevel,
             };
-            const [canReadThread, canUpdateThread] = isDefined(
-              uncommittedThread,
-            )
-              ? await Promise.all([
-                  this.permissionsService.canReadUncommittedRecord({
-                    ...objectQuestion,
-                    ...buildAgentChatUncommittedThreadAccess(uncommittedThread),
-                  }),
-                  this.permissionsService.canUpdateUncommittedRecord({
-                    ...objectQuestion,
-                    ...buildAgentChatUncommittedThreadAccess(uncommittedThread),
-                  }),
-                ])
-              : await Promise.all([
-                  this.permissionsService.canReadRecords({
-                    ...objectQuestion,
-                    recordIds: [threadId],
-                  }),
-                  this.permissionsService.canUpdateRecords({
-                    ...objectQuestion,
-                    recordIds: [threadId],
-                  }),
-                ]);
+            const recordQuestion = isDefined(uncommittedThread)
+              ? buildAgentChatUncommittedThreadAccess(uncommittedThread)
+              : { recordIds: [threadId] };
+            const [canReadThread, canUpdateThread] = await Promise.all([
+              this.permissionsService.canReadRecords({
+                ...objectQuestion,
+                ...recordQuestion,
+              }),
+              this.permissionsService.canUpdateRecords({
+                ...objectQuestion,
+                ...recordQuestion,
+              }),
+            ]);
 
             return canReadThread && canUpdateThread ? memberId : undefined;
           }),

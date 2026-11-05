@@ -172,30 +172,16 @@ export class PermissionsService {
     });
   }
 
-  public canReadRecords(question: RecordsQuestion): Promise<boolean> {
+  public canReadRecords(
+    question: RecordsQuestion | UncommittedRecordQuestion,
+  ): Promise<boolean> {
     return this.coversEveryRecord({ question, operationType: 'select' });
   }
 
-  public canUpdateRecords(question: RecordsQuestion): Promise<boolean> {
+  public canUpdateRecords(
+    question: RecordsQuestion | UncommittedRecordQuestion,
+  ): Promise<boolean> {
     return this.coversEveryRecord({ question, operationType: 'update' });
-  }
-
-  public canReadUncommittedRecord(
-    question: UncommittedRecordQuestion,
-  ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToUncommittedRecord({
-      ...question,
-      operationType: 'select',
-    });
-  }
-
-  public canUpdateUncommittedRecord(
-    question: UncommittedRecordQuestion,
-  ): Promise<boolean> {
-    return this.recordAccessPolicyService.hasAccessToUncommittedRecord({
-      ...question,
-      operationType: 'update',
-    });
   }
 
   public async findReadableRecordIds(
@@ -456,9 +442,16 @@ export class PermissionsService {
     question,
     operationType,
   }: {
-    question: RecordsQuestion;
+    question: RecordsQuestion | UncommittedRecordQuestion;
     operationType: ObjectRecordsOperationType;
   }): Promise<boolean> {
+    if ('record' in question) {
+      return this.recordAccessPolicyService.hasAccessToUncommittedRecord({
+        ...question,
+        operationType,
+      });
+    }
+
     const grantedRecordIds = await this.findGrantedRecordIds({
       question,
       operationType,
