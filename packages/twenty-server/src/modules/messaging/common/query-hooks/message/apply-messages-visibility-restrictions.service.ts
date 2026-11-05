@@ -56,7 +56,7 @@ export class ApplyMessagesVisibilityRestrictionsService
 
     const { fullyVisibleMessageIds, subjectVisibleMessageIds } =
       await this.findVisibleMessageIds({
-        messages: restrictableMessages,
+        messageIds: restrictableMessages.map((message) => message.id),
         authContext,
       });
 
@@ -79,11 +79,11 @@ export class ApplyMessagesVisibilityRestrictionsService
     }
   }
 
-  private async findVisibleMessageIds({
-    messages,
+  public async findVisibleMessageIds({
+    messageIds: requestedMessageIds,
     authContext,
   }: {
-    messages: ObjectRecord[];
+    messageIds: string[];
     authContext: WorkspaceAuthContext;
   }): Promise<{
     fullyVisibleMessageIds: Set<string>;
@@ -93,9 +93,7 @@ export class ApplyMessagesVisibilityRestrictionsService
     const fullyVisibleMessageIds = new Set<string>();
     const subjectVisibleMessageIds = new Set<string>();
 
-    const messageIds = [
-      ...new Set(messages.map((message) => message.id)),
-    ].filter(isDefined);
+    const messageIds = [...new Set(requestedMessageIds)].filter(isDefined);
 
     if (messageIds.length === 0) {
       return { fullyVisibleMessageIds, subjectVisibleMessageIds };
