@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useApplicationContentFilters } from '@/settings/applications/hooks/useApplicationContentFilters';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
-import { type ApplicationContentFilterKey } from '@/settings/applications/types/ApplicationContentFilterKey';
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
 
@@ -15,7 +14,7 @@ export const useApplicationContentListFilters = ({
   content: ApplicationContent;
 }) => {
   const filters = useApplicationContentFilters({ contentType, content });
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const activeFilters = filters.flatMap((filter) => {
     const selectedOption = filter.options.find(
@@ -29,24 +28,6 @@ export const useApplicationContentListFilters = ({
     (filter) => filter.isSelectable && filter.options.length > 0,
   );
 
-  const setFilterValue = ({
-    filterKey,
-    universalIdentifier,
-  }: {
-    filterKey: ApplicationContentFilterKey;
-    universalIdentifier: string | null;
-  }) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-
-    if (isDefined(universalIdentifier)) {
-      nextSearchParams.set(filterKey, universalIdentifier);
-    } else {
-      nextSearchParams.delete(filterKey);
-    }
-
-    setSearchParams(nextSearchParams, { replace: true });
-  };
-
   const matchesActiveFilters = (item: ApplicationContentItem) =>
     activeFilters.every(({ getItemKeys, selectedOption }) =>
       getItemKeys(item).includes(selectedOption.universalIdentifier),
@@ -58,7 +39,6 @@ export const useApplicationContentListFilters = ({
     selectedSelectableValue: isDefined(selectableFilter)
       ? searchParams.get(selectableFilter.key)
       : null,
-    setFilterValue,
     matchesActiveFilters,
   };
 };

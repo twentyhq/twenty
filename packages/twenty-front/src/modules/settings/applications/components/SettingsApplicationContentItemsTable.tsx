@@ -44,7 +44,6 @@ export const SettingsApplicationContentItemsTable = ({
     activeFilters,
     selectableFilter,
     selectedSelectableValue,
-    setFilterValue,
     matchesActiveFilters,
   } = useApplicationContentListFilters({ contentType, content });
   const [searchTerm, setSearchTerm] = useState('');
@@ -83,7 +82,6 @@ export const SettingsApplicationContentItemsTable = ({
                 activeFilters={activeFilters}
                 selectableFilter={selectableFilter}
                 selectedSelectableValue={selectedSelectableValue}
-                onFilterChange={setFilterValue}
               />
             )
           }

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 
 import { SettingsApplicationContentFilterDropdown } from '@/settings/applications/components/SettingsApplicationContentFilterDropdown';
+import { useSetApplicationContentFilterValue } from '@/settings/applications/hooks/useSetApplicationContentFilterValue';
 import { APPLICATION_CONTENT_FILTER_LABELS } from '@/settings/applications/constants/ApplicationContentFilterLabels';
 import { type ApplicationContentFilterKey } from '@/settings/applications/types/ApplicationContentFilterKey';
 import { type ApplicationContentFilterOption } from '@/settings/applications/types/ApplicationContentFilterOption';
@@ -18,20 +19,16 @@ type SettingsApplicationContentFilterActionsProps = {
     options: ApplicationContentFilterOption[];
   };
   selectedSelectableValue: string | null;
-  onFilterChange: (filterChange: {
-    filterKey: ApplicationContentFilterKey;
-    universalIdentifier: string | null;
-  }) => void;
 };
 
 export const SettingsApplicationContentFilterActions = ({
   activeFilters,
   selectableFilter,
   selectedSelectableValue,
-  onFilterChange,
 }: SettingsApplicationContentFilterActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const setFilterValue = useSetApplicationContentFilterValue();
 
   return (
     <>
@@ -43,20 +40,15 @@ export const SettingsApplicationContentFilterActions = ({
           labelValue={`: ${selectedOption.label}`}
           Icon={getIcon(selectedOption.icon)}
           onRemove={() =>
-            onFilterChange({ filterKey: key, universalIdentifier: null })
+            setFilterValue({ filterKey: key, universalIdentifier: null })
           }
         />
       ))}
       {isDefined(selectableFilter) && (
         <SettingsApplicationContentFilterDropdown
+          filterKey={selectableFilter.key}
           options={selectableFilter.options}
           selectedUniversalIdentifier={selectedSelectableValue}
-          onChange={(universalIdentifier) =>
-            onFilterChange({
-              filterKey: selectableFilter.key,
-              universalIdentifier,
-            })
-          }
         />
       )}
     </>

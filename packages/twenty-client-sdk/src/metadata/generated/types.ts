@@ -15830,13 +15830,13 @@ export default {
                 1
             ],
             "objectPermissions": [
-                399
+                401
             ],
             "objectRecordsPermissions": [
                 408
             ],
             "objectsPermissions": [
-                399
+                401
             ],
             "permissionFlags": [
                 426

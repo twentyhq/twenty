@@ -4,6 +4,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilterOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 
+import { useSetApplicationContentFilterValue } from '@/settings/applications/hooks/useSetApplicationContentFilterValue';
+import { type ApplicationContentFilterKey } from '@/settings/applications/types/ApplicationContentFilterKey';
 import { type ApplicationContentFilterOption } from '@/settings/applications/types/ApplicationContentFilterOption';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
@@ -11,18 +13,19 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 type SettingsApplicationContentFilterDropdownProps = {
+  filterKey: ApplicationContentFilterKey;
   options: ApplicationContentFilterOption[];
   selectedUniversalIdentifier: string | null;
-  onChange: (universalIdentifier: string | null) => void;
 };
 
 export const SettingsApplicationContentFilterDropdown = ({
+  filterKey,
   options,
   selectedUniversalIdentifier,
-  onChange,
 }: SettingsApplicationContentFilterDropdownProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const setFilterValue = useSetApplicationContentFilterValue();
 
   return (
     <DropdownRoot
@@ -38,7 +41,12 @@ export const SettingsApplicationContentFilterDropdown = ({
               selected={
                 option.universalIdentifier === selectedUniversalIdentifier
               }
-              onSelect={() => onChange(option.universalIdentifier)}
+              onSelect={() =>
+                setFilterValue({
+                  filterKey,
+                  universalIdentifier: option.universalIdentifier,
+                })
+              }
               startIcon={
                 <SelectOptionIcon
                   Icon={getIcon(option.icon)}
@@ -56,7 +64,9 @@ export const SettingsApplicationContentFilterDropdown = ({
             <Dropdown.Section>
               <Dropdown.ActionItem
                 startIcon={<IconFilterOff />}
-                onClick={() => onChange(null)}
+                onClick={() =>
+                  setFilterValue({ filterKey, universalIdentifier: null })
+                }
               >{t`Clear filter`}</Dropdown.ActionItem>
             </Dropdown.Section>
           </>

@@ -7,18 +7,8 @@ import { buildPublicAssetContentItem } from 'src/engine/core-modules/application
 import { buildTranslationContentItems } from 'src/engine/core-modules/application/application-content/utils/build-translation-content-items.util';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
 import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
+import { findByUniversalIdentifier } from 'src/engine/core-modules/application/application-content/utils/find-by-universal-identifier.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
-
-const findByUniversalIdentifier = <TValue>({
-  valueByUniversalIdentifier,
-  universalIdentifier,
-}: {
-  valueByUniversalIdentifier: Map<string, TValue>;
-  universalIdentifier: string | undefined;
-}) =>
-  isDefined(universalIdentifier)
-    ? valueByUniversalIdentifier.get(universalIdentifier)
-    : undefined;
 
 export const buildApplicationContentFromManifest = (
   manifest: Partial<Omit<Manifest, 'application'>>,
