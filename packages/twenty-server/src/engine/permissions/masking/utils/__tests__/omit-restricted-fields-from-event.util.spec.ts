@@ -1,4 +1,8 @@
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordDestroyEvent,
+  type ObjectRecordEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
   RelationType,
@@ -70,7 +74,7 @@ type CompanyEventRecord = {
   ownerWorkspaceMemberId?: string;
 };
 
-const updateEvent: ObjectRecordBaseEvent<CompanyEventRecord> = {
+const updateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
   recordId: 'record-1',
   userId: 'user-1',
   properties: {
@@ -108,7 +112,7 @@ const omit = ({
   event,
   restrictedFields,
 }: {
-  event: ObjectRecordBaseEvent<CompanyEventRecord>;
+  event: ObjectRecordEvent<CompanyEventRecord>;
   restrictedFields: RestrictedFieldsPermissions | undefined;
 }) =>
   omitRestrictedFieldsFromEvent({
@@ -161,12 +165,13 @@ describe('omitRestrictedFieldsFromEvent', () => {
   });
 
   it('should leave no updated field when only unreadable fields changed', () => {
-    const salaryOnlyUpdateEvent: ObjectRecordBaseEvent<CompanyEventRecord> = {
+    const salaryOnlyUpdateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
       ...updateEvent,
       properties: {
         updatedFields: ['salary'],
         before: { id: 'record-1', salary: 100 },
         after: { id: 'record-1', salary: 200 },
+        diff: { salary: { before: 100, after: 200 } },
       },
     };
 
@@ -181,11 +186,12 @@ describe('omitRestrictedFieldsFromEvent', () => {
       updatedFields: [],
       before: { id: 'record-1' },
       after: { id: 'record-1' },
+      diff: {},
     });
   });
 
   it('should keep a deleted record whose snapshot only sits in before', () => {
-    const deleteEvent: ObjectRecordBaseEvent<CompanyEventRecord> = {
+    const deleteEvent: ObjectRecordDestroyEvent<CompanyEventRecord> = {
       recordId: 'record-1',
       properties: { before: { id: 'record-1', name: 'Old', salary: 100 } },
     };
@@ -201,7 +207,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
   });
 
   it('should drop the join column of an unreadable relation alongside its name', () => {
-    const companyUpdateEvent: ObjectRecordBaseEvent<CompanyEventRecord> = {
+    const companyUpdateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
       recordId: 'record-1',
       properties: {
         updatedFields: ['name', 'company', 'companyId'],
@@ -230,12 +236,15 @@ describe('omitRestrictedFieldsFromEvent', () => {
   });
 
   it('should drop both join column spellings when settings rename it', () => {
-    const ownerUpdateEvent: ObjectRecordBaseEvent<CompanyEventRecord> = {
+    const ownerUpdateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
       recordId: 'record-1',
       properties: {
         updatedFields: ['owner', 'ownerId'],
         before: { id: 'record-1', ownerWorkspaceMemberId: 'member-1' },
         after: { id: 'record-1', ownerWorkspaceMemberId: 'member-2' },
+        diff: {
+          ownerWorkspaceMemberId: { before: 'member-1', after: 'member-2' },
+        },
       },
     };
 
@@ -250,6 +259,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
       updatedFields: [],
       before: { id: 'record-1' },
       after: { id: 'record-1' },
+      diff: {},
     });
   });
 });

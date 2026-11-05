@@ -157,8 +157,12 @@ describe('interpolateNavigationCommandMenuItemEvent', () => {
     const flatObjectMetadata = makeFlatObjectMetadata({
       labelPlural: 'People',
       icon: 'IconUser',
-      // @ts-expect-error rows written before authored overrides still store this flat shape
-      overrides: { labelPlural: 'Contacts', icon: 'IconContacts' },
+      overrides: {
+        'workspace-custom-application-universal-identifier': {
+          labelPlural: 'Contacts',
+          icon: 'IconContacts',
+        },
+      },
     });
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);

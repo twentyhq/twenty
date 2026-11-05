@@ -16,7 +16,7 @@ export const validateShareWithArgOrThrow = ({
   authContext,
   shareWith,
 }: {
-  authContext: Pick<WorkspaceAuthContext, 'type'>;
+  authContext: WorkspaceAuthContext;
   shareWith?: ShareWithInput[] | null;
 }): void => {
   if (!isUserAuthContext(authContext) && !isNonEmptyArray(shareWith)) {

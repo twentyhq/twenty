@@ -33,8 +33,14 @@ export type ObjectRecordGroupByForDateField = Partial<{
   };
 }>;
 
+export type ObjectRecordOrderByForRelationCompositeField = {
+  [Property in keyof ObjectRecord]?: ObjectRecordOrderByForCompositeField;
+};
+
 export type ObjectRecordOrderBy = Array<
-  ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
+  | ObjectRecordOrderByForScalarField
+  | ObjectRecordOrderByForCompositeField
+  | ObjectRecordOrderByForRelationCompositeField
 >;
 
 export type ObjectRecordCursorLeafScalarValue =
@@ -47,10 +53,16 @@ export type ObjectRecordCursorLeafCompositeValue = Record<
   ObjectRecordCursorLeafScalarValue
 >;
 
+export type ObjectRecordCursorRelationValue = Record<
+  string,
+  ObjectRecordCursorLeafScalarValue | ObjectRecordCursorLeafCompositeValue
+>;
+
 export type ObjectRecordCursor = {
   [Property in keyof ObjectRecord]?:
     | ObjectRecordCursorLeafScalarValue
-    | ObjectRecordCursorLeafCompositeValue;
+    | ObjectRecordCursorLeafCompositeValue
+    | ObjectRecordCursorRelationValue;
 };
 
 export interface ObjectRecordDuplicateCriteria {

@@ -247,7 +247,6 @@ describe('Field metadata isSearchable toggling', () => {
       input: {
         idToUpdate: labelIdentifierFieldMetadataId,
         updatePayload: {
-          // @ts-expect-error an API client can send an explicit null
           isSearchable: null,
         },
       },

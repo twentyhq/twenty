@@ -15,11 +15,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
-import {
-  ObjectRecordGroupByForAtomicField,
-  ObjectRecordGroupByForCompositeField,
-  ObjectRecordGroupByForDateField,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -264,11 +259,7 @@ export const validateAndTransformGroupByFieldsOrThrow = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  groupBy: Array<
-    | ObjectRecordGroupByForAtomicField
-    | ObjectRecordGroupByForCompositeField
-    | ObjectRecordGroupByForDateField
-  >;
+  groupBy: Record<string, unknown>[];
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

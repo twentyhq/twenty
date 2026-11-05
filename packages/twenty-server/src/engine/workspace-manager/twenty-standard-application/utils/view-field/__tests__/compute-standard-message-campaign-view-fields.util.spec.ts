@@ -1,27 +1,46 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { computeStandardMessageCampaignViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util';
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { computeStandardMessageCampaignViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util';
 
 const MESSAGE_CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 
 const buildArgs = () => {
-  const byUniversalIdentifier = Object.fromEntries(
-    Object.values(MESSAGE_CAMPAIGN.views).map((view) => [
-      view.universalIdentifier,
-      { isSystemSideEffect: false },
-    ]),
-  );
-
-  return {
+  const baseArgs = {
     workspaceId: 'workspace-id',
     twentyStandardApplicationId: 'application-id',
     now: '2026-01-01T00:00:00.000Z',
     objectName: 'messageCampaign' as const,
     standardObjectMetadataRelatedEntityIds:
       getStandardObjectMetadataRelatedEntityIds(),
+  };
+
+  const flatViewMaps = Object.values(
+    computeStandardMessageCampaignViews({
+      ...baseArgs,
+      dependencyFlatEntityMaps: {
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      },
+    }),
+  ).reduce<FlatEntityMaps<FlatView>>(
+    (flatEntityMaps, flatEntity) =>
+      addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+    createEmptyFlatEntityMaps(),
+  );
+
+  return {
+    ...baseArgs,
     dependencyFlatEntityMaps: {
-      flatViewMaps: { byUniversalIdentifier },
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+      flatViewMaps,
     },
   };
 };

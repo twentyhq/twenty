@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 describe('flatEntityToScalarFlatEntity', () => {
@@ -91,8 +92,7 @@ describe('flatEntityToScalarFlatEntity', () => {
       universalIdentifier: 'app-var-universal-id',
       applicationUniversalIdentifier: 'app-universal-id',
       key: 'API_SECRET',
-      // @ts-expect-error the util only reads the value, so the fixture skips real envelope encryption
-      value: encryptedValue,
+      value: encryptedValue as EncryptedString,
       description: 'An API secret key',
       isSecret: true,
       label: 'API secret',
@@ -124,8 +124,7 @@ describe('flatEntityToScalarFlatEntity', () => {
       universalIdentifier: 'app-var-universal-id',
       applicationUniversalIdentifier: 'app-universal-id',
       key: 'PUBLIC_URL',
-      // @ts-expect-error the util only reads the value, so the fixture skips real envelope encryption
-      value: plainValue,
+      value: plainValue as EncryptedString,
       description: 'A public URL',
       isSecret: false,
       label: 'Public URL',

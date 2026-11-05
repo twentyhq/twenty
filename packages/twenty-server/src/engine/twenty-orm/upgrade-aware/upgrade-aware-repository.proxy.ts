@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { UpdateResult } from 'typeorm';
+import { UpdateResult, type Repository } from 'typeorm';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,10 +14,6 @@ type UpgradeAwareAvailabilityState = Pick<
   UpgradeAwareRepositoryState,
   'getHiddenColumnPropertyNames' | 'isEntityAvailable'
 >;
-
-type UpgradeAwareRepositoryTarget = {
-  metadata: Pick<EntityMetadata, 'relations' | 'targetName'>;
-};
 
 type RepositoryMethodBehavior =
   | {
@@ -223,7 +219,7 @@ const stripUnavailableUpdateValues = (
 };
 
 const stripUnavailableRelations = (
-  metadata: UpgradeAwareRepositoryTarget['metadata'],
+  metadata: EntityMetadata,
   state: UpgradeAwareAvailabilityState,
   options: unknown,
 ): unknown => {
@@ -267,7 +263,7 @@ const stripUnavailableRelations = (
 };
 
 const isRelationAvailable = (
-  metadata: UpgradeAwareRepositoryTarget['metadata'],
+  metadata: EntityMetadata,
   state: UpgradeAwareAvailabilityState,
   relationPropertyName: string,
 ): boolean => {
@@ -302,17 +298,15 @@ const isClassConstructor = (fn: Function): boolean =>
   fn.prototype.constructor === fn &&
   fn.toString().startsWith('class ');
 
-export const wrapRepositoryWithUpgradeAwareProxy = <
-  TRepository extends UpgradeAwareRepositoryTarget,
->({
+export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
   repository,
   entityClass,
   state,
 }: {
-  repository: TRepository;
+  repository: Repository<Entity>;
   entityClass: Function;
   state: UpgradeAwareAvailabilityState;
-}): TRepository =>
+}): Repository<Entity> =>
   new Proxy(repository, {
     get(target, prop, receiver) {
       const methodName = typeof prop === 'string' ? prop : undefined;
@@ -342,7 +336,7 @@ export const wrapRepositoryWithUpgradeAwareProxy = <
     },
   });
 
-const handleRepositoryMethodCall = ({
+const handleRepositoryMethodCall = <Entity extends object>({
   target,
   methodName,
   entityClass,
@@ -350,7 +344,7 @@ const handleRepositoryMethodCall = ({
   behavior,
   args,
 }: {
-  target: UpgradeAwareRepositoryTarget;
+  target: Repository<Entity>;
   methodName: string;
   entityClass: Function;
   state: UpgradeAwareAvailabilityState;
@@ -411,17 +405,17 @@ const handleRepositoryMethodCall = ({
   return callRepositoryMethod({ target, methodName, args: rewrittenArgs });
 };
 
-const callRepositoryMethod = ({
+const callRepositoryMethod = <Entity extends object>({
   target,
   methodName,
   args,
 }: {
-  target: UpgradeAwareRepositoryTarget;
+  target: Repository<Entity>;
   methodName: string;
   args: unknown[];
 }): unknown =>
   (
-    target[methodName as keyof UpgradeAwareRepositoryTarget] as unknown as (
+    target[methodName as keyof Repository<Entity>] as unknown as (
       ...callArgs: unknown[]
     ) => unknown
   ).apply(target, args);

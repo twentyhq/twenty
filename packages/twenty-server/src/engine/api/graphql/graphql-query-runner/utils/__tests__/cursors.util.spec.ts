@@ -260,10 +260,8 @@ describe('encodeCursor', () => {
     const record = { id: 'abc' };
     const orderBy: Parameters<typeof encodeCursor>[0]['order'] = [
       {
-        // @ts-expect-error relation orderBy on a composite target is valid API input the type does not model
         company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
       },
-      // @ts-expect-error relation orderBy on a composite target is valid API input the type does not model
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
     ];
 

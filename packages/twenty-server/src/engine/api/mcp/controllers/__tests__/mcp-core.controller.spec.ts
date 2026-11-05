@@ -77,7 +77,7 @@ describe('McpCoreController', () => {
     const mockHttpRequest = {
       workspace: mockWorkspace,
       apiKey: mockApiKey,
-    };
+    } as import('express').Request;
     const mockAuthContext = {
       type: 'apiKey',
       workspace: mockWorkspace,

@@ -1,9 +1,10 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type ApiKeyWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
-export const isApiKeyAuthContext = <
-  TContext extends Pick<WorkspaceAuthContext, 'type'>,
->(
-  context: TContext,
-): context is Extract<TContext, { type: 'apiKey' }> => {
+export const isApiKeyAuthContext = (
+  context: WorkspaceAuthContext,
+): context is ApiKeyWorkspaceAuthContext => {
   return context.type === 'apiKey';
 };

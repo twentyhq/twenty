@@ -408,7 +408,6 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
             viewId: createdView.id,
             fieldMetadataId: createOneField.id,
             operand: operandForFieldType,
-            // @ts-expect-error an API client can send any JSON as the filter value
             value: createViewFilterValue,
           },
           expectToFail: true,

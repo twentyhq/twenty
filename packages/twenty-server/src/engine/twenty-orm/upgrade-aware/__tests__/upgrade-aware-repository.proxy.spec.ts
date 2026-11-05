@@ -3,6 +3,8 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
+import { type Repository, type UpdateResult } from 'typeorm';
+
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -59,10 +61,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
     await adapter.refresh();
 
     const find = jest.fn().mockResolvedValue([{ id: 1 }]);
-    const repository = {
-      find,
-      metadata: { relations: [], targetName: UnavailableEntity.name },
-    };
+    const repository = { find } as unknown as Repository<UnavailableEntity>;
 
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
@@ -82,7 +81,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         relations: [],
         targetName: EntityWithHiddenColumn.name,
       },
-    };
+    } as unknown as Repository<EntityWithHiddenColumn>;
     const state = {
       getHiddenColumnPropertyNames: jest
         .fn()
@@ -95,7 +94,11 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
       state,
     });
 
-    await wrapped.find({
+    await (
+      wrapped.find as unknown as (options: {
+        select: string[];
+      }) => Promise<unknown>
+    )({
       select: ['id', 'introducedColumn', 'unknownTypo'],
     });
 
@@ -113,7 +116,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
           relations: [],
           targetName: EntityWithHiddenColumn.name,
         },
-      };
+      } as unknown as Repository<EntityWithHiddenColumn>;
       const state = {
         getHiddenColumnPropertyNames: jest
           .fn()
@@ -127,7 +130,12 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
           repository,
           entityClass: EntityWithHiddenColumn,
           state,
-        }),
+        }) as unknown as {
+          update: (
+            criteria: unknown,
+            values: Record<string, unknown>,
+          ) => Promise<UpdateResult>;
+        },
       };
     };
 
@@ -172,7 +180,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         relations: [],
         targetName: EntityWithHiddenColumn.name,
       },
-    };
+    } as unknown as Repository<EntityWithHiddenColumn>;
     const state = {
       getHiddenColumnPropertyNames: jest
         .fn()
@@ -185,7 +193,11 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
       state,
     });
 
-    await wrapped.find({
+    await (
+      wrapped.find as unknown as (options: {
+        select: Record<string, boolean>;
+      }) => Promise<unknown>
+    )({
       select: {
         id: true,
         introducedColumn: true,

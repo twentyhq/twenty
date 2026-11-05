@@ -1,4 +1,4 @@
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -8,7 +8,7 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 export const omitRestrictedFieldsFromTimelineActivityEvent = <
-  TEvent extends ObjectRecordBaseEvent,
+  TEvent extends ObjectRecordEvent,
 >({
   event,
   recordsPermissions,

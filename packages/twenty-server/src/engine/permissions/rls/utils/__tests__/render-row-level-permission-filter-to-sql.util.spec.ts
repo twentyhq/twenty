@@ -246,8 +246,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
       renderRowLevelPermissionFilterToSql({
         ...baseArgs,
         recordFilter: {
-          // @ts-expect-error a stored predicate can name a sub field the filter type does not know
-          annualRecurringRevenue: { bogus: { eq: 1 } },
+          annualRecurringRevenue: { primaryEmail: { eq: 'a@example.com' } },
         },
       }),
     ).toThrow('is not a sub field of composite type');

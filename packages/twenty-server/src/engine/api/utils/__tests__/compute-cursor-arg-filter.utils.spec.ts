@@ -761,17 +761,14 @@ describe('computeCursorArgFilter', () => {
   describe('relation orderBy on a composite target field', () => {
     const relationCompositeOrderBy: ObjectRecordOrderBy = [
       {
-        // @ts-expect-error relation orderBy on a composite target is valid API input the type does not model
         company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
       },
-      // @ts-expect-error relation orderBy on a composite target is valid API input the type does not model
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
       { id: OrderByDirection.AscNullsFirst },
     ];
 
     it('should continue across both composite properties of the joined record', () => {
       const cursor: ObjectRecordCursor = {
-        // @ts-expect-error a relation cursor nests the composite values the type does not model
         company: { contactName: { firstName: 'Ada', lastName: 'Lovelace' } },
         id: 'uuid-1',
       };
@@ -826,7 +823,6 @@ describe('computeCursorArgFilter', () => {
 
     it('should reject a cursor missing one composite property of the relation', () => {
       const cursor: ObjectRecordCursor = {
-        // @ts-expect-error a relation cursor nests the composite values the type does not model
         company: { contactName: { firstName: 'Ada' } },
         id: 'uuid-1',
       };

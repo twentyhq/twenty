@@ -193,13 +193,16 @@ describe('projectCatalog', () => {
   });
 
   it('cannot restate what a model is, only which models a route serves', () => {
+    const modelRestatingItsModalities = {
+      model: 'gpt-5.6-luna',
+      modalities: ['image'],
+    };
     const spec: CatalogSpec = {
       providers: [
         {
           name: 'azure-foundry',
           npm: '@ai-sdk/azure',
-          // @ts-expect-error the spec is read from JSON without validation
-          models: [{ model: 'gpt-5.6-luna', modalities: ['image'] }],
+          models: [modelRestatingItsModalities],
         },
       ],
     };

@@ -17,21 +17,6 @@ import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/u
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-type WorkspaceMemberAvatarUrl = Pick<
-  WorkspaceMemberWorkspaceEntity,
-  'avatarUrl'
->;
-
-type WorkspaceMemberAvatarUpdateBatch = Pick<
-  WorkspaceEventBatch<{
-    properties: Pick<
-      ObjectRecordUpdateEvent<WorkspaceMemberAvatarUrl>['properties'],
-      'before' | 'after'
-    >;
-  }>,
-  'workspaceId' | 'events'
->;
-
 @Injectable()
 export class WorkspaceMemberAvatarFileDeletionListener {
   constructor(
@@ -39,7 +24,11 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
-  async handleUpdate(payload: WorkspaceMemberAvatarUpdateBatch) {
+  async handleUpdate(
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
+  ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
     await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
@@ -79,7 +68,9 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   }
 
   private getFileIdsToDeleteFromUpdateEvent(
-    payload: WorkspaceMemberAvatarUpdateBatch,
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
   ): string[] {
     return payload.events
       .map((event) => {

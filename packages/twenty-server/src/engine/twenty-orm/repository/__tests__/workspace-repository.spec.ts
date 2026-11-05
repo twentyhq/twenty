@@ -1,6 +1,7 @@
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -137,7 +138,11 @@ const buildRepository = ({
       flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
       flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
     },
-    authContext: {},
+    authContext: {
+      type: 'apiKey',
+      apiKey: { id: API_KEY_ID },
+      workspace: { id: 'workspace-id' },
+    } as WorkspaceAuthContext,
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);

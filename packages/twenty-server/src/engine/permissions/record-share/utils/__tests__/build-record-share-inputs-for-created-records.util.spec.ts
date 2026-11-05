@@ -9,10 +9,7 @@ import {
 } from 'twenty-shared/types';
 
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/permissions/record-share/utils/build-record-share-inputs-for-created-records.util';
-
-type RecordShareAuthContext = Parameters<
-  typeof buildRecordShareInputsForCreatedRecords
->[0]['authContext'];
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000001';
@@ -23,22 +20,28 @@ const APPLICATION_ROLE_ID = '20202020-0000-4000-8000-000000000005';
 const API_KEY_ID = 'api-key-1';
 const APPLICATION_ID = 'application-1';
 
-const userAuthContext: RecordShareAuthContext = {
+const userAuthContext = {
   type: 'user',
+  workspace: { id: 'workspace-1' },
   workspaceMemberId: WORKSPACE_MEMBER_ID,
-};
+} as WorkspaceAuthContext;
 
-const apiKeyAuthContext: RecordShareAuthContext = {
+const apiKeyAuthContext = {
   type: 'apiKey',
+  workspace: { id: 'workspace-1' },
   apiKey: { id: API_KEY_ID },
-};
+} as WorkspaceAuthContext;
 
-const applicationAuthContext: RecordShareAuthContext = {
+const applicationAuthContext = {
   type: 'application',
+  workspace: { id: 'workspace-1' },
   application: { id: APPLICATION_ID, defaultRoleId: APPLICATION_ROLE_ID },
-};
+} as WorkspaceAuthContext;
 
-const systemAuthContext: RecordShareAuthContext = { type: 'system' };
+const systemAuthContext = {
+  type: 'system',
+  workspace: { id: 'workspace-1' },
+} as WorkspaceAuthContext;
 
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
 
@@ -306,9 +309,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           recordIds: ['record-1'],
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: {
-            type: 'application',
+            ...applicationAuthContext,
             application: { id: APPLICATION_ID, defaultRoleId: null },
-          },
+          } as WorkspaceAuthContext,
           apiKeyRoleMap,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },

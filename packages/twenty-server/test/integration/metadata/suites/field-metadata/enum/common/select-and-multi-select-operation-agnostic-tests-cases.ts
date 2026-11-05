@@ -1,23 +1,22 @@
 import { BASIC_FAILING_STRING_EDGE_CASE_INPUTS } from 'test/constants/basic-failing-string-edge-case-inputs.constant';
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/field-metadata-enum-successful-and-failing-test-cases.type';
 import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case.type';
+import { type MalformedFieldOptionInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import {
   type FieldMetadataComplexOption,
   type TagColor,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-const OPTION_WITHOUT_LABEL: FieldMetadataComplexOption = {
-  // @ts-expect-error an API client can omit the option label
+const OPTION_WITHOUT_LABEL: MalformedFieldOptionInput = {
   label: undefined,
   value: 'OPTION_1',
   color: 'green',
   position: 1,
 };
 
-const OPTION_WITHOUT_VALUE: FieldMetadataComplexOption = {
+const OPTION_WITHOUT_VALUE: MalformedFieldOptionInput = {
   label: 'Option 1',
-  // @ts-expect-error an API client can omit the option value
   value: undefined,
   color: 'green',
   position: 1,

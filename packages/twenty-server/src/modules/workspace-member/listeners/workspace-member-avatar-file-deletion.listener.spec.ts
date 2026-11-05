@@ -1,6 +1,9 @@
 import { Test } from '@nestjs/testing';
 
+import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkspaceMemberAvatarFileDeletionListener } from 'src/modules/workspace-member/listeners/workspace-member-avatar-file-deletion.listener';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -15,18 +18,20 @@ const buildUpdateBatch = ({
   after,
   updatedFields,
 }: {
-  before: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl'>;
-  after: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl'> &
-    Partial<WorkspaceMemberWorkspaceEntity>;
+  before: Partial<WorkspaceMemberWorkspaceEntity>;
+  after: Partial<WorkspaceMemberWorkspaceEntity>;
   updatedFields: string[];
-}) => ({
-  workspaceId: WORKSPACE_ID,
-  events: [
-    {
-      properties: { before, after, updatedFields, diff: {} },
-    },
-  ],
-});
+}) =>
+  ({
+    workspaceId: WORKSPACE_ID,
+    events: [
+      {
+        properties: { before, after, updatedFields, diff: {} },
+      },
+    ],
+  }) as WorkspaceEventBatch<
+    ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+  >;
 
 describe('WorkspaceMemberAvatarFileDeletionListener', () => {
   let listener: WorkspaceMemberAvatarFileDeletionListener;
