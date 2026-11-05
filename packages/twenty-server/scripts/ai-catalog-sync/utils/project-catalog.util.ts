@@ -1,9 +1,9 @@
 import { PROVIDER_CREDENTIAL_FIELDS } from '../constants/provider-credential-fields.constant';
 import { type CanonicalCatalog } from '../types/canonical-catalog.type';
 import { type CatalogSpec } from '../types/catalog-spec.type';
+import { applySpecToCanonicalModel } from './apply-spec-to-canonical-model.util';
 import { assertProviderIsUsable } from './assert-provider-is-usable.util';
 import { indexCanonicalModels } from './index-canonical-models.util';
-import { projectModel } from './project-model.util';
 import { resolveProviderModels } from './resolve-provider-models.util';
 
 export const projectCatalog = ({
@@ -40,7 +40,9 @@ export const projectCatalog = ({
         provider,
         canonicalCatalog,
         canonicalModels,
-      }).map((resolved) => projectModel({ ...resolved, provider })),
+      }).map((resolved) =>
+        applySpecToCanonicalModel({ ...resolved, provider }),
+      ),
     };
   }
 

@@ -5,7 +5,7 @@ import {
   type CatalogSpecProvider,
 } from '../types/catalog-spec.type';
 
-export const projectModel = ({
+export const applySpecToCanonicalModel = ({
   canonicalModel,
   specModel,
   provider,
