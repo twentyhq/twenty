@@ -1,9 +1,9 @@
 ---
 title: AvatarAssistente
-description: Un personaggio assistente statico con forma, espressione, colore e dimensione configurabili.
+description: Un personaggio assistente con forma, espressione, colore, dimensioni e animazione inattiva configurabili.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
@@ -39,6 +39,7 @@ Scegli le forme indipendentemente dalle espressioni e dai colori.
 | `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `predefinito` |
 | `colore`     | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `blu`         |
 | `dimensione` | `14`, `16`, `20`, `24`, `40` pixel                                                         | `24`          |
+| `isAnimated` | `true`, `false`                                                                            | `falso`       |
 
 Il corpo e il viso utilizzano i token del tema della palette selezionata e seguono il tema chiaro o scuro circostante. Imposta `size` per un personaggio quadrato. Gli attributi nativi, gli eventi, `className`, `style` e `ref` sono applicati allo span esterno; gli stili espliciti sovrascrivono le relative dimensioni e i valori predefiniti della palette.
 
@@ -55,6 +56,24 @@ export const CustomAssistant = () => (
   />
 );
 ```
+
+## Animazione inattiva
+
+Imposta `isAnimated` per riprodurre il ciclo inattivo dell'espressione selezionata. Default sbatte le palpebre e guarda di lato, Happy alza lo sguardo, Wink chiude un occhio, Surprised spalanca gli occhi, Sleepy fa fluttuare un simbolo del sonno e Love fa pulsare i suoi occhi a cuore. Il corpo rimane immobile.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--idle-faces" title="Animazioni inattive per ogni espressione" height={180} />
+
+L'animazione è disattivata per impostazione predefinita. Imposta `isAnimated={false}` per visualizzare l'espressione statica, incluso l'occhiolino visibile. Quando il browser preferisce movimenti ridotti, il componente visualizza l'espressione statica anche quando `isAnimated` è abilitato. La preferenza si applica anche se cambia mentre il personaggio è visualizzato.
+
+L'applicazione controlla l'interruttore dell'animazione. Questa prop controlla la presentazione inattiva e non rappresenta l'attività dell'assistente in ascolto, mentre parla, mentre pensa o di altro tipo.
 
 ## Accessibilità
 
