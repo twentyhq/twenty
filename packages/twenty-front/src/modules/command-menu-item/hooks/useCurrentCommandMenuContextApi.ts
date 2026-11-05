@@ -27,6 +27,7 @@ import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayout
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -160,6 +161,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewIdComponentState,
   );
 
+  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
+
   const baseRecordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem?.namePlural ?? '',
     contextStoreCurrentViewId ?? '',
@@ -238,5 +243,11 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectMetadataItem: objectMetadataItem ?? {},
     objectMetadataLabel,
     coreObjectName: contextStoreCurrentCoreObjectName,
+    currentView: isDefined(currentView)
+      ? {
+          id: currentView.id,
+          universalIdentifier: currentView.universalIdentifier ?? null,
+        }
+      : null,
   };
 };

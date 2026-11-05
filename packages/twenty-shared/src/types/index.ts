@@ -30,7 +30,10 @@ export type {
 } from './CallRecordingTranscript';
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
-export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type {
+  CommandMenuCurrentView,
+  CommandMenuContextApi,
+} from './CommandMenuContextApi';
 export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
 export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';

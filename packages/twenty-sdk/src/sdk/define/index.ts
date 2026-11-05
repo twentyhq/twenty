@@ -62,6 +62,7 @@ export type { SettingsMenuItemScope } from 'twenty-shared/application';
 export {
   canAccessFullAdminPanel,
   canImpersonate,
+  currentView,
   every,
   everyDefined,
   everyEquals,
