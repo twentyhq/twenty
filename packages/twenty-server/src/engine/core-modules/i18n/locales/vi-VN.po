@@ -1823,7 +1823,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Xác thực không được kích hoạt với nhà cung cấp này."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Yêu cầu cung cấp thông tin xác thực để truy cập tính năng này. Vui lòng đăng nhập và thử lại."
 
@@ -2966,7 +2966,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Chọn một loại hoạt động dòng thời gian hiện có để ghi đè."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Chọn một người hoặc một vai trò để chia sẻ cùng."
 
@@ -3829,7 +3829,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Đã tạo siêu dữ liệu trường, không tìm thấy siêu dữ liệu đối tượng cha"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Việc tạo bản ghi của một đối tượng riêng tư yêu cầu đối số shareWith"
 
@@ -4746,7 +4746,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Mỗi trường đường dẫn bản ghi liên quan phải thuộc về đối tượng được truy cập bởi quan hệ trước đó"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Mỗi mục shareWith phải nhắm chính xác đến một trong các giá trị workspaceMemberId, roleId hoặc everyone"
 
@@ -6775,8 +6775,8 @@ msgid "Internal name of the campaign"
 msgstr "Tên nội bộ của chiến dịch"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Cấp độ truy cập không hợp lệ."
 
@@ -7494,8 +7494,8 @@ msgstr "Định dạng URL không hợp lệ."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Định dạng UUID không hợp lệ."
 
@@ -12647,17 +12647,17 @@ msgid "Shared record"
 msgstr "Hồ sơ được chia sẻ"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith chỉ định một vai trò không thuộc không gian làm việc này"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith chỉ định một thành viên không gian làm việc không thuộc không gian làm việc này"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith chỉ định cùng một chủ thể nhiều lần"
 
@@ -13609,7 +13609,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Không thể tìm thấy tác nhân bạn đang tìm kiếm. Nó có thể đã bị xóa hoặc bạn có thể không có quyền truy cập vào nó."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Khóa API không được chỉ định vai trò hợp lệ. Vui lòng kiểm tra cấu hình khóa API của bạn."
 
@@ -13625,7 +13625,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Kênh nguồn của ứng dụng không khớp với kiểu mong đợi."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Ứng dụng không được chỉ định vai trò hợp lệ. Vui lòng kiểm tra cấu hình ứng dụng của bạn."
 
@@ -14383,12 +14383,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Thành viên trong không gian làm việc đã cập nhật bản ghi lần cuối"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Vai trò của họ không thể truy cập các bản ghi này và đối tượng này chỉ được chia sẻ với những vai trò có thể truy cập."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Vai trò của họ không thể xem bản ghi này và đối tượng này chỉ được chia sẻ với những người có thể xem."
 
@@ -18233,8 +18233,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Vai trò của bạn không thể xóa một số bản ghi này nên không thể hợp nhất chúng."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Không thể tìm thấy vai trò của bạn trong không gian làm việc này. Vui lòng liên hệ quản trị viên không gian làm việc của bạn."
 

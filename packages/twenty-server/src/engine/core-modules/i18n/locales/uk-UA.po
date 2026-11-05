@@ -1823,7 +1823,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Аутентифікація не ввімкнена з цим постачальником."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Для доступу до цієї функції потрібна автентифікація. Будь ласка, увійдіть і спробуйте знову."
 
@@ -2966,7 +2966,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Виберіть наявний тип активності хронології для перевизначення"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Виберіть одну особу або одну роль, з якою хочете поділитися."
 
@@ -3829,7 +3829,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Створені метадані поля, метадані батьківського об'єкта не знайдено"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Створення запису приватного об’єкта потребує аргументу shareWith"
 
@@ -4746,7 +4746,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Кожне поле шляху пов’язаного запису має належати об’єкту, досягнутому попереднім зв’язком"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Кожен запис shareWith має посилатися рівно на один з workspaceMemberId, roleId або everyone"
 
@@ -6775,8 +6775,8 @@ msgid "Internal name of the campaign"
 msgstr "Внутрішня назва кампанії"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Недійсний рівень доступу."
 
@@ -7494,8 +7494,8 @@ msgstr "Некоректний формат URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Некоректний формат UUID."
 
@@ -12647,17 +12647,17 @@ msgid "Shared record"
 msgstr "Спільний запис"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith вказує роль, яка не належить до цього робочого простору"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith вказує учасника робочого простору, який не належить до цього робочого простору"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith вказує того самого суб’єкта більше одного разу"
 
@@ -13609,7 +13609,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Шуканого агента не знайдено. Його могли видалити або у вас немає до нього доступу."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Ключ API не має відповідної ролі. Перевірте налаштування вашого ключа API."
 
@@ -13625,7 +13625,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Канал джерела застосунку не відповідає очікуваному типу."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Застосунок не має відповідної ролі. Перевірте налаштування вашого застосунку."
 
@@ -14383,12 +14383,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Учасник робочого простору, який востаннє оновив запис"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Їхня роль не має доступу до цих записів, а цей об'єкт доступний лише ролям, які мають такий доступ."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Їхня роль не може бачити цей запис, а цей об'єкт доступний лише особам, які можуть його бачити."
 
@@ -18233,8 +18233,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ваша роль не може видалити деякі з цих записів, тому їх не можна об’єднати."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Вашу роль у цьому робочому просторі не знайдено. Зверніться до адміністратора робочого простору."
 

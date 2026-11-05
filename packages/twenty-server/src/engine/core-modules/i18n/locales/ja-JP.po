@@ -1823,7 +1823,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "このプロバイダーでは認証が有効になっていません。"
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "この機能にアクセスするには認証が必要です。サインインしてもう一度お試しください。"
 
@@ -2966,7 +2966,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "上書きする既存のタイムラインアクティビティタイプを選択してください"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "共有するユーザーまたはロールを選択してください。"
 
@@ -3829,7 +3829,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "フィールドメタデータが作成されましたが、親オブジェクトメタデータが見つかりませんでした"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "プライベートオブジェクトのレコードを作成するには、shareWith 引数が必要です"
 
@@ -4746,7 +4746,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "各関連レコードパスフィールドは、前のリレーションで到達したオブジェクトに属している必要があります"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "各 shareWith エントリでは、workspaceMemberId、roleId、everyone のいずれか1つのみを指定する必要があります"
 
@@ -6775,8 +6775,8 @@ msgid "Internal name of the campaign"
 msgstr "キャンペーンの内部名"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "無効なアクセスレベルです。"
 
@@ -7494,8 +7494,8 @@ msgstr "無効なURL形式です。"
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "無効なUUID形式です。"
 
@@ -12647,17 +12647,17 @@ msgid "Shared record"
 msgstr "共有レコード"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith はこのワークスペースに属していないロールを指定しています"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith はこのワークスペースに属していないワークスペースメンバーを指定しています"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith は同じプリンシパルを複数回指定しています"
 
@@ -13609,7 +13609,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "お探しのエージェントが見つかりませんでした。削除されたか、アクセスできない可能性があります。"
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "APIキーに有効なロールが割り当てられていません。APIキーの設定を確認してください。"
 
@@ -13625,7 +13625,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "アプリケーションのソースチャネルが想定された型と一致しません。"
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "アプリケーションに有効なロールが割り当てられていません。アプリケーションの設定を確認してください。"
 
@@ -14383,12 +14383,12 @@ msgid "The workspace member who last updated the record"
 msgstr "レコードを最後に更新したワークスペースのメンバー"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "そのロールはこれらのレコードにアクセスできず、このオブジェクトはアクセス可能なロールとのみ共有されています。"
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "そのロールはこのレコードを閲覧できず、このオブジェクトは閲覧可能なユーザーとのみ共有されています。"
 
@@ -18233,8 +18233,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "あなたのロールではこれらのレコードの一部を削除できないため、マージできません。"
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "このワークスペースでのロールが見つかりませんでした。ワークスペース管理者に連絡してください。"
 

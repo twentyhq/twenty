@@ -1823,7 +1823,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Η ταυτοποίηση δεν είναι ενεργοποιημένη με αυτόν τον πάροχο."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Απαιτείται έλεγχος ταυτότητας για να αποκτήσετε πρόσβαση σε αυτή τη λειτουργία. Παρακαλώ συνδεθείτε και δοκιμάστε ξανά."
 
@@ -2966,7 +2966,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Επιλέξτε έναν υπάρχοντα τύπο δραστηριότητας χρονολογίου για παράκαμψη."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Επιλέξτε ένα άτομο ή έναν ρόλο για κοινή χρήση."
 
@@ -3829,7 +3829,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Δημιουργήθηκαν μεταδεδομένα πεδίου, δεν βρέθηκαν μεταδεδομένα γονικού αντικειμένου"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Η δημιουργία μιας εγγραφής ιδιωτικού αντικειμένου απαιτεί το όρισμα shareWith"
 
@@ -4746,7 +4746,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Κάθε πεδίο διαδρομής σχετικής εγγραφής πρέπει να ανήκει στο αντικείμενο στο οποίο οδηγεί η προηγούμενη σχέση"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Κάθε καταχώριση shareWith πρέπει να στοχεύει ακριβώς ένα από τα workspaceMemberId, roleId ή everyone"
 
@@ -6775,8 +6775,8 @@ msgid "Internal name of the campaign"
 msgstr "Εσωτερικό όνομα της καμπάνιας"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Μη έγκυρο επίπεδο πρόσβασης."
 
@@ -7494,8 +7494,8 @@ msgstr "Μη έγκυρη μορφή URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Μη έγκυρη μορφή UUID."
 
@@ -12647,17 +12647,17 @@ msgid "Shared record"
 msgstr "Κοινόχρηστη εγγραφή"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "Το shareWith ορίζει έναν ρόλο που δεν ανήκει σε αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "Το shareWith ορίζει ένα μέλος χώρου εργασίας που δεν ανήκει σε αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "Το shareWith ορίζει την ίδια οντότητα περισσότερες από μία φορές"
 
@@ -13609,7 +13609,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Ο πράκτορας που αναζητάτε δεν βρέθηκε. Μπορεί να έχει διαγραφεί ή μπορεί να μην έχετε πρόσβαση σε αυτόν."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Το κλειδί API δεν έχει ανατεθεί με έγκυρο ρόλο. Παρακαλώ ελέγξτε τη διαμόρφωση του κλειδιού API σας."
 
@@ -13625,7 +13625,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Το κανάλι προέλευσης της εφαρμογής δεν αντιστοιχεί στον αναμενόμενο τύπο."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Δεν έχει ανατεθεί έγκυρος ρόλος στην εφαρμογή. Παρακαλώ ελέγξτε τη διαμόρφωση της εφαρμογής σας."
 
@@ -14383,12 +14383,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Το μέλος του χώρου εργασίας που πραγματοποίησε την τελευταία ενημέρωση της εγγραφής"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ο ρόλος τους δεν μπορεί να αποκτήσει πρόσβαση σε αυτές τις εγγραφές και αυτό το αντικείμενο κοινοποιείται μόνο σε ρόλους που μπορούν."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ο ρόλος τους δεν μπορεί να δει αυτή την εγγραφή και αυτό το αντικείμενο κοινοποιείται μόνο σε άτομα που μπορούν."
 
@@ -18233,8 +18233,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ο ρόλος σας δεν μπορεί να διαγράψει ορισμένες από αυτές τις εγγραφές, επομένως δεν μπορούν να συγχωνευτούν."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ο ρόλος σας σε αυτό το workspace δεν μπορεί να βρεθεί. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 
