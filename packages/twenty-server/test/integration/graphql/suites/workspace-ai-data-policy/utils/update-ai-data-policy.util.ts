@@ -4,8 +4,10 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 const UPDATE_WORKSPACE_AI_DATA_POLICY = gql`
   mutation UpdateWorkspaceAiDataPolicy($data: UpdateWorkspaceInput!) {
     updateWorkspace(data: $data) {
-      aiDataResidency
-      isAiZeroDataRetentionRequired
+      aiDataPolicy {
+        aiDataResidency
+        isAiZeroDataRetentionRequired
+      }
     }
   }
 `;

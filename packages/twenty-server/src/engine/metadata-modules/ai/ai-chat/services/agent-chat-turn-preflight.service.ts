@@ -6,6 +6,7 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 import {
   AiException,
   AiExceptionCode,
@@ -13,7 +14,7 @@ import {
 
 type AgentChatTurnWorkspace = Pick<
   WorkspaceEntity,
-  'id' | 'aiChatModelTier' | 'aiDataResidency' | 'isAiZeroDataRetentionRequired'
+  'id' | 'aiChatModelTier' | 'aiDataPolicy'
 >;
 
 @Injectable()
@@ -80,7 +81,7 @@ export class AgentChatTurnPreflightService {
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: getChatModelId({ requestedModelId: modelId, workspace }),
-      aiDataPolicy: workspace,
+      aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
     });
   }
 

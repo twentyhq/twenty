@@ -1,43 +1,78 @@
 import { updateAiDataPolicy } from 'test/integration/graphql/suites/workspace-ai-data-policy/utils/update-ai-data-policy.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 
+const NO_POLICY = {
+  aiDataResidency: null,
+  isAiZeroDataRetentionRequired: false,
+};
+const EU_ZERO_RETENTION_POLICY = {
+  aiDataResidency: 'eu',
+  isAiZeroDataRetentionRequired: true,
+};
+const ZERO_RETENTION_POLICY = {
+  aiDataResidency: null,
+  isAiZeroDataRetentionRequired: true,
+};
+
+const setAiDataPolicyFlag = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+const createAgentOnUnlabeledModel = () =>
+  createOneAgent({
+    input: {
+      label: 'Excluded model agent',
+      prompt: 'Answer.',
+      modelId: UNLABELED_CATALOG_MODEL_ID,
+    },
+    gqlFields: 'id',
+    expectToFail: true,
+    token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  });
+
 describe('workspace AI data policy', () => {
+  beforeEach(async () => {
+    await setAiDataPolicyFlag(true);
+  });
+
   afterEach(async () => {
+    await setAiDataPolicyFlag(true);
     await updateAiDataPolicy({
-      data: { aiDataResidency: null, isAiZeroDataRetentionRequired: false },
+      data: { aiDataPolicy: NO_POLICY },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
   });
 
   it('lets a workspace admin set and lift the policy', async () => {
     const restricted = await updateAiDataPolicy({
-      data: { aiDataResidency: 'eu', isAiZeroDataRetentionRequired: true },
+      data: { aiDataPolicy: EU_ZERO_RETENTION_POLICY },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     expect(restricted.body.errors).toBeUndefined();
-    expect(restricted.body.data.updateWorkspace).toEqual({
-      aiDataResidency: 'eu',
-      isAiZeroDataRetentionRequired: true,
-    });
+    expect(restricted.body.data.updateWorkspace.aiDataPolicy).toEqual(
+      EU_ZERO_RETENTION_POLICY,
+    );
 
     const lifted = await updateAiDataPolicy({
-      data: { aiDataResidency: null },
+      data: { aiDataPolicy: NO_POLICY },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     expect(lifted.body.errors).toBeUndefined();
-    expect(lifted.body.data.updateWorkspace).toEqual({
-      aiDataResidency: null,
-      isAiZeroDataRetentionRequired: true,
-    });
+    expect(lifted.body.data.updateWorkspace.aiDataPolicy).toEqual(NO_POLICY);
   });
 
   it('refuses a member without the security permission', async () => {
     const response = await updateAiDataPolicy({
-      data: { aiDataResidency: 'eu' },
+      data: { aiDataPolicy: EU_ZERO_RETENTION_POLICY },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
@@ -46,18 +81,17 @@ describe('workspace AI data policy', () => {
     );
   });
 
-  it('refuses an unknown residency', async () => {
+  it.each([
+    ['an unknown residency', { ...NO_POLICY, aiDataResidency: 'us' }],
+    ['a missing residency', { isAiZeroDataRetentionRequired: true }],
+    [
+      'a null retention requirement',
+      { aiDataResidency: 'eu', isAiZeroDataRetentionRequired: null },
+    ],
+    ['a null policy', null],
+  ])('refuses %s', async (_label, aiDataPolicy) => {
     const response = await updateAiDataPolicy({
-      data: { aiDataResidency: 'us' },
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
-  });
-
-  it('refuses a null zero data retention requirement', async () => {
-    const response = await updateAiDataPolicy({
-      data: { isAiZeroDataRetentionRequired: null },
+      data: { aiDataPolicy },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
@@ -67,7 +101,7 @@ describe('workspace AI data policy', () => {
   it('refuses to pin a model the policy sent in the same update excludes', async () => {
     const response = await updateAiDataPolicy({
       data: {
-        isAiZeroDataRetentionRequired: true,
+        aiDataPolicy: ZERO_RETENTION_POLICY,
         aiModelIdByTier: { fast: UNLABELED_CATALOG_MODEL_ID },
       },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -80,23 +114,43 @@ describe('workspace AI data policy', () => {
 
   it('refuses an agent on a model the policy excludes', async () => {
     await updateAiDataPolicy({
-      data: { isAiZeroDataRetentionRequired: true },
+      data: { aiDataPolicy: ZERO_RETENTION_POLICY },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    const { errors } = await createOneAgent({
-      input: {
-        label: 'Excluded model agent',
-        prompt: 'Answer.',
-        modelId: UNLABELED_CATALOG_MODEL_ID,
-      },
-      gqlFields: 'id',
-      expectToFail: true,
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
+    const { errors } = await createAgentOnUnlabeledModel();
 
     expect(errors[0].extensions.subCode).toBe(
       'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
     );
+  });
+
+  describe('with the feature flag off', () => {
+    it('refuses to set a policy', async () => {
+      await setAiDataPolicyFlag(false);
+
+      const response = await updateAiDataPolicy({
+        data: { aiDataPolicy: EU_ZERO_RETENTION_POLICY },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors[0].extensions.subCode).toBe(
+        'PERMISSION_DENIED',
+      );
+    });
+
+    it('keeps enforcing a policy that was already set', async () => {
+      await updateAiDataPolicy({
+        data: { aiDataPolicy: ZERO_RETENTION_POLICY },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+      await setAiDataPolicyFlag(false);
+
+      const { errors } = await createAgentOnUnlabeledModel();
+
+      expect(errors[0].extensions.subCode).toBe(
+        'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
+      );
+    });
   });
 });

@@ -97,7 +97,6 @@ import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/con
 import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
 import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
 import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
-import { computeAiDataPolicyAfterUpdate } from 'src/engine/core-modules/workspace/utils/compute-ai-data-policy-after-update.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -105,6 +104,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -166,8 +166,7 @@ export class WorkspaceService {
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
-    aiDataResidency: PermissionFlagType.SECURITY,
-    isAiZeroDataRetentionRequired: PermissionFlagType.SECURITY,
+    aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -471,6 +470,23 @@ export class WorkspaceService {
       );
     }
 
+    const isAiDataPolicyRequiredButDisabled =
+      isDefined(payload.aiDataPolicy) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspace.id,
+      ));
+
+    if (isAiDataPolicyRequiredButDisabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
+        },
+      );
+    }
+
     if (
       isDefined(payload.subdomain) &&
       workspace.subdomain !== payload.subdomain
@@ -571,10 +587,8 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
-        aiDataPolicy: computeAiDataPolicyAfterUpdate({
-          aiDataPolicy: workspace,
-          update: payload,
-        }),
+        aiDataPolicy:
+          payload.aiDataPolicy ?? getWorkspaceAiDataPolicy(workspace),
       });
     }
 

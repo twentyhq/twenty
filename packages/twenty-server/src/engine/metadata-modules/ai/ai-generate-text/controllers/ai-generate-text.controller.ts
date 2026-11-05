@@ -30,6 +30,7 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
@@ -99,10 +100,11 @@ export class AiGenerateTextController {
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
+    const aiDataPolicy = getWorkspaceAiDataPolicy(workspace);
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: resolvedModelId,
-      aiDataPolicy: workspace,
+      aiDataPolicy,
     });
 
     const registeredModel =
@@ -122,7 +124,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
-            isContentRecordingAllowed: !isAiDataPolicyActive(workspace),
+            isContentRecordingAllowed: !isAiDataPolicyActive(aiDataPolicy),
             workspaceId: workspace.id,
             userWorkspaceId,
           }),

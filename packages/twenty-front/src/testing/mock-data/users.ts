@@ -173,8 +173,6 @@ export const mockCurrentWorkspace = {
   databaseSchema: null,
   isTwoFactorAuthenticationEnforced: false,
   eventLogRetentionDays: 90,
-  aiDataResidency: null,
-  isAiZeroDataRetentionRequired: false,
   __typename: 'Workspace',
 } as const satisfies Workspace;
 

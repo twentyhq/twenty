@@ -8,7 +8,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { pickAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/pick-ai-data-policy.util';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 
 @Injectable()
 export class WorkspaceAiDataPolicyService {
@@ -29,6 +29,6 @@ export class WorkspaceAiDataPolicyService {
       );
     }
 
-    return pickAiDataPolicy(workspace);
+    return getWorkspaceAiDataPolicy(workspace);
   }
 }

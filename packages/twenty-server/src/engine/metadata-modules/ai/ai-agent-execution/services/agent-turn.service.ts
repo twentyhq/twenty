@@ -22,7 +22,7 @@ import {
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
-import { pickAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/pick-ai-data-policy.util';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 
 type AgentTurnContext = Pick<
   AgentStepLoopInput,
@@ -88,7 +88,7 @@ export class AgentTurnService {
     telemetry,
     ...loopInput
   }: AgentTurnInput): Promise<AgentTurn> {
-    const aiDataPolicy = pickAiDataPolicy(workspace);
+    const aiDataPolicy = getWorkspaceAiDataPolicy(workspace);
     const isContentRecordingAllowed = !isAiDataPolicyActive(aiDataPolicy);
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({

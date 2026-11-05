@@ -14,6 +14,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { getWorkspaceAiDataPolicy } from 'src/engine/metadata-modules/ai/ai-models/utils/get-workspace-ai-data-policy.util';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 
 import { AgentService } from './agent.service';
@@ -106,7 +107,7 @@ export class AgentResolver {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
-        aiDataPolicy: workspace,
+        aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
       });
     }
 
@@ -136,7 +137,7 @@ export class AgentResolver {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
         modelId: input.modelId,
-        aiDataPolicy: workspace,
+        aiDataPolicy: getWorkspaceAiDataPolicy(workspace),
       });
     }
 
