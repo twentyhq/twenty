@@ -1,1 +1,0 @@
-export const MCP_SERVER_NAME_MAX_LENGTH = 32;

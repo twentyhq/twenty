@@ -7,6 +7,12 @@ describe('getMcpServerToolAnnotationBadges', () => {
     expect(getMcpServerToolAnnotationBadges({ title: 'Search' })).toEqual([]);
   });
 
+  it('returns no badge when a hint is not a boolean', () => {
+    expect(getMcpServerToolAnnotationBadges({ readOnlyHint: 'yes' })).toEqual(
+      [],
+    );
+  });
+
   it('maps each true hint to a badge', () => {
     expect(
       getMcpServerToolAnnotationBadges({

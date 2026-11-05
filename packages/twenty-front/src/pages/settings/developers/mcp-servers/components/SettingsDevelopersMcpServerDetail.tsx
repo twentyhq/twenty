@@ -1,9 +1,14 @@
 import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
-import { SettingsMcpServerForm } from '@/settings/mcp-servers/components/SettingsMcpServerForm';
+import { SettingsMcpServerDetail } from '@/settings/mcp-servers/components/SettingsMcpServerDetail';
 
 export const SettingsDevelopersMcpServerDetail = () => {
-  const { mcpServerId } = useParams();
+  const { mcpServerId } = useParams<{ mcpServerId: string }>();
 
-  return <SettingsMcpServerForm mcpServerId={mcpServerId} />;
+  if (!isDefined(mcpServerId)) {
+    return null;
+  }
+
+  return <SettingsMcpServerDetail mcpServerId={mcpServerId} />;
 };

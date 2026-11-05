@@ -6,7 +6,7 @@ describe('getMcpServerStatus', () => {
       getMcpServerStatus({
         isActive: false,
         toolsSyncError: 'Connection refused',
-        tools: [{}, {}],
+        tools: [{ name: 'search' }, { name: 'fetch' }],
       }),
     ).toEqual({ color: 'gray', label: 'Inactive' });
   });
@@ -23,13 +23,17 @@ describe('getMcpServerStatus', () => {
 
   it('counts the cached tools', () => {
     expect(
-      getMcpServerStatus({ isActive: true, toolsSyncError: null, tools: [{}] }),
+      getMcpServerStatus({
+        isActive: true,
+        toolsSyncError: null,
+        tools: [{ name: 'search' }],
+      }),
     ).toEqual({ color: 'green', label: '1 tool' });
     expect(
       getMcpServerStatus({
         isActive: true,
         toolsSyncError: null,
-        tools: [{}, {}, {}],
+        tools: [{ name: 'search' }, { name: 'fetch' }, { name: 'create' }],
       }),
     ).toEqual({ color: 'green', label: '3 tools' });
   });

@@ -5,6 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-servers/constants/McpServerTableRowGridTemplateColumns';
 import { SettingsMcpServerTableRow } from '@/settings/mcp-servers/components/SettingsMcpServerTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -21,13 +22,19 @@ const StyledTableBodyContainer = styled.div`
 
 export const SettingsMcpServersTable = () => {
   const { t } = useLingui();
-  const { data } = useQuery(FindManyMcpServersDocument);
+  const { data, error } = useQuery(FindManyMcpServersDocument);
 
   const mcpServers = data?.mcpServers ?? [];
 
   return (
     <Table>
-      <TableRow gridTemplateColumns={MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
+      <ToastOnQueryErrorEffect
+        error={error}
+        message={t`Failed to load MCP servers`}
+      />
+      <TableRow
+        gridTemplateColumns={MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      >
         <TableHeader>{t`Label`}</TableHeader>
         <TableHeader>{t`Name`}</TableHeader>
         <TableHeader>{t`URL`}</TableHeader>

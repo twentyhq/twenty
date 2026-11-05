@@ -1,54 +1,32 @@
 import { t } from '@lingui/core/macro';
-import { isPlainObject } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
+import { type z } from 'zod';
 
-import { type McpServerToolAnnotations } from '@/mcp-servers/types/McpServerToolAnnotations';
+import { mcpServerToolAnnotationsSchema } from '@/settings/mcp-servers/validation-schemas/mcpServerToolAnnotationsSchema';
+import { type McpServerTool } from '~/generated-metadata/graphql';
 
-export type McpServerToolAnnotationBadge = {
-  key: keyof McpServerToolAnnotations;
+type McpServerToolAnnotationBadge = {
+  key: keyof z.infer<typeof mcpServerToolAnnotationsSchema>;
   color: ThemeColor;
   label: string;
 };
 
 export const getMcpServerToolAnnotationBadges = (
-  annotations: unknown,
+  annotations: McpServerTool['annotations'],
 ): McpServerToolAnnotationBadge[] => {
-  if (!isPlainObject(annotations)) {
+  const parsedAnnotations =
+    mcpServerToolAnnotationsSchema.safeParse(annotations);
+
+  if (!parsedAnnotations.success) {
     return [];
   }
 
-  const { readOnlyHint, destructiveHint, idempotentHint, openWorldHint } =
-    annotations as McpServerToolAnnotations;
+  const badges: McpServerToolAnnotationBadge[] = [
+    { key: 'readOnlyHint', color: 'green', label: t`Read-only` },
+    { key: 'destructiveHint', color: 'red', label: t`Destructive` },
+    { key: 'idempotentHint', color: 'blue', label: t`Idempotent` },
+    { key: 'openWorldHint', color: 'orange', label: t`Open world` },
+  ];
 
-  const badges: McpServerToolAnnotationBadge[] = [];
-
-  if (readOnlyHint === true) {
-    badges.push({ key: 'readOnlyHint', color: 'green', label: t`Read-only` });
-  }
-
-  if (destructiveHint === true) {
-    badges.push({
-      key: 'destructiveHint',
-      color: 'red',
-      label: t`Destructive`,
-    });
-  }
-
-  if (idempotentHint === true) {
-    badges.push({
-      key: 'idempotentHint',
-      color: 'blue',
-      label: t`Idempotent`,
-    });
-  }
-
-  if (openWorldHint === true) {
-    badges.push({
-      key: 'openWorldHint',
-      color: 'orange',
-      label: t`Open world`,
-    });
-  }
-
-  return badges;
+  return badges.filter(({ key }) => parsedAnnotations.data[key] ?? false);
 };

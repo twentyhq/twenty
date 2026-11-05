@@ -1,11 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { isValidUrl } from 'twenty-shared/utils';
+import { MCP_SERVER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
+import { isHttpUrl } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { MCP_SERVER_NAME_MAX_LENGTH } from '@/settings/mcp-servers/constants/McpServerNameMaxLength';
-
-const MCP_SERVER_NAME_PATTERN = /^[a-z][a-z0-9_]*$/;
-const HTTP_URL_PATTERN = /^https?:\/\//i;
+import { MCP_SERVER_NAME_PATTERN } from '@/settings/mcp-servers/constants/McpServerNamePattern';
 
 export const getMcpServerFormSchema = () =>
   z.object({
@@ -29,7 +27,7 @@ export const getMcpServerFormSchema = () =>
       .string()
       .trim()
       .min(1, { error: () => t`URL is required` })
-      .refine((url) => HTTP_URL_PATTERN.test(url) && isValidUrl(url), {
+      .refine(isHttpUrl, {
         error: () => t`Please enter a valid http(s) URL`,
       }),
     connectionProviderId: z.string().nullable(),

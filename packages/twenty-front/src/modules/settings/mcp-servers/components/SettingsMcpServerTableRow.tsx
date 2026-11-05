@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
+import { getUrlSafely } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -8,7 +8,7 @@ import { MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-serve
 import { SettingsMcpServerStatus } from '@/settings/mcp-servers/components/SettingsMcpServerStatus';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { type FindManyMcpServersQuery } from '~/generated-metadata/graphql';
+import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
 
 const StyledIconChevronRightContainer = styled.span`
   align-items: center;
@@ -17,7 +17,10 @@ const StyledIconChevronRightContainer = styled.span`
 `;
 
 type SettingsMcpServerTableRowProps = {
-  mcpServer: FindManyMcpServersQuery['mcpServers'][number];
+  mcpServer: Pick<
+    McpServerFragmentFragment,
+    'label' | 'name' | 'url' | 'isActive' | 'toolsSyncError' | 'tools'
+  >;
   to: string;
 };
 
@@ -40,11 +43,7 @@ export const SettingsMcpServerTableRow = ({
       </TableCell>
       <TableCell overflow="hidden">
         <OverflowingTextWithTooltip
-          text={
-            isValidUrl(mcpServer.url)
-              ? getUrlHostnameOrThrow(mcpServer.url)
-              : mcpServer.url
-          }
+          text={getUrlSafely(mcpServer.url)?.hostname ?? mcpServer.url}
         />
       </TableCell>
       <TableCell>

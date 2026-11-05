@@ -110,6 +110,9 @@ export const SettingsDevelopers = () => {
 
   const isAppsTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS;
   const isCliTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI;
+  const isMcpServersTab =
+    isMcpServersEnabled &&
+    activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS;
 
   return (
     <SettingsPageLayout
@@ -140,7 +143,7 @@ export const SettingsDevelopers = () => {
             darkSrc={isAppsTab ? AppsCoverDark : PlaygroundCoverDark}
             instanceIdPrefix={SETTINGS_DEVELOPERS_HERO_INSTANCE_ID_PREFIX}
             tabs={
-              isAppsTab || isCliTab
+              isAppsTab || isCliTab || isMcpServersTab
                 ? []
                 : [
                     {
@@ -208,28 +211,27 @@ export const SettingsDevelopers = () => {
           </StyledTabContent>
         )}
 
-        {isMcpServersEnabled &&
-          activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS && (
-            <StyledTabContent>
-              <Section.Root>
-                <Section.Header
-                  title={t`MCP servers`}
-                  description={t`Connect remote MCP servers so agents can use their tools.`}
-                />
-                <StyledTableContainer isMobile={isMobile}>
-                  <SettingsMcpServersTable />
-                  <StyledButtonContainer>
-                    <NavigationButton
-                      startIcon={<IconPlus />}
-                      size="sm"
-                      to={getSettingsPath(SettingsPath.NewMcpServer)}
-                      variant="outline"
-                    >{t`Add MCP server`}</NavigationButton>
-                  </StyledButtonContainer>
-                </StyledTableContainer>
-              </Section.Root>
-            </StyledTabContent>
-          )}
+        {isMcpServersTab && (
+          <StyledTabContent>
+            <Section.Root>
+              <Section.Header
+                title={t`MCP servers`}
+                description={t`Connect remote MCP servers so agents can use their tools.`}
+              />
+              <StyledTableContainer isMobile={isMobile}>
+                <SettingsMcpServersTable />
+                <StyledButtonContainer>
+                  <NavigationButton
+                    startIcon={<IconPlus />}
+                    size="sm"
+                    to={getSettingsPath(SettingsPath.NewMcpServer)}
+                    variant="outline"
+                  >{t`Add MCP server`}</NavigationButton>
+                </StyledButtonContainer>
+              </StyledTableContainer>
+            </Section.Root>
+          </StyledTabContent>
+        )}
 
         {isAppsTab && <SettingsDevelopersAppsTab />}
 

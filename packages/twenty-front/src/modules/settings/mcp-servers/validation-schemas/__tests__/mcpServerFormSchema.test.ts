@@ -16,6 +16,16 @@ describe('getMcpServerFormSchema', () => {
     expect(getMcpServerFormSchema().safeParse(validInput).success).toBe(true);
   });
 
+  it.each([
+    'http://localhost:3000/mcp',
+    'http://mcp-server:3000/mcp',
+    'http://[::1]:3000/mcp',
+  ])('accepts the internal endpoint %s like the server does', (url) => {
+    expect(
+      getMcpServerFormSchema().safeParse({ ...validInput, url }).success,
+    ).toBe(true);
+  });
+
   it('trims label, name and url', () => {
     const result = getMcpServerFormSchema().safeParse({
       ...validInput,
@@ -56,7 +66,11 @@ describe('getMcpServerFormSchema', () => {
       'Name must be at most 32 characters',
     ],
     ['empty url', { url: '' }, 'URL is required'],
-    ['non http url', { url: 'ftp://mcp.example.com' }, 'Please enter a valid http(s) URL'],
+    [
+      'non http url',
+      { url: 'ftp://mcp.example.com' },
+      'Please enter a valid http(s) URL',
+    ],
     ['malformed url', { url: 'https://' }, 'Please enter a valid http(s) URL'],
   ])('rejects %s', (_title, overrides, expectedMessage) => {
     const result = getMcpServerFormSchema().safeParse({

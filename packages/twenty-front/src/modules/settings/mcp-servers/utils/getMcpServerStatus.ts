@@ -1,16 +1,19 @@
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { type McpServer } from '~/generated-metadata/graphql';
+import {
+  type McpServer,
+  type McpServerTool,
+} from '~/generated-metadata/graphql';
 
-export type McpServerStatus = {
+type McpServerStatus = {
   color: ThemeColor;
   label: string;
 };
 
 export const getMcpServerStatus = (
   mcpServer: Pick<McpServer, 'isActive' | 'toolsSyncError'> & {
-    tools: unknown[];
+    tools: Pick<McpServerTool, 'name'>[];
   },
 ): McpServerStatus => {
   if (!mcpServer.isActive) {

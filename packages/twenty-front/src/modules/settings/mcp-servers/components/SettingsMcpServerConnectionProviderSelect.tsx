@@ -1,28 +1,30 @@
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 
-import { useWorkspaceCustomApplicationConnectionProviders } from '@/settings/mcp-servers/hooks/useWorkspaceCustomApplicationConnectionProviders';
 import { Select } from '@/ui/input/components/Select';
+import { ApplicationConnectionProvidersDocument } from '~/generated-metadata/graphql';
 
 type SettingsMcpServerConnectionProviderSelectProps = {
+  applicationId: string;
   value: string | null;
   onChange: (value: string | null) => void;
 };
 
 export const SettingsMcpServerConnectionProviderSelect = ({
+  applicationId,
   value,
   onChange,
 }: SettingsMcpServerConnectionProviderSelectProps) => {
   const { t } = useLingui();
-  const { connectionProviders } = useWorkspaceCustomApplicationConnectionProviders();
+  const { data, loading } = useQuery(ApplicationConnectionProvidersDocument, {
+    variables: { applicationId },
+  });
 
-  const options = connectionProviders.map((connectionProvider) => ({
-    value: connectionProvider.id,
-    label: connectionProvider.displayName,
-  }));
-
-  const hasSelectedProvider = options.some(
-    (option) => option.value === value,
+  const options = (data?.applicationConnectionProviders ?? []).map(
+    (connectionProvider) => ({
+      value: connectionProvider.id,
+      label: connectionProvider.displayName,
+    }),
   );
 
   return (
@@ -30,8 +32,9 @@ export const SettingsMcpServerConnectionProviderSelect = ({
       dropdownId="mcp-server-connection-provider-select"
       options={options}
       emptyOption={{ value: null, label: t`None` }}
-      value={isDefined(value) && hasSelectedProvider ? value : null}
+      value={value}
       onChange={onChange}
+      disabled={loading}
       fullWidth
     />
   );

@@ -3,11 +3,14 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 import { getMcpServerStatus } from '@/settings/mcp-servers/utils/getMcpServerStatus';
-import { type McpServer } from '~/generated-metadata/graphql';
+import {
+  type McpServer,
+  type McpServerTool,
+} from '~/generated-metadata/graphql';
 
 type SettingsMcpServerStatusProps = {
   mcpServer: Pick<McpServer, 'isActive' | 'toolsSyncError'> & {
-    tools: unknown[];
+    tools: Pick<McpServerTool, 'name'>[];
   };
 };
 

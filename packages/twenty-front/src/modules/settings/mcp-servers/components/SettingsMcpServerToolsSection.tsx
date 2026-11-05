@@ -6,21 +6,23 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { SettingsMcpServerToolsTable } from '@/settings/mcp-servers/components/SettingsMcpServerToolsTable';
-import { type FindOneMcpServerQuery } from '~/generated-metadata/graphql';
+import { useSyncMcpServerTools } from '@/settings/mcp-servers/hooks/useSyncMcpServerTools';
+import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type SettingsMcpServerToolsSectionProps = {
-  mcpServer: NonNullable<FindOneMcpServerQuery['mcpServer']>;
-  isSyncing: boolean;
-  onSync: () => void;
+  mcpServer: Pick<
+    McpServerFragmentFragment,
+    'id' | 'tools' | 'toolsSyncedAt' | 'toolsSyncError'
+  >;
 };
 
 export const SettingsMcpServerToolsSection = ({
   mcpServer,
-  isSyncing,
-  onSync,
 }: SettingsMcpServerToolsSectionProps) => {
   const { t } = useLingui();
+  const { syncMcpServerTools, isSyncingMcpServerTools } =
+    useSyncMcpServerTools();
 
   const getDescription = () => {
     if (isNonEmptyString(mcpServer.toolsSyncError)) {
@@ -46,9 +48,9 @@ export const SettingsMcpServerToolsSection = ({
             startIcon={<IconRefresh />}
             variant="outline"
             size="sm"
-            loading={isSyncing}
-            disabled={isSyncing}
-            onClick={onSync}
+            loading={isSyncingMcpServerTools}
+            disabled={isSyncingMcpServerTools}
+            onClick={() => syncMcpServerTools(mcpServer.id)}
           >{t`Sync tools`}</Button>
         }
       />
