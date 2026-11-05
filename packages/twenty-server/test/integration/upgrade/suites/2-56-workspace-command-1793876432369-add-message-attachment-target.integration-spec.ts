@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -47,16 +48,19 @@ describe('2-56 workspace command - add message attachment target (integration)',
     return {
       fieldCount: MESSAGE_ATTACHMENT_FIELD_UNIVERSAL_IDENTIFIERS.filter(
         (universalIdentifier) =>
-          findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifier,
-          }) !== undefined,
+          isDefined(
+            findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier,
+            }),
+          ),
       ).length,
-      hasIndex:
+      hasIndex: isDefined(
         findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatIndexMaps,
           universalIdentifier: MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER,
-        }) !== undefined,
+        }),
+      ),
       hasColumn: columns.length > 0,
     };
   };
