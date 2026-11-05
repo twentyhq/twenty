@@ -41,7 +41,7 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
         .mockResolvedValue({ type: 'application' }),
     } as never,
     {} as never,
-    { findOneBy: jest.fn().mockResolvedValue(null) } as never,
+    { findOneBy: jest.fn().mockResolvedValue({ id: 'workspace-id' }) } as never,
   );
 
   const started = await service.startTurn({

@@ -14898,6 +14898,9 @@ export default {
             "aiChatModelTier": [
                 31
             ],
+            "aiDataResidency": [
+                1
+            ],
             "aiEvaluationModelId": [
                 1
             ],
@@ -14924,6 +14927,9 @@ export default {
             ],
             "inviteHash": [
                 1
+            ],
+            "isAiZeroDataRetentionRequired": [
+                4
             ],
             "isAutoModelSelectionEnabled": [
                 4
@@ -16376,6 +16382,9 @@ export default {
             "aiChatModelTier": [
                 31
             ],
+            "aiDataResidency": [
+                1
+            ],
             "aiEvaluationModelId": [
                 1
             ],
@@ -16444,6 +16453,9 @@ export default {
             ],
             "inviteHash": [
                 1
+            ],
+            "isAiZeroDataRetentionRequired": [
+                4
             ],
             "isAutoModelSelectionEnabled": [
                 4

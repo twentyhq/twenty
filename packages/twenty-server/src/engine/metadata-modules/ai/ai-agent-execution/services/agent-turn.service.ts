@@ -20,6 +20,7 @@ import {
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
+import { type WorkspaceAiPrivacySettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-privacy-settings.type';
 
 type AgentTurnContext = Pick<
   AgentStepLoopInput,
@@ -36,11 +37,16 @@ type AgentTurnInput = Omit<
   | 'tools'
   | 'offeredPausingToolNames'
   | 'providerOptions'
+  | 'telemetry'
 > & {
-  workspace?: WorkspaceEntity;
+  workspace: WorkspaceEntity;
+  telemetry: Omit<AgentStepLoopInput['telemetry'], 'privacySettings'>;
   modelId: string;
   // the model's own native tools when nativeToolOptions is absent
-  toolset: Omit<AgentToolsetInput, 'registeredModel' | 'nativeToolOptions'> & {
+  toolset: Omit<
+    AgentToolsetInput,
+    'registeredModel' | 'nativeToolOptions' | 'aiDataPolicy'
+  > & {
     nativeToolOptions?: NativeModelToolOptions;
   };
   buildContext: (turn: {
@@ -53,6 +59,7 @@ type AgentTurnInput = Omit<
 };
 
 export type AgentTurn = AgentStepLoop & {
+  privacySettings: WorkspaceAiPrivacySettings;
   registeredModel: RegisteredAiModel;
   modelConfig: AiModelConfig;
   toolset: AgentToolset;
@@ -76,9 +83,10 @@ export class AgentTurnService {
     buildContext,
     promptCacheKey,
     shouldIncludeReasoningSummary = false,
+    telemetry,
     ...loopInput
   }: AgentTurnInput): Promise<AgentTurn> {
-    this.aiModelRegistryService.validateModelAvailability(modelId);
+    this.aiModelRegistryService.validateModelAvailability(modelId, workspace);
 
     const registeredModel = this.aiModelRegistryService.resolveModelForAgent(
       { modelId },
@@ -94,6 +102,7 @@ export class AgentTurnService {
     const toolset = await this.agentToolsetService.build({
       ...toolsetInput,
       registeredModel,
+      aiDataPolicy: workspace,
       nativeToolOptions: toolsetInput.nativeToolOptions ?? {
         webSearch: nativeCapabilities?.webSearch === true,
         twitterSearch: nativeCapabilities?.twitterSearch === true,
@@ -112,6 +121,7 @@ export class AgentTurnService {
 
     const stepLoop = this.agentStepLoopService.start({
       ...loopInput,
+      telemetry: { ...telemetry, privacySettings: workspace },
       registeredModel,
       modelConfig,
       systemPrompt,
@@ -129,6 +139,12 @@ export class AgentTurnService {
       }),
     });
 
-    return { ...stepLoop, registeredModel, modelConfig, toolset };
+    return {
+      ...stepLoop,
+      privacySettings: workspace,
+      registeredModel,
+      modelConfig,
+      toolset,
+    };
   }
 }

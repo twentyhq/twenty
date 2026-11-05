@@ -92,10 +92,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
           uptime: false,
         },
       }),
-      Sentry.vercelAIIntegration({
-        recordInputs: true,
-        recordOutputs: true,
-      }),
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,

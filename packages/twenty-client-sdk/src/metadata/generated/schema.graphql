@@ -5614,6 +5614,7 @@ input UpdateWorkspaceInput {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -5623,6 +5624,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   eventLogRetentionDays: Float
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
   isCampaignOpenTrackingEnabled: Boolean
@@ -6386,6 +6388,7 @@ type Workspace {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
@@ -6409,6 +6412,7 @@ type Workspace {
   iframeMediaPermissions: [IframeMediaPermission!]
   installedApplications: [Application!]!
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean!
   isAutoModelSelectionEnabled: Boolean!
   isCampaignClickTrackingEnabled: Boolean!
   isCampaignOpenTrackingEnabled: Boolean!

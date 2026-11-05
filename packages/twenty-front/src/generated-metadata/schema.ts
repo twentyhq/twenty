@@ -7978,6 +7978,7 @@ export type UpdateWorkspaceInput = {
   aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
+  aiDataResidency?: InputMaybe<Scalars['String']['input']>;
   aiEvaluationModelId?: InputMaybe<Scalars['String']['input']>;
   aiModelIdByTier?: InputMaybe<Scalars['JSON']['input']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7987,6 +7988,7 @@ export type UpdateWorkspaceInput = {
   editableProfileFields?: InputMaybe<Array<Scalars['String']['input']>>;
   eventLogRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
+  isAiZeroDataRetentionRequired?: InputMaybe<Scalars['Boolean']['input']>;
   isAutoModelSelectionEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isCampaignClickTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isCampaignOpenTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8762,6 +8764,7 @@ export type Workspace = {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
   aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;
+  aiDataResidency?: Maybe<Scalars['String']['output']>;
   aiEvaluationModelId?: Maybe<Scalars['String']['output']>;
   aiModelIdByTier: Scalars['JSON']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
@@ -8785,6 +8788,7 @@ export type Workspace = {
   iframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
+  isAiZeroDataRetentionRequired: Scalars['Boolean']['output'];
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];
   isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
   isCampaignOpenTrackingEnabled: Scalars['Boolean']['output'];

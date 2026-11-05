@@ -17,6 +17,7 @@ import { ListAgentsTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/li
 import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
@@ -24,6 +25,10 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
+const WORKSPACE_PRIVACY_SETTINGS = {
+  aiDataResidency: 'eu',
+  isAiZeroDataRetentionRequired: true,
+};
 const agentId = '20202020-0000-4000-8000-000000000001';
 const roleId = '20202020-0000-4000-8000-000000000002';
 const existingTriggerId = '20202020-0000-4000-8000-000000000003';
@@ -102,6 +107,11 @@ const buildAgentTools = (options?: {
       flatWorkflowVersionMaps: { byUniversalIdentifier: {} },
     }),
   };
+  const workspaceAiDataPolicyService = {
+    getAiPrivacySettingsOrThrow: jest
+      .fn()
+      .mockResolvedValue(WORKSPACE_PRIVACY_SETTINGS),
+  };
   const permissionsService = {
     hasPermissionFlag: jest
       .fn()
@@ -126,11 +136,13 @@ const buildAgentTools = (options?: {
     new CreateAgentTool(
       agentService as unknown as AgentService,
       aiModelRegistryService as unknown as AiModelRegistryService,
+      workspaceAiDataPolicyService as unknown as WorkspaceAiDataPolicyService,
     ),
     new UpdateAgentTool(
       agentService as unknown as AgentService,
       aiModelRegistryService as unknown as AiModelRegistryService,
       manageableAgentService,
+      workspaceAiDataPolicyService as unknown as WorkspaceAiDataPolicyService,
     ),
     new DeleteAgentTool(
       agentService as unknown as AgentService,
@@ -361,7 +373,10 @@ describe('Agent tools', () => {
       ).toHaveBeenCalledTimes(1);
       expect(
         aiModelRegistryService.validateModelAvailability,
-      ).toHaveBeenCalledWith('workspace-default-model');
+      ).toHaveBeenCalledWith(
+        'workspace-default-model',
+        WORKSPACE_PRIVACY_SETTINGS,
+      );
       expect(agentService.createOneAgent).toHaveBeenCalledTimes(1);
 
       const [createAgentInput, calledWorkspaceId] =
@@ -396,6 +411,20 @@ describe('Agent tools', () => {
   });
 
   describe('update_agent', () => {
+    it('checks a new model against the workspace AI data policy', async () => {
+      const { executeTool, aiModelRegistryService } = buildAgentTools();
+
+      const output = await executeTool({
+        toolName: 'update_agent',
+        args: { id: agentId, modelId: 'anthropic/claude' },
+      });
+
+      expect(output.success).toBe(true);
+      expect(
+        aiModelRegistryService.validateModelAvailability,
+      ).toHaveBeenCalledWith('anthropic/claude', WORKSPACE_PRIVACY_SETTINGS);
+    });
+
     it('keeps the ids of the triggers passed back and only sends the given fields', async () => {
       const { executeTool, agentService, aiModelRegistryService } =
         buildAgentTools();

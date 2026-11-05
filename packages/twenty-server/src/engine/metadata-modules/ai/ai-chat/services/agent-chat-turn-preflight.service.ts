@@ -30,7 +30,13 @@ export class AgentChatTurnPreflightService {
     modelId?: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
-    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
+    workspace: Pick<
+      WorkspaceEntity,
+      | 'id'
+      | 'aiChatModelTier'
+      | 'aiDataResidency'
+      | 'isAiZeroDataRetentionRequired'
+    >;
   }) {
     this.assertModelAvailable({ modelId, workspace });
 
@@ -52,7 +58,13 @@ export class AgentChatTurnPreflightService {
   }: {
     modelId?: string;
     userWorkspaceId: string;
-    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
+    workspace: Pick<
+      WorkspaceEntity,
+      | 'id'
+      | 'aiChatModelTier'
+      | 'aiDataResidency'
+      | 'isAiZeroDataRetentionRequired'
+    >;
   }): Promise<void> {
     this.assertModelAvailable({ modelId, workspace });
 
@@ -64,7 +76,13 @@ export class AgentChatTurnPreflightService {
     workspace,
   }: {
     modelId?: string;
-    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
+    workspace: Pick<
+      WorkspaceEntity,
+      | 'id'
+      | 'aiChatModelTier'
+      | 'aiDataResidency'
+      | 'isAiZeroDataRetentionRequired'
+    >;
   }): void {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
@@ -75,6 +93,7 @@ export class AgentChatTurnPreflightService {
 
     this.aiModelRegistryService.validateModelAvailability(
       getChatModelId({ requestedModelId: modelId, workspace }),
+      workspace,
     );
   }
 
@@ -83,7 +102,13 @@ export class AgentChatTurnPreflightService {
     workspace,
   }: {
     userWorkspaceId: string;
-    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
+    workspace: Pick<
+      WorkspaceEntity,
+      | 'id'
+      | 'aiChatModelTier'
+      | 'aiDataResidency'
+      | 'isAiZeroDataRetentionRequired'
+    >;
   }): Promise<void> {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
