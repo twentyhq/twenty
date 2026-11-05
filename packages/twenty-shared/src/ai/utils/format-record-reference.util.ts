@@ -1,4 +1,6 @@
-import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from '../constants/agent-chat-assistant-mention-object-name-singular.const';
+import { isAgentChatAssistantReference } from './is-agent-chat-assistant-reference.util';
+
+const UNENCODED_REFERENCE_LABEL_PUNCTUATION_REGEX = /[!'()*_~.-]/g;
 
 export const formatRecordReference = ({
   objectNameSingular,
@@ -8,7 +10,13 @@ export const formatRecordReference = ({
   objectNameSingular: string;
   recordId: string;
   displayName: string;
-}): string =>
-  objectNameSingular === AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR
-    ? `@${displayName}`
-    : `[[record:${objectNameSingular}:${recordId}:${displayName}]]`;
+}): string => {
+  const label = isAgentChatAssistantReference({ objectNameSingular, recordId })
+    ? encodeURIComponent(displayName).replace(
+        UNENCODED_REFERENCE_LABEL_PUNCTUATION_REGEX,
+        (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+      )
+    : displayName;
+
+  return `[[record:${objectNameSingular}:${recordId}:${label}]]`;
+};

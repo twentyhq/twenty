@@ -30,6 +30,8 @@ export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conv
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
+export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
@@ -133,6 +135,7 @@ export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';

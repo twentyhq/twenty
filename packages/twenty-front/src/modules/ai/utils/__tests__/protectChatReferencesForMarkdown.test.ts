@@ -1,10 +1,56 @@
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
+import { parseChatReferences } from '@/ai/utils/parseChatReferences';
+import {
+  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  formatRecordReference,
+} from 'twenty-shared/ai';
 
 describe('protectChatReferencesForMarkdown', () => {
+  it('encodes raw markdown punctuation in an assistant reference without adding display backslashes', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        'Ask [[record:agentChatAssistant:agentChatAssistant:*Ada* _team_]] now',
+      ),
+    ).toBe(
+      'Ask [[record:agentChatAssistant:agentChatAssistant:%2AAda%2A%20%5Fteam%5F]] now',
+    );
+  });
+
   it('should leave plain text unchanged', () => {
     expect(
       protectChatReferencesForMarkdown('Which company should we contact?'),
     ).toBe('Which company should we contact?');
+  });
+
+  it('preserves encoded assistant labels while protecting ordinary references', () => {
+    const displayName = 'Nova: [[team]] %3A \\ `code` *bold* _name_';
+    const assistantReference = formatRecordReference({
+      objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+      recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+      displayName,
+    });
+    const protectedText = protectChatReferencesForMarkdown(
+      `Ask ${assistantReference} about [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme (EMEA)]]`,
+    );
+
+    expect(protectedText).toBe(
+      `Ask ${assistantReference} about [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme \\(EMEA\\)]]`,
+    );
+    expect(parseChatReferences(protectedText)[0]).toEqual(
+      expect.objectContaining({
+        kind: 'record',
+        objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        displayName,
+        fullMatch: assistantReference,
+      }),
+    );
+  });
+
+  it('preserves legacy plain mentions and their surrounding prose', () => {
+    const text = 'Ask @Ada or @Nova: [support] to review 50% today.';
+
+    expect(protectChatReferencesForMarkdown(text)).toBe(text);
   });
 
   it('should leave a reference with a plain label unchanged', () => {
