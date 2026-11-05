@@ -33,12 +33,15 @@ describe('2-56 workspace command - add message attachment target (integration)',
   let command: AddMessageAttachmentTargetCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
+  const getFlatFieldAndIndexMaps = () =>
+    workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatFieldMetadataMaps',
+      'flatIndexMaps',
+    ]);
+
   const findMessageAttachmentTarget = async () => {
     const { flatFieldMetadataMaps, flatIndexMaps } =
-      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ]);
+      await getFlatFieldAndIndexMaps();
     const columns: unknown[] = await global.testDataSource.query(
       `SELECT 1 FROM information_schema.columns
          WHERE table_schema = $1 AND table_name = 'attachment' AND column_name = 'targetMessageId'`,
@@ -67,10 +70,7 @@ describe('2-56 workspace command - add message attachment target (integration)',
 
   const removeMessageAttachmentTarget = async () => {
     const { flatFieldMetadataMaps, flatIndexMaps } =
-      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ]);
+      await getFlatFieldAndIndexMaps();
     const { twentyStandardFlatApplication } =
       await getAppProviderByClassName<ApplicationService>(
         'ApplicationService',
