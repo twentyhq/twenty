@@ -10,7 +10,6 @@ import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -33,7 +32,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     WorkspaceCacheStorageModule,
     RoleTargetModule,
     TokenModule,
-    PermissionsModule,
     ApiKeyRoleModule,
   ],
   providers: [
@@ -46,6 +44,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   controllers: [ApiKeyController],
-  exports: [ApiKeyService, ApiKeyRoleModule, PermissionsModule, TypeOrmModule],
+  exports: [ApiKeyService, ApiKeyRoleModule, TypeOrmModule],
 })
 export class ApiKeyModule {}
