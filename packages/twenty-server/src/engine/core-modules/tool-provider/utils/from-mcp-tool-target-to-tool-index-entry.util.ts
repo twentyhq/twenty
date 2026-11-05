@@ -18,7 +18,7 @@ export const fromMcpToolTargetToToolIndexEntry = ({
     `(MCP server: ${mcpServer.label})`,
     ...(isDestructiveMcpServerTool(tool)
       ? [
-          `Destructive: it only runs once approved through ${PROPOSE_TOOL_CALL_TOOL_NAME}.`,
+          `It may change data: it only runs once approved through ${PROPOSE_TOOL_CALL_TOOL_NAME}.`,
         ]
       : []),
   ].join(' '),

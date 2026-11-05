@@ -30,6 +30,8 @@ import { isMcpServerDueForToolSync } from 'src/engine/metadata-modules/mcp-serve
 import { isMcpUnknownToolError } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-error.util';
 import { isMcpUnknownToolMessage } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-message.util';
 
+const CATALOG_TOOL_SYNC_TIMEOUT_MS = 5_000;
+
 type RemoteToolCallOutcome = {
   output: ToolOutput;
   isToolUnknownToServer: boolean;
@@ -59,7 +61,10 @@ export class McpToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
     const mcpServers = await this.findReachableMcpServers(context);
-    const hasSyncedAny = await this.syncServersNeverSynced(mcpServers, context);
+    const hasSyncedAny = await this.syncServersNeverSynced({
+      mcpServers,
+      userWorkspaceId: context.userWorkspaceId,
+    });
     const upToDateMcpServers = hasSyncedAny
       ? await this.findReachableMcpServers(context)
       : mcpServers;
@@ -99,7 +104,7 @@ export class McpToolProvider implements ToolProvider {
       return {
         success: false,
         message: `Tool ${toolName} requires approval`,
-        error: `${toolName} is destructive: propose it with ${PROPOSE_TOOL_CALL_TOOL_NAME} and let the user approve it.`,
+        error: `${toolName} may change data: propose it with ${PROPOSE_TOOL_CALL_TOOL_NAME} and let the user approve it.`,
       };
     }
 
@@ -179,13 +184,18 @@ export class McpToolProvider implements ToolProvider {
     }
   }
 
-  private async findReachableMcpServers(
-    context: ToolProviderContext,
-  ): Promise<FlatMcpServer[]> {
+  private async findReachableMcpServers({
+    workspaceId,
+    application,
+    authContext,
+  }: Pick<
+    ToolProviderContext,
+    'workspaceId' | 'application' | 'authContext'
+  >): Promise<FlatMcpServer[]> {
     const { flatMcpServerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
-          workspaceId: context.workspaceId,
+          workspaceId,
           flatMapsKeys: ['flatMcpServerMaps'],
         },
       );
@@ -195,34 +205,37 @@ export class McpToolProvider implements ToolProvider {
         isDefined(mcpServer) &&
         mcpServer.isActive &&
         canCallerReachApplication({
-          callingApplication: context.application,
+          callingApplication: application,
           applicationId: mcpServer.applicationId,
           operation: 'trigger',
           workspaceCustomApplicationId:
-            context.authContext?.workspace.workspaceCustomApplicationId,
+            authContext?.workspace.workspaceCustomApplicationId,
         }),
     );
   }
 
-  private async syncServersNeverSynced(
-    mcpServers: FlatMcpServer[],
-    context: ToolProviderContext,
-  ): Promise<boolean> {
+  private async syncServersNeverSynced({
+    mcpServers,
+    userWorkspaceId,
+  }: {
+    mcpServers: FlatMcpServer[];
+    userWorkspaceId: string | undefined;
+  }): Promise<boolean> {
     const now = new Date();
     const syncOutcomes = await Promise.all(
       mcpServers
         .filter((mcpServer) => isMcpServerDueForToolSync({ mcpServer, now }))
         .map(async (mcpServer) => {
-          const target = {
-            ...mcpServer,
-            userWorkspaceId: context.userWorkspaceId,
-          };
+          const target = { ...mcpServer, userWorkspaceId };
 
           if (!(await this.mcpServerClientService.canCallerConnect(target))) {
             return false;
           }
 
-          await this.mcpServerToolSyncService.syncTools(target);
+          await this.mcpServerToolSyncService.syncTools({
+            ...target,
+            timeoutMs: CATALOG_TOOL_SYNC_TIMEOUT_MS,
+          });
 
           return true;
         }),

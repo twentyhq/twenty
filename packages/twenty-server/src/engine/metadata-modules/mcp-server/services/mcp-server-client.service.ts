@@ -45,9 +45,15 @@ export class McpServerClientService {
   ) {}
 
   // One deadline spans the handshake and every page: the sync runs inside a mutation.
-  async listTools(target: McpServerTarget): Promise<Tool[]> {
+  async listTools({
+    target,
+    timeoutMs = LIST_TOOLS_TIMEOUT_MS,
+  }: {
+    target: McpServerTarget;
+    timeoutMs?: number;
+  }): Promise<Tool[]> {
     return this.withConnectedClient(
-      { target, timeoutMs: LIST_TOOLS_TIMEOUT_MS },
+      { target, timeoutMs },
       ({ client, signal }) => this.listToolPages({ client, signal }),
     );
   }
