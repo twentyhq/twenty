@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSupportedInGroupBy,
+} from 'twenty-shared/utils';
 
 import { type WorkspaceApiNamingMetadata } from 'src/engine/api/common/workspace-api-naming/types/workspace-api-naming-metadata.type';
 import { type WorkspaceApiNamingView } from 'src/engine/api/common/workspace-api-naming/types/workspace-api-naming-view.type';
@@ -49,6 +52,29 @@ export const validateWorkspaceApiNamingViewOrThrow = ({
     if (!isDefined(fieldMetadata)) {
       throw new WorkspaceApiNamingException(
         `Unknown field universal identifier ${universalIdentifier}`,
+      );
+    }
+
+    if (name === fieldMetadata.name) {
+      continue;
+    }
+
+    if (fieldMetadata.name === 'id') {
+      throw new WorkspaceApiNamingException(
+        'The primary ID field cannot use a different API name',
+      );
+    }
+
+    const supportsCanonicalGroupBy =
+      isFieldMetadataSupportedInGroupBy(fieldMetadata);
+    const supportsApiGroupBy = isFieldMetadataSupportedInGroupBy({
+      ...fieldMetadata,
+      name,
+    });
+
+    if (supportsCanonicalGroupBy !== supportsApiGroupBy) {
+      throw new WorkspaceApiNamingException(
+        `API field name "${name}" changes grouping eligibility`,
       );
     }
 
