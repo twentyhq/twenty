@@ -142,16 +142,18 @@ export class AgentChatMemberMessageWriterService {
     };
 
     if (isDefined(participation) && isDefined(addressing)) {
+      const shouldDeliverToInitialRecipients =
+        participation.isInitialMessage ||
+        thread.conversationType ===
+          AgentChatThreadConversationType.DIRECT_MESSAGE;
+
       delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
         ...threadAccess,
         messageId: persistedMessage.id,
         mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-        initialRecipientWorkspaceMemberIds:
-          participation.isInitialMessage ||
-          thread.conversationType ===
-            AgentChatThreadConversationType.DIRECT_MESSAGE
-            ? addressing.initialRecipientWorkspaceMemberIds
-            : [],
+        initialRecipientWorkspaceMemberIds: shouldDeliverToInitialRecipients
+          ? addressing.initialRecipientWorkspaceMemberIds
+          : [],
       });
     }
 
