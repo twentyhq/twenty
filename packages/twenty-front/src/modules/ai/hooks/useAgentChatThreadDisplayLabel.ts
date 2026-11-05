@@ -15,12 +15,14 @@ export const useAgentChatThreadDisplayLabel = ({
 }) => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const workspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
 
   return getAgentChatThreadDisplayLabel({
     thread,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
-    workspaceMembers,
+    workspaceMembers: currentWorkspaceMembers,
     fallbackLabel,
     formerMemberLabel: t`Former member`,
   });

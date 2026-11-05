@@ -29,7 +29,9 @@ export const SidePanelAiChatPickerSearchResults = ({
 }: SidePanelAiChatPickerSearchResultsProps) => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const workspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
   const isDirectMessageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
@@ -43,7 +45,7 @@ export const SidePanelAiChatPickerSearchResults = ({
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
       filter: getAiChatThreadSearchFilter({
         searchTerm,
-        workspaceMembers,
+        workspaceMembers: currentWorkspaceMembers,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
         isDirectMessageEnabled,
       }),
