@@ -1,6 +1,7 @@
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-
-export type RecordPermissionTransactionScope = Pick<
-  WorkspaceTransactionScope,
-  'workspaceId' | 'executeRawQuery'
->;
+export type RecordPermissionTransactionScope = {
+  workspaceId: string;
+  executeRawQuery: (
+    sql: string,
+    parameters?: unknown[],
+  ) => Promise<Record<string, unknown>[]>;
+};

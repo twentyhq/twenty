@@ -8,7 +8,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type ColumnNameProcessor,
   processFieldMetadataForColumnNameMapping,
-} from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/process-field-metadata-for-column-name-mapping.util';
 
 export function getColumnNameToFieldMetadataIdMap(
   flatObjectMetadata: FlatObjectMetadata,

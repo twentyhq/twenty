@@ -5,7 +5,7 @@ import { randomBytes } from 'node:crypto';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
-import { buildPostgresSafeAlias } from 'src/engine/twenty-orm/sql/utils/build-postgres-safe-alias.util';
+import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildRecordShareCondition = ({
