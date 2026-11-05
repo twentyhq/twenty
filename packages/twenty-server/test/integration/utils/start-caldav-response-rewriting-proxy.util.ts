@@ -1,25 +1,19 @@
 import { createServer, request, type Server } from 'node:http';
 import { type AddressInfo } from 'node:net';
 
-// The self-closing form has to be matched on its own: sharing a branch with the
-// open tag lets a self-closing occurrence pair up with a later closing tag and
-// swallow every response in between.
-const COMPONENT_SET_ELEMENT =
-  /<(\w+:)?supported-calendar-component-set\b[^>]*\/>|<(\w+:)?supported-calendar-component-set\b[^>]*>[\s\S]*?<\/(\w+:)?supported-calendar-component-set>/g;
-
 export type CalDavProxy = {
   url: string;
   stop: () => Promise<void>;
 };
 
-// Radicale always publishes supported-calendar-component-set, so reproducing an
-// RFC 4791 server that leaves it out means stripping it off the wire.
-export const startCalDavProxyOmittingComponentSet = async ({
+export const startCalDavResponseRewritingProxy = async ({
   targetHost,
   targetPort,
+  rewriteResponseBody,
 }: {
   targetHost: string;
   targetPort: number;
+  rewriteResponseBody: (body: string) => string;
 }): Promise<CalDavProxy> => {
   const server: Server = createServer((incoming, outgoing) => {
     const requestChunks: Buffer[] = [];
@@ -43,9 +37,9 @@ export const startCalDavProxyOmittingComponentSet = async ({
 
           upstream.on('data', (chunk) => responseChunks.push(chunk));
           upstream.on('end', () => {
-            const body = Buffer.concat(responseChunks)
-              .toString('utf-8')
-              .replace(COMPONENT_SET_ELEMENT, '');
+            const body = rewriteResponseBody(
+              Buffer.concat(responseChunks).toString('utf-8'),
+            );
 
             const {
               'content-length': _staleContentLength,
