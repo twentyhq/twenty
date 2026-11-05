@@ -33,7 +33,7 @@ const buildManifest = ({
 }: {
   options: SelectFieldOptions;
   selectFieldUniversalIdentifier?: string;
-  extraFields?: FieldManifest[];
+  extraFields?: ObjectManifest['fields'];
 }) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
@@ -177,13 +177,13 @@ describe('Sync application keeps field option rows in step with its manifest', (
   }, 60000);
 
   it('rejects two fields of one manifest that share an option id', async () => {
-    const sharedOption = {
+    const sharedOption: SelectFieldOptions[number] = {
       id: OPEN_OPTION_ID,
       value: 'OPEN',
       label: 'Open',
       color: 'green',
       position: 0,
-    } as const;
+    };
 
     const { errors } = await syncApplication({
       manifest: buildManifest({
