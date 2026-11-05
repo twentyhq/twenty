@@ -5,7 +5,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 import {
   TwentyOrmException,
@@ -65,19 +65,21 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
-  recordsPermissions: RoleRecordsPermissions;
+  recordReadRestrictions: RecordReadRestrictions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
-  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
+  onBeforeExecute: (
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
 };
 
 export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
-  readonly recordsPermissions: RoleRecordsPermissions;
+  readonly recordReadRestrictions: RecordReadRestrictions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
@@ -101,7 +103,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
-    this.recordsPermissions = context.recordsPermissions;
+    this.recordReadRestrictions = context.recordReadRestrictions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }
@@ -668,14 +670,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return rows as T[];
   }
 
-  applyRowLevelPermissions(): this {
-    this.context.onBeforeExecute(this);
+  async applyRowLevelPermissions(): Promise<this> {
+    await this.context.onBeforeExecute(this);
 
     return this;
   }
 
   async getCount(): Promise<number> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
@@ -1207,7 +1209,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     allowPlainToManyJoins?: boolean;
     types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);

@@ -22,7 +22,7 @@ import {
   type PermissionsPrincipalsRoleMaps,
   resolvePermissionsPrincipalsWithRoles,
 } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/internal/role/constants/no-role-records-permissions.constant';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/compute-principals-records-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 

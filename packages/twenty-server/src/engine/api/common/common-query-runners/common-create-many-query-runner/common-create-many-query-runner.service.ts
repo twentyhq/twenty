@@ -350,6 +350,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
     const existingRecords = await this.findExistingRecords({
       repository,
+      permissionsPrincipals: queryRunnerContext.permissionsPrincipals,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       args,
@@ -440,12 +441,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   private async findExistingRecords({
     repository,
+    permissionsPrincipals,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     args,
     conflictingFieldGroups,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
+    permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     args: CreateManyQueryArgs;
@@ -477,11 +480,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const restrictedFields =
-      repository.recordsPermissions.objects[flatObjectMetadata.id]
-        ?.restrictedFields;
+      await this.recordPermissionsService.findRestrictedFields({
+        principals: permissionsPrincipals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectOptions = getAllSelectableColumnNames({
-      restrictedFields: restrictedFields ?? {},
+      restrictedFields,
       objectMetadata: {
         objectMetadataMapItem: flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -599,7 +604,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const { authContext, flatObjectMetadata, repository, transactionScope } =
+    const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
@@ -624,7 +629,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
-      apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       createdRecordSharing,
       transactionScope,
     });

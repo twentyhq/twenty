@@ -2,12 +2,13 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { filterFieldNamesInEventProperties } from 'src/engine/permissions/internal/masking/utils/filter-field-names-in-event-properties.util';
-import { getFieldNamesInEventProperties } from 'src/engine/permissions/internal/masking/utils/get-field-names-in-event-properties.util';
+import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
+import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 
@@ -66,12 +67,14 @@ export const omitRestrictedFieldsFromEvent = <
   event,
   objectMetadata,
   recordsPermissions,
+  recordReadRestrictions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
   objectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
+  recordReadRestrictions: RecordReadRestrictions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): TEvent => {
@@ -91,7 +94,7 @@ export const omitRestrictedFieldsFromEvent = <
   return objectMetadata.nameSingular === 'timelineActivity'
     ? omitRestrictedFieldsFromTimelineActivityEvent({
         event: eventWithoutRestrictedFields,
-        recordsPermissions,
+        recordReadRestrictions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       })

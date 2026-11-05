@@ -204,11 +204,12 @@ describe('permissions read services', () => {
   describe('field questions', () => {
     let readRestricted: ApiKeyWithObjectRecordGrants;
     let updateRestricted: ApiKeyWithObjectRecordGrants;
+    let idReadRestricted: ApiKeyWithObjectRecordGrants;
     let introFieldMetadataId: string;
     let jobTitleFieldMetadataId: string;
 
     beforeAll(async () => {
-      [readRestricted, updateRestricted] = await Promise.all([
+      [readRestricted, updateRestricted, idReadRestricted] = await Promise.all([
         createApiKeyWithFieldPermission({
           objectNameSingular: 'person',
           fieldName: 'intro',
@@ -218,6 +219,11 @@ describe('permissions read services', () => {
           objectNameSingular: 'person',
           fieldName: 'intro',
           canUpdateFieldValue: false,
+        }),
+        createApiKeyWithFieldPermission({
+          objectNameSingular: 'person',
+          fieldName: 'id',
+          canReadFieldValue: false,
         }),
       ]);
       [introFieldMetadataId, jobTitleFieldMetadataId] = await Promise.all(
@@ -234,6 +240,7 @@ describe('permissions read services', () => {
       await deleteApiKeysWithObjectRecordGrants([
         readRestricted,
         updateRestricted,
+        idReadRestricted,
       ]);
     });
 
@@ -255,6 +262,33 @@ describe('permissions read services', () => {
 
       return principals;
     };
+
+    it('denies record questions when the role cannot read the id field', async () => {
+      const buildApiKeyAuthContext = (
+        apiKey: ApiKeyWithObjectRecordGrants,
+      ): PermissionsAuthContext => ({
+        type: 'apiKey',
+        workspace: { id: SEED_APPLE_WORKSPACE_ID },
+        apiKey: { id: apiKey.apiKeyId },
+      });
+
+      for (const question of ['canReadRecords', 'canUpdateRecords'] as const) {
+        expect(
+          await askRecordsQuestion({
+            question,
+            authContext: buildApiKeyAuthContext(readRestricted),
+            recordIds: [recordId],
+          }),
+        ).toBe(true);
+        expect(
+          await askRecordsQuestion({
+            question,
+            authContext: buildApiKeyAuthContext(idReadRestricted),
+            recordIds: [recordId],
+          }),
+        ).toBe(false);
+      }
+    });
 
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);

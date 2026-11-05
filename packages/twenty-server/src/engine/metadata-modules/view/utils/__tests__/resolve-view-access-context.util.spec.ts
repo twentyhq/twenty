@@ -1,4 +1,4 @@
-import { resolveViewAccessContext } from 'src/engine/permissions/view/utils/resolve-view-access-context.util';
+import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
 
 describe('resolveViewAccessContext', () => {
   it('reads the user principal', () => {
