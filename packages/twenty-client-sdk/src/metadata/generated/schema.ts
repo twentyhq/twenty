@@ -9601,7 +9601,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatAssistantProfile"')
       return AiChatAssistantProfile_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
