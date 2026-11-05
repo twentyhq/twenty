@@ -1,4 +1,3 @@
-// n saturated keys each hold share / (1 + share * (n - 1)) of the capacity, so they never fill it
 export const computeJobMemoryLimitBytes = ({
   capacityBytes,
   usedMemoryBytes,

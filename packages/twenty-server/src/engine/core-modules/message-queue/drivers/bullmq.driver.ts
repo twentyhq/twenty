@@ -679,8 +679,6 @@ export class BullMQDriver
       })),
     });
 
-    // BullMQ keeps a job whose id it still holds (waiting or retained after finishing), so
-    // re-enqueuing that id starts no run and must not be charged
     const existingJobIds = isLimitingEnabled
       ? await this.findExistingJobIds({
           queueName,
@@ -779,7 +777,6 @@ export class BullMQDriver
       throw error;
     }
 
-    // A deduplicated job is not stored: BullMQ returns the job it was deduplicated into
     await Promise.all(
       addedJobs.map((addedJob, index) => {
         const { jobId, memoryGroupKeys } = preparedJobs[index].options;
