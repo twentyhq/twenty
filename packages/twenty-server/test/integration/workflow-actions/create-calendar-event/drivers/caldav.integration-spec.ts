@@ -320,4 +320,16 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       { handle: serverCalendarUserAddress, isOrganizer: true },
     ]);
   }, 300000);
+
+  it('still creates the event when the invitation email cannot be sent', async () => {
+    await greenmail.stop();
+
+    const title = `CalDAV unsent invitation ${randomUUID()}`;
+    const workflowRun = await runCreateCalendarEvent(title);
+
+    expect(workflowRun.stepStatus).toBe('SUCCESS');
+    expect(await fetchStoredICalendar(workflowRun.stepResult)).toContain(
+      `SUMMARY:${title}`,
+    );
+  }, 300000);
 });
