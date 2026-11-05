@@ -1,12 +1,14 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 
-const COMMAND_MENU_CONTEXT_API = {
+const COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
+  ...EMPTY_COMMAND_MENU_CONTEXT_API,
   isInSidePanel: true,
   numberOfSelectedRecords: 2,
-} as unknown as CommandMenuContextApi;
+};
 
 describe('getCommandMenuContextApiForContainerType', () => {
   it('reports the command menu list as not being a panel-hosted page', () => {

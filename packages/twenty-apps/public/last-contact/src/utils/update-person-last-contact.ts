@@ -59,7 +59,7 @@ export const pickLatestInteraction = (
 ): Interaction | undefined => pickLatest(interactions);
 
 export const collectPersonLastContactState = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   personIds: string[],
 ): Promise<Map<string, PersonLastContactState>> => {
   const stateByPersonId = new Map<string, PersonLastContactState>();

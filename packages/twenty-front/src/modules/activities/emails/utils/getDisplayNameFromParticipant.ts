@@ -4,11 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getEmailIdentityDisplayName } from '@/activities/emails/utils/getEmailIdentityDisplayName';
 
+type ParticipantIdentity = {
+  name?: { firstName?: string; lastName?: string };
+};
+
 export const getDisplayNameFromParticipant = ({
   participant,
   shouldUseFullName = false,
 }: {
-  participant: EmailThreadMessageParticipant;
+  participant: Pick<EmailThreadMessageParticipant, 'displayName' | 'handle'> & {
+    person?: ParticipantIdentity | null;
+    workspaceMember?: ParticipantIdentity | null;
+  };
   shouldUseFullName?: boolean;
 }) => {
   const buildName = (name?: { firstName?: string; lastName?: string }) => {

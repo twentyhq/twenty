@@ -10,7 +10,7 @@ import {
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/internal/role/constants/no-role-records-permissions.constant';
 
 const SCHEMA_NAME = 'workspace_test';
 

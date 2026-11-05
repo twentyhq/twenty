@@ -37,10 +37,7 @@ import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -183,7 +180,7 @@ const scriptModelAnsweringASummary = (): ModelCall[] => {
       modelId: TEST_AI_MODEL_ID,
       sdkPackage: '@ai-sdk/openai',
       model,
-    } as unknown as RegisteredAiModel);
+    });
 
   return calls;
 };

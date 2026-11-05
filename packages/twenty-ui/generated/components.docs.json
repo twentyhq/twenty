@@ -5301,6 +5301,20 @@
         "description": "A ref to access the hidden input element."
       },
       {
+        "name": "layout",
+        "type": "\"grid\" | \"list\"",
+        "required": false,
+        "defaultValue": "list",
+        "description": "list arranges options in the orientation direction. grid fills the available width with responsive columns."
+      },
+      {
+        "name": "minColumnWidth",
+        "type": "number",
+        "required": false,
+        "defaultValue": "148",
+        "description": "Minimum grid column width in pixels. Columns can shrink below this width when the container is narrower."
+      },
+      {
         "name": "name",
         "type": "string",
         "required": false,
@@ -8388,6 +8402,13 @@
             "description": "CSS background color of the outer card. Child sections have their own backgrounds."
           },
           {
+            "name": "borderStyle",
+            "type": "\"dashed\" | \"solid\"",
+            "required": false,
+            "defaultValue": "solid",
+            "description": "Use a solid or dashed outer border."
+          },
+          {
             "name": "children",
             "type": "ReactNode",
             "required": false,
@@ -8407,6 +8428,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Sets the card width to 100% of its container."
+          },
+          {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Highlights the outer border. Supply the matching accessible selection state on the interactive owner."
           },
           {
             "name": "ref",

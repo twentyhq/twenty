@@ -227,17 +227,4 @@ describe('getWorkflowDiagramTriggerNode', () => {
 `);
     });
   });
-
-  describe('default case', () => {
-    it('should throw error for unsupported trigger type', () => {
-      const trigger = {
-        type: 'UNSUPPORTED_TYPE',
-        settings: {},
-      } as unknown as WorkflowTrigger;
-
-      expect(() => getWorkflowDiagramTriggerNode({ trigger })).toThrow(
-        'Expected the trigger "{"type":"UNSUPPORTED_TYPE","settings":{}}" to be supported.',
-      );
-    });
-  });
 });

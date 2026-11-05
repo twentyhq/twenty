@@ -5,8 +5,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -16,11 +16,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     RoleTargetModule,
     RoleAssignmentValidationModule,
+    PermissionsModule,
   ],
-  providers: [
-    UserRoleService,
-    provideWorkspaceScopedRepository(RoleTargetEntity),
-  ],
+  providers: [UserRoleService],
   exports: [UserRoleService],
 })
 export class UserRoleModule {}

@@ -7,13 +7,11 @@ describe('conditional-availability-variables', () => {
   });
 
   it('should throw on property access of a context variable', () => {
-    expect(
-      () =>
-        (
-          conditionalAvailabilityVariables.objectMetadataItem as unknown as {
-            nameSingular: string;
-          }
-        ).nameSingular,
+    expect(() =>
+      Reflect.get(
+        conditionalAvailabilityVariables.objectMetadataItem,
+        'nameSingular',
+      ),
     ).toThrow('conditionalAvailabilityExpression');
   });
 
@@ -40,7 +38,7 @@ describe('conditional-availability-variables', () => {
     for (const [name, value] of Object.entries(
       conditionalAvailabilityVariables,
     )) {
-      expect(() => (value as unknown as () => void)()).toThrow(name);
+      expect(() => String(value)).toThrow(name);
     }
   });
 

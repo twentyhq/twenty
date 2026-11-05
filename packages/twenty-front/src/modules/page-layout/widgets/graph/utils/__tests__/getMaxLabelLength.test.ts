@@ -22,10 +22,8 @@ describe('getMaxLabelLength', () => {
   });
 
   it('handles null/undefined items in array', () => {
-    expect(
-      getMaxLabelLength(['valid', null as unknown as string, 'test']),
-    ).toBe(5);
-    expect(getMaxLabelLength([undefined as unknown as string, 'abc'])).toBe(3);
+    expect(getMaxLabelLength(['valid', null, 'test'])).toBe(5);
+    expect(getMaxLabelLength([undefined, 'abc'])).toBe(3);
   });
 
   it('handles empty strings in array', () => {

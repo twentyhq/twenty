@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 
 export const getUrlFromFetchRequestInput = (
-  input: RequestInfo | URL,
+  input: string | URL | Pick<Request, 'url'>,
 ): string => {
   if (isString(input)) {
     return input;

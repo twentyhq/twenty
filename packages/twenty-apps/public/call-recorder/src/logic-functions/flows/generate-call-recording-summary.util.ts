@@ -14,7 +14,7 @@ import { getCallRecorderAdditionalSummaryPrompt } from 'src/logic-functions/util
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
 
 export const generateCallRecordingSummary = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   {
     callRecordingId,
     requireCreatedByCallRecorder = false,

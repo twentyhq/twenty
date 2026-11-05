@@ -50,14 +50,16 @@ describe('filterAndSortNavigationMenuItems', () => {
       nameSingular: 'agentChatThread',
       isActive: true,
     } as EnrichedObjectMetadataItem;
-    const chatRecordItem = {
+    const chatRecordItem: NavigationMenuItem = {
       id: 'chat-favorite-id',
       type: NavigationMenuItemType.RECORD,
       position: 0,
       targetRecordId: 'chat-record-id',
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
       targetObjectMetadataId: 'chat-metadata-id',
       targetRecordIdentifier: { id: 'chat-record-id', labelIdentifier: 'Chat' },
-    } as NavigationMenuItem;
+    };
 
     expect(
       filterAndSortNavigationMenuItems(
@@ -69,14 +71,19 @@ describe('filterAndSortNavigationMenuItems', () => {
   });
 
   it('keeps other objects record items', () => {
-    const personRecordItem = {
+    const personRecordItem: NavigationMenuItem = {
       id: 'person-favorite-id',
       type: NavigationMenuItemType.RECORD,
       position: 0,
       targetRecordId: 'person-record-id',
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
       targetObjectMetadataId: 'metadata-id',
-      targetRecordIdentifier: { id: 'person-record-id', name: 'Jane' },
-    } as unknown as NavigationMenuItem;
+      targetRecordIdentifier: {
+        id: 'person-record-id',
+        labelIdentifier: 'Jane',
+      },
+    };
 
     expect(
       filterAndSortNavigationMenuItems(

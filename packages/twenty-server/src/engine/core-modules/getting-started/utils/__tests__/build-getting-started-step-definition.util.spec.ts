@@ -113,16 +113,21 @@ describe('buildGettingStartedStepDefinition', () => {
     );
   });
 
-  it('should fall back to the description when a step has no done description', () => {
-    expect(
-      buildGettingStartedStepDefinition({
-        stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
-        companyEnrichment: null,
-        doneChatThreadId: null,
-        doneWorkflowId: null,
-        translate,
-      }).doneDescription,
-    ).toBe('Companies and people fill in from your emails and meetings.');
+  it('should keep the mailbox done description apart from its description', () => {
+    const mailboxStepDefinition = buildGettingStartedStepDefinition({
+      stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
+      companyEnrichment: null,
+      doneChatThreadId: null,
+      doneWorkflowId: null,
+      translate,
+    });
+
+    expect(mailboxStepDefinition.description).toBe(
+      'Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.',
+    );
+    expect(mailboxStepDefinition.doneDescription).toBe(
+      'Companies and people fill in from your emails and meetings.',
+    );
   });
 
   it('should define any other step as a custom step', () => {

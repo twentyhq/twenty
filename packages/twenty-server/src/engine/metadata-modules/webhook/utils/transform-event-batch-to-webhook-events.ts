@@ -10,17 +10,17 @@ import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhoo
 export const transformEventBatchToWebhookEvents = ({
   workspaceEventBatch,
   webhooks,
-  admittedRecordIds,
+  readableRecordIds,
 }: {
   workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>;
   webhooks: Pick<WebhookEntity, 'id' | 'targetUrl' | 'secret'>[];
-  admittedRecordIds?: Set<string>;
+  readableRecordIds?: Set<string>;
 }): CallWebhookJobData[] => {
   const result: CallWebhookJobData[] = [];
 
-  const events = isDefined(admittedRecordIds)
+  const events = isDefined(readableRecordIds)
     ? workspaceEventBatch.events.filter((event) =>
-        admittedRecordIds.has(event.recordId),
+        readableRecordIds.has(event.recordId),
       )
     : workspaceEventBatch.events;
 

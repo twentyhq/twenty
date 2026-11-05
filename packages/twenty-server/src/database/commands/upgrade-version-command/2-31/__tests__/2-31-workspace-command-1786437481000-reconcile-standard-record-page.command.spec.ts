@@ -1,6 +1,8 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileStandardRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437481000-reconcile-standard-record-page.command';
 import { PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-31/constants/pre-2-31-standard-record-page-layout-universal-identifier-by-object-universal-identifier.constant';
 import {
@@ -15,15 +17,15 @@ import {
   STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   WORKSPACE_ID,
 } from 'src/database/commands/upgrade-version-command/2-31/__tests__/record-page-reconcile-test-setup';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company;
@@ -86,7 +88,7 @@ describe('ReconcileStandardRecordPageCommand', () => {
   let invalidateCacheMock: jest.Mock;
   let updateMocksByEntity: Map<unknown, jest.Mock>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -123,30 +125,47 @@ describe('ReconcileStandardRecordPageCommand', () => {
       },
     };
 
-    command = new ReconcileStandardRecordPageCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        invalidateCache: invalidateCacheMock,
-      } as unknown as WorkspaceMigrationRunnerService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              id: STANDARD_APPLICATION_ID,
-              universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-            workspaceCustomFlatApplication: {
-              id: CUSTOM_APPLICATION_ID,
-              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      viewRepositoryMock as never,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ReconcileStandardRecordPageCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: {
+            invalidateCache: invalidateCacheMock,
+          },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  id: STANDARD_APPLICATION_ID,
+                  universalIdentifier:
+                    STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+                workspaceCustomFlatApplication: {
+                  id: CUSTOM_APPLICATION_ID,
+                  universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+              }),
+          },
+        },
+        {
+          provide: getRepositoryToken(ViewEntity),
+          useValue: viewRepositoryMock,
+        },
+      ],
+    }).compile();
+    command = module.get(ReconcileStandardRecordPageCommand);
   });
 
   const mockWorkspaceCache = ({

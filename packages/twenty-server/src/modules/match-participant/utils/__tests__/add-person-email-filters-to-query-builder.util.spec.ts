@@ -119,8 +119,7 @@ describe('addPersonEmailFiltersToQueryBuilder', () => {
     '$title',
     ({ context: { emails, excludePersonIds, description } }) => {
       const result = addPersonEmailFiltersToQueryBuilder({
-        queryBuilder:
-          mockQueryBuilder as unknown as WorkspaceSelectQueryBuilder,
+        queryBuilder: mockQueryBuilder as WorkspaceSelectQueryBuilder,
         emails,
         excludePersonIds,
       });

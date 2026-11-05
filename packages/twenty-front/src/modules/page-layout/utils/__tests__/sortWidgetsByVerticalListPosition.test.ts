@@ -26,10 +26,10 @@ describe('sortWidgetsByVerticalListPosition', () => {
 
   it('should handle widgets with undefined positions by treating as index 0', () => {
     const widgetWithPosition = makeWidget('b', 1);
-    const widgetWithoutPosition = {
+    const widgetWithoutPosition: PageLayoutWidget = {
       ...makeWidget('a', 0),
       position: undefined,
-    } as unknown as PageLayoutWidget;
+    };
 
     const sorted = sortWidgetsByVerticalListPosition([
       widgetWithPosition,
