@@ -26,8 +26,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -39,7 +37,6 @@ export class WorkspaceDataSource {
   private readonly pool: Pick<Pool, 'connect' | 'query'>;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
-  private permissionsPrincipals?: PermissionsPrincipalsWithRolesContext | null;
 
   constructor({
     pool,
@@ -238,7 +235,7 @@ export class WorkspaceDataSource {
       executor,
       permissionsPrincipals: shouldRepositoryBypassPermissionChecks
         ? undefined
-        : this.resolvePermissionsPrincipals(),
+        : internalContext.permissionsPrincipals,
       shouldBypassPermissionChecks: shouldRepositoryBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
@@ -274,20 +271,6 @@ export class WorkspaceDataSource {
           ),
         ),
     });
-  }
-
-  private resolvePermissionsPrincipals():
-    | PermissionsPrincipalsWithRolesContext
-    | undefined {
-    if (this.permissionsPrincipals === undefined) {
-      this.permissionsPrincipals =
-        resolvePermissionsPrincipalsWithRoles({
-          authContext: this.authContext,
-          roleMaps: this.internalContext,
-        }) ?? null;
-    }
-
-    return this.permissionsPrincipals ?? undefined;
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {
