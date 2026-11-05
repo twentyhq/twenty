@@ -29,29 +29,42 @@ export const useApplicationContentRoute = () => {
     isMarketplaceRoute ? availableApplicationId : undefined,
   );
 
-  const location: ApplicationContentLocation = isMarketplaceRoute
-    ? { kind: 'marketplace', availableApplicationId }
-    : { kind: 'installed', applicationId };
+  if (isMarketplaceRoute) {
+    const location: ApplicationContentLocation = {
+      kind: 'marketplace',
+      availableApplicationId,
+    };
 
-  const source = isMarketplaceRoute
-    ? marketplace
-    : {
-        name: installed.application?.name,
-        logoUrl: installed.application?.logoUrl,
-        installedApplicationId: installed.application?.id,
-        content: installed.content,
-        isLoading: installed.isLoading,
-      };
+    return {
+      ...marketplace,
+      contentType,
+      location,
+      applicationPath: getSettingsPath(
+        SettingsPath.AvailableApplicationDetail,
+        {
+          availableApplicationId,
+        },
+      ),
+      contentPath: getApplicationContentPath({ location }),
+    };
+  }
+
+  const location: ApplicationContentLocation = {
+    kind: 'installed',
+    applicationId,
+  };
 
   return {
-    ...source,
+    name: installed.application?.name,
+    logoUrl: installed.application?.logoUrl,
+    installedApplicationId: installed.application?.id,
+    content: installed.content,
+    isLoading: installed.isLoading,
     contentType,
     location,
-    applicationPath: isMarketplaceRoute
-      ? getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-          availableApplicationId,
-        })
-      : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
+    applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
+      applicationId,
+    }),
     contentPath: getApplicationContentPath({ location }),
   };
 };

@@ -109,10 +109,13 @@ export const SettingsApplicationContentItemsTable = ({
     (filter) => filter.isSelectable && filter.options.length > 0,
   );
 
-  const setFilterValue = (
-    filterKey: ApplicationContentFilterKey,
-    universalIdentifier: string | null,
-  ) => {
+  const setFilterValue = ({
+    filterKey,
+    universalIdentifier,
+  }: {
+    filterKey: ApplicationContentFilterKey;
+    universalIdentifier: string | null;
+  }) => {
     const nextSearchParams = new URLSearchParams(searchParams);
 
     if (isDefined(universalIdentifier)) {
@@ -268,8 +271,8 @@ export const SettingsApplicationContentItemsTable = ({
     item,
     column: { link },
   }: {
-    item: ApplicationContentItem;
-    column: ApplicationContentColumn;
+    item: Pick<ApplicationContentItem, 'count' | 'universalIdentifier'>;
+    column: Pick<ApplicationContentColumn, 'link'>;
   }) => {
     if (!isDefined(link) || !isDefined(item.count) || item.count === 0) {
       return undefined;
@@ -333,7 +336,9 @@ export const SettingsApplicationContentItemsTable = ({
             labelKey={t(APPLICATION_CONTENT_FILTER_LABELS[key])}
             labelValue={`: ${selectedOption.label}`}
             Icon={getIcon(selectedOption.icon)}
-            onRemove={() => setFilterValue(key, null)}
+            onRemove={() =>
+              setFilterValue({ filterKey: key, universalIdentifier: null })
+            }
           />
         ))}
         {isDefined(selectableFilter) && (
@@ -341,7 +346,10 @@ export const SettingsApplicationContentItemsTable = ({
             options={selectableFilter.options}
             selectedUniversalIdentifier={searchParams.get(selectableFilter.key)}
             onChange={(universalIdentifier) =>
-              setFilterValue(selectableFilter.key, universalIdentifier)
+              setFilterValue({
+                filterKey: selectableFilter.key,
+                universalIdentifier,
+              })
             }
           />
         )}

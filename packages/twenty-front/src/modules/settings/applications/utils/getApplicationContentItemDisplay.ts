@@ -8,7 +8,6 @@ import { type ApplicationContentItem } from '@/settings/applications/types/Appli
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
 import { type ResolvedApplicationContentObject } from '@/settings/applications/types/ResolvedApplicationContentObject';
 
-// Command menu items store templated labels and icons resolved per object
 export const getApplicationContentItemDisplay = ({
   contentType,
   item,

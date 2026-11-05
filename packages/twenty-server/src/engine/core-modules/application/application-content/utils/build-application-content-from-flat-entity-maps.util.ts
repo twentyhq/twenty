@@ -161,17 +161,24 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const findPublishedWorkflowVersionStatus = (
     workflowVersionId: string | null,
   ) => {
-    const workflowVersionUniversalIdentifier = isDefined(workflowVersionId)
-      ? flatEntityMaps.flatWorkflowVersionMaps.universalIdentifierById[
-          workflowVersionId
-        ]
-      : undefined;
+    if (!isDefined(workflowVersionId)) {
+      return 'DRAFT';
+    }
 
-    return isDefined(workflowVersionUniversalIdentifier)
-      ? (flatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
-          workflowVersionUniversalIdentifier
-        ]?.status ?? 'DRAFT')
-      : 'DRAFT';
+    const workflowVersionUniversalIdentifier =
+      flatEntityMaps.flatWorkflowVersionMaps.universalIdentifierById[
+        workflowVersionId
+      ];
+
+    if (!isDefined(workflowVersionUniversalIdentifier)) {
+      return null;
+    }
+
+    return (
+      flatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
+        workflowVersionUniversalIdentifier
+      ]?.status ?? null
+    );
   };
 
   const findView = (universalIdentifier: string | null) =>
