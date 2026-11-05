@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -143,17 +144,33 @@ export class CoreWorkflowRunnerService {
     }
 
     if (isManualTrigger) {
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RunWorkflowJob.name,
-        { workspaceId, workflowRunId: createdWorkflowRunId },
-        buildRunWorkflowJobOptions({
+      const scope =
+        await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+          workspaceId,
+          applicationId: workflow.applicationId,
+        });
+
+      try {
+        await this.messageQueueService.add<RunWorkflowJobData>(
+          RunWorkflowJob.name,
+          { workspaceId, workflowRunId: createdWorkflowRunId },
+          buildRunWorkflowJobOptions({
+            workflowRunId: createdWorkflowRunId,
+            scope,
+          }),
+        );
+      } catch (error) {
+        if (!(error instanceof MessageQueueException)) {
+          throw error;
+        }
+
+        await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId: createdWorkflowRunId,
-          scope:
-            await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
-              { workspaceId, applicationId: workflow.applicationId },
-            ),
-        }),
-      );
+          workspaceId,
+          status: WorkflowRunStatus.FAILED,
+          error: error.message,
+        });
+      }
     } else {
       await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
         workspaceId,
