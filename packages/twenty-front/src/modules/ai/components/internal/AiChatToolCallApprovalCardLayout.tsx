@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { AiChatToolCallApprovalFeedbackInput } from '@/ai/components/internal/AiChatToolCallApprovalFeedbackInput';
 import { useAiChatAskCardFieldFocus } from '@/ai/hooks/useAiChatAskCardFieldFocus';
 import { type useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
@@ -73,7 +74,9 @@ export const AiChatToolCallApprovalCardLayout = ({
       <StyledHeader>
         <StyledLabel>{label}</StyledLabel>
         <StyledSummary>
-          <TextWithChatReferences text={summary} />
+          <TextWithChatReferences
+            segments={getChatReferenceSegments(summary)}
+          />
         </StyledSummary>
       </StyledHeader>
       <StyledBody onFocus={handleFieldFocus} onBlur={handleFieldBlur}>

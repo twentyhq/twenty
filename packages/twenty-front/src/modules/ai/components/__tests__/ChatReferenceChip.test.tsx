@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
@@ -439,7 +440,9 @@ describe('TextWithChatReferences', () => {
   it('should render chips inside the surrounding text', () => {
     renderWithReferences(
       <TextWithChatReferences
-        text={`Open the [[view:${VIEW_ID}:All Companies]] view`}
+        segments={getChatReferenceSegments(
+          `Open the [[view:${VIEW_ID}:All Companies]] view`,
+        )}
       />,
     );
 
@@ -455,7 +458,9 @@ describe('TextWithChatReferences', () => {
   it('should render the label of a retired id-addressed field reference as plain text', () => {
     renderWithReferences(
       <TextWithChatReferences
-        text={`Sort by [[field:${UNKNOWN_ID}:Stage]] first`}
+        segments={getChatReferenceSegments(
+          `Sort by [[field:${UNKNOWN_ID}:Stage]] first`,
+        )}
       />,
     );
 

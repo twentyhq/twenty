@@ -11,6 +11,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -73,7 +74,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     >
       {isNonEmptyString(detail) && (
         <StyledAiChatAskStatusDetail>
-          <TextWithChatReferences text={detail} />
+          <TextWithChatReferences segments={getChatReferenceSegments(detail)} />
         </StyledAiChatAskStatusDetail>
       )}
     </AiChatAskStatusRow>

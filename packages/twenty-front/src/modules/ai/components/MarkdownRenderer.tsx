@@ -3,7 +3,8 @@ import {
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { TextWithProtectedChatReferences } from '@/ai/components/TextWithProtectedChatReferences';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { getProtectedChatReferenceSegments } from '@/ai/utils/getProtectedChatReferenceSegments';
 import { cloneElement, isValidElement } from 'react';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
@@ -27,7 +28,11 @@ const processChildrenForChatReferences = (
   children: React.ReactNode,
 ): React.ReactNode => {
   if (typeof children === 'string') {
-    return <TextWithProtectedChatReferences text={children} />;
+    return (
+      <TextWithChatReferences
+        segments={getProtectedChatReferenceSegments(children)}
+      />
+    );
   }
 
   if (Array.isArray(children)) {
