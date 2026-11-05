@@ -4092,6 +4092,7 @@ msgid "Data Model"
 msgstr "Tietomalli"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Tietorakenne on virheellinen."
@@ -11262,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Tietue, johon agentin keskusteluketju on liitetty"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "Tietue ei täytä suojausrajoituksia."
 

@@ -4092,6 +4092,7 @@ msgid "Data Model"
 msgstr "مدل داده"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "ساختار داده نامعتبر است."
@@ -11262,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "رکوردی که رشته گفت‌وگوی عامل به آن پیوست شده است"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "رکورد الزامات امنیتی را برآورده نمی‌کند."
 

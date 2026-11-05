@@ -4092,6 +4092,7 @@ msgid "Data Model"
 msgstr "数据模型"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "数据结构无效。"
@@ -11262,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "智能体聊天线程附加到的记录"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "记录不满足安全约束。"
 
