@@ -1,4 +1,5 @@
-import { isPlainObject } from 'twenty-shared/utils';
+import { isUndefined } from '@sniptt/guards';
+import { safeGetNestedProperty } from 'twenty-shared/utils';
 
 export const isRecordFieldValueLoaded = ({
   record,
@@ -6,16 +7,4 @@ export const isRecordFieldValueLoaded = ({
 }: {
   record: Record<string, unknown>;
   fieldPath: string;
-}): boolean => {
-  let value: unknown = record;
-
-  for (const segment of fieldPath.split('.')) {
-    if (!isPlainObject(value) || !(segment in value)) {
-      return false;
-    }
-
-    value = value[segment];
-  }
-
-  return true;
-};
+}): boolean => !isUndefined(safeGetNestedProperty(record, fieldPath));

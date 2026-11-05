@@ -1,6 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import {
+  type ObjectRecordsOperationType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -16,17 +19,9 @@ import {
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
-export type OperationType =
-  | 'select'
-  | 'insert'
-  | 'update'
-  | 'delete'
-  | 'restore'
-  | 'soft-delete';
-
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
-  operationType: OperationType;
+  operationType: ObjectRecordsOperationType;
   recordsPermissions: RoleRecordsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

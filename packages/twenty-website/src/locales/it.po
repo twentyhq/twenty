@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -654,7 +654,7 @@ msgstr "30 giorni"
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
-msgstr ""
+msgstr "30 giorni dopo il clic. Se il visitatore crea il proprio workspace entro questo periodo e in seguito diventa un cliente pagante Cloud Organization o Enterprise, la commissione è tua. Se fa clic sul link di un altro partner prima di creare il proprio workspace, il merito va a quel partner. Una volta creato il workspace, il merito è definitivo."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4724,7 +4724,7 @@ msgstr "Ungheria 🇭🇺"
 #. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>Affiliate Program Terms</0>"
-msgstr ""
+msgstr "Accetto i <0>Termini del Programma di affiliazione</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4750,7 +4750,7 @@ msgstr "Identità"
 #. js-lingui-id: 02Xy0V
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr ""
+msgstr "Se è il loro primo workspace Twenty e non è ancora impostato alcun codice partner, possono inserire il tuo in Impostazioni → Fatturazione durante la prova gratuita. Entro 30 giorni dal primo pagamento, possono anche chiederci di aggiungerlo. Una volta salvato un codice in un workspace, non può essere modificato."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -9769,7 +9769,7 @@ msgstr "Quanto costa Twenty?"
 #. js-lingui-id: XqkgE8
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "What if a customer signs up without my link?"
-msgstr ""
+msgstr "Cosa succede se un cliente si registra senza il mio link?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

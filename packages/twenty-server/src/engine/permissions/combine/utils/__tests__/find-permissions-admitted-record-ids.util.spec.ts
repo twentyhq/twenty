@@ -4,6 +4,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
+  type ObjectRecordsPermissions,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
@@ -23,7 +24,6 @@ import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rl
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',

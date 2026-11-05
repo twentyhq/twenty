@@ -1,3 +1,7 @@
+import {
+  type ObjectRecordsPermissions,
+  type ObjectRecordsOperationType,
+} from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,8 +17,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const workspaceId = 'workspace-id';
@@ -41,12 +43,12 @@ const createFlatObject = (
 type GenerateDescriptorsTestOptions = {
   explicitObjectGrants?: ExplicitObjectGrants;
   composedObjectRecordsPermissions?: Partial<ObjectRecordsPermissions>;
-  sharedOperationTypes?: OperationType[];
+  sharedOperationTypes?: ObjectRecordsOperationType[];
 };
 
 const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
   Record<
-    OperationType,
+    ObjectRecordsOperationType,
     keyof Pick<
       ObjectRecordsPermissions,
       | 'canReadAllRecords'
@@ -125,7 +127,11 @@ describe('DatabaseToolProvider', () => {
         .fn()
         .mockResolvedValue(composedRecordsPermissions),
       hasAccessToSomeRecords: jest.fn(
-        async ({ operationType }: { operationType: OperationType }) => {
+        async ({
+          operationType,
+        }: {
+          operationType: ObjectRecordsOperationType;
+        }) => {
           const objectPermission =
             OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
 

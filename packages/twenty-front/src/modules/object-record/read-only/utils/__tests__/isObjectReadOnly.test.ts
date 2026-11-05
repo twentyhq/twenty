@@ -1,3 +1,4 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
 
 const editableObjectMetadataItem = {
@@ -10,7 +11,7 @@ describe('isObjectReadOnly', () => {
     expect(
       isObjectReadOnly({
         isLayoutCustomizationModeEnabled: false,
-        objectPermissions: { canUpdateObjectRecords: true },
+        objectPermissions: getDefaultObjectPermissions(),
         objectMetadataItem: editableObjectMetadataItem,
       }),
     ).toBe(false);
@@ -20,7 +21,7 @@ describe('isObjectReadOnly', () => {
     expect(
       isObjectReadOnly({
         isLayoutCustomizationModeEnabled: true,
-        objectPermissions: { canUpdateObjectRecords: true },
+        objectPermissions: getDefaultObjectPermissions(),
         objectMetadataItem: editableObjectMetadataItem,
       }),
     ).toBe(true);
@@ -30,7 +31,10 @@ describe('isObjectReadOnly', () => {
     expect(
       isObjectReadOnly({
         isLayoutCustomizationModeEnabled: false,
-        objectPermissions: { canUpdateObjectRecords: false },
+        objectPermissions: {
+          ...getDefaultObjectPermissions(),
+          canUpdateAllRecords: false,
+        },
         objectMetadataItem: editableObjectMetadataItem,
       }),
     ).toBe(true);
