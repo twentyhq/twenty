@@ -565,7 +565,7 @@ export class BullMQDriver
 
     this.checkJobSizes({
       queueName,
-      jobs: [{ data, options: queueOptions, scope: options }],
+      jobs: [{ index: 0, data, options: queueOptions, scope: options }],
       additionalGroupKeys: options.groupKeys,
     });
 
@@ -591,12 +591,22 @@ export class BullMQDriver
     additionalGroupKeys,
   }: {
     queueName: MessageQueue;
-    jobs: { data: unknown; options: BullMQJobsOptions; scope: QueueJobScope }[];
+    jobs: {
+      index: number;
+      data: unknown;
+      options: BullMQJobsOptions;
+      scope: QueueJobScope;
+    }[];
     additionalGroupKeys?: string[];
   }): void {
+    if (!this.jobSizeLimiter.isEnabled()) {
+      return;
+    }
+
     this.jobSizeLimiter.checkJobSizes({
       queueName,
-      jobs: jobs.map(({ data, options, scope }) => ({
+      jobs: jobs.map(({ index, data, options, scope }) => ({
+        index,
         groupKey: buildQueueJobGroupKeys({ scope, additionalGroupKeys })[0],
         sizeBytes: computeJobSizeBytes({ data, options }),
       })),
@@ -611,10 +621,9 @@ export class BullMQDriver
     );
   }
 
-  private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-    jobs: QueueJobToAdd<T>[],
-  ): Promise<QueueJobToAdd<T>[]> {
+  private async filterOutAlreadyWaitingJobs<
+    TJob extends QueueJobToAdd<MessageQueueJobData>,
+  >(queueName: MessageQueue, jobs: TJob[]): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
@@ -640,9 +649,10 @@ export class BullMQDriver
       );
     }
 
+    const indexedJobs = jobs.map((job, inputIndex) => ({ ...job, inputIndex }));
     const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
-      ? jobs
-      : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
+      ? indexedJobs
+      : await this.filterOutAlreadyWaitingJobs(queueName, indexedJobs);
 
     if (jobsToAdd.length === 0) {
       return [];
@@ -659,6 +669,7 @@ export class BullMQDriver
     this.checkJobSizes({
       queueName,
       jobs: jobsToAdd.map((job, index) => ({
+        index: job.inputIndex,
         data: job.data,
         options: queueOptionsByJob[index],
         scope: job,
