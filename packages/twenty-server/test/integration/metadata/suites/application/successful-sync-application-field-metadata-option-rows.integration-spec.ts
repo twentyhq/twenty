@@ -25,10 +25,13 @@ type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
 >;
 
-const buildManifest = (
-  options: SelectFieldOptions,
+const buildManifest = ({
+  options,
   selectFieldUniversalIdentifier = SELECT_FIELD_ID,
-) => {
+}: {
+  options: SelectFieldOptions;
+  selectFieldUniversalIdentifier?: string;
+}) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
     nameSingular: 'optionRowsSubject',
@@ -91,22 +94,24 @@ describe('Sync application keeps field option rows in step with its manifest', (
 
   it('creates, updates and removes the app option rows', async () => {
     await syncApplication({
-      manifest: buildManifest([
-        {
-          id: OPEN_OPTION_ID,
-          value: 'OPEN',
-          label: 'Open',
-          color: 'green',
-          position: 0,
-        },
-        {
-          id: CLOSED_OPTION_ID,
-          value: 'CLOSED',
-          label: 'Closed',
-          color: 'red',
-          position: 1,
-        },
-      ]),
+      manifest: buildManifest({
+        options: [
+          {
+            id: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'Open',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: CLOSED_OPTION_ID,
+            value: 'CLOSED',
+            label: 'Closed',
+            color: 'red',
+            position: 1,
+          },
+        ],
+      }),
       expectToFail: false,
     });
 
@@ -128,22 +133,24 @@ describe('Sync application keeps field option rows in step with its manifest', (
     ]);
 
     await syncApplication({
-      manifest: buildManifest([
-        {
-          id: OPEN_OPTION_ID,
-          value: 'OPEN',
-          label: 'In progress',
-          color: 'blue',
-          position: 0,
-        },
-        {
-          id: PAUSED_OPTION_ID,
-          value: 'PAUSED',
-          label: 'Paused',
-          color: 'gray',
-          position: 1,
-        },
-      ]),
+      manifest: buildManifest({
+        options: [
+          {
+            id: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'In progress',
+            color: 'blue',
+            position: 0,
+          },
+          {
+            id: PAUSED_OPTION_ID,
+            value: 'PAUSED',
+            label: 'Paused',
+            color: 'gray',
+            position: 1,
+          },
+        ],
+      }),
       expectToFail: false,
     });
 
@@ -167,8 +174,8 @@ describe('Sync application keeps field option rows in step with its manifest', (
 
   it('rejects a replacement field that reuses the option ids', async () => {
     const { errors } = await syncApplication({
-      manifest: buildManifest(
-        [
+      manifest: buildManifest({
+        options: [
           {
             id: OPEN_OPTION_ID,
             value: 'OPEN',
@@ -177,8 +184,8 @@ describe('Sync application keeps field option rows in step with its manifest', (
             position: 0,
           },
         ],
-        REPLACEMENT_SELECT_FIELD_ID,
-      ),
+        selectFieldUniversalIdentifier: REPLACEMENT_SELECT_FIELD_ID,
+      }),
       expectToFail: true,
     });
 

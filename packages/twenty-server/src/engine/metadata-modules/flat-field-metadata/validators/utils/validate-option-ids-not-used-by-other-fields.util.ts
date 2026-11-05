@@ -9,8 +9,7 @@ import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/works
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
-// Option ids are their rows' universal identifiers, so they must be unique across the workspace.
-// Existing rows count too: a field replaced in the same migration still owns its rows until it is deleted.
+// Option ids are row universal identifiers, unique workspace-wide, including rows of a field being replaced.
 export const validateOptionIdsNotUsedByOtherFields = ({
   universalFlatFieldMetadata,
   flatFieldMetadataMaps,
