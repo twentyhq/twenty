@@ -70,7 +70,7 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
+export const isRecordMatchingFilter = ({
   record,
   filter,
   flatObjectMetadata,
@@ -90,7 +90,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
   if (isImplicitAndFilter(filter)) {
     return Object.entries(filter).every(([filterKey, value]) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record,
         filter: { [filterKey]: value },
         flatObjectMetadata,
@@ -112,7 +112,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     return (
       filterValue.length === 0 ||
       filterValue.every((andFilter) =>
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingFilter({
           record,
           filter: andFilter,
           flatObjectMetadata,
@@ -130,7 +130,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       return (
         filterValue.length === 0 ||
         filterValue.some((orFilter) =>
-          isRecordMatchingRLSRowLevelPermissionPredicate({
+          isRecordMatchingFilter({
             record,
             filter: orFilter,
             flatObjectMetadata,
@@ -143,7 +143,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
     if (isObject(filterValue)) {
       // The API considers "or" with an object as an "and"
-      return isRecordMatchingRLSRowLevelPermissionPredicate({
+      return isRecordMatchingFilter({
         record,
         filter: filterValue,
         flatObjectMetadata,
@@ -164,7 +164,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
     return (
       isEmptyObject(filterValue) ||
-      !isRecordMatchingRLSRowLevelPermissionPredicate({
+      !isRecordMatchingFilter({
         record,
         filter: filterValue,
         flatObjectMetadata,
