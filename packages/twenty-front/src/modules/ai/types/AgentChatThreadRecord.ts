@@ -4,6 +4,8 @@ import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
 export type AgentChatThreadRecord = ObjectRecord & {
   title: string | null;
   conversationType?: AgentChatThreadConversationType;
+  directMessageFirstWorkspaceMemberId?: string | null;
+  directMessageSecondWorkspaceMemberId?: string | null;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
