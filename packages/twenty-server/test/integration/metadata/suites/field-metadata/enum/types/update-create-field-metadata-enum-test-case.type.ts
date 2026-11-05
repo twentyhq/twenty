@@ -4,6 +4,6 @@ import { type FieldMetadataComplexOption } from 'twenty-shared/types';
 
 export type UpdateCreateFieldMetadataSelectTestCase = EachTestingContext<{
   input: Partial<Pick<CreateOneFieldFactoryInput, 'defaultValue'>> &
-    Required<Pick<CreateOneFieldFactoryInput, 'options'>>;
+    Pick<CreateOneFieldFactoryInput, 'options'>;
   expectedOptions?: FieldMetadataComplexOption[];
 }>;

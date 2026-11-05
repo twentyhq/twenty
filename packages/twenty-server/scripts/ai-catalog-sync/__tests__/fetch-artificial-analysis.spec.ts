@@ -1,10 +1,9 @@
 import { fetchArtificialAnalysisBenchmarks } from '../utils/fetch-artificial-analysis-benchmarks.util';
 
 const respondWith = (models: unknown[]): void => {
-  global.fetch = jest.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({ data: models }),
-  }) as unknown as typeof fetch;
+  global.fetch = jest.fn(
+    async () => new Response(JSON.stringify({ data: models })),
+  );
 };
 
 const measuredModel = {
@@ -164,12 +163,16 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
         pagination: { page: 2, has_more: false },
       },
     ];
-    const fetchMock = jest.fn(async (url: URL) => ({
-      ok: true,
-      json: async () => pages[Number(url.searchParams.get('page')) - 1],
-    }));
+    const fetchMock = jest.fn(
+      async (url: RequestInfo | URL) =>
+        new Response(
+          JSON.stringify(
+            pages[Number(new URL(String(url)).searchParams.get('page')) - 1],
+          ),
+        ),
+    );
 
-    global.fetch = fetchMock as unknown as typeof fetch;
+    global.fetch = fetchMock;
 
     const index = await fetchArtificialAnalysisBenchmarks('key');
 

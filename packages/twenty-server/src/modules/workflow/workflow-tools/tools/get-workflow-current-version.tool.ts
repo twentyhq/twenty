@@ -21,10 +21,16 @@ type GetWorkflowCurrentVersionInput = z.infer<
 >;
 
 export const createGetWorkflowCurrentVersionTool = (
-  deps: Pick<
-    WorkflowToolDependencies,
-    'coreWorkflowListService' | 'coreWorkflowVersionListService'
-  >,
+  deps: {
+    coreWorkflowListService: Pick<
+      WorkflowToolDependencies['coreWorkflowListService'],
+      'findOneById'
+    >;
+    coreWorkflowVersionListService: Pick<
+      WorkflowToolDependencies['coreWorkflowVersionListService'],
+      'findManyByCoreWorkflowId' | 'findOneByCoreWorkflowVersionId'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_current_version' as const,

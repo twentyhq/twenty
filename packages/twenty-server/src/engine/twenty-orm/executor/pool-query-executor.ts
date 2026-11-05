@@ -5,9 +5,9 @@ import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 
 export class PoolQueryExecutor implements QueryExecutor {
-  private readonly pool: Pool;
+  private readonly pool: Pick<Pool, 'query'>;
 
-  constructor({ pool }: { pool: Pool }) {
+  constructor({ pool }: { pool: Pick<Pool, 'query'> }) {
     this.pool = pool;
   }
 

@@ -10,7 +10,7 @@ export const runInRollbackSafeTransaction = async <T>({
   pool,
   work,
 }: {
-  pool: Pool;
+  pool: Pick<Pool, 'connect'>;
   work: (client: PoolClient) => Promise<T>;
 }): Promise<T> => {
   const client = await pool.connect().catch((error: unknown) => {
