@@ -381,7 +381,7 @@ describe('field metadata option rows follow field options', () => {
 
       expect(await findOptionRows(fieldMetadataId)).toEqual([]);
 
-      const [{ options: legacyOptions }] =
+      const [{ options: legacyOptions }]: { options: StoredOption[] }[] =
         await globalThis.testDataSource.query(
           `SELECT options FROM core."fieldMetadata" WHERE id = $1`,
           [fieldMetadataId],
@@ -392,7 +392,7 @@ describe('field metadata option rows follow field options', () => {
         input: {
           idToUpdate: fieldMetadataId,
           updatePayload: {
-            options: (legacyOptions as StoredOption[]).map((option) => ({
+            options: legacyOptions.map((option) => ({
               ...option,
               label: `${option.label} edited`,
             })),
