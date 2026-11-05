@@ -158,16 +158,16 @@ const assertProviderIsUsable = ({
 
 const assertInferenceProfileMatchesResidency = ({
   provider,
-  specModel,
+  modelName,
 }: {
   provider: Pick<CatalogSpecProvider, 'name' | 'dataResidency'>;
-  specModel: Pick<CatalogSpecModel, 'as'>;
+  modelName: string;
 }): void => {
-  if (specModel.as === undefined || provider.dataResidency === undefined) {
+  if (provider.dataResidency === undefined) {
     return;
   }
 
-  const [prefix] = specModel.as.split('.');
+  const [prefix] = modelName.split('.');
   const profileResidency = DATA_RESIDENCY_BY_INFERENCE_PROFILE_PREFIX[prefix];
 
   if (
@@ -175,7 +175,7 @@ const assertInferenceProfileMatchesResidency = ({
     profileResidency !== provider.dataResidency
   ) {
     throw new Error(
-      `${provider.name}/${specModel.as} routes to "${profileResidency}" but its provider states "${provider.dataResidency}". Move it to a route with that residency.`,
+      `${provider.name}/${modelName} routes to "${profileResidency}" but its provider states "${provider.dataResidency}". Move it to a route with that residency.`,
     );
   }
 };
@@ -218,10 +218,14 @@ const resolveModels = ({
       );
     }
 
-    return vendorModels.map((canonicalModel) => ({
-      canonicalModel,
-      specModel: { model: canonicalModel.name },
-    }));
+    return vendorModels.map((canonicalModel) => {
+      assertInferenceProfileMatchesResidency({
+        provider,
+        modelName: canonicalModel.name,
+      });
+
+      return { canonicalModel, specModel: { model: canonicalModel.name } };
+    });
   }
 
   const specModels = provider.models.map(asSpecModel);
@@ -237,7 +241,10 @@ const resolveModels = ({
 
   return specModels.map((specModel) => {
     assertNumbersAreUsable({ provider, specModel });
-    assertInferenceProfileMatchesResidency({ provider, specModel });
+    assertInferenceProfileMatchesResidency({
+      provider,
+      modelName: specModel.as ?? specModel.model,
+    });
 
     const canonicalModel = canonicalModels.get(specModel.model);
 

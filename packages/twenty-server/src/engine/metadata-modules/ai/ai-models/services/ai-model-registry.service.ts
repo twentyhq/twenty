@@ -579,6 +579,7 @@ export class AiModelRegistryService {
     return undefined;
   }
 
+  // borrow the nearest tier's chain before falling back to any allowed model, never a disabled or non-compliant one
   findDefaultModelForTier(
     tier: AiModelTier,
     aiDataPolicy?: AiDataPolicy,
@@ -632,6 +633,7 @@ export class AiModelRegistryService {
     );
   }
 
+  // a pin applies only while its model resolves, is enabled and meets the data policy, so a tier never goes dark
   private resolveModelForTier(
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,

@@ -140,7 +140,7 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
     case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
-      return msg`No AI model meets this workspace's privacy settings. Change them in Settings > General > Privacy.`;
+      return msg`No AI model meets this workspace's privacy settings.`;
     default:
       assertUnreachable(code);
   }

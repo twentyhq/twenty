@@ -191,7 +191,10 @@ export class UpdateWorkspaceInput {
 
   @Field({ nullable: true })
   @IsBoolean()
-  @IsOptional()
+  @ValidateIf(
+    ({ isAiZeroDataRetentionRequired }: UpdateWorkspaceInput) =>
+      !isUndefined(isAiZeroDataRetentionRequired),
+  )
   isAiZeroDataRetentionRequired?: boolean;
 
   @Field(() => [String], { nullable: true })
