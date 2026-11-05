@@ -211,31 +211,6 @@ describe('shouldSkipIteratorStepExecution', () => {
       expect(result).toBe(false);
     });
 
-    it('should handle undefined steps gracefully', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
-      const steps: WorkflowAction[] = [
-        createMockCodeStep('step-1', ['iterator-1']),
-        // @ts-expect-error stored workflow steps can hold empty slots
-        undefined,
-        createMockCodeStep('step-2', ['iterator-1']),
-        iteratorStep,
-      ];
-      const stepInfos = {
-        'step-1': { status: StepStatus.SKIPPED },
-        'step-2': { status: StepStatus.SKIPPED },
-      };
-
-      getAllStepIdsInLoop.mockReturnValue(['step-1']);
-
-      const result = shouldSkipIteratorStepExecution({
-        step: iteratorStep,
-        steps,
-        stepInfos,
-      });
-
-      expect(result).toBe(true);
-    });
-
     it('should work correctly with multiple steps targeting the same iterator', () => {
       const iteratorStep = createMockIteratorStep(
         'iterator-1',

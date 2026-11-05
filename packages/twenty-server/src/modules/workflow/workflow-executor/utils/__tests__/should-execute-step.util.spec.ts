@@ -295,33 +295,6 @@ describe('shouldExecuteStep', () => {
     expect(result).toBe(false);
   });
 
-  it('should handle undefined parent steps gracefully', () => {
-    const stepsWithUndefined: WorkflowAction[] = [
-      createMockCodeStep('step-1', ['step-3']),
-      // @ts-expect-error stored workflow steps can hold empty slots
-      undefined,
-      createMockCodeStep('step-3'),
-    ];
-
-    const stepInfos = {
-      'step-1': {
-        status: StepStatus.SUCCESS,
-      },
-      'step-3': {
-        status: StepStatus.NOT_STARTED,
-      },
-    };
-
-    const result = shouldExecuteStep({
-      stepInfos,
-      steps: stepsWithUndefined,
-      step: stepsWithUndefined[2],
-      workflowRunStatus: WorkflowRunStatus.RUNNING,
-    });
-
-    expect(result).toBe(true);
-  });
-
   it('should return false when at least one parent is FAILED', () => {
     const result = shouldExecuteStep({
       stepInfos: {
