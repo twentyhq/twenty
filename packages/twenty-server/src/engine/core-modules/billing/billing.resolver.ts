@@ -90,7 +90,7 @@ const BILLING_PARTNER_CODE_ACCESS_POLICY: AccessPolicy = {
     userSession: {
       standard: true,
       impersonated: true,
-      playground: true,
+      playground: false,
       workspaceAgnostic: false,
     },
     apiKey: false,
