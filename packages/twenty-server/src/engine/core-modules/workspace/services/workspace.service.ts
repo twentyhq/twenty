@@ -116,7 +116,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
+import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -216,7 +216,7 @@ export class WorkspaceService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
+    private readonly roleAssignmentService: RoleAssignmentService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -529,9 +529,10 @@ export class WorkspaceService {
       isDefined(payload.defaultRoleId) &&
       workspace.defaultRoleId !== payload.defaultRoleId
     ) {
-      await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        { roleId: payload.defaultRoleId, workspaceId: workspace.id },
-      );
+      await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+        roleId: payload.defaultRoleId,
+        workspaceId: workspace.id,
+      });
     }
 
     let customDomainRegistered = false;
