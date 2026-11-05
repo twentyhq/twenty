@@ -159,9 +159,6 @@ export const GettingStartedImportAction = () => {
             {t`AI shapes your workspace around your data.`}
           </Text>
         </StyledDropZoneDescription>
-        <Text size="xs" color="light">
-          {t`or click to browse`}
-        </Text>
       </StyledDropZone>
       <StyledExportRow>
         <Text
