@@ -2,8 +2,9 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { type DataSource, type QueryRunner } from 'typeorm';
+import { createChatChannelTestDataSource } from 'test/integration/graphql/suites/chat-channel/utils/create-chat-channel-test-data-source.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
@@ -467,6 +468,7 @@ export const setUpChatChannelTests = () => {
 
   const roleIdsToReopenToAllChannels = new Set<string>();
   const heldQueryRunners: QueryRunner[] = [];
+  let heldTransactionDataSourcePromise: Promise<DataSource> | undefined;
   let isChannelCacheStale = false;
 
   const markChannelCacheStale = () => {
@@ -474,7 +476,9 @@ export const setUpChatChannelTests = () => {
   };
 
   const startHeldTransaction = async (): Promise<QueryRunner> => {
-    const queryRunner = global.testDataSource.createQueryRunner();
+    const dataSource = await (heldTransactionDataSourcePromise ??=
+      createChatChannelTestDataSource().initialize());
+    const queryRunner = dataSource.createQueryRunner();
 
     await queryRunner.connect();
     heldQueryRunners.push(queryRunner);
@@ -600,6 +604,16 @@ export const setUpChatChannelTests = () => {
     }
 
     expect(orphanedThreadCount).toBe(0);
+  });
+
+  afterAll(async () => {
+    if (!isDefined(heldTransactionDataSourcePromise)) {
+      return;
+    }
+
+    const dataSource = await heldTransactionDataSourcePromise;
+
+    await dataSource.destroy();
   });
 
   return {
