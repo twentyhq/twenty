@@ -4,6 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -70,7 +71,8 @@ export class DirectMessageContentService {
 
       return (
         !isDefined(agentChatThread) ||
-        agentChatThread.conversationType === 'DIRECT_MESSAGE'
+        agentChatThread.conversationType ===
+          AgentChatThreadConversationType.DIRECT_MESSAGE
       );
     }, authContext);
   }

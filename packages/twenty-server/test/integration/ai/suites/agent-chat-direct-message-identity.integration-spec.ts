@@ -17,6 +17,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
@@ -454,7 +455,7 @@ describe('Canonical direct message identity', () => {
 
     expect(await readIdentity(threadId)).toEqual({
       id: threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
       directMessageFirstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       directMessageSecondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       workspaceMemberId: null,
@@ -501,7 +502,7 @@ describe('Canonical direct message identity', () => {
         .into(`${context.schema}.agentChatThread`)
         .values({
           id: randomUUID(),
-          conversationType: 'DIRECT_MESSAGE',
+          conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
           directMessageFirstWorkspaceMemberId:
             WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           directMessageSecondWorkspaceMemberId:
@@ -642,7 +643,7 @@ describe('Canonical direct message identity', () => {
       ErrorCode.FORBIDDEN,
     );
     expect(await readIdentity(threadId)).toMatchObject({
-      conversationType: 'STANDARD',
+      conversationType: AgentChatThreadConversationType.STANDARD,
       directMessageFirstWorkspaceMemberId: null,
       directMessageSecondWorkspaceMemberId: null,
     });
@@ -654,7 +655,7 @@ describe('Canonical direct message identity', () => {
 
     expect(firstThreadId).not.toBe(secondThreadId);
     expect(await readIdentity(firstThreadId)).toMatchObject({
-      conversationType: 'STANDARD',
+      conversationType: AgentChatThreadConversationType.STANDARD,
       directMessageFirstWorkspaceMemberId: null,
       directMessageSecondWorkspaceMemberId: null,
       workspaceMemberId: context.workspaceMemberId,
@@ -663,7 +664,7 @@ describe('Canonical direct message identity', () => {
       expect.objectContaining({ workspaceMemberId: context.workspaceMemberId }),
     ]);
     expect(await readIdentity(secondThreadId)).toMatchObject({
-      conversationType: 'STANDARD',
+      conversationType: AgentChatThreadConversationType.STANDARD,
       directMessageFirstWorkspaceMemberId: null,
       directMessageSecondWorkspaceMemberId: null,
     });

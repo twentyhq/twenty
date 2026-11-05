@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -114,7 +115,10 @@ export class AgentChatThreadTargetService {
       return throwAgentChatThreadNotFound();
     }
 
-    if (agentChatThread.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      agentChatThread.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       throw new AiException(
         doNotTranslate('Direct messages do not support linked records'),
         AiExceptionCode.INVALID_AGENT_INPUT,
