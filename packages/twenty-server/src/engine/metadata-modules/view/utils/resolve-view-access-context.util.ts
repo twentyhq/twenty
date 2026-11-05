@@ -1,4 +1,4 @@
-import { type ViewAccessContext } from 'src/engine/permissions/view/types/view-permissions.type';
+import { type ViewAccessContext } from 'src/engine/metadata-modules/view/types/view-permissions.type';
 
 // Every view guard authorises the same three principals, so they read them in
 // one place: a guard that builds the context by hand is how an application

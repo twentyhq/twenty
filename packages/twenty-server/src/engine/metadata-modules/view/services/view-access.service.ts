@@ -5,11 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
 
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
+import { ViewEntityLookupService } from 'src/engine/metadata-modules/view/services/view-entity-lookup.service';
 import {
   type ViewAccessContext,
   type ViewChildEntityKind,
-} from 'src/engine/permissions/view/types/view-permissions.type';
+} from 'src/engine/metadata-modules/view/types/view-permissions.type';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import {
   ViewException,

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type ViewChildEntityKind } from 'src/engine/permissions/view/types/view-permissions.type';
+import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view/types/view-permissions.type';
 
 @Injectable()
 export class ViewEntityLookupService {

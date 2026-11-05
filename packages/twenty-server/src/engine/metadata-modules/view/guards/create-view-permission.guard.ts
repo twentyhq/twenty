@@ -7,8 +7,8 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewVisibility } from 'twenty-shared/types';
 
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
-import { resolveViewAccessContext } from 'src/engine/permissions/view/utils/resolve-view-access-context.util';
+import { ViewAccessService } from 'src/engine/metadata-modules/view/services/view-access.service';
+import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
 
 @Injectable()
 export class CreateViewPermissionGuard implements CanActivate {
