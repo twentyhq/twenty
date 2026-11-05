@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isRecordPathLoaded } from '@/object-record/record-form/utils/isRecordPathLoaded';
+import { isRecordFieldValueLoaded } from '@/object-record/record-form/utils/isRecordFieldValueLoaded';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
@@ -8,9 +8,7 @@ import {
   getValidationRulePreviousValueFieldPath,
 } from 'twenty-shared/utils';
 
-// Only rules whose error field is this select can rule a value out: a rule that
-// blames another field (a missing Lost reason) is completed after the pick, not
-// prevented by it
+// A rule blaming another field (a missing Lost reason) is completed after the pick, not prevented by it
 export const computeSelectValuesBlockedByValidationRules = ({
   validationRules,
   record,
@@ -51,9 +49,9 @@ export const computeSelectValuesBlockedByValidationRules = ({
         Object.keys(compilationResult.bindings).every(
           (bindingPath) =>
             bindingPath === fieldMetadataItem.name ||
-            isRecordPathLoaded({
+            isRecordFieldValueLoaded({
               record,
-              path:
+              fieldPath:
                 getValidationRulePreviousValueFieldPath(bindingPath) ??
                 bindingPath,
             }),

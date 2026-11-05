@@ -45,7 +45,6 @@ export const computeRecordUpdateFieldsToComplete = ({
   fieldMetadataIds: string[];
   violations: ValidationRuleViolation[];
 } => {
-  // A changed join column leaves the loaded related record stale, so rules reading it are left to the server
   const relationFieldNamesWithChangedJoinColumn = fields
     .filter(
       (field) =>
@@ -75,7 +74,6 @@ export const computeRecordUpdateFieldsToComplete = ({
     violations.map((violation) => violation.fieldMetadataId).filter(isDefined),
   );
 
-  // A field the person is editing right now is already in front of them, so it is not asked for again
   const fieldMetadataIds = fieldMetadataItems
     .filter(
       (fieldMetadataItem) =>

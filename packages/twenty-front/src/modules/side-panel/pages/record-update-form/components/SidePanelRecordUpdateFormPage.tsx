@@ -107,7 +107,6 @@ const SidePanelRecordUpdateForm = ({
     displayedFieldMetadataIds,
   });
 
-  // A value picked here can make another rule ask for one more field, which then joins the form
   const checkDraftRecord = (draftRecordToCheck: Partial<ObjectRecord>) => {
     const { fieldMetadataIds: violatedFieldMetadataIds, violations } =
       computeRecordUpdateFieldsToComplete({
@@ -141,7 +140,6 @@ const SidePanelRecordUpdateForm = ({
     gqlFieldName: string,
     value: JsonValue,
   ) => {
-    // A new join column value makes the loaded related record stale, so rules reading it are left to the server
     const relationFieldNameWithChangedJoinColumn =
       objectMetadataItem.fields.find(
         (fieldMetadataItem) =>

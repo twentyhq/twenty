@@ -70,8 +70,6 @@ export const RecordUpdateFormProvider = ({
       fieldMetadataIds,
       violations,
     }: RecordUpdateFormCompletionRequest) => {
-      // Read from the store, not a render value: the cards of one multi-card drop all ask before any re-render.
-      // One form at a time, so the rest of that drop goes to the server unchanged
       if (isDefined(store.get(pendingRecordUpdateFormState.atom))) {
         return Promise.resolve({});
       }
