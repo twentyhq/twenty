@@ -60,6 +60,43 @@ describe('computeFieldMetadataOptionBackfill', () => {
     ]);
   });
 
+  it('regenerates uppercase and pre-v4 ids, which cannot be universal identifiers', () => {
+    const { optionsToRewriteByFieldMetadataId, optionRowsToInsert } =
+      computeFieldMetadataOptionBackfill({
+        enumFields: [
+          {
+            id: FIELD_ID,
+            applicationId: APPLICATION_ID,
+            options: [
+              {
+                id: OPTION_ID.toUpperCase(),
+                value: 'OPEN',
+                label: 'Open',
+                position: 0,
+              },
+              {
+                id: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+                value: 'CLOSED',
+                label: 'Closed',
+                position: 1,
+              },
+            ],
+          },
+        ],
+        existingFieldMetadataIdByUniversalIdentifier: new Map(),
+      });
+
+    const rewrittenOptions = optionsToRewriteByFieldMetadataId.get(FIELD_ID);
+
+    expect(rewrittenOptions?.map((option) => option.id)).toEqual([
+      expect.stringMatching(UUID_PATTERN),
+      expect.stringMatching(UUID_PATTERN),
+    ]);
+    expect(
+      optionRowsToInsert.map((row) => row.universalIdentifier),
+    ).toEqual(rewrittenOptions?.map((option) => option.id));
+  });
+
   it('regenerates missing and reused ids and writes them back to the field', () => {
     const { optionsToRewriteByFieldMetadataId, optionRowsToInsert } =
       computeFieldMetadataOptionBackfill({

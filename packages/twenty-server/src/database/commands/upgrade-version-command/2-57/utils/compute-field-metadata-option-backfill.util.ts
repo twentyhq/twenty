@@ -1,5 +1,6 @@
 import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
-import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import { isValidUniversalIdentifier } from 'twenty-shared/application';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type StoredOption = Record<string, unknown>;
@@ -58,7 +59,8 @@ export const computeFieldMetadataOptionBackfill = ({
       .map((option, index) => {
         const reusableId =
           isString(option.id) &&
-          isValidUuid(option.id) &&
+          isValidUniversalIdentifier(option.id) &&
+          option.id === option.id.toLowerCase() &&
           !claimedUniversalIdentifiers.has(option.id) &&
           isOwnedByFieldOrUnused({
             fieldMetadataId: enumField.id,
