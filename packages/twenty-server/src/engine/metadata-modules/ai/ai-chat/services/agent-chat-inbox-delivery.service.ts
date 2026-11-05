@@ -157,7 +157,6 @@ export class AgentChatInboxDeliveryService {
     return deliveredWorkspaceMemberIds;
   }
 
-  // Checked as the owner, who shares the conversation and can be mentioned too
   async prepareMentionDeliveryOrThrow({
     workspaceId,
     thread,

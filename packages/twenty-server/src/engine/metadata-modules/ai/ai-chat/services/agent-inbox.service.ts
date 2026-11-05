@@ -212,7 +212,6 @@ export class AgentInboxService {
     workspaceId: string;
     sender: AgentInboxSender;
     workspaceMemberIds: string[];
-    // checked before any recipient is delivered, and delivered with the message
     mentionedWorkspaceMemberIds?: string[];
     threadKey: string;
     title: string;

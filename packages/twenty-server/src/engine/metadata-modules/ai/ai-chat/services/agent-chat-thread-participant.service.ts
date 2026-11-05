@@ -58,7 +58,6 @@ const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" I
 const PARTICIPANT_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
-// unnest keeps the array's order, so the locks are taken in the order given
 const PARTICIPANT_LOCKS_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended(lock_key, 0)) FROM unnest($1::text[]) AS lock_key';
 

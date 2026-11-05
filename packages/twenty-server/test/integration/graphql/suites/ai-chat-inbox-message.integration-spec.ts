@@ -612,7 +612,7 @@ describe('Sending an inbox message as an application', () => {
 
           return insert.apply(this, args);
         });
-      const send = () =>
+      const send = async () =>
         sendInboxMessage(applicationToken, {
           toolCall: null,
           threadKey,
@@ -620,13 +620,9 @@ describe('Sending an inbox message as an application', () => {
           text: `${mention(JONY)}, the deck is ready.`,
         });
 
-      let failedResponse;
-
-      try {
-        failedResponse = await send();
-      } finally {
-        failParticipantInsertSpy.mockRestore();
-      }
+      const failedResponse = await send().finally(() =>
+        failParticipantInsertSpy.mockRestore(),
+      );
 
       try {
         expect(failedResponse.body.errors).toBeDefined();
