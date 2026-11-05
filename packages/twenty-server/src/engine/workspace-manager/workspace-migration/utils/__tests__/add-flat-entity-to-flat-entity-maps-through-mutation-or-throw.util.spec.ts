@@ -7,11 +7,15 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const createMaps = (): FlatEntityMaps<SyncableFlatEntity> =>
   createEmptyFlatEntityMaps();
 
-const makeFlatEntity = (
-  id: string,
-  universalIdentifier: string,
-  applicationId: string,
-): SyncableFlatEntity => ({
+const makeFlatEntity = ({
+  id,
+  universalIdentifier,
+  applicationId,
+}: {
+  id: string;
+  universalIdentifier: string;
+  applicationId: string;
+}): SyncableFlatEntity => ({
   id,
   universalIdentifier,
   applicationId,
@@ -21,7 +25,11 @@ const makeFlatEntity = (
 describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
   it('should index a new entity by universalIdentifier and id', () => {
     const flatEntityMapsToMutate = createMaps();
-    const flatEntity = makeFlatEntity('id-1', 'uid-1', 'app-1');
+    const flatEntity = makeFlatEntity({
+      id: 'id-1',
+      universalIdentifier: 'uid-1',
+      applicationId: 'app-1',
+    });
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
       flatEntity,
@@ -43,11 +51,19 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
     const flatEntityMapsToMutate = createMaps();
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: makeFlatEntity('id-1', 'uid-1', 'app-1'),
+      flatEntity: makeFlatEntity({
+        id: 'id-1',
+        universalIdentifier: 'uid-1',
+        applicationId: 'app-1',
+      }),
       flatEntityMapsToMutate,
     });
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: makeFlatEntity('id-2', 'uid-2', 'app-1'),
+      flatEntity: makeFlatEntity({
+        id: 'id-2',
+        universalIdentifier: 'uid-2',
+        applicationId: 'app-1',
+      }),
       flatEntityMapsToMutate,
     });
 
@@ -64,13 +80,21 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
     const flatEntityMapsToMutate = createMaps();
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: makeFlatEntity('id-1', 'uid-1', 'app-1'),
+      flatEntity: makeFlatEntity({
+        id: 'id-1',
+        universalIdentifier: 'uid-1',
+        applicationId: 'app-1',
+      }),
       flatEntityMapsToMutate,
     });
 
     expect(() =>
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: makeFlatEntity('id-1-bis', 'uid-1', 'app-1'),
+        flatEntity: makeFlatEntity({
+          id: 'id-1-bis',
+          universalIdentifier: 'uid-1',
+          applicationId: 'app-1',
+        }),
         flatEntityMapsToMutate,
       }),
     ).toThrow(
@@ -86,7 +110,11 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
 
     for (let index = 0; index < entityCount; index++) {
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: makeFlatEntity(`id-${index}`, `uid-${index}`, 'app-1'),
+        flatEntity: makeFlatEntity({
+          id: `id-${index}`,
+          universalIdentifier: `uid-${index}`,
+          applicationId: 'app-1',
+        }),
         flatEntityMapsToMutate,
       });
     }

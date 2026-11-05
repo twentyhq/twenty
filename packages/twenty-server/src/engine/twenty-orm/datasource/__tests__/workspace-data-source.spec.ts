@@ -105,10 +105,13 @@ const sumPetColumn = ({
     .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);
 
-const expectSingleQueryContaining = (
-  pool: ReturnType<typeof buildPool>,
-  sqlFragment: string,
-) => {
+const expectSingleQueryContaining = ({
+  pool,
+  sqlFragment,
+}: {
+  pool: ReturnType<typeof buildPool>;
+  sqlFragment: string;
+}) => {
   expect(pool.query).toHaveBeenCalledTimes(1);
   expect(pool.query).toHaveBeenCalledWith(
     expect.objectContaining({ text: expect.stringContaining(sqlFragment) }),
@@ -127,7 +130,7 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps('weight'),
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"weight"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"weight"' });
 
     const renamedSum = await sumPetColumn({
       pool,
@@ -136,7 +139,7 @@ describe('WorkspaceDataSource', () => {
       columnName: 'weightInKg',
     });
 
-    expectSingleQueryContaining(pool, '"weightInKg"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"weightInKg"' });
     expect(renamedSum).toBe(3);
   });
 
@@ -150,7 +153,7 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps,
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"_pet"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"_pet"' });
 
     await sumPetColumn({
       pool,
@@ -158,6 +161,6 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps,
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"_animal"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"_animal"' });
   });
 });
