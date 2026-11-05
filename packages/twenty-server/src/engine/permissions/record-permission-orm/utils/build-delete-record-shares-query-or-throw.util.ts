@@ -34,7 +34,6 @@ export const buildDeleteRecordSharesQueryOrThrow = ({
     isDefined(sourceId) && `"sourceId" = :sourceId`,
   ].filter((condition) => condition !== false);
 
-  // No condition would delete every share of the workspace
   if (conditions.length === 0) {
     throw new RecordShareException(
       'Deleting record shares requires at least one criterion',
