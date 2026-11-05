@@ -1,49 +1,20 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ObjectOpenRecordIn } from 'twenty-shared/types';
-import {
-  type ObjectPermissionAction,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-} from 'twenty-shared/application';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { type CreateStandardObjectArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/create-standard-object-args.type';
 
-export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
-  universalIdentifier: string;
-  nameSingular: O;
-  namePlural: string;
-  labelSingular: string;
-  labelPlural: string;
-  description: string;
-  icon: string;
-  isSystem?: boolean;
-  isSearchable?: boolean;
-  isAuditLogged?: boolean;
-  isUIEditable?: boolean;
-  isUICreatable?: boolean;
-  disabledObjectPermissionActions?: ObjectPermissionAction[];
-  openRecordIn?: ObjectOpenRecordIn;
-  shortcut?: string | null;
-  duplicateCriteria?: string[][] | null;
-  labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
-  imageIdentifierFieldMetadataName?: AllStandardObjectFieldName<O>;
-};
-
-export type CreateStandardObjectArgs<
-  O extends AllStandardObjectName = AllStandardObjectName,
-> = StandardBuilderArgs<'objectMetadata'> & {
-  objectName: O;
-  context: CreateStandardObjectContext<O>;
-};
-
-const getStandardFieldUniversalIdentifier = <O extends AllStandardObjectName>({
+const getStandardFieldUniversalIdentifier = <
+  TObjectName extends AllStandardObjectName,
+>({
   objectName,
   fieldName,
 }: {
-  objectName: O;
-  fieldName: AllStandardObjectFieldName<O>;
+  objectName: TObjectName;
+  fieldName: AllStandardObjectFieldName<TObjectName>;
 }): string => {
   const standardObjectFields: Record<
     PropertyKey,
@@ -54,8 +25,9 @@ const getStandardFieldUniversalIdentifier = <O extends AllStandardObjectName>({
 };
 
 export const createStandardObjectFlatMetadata = <
-  O extends AllStandardObjectName,
+  TObjectName extends AllStandardObjectName,
 >({
+  objectName,
   context: {
     universalIdentifier,
     nameSingular,
@@ -80,17 +52,17 @@ export const createStandardObjectFlatMetadata = <
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
-}: CreateStandardObjectArgs<O>): FlatObjectMetadata => {
+}: CreateStandardObjectArgs<TObjectName>): FlatObjectMetadata => {
   const labelIdentifierFieldMetadataUniversalIdentifier =
     getStandardFieldUniversalIdentifier({
-      objectName: nameSingular,
+      objectName,
       fieldName: labelIdentifierFieldMetadataName,
     });
 
   const imageIdentifierFieldMetadataUniversalIdentifier =
     imageIdentifierFieldMetadataName
       ? getStandardFieldUniversalIdentifier({
-          objectName: nameSingular,
+          objectName,
           fieldName: imageIdentifierFieldMetadataName,
         })
       : null;
@@ -120,11 +92,11 @@ export const createStandardObjectFlatMetadata = <
     duplicateCriteria,
     shortcut,
     labelIdentifierFieldMetadataId:
-      standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+      standardObjectMetadataRelatedEntityIds[objectName].fields[
         labelIdentifierFieldMetadataName
       ].id,
     imageIdentifierFieldMetadataId: imageIdentifierFieldMetadataName
-      ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+      ? standardObjectMetadataRelatedEntityIds[objectName].fields[
           imageIdentifierFieldMetadataName
         ].id
       : null,
@@ -140,7 +112,7 @@ export const createStandardObjectFlatMetadata = <
     pageLayoutIds: [],
     createdAt: now,
     updatedAt: now,
-    id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
+    id: standardObjectMetadataRelatedEntityIds[objectName].id,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     fieldUniversalIdentifiers: [],

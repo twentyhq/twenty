@@ -5,10 +5,8 @@ import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import {
-  type CreateStandardObjectArgs,
-  createStandardObjectFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
+import { type CreateStandardObjectArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/create-standard-object-args.type';
+import { createStandardObjectFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 import {
   PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
   PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,

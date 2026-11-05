@@ -31,12 +31,15 @@ import { buildStandardFlatViewFilterMetadataMaps } from 'src/engine/workspace-ma
 import { buildStandardFlatViewGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/build-standard-flat-view-group-metadata-maps.util';
 import { buildStandardFlatViewMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util';
 import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
+import { type MetadataTechnicalNamesByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/types/metadata-technical-names-by-universal-identifier.type';
+import { applyStandardMetadataTechnicalNamesOrThrow } from 'src/engine/workspace-manager/twenty-standard-application/utils/apply-standard-metadata-technical-names-or-throw.util';
 
 export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   isWorkspaceCreation?: boolean;
+  technicalNamesByUniversalIdentifier?: MetadataTechnicalNamesByUniversalIdentifier;
 };
 
 export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
@@ -44,6 +47,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   workspaceId,
   twentyStandardApplicationId,
   isWorkspaceCreation = false,
+  technicalNamesByUniversalIdentifier,
 }: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): {
   allFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
   // TODO remove once all metadatas has fully been universal migrated
@@ -332,7 +336,12 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   }
 
   return {
-    allFlatEntityMaps,
+    allFlatEntityMaps: isDefined(technicalNamesByUniversalIdentifier)
+      ? applyStandardMetadataTechnicalNamesOrThrow({
+          allFlatEntityMaps,
+          technicalNamesByUniversalIdentifier,
+        })
+      : allFlatEntityMaps,
     idByUniversalIdentifierByMetadataName,
   };
 };
