@@ -1,16 +1,18 @@
+import { Test } from '@nestjs/testing';
+
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
@@ -51,7 +53,7 @@ describe('SendChatMessageWorkflowAction', () => {
       runInfo: { workflowRunId: WORKFLOW_RUN_ID, workspaceId: WORKSPACE_ID },
     });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
     sendMessage.mockResolvedValue({
       status: 'DELIVERED',
@@ -66,23 +68,42 @@ describe('SendChatMessageWorkflowAction', () => {
       name: 'New deals',
     });
 
-    action = new SendChatMessageWorkflowAction(
-      { sendMessage } as unknown as AgentCallerConversationService,
-      new WorkflowRunInboxSenderWorkspaceService(
+    const module = await Test.createTestingModule({
+      providers: [
+        SendChatMessageWorkflowAction,
+        WorkflowRunInboxSenderWorkspaceService,
         {
-          executeInWorkspaceContext: jest.fn((callback) => callback()),
-          getRepositoryWithoutPermissionChecks: jest
-            .fn()
-            .mockReturnValue({ findOne: findWorkflowRun }),
-        } as unknown as WorkspaceOrmManager,
-        { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
-        {} as WorkspaceCacheService,
-      ),
-      { arm: armStepWait } as unknown as WorkflowStepWaitWorkspaceService,
-      {
-        getExecutionContext: jest.fn().mockResolvedValue(EXECUTION_CONTEXT),
-      } as unknown as WorkflowExecutionContextService,
-    );
+          provide: AgentCallerConversationService,
+          useValue: { sendMessage },
+        },
+        {
+          provide: WorkspaceOrmManager,
+          useValue: {
+            executeInWorkspaceContext: jest.fn((callback) => callback()),
+            getRepositoryWithoutPermissionChecks: jest
+              .fn()
+              .mockReturnValue({ findOne: findWorkflowRun }),
+          },
+        },
+        {
+          provide: WorkflowCoreSyncService,
+          useValue: { findCoreWorkflowById },
+        },
+        { provide: WorkspaceCacheService, useValue: {} },
+        {
+          provide: WorkflowStepWaitWorkspaceService,
+          useValue: { arm: armStepWait },
+        },
+        {
+          provide: WorkflowExecutionContextService,
+          useValue: {
+            getExecutionContext: jest.fn().mockResolvedValue(EXECUTION_CONTEXT),
+          },
+        },
+      ],
+    }).compile();
+
+    action = module.get(SendChatMessageWorkflowAction);
   });
 
   it('posts the resolved message in the run conversation of the member', async () => {

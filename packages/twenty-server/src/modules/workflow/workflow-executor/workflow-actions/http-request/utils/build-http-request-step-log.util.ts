@@ -232,8 +232,8 @@ export const buildHttpRequestStepLog = ({
   output,
   durationMs,
 }: {
-  input: WorkflowHttpRequestActionInput;
-  output: ToolOutput;
+  input: Omit<WorkflowHttpRequestActionInput, 'body'> & { body?: unknown };
+  output: Omit<ToolOutput, 'error'> & { error?: unknown };
   durationMs: number;
 }): WorkflowRunStepLog => {
   const requestBody = serializeBody(input.body);

@@ -3,10 +3,6 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type DataSource } from 'typeorm';
-import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
-import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
-
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
@@ -33,14 +29,13 @@ class EntityWithHideableColumns {
   visibleColumn!: string;
 }
 
-const buildColumn = (propertyName: string): ColumnMetadata =>
-  ({
-    propertyName,
-    databaseName: propertyName,
-    isSelect: true,
-    isInsert: true,
-    isUpdate: true,
-  }) as unknown as ColumnMetadata;
+const buildColumn = (propertyName: string) => ({
+  propertyName,
+  databaseName: propertyName,
+  isSelect: true,
+  isInsert: true,
+  isUpdate: true,
+});
 
 describe('UpgradeAwareEntityMetadataAdapter', () => {
   it('rewrites tableName / tablePath / givenTableName when the rename step is not yet applied', async () => {
@@ -51,11 +46,11 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       givenTableName: 'newEntity',
       schema: 'core',
       columns: [],
-    } as unknown as EntityMetadata;
+    };
 
     const dataSource = {
       entityMetadatas: [metadata],
-    } as unknown as DataSource;
+    };
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -101,11 +96,11 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       givenTableName: 'entityWithHideableColumns',
       schema: 'core',
       columns: [introducedColumn, removedColumn, visibleColumn],
-    } as unknown as EntityMetadata;
+    };
 
     const dataSource = {
       entityMetadatas: [metadata],
-    } as unknown as DataSource;
+    };
 
     const moduleRef = await Test.createTestingModule({
       providers: [

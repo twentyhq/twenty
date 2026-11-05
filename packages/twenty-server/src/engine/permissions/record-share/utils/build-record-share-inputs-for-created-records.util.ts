@@ -10,10 +10,30 @@ import { isDefined } from 'twenty-shared/utils';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type ApiKeyWorkspaceAuthContext,
+  type ApplicationWorkspaceAuthContext,
+  type PendingActivationUserWorkspaceAuthContext,
+  type SystemWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util';
+
+type RecordShareCreatorAuthContext =
+  | Pick<UserWorkspaceAuthContext, 'type' | 'workspaceMemberId'>
+  | (Pick<ApiKeyWorkspaceAuthContext, 'type'> & {
+      apiKey: Pick<ApiKeyWorkspaceAuthContext['apiKey'], 'id'>;
+    })
+  | (Pick<ApplicationWorkspaceAuthContext, 'type'> & {
+      application: Pick<
+        ApplicationWorkspaceAuthContext['application'],
+        'id' | 'defaultRoleId'
+      >;
+    })
+  | Pick<SystemWorkspaceAuthContext, 'type'>
+  | Pick<PendingActivationUserWorkspaceAuthContext, 'type'>;
 
 type RecordShareInputForRecord = Omit<
   RecordShareInput,
@@ -24,7 +44,7 @@ const resolveShareWithRowOrigin = ({
   authContext,
   recordId,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: RecordShareCreatorAuthContext;
   recordId: string;
 }): Pick<RecordShareInput, 'rowCause' | 'sourceId'> => {
   if (isUserAuthContext(authContext)) {
@@ -48,7 +68,7 @@ const resolveCreatorRoleId = ({
   authContext,
   apiKeyRoleMap,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: RecordShareCreatorAuthContext;
   apiKeyRoleMap: Record<string, string>;
 }): string | null | undefined => {
   if (isApplicationAuthContext(authContext)) {
@@ -68,7 +88,7 @@ const buildCreatorRows = ({
   recordId,
   shareWithPrincipals,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: RecordShareCreatorAuthContext;
   apiKeyRoleMap: Record<string, string>;
   recordId: string;
   shareWithPrincipals: Pick<RecordShareInput, 'principalId'>[];
@@ -117,7 +137,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
 }: {
   recordIds: string[];
   objectMetadataId: string;
-  authContext: WorkspaceAuthContext;
+  authContext: RecordShareCreatorAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
   isPrivateByDefault: boolean;

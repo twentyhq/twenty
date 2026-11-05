@@ -41,7 +41,7 @@ describe('CalDavClientProvider', () => {
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
     handle: 'user@example.com',
     connectionParameters: mockConnectionParameters,
-  } as unknown as ConnectedAccountEntity;
+  };
 
   beforeEach(async () => {
     connectedAccountTokenEncryptionService = {

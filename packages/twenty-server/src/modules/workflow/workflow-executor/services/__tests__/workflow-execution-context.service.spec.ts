@@ -1,16 +1,18 @@
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { Test } from '@nestjs/testing';
+
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
-import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-app-id';
@@ -80,7 +82,7 @@ const buildWorkflowRun = ({
     },
   }) as WorkflowRunWorkspaceEntity;
 
-const buildService = ({
+const buildService = async ({
   workflowRun = buildWorkflowRun({ coreWorkflowId: WORKSPACE_WORKFLOW_ID }),
   applications = [installedApplication, workspaceCustomApplication],
   roleIds = ['installed-app-role-id'],
@@ -88,56 +90,77 @@ const buildService = ({
   workflowRun?: WorkflowRunWorkspaceEntity;
   applications?: FlatApplication[];
   roleIds?: string[];
-} = {}) =>
-  new WorkflowExecutionContextService(
-    {
-      getWorkflowRunOrFail: jest.fn().mockResolvedValue(workflowRun),
-    } as unknown as WorkflowRunWorkspaceService,
-    {} as UserWorkspaceService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatApplicationMaps: {
-          byId: Object.fromEntries(
-            applications.map((application) => [application.id, application]),
-          ),
+} = {}) => {
+  const module = await Test.createTestingModule({
+    providers: [
+      WorkflowExecutionContextService,
+      {
+        provide: WorkflowRunWorkspaceService,
+        useValue: {
+          getWorkflowRunOrFail: jest.fn().mockResolvedValue(workflowRun),
         },
-        flatWorkflowMaps: {
-          byUniversalIdentifier: Object.fromEntries(
-            workflows.map((workflow) => [
-              workflow.universalIdentifier,
-              workflow,
-            ]),
-          ),
-          universalIdentifierById: Object.fromEntries(
-            workflows.map((workflow) => [
-              workflow.id,
-              workflow.universalIdentifier,
-            ]),
-          ),
+      },
+      { provide: UserWorkspaceService, useValue: {} },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatApplicationMaps: {
+              byId: Object.fromEntries(
+                applications.map((application) => [
+                  application.id,
+                  application,
+                ]),
+              ),
+            },
+            flatWorkflowMaps: {
+              byUniversalIdentifier: Object.fromEntries(
+                workflows.map((workflow) => [
+                  workflow.universalIdentifier,
+                  workflow,
+                ]),
+              ),
+              universalIdentifierById: Object.fromEntries(
+                workflows.map((workflow) => [
+                  workflow.id,
+                  workflow.universalIdentifier,
+                ]),
+              ),
+            },
+          }),
         },
-      }),
-    } as unknown as WorkspaceCacheService,
-    {
-      get: jest.fn().mockResolvedValue({
-        id: WORKSPACE_ID,
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-      }),
-    } as unknown as CoreEntityCacheService,
-    {
-      getRoleIds: jest.fn().mockResolvedValue(roleIds),
-    } as unknown as PermissionsService,
-  );
+      },
+      {
+        provide: CoreEntityCacheService,
+        useValue: {
+          get: jest.fn().mockResolvedValue({
+            id: WORKSPACE_ID,
+            workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+          }),
+        },
+      },
+      {
+        provide: PermissionsService,
+        useValue: { getRoleIds: jest.fn().mockResolvedValue(roleIds) },
+      },
+    ],
+  }).compile();
+
+  return module.get(WorkflowExecutionContextService);
+};
 
 const runInfo = { workflowRunId: 'workflow-run-id', workspaceId: WORKSPACE_ID };
 
 describe('WorkflowExecutionContextService', () => {
   describe('getExecutionContext', () => {
     it('runs an automated run through the application owning its workflow, with its role', async () => {
-      const executionContext = await buildService({
-        workflowRun: buildWorkflowRun({
-          coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
-        }),
-      }).getExecutionContext(runInfo);
+      const executionContext = await (
+        await buildService({
+          workflowRun: buildWorkflowRun({
+            coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+          }),
+        })
+      ).getExecutionContext(runInfo);
 
       expect(executionContext.application).toBe(installedApplication);
       expect(executionContext.authContext).toMatchObject({
@@ -148,22 +171,26 @@ describe('WorkflowExecutionContextService', () => {
 
     it('refuses a run left with no role', async () => {
       await expect(
-        buildService({
-          workflowRun: buildWorkflowRun({
-            coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
-          }),
-          roleIds: [],
-        }).getExecutionContext(runInfo),
+        (
+          await buildService({
+            workflowRun: buildWorkflowRun({
+              coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+            }),
+            roleIds: [],
+          })
+        ).getExecutionContext(runInfo),
       ).rejects.toThrow('No role is left to run this step with');
     });
 
     it('takes the application from the workflow of the run, not from the one stamped on it', async () => {
-      const executionContext = await buildService({
-        workflowRun: buildWorkflowRun({
-          coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
-          stampedApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-        }),
-      }).getExecutionContext(runInfo);
+      const executionContext = await (
+        await buildService({
+          workflowRun: buildWorkflowRun({
+            coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+            stampedApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+          }),
+        })
+      ).getExecutionContext(runInfo);
 
       expect(executionContext.application).toBe(installedApplication);
     });
@@ -172,23 +199,27 @@ describe('WorkflowExecutionContextService', () => {
       'refuses a run whose workflow no longer exists (workflow: %s)',
       async (coreWorkflowId) => {
         await expect(
-          buildService({
-            workflowRun: buildWorkflowRun({ coreWorkflowId }),
-          }).getExecutionContext(runInfo),
+          (
+            await buildService({
+              workflowRun: buildWorkflowRun({ coreWorkflowId }),
+            })
+          ).getExecutionContext(runInfo),
         ).rejects.toThrow('The workflow of this run no longer exists');
       },
     );
 
     it('refuses a run whose application has no role instead of falling back to another one', async () => {
       await expect(
-        buildService({
-          workflowRun: buildWorkflowRun({
-            coreWorkflowId: WORKSPACE_WORKFLOW_ID,
-          }),
-          applications: [
-            { ...workspaceCustomApplication, defaultRoleId: null },
-          ],
-        }).getExecutionContext(runInfo),
+        (
+          await buildService({
+            workflowRun: buildWorkflowRun({
+              coreWorkflowId: WORKSPACE_WORKFLOW_ID,
+            }),
+            applications: [
+              { ...workspaceCustomApplication, defaultRoleId: null },
+            ],
+          })
+        ).getExecutionContext(runInfo),
       ).rejects.toThrow('has no role');
     });
   });
@@ -200,7 +231,9 @@ describe('WorkflowExecutionContextService', () => {
       });
 
       expect(
-        await buildService({ workflowRun }).getFormRecordReadContext({
+        await (
+          await buildService({ workflowRun })
+        ).getFormRecordReadContext({
           workflowRun,
           workspaceId: WORKSPACE_ID,
         }),
@@ -214,7 +247,9 @@ describe('WorkflowExecutionContextService', () => {
       });
 
       expect(
-        await buildService({ workflowRun }).getFormRecordReadContext({
+        await (
+          await buildService({ workflowRun })
+        ).getFormRecordReadContext({
           workflowRun,
           workspaceId: WORKSPACE_ID,
         }),
@@ -223,6 +258,12 @@ describe('WorkflowExecutionContextService', () => {
   });
 
   describe('assertRunApplicationCanTriggerStepTargetOrThrow', () => {
+    let service: WorkflowExecutionContextService;
+
+    beforeAll(async () => {
+      service = await await buildService();
+    });
+
     const assertTarget = ({
       application,
       targetApplicationId,
@@ -230,7 +271,7 @@ describe('WorkflowExecutionContextService', () => {
       application: FlatApplication;
       targetApplicationId: string;
     }) =>
-      buildService().assertRunApplicationCanTriggerStepTargetOrThrow({
+      service.assertRunApplicationCanTriggerStepTargetOrThrow({
         executionContext: { application, authContext },
         targetApplicationId,
         targetLabel: 'Logic function "greet"',

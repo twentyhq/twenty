@@ -6,7 +6,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 
 type ManyToOneRelationsConfig<T extends AllMetadataName> =
   (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[T];
@@ -38,11 +38,12 @@ export const resolveManyToOneRelationIdsToUniversalIdentifiers = <
   ...idToUniversalIdentifierMaps
 }: {
   metadataName: T;
-} & FromEntityToFlatEntityArgs<T>): ResolvedManyToOneRelationUniversalIdentifiers<T> => {
+  entity: object;
+} & EntityManyToOneIdByUniversalIdentifierMaps<T>): ResolvedManyToOneRelationUniversalIdentifiers<T> => {
   const readEntityForeignKey = (
     propertyName: string,
   ): string | null | undefined =>
-    entity[propertyName as keyof typeof entity] as string | null | undefined;
+    (entity as Record<string, string | null | undefined>)[propertyName];
 
   const entityId = readEntityForeignKey('id');
   const resolvedUniversalIdentifierByForeignKey: Record<string, string | null> =

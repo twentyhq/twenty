@@ -1,13 +1,81 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import {
+  NavigationMenuItemType,
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
+
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 const OWNER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
+
+const buildNavigationMenuItem = (
+  userWorkspaceId: string | null,
+): ScalarFlatEntity<NavigationMenuItemEntity> => ({
+  id: 'nav-1',
+  universalIdentifier: 'nav-1',
+  applicationId: 'application-1',
+  workspaceId: 'workspace-1',
+  userWorkspaceId,
+  targetRecordId: null,
+  targetObjectMetadataId: null,
+  viewId: null,
+  type: NavigationMenuItemType.LINK,
+  name: null,
+  link: null,
+  icon: null,
+  color: null,
+  folderId: null,
+  pageLayoutId: null,
+  agentChatChannelId: null,
+  nativePageKey: null,
+  position: 0,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+});
+
+const VIEW_CREATED_BY_OWNER: ScalarFlatEntity<ViewEntity> = {
+  isActive: true,
+  id: 'view-1',
+  universalIdentifier: 'view-1',
+  applicationId: 'application-1',
+  workspaceId: 'workspace-1',
+  name: 'View',
+  objectMetadataId: 'object-metadata-1',
+  type: ViewType.TABLE,
+  key: null,
+  icon: 'IconList',
+  position: 0,
+  isCompact: false,
+  openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+  kanbanAggregateOperation: null,
+  kanbanAggregateOperationFieldMetadataId: null,
+  calendarLayout: null,
+  calendarFieldMetadataId: null,
+  calendarEndFieldMetadataId: null,
+  mainGroupByFieldMetadataId: null,
+  shouldHideEmptyGroups: false,
+  kanbanColumnWidth: null,
+  groupLoadLimit: 10,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  deletedAt: null,
+  anyFieldFilterValue: null,
+  visibility: ViewVisibility.WORKSPACE,
+  isSystemSideEffect: false,
+  overrides: null,
+  createdByUserWorkspaceId: OWNER_USER_WORKSPACE_ID,
+};
 
 describe('MetadataEventPublisher', () => {
   let publisher: MetadataEventPublisher;
@@ -32,8 +100,8 @@ describe('MetadataEventPublisher', () => {
     publisher = module.get<MetadataEventPublisher>(MetadataEventPublisher);
   });
 
-  const publishAndGetFirstEvent = async (batch: object) => {
-    await publisher.publish(batch as unknown as MetadataEventBatch);
+  const publishAndGetFirstEvent = async (batch: MetadataEventBatch) => {
+    await publisher.publish(batch);
 
     return broadcast.mock.calls[0][0].events[0];
   };
@@ -50,7 +118,7 @@ describe('MetadataEventPublisher', () => {
           type: 'created',
           recordId: 'nav-1',
           properties: {
-            after: { id: 'nav-1', userWorkspaceId: OWNER_USER_WORKSPACE_ID },
+            after: buildNavigationMenuItem(OWNER_USER_WORKSPACE_ID),
           },
         },
       ],
@@ -71,10 +139,10 @@ describe('MetadataEventPublisher', () => {
           type: 'updated',
           recordId: 'nav-1',
           properties: {
-            updatedFields: ['name'],
+            updatedFields: [],
             diff: {},
-            before: { id: 'nav-1', userWorkspaceId: OWNER_USER_WORKSPACE_ID },
-            after: { id: 'nav-1', userWorkspaceId: OWNER_USER_WORKSPACE_ID },
+            before: buildNavigationMenuItem(OWNER_USER_WORKSPACE_ID),
+            after: buildNavigationMenuItem(OWNER_USER_WORKSPACE_ID),
           },
         },
       ],
@@ -95,7 +163,7 @@ describe('MetadataEventPublisher', () => {
           type: 'deleted',
           recordId: 'nav-1',
           properties: {
-            before: { id: 'nav-1', userWorkspaceId: OWNER_USER_WORKSPACE_ID },
+            before: buildNavigationMenuItem(OWNER_USER_WORKSPACE_ID),
           },
         },
       ],
@@ -116,7 +184,7 @@ describe('MetadataEventPublisher', () => {
           type: 'created',
           recordId: 'nav-1',
           properties: {
-            after: { id: 'nav-1', userWorkspaceId: null },
+            after: buildNavigationMenuItem(null),
           },
         },
       ],
@@ -137,7 +205,7 @@ describe('MetadataEventPublisher', () => {
           type: 'created',
           recordId: 'nav-1',
           properties: {
-            after: { id: 'nav-1', userWorkspaceId: '' },
+            after: buildNavigationMenuItem(''),
           },
         },
       ],
@@ -158,10 +226,7 @@ describe('MetadataEventPublisher', () => {
           type: 'created',
           recordId: 'view-1',
           properties: {
-            after: {
-              id: 'view-1',
-              createdByUserWorkspaceId: OWNER_USER_WORKSPACE_ID,
-            },
+            after: VIEW_CREATED_BY_OWNER,
           },
         },
       ],

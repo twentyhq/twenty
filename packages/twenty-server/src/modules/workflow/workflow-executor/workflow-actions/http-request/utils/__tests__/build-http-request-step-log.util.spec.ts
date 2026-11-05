@@ -244,7 +244,7 @@ describe('buildHttpRequestStepLog', () => {
           password: 'hunter2',
           credentials: { client_secret: 'oauth-secret', clientId: 'public' },
           tokens: [{ access_token: 'aaa', issuedAt: 1 }],
-        } as unknown as WorkflowHttpRequestActionInput['body'],
+        },
       },
       output: baseOutput,
       durationMs: 1,
@@ -334,7 +334,7 @@ describe('buildHttpRequestStepLog', () => {
         error: {
           code: 'invalid_client',
           client_secret: 'leaked',
-        } as unknown as string,
+        },
         status: 401,
       },
       durationMs: 1,

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { UpdateResult, type Repository } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +9,15 @@ import { type UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-
 import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/upgrade-aware/exceptions/upgrade-unavailable-entity-write.exception';
 
 const logger = new Logger('UpgradeAwareRepositoryProxy');
+
+type UpgradeAwareAvailabilityState = Pick<
+  UpgradeAwareRepositoryState,
+  'getHiddenColumnPropertyNames' | 'isEntityAvailable'
+>;
+
+type UpgradeAwareRepositoryTarget = {
+  metadata: Pick<EntityMetadata, 'relations' | 'targetName'>;
+};
 
 type RepositoryMethodBehavior =
   | {
@@ -111,7 +120,7 @@ const METHODS_THAT_ACCEPT_FIND_OPTIONS = new Set<string>([
 
 const stripUnavailableSelect = (
   entityClass: Function,
-  state: UpgradeAwareRepositoryState,
+  state: UpgradeAwareAvailabilityState,
   options: unknown,
 ): unknown => {
   if (!isDefined(options) || typeof options !== 'object') {
@@ -176,7 +185,7 @@ const buildSkippedUpdateResult = (): UpdateResult => {
 
 const stripUnavailableUpdateValues = (
   entityClass: Function,
-  state: UpgradeAwareRepositoryState,
+  state: UpgradeAwareAvailabilityState,
   values: unknown,
 ): unknown => {
   if (
@@ -214,8 +223,8 @@ const stripUnavailableUpdateValues = (
 };
 
 const stripUnavailableRelations = (
-  metadata: EntityMetadata,
-  state: UpgradeAwareRepositoryState,
+  metadata: UpgradeAwareRepositoryTarget['metadata'],
+  state: UpgradeAwareAvailabilityState,
   options: unknown,
 ): unknown => {
   if (!isDefined(options) || typeof options !== 'object') {
@@ -258,8 +267,8 @@ const stripUnavailableRelations = (
 };
 
 const isRelationAvailable = (
-  metadata: EntityMetadata,
-  state: UpgradeAwareRepositoryState,
+  metadata: UpgradeAwareRepositoryTarget['metadata'],
+  state: UpgradeAwareAvailabilityState,
   relationPropertyName: string,
 ): boolean => {
   const relation = metadata.relations.find(
@@ -293,15 +302,17 @@ const isClassConstructor = (fn: Function): boolean =>
   fn.prototype.constructor === fn &&
   fn.toString().startsWith('class ');
 
-export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
+export const wrapRepositoryWithUpgradeAwareProxy = <
+  TRepository extends UpgradeAwareRepositoryTarget,
+>({
   repository,
   entityClass,
   state,
 }: {
-  repository: Repository<Entity>;
+  repository: TRepository;
   entityClass: Function;
-  state: UpgradeAwareRepositoryState;
-}): Repository<Entity> =>
+  state: UpgradeAwareAvailabilityState;
+}): TRepository =>
   new Proxy(repository, {
     get(target, prop, receiver) {
       const methodName = typeof prop === 'string' ? prop : undefined;
@@ -331,7 +342,7 @@ export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
     },
   });
 
-const handleRepositoryMethodCall = <Entity extends object>({
+const handleRepositoryMethodCall = ({
   target,
   methodName,
   entityClass,
@@ -339,10 +350,10 @@ const handleRepositoryMethodCall = <Entity extends object>({
   behavior,
   args,
 }: {
-  target: Repository<Entity>;
+  target: UpgradeAwareRepositoryTarget;
   methodName: string;
   entityClass: Function;
-  state: UpgradeAwareRepositoryState;
+  state: UpgradeAwareAvailabilityState;
   behavior: RepositoryMethodBehavior;
   args: unknown[];
 }): unknown => {
@@ -400,17 +411,17 @@ const handleRepositoryMethodCall = <Entity extends object>({
   return callRepositoryMethod({ target, methodName, args: rewrittenArgs });
 };
 
-const callRepositoryMethod = <Entity extends object>({
+const callRepositoryMethod = ({
   target,
   methodName,
   args,
 }: {
-  target: Repository<Entity>;
+  target: UpgradeAwareRepositoryTarget;
   methodName: string;
   args: unknown[];
 }): unknown =>
   (
-    target[methodName as keyof Repository<Entity>] as unknown as (
+    target[methodName as keyof UpgradeAwareRepositoryTarget] as unknown as (
       ...callArgs: unknown[]
     ) => unknown
   ).apply(target, args);

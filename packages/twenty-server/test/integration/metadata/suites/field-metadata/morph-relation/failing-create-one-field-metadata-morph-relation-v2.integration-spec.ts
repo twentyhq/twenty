@@ -309,7 +309,8 @@ const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
           targetFieldIcon: 'Icon123',
           targetFieldLabel: 'test',
           targetObjectMetadataId: createdObjectMetadataOpportunityId,
-          type: undefined as unknown as RelationType,
+          // @ts-expect-error an API client can omit the relation type
+          type: undefined,
         },
       ],
     }),

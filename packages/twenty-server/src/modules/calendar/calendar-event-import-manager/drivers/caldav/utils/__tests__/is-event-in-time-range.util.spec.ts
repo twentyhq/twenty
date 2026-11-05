@@ -1,8 +1,6 @@
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
-const event = (startsAt: string, endsAt: string) =>
-  ({ startsAt, endsAt }) as unknown as FetchedCalendarEvent;
+const event = (startsAt: string, endsAt: string) => ({ startsAt, endsAt });
 
 const WINDOW_START = new Date('2026-01-01');
 const WINDOW_END = new Date('2026-12-31');

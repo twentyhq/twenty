@@ -10,13 +10,13 @@ const createMaps = (): FlatEntityMaps<SyncableFlatEntity> =>
 const makeFlatEntity = (
   id: string,
   universalIdentifier: string,
-  applicationId?: string,
-): SyncableFlatEntity =>
-  ({
-    id,
-    universalIdentifier,
-    applicationId,
-  }) as unknown as SyncableFlatEntity;
+  applicationId: string,
+): SyncableFlatEntity => ({
+  id,
+  universalIdentifier,
+  applicationId,
+  workspaceId: 'workspace-id',
+});
 
 describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
   it('should index a new entity by universalIdentifier and id', () => {
@@ -57,19 +57,6 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
     expect(universalIdentifiers).toEqual(['uid-1', 'uid-2']);
     expect(new Set(universalIdentifiers).size).toBe(
       universalIdentifiers?.length,
-    );
-  });
-
-  it('should not index entities that have no applicationId', () => {
-    const flatEntityMapsToMutate = createMaps();
-
-    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: makeFlatEntity('id-1', 'uid-1'),
-      flatEntityMapsToMutate,
-    });
-
-    expect(flatEntityMapsToMutate.universalIdentifiersByApplicationId).toEqual(
-      {},
     );
   });
 

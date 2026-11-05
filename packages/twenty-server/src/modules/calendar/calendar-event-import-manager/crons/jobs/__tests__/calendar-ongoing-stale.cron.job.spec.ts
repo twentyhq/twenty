@@ -1,7 +1,9 @@
-import { type Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
@@ -11,7 +13,7 @@ describe('CalendarOngoingStaleCronJob', () => {
   let messageQueueService: { add: jest.Mock };
   let job: CalendarOngoingStaleCronJob;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     calendarChannelRepository = {
       find: jest
         .fn()
@@ -22,13 +24,26 @@ describe('CalendarOngoingStaleCronJob', () => {
         ]),
     };
     messageQueueService = { add: jest.fn() };
-    job = new CalendarOngoingStaleCronJob(
-      calendarChannelRepository as unknown as Repository<CalendarChannelEntity>,
-      messageQueueService as unknown as MessageQueueService,
-      {
-        captureExceptions: jest.fn(),
-      } as unknown as ExceptionHandlerService,
-    );
+
+    const module = await Test.createTestingModule({
+      providers: [
+        CalendarOngoingStaleCronJob,
+        {
+          provide: getRepositoryToken(CalendarChannelEntity),
+          useValue: calendarChannelRepository,
+        },
+        {
+          provide: getQueueToken(MessageQueue.calendarQueue),
+          useValue: messageQueueService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: { captureExceptions: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    job = module.get(CalendarOngoingStaleCronJob);
   });
 
   it('enqueues recovery once per workspace with a stale channel', async () => {

@@ -5,22 +5,15 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { validateShareWithArgOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
-const userAuthContext = {
-  type: 'user',
-  workspace: { id: 'workspace-1' },
-  workspaceMemberId: 'workspace-member-1',
-} as unknown as WorkspaceAuthContext;
+const userAuthContext: Pick<WorkspaceAuthContext, 'type'> = { type: 'user' };
 
-const apiKeyAuthContext = {
+const apiKeyAuthContext: Pick<WorkspaceAuthContext, 'type'> = {
   type: 'apiKey',
-  workspace: { id: 'workspace-1' },
-  apiKey: { id: 'api-key-1' },
-} as unknown as WorkspaceAuthContext;
+};
 
-const systemAuthContext = {
+const systemAuthContext: Pick<WorkspaceAuthContext, 'type'> = {
   type: 'system',
-  workspace: { id: 'workspace-1' },
-} as unknown as WorkspaceAuthContext;
+};
 
 const OTHER_WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000002';
 const ROLE_ID = '20202020-0000-4000-8000-000000000003';

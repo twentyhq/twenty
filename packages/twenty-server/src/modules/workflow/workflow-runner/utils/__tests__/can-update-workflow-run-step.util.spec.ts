@@ -87,16 +87,17 @@ describe('canUpdateWorkflowRunStep', () => {
   });
 
   it('lets the values of a form step be filled when the stored step still carries a legacy retry flag', () => {
-    const legacyFormStep = {
+    const legacyFormStep: WorkflowFormAction = {
       ...FORM_STEP,
       settings: {
         ...FORM_STEP.settings,
         errorHandlingOptions: {
           ...ERROR_HANDLING_OPTIONS,
+          // @ts-expect-error stored steps can still carry the legacy boolean flag
           retryOnFailure: { value: false },
         },
       },
-    } as unknown as WorkflowFormAction;
+    };
 
     expect(
       canUpdateWorkflowRunStep({

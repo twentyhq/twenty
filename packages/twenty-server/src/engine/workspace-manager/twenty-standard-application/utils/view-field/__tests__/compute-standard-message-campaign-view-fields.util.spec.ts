@@ -1,35 +1,11 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { computeStandardMessageCampaignViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util';
 
 const MESSAGE_CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 
 const buildArgs = () => {
-  const views = Object.fromEntries(
-    Object.entries(MESSAGE_CAMPAIGN.views).map(([viewName, view]) => [
-      viewName,
-      {
-        id: `${viewName}-id`,
-        viewFieldGroups: Object.fromEntries(
-          Object.keys(
-            (view as { viewFieldGroups?: Record<string, unknown> })
-              .viewFieldGroups ?? {},
-          ).map((groupName) => [
-            groupName,
-            { id: `${viewName}-${groupName}-id` },
-          ]),
-        ),
-      },
-    ]),
-  );
-
-  const fields = Object.fromEntries(
-    Object.keys(MESSAGE_CAMPAIGN.fields).map((fieldName) => [
-      fieldName,
-      { id: `${fieldName}-id` },
-    ]),
-  );
-
   const byUniversalIdentifier = Object.fromEntries(
     Object.values(MESSAGE_CAMPAIGN.views).map((view) => [
       view.universalIdentifier,
@@ -40,16 +16,14 @@ const buildArgs = () => {
   return {
     workspaceId: 'workspace-id',
     twentyStandardApplicationId: 'application-id',
-    now: new Date('2026-01-01T00:00:00.000Z'),
-    standardObjectMetadataRelatedEntityIds: {
-      messageCampaign: { views, fields },
-    },
+    now: '2026-01-01T00:00:00.000Z',
+    objectName: 'messageCampaign' as const,
+    standardObjectMetadataRelatedEntityIds:
+      getStandardObjectMetadataRelatedEntityIds(),
     dependencyFlatEntityMaps: {
       flatViewMaps: { byUniversalIdentifier },
     },
-  } as unknown as Parameters<
-    typeof computeStandardMessageCampaignViewFields
-  >[0];
+  };
 };
 
 const collectViewFieldNames = (

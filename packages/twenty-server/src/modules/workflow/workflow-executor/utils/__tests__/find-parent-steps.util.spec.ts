@@ -72,7 +72,12 @@ describe('findParentSteps', () => {
   it('should handle undefined steps gracefully', () => {
     const parent = createMockCodeStep('parent', ['child']);
     const child = createMockCodeStep('child');
-    const steps = [parent, undefined as unknown as WorkflowAction, child];
+    const steps: WorkflowAction[] = [
+      parent,
+      // @ts-expect-error stored workflow steps can hold empty slots
+      undefined,
+      child,
+    ];
 
     const result = findParentSteps({ step: child, steps });
 

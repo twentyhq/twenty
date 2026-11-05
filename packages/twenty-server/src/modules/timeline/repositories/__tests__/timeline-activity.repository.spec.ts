@@ -1,7 +1,9 @@
+import { Test } from '@nestjs/testing';
+
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 import { In } from 'typeorm';
 
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -19,7 +21,7 @@ const TIMELINE_ACTIVITY_TYPE_SNAPSHOT: TimelineActivityTypeSnapshot = {
   frontComponentUniversalIdentifier: null,
 };
 
-const buildTimelineActivityRepository = (
+const buildTimelineActivityRepository = async (
   recentTimelineActivities: Record<string, unknown>[] = [],
 ) => {
   const executeRawQuery = jest.fn().mockResolvedValue([]);
@@ -41,10 +43,17 @@ const buildTimelineActivityRepository = (
         getRepositoryWithoutPermissionChecks: () => workspaceRepository,
         executeRawQuery,
       }),
-  } as unknown as WorkspaceOrmManager;
+  };
+
+  const module = await Test.createTestingModule({
+    providers: [
+      TimelineActivityRepository,
+      { provide: WorkspaceOrmManager, useValue: workspaceOrmManager },
+    ],
+  }).compile();
 
   return {
-    repository: new TimelineActivityRepository(workspaceOrmManager),
+    repository: module.get(TimelineActivityRepository),
     workspaceRepository,
     executeRawQuery,
   };
@@ -55,7 +64,7 @@ describe('TimelineActivityRepository', () => {
     const {
       repository,
       workspaceRepository: { update, insert },
-    } = buildTimelineActivityRepository([
+    } = await buildTimelineActivityRepository([
       {
         id: '20202020-0000-4000-8000-000000000006',
         targetPersonId: RECORD_ID,
@@ -101,7 +110,7 @@ describe('TimelineActivityRepository', () => {
 
   it('locks merge identities in a stable order before reading recent rows', async () => {
     const { repository, workspaceRepository, executeRawQuery } =
-      buildTimelineActivityRepository();
+      await buildTimelineActivityRepository();
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -160,7 +169,7 @@ describe('TimelineActivityRepository', () => {
 
   it('locks and reads recent rows per linked record for linked payloads', async () => {
     const { repository, workspaceRepository, executeRawQuery } =
-      buildTimelineActivityRepository();
+      await buildTimelineActivityRepository();
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -202,7 +211,7 @@ describe('TimelineActivityRepository', () => {
     const {
       repository,
       workspaceRepository: { update, insert },
-    } = buildTimelineActivityRepository([
+    } = await buildTimelineActivityRepository([
       {
         id: '20202020-0000-4000-8000-000000000006',
         targetPersonId: RECORD_ID,

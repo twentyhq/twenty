@@ -213,9 +213,10 @@ describe('shouldSkipIteratorStepExecution', () => {
 
     it('should handle undefined steps gracefully', () => {
       const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
-      const steps = [
+      const steps: WorkflowAction[] = [
         createMockCodeStep('step-1', ['iterator-1']),
-        undefined as unknown as WorkflowAction,
+        // @ts-expect-error stored workflow steps can hold empty slots
+        undefined,
         createMockCodeStep('step-2', ['iterator-1']),
         iteratorStep,
       ];

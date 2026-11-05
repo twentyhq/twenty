@@ -1,6 +1,5 @@
 // oxlint-disable twenty/graphql-resolvers-should-be-guarded
 import {
-  type ArgumentsHost,
   type CanActivate,
   Injectable,
   Module,
@@ -17,6 +16,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
+
+import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
 
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { msg } from '@lingui/core/macro';
@@ -96,6 +97,19 @@ class RootModuleWithAppFilter {}
 })
 class RootModuleWithoutAppFilter {}
 
+const buildFilter = async (exceptionHandlerService: {
+  captureExceptions: jest.Mock;
+}): Promise<UnhandledExceptionFilter> => {
+  const module = await Test.createTestingModule({
+    providers: [
+      UnhandledExceptionFilter,
+      { provide: ExceptionHandlerService, useValue: exceptionHandlerService },
+    ],
+  }).compile();
+
+  return module.get(UnhandledExceptionFilter);
+};
+
 const buildSchema = async (
   rootModule: unknown,
   registerFilterAtBootstrap: boolean,
@@ -108,11 +122,7 @@ const buildSchema = async (
   const app = moduleRef.createNestApplication();
 
   if (registerFilterAtBootstrap) {
-    app.useGlobalFilters(
-      new UnhandledExceptionFilter({
-        captureExceptions: jest.fn(),
-      } as unknown as ExceptionHandlerService),
-    );
+    app.useGlobalFilters(await buildFilter({ captureExceptions: jest.fn() }));
   }
 
   await app.init();
@@ -159,9 +169,11 @@ describe('UnhandledExceptionFilter global registration', () => {
 describe('UnhandledExceptionFilter Sentry capture', () => {
   const captureExceptions = jest.fn();
 
-  const filter = new UnhandledExceptionFilter({
-    captureExceptions,
-  } as unknown as ExceptionHandlerService);
+  let filter: UnhandledExceptionFilter;
+
+  beforeAll(async () => {
+    filter = await buildFilter({ captureExceptions });
+  });
 
   const buildResponse = () => {
     const response = {
@@ -178,9 +190,7 @@ describe('UnhandledExceptionFilter Sentry capture', () => {
   };
 
   const buildHost = (response: ReturnType<typeof buildResponse>) =>
-    ({
-      switchToHttp: () => ({ getResponse: () => response }),
-    }) as unknown as ArgumentsHost;
+    buildExecutionContextMock({ response });
 
   afterEach(() => {
     jest.clearAllMocks();

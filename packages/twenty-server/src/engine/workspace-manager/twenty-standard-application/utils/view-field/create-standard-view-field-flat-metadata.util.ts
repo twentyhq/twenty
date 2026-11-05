@@ -10,6 +10,7 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { type AllStandardObjectViewFieldGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-group-name.type';
 import { type AllStandardObjectViewFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardViewFieldOptions<
@@ -29,7 +30,19 @@ export type CreateStandardViewFieldOptions<
 export type CreateStandardViewFieldArgs<
   O extends AllStandardObjectName = AllStandardObjectName,
   V extends AllStandardObjectViewName<O> = AllStandardObjectViewName<O>,
-> = StandardBuilderArgs<'viewField'> & {
+> = Omit<StandardBuilderArgs<'viewField'>, 'dependencyFlatEntityMaps'> & {
+  dependencyFlatEntityMaps: Partial<
+    Omit<
+      StandardBuilderArgs<'viewField'>['dependencyFlatEntityMaps'],
+      'flatViewMaps'
+    >
+  > & {
+    flatViewMaps: {
+      byUniversalIdentifier: Partial<
+        Record<string, Pick<UniversalFlatView, 'isSystemSideEffect'>>
+      >;
+    };
+  };
   objectName: O;
   context: CreateStandardViewFieldOptions<O, V>;
 };

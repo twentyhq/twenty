@@ -197,9 +197,10 @@ describe('shouldSkipStepExecution', () => {
   });
 
   it('should handle undefined steps gracefully', () => {
-    const steps = [
+    const steps: WorkflowAction[] = [
       createMockCodeStep('step-1', ['step-2']),
-      undefined as unknown as WorkflowAction,
+      // @ts-expect-error stored workflow steps can hold empty slots
+      undefined,
       createMockCodeStep('step-2', []),
     ];
     const stepInfos = {

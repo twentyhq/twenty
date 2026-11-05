@@ -1,5 +1,4 @@
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
-import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -9,11 +8,10 @@ const createMessage = (
 ): MessageWithParticipants =>
   ({ externalId, labelIds }) as MessageWithParticipants;
 
-const createFolder = (
-  externalId: string,
-  isSynced: boolean,
-): MessageFolderEntity =>
-  ({ externalId, isSynced }) as unknown as MessageFolderEntity;
+const createFolder = (externalId: string, isSynced: boolean) => ({
+  externalId,
+  isSynced,
+});
 
 describe('filterGmailMessagesByFolderPolicy', () => {
   describe('ALL_FOLDERS policy', () => {

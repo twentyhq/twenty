@@ -14,7 +14,23 @@ import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/a
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
 
-const getUserSessionVariant = (req: Request): UserSessionVariant => {
+export type WorkspaceAuthContextRequest = Pick<
+  Request,
+  | 'agentId'
+  | 'apiKey'
+  | 'application'
+  | 'impersonationContext'
+  | 'tokenType'
+  | 'user'
+  | 'userWorkspaceId'
+  | 'workspace'
+  | 'workspaceMember'
+  | 'workspaceMemberId'
+>;
+
+const getUserSessionVariant = (
+  req: WorkspaceAuthContextRequest,
+): UserSessionVariant => {
   if (req.tokenType === JwtTokenTypeEnum.PLAYGROUND) {
     return 'playground';
   }
@@ -25,7 +41,7 @@ const getUserSessionVariant = (req: Request): UserSessionVariant => {
 };
 
 export const buildWorkspaceAuthContextFromRequest = (
-  req: Request,
+  req: WorkspaceAuthContextRequest,
 ): WorkspaceAuthContext => {
   if (isDefined(req.apiKey)) {
     return buildApiKeyAuthContext({

@@ -1,4 +1,6 @@
 import { type ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { Test } from '@nestjs/testing';
 
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -9,22 +11,24 @@ describe('McpAuthGuard', () => {
 
   const mockSetHeader = jest.fn();
   const buildContext = (host = 'crm.example.com'): ExecutionContext =>
-    ({
-      switchToHttp: () => ({
-        getResponse: () => ({ setHeader: mockSetHeader }),
-        getRequest: () => ({
-          protocol: 'https',
-          get: (name: string) => (name === 'host' ? host : undefined),
-        }),
-      }),
-    }) as unknown as ExecutionContext;
+    new ExecutionContextHost([
+      {
+        protocol: 'https',
+        get: (name: string) => (name === 'host' ? host : undefined),
+      },
+      { setHeader: mockSetHeader },
+    ]);
 
-  beforeEach(() => {
-    jwtAuthGuard = {
-      canActivate: jest.fn(),
-    } as unknown as jest.Mocked<JwtAuthGuard>;
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        McpAuthGuard,
+        { provide: JwtAuthGuard, useValue: { canActivate: jest.fn() } },
+      ],
+    }).compile();
 
-    guard = new McpAuthGuard(jwtAuthGuard);
+    guard = module.get(McpAuthGuard);
+    jwtAuthGuard = module.get(JwtAuthGuard);
     mockSetHeader.mockClear();
   });
 

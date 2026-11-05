@@ -5,6 +5,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type WorkspaceAuthContextRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 
 import { WorkspaceAuthContextMiddleware } from '../workspace-auth-context.middleware';
 
@@ -47,11 +48,12 @@ describe('WorkspaceAuthContextMiddleware', () => {
     mockNext = jest.fn();
   });
 
-  const buildRequest = (overrides: Partial<Request> = {}): Request =>
-    ({
-      workspace: mockWorkspace,
-      ...overrides,
-    }) as unknown as Request;
+  const buildRequest = (
+    overrides: WorkspaceAuthContextRequest = {},
+  ): WorkspaceAuthContextRequest => ({
+    workspace: mockWorkspace,
+    ...overrides,
+  });
 
   it('should call next without auth context when workspace is not defined', () => {
     const req = buildRequest({ workspace: undefined });

@@ -1,4 +1,4 @@
-import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,7 +37,7 @@ const buildRestrictedFieldNames = ({
     ),
   );
 
-const omitFieldNames = <TEvent extends ObjectRecordEvent>({
+const omitFieldNames = <TEvent extends ObjectRecordBaseEvent>({
   event,
   restrictedFieldNames,
 }: {
@@ -61,7 +61,7 @@ const omitFieldNames = <TEvent extends ObjectRecordEvent>({
 };
 
 export const omitRestrictedFieldsFromEvent = <
-  TEvent extends ObjectRecordEvent,
+  TEvent extends ObjectRecordBaseEvent,
 >({
   event,
   objectMetadata,

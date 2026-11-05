@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  type RecordGqlOperationFilter,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -250,8 +246,9 @@ describe('renderRowLevelPermissionFilterToSql', () => {
       renderRowLevelPermissionFilterToSql({
         ...baseArgs,
         recordFilter: {
+          // @ts-expect-error a stored predicate can name a sub field the filter type does not know
           annualRecurringRevenue: { bogus: { eq: 1 } },
-        } as unknown as RecordGqlOperationFilter,
+        },
       }),
     ).toThrow('is not a sub field of composite type');
   });

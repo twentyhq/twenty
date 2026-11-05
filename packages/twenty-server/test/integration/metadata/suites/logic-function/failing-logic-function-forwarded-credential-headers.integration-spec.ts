@@ -120,7 +120,8 @@ const FAILING_FORWARDED_CREDENTIAL_HEADERS_TEST_CASES: EachTestingContext<TestCo
           buildExistingLogicFunction(['x-custom-header']),
           buildLogicFunction({
             httpRouteTriggerSettings: buildHttpRouteTriggerSettings(
-              'authorization' as unknown as string[],
+              // @ts-expect-error a manifest is plain JSON, so this can be a string
+              'authorization',
             ),
           }),
         ]),
@@ -132,9 +133,10 @@ const FAILING_FORWARDED_CREDENTIAL_HEADERS_TEST_CASES: EachTestingContext<TestCo
         manifest: buildManifest([
           buildExistingLogicFunction(['x-custom-header']),
           buildLogicFunction({
-            httpRouteTriggerSettings: buildHttpRouteTriggerSettings({
-              0: 'authorization',
-            } as unknown as string[]),
+            httpRouteTriggerSettings: buildHttpRouteTriggerSettings(
+              // @ts-expect-error a manifest is plain JSON, so this can be an object
+              { 0: 'authorization' },
+            ),
           }),
         ]),
       },
@@ -149,7 +151,8 @@ const FAILING_FORWARDED_CREDENTIAL_HEADERS_TEST_CASES: EachTestingContext<TestCo
               'x-custom-header',
             ]),
             serverRouteTriggerSettings: {
-              forwardedRequestHeaders: [null] as unknown as string[],
+              // @ts-expect-error a manifest is plain JSON, so this can hold null
+              forwardedRequestHeaders: [null],
             },
           }),
         ]),

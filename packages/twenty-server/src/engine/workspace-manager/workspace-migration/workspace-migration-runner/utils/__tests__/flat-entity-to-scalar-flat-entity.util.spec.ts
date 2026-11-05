@@ -84,19 +84,27 @@ describe('flatEntityToScalarFlatEntity', () => {
   it('should preserve secret application variable value instead of masking it', () => {
     const encryptedValue = 'dGVzdC1lbmNyeXB0ZWQtdmFsdWUtd2l0aC1pdi1wcmVmaXg=';
 
-    const flatEntity = {
+    const flatEntity: FlatApplicationVariable = {
       id: 'app-var-id',
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
       universalIdentifier: 'app-var-universal-id',
       applicationUniversalIdentifier: 'app-universal-id',
       key: 'API_SECRET',
+      // @ts-expect-error the util only reads the value, so the fixture skips real envelope encryption
       value: encryptedValue,
       description: 'An API secret key',
       isSecret: true,
+      label: 'API secret',
+      type: FieldMetadataType.TEXT,
+      defaultValue: null,
+      options: null,
+      isDeprecated: false,
+      isRequired: false,
+      scope: 'WORKSPACE',
       createdAt: '2025-01-01T00:00:00.000Z',
       updatedAt: '2025-01-01T00:00:00.000Z',
-    } as unknown as FlatApplicationVariable;
+    };
 
     const result = flatEntityToScalarFlatEntity({
       metadataName: 'applicationVariable',
@@ -109,19 +117,27 @@ describe('flatEntityToScalarFlatEntity', () => {
   it('should preserve non-secret application variable value', () => {
     const plainValue = 'https://example.com';
 
-    const flatEntity = {
+    const flatEntity: FlatApplicationVariable = {
       id: 'app-var-id',
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
       universalIdentifier: 'app-var-universal-id',
       applicationUniversalIdentifier: 'app-universal-id',
       key: 'PUBLIC_URL',
+      // @ts-expect-error the util only reads the value, so the fixture skips real envelope encryption
       value: plainValue,
       description: 'A public URL',
       isSecret: false,
+      label: 'Public URL',
+      type: FieldMetadataType.TEXT,
+      defaultValue: null,
+      options: null,
+      isDeprecated: false,
+      isRequired: false,
+      scope: 'WORKSPACE',
       createdAt: '2025-01-01T00:00:00.000Z',
       updatedAt: '2025-01-01T00:00:00.000Z',
-    } as unknown as FlatApplicationVariable;
+    };
 
     const result = flatEntityToScalarFlatEntity({
       metadataName: 'applicationVariable',

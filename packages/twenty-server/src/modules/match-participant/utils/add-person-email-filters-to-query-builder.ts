@@ -1,17 +1,26 @@
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type ObjectLiteral } from 'typeorm';
 
-export interface AddPersonEmailFiltersToQueryBuilderOptions {
-  queryBuilder: WorkspaceSelectQueryBuilder;
+type PersonEmailFilterableQueryBuilder<TQueryBuilder> = {
+  where: (where: string, parameters: ObjectLiteral) => TQueryBuilder;
+  andWhere: (where: string, parameters: ObjectLiteral) => TQueryBuilder;
+  orWhere: (where: string, parameters: ObjectLiteral) => TQueryBuilder;
+  withDeleted: () => TQueryBuilder;
+};
+
+export type AddPersonEmailFiltersToQueryBuilderOptions<TQueryBuilder> = {
+  queryBuilder: TQueryBuilder;
   emails: string[];
   excludePersonIds?: string[];
-}
+};
 
 // A query builder rather than find(): matching additional emails needs the jsonb @> operator
-export function addPersonEmailFiltersToQueryBuilder({
+export function addPersonEmailFiltersToQueryBuilder<
+  TQueryBuilder extends PersonEmailFilterableQueryBuilder<TQueryBuilder>,
+>({
   queryBuilder,
   emails,
   excludePersonIds = [],
-}: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilder {
+}: AddPersonEmailFiltersToQueryBuilderOptions<TQueryBuilder>): TQueryBuilder {
   const normalizedEmails = emails.map((email) => email.toLowerCase());
 
   queryBuilder = queryBuilder

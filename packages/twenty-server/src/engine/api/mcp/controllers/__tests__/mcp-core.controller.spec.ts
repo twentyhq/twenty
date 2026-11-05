@@ -77,7 +77,7 @@ describe('McpCoreController', () => {
     const mockHttpRequest = {
       workspace: mockWorkspace,
       apiKey: mockApiKey,
-    } as unknown as import('express').Request;
+    };
     const mockAuthContext = {
       type: 'apiKey',
       workspace: mockWorkspace,
@@ -89,13 +89,14 @@ describe('McpCoreController', () => {
       setHeader: jest.fn(),
       write: jest.fn(),
       end: jest.fn(),
-    } as unknown as import('express').Response;
+      headersSent: false,
+    };
 
     beforeEach(() => {
-      (mockRes.status as jest.Mock).mockClear();
-      (mockRes.setHeader as jest.Mock).mockClear();
-      (mockRes.write as jest.Mock).mockClear();
-      (mockRes.end as jest.Mock).mockClear();
+      mockRes.status.mockClear();
+      mockRes.setHeader.mockClear();
+      mockRes.write.mockClear();
+      mockRes.end.mockClear();
     });
 
     it('should call mcpProtocolService.handleMCPCoreQuery with correct parameters', async () => {

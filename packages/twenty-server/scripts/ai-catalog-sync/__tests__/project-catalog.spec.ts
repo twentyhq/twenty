@@ -193,15 +193,16 @@ describe('projectCatalog', () => {
   });
 
   it('cannot restate what a model is, only which models a route serves', () => {
-    const spec = {
+    const spec: CatalogSpec = {
       providers: [
         {
           name: 'azure-foundry',
           npm: '@ai-sdk/azure',
+          // @ts-expect-error the spec is read from JSON without validation
           models: [{ model: 'gpt-5.6-luna', modalities: ['image'] }],
         },
       ],
-    } as unknown as CatalogSpec;
+    };
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 

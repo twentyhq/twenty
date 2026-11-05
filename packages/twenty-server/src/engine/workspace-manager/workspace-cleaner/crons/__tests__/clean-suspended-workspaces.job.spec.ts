@@ -1,11 +1,12 @@
-import { type Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
-import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
-import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
-import { type CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 jest.mock(
   'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service',
@@ -31,14 +32,29 @@ describe('CleanSuspendedWorkspacesJob', () => {
     tryWithLock: jest.fn(),
   };
 
-  const createJob = () =>
-    new CleanSuspendedWorkspacesJob(
-      cleanerWorkspaceService as unknown as CleanerWorkspaceService,
-      workspaceRepository as unknown as Repository<WorkspaceEntity>,
-      workspaceService as unknown as WorkspaceService,
-      applicationUninstallService as unknown as ApplicationUninstallService,
-      postgresAdvisoryLockService as unknown as PostgresAdvisoryLockService,
-    );
+  const createJob = async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        CleanSuspendedWorkspacesJob,
+        { provide: CleanerWorkspaceService, useValue: cleanerWorkspaceService },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: workspaceRepository,
+        },
+        { provide: WorkspaceService, useValue: workspaceService },
+        {
+          provide: ApplicationUninstallService,
+          useValue: applicationUninstallService,
+        },
+        {
+          provide: PostgresAdvisoryLockService,
+          useValue: postgresAdvisoryLockService,
+        },
+      ],
+    }).compile();
+
+    return module.get(CleanSuspendedWorkspacesJob);
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -60,7 +76,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
       acquired: false,
     });
 
-    await createJob().handle();
+    await (await createJob()).handle();
 
     expect(workspaceRepository.find).not.toHaveBeenCalled();
     expect(
@@ -76,7 +92,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
       }),
     );
 
-    await createJob().handle();
+    await (await createJob()).handle();
 
     expect(workspaceRepository.find).toHaveBeenNthCalledWith(1, {
       select: ['id'],
@@ -108,7 +124,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
       }),
     );
 
-    await createJob().handle();
+    await (await createJob()).handle();
 
     expect(
       applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks,
@@ -146,7 +162,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
       }),
     );
 
-    await createJob().handle();
+    await (await createJob()).handle();
 
     expect(
       workspaceService.enqueueWorkspaceDeletionApplicationUninstall,

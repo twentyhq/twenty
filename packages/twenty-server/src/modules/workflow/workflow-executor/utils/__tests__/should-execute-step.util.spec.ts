@@ -296,31 +296,12 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should handle undefined parent steps gracefully', () => {
-    const stepsWithUndefined = [
-      {
-        id: 'step-1',
-        type: WorkflowActionType.CODE,
-        settings: {
-          errorHandlingOptions: {
-            continueOnFailure: { value: false },
-            retryOnFailure: { value: 0 },
-          },
-        },
-        nextStepIds: ['step-3'],
-      },
-      undefined as unknown as WorkflowAction,
-      {
-        id: 'step-3',
-        type: WorkflowActionType.SEND_EMAIL,
-        settings: {
-          errorHandlingOptions: {
-            continueOnFailure: { value: false },
-            retryOnFailure: { value: 0 },
-          },
-        },
-        nextStepIds: [],
-      },
-    ] as WorkflowAction[];
+    const stepsWithUndefined: WorkflowAction[] = [
+      createMockCodeStep('step-1', ['step-3']),
+      // @ts-expect-error stored workflow steps can hold empty slots
+      undefined,
+      createMockCodeStep('step-3'),
+    ];
 
     const stepInfos = {
       'step-1': {

@@ -1,7 +1,6 @@
-import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+import { Test } from '@nestjs/testing';
 
-import { type FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { WorkspaceMemberAvatarFileDeletionListener } from 'src/modules/workspace-member/listeners/workspace-member-avatar-file-deletion.listener';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -16,33 +15,37 @@ const buildUpdateBatch = ({
   after,
   updatedFields,
 }: {
-  before: Partial<WorkspaceMemberWorkspaceEntity>;
-  after: Partial<WorkspaceMemberWorkspaceEntity>;
+  before: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl'>;
+  after: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl'> &
+    Partial<WorkspaceMemberWorkspaceEntity>;
   updatedFields: string[];
-}): WorkspaceEventBatch<
-  ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
-> =>
-  ({
-    workspaceId: WORKSPACE_ID,
-    events: [
-      {
-        properties: { before, after, updatedFields, diff: {} },
-      },
-    ],
-  }) as unknown as WorkspaceEventBatch<
-    ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
-  >;
+}) => ({
+  workspaceId: WORKSPACE_ID,
+  events: [
+    {
+      properties: { before, after, updatedFields, diff: {} },
+    },
+  ],
+});
 
 describe('WorkspaceMemberAvatarFileDeletionListener', () => {
   let listener: WorkspaceMemberAvatarFileDeletionListener;
   let deleteCorePicture: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     deleteCorePicture = jest.fn().mockResolvedValue(undefined);
 
-    listener = new WorkspaceMemberAvatarFileDeletionListener({
-      deleteCorePicture,
-    } as unknown as FileCorePictureService);
+    const module = await Test.createTestingModule({
+      providers: [
+        WorkspaceMemberAvatarFileDeletionListener,
+        {
+          provide: FileCorePictureService,
+          useValue: { deleteCorePicture },
+        },
+      ],
+    }).compile();
+
+    listener = module.get(WorkspaceMemberAvatarFileDeletionListener);
   });
 
   it('does not delete the avatar file when avatarUrl is unchanged', async () => {

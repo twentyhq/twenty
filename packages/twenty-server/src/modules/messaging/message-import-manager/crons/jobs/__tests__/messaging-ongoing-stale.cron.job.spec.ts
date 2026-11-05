@@ -1,7 +1,9 @@
-import { type Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
@@ -11,7 +13,7 @@ describe('MessagingOngoingStaleCronJob', () => {
   let messageQueueService: { add: jest.Mock };
   let job: MessagingOngoingStaleCronJob;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     messageChannelRepository = {
       find: jest
         .fn()
@@ -22,13 +24,26 @@ describe('MessagingOngoingStaleCronJob', () => {
         ]),
     };
     messageQueueService = { add: jest.fn() };
-    job = new MessagingOngoingStaleCronJob(
-      messageChannelRepository as unknown as Repository<MessageChannelEntity>,
-      messageQueueService as unknown as MessageQueueService,
-      {
-        captureExceptions: jest.fn(),
-      } as unknown as ExceptionHandlerService,
-    );
+
+    const module = await Test.createTestingModule({
+      providers: [
+        MessagingOngoingStaleCronJob,
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: messageChannelRepository,
+        },
+        {
+          provide: getQueueToken(MessageQueue.messagingQueue),
+          useValue: messageQueueService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: { captureExceptions: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    job = module.get(MessagingOngoingStaleCronJob);
   });
 
   it('enqueues recovery once per workspace with a stale channel', async () => {

@@ -3,9 +3,6 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type DataSource, type Repository, type UpdateResult } from 'typeorm';
-import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
-
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -29,11 +26,11 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
       givenTableName: 'unavailableEntity',
       schema: 'core',
       columns: [],
-    } as unknown as EntityMetadata;
+    };
 
     const dataSource = {
       entityMetadatas: [metadata],
-    } as unknown as DataSource;
+    };
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -62,7 +59,10 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
     await adapter.refresh();
 
     const find = jest.fn().mockResolvedValue([{ id: 1 }]);
-    const repository = { find } as unknown as Repository<UnavailableEntity>;
+    const repository = {
+      find,
+      metadata: { relations: [], targetName: UnavailableEntity.name },
+    };
 
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
@@ -82,24 +82,20 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         relations: [],
         targetName: EntityWithHiddenColumn.name,
       },
-    } as unknown as Repository<EntityWithHiddenColumn>;
+    };
     const state = {
       getHiddenColumnPropertyNames: jest
         .fn()
         .mockReturnValue(new Set(['introducedColumn'])),
       isEntityAvailable: jest.fn().mockReturnValue(true),
-    } as unknown as UpgradeAwareRepositoryState;
+    };
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: EntityWithHiddenColumn,
       state,
     });
 
-    await (
-      wrapped.find as unknown as (options: {
-        select: string[];
-      }) => Promise<unknown>
-    )({
+    await wrapped.find({
       select: ['id', 'introducedColumn', 'unknownTypo'],
     });
 
@@ -117,13 +113,13 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
           relations: [],
           targetName: EntityWithHiddenColumn.name,
         },
-      } as unknown as Repository<EntityWithHiddenColumn>;
+      };
       const state = {
         getHiddenColumnPropertyNames: jest
           .fn()
           .mockReturnValue(new Set(hiddenColumnPropertyNames)),
         isEntityAvailable: jest.fn().mockReturnValue(true),
-      } as unknown as UpgradeAwareRepositoryState;
+      };
 
       return {
         update,
@@ -131,12 +127,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
           repository,
           entityClass: EntityWithHiddenColumn,
           state,
-        }) as unknown as {
-          update: (
-            criteria: unknown,
-            values: Record<string, unknown>,
-          ) => Promise<UpdateResult>;
-        },
+        }),
       };
     };
 
@@ -181,24 +172,20 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         relations: [],
         targetName: EntityWithHiddenColumn.name,
       },
-    } as unknown as Repository<EntityWithHiddenColumn>;
+    };
     const state = {
       getHiddenColumnPropertyNames: jest
         .fn()
         .mockReturnValue(new Set(['introducedColumn'])),
       isEntityAvailable: jest.fn().mockReturnValue(true),
-    } as unknown as UpgradeAwareRepositoryState;
+    };
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: EntityWithHiddenColumn,
       state,
     });
 
-    await (
-      wrapped.find as unknown as (options: {
-        select: Record<string, boolean>;
-      }) => Promise<unknown>
-    )({
+    await wrapped.find({
       select: {
         id: true,
         introducedColumn: true,

@@ -1,17 +1,19 @@
+import { Test } from '@nestjs/testing';
+
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
+import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
-import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
@@ -34,14 +36,29 @@ describe('RunWorkflowJob', () => {
     ),
   };
 
-  const job = new RunWorkflowJob(
-    {} as WorkflowVersionCoreSyncService,
-    {} as CodeStepBuildService,
-    workflowExecutorWorkspaceService as unknown as WorkflowExecutorWorkspaceService,
-    workflowRunWorkspaceService as unknown as WorkflowRunWorkspaceService,
-    {} as MetricsService,
-    workspaceOrmManager as unknown as WorkspaceOrmManager,
-  );
+  let job: RunWorkflowJob;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        RunWorkflowJob,
+        { provide: WorkflowVersionCoreSyncService, useValue: {} },
+        { provide: CodeStepBuildService, useValue: {} },
+        {
+          provide: WorkflowExecutorWorkspaceService,
+          useValue: workflowExecutorWorkspaceService,
+        },
+        {
+          provide: WorkflowRunWorkspaceService,
+          useValue: workflowRunWorkspaceService,
+        },
+        { provide: MetricsService, useValue: {} },
+        { provide: WorkspaceOrmManager, useValue: workspaceOrmManager },
+      ],
+    }).compile();
+
+    job = await module.resolve(RunWorkflowJob);
+  });
 
   const completeAwaitedStep = () =>
     job.handle({

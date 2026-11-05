@@ -1,16 +1,20 @@
+import { Test } from '@nestjs/testing';
+
 import { type ObjectRecordUpsertEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { EntityEventsToDbListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/entity-events-to-db.listener';
-import { type WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { type ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type TimelineActivityRoutingPlanService } from 'src/modules/timeline/services/timeline-activity-routing-plan.service';
+import { TimelineActivityRoutingPlanService } from 'src/modules/timeline/services/timeline-activity-routing-plan.service';
 
 const WORKSPACE_ID = 'workspace-id';
 
@@ -34,38 +38,70 @@ const buildFlatAgentMaps = (eventName: string) =>
     flatEntityMaps: createEmptyFlatEntityMaps(),
   });
 
-const UPSERT_BATCH_EVENT = {
+const UPSERT_BATCH_EVENT: WorkspaceEventBatch<ObjectRecordUpsertEvent> = {
   name: 'company.upserted',
   workspaceId: WORKSPACE_ID,
-  objectMetadata: { id: 'object-id', nameSingular: 'company' },
+  objectMetadata: getFlatObjectMetadataMock({
+    id: 'object-id',
+    universalIdentifier: 'object-id',
+    nameSingular: 'company',
+  }),
   events: [],
-} as unknown as WorkspaceEventBatch<ObjectRecordUpsertEvent>;
+};
 
-const buildListener = (triggerEventName: string) => {
+const buildListener = async (triggerEventName: string) => {
   const triggerQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const otherQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const flatAgentMaps = buildFlatAgentMaps(triggerEventName);
 
-  const listener = new EntityEventsToDbListener(
-    otherQueueService as unknown as MessageQueueService,
-    otherQueueService as unknown as MessageQueueService,
-    otherQueueService as unknown as MessageQueueService,
-    triggerQueueService as unknown as MessageQueueService,
-    { publish: jest.fn() } as unknown as ObjectRecordEventPublisher,
-    {} as TimelineActivityRoutingPlanService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({ flatAgentMaps }),
-    } as unknown as WorkspaceCacheService,
-    { isEnabled: () => true } as unknown as WorkspaceEventSinkService,
-  );
+  const module = await Test.createTestingModule({
+    providers: [
+      EntityEventsToDbListener,
+      {
+        provide: getQueueToken(MessageQueue.entityEventsToDbQueue),
+        useValue: otherQueueService,
+      },
+      {
+        provide: getQueueToken(MessageQueue.eventLogQueue),
+        useValue: otherQueueService,
+      },
+      {
+        provide: getQueueToken(MessageQueue.webhookQueue),
+        useValue: otherQueueService,
+      },
+      {
+        provide: getQueueToken(MessageQueue.triggerQueue),
+        useValue: triggerQueueService,
+      },
+      {
+        provide: ObjectRecordEventPublisher,
+        useValue: { publish: jest.fn() },
+      },
+      { provide: TimelineActivityRoutingPlanService, useValue: {} },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({ flatAgentMaps }),
+        },
+      },
+      {
+        provide: WorkspaceEventSinkService,
+        useValue: { isEnabled: () => true },
+      },
+    ],
+  }).compile();
 
-  return { listener, triggerQueueService, otherQueueService };
+  return {
+    listener: module.get(EntityEventsToDbListener),
+    triggerQueueService,
+    otherQueueService,
+  };
 };
 
 describe('EntityEventsToDbListener', () => {
   it('should dispatch upsert events to agents watching them', async () => {
     const { listener, triggerQueueService, otherQueueService } =
-      buildListener('company.upserted');
+      await buildListener('company.upserted');
 
     await listener.handleUpsert(UPSERT_BATCH_EVENT);
 
@@ -82,26 +118,27 @@ describe('EntityEventsToDbListener', () => {
   });
 
   it('should not dispatch timeline activity upserts', async () => {
-    const { listener, triggerQueueService } = buildListener(
+    const { listener, triggerQueueService } = await buildListener(
       'timelineActivity.upserted',
     );
 
     await listener.handleUpsert({
       ...UPSERT_BATCH_EVENT,
       name: 'timelineActivity.upserted',
-      objectMetadata: {
+      objectMetadata: getFlatObjectMetadataMock({
         id: 'object-id',
         nameSingular: 'timelineActivity',
         universalIdentifier:
           STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-      },
-    } as unknown as WorkspaceEventBatch<ObjectRecordUpsertEvent>);
+      }),
+    });
 
     expect(triggerQueueService.add).not.toHaveBeenCalled();
   });
 
   it('should not dispatch upsert events when no agent watches them', async () => {
-    const { listener, triggerQueueService } = buildListener('company.created');
+    const { listener, triggerQueueService } =
+      await buildListener('company.created');
 
     await listener.handleUpsert(UPSERT_BATCH_EVENT);
 

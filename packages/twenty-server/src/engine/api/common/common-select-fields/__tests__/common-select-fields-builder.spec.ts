@@ -15,6 +15,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('CommonSelectFieldsBuilder', () => {
   let handler: CommonSelectFieldsBuilder;
@@ -69,14 +70,13 @@ describe('CommonSelectFieldsBuilder', () => {
       workspaceId: 'workspace-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       label: overrides.name,
       settings: null,
       relationTargetObjectMetadataId: null,
@@ -91,7 +91,7 @@ describe('CommonSelectFieldsBuilder', () => {
       fieldIds: string[];
     },
   ): FlatObjectMetadata =>
-    ({
+    getFlatObjectMetadataMock({
       workspaceId: 'workspace-id',
       namePlural: `${overrides.nameSingular}s`,
       labelSingular: overrides.nameSingular,
@@ -99,16 +99,15 @@ describe('CommonSelectFieldsBuilder', () => {
       isRemote: false,
       isActive: true,
       isSystem: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: overrides.id,
       indexMetadataIds: [],
       viewIds: [],
-      applicationId: null,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       ...overrides,
-    }) as unknown as FlatObjectMetadata;
+    });
 
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],

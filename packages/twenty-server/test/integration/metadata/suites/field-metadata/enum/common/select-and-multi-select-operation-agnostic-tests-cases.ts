@@ -7,6 +7,22 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+const OPTION_WITHOUT_LABEL: FieldMetadataComplexOption = {
+  // @ts-expect-error an API client can omit the option label
+  label: undefined,
+  value: 'OPTION_1',
+  color: 'green',
+  position: 1,
+};
+
+const OPTION_WITHOUT_VALUE: FieldMetadataComplexOption = {
+  label: 'Option 1',
+  // @ts-expect-error an API client can omit the option value
+  value: undefined,
+  color: 'green',
+  position: 1,
+};
+
 const stringFields: (keyof FieldMetadataComplexOption)[] = [
   'id',
   'label',
@@ -182,14 +198,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
         title: 'should fail with undefined option label',
         context: {
           input: {
-            options: [
-              {
-                label: undefined as unknown as string,
-                value: 'OPTION_1',
-                color: 'green',
-                position: 1,
-              },
-            ],
+            options: [OPTION_WITHOUT_LABEL],
           },
         },
       },
@@ -229,14 +238,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
         title: 'should fail with undefined option value',
         context: {
           input: {
-            options: [
-              {
-                label: 'Option 1',
-                value: undefined as unknown as string,
-                color: 'green',
-                position: 1,
-              },
-            ],
+            options: [OPTION_WITHOUT_VALUE],
           },
         },
       },

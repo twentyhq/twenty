@@ -27,7 +27,10 @@ import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
+import {
+  buildWorkspaceAuthContextFromRequest,
+  type WorkspaceAuthContextRequest,
+} from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -82,8 +85,14 @@ export class McpCoreController {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
-    @Req() request: Request,
-    @Res({ passthrough: true }) res: Response,
+    @Req()
+    request: WorkspaceAuthContextRequest &
+      Pick<Request, 'mcpMethod' | 'mcpToolName'>,
+    @Res({ passthrough: true })
+    res: Pick<
+      Response,
+      'status' | 'setHeader' | 'write' | 'end' | 'headersSent'
+    >,
     @Query('mode') mode?: string,
   ) {
     const { method: mcpMethod, toolName: mcpToolName } =

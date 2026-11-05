@@ -1,14 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordInput } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
+type RequestingAuthContext = Pick<WorkspaceAuthContext, 'type'> & {
+  application?: { id: string };
+};
+
 const getRequestingApplicationId = (
-  authContext: WorkspaceAuthContext,
+  authContext: RequestingAuthContext,
 ): string | undefined => {
-  if (isApplicationAuthContext(authContext) || isUserAuthContext(authContext)) {
+  if (authContext.type === 'application' || authContext.type === 'user') {
     return authContext.application?.id;
   }
 
@@ -19,7 +21,7 @@ export const stampCallRecordingApplicationId = ({
   authContext,
   records,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: RequestingAuthContext;
   records: RecordInput[];
 }): RecordInput[] => {
   const applicationId = getRequestingApplicationId(authContext);
