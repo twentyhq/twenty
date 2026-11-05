@@ -3,6 +3,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 type AgentHistoryStorageExceptionCode =
   | 'INVALID_WORKSPACE'
+  | 'OBJECT_METADATA_NOT_FOUND'
   | 'RECORD_NOT_FOUND';
 
 export class AgentHistoryStorageException extends CustomException<AgentHistoryStorageExceptionCode> {
