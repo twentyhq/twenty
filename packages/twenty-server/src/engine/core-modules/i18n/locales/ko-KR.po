@@ -1063,6 +1063,16 @@ msgstr "워크스페이스 멤버가 소유한 AI 채팅 스레드"
 msgid "AI component builder is disabled."
 msgstr "AI 컴포넌트 빌더가 비활성화되어 있습니다."
 
+#. js-lingui-id: 1G2GHA
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: gt0M4i
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not enabled for this workspace."
+msgstr ""
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -3025,6 +3035,11 @@ msgstr "클레임 토큰"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "이 서버에서는 소유권 등록 기능이 설정되어 있지 않습니다. 관리자에게 GitHub OAuth 앱을 구성해 달라고 요청하세요."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr ""
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9339,6 +9354,11 @@ msgstr "새 워크스페이스 설정이 비활성화되어 있습니다"
 msgid "No"
 msgstr "아니요"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr ""
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -14176,6 +14196,11 @@ msgstr "고정된 다이렉트 메시지 쌍의 두 번째 멤버"
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "선택한 모델은 관리자가 비활성화했습니다."
+
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr ""
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
