@@ -1,3 +1,4 @@
+import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -142,6 +143,26 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
+    }
+
+    for (const flatFieldMetadata of Object.values(
+      allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(flatFieldMetadata)) continue;
+
+      for (const universalFlatFieldMetadataOption of buildUniversalFlatFieldMetadataOptionsForField(
+        {
+          universalFlatFieldMetadata: flatFieldMetadata,
+          applicationUniversalIdentifier,
+          now,
+        },
+      )) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: universalFlatFieldMetadataOption,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+        });
+      }
     }
 
     const indexCountByObjectUniversalIdentifier = new Map<string, number>();
