@@ -1492,6 +1492,48 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     });
   });
 
+  const findRecordsSortedBy = (gqlOperationOrderBy: unknown[]) =>
+    createRecordStep({
+      name: 'Search Records',
+      type: 'FIND_RECORDS',
+      settings: {
+        outputSchema: {},
+        errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+        input: {
+          objectName: 'ticket',
+          limit: 5,
+          orderBy: { gqlOperationOrderBy },
+        },
+      },
+    });
+
+  it('exports a sort written through the API as record sorts that apply back to the same order', () => {
+    const { steps } = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [findRecordsSortedBy([{ status: 'DescNullsLast' }])],
+    });
+
+    expect(steps[0]?.input).toMatchObject({
+      orderBy: {
+        recordSorts: [
+          {
+            fieldMetadataUniversalIdentifier: STATUS_FIELD_ID,
+            direction: 'DESC',
+          },
+        ],
+      },
+    });
+  });
+
+  it('refuses a sort written through the API that record sorts cannot express', () => {
+    expect(() =>
+      exportBuilderVersion({
+        triggers: [recordCreatedTrigger()],
+        steps: [findRecordsSortedBy([{ status: 'AscNullsFirst' }])],
+      }),
+    ).toThrow('find records step sorted by a nested or nulls-first order');
+  });
+
   it('exports the isFullRecord flag the builder stores on step filters', () => {
     const builderStepFilter = {
       id: 'filter',

@@ -19,6 +19,17 @@ const normalizeCodeStepInput = (input: unknown): unknown => {
   return inlineInput;
 };
 
+// A run sorts by gqlOperationOrderBy alone; the record sorts it is computed from only drive the builder
+const normalizeFindRecordsInput = (input: unknown): unknown => {
+  if (!isPlainObject(input) || !isPlainObject(input.orderBy)) {
+    return input;
+  }
+
+  const { recordSorts: _recordSorts, ...orderBy } = input.orderBy;
+
+  return { ...input, orderBy };
+};
+
 // Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
   type,
@@ -27,6 +38,9 @@ const normalizeSettings = ({
   Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
   ...rest,
   ...(type === 'CODE' ? { input: normalizeCodeStepInput(rest.input) } : {}),
+  ...(type === 'FIND_RECORDS'
+    ? { input: normalizeFindRecordsInput(rest.input) }
+    : {}),
   ...(type === 'MANUAL' ? {} : { objectType }),
   ...(isDefined(errorHandlingOptions)
     ? {

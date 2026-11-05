@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
@@ -30,19 +30,76 @@ const toRecord = (value: unknown): Record<string, unknown> =>
 const toArray = (value: unknown): unknown[] =>
   Array.isArray(value) ? value : [];
 
+const RECORD_SORT_DIRECTION_BY_GQL_ORDER_BY_DIRECTION: Record<
+  string,
+  'ASC' | 'DESC'
+> = {
+  AscNullsLast: 'ASC',
+  DescNullsLast: 'DESC',
+};
+
+// Sorts written through the API carry only the GraphQL order, which a manifest
+// expresses as record sorts; the import computes the same order back from them
+const fromGqlOperationOrderBy = ({
+  gqlOperationOrderBy,
+  objectUniversalIdentifier,
+  resolvers,
+}: {
+  gqlOperationOrderBy: unknown;
+  objectUniversalIdentifier: string;
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}) =>
+  toArray(gqlOperationOrderBy).map((orderByEntry) => {
+    const entries = Object.entries(toRecord(orderByEntry));
+    const [fieldName, gqlDirection] = entries[0] ?? [];
+    const direction = isString(gqlDirection)
+      ? RECORD_SORT_DIRECTION_BY_GQL_ORDER_BY_DIRECTION[gqlDirection]
+      : undefined;
+
+    if (entries.length !== 1 || !isDefined(direction)) {
+      resolvers.markUnsupported(
+        'find records step sorted by a nested or nulls-first order',
+      );
+
+      return {};
+    }
+
+    return {
+      fieldMetadataUniversalIdentifier:
+        resolvers.fieldUniversalIdentifierByName({
+          objectUniversalIdentifier,
+          fieldName,
+        }),
+      direction,
+    };
+  });
+
 const fromFindRecordsOrderBy = ({
   orderBy,
+  objectUniversalIdentifier,
   resolvers,
 }: {
   orderBy: Record<string, unknown>;
+  objectUniversalIdentifier: string;
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }) => {
-  const { gqlOperationOrderBy: _gqlOperationOrderBy, ...rest } = orderBy;
+  const { gqlOperationOrderBy, ...rest } = orderBy;
 
-  return isDefined(rest.recordSorts)
+  if (isDefined(rest.recordSorts)) {
+    return {
+      ...rest,
+      recordSorts: toArray(rest.recordSorts).map(resolvers.fieldReference),
+    };
+  }
+
+  return isDefined(gqlOperationOrderBy)
     ? {
         ...rest,
-        recordSorts: toArray(rest.recordSorts).map(resolvers.fieldReference),
+        recordSorts: fromGqlOperationOrderBy({
+          gqlOperationOrderBy,
+          objectUniversalIdentifier,
+          resolvers,
+        }),
       }
     : rest;
 };
@@ -83,15 +140,23 @@ const fromFindRecordsInput = ({
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }) => {
   const { objectName, filter, orderBy, ...rest } = input;
+  const objectUniversalIdentifier =
+    resolvers.objectUniversalIdentifier(objectName);
 
   return {
     ...rest,
-    objectUniversalIdentifier: resolvers.objectUniversalIdentifier(objectName),
+    objectUniversalIdentifier,
     ...(isPlainObject(filter)
       ? { filter: fromFindRecordsFilter({ filter, resolvers }) }
       : {}),
     ...(isPlainObject(orderBy)
-      ? { orderBy: fromFindRecordsOrderBy({ orderBy, resolvers }) }
+      ? {
+          orderBy: fromFindRecordsOrderBy({
+            orderBy,
+            objectUniversalIdentifier,
+            resolvers,
+          }),
+        }
       : {}),
   };
 };
