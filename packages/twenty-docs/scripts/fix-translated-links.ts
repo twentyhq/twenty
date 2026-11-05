@@ -24,7 +24,7 @@ export const localizeLinks = (content: string, language: string): string =>
     (result, section) =>
       result.replaceAll(
         new RegExp(
-          `((?:href=["']\\/|]\\(\\/|https:\\/\\/docs\\.twenty\\.com\\/))${section}(?=[/'")#?\\s]|$)`,
+          `((?:href=["']\\/|(?<!\\!)\\[[^\\]]*\\]\\(\\/|https:\\/\\/docs\\.twenty\\.com\\/))${section}(?=[/'")#?\\s]|$)`,
           'g',
         ),
         `$1${language}/${section}`,

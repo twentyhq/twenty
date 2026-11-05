@@ -55,6 +55,7 @@ describe('localizeLinks', () => {
   it('leaves images and external links untouched', () => {
     const content = [
       '![Import](/images/user-guide/import.png)',
+      '![logo](/user-guide/logo.svg)',
       '[Mintlify](https://mintlify.com/docs/user-guide/overview)',
       '<Card href="/user-guides">Guides</Card>',
     ].join('\n');
