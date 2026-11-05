@@ -19,6 +19,8 @@ import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -81,6 +83,17 @@ export class WorkspaceDataSourceService
         pool: this.replicaPool,
       });
     }
+  }
+
+  getPrimaryQueryExecutor(): QueryExecutor {
+    if (!isDefined(this.primaryPool)) {
+      throw new TwentyOrmException(
+        'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
+      );
+    }
+
+    return new PoolQueryExecutor({ pool: this.primaryPool });
   }
 
   getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {

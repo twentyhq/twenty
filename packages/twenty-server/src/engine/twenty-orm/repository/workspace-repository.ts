@@ -17,7 +17,8 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
+import { findPrivateRecordStates } from 'src/engine/permissions/record-permission-orm/utils/find-private-record-states.util';
+import { findRecordShareGrants } from 'src/engine/permissions/record-permission-orm/utils/find-record-share-grants.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -1818,7 +1819,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
-          this.findRecordShareGrants({ objectMetadataId, recordIds });
+          findRecordShareGrants({
+            executor: this.options.executor,
+            recordShareTableExpression: this.getRecordShareTableExpression(),
+            objectMetadataId,
+            recordIds,
+          });
 
         recordShareGrantsByObjectMetadataId.set(
           objectMetadataId,
@@ -1840,7 +1846,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordIds: string[],
   ): Promise<Map<string, PrivateRecordState>> {
     return findPrivateRecordStates({
-      repository: this,
+      executor: this.options.executor,
       tableExpression: this.getTableExpression(
         this.options.flatObjectMetadata.id,
       ),
@@ -1848,23 +1854,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       recordIds,
     });
-  }
-
-  private async findRecordShareGrants({
-    objectMetadataId,
-    recordIds,
-  }: {
-    objectMetadataId: string;
-    recordIds: string[];
-  }): Promise<RecordShareGrant[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-
-    return this.executeRaw<RecordShareGrant>(
-      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.getRecordShareTableExpression()} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
-      { objectMetadataId, recordIds },
-    );
   }
 
   private emitMutationEvent({
@@ -2170,48 +2159,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
       throw error;
     }
-  }
-
-  async findPrincipalsAdmittedRecordIds({
-    principals,
-    recordIds,
-    operationType,
-    hypotheticalRecordShareAccessLevel,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    recordIds: string[];
-    operationType: ObjectRecordsOperationType;
-    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): Promise<Set<string>> {
-    const condition = buildPermissionsCondition({
-      principals,
-      metadataMaps: this.options.internalContext,
-      recordShareTableExpression: this.getRecordShareTableExpression(),
-      flatObjectMetadata: this.options.flatObjectMetadata,
-      operationType,
-      hypotheticalRecordShareAccessLevel,
-    });
-
-    if (condition === false || recordIds.length === 0) {
-      return new Set();
-    }
-
-    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
-      this.options.tableShape.nameSingular,
-    )
-      .where({ id: In(recordIds) })
-      .withDeleted()
-      .select(['id']);
-    const admittedRecords = await (
-      isObject(condition)
-        ? queryBuilder.addRowAccessCondition(
-            condition.sql,
-            condition.parameters,
-          )
-        : queryBuilder
-    ).getMany<ObjectRecord>({ noFormatting: true });
-
-    return new Set(admittedRecords.map(({ id }) => String(id)));
   }
 
   // Whether the role alone permits the operation, regardless of any record
