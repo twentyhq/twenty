@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { APPLICATION_CONTENT_TYPES } from '@/settings/applications/constants/ApplicationContentTypes';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
 
@@ -34,31 +35,14 @@ export const addInstalledIdsToApplicationContent = ({
     return manifestContent;
   }
 
-  const withInstalledIds = (contentType: keyof ApplicationContent) =>
-    addInstalledIds({
+  const content = { ...manifestContent };
+
+  for (const contentType of APPLICATION_CONTENT_TYPES) {
+    content[contentType] = addInstalledIds({
       manifestItems: manifestContent[contentType],
       installedItems: installedContent[contentType],
     });
+  }
 
-  return {
-    objects: withInstalledIds('objects'),
-    fields: withInstalledIds('fields'),
-    indexes: withInstalledIds('indexes'),
-    views: withInstalledIds('views'),
-    viewFields: withInstalledIds('viewFields'),
-    pageLayouts: withInstalledIds('pageLayouts'),
-    pageLayoutTabs: withInstalledIds('pageLayoutTabs'),
-    navigationMenuItems: withInstalledIds('navigationMenuItems'),
-    commandMenuItems: withInstalledIds('commandMenuItems'),
-    frontComponents: withInstalledIds('frontComponents'),
-    workflows: withInstalledIds('workflows'),
-    logicFunctions: withInstalledIds('logicFunctions'),
-    agents: withInstalledIds('agents'),
-    skills: withInstalledIds('skills'),
-    roles: withInstalledIds('roles'),
-    permissionFlags: withInstalledIds('permissionFlags'),
-    connectionProviders: withInstalledIds('connectionProviders'),
-    publicAssets: withInstalledIds('publicAssets'),
-    translations: withInstalledIds('translations'),
-  };
+  return content;
 };

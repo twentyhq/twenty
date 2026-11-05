@@ -160,9 +160,9 @@ export const SettingsApplicationDetailGeneralTab = ({
       </Section.Root>
       {isDefined(content) && (
         <SettingsApplicationContentSummarySection
-          applicationId={application.id}
           applicationName={displayName}
           content={content}
+          location={{ kind: 'installed', applicationId: application.id }}
         />
       )}
       {isUpgradable && (

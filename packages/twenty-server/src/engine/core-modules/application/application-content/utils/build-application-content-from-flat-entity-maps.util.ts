@@ -169,28 +169,24 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       return 'DRAFT';
     }
 
-    const workflowVersionUniversalIdentifier =
-      flatEntityMaps.flatWorkflowVersionMaps.universalIdentifierById[
-        workflowVersionId
-      ];
-
-    if (!isDefined(workflowVersionUniversalIdentifier)) {
-      return null;
-    }
-
     return (
-      flatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
-        workflowVersionUniversalIdentifier
-      ]?.status ?? null
+      findByUniversalIdentifier({
+        valueByUniversalIdentifier:
+          flatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
+        universalIdentifier:
+          flatEntityMaps.flatWorkflowVersionMaps.universalIdentifierById[
+            workflowVersionId
+          ],
+      })?.status ?? null
     );
   };
 
   const findFieldLabel = (fieldUniversalIdentifier: string | null) =>
-    isDefined(fieldUniversalIdentifier)
-      ? flatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-          fieldUniversalIdentifier
-        ]?.label
-      : undefined;
+    findByUniversalIdentifier({
+      valueByUniversalIdentifier:
+        flatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+      universalIdentifier: fieldUniversalIdentifier,
+    })?.label;
 
   return {
     objects: objects.map((object) => ({
@@ -241,10 +237,11 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       label:
         findFieldLabel(viewField.fieldMetadataUniversalIdentifier) ??
         viewField.fieldMetadataUniversalIdentifier,
-      parentLabel:
-        flatEntityMaps.flatViewMaps.byUniversalIdentifier[
-          viewField.viewUniversalIdentifier
-        ]?.name,
+      parentLabel: findByUniversalIdentifier({
+        valueByUniversalIdentifier:
+          flatEntityMaps.flatViewMaps.byUniversalIdentifier,
+        universalIdentifier: viewField.viewUniversalIdentifier,
+      })?.name,
       parentUniversalIdentifier: viewField.viewUniversalIdentifier,
       fieldUniversalIdentifier: viewField.fieldMetadataUniversalIdentifier,
       position: viewField.position,
@@ -262,10 +259,11 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       universalIdentifier: tab.universalIdentifier,
       label: tab.title,
       icon: tab.icon,
-      parentLabel:
-        flatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
-          tab.pageLayoutUniversalIdentifier
-        ]?.name,
+      parentLabel: findByUniversalIdentifier({
+        valueByUniversalIdentifier:
+          flatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
+        universalIdentifier: tab.pageLayoutUniversalIdentifier,
+      })?.name,
       parentUniversalIdentifier: tab.pageLayoutUniversalIdentifier,
       count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
     })),

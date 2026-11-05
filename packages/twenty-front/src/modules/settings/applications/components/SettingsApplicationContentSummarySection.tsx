@@ -23,20 +23,16 @@ const StyledFooter = styled.div`
 `;
 
 type SettingsApplicationContentSummarySectionProps = {
-  applicationId: string;
   applicationName: string;
   content: ApplicationContent;
+  location: ApplicationContentLocation;
 };
 
 export const SettingsApplicationContentSummarySection = ({
-  applicationId,
   applicationName,
   content,
+  location,
 }: SettingsApplicationContentSummarySectionProps) => {
-  const location: ApplicationContentLocation = {
-    kind: 'installed',
-    applicationId,
-  };
   const { t } = useLingui();
   const resolveObject = useApplicationContentObjectResolver(content);
   const { getItemLabel } = useApplicationContentItemDisplay(content);
