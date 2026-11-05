@@ -360,17 +360,6 @@ export class RecordAccessDecisionService {
     });
   }
 
-  async findRecordsPermissionsOfPrincipals({
-    principals,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-  }): Promise<RoleRecordsPermissions> {
-    return getPermissionsPrincipalsRecordsPermissions({
-      principals,
-      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
-    });
-  }
-
   async isOperationDisabled(
     question: RecordOperationQuestion,
   ): Promise<boolean> {
@@ -398,7 +387,7 @@ export class RecordAccessDecisionService {
     }
   }
 
-  async assertColumnsPermittedOrThrow({
+  async assertColumnsReadableAndUpdatableOrThrow({
     principals,
     flatObjectMetadata,
     operationType,
@@ -851,7 +840,7 @@ export class RecordAccessDecisionService {
     return metadataMaps;
   }
 
-  private findPrincipalsRecordsPermissions(
+  findPrincipalsRecordsPermissions(
     principals: PermissionsPrincipalsWithRolesContext,
   ): Promise<RoleRecordsPermissions> {
     const cachedRecordsPermissions =

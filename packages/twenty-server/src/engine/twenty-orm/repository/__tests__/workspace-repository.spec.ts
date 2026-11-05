@@ -110,7 +110,7 @@ const buildRepository = ({
       recordPermissions: {
         isOperationDisabled: jest.fn().mockResolvedValue(false),
         assertObjectOperationAccessibleOrThrow: jest.fn(),
-        assertColumnsPermittedOrThrow: jest.fn(),
+        assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
         buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesStayGrantedOrThrow: jest.fn(),

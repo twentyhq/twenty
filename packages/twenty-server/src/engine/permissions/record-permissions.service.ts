@@ -82,11 +82,13 @@ export class RecordPermissionsService {
     );
   }
 
-  public findRecordsPermissionsOfPrincipals(question: {
+  public findPrincipalsRecordsPermissions({
+    principals,
+  }: {
     principals: PermissionsPrincipalsWithRolesContext;
   }): Promise<RoleRecordsPermissions> {
-    return this.recordAccessDecisionService.findRecordsPermissionsOfPrincipals(
-      question,
+    return this.recordAccessDecisionService.findPrincipalsRecordsPermissions(
+      principals,
     );
   }
 
@@ -104,13 +106,13 @@ export class RecordPermissionsService {
     );
   }
 
-  public assertColumnsPermittedOrThrow(
+  public assertColumnsReadableAndUpdatableOrThrow(
     question: RecordOperationQuestion & {
       selectedColumns: string[];
       updatedColumns: string[];
     },
   ): Promise<void> {
-    return this.recordAccessDecisionService.assertColumnsPermittedOrThrow(
+    return this.recordAccessDecisionService.assertColumnsReadableAndUpdatableOrThrow(
       question,
     );
   }

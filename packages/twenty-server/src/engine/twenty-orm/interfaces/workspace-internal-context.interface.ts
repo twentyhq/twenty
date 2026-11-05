@@ -29,7 +29,7 @@ export interface WorkspaceInternalContext {
     RecordPermissionsService,
     | 'isOperationDisabled'
     | 'assertObjectOperationAccessibleOrThrow'
-    | 'assertColumnsPermittedOrThrow'
+    | 'assertColumnsReadableAndUpdatableOrThrow'
     | 'buildRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesStayGrantedOrThrow'

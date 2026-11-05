@@ -130,7 +130,7 @@ export class WorkspaceOrmManager {
         authContext,
       });
     const recordsPermissions = isDefined(permissionsPrincipals)
-      ? await this.recordPermissionsService.findRecordsPermissionsOfPrincipals({
+      ? await this.recordPermissionsService.findPrincipalsRecordsPermissions({
           principals: permissionsPrincipals,
         })
       : NO_ROLE_RECORDS_PERMISSIONS;

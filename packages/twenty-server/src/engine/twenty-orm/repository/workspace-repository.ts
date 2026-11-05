@@ -1713,7 +1713,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
     });
 
-    await this.options.internalContext.recordPermissions.assertColumnsPermittedOrThrow(
+    await this.options.internalContext.recordPermissions.assertColumnsReadableAndUpdatableOrThrow(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata: this.options.flatObjectMetadata,
@@ -1837,7 +1837,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         operationType: 'select',
       });
 
-      await this.options.internalContext.recordPermissions.assertColumnsPermittedOrThrow(
+      await this.options.internalContext.recordPermissions.assertColumnsReadableAndUpdatableOrThrow(
         {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           flatObjectMetadata,
