@@ -937,7 +937,7 @@ describe('BullMQDriver job size limit', () => {
       );
     });
 
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = mockWorkerConstructor.mock.calls[0][1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');
