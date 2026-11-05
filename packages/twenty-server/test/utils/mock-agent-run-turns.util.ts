@@ -47,7 +47,6 @@ export const buildToolCallStepResult = ({
     toolCallId,
     toolName,
     input: {},
-    dynamic: true as const,
   };
   const toolResult = {
     type: 'tool-result' as const,
@@ -55,7 +54,6 @@ export const buildToolCallStepResult = ({
     toolName,
     input: {},
     output,
-    dynamic: true as const,
   };
 
   return {
@@ -71,11 +69,11 @@ export const buildToolCallStepResult = ({
     files: [],
     sources: [],
     toolCalls: [toolCall],
-    staticToolCalls: [],
-    dynamicToolCalls: [toolCall],
+    staticToolCalls: [toolCall],
+    dynamicToolCalls: [],
     toolResults: [toolResult],
-    staticToolResults: [],
-    dynamicToolResults: [toolResult],
+    staticToolResults: [toolResult],
+    dynamicToolResults: [],
     finishReason: 'tool-calls',
     rawFinishReason: undefined,
     usage: EMPTY_USAGE,
