@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { RecordShareRowCause } from 'twenty-shared/types';
 
-import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { RecordShareWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-share-write-orm.service';
 import { type RecordShareCriteria } from 'src/engine/permissions/record-permission-orm/types/record-share-criteria.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -12,7 +12,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 @Injectable()
 export class RecordShareStorageService {
   constructor(
-    private readonly recordPermissionOrmService: RecordPermissionOrmService,
+    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
   ) {}
 
   // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
@@ -27,7 +27,7 @@ export class RecordShareStorageService {
     enabled: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    await this.recordPermissionOrmService.deleteRecordShares({
+    await this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: {
@@ -40,7 +40,7 @@ export class RecordShareStorageService {
     });
 
     if (enabled) {
-      await this.recordPermissionOrmService.insertRecordShares({
+      await this.recordShareWriteOrmService.insertRecordShares({
         workspaceId,
         transactionScope,
         recordShares: [{ ...share, rowCause: RecordShareRowCause.MANUAL }],
@@ -58,7 +58,7 @@ export class RecordShareStorageService {
     recordShares: RecordShareInput[];
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    return this.recordPermissionOrmService.insertRecordShares({
+    return this.recordShareWriteOrmService.insertRecordShares({
       workspaceId,
       recordShares,
       shouldIgnoreConflicts: true,
@@ -81,7 +81,7 @@ export class RecordShareStorageService {
       return;
     }
 
-    await this.recordPermissionOrmService.deleteRecordShares({
+    await this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: { objectMetadataId, recordIds },
@@ -98,7 +98,7 @@ export class RecordShareStorageService {
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
     for (const criterion of criteria) {
-      await this.recordPermissionOrmService.deleteRecordShares({
+      await this.recordShareWriteOrmService.deleteRecordShares({
         workspaceId,
         transactionScope,
         criteria: criterion,
@@ -115,7 +115,7 @@ export class RecordShareStorageService {
     sourceId: string;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
-    return this.recordPermissionOrmService.deleteRecordShares({
+    return this.recordShareWriteOrmService.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: { sourceId },
@@ -128,7 +128,7 @@ export class RecordShareStorageService {
     fromWorkspaceMemberId: string;
     toWorkspaceMemberId: string | undefined;
   }): Promise<void> {
-    return this.recordPermissionOrmService.transferMemberRecordShares(args);
+    return this.recordShareWriteOrmService.transferMemberRecordShares(args);
   }
 
   insertOwnerGrantsFromSelect(args: {
@@ -137,7 +137,7 @@ export class RecordShareStorageService {
     parameters: Record<string, unknown>;
     granteeWorkspaceMemberId: string;
   }): Promise<void> {
-    return this.recordPermissionOrmService.insertOwnerRecordSharesFromSelect(
+    return this.recordShareWriteOrmService.insertOwnerRecordSharesFromSelect(
       args,
     );
   }

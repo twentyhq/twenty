@@ -21,7 +21,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -49,7 +49,7 @@ const SET_PRIVATE = parse(
 describe('Record-level sharing on an object open by default', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
-  let recordPermissionOrmService: RecordPermissionOrmService;
+  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
 
   const setRecordSharingEnabled = (value: boolean) =>
@@ -130,9 +130,9 @@ describe('Record-level sharing on an object open by default', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
-    recordPermissionOrmService =
-      getAppProviderByClassName<RecordPermissionOrmService>(
-        'RecordPermissionOrmService',
+    recordPermissionReadOrmService =
+      getAppProviderByClassName<RecordPermissionReadOrmService>(
+        'RecordPermissionReadOrmService',
       );
     const { data } = await createOneObjectMetadata({
       input: {
@@ -213,7 +213,7 @@ describe('Record-level sharing on an object open by default', () => {
       shares: [],
     });
     expect(
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RECORD_ID],
@@ -271,7 +271,7 @@ describe('Record-level sharing on an object open by default', () => {
       isPrivate: false,
     });
     expect(
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RECORD_ID],

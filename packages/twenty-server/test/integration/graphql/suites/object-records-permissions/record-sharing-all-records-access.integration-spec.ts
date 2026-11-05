@@ -30,7 +30,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
-import { type RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -58,7 +58,7 @@ const SET_PRIVATE = parse(
 describe('Access to all records and ownership transfer', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
-  let recordPermissionOrmService: RecordPermissionOrmService;
+  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
 
   const target = (recordId: string) => ({ objectMetadataId, recordId });
 
@@ -112,7 +112,7 @@ describe('Access to all records and ownership transfer', () => {
 
   const findMemberGrants = async (workspaceMemberId: string) =>
     (
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RESTRICTED_RECORD_ID, SHARED_RECORD_ID],
@@ -133,9 +133,9 @@ describe('Access to all records and ownership transfer', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
-    recordPermissionOrmService =
-      getAppProviderByClassName<RecordPermissionOrmService>(
-        'RecordPermissionOrmService',
+    recordPermissionReadOrmService =
+      getAppProviderByClassName<RecordPermissionReadOrmService>(
+        'RecordPermissionReadOrmService',
       );
     const { data } = await createOneObjectMetadata({
       input: {
@@ -385,7 +385,7 @@ describe('Access to all records and ownership transfer', () => {
       ).toEqual([]);
 
       const chatThreadShares =
-        await recordPermissionOrmService.findRecordShares({
+        await recordPermissionReadOrmService.findRecordShares({
           workspaceId,
           objectMetadataId: chatThreadObjectMetadataId,
           recordIds: [privateChatThreadId],

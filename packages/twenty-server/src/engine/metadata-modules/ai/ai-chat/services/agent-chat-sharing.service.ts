@@ -24,7 +24,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
-import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
@@ -74,7 +74,7 @@ export class AgentChatSharingService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly recordPermissionOrmService: RecordPermissionOrmService,
+    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly recordSharingService: RecordSharingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
@@ -152,13 +152,12 @@ export class AgentChatSharingService {
     threadId: string;
     roleId: string;
   }): Promise<boolean> {
-    const threadShares = await this.recordPermissionOrmService.findRecordShares(
-      {
+    const threadShares =
+      await this.recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId: (await this.getThreadObjectMetadata(workspaceId)).id,
         recordIds: [threadId],
-      },
-    );
+      });
 
     return resolveRecordIdsSharedWithPrincipals({
       recordShares: threadShares,

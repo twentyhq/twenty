@@ -6,7 +6,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { RecordPrivacyWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-privacy-write-orm.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
@@ -20,7 +20,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 @Injectable()
 export class PrivateRecordStorageService {
   constructor(
-    private readonly recordPermissionOrmService: RecordPermissionOrmService,
+    private readonly recordPrivacyWriteOrmService: RecordPrivacyWriteOrmService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
@@ -79,7 +79,7 @@ export class PrivateRecordStorageService {
     isPrivate: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    return this.recordPermissionOrmService.setRecordsPrivate(args);
+    return this.recordPrivacyWriteOrmService.setRecordsPrivate(args);
   }
 }
 

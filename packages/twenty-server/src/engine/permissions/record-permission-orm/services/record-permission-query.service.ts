@@ -1,0 +1,51 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { type RecordPermissionQuery } from 'src/engine/permissions/record-permission-orm/types/record-permission-query.type';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/permissions/record-share/record-share.exception';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+
+@Injectable()
+export class RecordPermissionQueryService {
+  constructor(
+    private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
+  ) {}
+
+  execute<TRow extends Record<string, unknown> = Record<string, unknown>>({
+    workspaceId,
+    transactionScope,
+    query,
+  }: {
+    workspaceId: string;
+    transactionScope?: WorkspaceTransactionScope;
+    query: RecordPermissionQuery;
+  }): Promise<TRow[]> {
+    const statement = compileNamedParameters(query.sql, query.parameters);
+
+    if (!isDefined(transactionScope)) {
+      return this.workspaceQueryExecutorService
+        .getPrimaryQueryExecutorOrThrow()
+        .execute<TRow>(statement);
+    }
+
+    if (transactionScope.workspaceId !== workspaceId) {
+      throw new RecordShareException(
+        `Transaction scope of workspace ${transactionScope.workspaceId} cannot read record permission data of workspace ${workspaceId}`,
+        RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
+      );
+    }
+
+    return transactionScope.executeRawQuery<TRow>(
+      statement.text,
+      statement.values,
+    );
+  }
+}

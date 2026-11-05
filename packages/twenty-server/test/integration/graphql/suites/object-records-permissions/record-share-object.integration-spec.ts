@@ -21,7 +21,7 @@ import {
 } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -32,7 +32,7 @@ const getAgentChatThreadService = () =>
 
 describe('recordShare object', () => {
   let recordShareStorageService: RecordShareStorageService;
-  let recordPermissionOrmService: RecordPermissionOrmService;
+  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
   let personObjectMetadataId: string;
   let recordShareInput: RecordShareInput;
 
@@ -43,9 +43,9 @@ describe('recordShare object', () => {
       getAppProviderByClassName<RecordShareStorageService>(
         'RecordShareStorageService',
       );
-    recordPermissionOrmService =
-      getAppProviderByClassName<RecordPermissionOrmService>(
-        'RecordPermissionOrmService',
+    recordPermissionReadOrmService =
+      getAppProviderByClassName<RecordPermissionReadOrmService>(
+        'RecordPermissionReadOrmService',
       );
 
     const personObjectMetadata = await getCoreRepository<ObjectMetadataEntity>(
@@ -89,7 +89,7 @@ describe('recordShare object', () => {
       ],
     });
     const readShares = () =>
-      recordPermissionOrmService.findRecordShares({
+      recordPermissionReadOrmService.findRecordShares({
         workspaceId,
         objectMetadataId: personObjectMetadataId,
         recordIds: [recordId],
@@ -181,7 +181,7 @@ describe('recordShare object', () => {
         authProvider: AuthProviderEnum.Password,
       });
     const readGrants = () =>
-      recordPermissionOrmService.findRecordShares({
+      recordPermissionReadOrmService.findRecordShares({
         workspaceId: args.workspaceId,
         objectMetadataId: metadata.id,
         recordIds: [args.threadId],
@@ -242,7 +242,7 @@ describe('recordShare object', () => {
     });
 
     const insertedRecordShares =
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId: personObjectMetadataId,
         recordIds: [PERSON_DATA_SEED_IDS.ID_1],
@@ -259,7 +259,7 @@ describe('recordShare object', () => {
     });
 
     const recordSharesAfterDuplicateInsert =
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId: personObjectMetadataId,
         recordIds: [PERSON_DATA_SEED_IDS.ID_1],
@@ -276,7 +276,7 @@ describe('recordShare object', () => {
     });
 
     const recordSharesAfterDelete =
-      await recordPermissionOrmService.findRecordShares({
+      await recordPermissionReadOrmService.findRecordShares({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId: personObjectMetadataId,
         recordIds: [PERSON_DATA_SEED_IDS.ID_1],

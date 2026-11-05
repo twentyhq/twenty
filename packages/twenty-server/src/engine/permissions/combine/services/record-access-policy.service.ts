@@ -16,7 +16,7 @@ import { type PermissionsAuthContext } from 'src/engine/permissions/principal/ty
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
-import { RecordPermissionOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-orm.service';
+import { RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import {
@@ -90,7 +90,7 @@ export class RecordAccessPolicyService {
 
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
-    private readonly recordPermissionOrmService: RecordPermissionOrmService,
+    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
   ) {}
 
@@ -222,7 +222,7 @@ export class RecordAccessPolicyService {
       return new Set();
     }
 
-    return this.recordPermissionOrmService.findRecordIdsMatchingCondition({
+    return this.recordPermissionReadOrmService.findRecordIdsMatchingCondition({
       workspaceId: principals.workspaceId,
       flatObjectMetadata: request.flatObjectMetadata,
       recordIds: uniqueRecordIds,
@@ -402,7 +402,7 @@ export class RecordAccessPolicyService {
       );
 
       if (missingRecordIds.length > 0) {
-        const groupedRecordShares = this.recordPermissionOrmService
+        const groupedRecordShares = this.recordPermissionReadOrmService
           .findRecordShares({
             workspaceId,
             objectMetadataId,
@@ -443,7 +443,7 @@ export class RecordAccessPolicyService {
     const findPrivateRecordStates = () =>
       (privateRecordStates ??= loadMetadataMaps().then(
         ({ flatFieldMetadataMaps }) =>
-          this.recordPermissionOrmService.findPrivateRecordStates({
+          this.recordPermissionReadOrmService.findPrivateRecordStates({
             workspaceId,
             flatObjectMetadata: objectMetadata,
             flatFieldMetadataMaps,
@@ -549,7 +549,7 @@ export class RecordAccessPolicyService {
     }
 
     const sharedAccessLevels =
-      this.recordPermissionOrmService.findRecordShareAccessLevelsByObjectMetadataId(
+      this.recordPermissionReadOrmService.findRecordShareAccessLevelsByObjectMetadataId(
         {
           workspaceId: principals.workspaceId,
           principalIds: getPermissionsPrincipalsShareKeys(principals),
