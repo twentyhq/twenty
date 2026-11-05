@@ -12,7 +12,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -35,7 +35,7 @@ type CampaignStatusTransition = {
 export class MessageCampaignLifecycleService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
@@ -133,10 +133,12 @@ export class MessageCampaignLifecycleService {
     userWorkspaceId: string;
     campaignId: string;
   }): Promise<{ campaignId: string; canceledMessageCount: number }> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
+    const roleId = await this.permissionsService.findUserWorkspaceRoleIdOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+      },
+    );
 
     const unscheduled = await this.transitionCampaignStatus({
       workspaceId,

@@ -37,7 +37,7 @@ export const uploadMessageAttachment = async ({
   });
 
   const uploadedFile = await client.uploadFile({
-    fileBuffer: Buffer.from(content),
+    fileBuffer: content,
     filename,
     fieldMetadataUniversalIdentifier:
       ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,

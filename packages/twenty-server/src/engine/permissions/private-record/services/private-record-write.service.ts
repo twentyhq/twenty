@@ -2,6 +2,11 @@
 
 import { Injectable } from '@nestjs/common';
 
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
@@ -9,6 +14,12 @@ import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/co
 import { RecordPrivacyWriteOrmService } from 'src/engine/permissions/record-permission-orm/services/record-privacy-write-orm.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import {
+  type RecordSharingChange,
+  RecordSharingChangeService,
+} from 'src/engine/permissions/record-share/services/record-sharing-change.service';
+import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -18,11 +29,12 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
-export class PrivateRecordStorageService {
+export class PrivateRecordWriteService {
   constructor(
     private readonly recordPrivacyWriteOrmService: RecordPrivacyWriteOrmService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingChangeService: RecordSharingChangeService,
   ) {}
 
   async grantPrivateRecordsCreatedBy({
@@ -72,6 +84,15 @@ export class PrivateRecordStorageService {
     });
   }
 
+  changeRecordPrivacy(
+    args: RecordSharingArgs & { isPrivate: boolean },
+  ): Promise<RecordSharingDTO> {
+    return this.recordSharingChangeService.runChange({
+      args,
+      write: (change) => this.writeRecordPrivacy({ ...change, args }),
+    });
+  }
+
   setPrivate({
     workspaceId,
     flatObjectMetadata,
@@ -91,6 +112,79 @@ export class PrivateRecordStorageService {
       recordIds,
       isPrivate,
       transactionScope,
+    });
+  }
+
+  private async writeRecordPrivacy({
+    workspaceId,
+    transactionScope,
+    sharingObject: { flatObjectMetadata },
+    creatorWorkspaceMemberId,
+    args,
+  }: RecordSharingChange & {
+    args: RecordSharingArgs & { isPrivate: boolean };
+  }): Promise<void> {
+    const { isPrivate } = args;
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    await this.setPrivate({
+      workspaceId,
+      flatObjectMetadata,
+      recordIds: [args.recordId],
+      isPrivate,
+      transactionScope,
+    });
+
+    if (!isPrivate) {
+      if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
+        return;
+      }
+
+      await this.recordShareStorageService.deleteMatching({
+        workspaceId,
+        transactionScope,
+        criteria: {
+          objectMetadataId: args.objectMetadataId,
+          recordIds: [args.recordId],
+          rowCause: RecordShareRowCause.OWNER,
+        },
+      });
+
+      return;
+    }
+
+    await this.recordShareStorageService.deleteMatching({
+      workspaceId,
+      transactionScope,
+      criteria: {
+        objectMetadataId: args.objectMetadataId,
+        recordIds: [args.recordId],
+        principalType: RecordSharePrincipalType.EVERYONE,
+        rowCause: RecordShareRowCause.MANUAL,
+      },
+    });
+
+    if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
+      return;
+    }
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      transactionScope,
+      recordShares: [
+        {
+          recordId: args.recordId,
+          objectMetadataId: args.objectMetadataId,
+          principalId: args.authContext.workspaceMemberId,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+          sourceId: args.recordId,
+        },
+      ],
     });
   }
 }

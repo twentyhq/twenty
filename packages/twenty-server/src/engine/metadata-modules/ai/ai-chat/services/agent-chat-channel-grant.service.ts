@@ -10,6 +10,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -26,7 +27,6 @@ import { diffAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/a
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -41,7 +41,7 @@ export class AgentChatChannelGrantService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
@@ -210,7 +210,7 @@ export class AgentChatChannelGrantService {
     });
 
     if (isNonEmptyArray(obsoleteGrantIds)) {
-      await this.recordShareStorageService.deleteMatching({
+      await this.recordSharingWriteService.deleteRecordSharesMatching({
         workspaceId,
         criteria: { ids: obsoleteGrantIds },
         transactionScope,
@@ -218,7 +218,7 @@ export class AgentChatChannelGrantService {
     }
 
     for (const missingGrantBatch of chunk(missingGrants, QUERY_MAX_RECORDS)) {
-      await this.recordShareStorageService.insertMany({
+      await this.recordSharingWriteService.insertRecordShares({
         workspaceId,
         recordShares: missingGrantBatch.map(
           ({ recordId, principalId, sourceId }) => ({

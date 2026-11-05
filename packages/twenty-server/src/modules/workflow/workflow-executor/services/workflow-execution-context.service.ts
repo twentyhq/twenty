@@ -134,9 +134,7 @@ export class WorkflowExecutionContextService {
         })
       : buildApplicationAuthContext({ workspace, application });
 
-    const roleIds = await this.permissionsService.getRoleIds(authContext);
-
-    if (roleIds.length === 0) {
+    if (!(await this.permissionsService.hasAnyRole({ authContext }))) {
       throw new WorkflowStepExecutorException(
         'No role is left to run this step with',
         WorkflowStepExecutorExceptionCode.FORBIDDEN,

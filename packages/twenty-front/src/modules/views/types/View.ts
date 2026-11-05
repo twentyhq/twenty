@@ -40,5 +40,6 @@ export type View = {
   visibility: ViewVisibility;
   createdByUserWorkspaceId?: string | null;
   applicationId?: string;
+  universalIdentifier?: string;
   isActive: boolean;
 };

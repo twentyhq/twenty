@@ -14,6 +14,10 @@ import { type RecordShareCriteria } from 'src/engine/permissions/record-permissi
 import { buildDeleteRecordSharesQueryOrThrow } from 'src/engine/permissions/record-permission-orm/utils/build-delete-record-shares-query-or-throw.util';
 import { buildInsertRecordSharesQuery } from 'src/engine/permissions/record-permission-orm/utils/build-insert-record-shares-query.util';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-record-share-table-expression.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/record-permission-orm/utils/build-workspace-table-expression.util';
+import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
@@ -28,6 +32,44 @@ export class RecordShareWriteOrmService {
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
   ) {}
+
+  async lockRecordForSharingChange({
+    workspaceId,
+    flatObjectMetadata,
+    recordId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    recordId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<void> {
+    await this.recordPermissionQueryService.execute({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: 'SELECT pg_advisory_xact_lock(hashtextextended(:lockKey, 0))',
+        parameters: {
+          lockKey: buildRecordShareLockKey({
+            workspaceId,
+            objectMetadataId: flatObjectMetadata.id,
+            recordId,
+          }),
+        },
+      },
+    });
+    await this.recordPermissionQueryService.execute({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT "id" FROM ${buildWorkspaceTableExpression({
+          workspaceId,
+          tableName: computeObjectTargetTable(flatObjectMetadata),
+        })} WHERE "id" = :recordId FOR UPDATE`,
+        parameters: { recordId },
+      },
+    });
+  }
 
   async insertRecordShares({
     workspaceId,

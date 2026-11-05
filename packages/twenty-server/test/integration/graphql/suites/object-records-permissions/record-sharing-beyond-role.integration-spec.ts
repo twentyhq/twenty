@@ -279,24 +279,18 @@ describe('Records shared beyond the role that can access their object', () => {
       }),
     ).toBe(true);
     expect(
-      await permissionsService.canReadAllRecords({
-        principals,
-        objectMetadataId: flatObjectMetadata.id,
-      }),
-    ).toBe(false);
-    expect(
       await permissionsService.canUpdateSomeRecords({
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await permissionsService.findReadableRecordIds({
+      await permissionsService.canReadRecords({
         principals,
         objectMetadataId: flatObjectMetadata.id,
-        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+        recordIds: [OTHER_RECORD_ID],
       }),
-    ).toEqual([SHARED_RECORD_ID]);
+    ).toBe(false);
     expect(
       await permissionsService.canReadRecords({
         principals,
