@@ -122,7 +122,9 @@ export const SentryInitEffect = () => {
         return;
       }
 
-      if (!isDefined(getReplay())) {
+      const replay = getReplay();
+
+      if (!isDefined(replay)) {
         addIntegration(
           replayIntegration({
             _experiments: {
@@ -132,6 +134,12 @@ export const SentryInitEffect = () => {
             },
           }),
         );
+
+        return;
+      }
+
+      if (!isDefined(replay.getReplayId())) {
+        replay.startBuffering();
       }
     };
 
