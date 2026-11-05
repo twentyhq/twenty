@@ -31,8 +31,6 @@ export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
-export type { AiDataResidencyPolicy } from './constants/data-residencies-by-ai-data-residency-policy.const';
-export { DATA_RESIDENCIES_BY_AI_DATA_RESIDENCY_POLICY } from './constants/data-residencies-by-ai-data-residency-policy.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
@@ -41,6 +39,8 @@ export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-
 export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-assistant-profile.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export type { AiDataResidencyPolicy } from './constants/model-residencies-allowed-by-policy.const';
+export { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from './constants/model-residencies-allowed-by-policy.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';

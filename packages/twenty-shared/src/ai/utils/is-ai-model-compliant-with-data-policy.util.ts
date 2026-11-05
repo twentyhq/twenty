@@ -1,6 +1,6 @@
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { DATA_RESIDENCIES_BY_AI_DATA_RESIDENCY_POLICY } from '../constants/data-residencies-by-ai-data-residency-policy.const';
+import { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from '../constants/model-residencies-allowed-by-policy.const';
 import { type DataResidency } from '../constants/data-residency.const';
 import { type AiDataPolicy } from '../types/AiDataPolicy';
 import { isDataResidency } from './is-data-residency.util';
@@ -27,7 +27,7 @@ export const isAiModelCompliantWithDataPolicy = ({
   }
 
   const allowedResidencies: readonly DataResidency[] =
-    DATA_RESIDENCIES_BY_AI_DATA_RESIDENCY_POLICY[aiDataPolicy.dataResidency];
+    MODEL_RESIDENCIES_ALLOWED_BY_POLICY[aiDataPolicy.dataResidency];
 
   return (
     isDefined(model.dataResidency) &&
