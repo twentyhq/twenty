@@ -68,12 +68,13 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     });
 
     if (isDefined(parameters.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(
-        parameters.modelId,
-        await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
-          context.workspaceId,
-        ),
-      );
+      this.aiModelRegistryService.validateModelAvailability({
+        modelId: parameters.modelId,
+        aiDataPolicy:
+          await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+            context.workspaceId,
+          ),
+      });
     }
 
     const agent = await this.agentService.updateOneAgent({

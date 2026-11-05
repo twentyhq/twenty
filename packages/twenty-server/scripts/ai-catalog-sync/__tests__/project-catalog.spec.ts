@@ -318,6 +318,39 @@ describe('projectCatalog', () => {
     });
   });
 
+  it('refuses a model whose own name routes outside its provider residency', () => {
+    const catalogWithProfile: CanonicalCatalog = {
+      amazon: {
+        npm: '@ai-sdk/amazon-bedrock',
+        label: 'Amazon',
+        models: [{ name: 'global.anthropic.claude-opus-4-7', label: 'Opus' }],
+      },
+    };
+    const provider = {
+      name: 'amazon-bedrock-eu',
+      npm: '@ai-sdk/amazon-bedrock',
+      dataResidency: 'eu',
+    };
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog: catalogWithProfile,
+        spec: {
+          providers: [
+            { ...provider, models: ['global.anthropic.claude-opus-4-7'] },
+          ],
+        },
+      }),
+    ).toThrow('routes to "global" but its provider states "eu"');
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog: catalogWithProfile,
+        spec: { providers: [{ ...provider, models: { vendor: 'amazon' } }] },
+      }),
+    ).toThrow('routes to "global" but its provider states "eu"');
+  });
+
   it('refuses a negotiated price that is not a usable number', () => {
     const spec: CatalogSpec = {
       providers: [

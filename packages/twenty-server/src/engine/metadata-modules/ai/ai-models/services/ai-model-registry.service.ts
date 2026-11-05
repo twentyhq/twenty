@@ -11,7 +11,6 @@ import {
   type AiModelTier,
   type AiSdkPackage,
   AI_MODEL_EFFORT_LABELS,
-  isAiDataPolicyActive,
   isAiModelCompliantWithDataPolicy,
   parseAiModelVariantId,
   type AiDataPolicy,
@@ -52,6 +51,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
+import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.const';
 import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export interface RegisteredAiModel {
@@ -525,53 +525,43 @@ export class AiModelRegistryService {
     return this.modelConfigCache.get(modelId);
   }
 
-  isModelCompliantWithDataPolicy(
-    modelId: string,
-    aiDataPolicy?: AiDataPolicy,
-  ): boolean {
-    if (!isDefined(aiDataPolicy) || !isAiDataPolicyActive(aiDataPolicy)) {
-      return true;
-    }
-
-    const modelConfig = this.getModelConfig(modelId);
-
-    return (
-      isDefined(modelConfig) &&
-      isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
-    );
+  private isModelCompliantWithDataPolicy({
+    modelId,
+    aiDataPolicy,
+  }: {
+    modelId: string;
+    aiDataPolicy: AiDataPolicy;
+  }): boolean {
+    return isAiModelCompliantWithDataPolicy({
+      model: this.getModelConfig(modelId) ?? {},
+      aiDataPolicy,
+    });
   }
 
-  isEvaluationModelCompliantWithDataPolicy(
-    modelId: string,
-    aiDataPolicy: AiDataPolicy,
-  ): boolean {
-    if (!isAiDataPolicyActive(aiDataPolicy)) {
-      return true;
-    }
-
-    const modelConfig = this.getEvaluationModelConfig(modelId);
-
-    return (
-      isDefined(modelConfig) &&
-      isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
-    );
-  }
-
-  private isModelUsable(modelId: string, aiDataPolicy?: AiDataPolicy): boolean {
+  private isModelUsable({
+    modelId,
+    aiDataPolicy,
+  }: {
+    modelId: string;
+    aiDataPolicy: AiDataPolicy;
+  }): boolean {
     return (
       this.isModelAdminAllowed(modelId) &&
-      this.isModelCompliantWithDataPolicy(modelId, aiDataPolicy)
+      this.isModelCompliantWithDataPolicy({ modelId, aiDataPolicy })
     );
   }
 
-  private getFirstAvailableModelFromList(
-    modelIds: string[],
-    aiDataPolicy?: AiDataPolicy,
-  ): RegisteredAiModel | undefined {
+  private getFirstAvailableModelFromList({
+    modelIds,
+    aiDataPolicy,
+  }: {
+    modelIds: string[];
+    aiDataPolicy: AiDataPolicy;
+  }): RegisteredAiModel | undefined {
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
-      if (isDefined(model) && this.isModelUsable(modelId, aiDataPolicy)) {
+      if (isDefined(model) && this.isModelUsable({ modelId, aiDataPolicy })) {
         return model;
       }
     }
@@ -580,15 +570,19 @@ export class AiModelRegistryService {
   }
 
   // borrow the nearest tier's chain before falling back to any allowed model, never a disabled or non-compliant one
-  findDefaultModelForTier(
-    tier: AiModelTier,
-    aiDataPolicy?: AiDataPolicy,
-  ): RegisteredAiModel | undefined {
+  findDefaultModelForTier({
+    tier,
+    aiDataPolicy,
+  }: {
+    tier: AiModelTier;
+    aiDataPolicy: AiDataPolicy;
+  }): RegisteredAiModel | undefined {
     for (const candidateTier of getAiModelTiersByDistance(tier)) {
-      const model = this.getFirstAvailableModelFromList(
-        this.preferencesService.getDefaultModelIdsForTier(candidateTier),
+      const model = this.getFirstAvailableModelFromList({
+        modelIds:
+          this.preferencesService.getDefaultModelIdsForTier(candidateTier),
         aiDataPolicy,
-      );
+      });
 
       if (isDefined(model)) {
         return model;
@@ -596,7 +590,10 @@ export class AiModelRegistryService {
     }
 
     const allowedModels = this.getAdminFilteredModels().filter((model) =>
-      this.isModelCompliantWithDataPolicy(model.modelId, aiDataPolicy),
+      this.isModelCompliantWithDataPolicy({
+        modelId: model.modelId,
+        aiDataPolicy,
+      }),
     );
 
     return (
@@ -606,21 +603,29 @@ export class AiModelRegistryService {
     );
   }
 
-  getDefaultModelForTier(
+  findInstanceDefaultModelForTier(
     tier: AiModelTier,
-    aiDataPolicy?: AiDataPolicy,
-  ): RegisteredAiModel {
-    const model = this.findDefaultModelForTier(tier, aiDataPolicy);
+  ): RegisteredAiModel | undefined {
+    return this.findDefaultModelForTier({
+      tier,
+      aiDataPolicy: NO_AI_DATA_POLICY,
+    });
+  }
+
+  private getDefaultModelForTier({
+    tier,
+    aiDataPolicy,
+  }: {
+    tier: AiModelTier;
+    aiDataPolicy: AiDataPolicy;
+  }): RegisteredAiModel {
+    const model = this.findDefaultModelForTier({ tier, aiDataPolicy });
 
     if (isDefined(model)) {
       return model;
     }
 
-    if (
-      isDefined(aiDataPolicy) &&
-      isAiDataPolicyActive(aiDataPolicy) &&
-      isDefined(this.findDefaultModelForTier(tier))
-    ) {
+    if (isDefined(this.findInstanceDefaultModelForTier(tier))) {
       throw new AiException(
         'No AI model meets the workspace data policy.',
         AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY,
@@ -638,6 +643,7 @@ export class AiModelRegistryService {
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,
   ): RegisteredAiModel {
+    const aiDataPolicy = workspaceSettings ?? NO_AI_DATA_POLICY;
     const pinnedModelId =
       isDefined(workspaceSettings) &&
       !workspaceSettings.isAutoModelSelectionEnabled
@@ -646,7 +652,7 @@ export class AiModelRegistryService {
 
     if (
       isDefined(pinnedModelId) &&
-      this.isModelUsable(pinnedModelId, workspaceSettings)
+      this.isModelUsable({ modelId: pinnedModelId, aiDataPolicy })
     ) {
       const pinnedModel = this.getModel(pinnedModelId);
 
@@ -655,7 +661,7 @@ export class AiModelRegistryService {
       }
     }
 
-    return this.getDefaultModelForTier(tier, workspaceSettings);
+    return this.getDefaultModelForTier({ tier, aiDataPolicy });
   }
 
   private resolveAutoSelectModel(
@@ -764,10 +770,13 @@ export class AiModelRegistryService {
   }
 
   // catalog membership, not registration: a provider key added later makes the stored id work
-  validateModelAvailability(
-    modelId: string,
-    aiDataPolicy?: AiDataPolicy,
-  ): void {
+  validateModelAvailability({
+    modelId,
+    aiDataPolicy,
+  }: {
+    modelId: string;
+    aiDataPolicy: AiDataPolicy;
+  }): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
         'The selected model has been disabled by the administrator.',
@@ -789,14 +798,17 @@ export class AiModelRegistryService {
       );
     }
 
-    this.assertModelIsCompliantWithDataPolicy(modelId, aiDataPolicy);
+    this.assertModelIsCompliantWithDataPolicy({ modelId, aiDataPolicy });
   }
 
-  private assertModelIsCompliantWithDataPolicy(
-    modelId: string,
-    aiDataPolicy?: AiDataPolicy,
-  ): void {
-    if (!this.isModelCompliantWithDataPolicy(modelId, aiDataPolicy)) {
+  private assertModelIsCompliantWithDataPolicy({
+    modelId,
+    aiDataPolicy,
+  }: {
+    modelId: string;
+    aiDataPolicy: AiDataPolicy;
+  }): void {
+    if (!this.isModelCompliantWithDataPolicy({ modelId, aiDataPolicy })) {
       throw new AiException(
         `Model ${modelId} does not meet the workspace data policy`,
         AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY,
@@ -927,10 +939,10 @@ export class AiModelRegistryService {
       );
     }
 
-    this.assertModelIsCompliantWithDataPolicy(
-      registeredModel.modelId,
-      workspaceSettings,
-    );
+    this.assertModelIsCompliantWithDataPolicy({
+      modelId: registeredModel.modelId,
+      aiDataPolicy: workspaceSettings,
+    });
 
     return registeredModel;
   }

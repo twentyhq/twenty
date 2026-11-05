@@ -97,6 +97,7 @@ import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/con
 import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
 import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
 import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
+import { computeAiDataPolicyAfterUpdate } from 'src/engine/core-modules/workspace/utils/compute-ai-data-policy-after-update.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -570,15 +571,10 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
-        aiDataPolicy: {
-          aiDataResidency:
-            payload.aiDataResidency === undefined
-              ? workspace.aiDataResidency
-              : payload.aiDataResidency,
-          isAiZeroDataRetentionRequired:
-            payload.isAiZeroDataRetentionRequired ??
-            workspace.isAiZeroDataRetentionRequired,
-        },
+        aiDataPolicy: computeAiDataPolicyAfterUpdate({
+          aiDataPolicy: workspace,
+          update: payload,
+        }),
       });
     }
 

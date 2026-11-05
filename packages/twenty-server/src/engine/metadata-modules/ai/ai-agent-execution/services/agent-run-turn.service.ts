@@ -320,7 +320,7 @@ export class AgentRunTurnService {
         }),
         ...buildAiTelemetry({
           functionId: 'agent-structured-output',
-          privacySettings: turn.privacySettings,
+          isContentRecordingAllowed: turn.isContentRecordingAllowed,
           workspaceId,
           userWorkspaceId,
           agentId: persona.agentId ?? undefined,

@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { JEV_MODEL_ID } from 'twenty-shared/ai';
+import {
+  isAiModelCompliantWithDataPolicy,
+  JEV_MODEL_ID,
+} from 'twenty-shared/ai';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -53,15 +56,16 @@ export class AiEvaluationService {
     const modelId = JEV_MODEL_ID;
 
     const aiDataPolicy =
-      await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
         workspaceId,
       );
 
     if (
-      !this.aiModelRegistryService.isEvaluationModelCompliantWithDataPolicy(
-        modelId,
+      !isAiModelCompliantWithDataPolicy({
+        model:
+          this.aiModelRegistryService.getEvaluationModelConfig(modelId) ?? {},
         aiDataPolicy,
-      )
+      })
     ) {
       throw new AiException(
         `Evaluation model ${modelId} does not meet the workspace data policy`,

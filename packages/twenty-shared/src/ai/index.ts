@@ -137,7 +137,6 @@ export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
-export { isAiDataResidencyPolicy } from './utils/is-ai-data-residency-policy.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';

@@ -25,7 +25,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
-const WORKSPACE_PRIVACY_SETTINGS = {
+const WORKSPACE_AI_DATA_POLICY = {
   aiDataResidency: 'eu',
   isAiZeroDataRetentionRequired: true,
 };
@@ -108,9 +108,9 @@ const buildAgentTools = (options?: {
     }),
   };
   const workspaceAiDataPolicyService = {
-    getAiPrivacySettingsOrThrow: jest
+    getAiDataPolicyOrThrow: jest
       .fn()
-      .mockResolvedValue(WORKSPACE_PRIVACY_SETTINGS),
+      .mockResolvedValue(WORKSPACE_AI_DATA_POLICY),
   };
   const permissionsService = {
     hasPermissionFlag: jest
@@ -373,10 +373,10 @@ describe('Agent tools', () => {
       ).toHaveBeenCalledTimes(1);
       expect(
         aiModelRegistryService.validateModelAvailability,
-      ).toHaveBeenCalledWith(
-        'workspace-default-model',
-        WORKSPACE_PRIVACY_SETTINGS,
-      );
+      ).toHaveBeenCalledWith({
+        modelId: 'workspace-default-model',
+        aiDataPolicy: WORKSPACE_AI_DATA_POLICY,
+      });
       expect(agentService.createOneAgent).toHaveBeenCalledTimes(1);
 
       const [createAgentInput, calledWorkspaceId] =
@@ -422,7 +422,10 @@ describe('Agent tools', () => {
       expect(output.success).toBe(true);
       expect(
         aiModelRegistryService.validateModelAvailability,
-      ).toHaveBeenCalledWith('anthropic/claude', WORKSPACE_PRIVACY_SETTINGS);
+      ).toHaveBeenCalledWith({
+        modelId: 'anthropic/claude',
+        aiDataPolicy: WORKSPACE_AI_DATA_POLICY,
+      });
     });
 
     it('keeps the ids of the triggers passed back and only sends the given fields', async () => {
