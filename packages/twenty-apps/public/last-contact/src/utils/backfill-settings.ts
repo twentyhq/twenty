@@ -5,7 +5,10 @@ import {
 
 // Application and server variables are injected into process.env on every
 // execution.
-const readPositiveInteger = (envVarName: string, fallback: number): number => {
+const readPositiveInteger = (
+  envVarName: string,
+  fallback: number,
+): number => {
   const rawValue = process.env[envVarName];
 
   if (rawValue === undefined || rawValue.trim().length === 0) {
@@ -20,7 +23,4 @@ const readPositiveInteger = (envVarName: string, fallback: number): number => {
 };
 
 export const getBackfillBatchSize = (): number =>
-  readPositiveInteger(
-    BACKFILL_BATCH_SIZE_ENV_VAR_NAME,
-    DEFAULT_BACKFILL_BATCH_SIZE,
-  );
+  readPositiveInteger(BACKFILL_BATCH_SIZE_ENV_VAR_NAME, DEFAULT_BACKFILL_BATCH_SIZE);

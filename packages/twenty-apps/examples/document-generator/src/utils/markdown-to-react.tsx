@@ -9,27 +9,9 @@ const HEADING = '#10152a';
 const ACCENT = '#1961ed';
 
 const styles: Record<string, CSSProperties> = {
-  h1: {
-    fontSize: '22px',
-    fontWeight: 700,
-    color: HEADING,
-    margin: '28px 0 12px',
-    lineHeight: 1.3,
-  },
-  h2: {
-    fontSize: '18px',
-    fontWeight: 700,
-    color: HEADING,
-    margin: '24px 0 10px',
-    lineHeight: 1.3,
-  },
-  h3: {
-    fontSize: '15px',
-    fontWeight: 700,
-    color: HEADING,
-    margin: '20px 0 8px',
-    lineHeight: 1.3,
-  },
+  h1: { fontSize: '22px', fontWeight: 700, color: HEADING, margin: '28px 0 12px', lineHeight: 1.3 },
+  h2: { fontSize: '18px', fontWeight: 700, color: HEADING, margin: '24px 0 10px', lineHeight: 1.3 },
+  h3: { fontSize: '15px', fontWeight: 700, color: HEADING, margin: '20px 0 8px', lineHeight: 1.3 },
   p: { margin: '0 0 14px', lineHeight: 1.7, color: INK },
   ul: { margin: '0 0 14px', paddingLeft: '22px' },
   ol: { margin: '0 0 14px', paddingLeft: '22px' },
@@ -72,44 +54,25 @@ const BLOCK_TOKEN_TYPES = new Set([
   'space',
 ]);
 
-const renderInline = (
-  tokens: Token[] | undefined,
-  keyPrefix: string,
-): ReactNode[] => {
+const renderInline = (tokens: Token[] | undefined, keyPrefix: string): ReactNode[] => {
   if (!tokens) return [];
 
   return tokens.map((token, index): ReactNode => {
     const key = `${keyPrefix}-${index}`;
     switch (token.type) {
       case 'strong':
-        return (
-          <strong key={key}>
-            {renderInline((token as Tokens.Strong).tokens, key)}
-          </strong>
-        );
+        return <strong key={key}>{renderInline((token as Tokens.Strong).tokens, key)}</strong>;
       case 'em':
-        return (
-          <em key={key}>{renderInline((token as Tokens.Em).tokens, key)}</em>
-        );
+        return <em key={key}>{renderInline((token as Tokens.Em).tokens, key)}</em>;
       case 'codespan':
-        return (
-          <code key={key} style={styles.code}>
-            {(token as Tokens.Codespan).text}
-          </code>
-        );
+        return <code key={key} style={styles.code}>{(token as Tokens.Codespan).text}</code>;
       case 'br':
         return <br key={key} />;
       case 'link': {
         const link = token as Tokens.Link;
         const safe = /^(https?:|mailto:)/i.test(link.href ?? '');
         return safe ? (
-          <a
-            key={key}
-            href={link.href}
-            style={styles.a}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a key={key} href={link.href} style={styles.a} target="_blank" rel="noopener noreferrer">
             {renderInline(link.tokens, key)}
           </a>
         ) : (
@@ -133,10 +96,7 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
     switch (token.type) {
       case 'heading': {
         const heading = token as Tokens.Heading;
-        const Tag = (['h1', 'h2', 'h3', 'h3'][heading.depth - 1] ?? 'h3') as
-          | 'h1'
-          | 'h2'
-          | 'h3';
+        const Tag = (['h1', 'h2', 'h3', 'h3'][heading.depth - 1] ?? 'h3') as 'h1' | 'h2' | 'h3';
         return (
           <Tag key={key} style={styles[Tag]}>
             {renderInline(heading.tokens, key)}
@@ -144,19 +104,13 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
         );
       }
       case 'paragraph':
-        return (
-          <p key={key} style={styles.p}>
-            {renderInline((token as Tokens.Paragraph).tokens, key)}
-          </p>
-        );
+        return <p key={key} style={styles.p}>{renderInline((token as Tokens.Paragraph).tokens, key)}</p>;
       case 'list': {
         const list = token as Tokens.List;
         const items = list.items.map((item, itemIndex) => {
           // List items can hold block-level tokens (nested lists, extra
           // paragraphs, code). Render those as blocks; keep simple items inline.
-          const hasBlock = item.tokens?.some((child) =>
-            BLOCK_TOKEN_TYPES.has(child.type),
-          );
+          const hasBlock = item.tokens?.some((child) => BLOCK_TOKEN_TYPES.has(child.type));
           return (
             <li key={`${key}-${itemIndex}`} style={styles.li}>
               {hasBlock
@@ -166,13 +120,9 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
           );
         });
         return list.ordered ? (
-          <ol key={key} style={styles.ol}>
-            {items}
-          </ol>
+          <ol key={key} style={styles.ol}>{items}</ol>
         ) : (
-          <ul key={key} style={styles.ul}>
-            {items}
-          </ul>
+          <ul key={key} style={styles.ul}>{items}</ul>
         );
       }
       case 'blockquote':
@@ -182,11 +132,7 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
           </blockquote>
         );
       case 'code':
-        return (
-          <pre key={key} style={styles.pre}>
-            {(token as Tokens.Code).text}
-          </pre>
-        );
+        return <pre key={key} style={styles.pre}>{(token as Tokens.Code).text}</pre>;
       case 'hr':
         return <hr key={key} style={styles.hr} />;
       case 'space':
@@ -205,11 +151,7 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
       }
       default: {
         const text = (token as { text?: string }).text;
-        return text ? (
-          <p key={key} style={styles.p}>
-            {text}
-          </p>
-        ) : null;
+        return text ? <p key={key} style={styles.p}>{text}</p> : null;
       }
     }
   });

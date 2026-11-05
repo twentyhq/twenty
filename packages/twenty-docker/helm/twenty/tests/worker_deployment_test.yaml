@@ -65,12 +65,12 @@ tests:
     asserts:
       - matchRegex:
           path: spec.template.spec.containers[0].image
-          pattern: '^custom/twenty:v2.0.0$'
+          pattern: "^custom/twenty:v2.0.0$"
 
   - it: falls back to Chart.AppVersion when tag not specified
     set:
-      worker.image.tag: ''
+      worker.image.tag: ""
     asserts:
       - matchRegex:
           path: spec.template.spec.containers[0].image
-          pattern: ':v1.14.0$'
+          pattern: ":v1.14.0$"

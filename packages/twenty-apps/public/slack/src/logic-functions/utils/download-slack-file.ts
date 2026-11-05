@@ -144,11 +144,7 @@ export const downloadSlackFile = async ({
   ) {
     await response.body?.cancel().catch(() => undefined);
 
-    return {
-      success: false,
-      error: TOO_LARGE_ERROR,
-      reason: 'download-failed',
-    };
+    return { success: false, error: TOO_LARGE_ERROR, reason: 'download-failed' };
   }
 
   if (isNull(response.body)) {
@@ -162,11 +158,7 @@ export const downloadSlackFile = async ({
   const bytes = await readBoundedBody(response.body);
 
   if (!isDefined(bytes)) {
-    return {
-      success: false,
-      error: TOO_LARGE_ERROR,
-      reason: 'download-failed',
-    };
+    return { success: false, error: TOO_LARGE_ERROR, reason: 'download-failed' };
   }
 
   return { success: true, bytes, contentType: mimeType };

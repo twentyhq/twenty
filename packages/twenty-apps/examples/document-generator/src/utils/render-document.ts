@@ -94,10 +94,7 @@ const PAGE_BODY_CSS = `
 `;
 
 // A complete, printable HTML page for the public view route.
-export const documentHtmlPage = (
-  title: string,
-  content: string,
-): string => `<!doctype html>
+export const documentHtmlPage = (title: string, content: string): string => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />

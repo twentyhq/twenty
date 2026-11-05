@@ -16,18 +16,25 @@ interface Loc {
 
 const isMemberExpression = (node: any): boolean =>
   node.type === 'MemberExpression';
-const isCallExpression = (node: any): boolean => node.type === 'CallExpression';
+const isCallExpression = (node: any): boolean =>
+  node.type === 'CallExpression';
 
 const isStyledTagname = (node: any): boolean => {
   if (node.tag?.type === 'Identifier') {
     return node.tag.name === 'css';
   }
 
-  if (isMemberExpression(node.tag) && node.tag.object?.type === 'Identifier') {
+  if (
+    isMemberExpression(node.tag) &&
+    node.tag.object?.type === 'Identifier'
+  ) {
     return node.tag.object.name === 'styled';
   }
 
-  if (isCallExpression(node.tag) && node.tag.callee?.type === 'Identifier') {
+  if (
+    isCallExpression(node.tag) &&
+    node.tag.callee?.type === 'Identifier'
+  ) {
     return node.tag.callee.name === 'styled';
   }
 
@@ -73,7 +80,8 @@ const isValidAtomicRule = (
         loc: {
           start: {
             line: decls[invalidDeclIndex - 1].source!.start!.line,
-            column: decls[invalidDeclIndex - 1].source!.start!.column - 1,
+            column:
+              decls[invalidDeclIndex - 1].source!.start!.column - 1,
           },
           end: {
             line: decls[invalidDeclIndex].source!.end!.line,
@@ -84,7 +92,9 @@ const isValidAtomicRule = (
     : { isValid: true };
 };
 
-const isValidRule = (rule: postcss.Rule): { isValid: boolean; loc?: Loc } => {
+const isValidRule = (
+  rule: postcss.Rule,
+): { isValid: boolean; loc?: Loc } => {
   const { isValid, loc } = rule.nodes.reduce<{
     isValid: boolean;
     loc?: Loc;
@@ -198,7 +208,13 @@ const getDeclRange = ({
   return { startIdx, endIdx };
 };
 
-const getDeclText = ({ decl, src }: { decl: postcss.ChildNode; src: any }) => {
+const getDeclText = ({
+  decl,
+  src,
+}: {
+  decl: postcss.ChildNode;
+  src: any;
+}) => {
   const { startIdx, endIdx } = getDeclRange({ decl, src });
   return src.getText().substring(startIdx, endIdx + 1);
 };

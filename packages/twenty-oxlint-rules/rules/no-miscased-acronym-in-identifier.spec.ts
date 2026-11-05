@@ -35,7 +35,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: 'sso-identity-provider.entity.ts',
     },
     {
-      code: 'export const RECALL_API_MAX_ATTEMPTS = 3;',
+      code: "export const RECALL_API_MAX_ATTEMPTS = 3;",
       filename:
         'packages/twenty-apps/public/companion/src/logic-functions/constants/RECALL_API_MAX_ATTEMPTS.ts',
     },
@@ -95,8 +95,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: 'export const openApiReference = {};',
       errors: [{ messageId: 'miscasedAcronymInFilename' }],
-      filename:
-        'packages/twenty-server/src/engine/core-modules/open-api/openAPIReference.ts',
+      filename: 'packages/twenty-server/src/engine/core-modules/open-api/openAPIReference.ts',
     },
     {
       code: 'export const SettingsSsoForm = () => null;',

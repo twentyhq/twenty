@@ -57,10 +57,7 @@
       "properties": {
         "repository": { "type": "string" },
         "tag": { "type": "string" },
-        "pullPolicy": {
-          "type": "string",
-          "enum": ["Always", "IfNotPresent", "Never"]
-        }
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
       }
     },
     "nameOverride": { "type": "string" },
@@ -109,10 +106,7 @@
         "env": {
           "type": "object",
           "properties": {
-            "SERVER_URL": {
-              "type": "string",
-              "description": "Override for the server URL (e.g., https://crm.example.com). If not set, derived from ingress or service."
-            },
+            "SERVER_URL": { "type": "string", "description": "Override for the server URL (e.g., https://crm.example.com). If not set, derived from ingress or service." },
             "NODE_PORT": { "type": "integer", "minimum": 1 },
             "PG_DATABASE_URL": { "type": "string" },
             "REDIS_URL": { "type": "string" },
@@ -143,21 +137,18 @@
               "valueFrom": { "type": "object" }
             },
             "required": ["name"],
-            "oneOf": [{ "required": ["value"] }, { "required": ["valueFrom"] }]
+            "oneOf": [
+              { "required": ["value"] },
+              { "required": ["valueFrom"] }
+            ]
           }
         },
         "service": {
           "type": "object",
           "properties": {
-            "type": {
-              "type": "string",
-              "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
-            },
+            "type": { "type": "string", "enum": ["ClusterIP", "NodePort", "LoadBalancer"] },
             "port": { "type": "integer", "minimum": 1 },
-            "sessionAffinity": {
-              "type": "string",
-              "enum": ["None", "ClientIP"]
-            },
+            "sessionAffinity": { "type": "string", "enum": ["None", "ClientIP"] },
             "sessionAffinityTimeoutSeconds": { "type": "integer", "minimum": 1 }
           }
         },
@@ -179,10 +170,7 @@
                       "type": "object",
                       "properties": {
                         "path": { "type": "string" },
-                        "pathType": {
-                          "type": "string",
-                          "enum": ["Prefix", "Exact", "ImplementationSpecific"]
-                        }
+                        "pathType": { "type": "string", "enum": ["Prefix", "Exact", "ImplementationSpecific"] }
                       }
                     }
                   }
@@ -218,16 +206,7 @@
           "items": { "type": "object" }
         },
         "affinity": { "type": "object" },
-        "dnsPolicy": {
-          "type": ["string", "null"],
-          "enum": [
-            "ClusterFirst",
-            "ClusterFirstWithHostNet",
-            "Default",
-            "None",
-            null
-          ]
-        },
+        "dnsPolicy": { "type": ["string", "null"], "enum": ["ClusterFirst", "ClusterFirstWithHostNet", "Default", "None", null] },
         "dnsConfig": { "type": "object" },
         "startupProbe": { "$ref": "#/definitions/probe" },
         "livenessProbe": { "$ref": "#/definitions/probe" },
@@ -261,7 +240,10 @@
               "valueFrom": { "type": "object" }
             },
             "required": ["name"],
-            "oneOf": [{ "required": ["value"] }, { "required": ["valueFrom"] }]
+            "oneOf": [
+              { "required": ["value"] },
+              { "required": ["valueFrom"] }
+            ]
           }
         },
         "nodeSelector": { "type": "object" },
@@ -270,16 +252,7 @@
           "items": { "type": "object" }
         },
         "affinity": { "type": "object" },
-        "dnsPolicy": {
-          "type": ["string", "null"],
-          "enum": [
-            "ClusterFirst",
-            "ClusterFirstWithHostNet",
-            "Default",
-            "None",
-            null
-          ]
-        },
+        "dnsPolicy": { "type": ["string", "null"], "enum": ["ClusterFirst", "ClusterFirstWithHostNet", "Default", "None", null] },
         "dnsConfig": { "type": "object" }
       }
     },
@@ -305,20 +278,12 @@
       "required": ["type"],
       "allOf": [
         {
-          "if": {
-            "properties": { "type": { "const": "s3" } },
-            "required": ["type"]
-          },
+          "if": { "properties": { "type": { "const": "s3" } }, "required": ["type"] },
           "then": {
             "required": ["s3"],
             "properties": {
               "s3": {
-                "required": [
-                  "bucket",
-                  "region",
-                  "accessKeyId",
-                  "secretAccessKey"
-                ]
+                "required": ["bucket", "region", "accessKeyId", "secretAccessKey"]
               }
             }
           }

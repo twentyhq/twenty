@@ -1,7 +1,4 @@
-import {
-  defineLogicFunction,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk/define';
+import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import { PDL_COMPANY_REQUIRED_FIELD_VALUES } from 'src/constants/pdl-company-required-field-values';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
@@ -12,8 +9,7 @@ import { type SingleEnrichInput } from 'src/types/single-enrich-input';
 const handler = (input: SingleEnrichInput) => enrichCompanyCore({ input });
 
 export default defineLogicFunction({
-  universalIdentifier:
-    PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompany.universalIdentifier,
+  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompany.universalIdentifier,
   name: 'enrich-company',
   description:
     'Enrich a single Company record with People Data Labs data (industry, size, funding, location, etc.) given its record id.',

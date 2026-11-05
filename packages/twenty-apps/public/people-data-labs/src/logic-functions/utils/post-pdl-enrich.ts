@@ -36,17 +36,12 @@ export const postPdlBulkEnrich = async <TData>({
         'Content-Type': 'application/json',
         'X-Api-Key': apiKey,
       },
-      body: JSON.stringify({
-        requests: requests.map((params) => ({ params })),
-      }),
+      body: JSON.stringify({ requests: requests.map((params) => ({ params })) }),
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
 
-    return failAll({
-      message: `PDL request failed: ${message}`,
-      httpStatus: 0,
-    });
+    return failAll({ message: `PDL request failed: ${message}`, httpStatus: 0 });
   }
 
   let json: unknown;
@@ -72,8 +67,7 @@ export const postPdlBulkEnrich = async <TData>({
 
   const responseItems = Array.isArray(json)
     ? json
-    : isObject(json) &&
-        Array.isArray((json as Record<string, unknown>).responses)
+    : isObject(json) && Array.isArray((json as Record<string, unknown>).responses)
       ? ((json as Record<string, unknown>).responses as unknown[])
       : [];
 

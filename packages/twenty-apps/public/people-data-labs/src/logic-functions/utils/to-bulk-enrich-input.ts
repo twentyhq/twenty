@@ -7,9 +7,7 @@ type EnrichRouteBody = { recordIds?: string[] };
 
 export type EnrichInput = BulkEnrichInput | RoutePayload<EnrichRouteBody>;
 
-const isRoutePayload = (
-  input: EnrichInput,
-): input is RoutePayload<EnrichRouteBody> =>
+const isRoutePayload = (input: EnrichInput): input is RoutePayload<EnrichRouteBody> =>
   isObject(input) && 'requestContext' in input;
 
 export const toBulkEnrichInput = (input: EnrichInput): BulkEnrichInput =>

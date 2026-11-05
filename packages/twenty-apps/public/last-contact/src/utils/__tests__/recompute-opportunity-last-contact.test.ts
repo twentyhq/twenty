@@ -42,19 +42,19 @@ describe('recomputeOpportunitiesLastContact', () => {
 
     await recomputeOpportunitiesLastContact(client as never, [OPPORTUNITY_ID]);
 
-    expect(client.mutation.mock.calls[0][0].createOpportunities.__args).toEqual(
-      {
-        upsert: true,
-        data: [
-          {
-            id: OPPORTUNITY_ID,
-            lastContactAt: OCCURRED_AT,
-            lastContactItemMessageId: MESSAGE_ID,
-            lastContactItemCalendarEventId: null,
-          },
-        ],
-      },
-    );
+    expect(
+      client.mutation.mock.calls[0][0].createOpportunities.__args,
+    ).toEqual({
+      upsert: true,
+      data: [
+        {
+          id: OPPORTUNITY_ID,
+          lastContactAt: OCCURRED_AT,
+          lastContactItemMessageId: MESSAGE_ID,
+          lastContactItemCalendarEventId: null,
+        },
+      ],
+    });
   });
 
   it('clears the opportunity last contact when there is no point of contact', async () => {

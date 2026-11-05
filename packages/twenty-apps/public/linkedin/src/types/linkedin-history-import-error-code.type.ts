@@ -1,5 +1,2 @@
 export type LinkedinHistoryImportErrorCode =
-  | 'AUTH_FAILED'
-  | 'UNREACHABLE'
-  | 'STALLED'
-  | 'UNKNOWN';
+  'AUTH_FAILED' | 'UNREACHABLE' | 'STALLED' | 'UNKNOWN';

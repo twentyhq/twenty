@@ -18,7 +18,10 @@ export const rule = defineRule({
   create: (context) => {
     return {
       CallExpression: (node: any) => {
-        if (node.callee?.type !== 'Identifier' || node.callee.name !== 'useRef')
+        if (
+          node.callee?.type !== 'Identifier' ||
+          node.callee.name !== 'useRef'
+        )
           return;
 
         const typeParam = node.typeArguments?.params[0];

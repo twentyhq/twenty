@@ -22,7 +22,9 @@ async function getToken(): Promise<string> {
   const token = process.env.CROWDIN_PERSONAL_TOKEN;
 
   if (!token) {
-    console.error('Error: CROWDIN_PERSONAL_TOKEN environment variable not set');
+    console.error(
+      'Error: CROWDIN_PERSONAL_TOKEN environment variable not set',
+    );
     console.error(
       'Get your token from: https://twenty.crowdin.com/u/settings#api-key',
     );
@@ -141,9 +143,7 @@ Generated: ${new Date().toISOString()}
 
       for (const check of langChecks.slice(0, 5)) {
         const truncatedText =
-          check.text.length > 100
-            ? check.text.slice(0, 100) + '...'
-            : check.text;
+          check.text.length > 100 ? check.text.slice(0, 100) + '...' : check.text;
 
         report += `- String #${check.stringId}: ${truncatedText}\n`;
       }
@@ -217,9 +217,7 @@ async function main() {
   const criticalIssues = checks.filter((c) => c.category !== 'spellcheck');
 
   if (criticalIssues.length > 0) {
-    console.log(
-      `\n⚠️  ${criticalIssues.length} critical issues found (excluding spellcheck)`,
-    );
+    console.log(`\n⚠️  ${criticalIssues.length} critical issues found (excluding spellcheck)`);
     process.exit(1);
   }
 }

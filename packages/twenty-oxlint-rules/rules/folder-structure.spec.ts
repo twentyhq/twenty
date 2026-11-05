@@ -40,7 +40,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/hooks/useMyHook.tsx'),
+      filename: filename(
+        'src/modules/object-record/hooks/useMyHook.tsx',
+      ),
     },
 
     // Hook tests: use{PascalCase}.(test|spec).(ts|tsx)
@@ -88,7 +90,9 @@ ruleTester.run(RULE_NAME, rule, {
     // Utils: {camelCase}.(ts|tsx)
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/utils/buildQuery.ts'),
+      filename: filename(
+        'src/modules/object-record/utils/buildQuery.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
@@ -134,7 +138,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/states/someState.ts'),
+      filename: filename(
+        'src/modules/object-record/states/someState.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
@@ -144,7 +150,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/graphql/queries.ts'),
+      filename: filename(
+        'src/modules/object-record/graphql/queries.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
@@ -160,19 +168,27 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/contexts/MyContext.ts'),
+      filename: filename(
+        'src/modules/object-record/contexts/MyContext.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/scopes/MyScope.ts'),
+      filename: filename(
+        'src/modules/object-record/scopes/MyScope.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/services/recordService.ts'),
+      filename: filename(
+        'src/modules/object-record/services/recordService.ts',
+      ),
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/object-record/errors/NotFoundError.ts'),
+      filename: filename(
+        'src/modules/object-record/errors/NotFoundError.ts',
+      ),
     },
 
     // Nested modules up to depth 4
@@ -188,7 +204,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/a/b/c/d/e/hooks/useDeep.ts'),
+      filename: filename(
+        'src/modules/a/b/c/d/e/hooks/useDeep.ts',
+      ),
     },
 
     // Files directly in module folders
@@ -243,69 +261,91 @@ ruleTester.run(RULE_NAME, rule, {
     // Non-kebab-case module names
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/MyModule/hooks/useHook.ts'),
+      filename: filename(
+        'src/modules/MyModule/hooks/useHook.ts',
+      ),
       errors: [{ messageId: 'moduleNameNotKebabCase' }],
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/camelCase/hooks/useHook.ts'),
+      filename: filename(
+        'src/modules/camelCase/hooks/useHook.ts',
+      ),
       errors: [{ messageId: 'moduleNameNotKebabCase' }],
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/graphWidgetChart/file.ts'),
+      filename: filename(
+        'src/modules/my-feature/graphWidgetChart/file.ts',
+      ),
       errors: [{ messageId: 'moduleNameNotKebabCase' }],
     },
 
     // Module nesting too deep (depth > 5)
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/a/b/c/d/e/f/hooks/useDeep.ts'),
+      filename: filename(
+        'src/modules/a/b/c/d/e/f/hooks/useDeep.ts',
+      ),
       errors: [{ messageId: 'moduleTooDeep' }],
     },
     // Depth check fires before kebab-case check at max depth
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/a/b/c/d/e/camelCaseDir/file.ts'),
+      filename: filename(
+        'src/modules/a/b/c/d/e/camelCaseDir/file.ts',
+      ),
       errors: [{ messageId: 'moduleTooDeep' }],
     },
 
     // Bad hook file naming
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/hooks/badName.ts'),
+      filename: filename(
+        'src/modules/my-feature/hooks/badName.ts',
+      ),
       errors: [{ messageId: 'hookFileNaming' }],
     },
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/hooks/helper.ts'),
+      filename: filename(
+        'src/modules/my-feature/hooks/helper.ts',
+      ),
       errors: [{ messageId: 'hookFileNaming' }],
     },
 
     // Invalid hooks folder entry
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/hooks/random-folder/file.ts'),
+      filename: filename(
+        'src/modules/my-feature/hooks/random-folder/file.ts',
+      ),
       errors: [{ messageId: 'invalidHooksEntry' }],
     },
 
     // Bad util file naming (PascalCase not allowed)
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/utils/BadName.ts'),
+      filename: filename(
+        'src/modules/my-feature/utils/BadName.ts',
+      ),
       errors: [{ messageId: 'utilFileNaming' }],
     },
     // Bad util file naming (kebab-case files not allowed)
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/utils/kebab-name.ts'),
+      filename: filename(
+        'src/modules/my-feature/utils/kebab-name.ts',
+      ),
       errors: [{ messageId: 'utilFileNaming' }],
     },
 
     // Non-kebab-case subfolder in utils
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/my-feature/utils/camelCase/file.ts'),
+      filename: filename(
+        'src/modules/my-feature/utils/camelCase/file.ts',
+      ),
       errors: [{ messageId: 'invalidUtilsEntry' }],
     },
 

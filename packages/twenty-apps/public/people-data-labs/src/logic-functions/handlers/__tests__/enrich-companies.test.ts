@@ -20,9 +20,7 @@ type Captured = {
 
 type MutationRequest = {
   updateCompany?: { __args: { id: string; data: Record<string, unknown> } };
-  updateCompanies?: {
-    __args: { filter: unknown; data: Record<string, unknown> };
-  };
+  updateCompanies?: { __args: { filter: unknown; data: Record<string, unknown> } };
 };
 
 const captureMutation = (captured: Captured) => (request: unknown) => {
@@ -38,10 +36,7 @@ const captureMutation = (captured: Captured) => (request: unknown) => {
   }
 };
 
-const buildClient = (
-  companies: CompanyNode[],
-  captured: Captured,
-): CoreApiClient =>
+const buildClient = (companies: CompanyNode[], captured: Captured): CoreApiClient =>
   createCoreApiClientMock({
     queryResult: { companies: { edges: companies.map((node) => ({ node })) } },
     onMutation: captureMutation(captured),
@@ -84,9 +79,7 @@ describe('enrichCompaniesCore', () => {
   });
 
   it('records NOT_FOUND and writes the status via a batched updateCompanies', async () => {
-    enrichCompaniesMock.mockResolvedValue([
-      { outcome: 'not_found', httpStatus: 404 },
-    ]);
+    enrichCompaniesMock.mockResolvedValue([{ outcome: 'not_found', httpStatus: 404 }]);
     const captured: Captured = {};
     const client = buildClient([COMPANY_NODE_MOCK], captured);
 
@@ -160,9 +153,7 @@ describe('enrichCompaniesCore', () => {
     });
 
     expect(enrichCompaniesMock).toHaveBeenCalledTimes(1);
-    expect(captured.updateCompanies?.filter).toEqual({
-      id: { in: ['c1', 'c2'] },
-    });
+    expect(captured.updateCompanies?.filter).toEqual({ id: { in: ['c1', 'c2'] } });
     expect(result.notFound).toBe(2);
   });
 });

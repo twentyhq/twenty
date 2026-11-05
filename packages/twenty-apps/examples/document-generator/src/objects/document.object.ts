@@ -18,8 +18,7 @@ export default defineObject({
   namePlural: 'documents',
   labelSingular: 'Document',
   labelPlural: 'Documents',
-  description:
-    'A generated document produced from a template and a CRM record.',
+  description: 'A generated document produced from a template and a CRM record.',
   icon: 'IconFile',
   labelIdentifierFieldMetadataUniversalIdentifier:
     DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,

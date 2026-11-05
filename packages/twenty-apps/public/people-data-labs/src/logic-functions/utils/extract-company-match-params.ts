@@ -25,9 +25,7 @@ export const extractCompanyMatchParams = ({
   }
 
   const websiteDomain = normalizeDomain(node.domainName?.primaryLinkUrl);
-  const linkedinProfileUrl = normalizeLinkedinUrl(
-    node.linkedinLink?.primaryLinkUrl,
-  );
+  const linkedinProfileUrl = normalizeLinkedinUrl(node.linkedinLink?.primaryLinkUrl);
   const companyName = toText(node.name);
   const hasStrongIdentifier =
     isDefined(websiteDomain) || isDefined(linkedinProfileUrl);

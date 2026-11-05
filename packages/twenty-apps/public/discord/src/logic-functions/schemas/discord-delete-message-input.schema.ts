@@ -12,7 +12,7 @@ export const discordDeleteMessageInputSchema: InputJsonSchema = {
       type: 'string',
       label: 'Message ID',
       description:
-        "Which message to remove: its **message ID** (same value as `messageId` returned when the bot posted it). The bot can delete its own messages without extra permissions; deleting others' messages requires the **Manage Messages** permission.",
+        'Which message to remove: its **message ID** (same value as `messageId` returned when the bot posted it). The bot can delete its own messages without extra permissions; deleting others\' messages requires the **Manage Messages** permission.',
     },
   },
   required: ['channelId', 'messageId'],

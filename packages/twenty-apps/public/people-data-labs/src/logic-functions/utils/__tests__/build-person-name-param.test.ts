@@ -10,14 +10,8 @@ describe('buildPersonNameParam', () => {
   });
 
   it('returns undefined unless both name parts are present', () => {
-    expect(
-      buildPersonNameParam({ firstName: 'Jane', lastName: '' }),
-    ).toBeUndefined();
-    expect(
-      buildPersonNameParam({ firstName: '', lastName: 'Doe' }),
-    ).toBeUndefined();
-    expect(
-      buildPersonNameParam({ firstName: '', lastName: null }),
-    ).toBeUndefined();
+    expect(buildPersonNameParam({ firstName: 'Jane', lastName: '' })).toBeUndefined();
+    expect(buildPersonNameParam({ firstName: '', lastName: 'Doe' })).toBeUndefined();
+    expect(buildPersonNameParam({ firstName: '', lastName: null })).toBeUndefined();
   });
 });

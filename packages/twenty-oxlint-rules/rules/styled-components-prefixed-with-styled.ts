@@ -6,7 +6,8 @@ export const rule = defineRule({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Warn when StyledComponents are not prefixed with Styled',
+      description:
+        'Warn when StyledComponents are not prefixed with Styled',
     },
     messages: {
       noStyledPrefix:
@@ -28,7 +29,10 @@ export const rule = defineRule({
         const templateExpr = node.init;
         if (templateExpr?.type !== 'TaggedTemplateExpression') return;
 
-        if (node.id?.type === 'Identifier' && isStyledRoot(templateExpr.tag)) {
+        if (
+          node.id?.type === 'Identifier' &&
+          isStyledRoot(templateExpr.tag)
+        ) {
           const variable = node.id;
           if (variable.name.startsWith('Styled')) return;
 

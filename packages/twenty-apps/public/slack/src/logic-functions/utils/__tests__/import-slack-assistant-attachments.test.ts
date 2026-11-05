@@ -225,7 +225,9 @@ describe('importSlackAssistantAttachments', () => {
       }),
     );
 
-    await importFiles([{ id: 'F9', file_access: 'check_file_info' }]);
+    await importFiles([
+      { id: 'F9', file_access: 'check_file_info' },
+    ]);
 
     expect(reportSlackConnectionAuthFailure).not.toHaveBeenCalled();
   });

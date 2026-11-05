@@ -20,8 +20,10 @@ const TOGGLE_DIMENSIONS_BY_SIZE: Record<ToggleSize, ToggleDimensions> = {
 
 const THUMB_INSET_PIXELS = 2;
 
-const getCheckedThumbOffsetPixels = ({ width, thumbSize }: ToggleDimensions) =>
-  width - thumbSize - THUMB_INSET_PIXELS;
+const getCheckedThumbOffsetPixels = ({
+  width,
+  thumbSize,
+}: ToggleDimensions) => width - thumbSize - THUMB_INSET_PIXELS;
 
 const StyledToggle = styled.button<{
   $toggleSize: ToggleSize;
@@ -73,7 +75,9 @@ const StyledThumb = styled.span<{
   &[data-checked='true'] {
     transform: translate(
       ${({ $toggleSize }) =>
-        getCheckedThumbOffsetPixels(TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize])}px,
+        getCheckedThumbOffsetPixels(
+          TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize],
+        )}px,
       -50%
     );
   }

@@ -17,10 +17,7 @@ describe('buildDiscordFailureResult', () => {
   });
 
   it('should use a generic error when the thrown value is not an Error', () => {
-    const result = buildDiscordFailureResult(
-      'Failed to post Discord message',
-      'boom',
-    );
+    const result = buildDiscordFailureResult('Failed to post Discord message', 'boom');
 
     expect(result).toEqual({
       success: false,

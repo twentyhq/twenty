@@ -184,7 +184,9 @@ const validateSegment = (
   }
 };
 
-const extractModulesRelativePath = (filename: string): string | null => {
+const extractModulesRelativePath = (
+  filename: string,
+): string | null => {
   const marker = '/src/modules/';
   const index = filename.indexOf(marker);
 
@@ -225,7 +227,9 @@ export const rule = defineRule({
   create: (context) => {
     return {
       Program: (node: any) => {
-        const relativePath = extractModulesRelativePath(context.filename);
+        const relativePath = extractModulesRelativePath(
+          context.filename,
+        );
 
         if (!relativePath) {
           return;

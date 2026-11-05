@@ -220,9 +220,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(
-    'No blocked contributors found in PR commits, description, comments or reviews.',
-  );
+  console.log('No blocked contributors found in PR commits, description, comments or reviews.');
 }
 
 main().catch((error) => {

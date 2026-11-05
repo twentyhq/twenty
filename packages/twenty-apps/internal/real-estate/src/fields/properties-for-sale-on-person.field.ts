@@ -20,7 +20,8 @@ export default defineField({
   icon: 'IconHome',
   relationTargetObjectMetadataUniversalIdentifier:
     PROPERTY_UNIVERSAL_IDENTIFIER,
-  relationTargetFieldMetadataUniversalIdentifier: SELLER_CONTACT_ON_PROPERTY_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELLER_CONTACT_ON_PROPERTY_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },

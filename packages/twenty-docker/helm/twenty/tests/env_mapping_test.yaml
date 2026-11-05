@@ -11,13 +11,13 @@ tests:
     set:
       server.extraEnv:
         - name: FEATURE_X_ENABLED
-          value: 'true'
+          value: "true"
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: FEATURE_X_ENABLED
-            value: 'true'
+            value: "true"
 
   - it: renders server extraEnv with valueFrom
     template: templates/deployment-server.yaml

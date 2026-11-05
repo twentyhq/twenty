@@ -172,11 +172,7 @@ describe('enrichPeopleCore', () => {
         outcome: 'matched',
         httpStatus: 200,
         likelihood: 8,
-        data: {
-          id: 'pdl1',
-          work_email: 'jane@acme.com',
-          job_company_name: 'Acme',
-        },
+        data: { id: 'pdl1', work_email: 'jane@acme.com', job_company_name: 'Acme' },
       },
     ]);
     const captured: Captured = {};
@@ -213,9 +209,7 @@ describe('enrichPeopleCore', () => {
   });
 
   it('records NOT_FOUND and writes the status via a batched updatePeople', async () => {
-    enrichPeopleMock.mockResolvedValue([
-      { outcome: 'not_found', httpStatus: 404 },
-    ]);
+    enrichPeopleMock.mockResolvedValue([{ outcome: 'not_found', httpStatus: 404 }]);
     const captured: Captured = {};
     const client = buildClient({ people: [PERSON_NODE_MOCK], captured });
 
@@ -288,10 +282,7 @@ describe('enrichPeopleCore', () => {
     const client = buildClient({ people: [PERSON_NODE_MOCK], captured });
 
     const result = await enrichPeopleCore({
-      input: {
-        records: [{ id: 'p1' }],
-        updateFields: UPDATE_FIELDS_OPTIONS.no,
-      },
+      input: { records: [{ id: 'p1' }], updateFields: UPDATE_FIELDS_OPTIONS.no },
       client,
     });
 

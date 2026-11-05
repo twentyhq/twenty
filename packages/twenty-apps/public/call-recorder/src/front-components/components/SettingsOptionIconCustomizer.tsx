@@ -24,9 +24,6 @@ export const SettingsOptionIconCustomizer = ({
   rotate = -4,
 }: SettingsOptionIconCustomizerProps) => (
   <StyledIconCustomizer $zoom={zoom} $rotate={rotate}>
-    <Icon
-      size={THEME_COMMON.icon.size.lg}
-      stroke={THEME_COMMON.icon.stroke.md}
-    />
+    <Icon size={THEME_COMMON.icon.size.lg} stroke={THEME_COMMON.icon.stroke.md} />
   </StyledIconCustomizer>
 );

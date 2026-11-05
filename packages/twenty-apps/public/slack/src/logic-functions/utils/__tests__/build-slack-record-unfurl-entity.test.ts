@@ -199,9 +199,9 @@ describe('buildSlackRecordUnfurlEntity', () => {
       workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
-    expect(entity?.entity_payload.attributes.product_icon).toMatchObject({
-      alt_text: 'Twenty',
-    });
+    expect(
+      entity?.entity_payload.attributes.product_icon,
+    ).toMatchObject({ alt_text: 'Twenty' });
   });
 
   it('should return undefined when the record has no title', () => {

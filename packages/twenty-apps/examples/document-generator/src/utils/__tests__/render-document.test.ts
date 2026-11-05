@@ -4,9 +4,7 @@ import { documentContentToHtml, documentHtmlPage } from '../render-document';
 
 describe('documentContentToHtml', () => {
   it('should render markdown to html', () => {
-    const html = documentContentToHtml(
-      '# Hi\n\n**bold** and a list:\n\n- one\n- two',
-    );
+    const html = documentContentToHtml('# Hi\n\n**bold** and a list:\n\n- one\n- two');
 
     expect(html).toContain('<h1>Hi</h1>');
     expect(html).toContain('<strong>bold</strong>');

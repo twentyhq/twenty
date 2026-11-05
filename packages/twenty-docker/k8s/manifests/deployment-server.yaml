@@ -36,24 +36,24 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ['sleep', '20']
+                command: ["sleep", "20"]
           env:
             - name: NODE_PORT
               value: 3000
             - name: SERVER_URL
-              value: 'https://crm.example.com:443'
-            - name: 'PG_DATABASE_URL'
-              value: 'postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default'
-            - name: 'REDIS_URL'
-              value: 'redis://twentycrm-redis.twentycrm.svc.cluster.local:6379'
+              value: "https://crm.example.com:443"
+            - name: "PG_DATABASE_URL"
+              value: "postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default"
+            - name: "REDIS_URL"
+              value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: SIGN_IN_PREFILLED
-              value: 'false'
+              value: "false"
             - name: STORAGE_TYPE
-              value: 'local'
-            - name: 'ACCESS_TOKEN_EXPIRES_IN'
-              value: '7d'
-            - name: 'LOGIN_TOKEN_EXPIRES_IN'
-              value: '1h'
+              value: "local"
+            - name: "ACCESS_TOKEN_EXPIRES_IN"
+              value: "7d"
+            - name: "LOGIN_TOKEN_EXPIRES_IN"
+              value: "1h"
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
@@ -65,11 +65,11 @@ spec:
               protocol: TCP
           resources:
             requests:
-              memory: '256Mi'
-              cpu: '250m'
+              memory: "256Mi"
+              cpu: "250m"
             limits:
-              memory: '1024Mi'
-              cpu: '1000m'
+              memory: "1024Mi"
+              cpu: "1000m"
           stdin: true
           tty: true
           volumeMounts:

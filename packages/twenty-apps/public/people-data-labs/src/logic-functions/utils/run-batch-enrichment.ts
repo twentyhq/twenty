@@ -44,10 +44,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
   const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
   let pdlAccessErrorMessage: string | undefined;
 
-  for (const recordIdsChunk of chunk({
-    items: recordIds,
-    size: PDL_BATCH_SIZE,
-  })) {
+  for (const recordIdsChunk of chunk({ items: recordIds, size: PDL_BATCH_SIZE })) {
     const enrichChunkResult = await enrichChunk({
       client,
       recordIds: recordIdsChunk,

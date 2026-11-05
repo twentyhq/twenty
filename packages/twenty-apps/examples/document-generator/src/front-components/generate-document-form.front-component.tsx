@@ -228,7 +228,8 @@ const GenerateDocumentForm = () => {
       handleClose();
     } catch (error) {
       await enqueueSnackbar({
-        message: error instanceof Error ? error.message : 'Generation failed.',
+        message:
+          error instanceof Error ? error.message : 'Generation failed.',
         variant: 'error',
       });
     } finally {

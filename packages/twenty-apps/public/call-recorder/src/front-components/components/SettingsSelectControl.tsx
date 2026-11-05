@@ -136,10 +136,7 @@ export const SettingsSelectControl = ({
       {adornment}
       <OverflowingTextWithTooltip text={label} />
       <StyledChevronWrapper>
-        <IconChevronDown
-          size={THEME_COMMON.icon.size.md}
-          stroke={THEME_COMMON.icon.stroke.sm}
-        />
+        <IconChevronDown size={THEME_COMMON.icon.size.md} stroke={THEME_COMMON.icon.stroke.sm} />
       </StyledChevronWrapper>
     </StyledControlContainer>
   );

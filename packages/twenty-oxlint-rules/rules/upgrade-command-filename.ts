@@ -16,7 +16,9 @@ const SKIPPED_FILE_REGEX =
 
 const COMMAND_PREFIX_REGEX = /^\d+-\d+-/;
 
-const extractUpgradeCommandRelativePath = (filename: string): string | null => {
+const extractUpgradeCommandRelativePath = (
+  filename: string,
+): string | null => {
   const marker = 'upgrade-version-command/';
   const index = filename.indexOf(marker);
 

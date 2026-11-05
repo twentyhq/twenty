@@ -1,17 +1,17 @@
 # Default image used by all components
 image:
   repository: twentycrm/twenty
-  tag: '' # defaults to Chart.yaml appVersion
+  tag: ""  # defaults to Chart.yaml appVersion
   pullPolicy: IfNotPresent
 
-nameOverride: ''
-fullnameOverride: ''
+nameOverride: ""
+fullnameOverride: ""
 
 # ServiceAccount used by the server and worker pods
 serviceAccount:
-  create: false # set true to create a dedicated ServiceAccount instead of using the namespace's "default"
-  name: '' # when create is false, this ServiceAccount must already exist in the namespace; defaults to the chart fullname when create is true
-  automount: true # set false to skip mounting the Kubernetes API token (server and worker do not call the API; IRSA/Workload Identity are unaffected)
+  create: false  # set true to create a dedicated ServiceAccount instead of using the namespace's "default"
+  name: ""  # when create is false, this ServiceAccount must already exist in the namespace; defaults to the chart fullname when create is true
+  automount: true  # set false to skip mounting the Kubernetes API token (server and worker do not call the API; IRSA/Workload Identity are unaffected)
   annotations: {}
   # eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role
   # iam.gke.io/gcp-service-account: twenty@my-project.iam.gserviceaccount.com
@@ -25,12 +25,12 @@ securityContext:
 storage:
   type: local
   s3:
-    bucket: ''
-    region: ''
-    endpoint: ''
+    bucket: ""
+    region: ""
+    endpoint: ""
     # Option A: direct values
-    accessKeyId: ''
-    secretAccessKey: ''
+    accessKeyId: ""
+    secretAccessKey: ""
     # Option B: reference a Secret
     # secretName: my-s3-creds
     # accessKeyIdKey: accessKeyId
@@ -41,13 +41,13 @@ secrets:
   tokens:
     create: true
     name: tokens
-    accessToken: ''
+    accessToken: ""
 
 # Server deployment
 server:
   enabled: true
   replicaCount: 1
-  image: {} # override repository/tag/pullPolicy per component
+  image: {}  # override repository/tag/pullPolicy per component
 
   resources:
     requests:
@@ -58,9 +58,9 @@ server:
       memory: 1024Mi
 
   env:
-    SIGN_IN_PREFILLED: 'false'
-    ACCESS_TOKEN_EXPIRES_IN: '7d'
-    LOGIN_TOKEN_EXPIRES_IN: '1h'
+    SIGN_IN_PREFILLED: "false"
+    ACCESS_TOKEN_EXPIRES_IN: "7d"
+    LOGIN_TOKEN_EXPIRES_IN: "1h"
   extraEnv: []
   # - name: EMAIL_DRIVER
   #   value: smtp
@@ -77,7 +77,7 @@ server:
   ingress:
     enabled: true
     className: nginx
-    acme: true # add cert-manager annotation for Let's Encrypt
+    acme: true  # add cert-manager annotation for Let's Encrypt
     annotations: {}
     hosts:
       - host: crm.example.com
@@ -92,16 +92,16 @@ server:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: ''
-    existingClaim: ''
+    storageClass: ""
+    existingClaim: ""
     accessModes:
       - ReadWriteOnce
 
   dockerDataPersistence:
     enabled: true
     size: 100Mi
-    storageClass: ''
-    existingClaim: ''
+    storageClass: ""
+    existingClaim: ""
     accessModes:
       - ReadWriteOnce
 
@@ -144,7 +144,7 @@ worker:
   enabled: true
   replicaCount: 1
   image: {}
-  command: ['yarn', 'worker:prod']
+  command: ["yarn", "worker:prod"]
 
   resources:
     requests:
@@ -169,7 +169,7 @@ db:
   internal:
     database: twenty
     appUser: twenty_app_user
-    appPassword: '' # random if empty
+    appPassword: ""  # random if empty
     image:
       repository: twentycrm/twenty-postgres-spilo
       tag: 3.3-p2
@@ -183,25 +183,25 @@ db:
     persistence:
       enabled: true
       size: 10Gi
-      storageClass: ''
-      existingClaim: ''
+      storageClass: ""
+      existingClaim: ""
       accessModes:
         - ReadWriteOnce
     env:
       PGUSER_SUPERUSER: postgres
       PGPASSWORD_SUPERUSER: postgres
       SPILO_PROVIDER: local
-      ALLOW_NOSSL: 'true'
+      ALLOW_NOSSL: "true"
 
   external:
-    host: ''
+    host: ""
     port: 5432
     user: twenty_app_user
-    password: ''
+    password: ""
     database: twenty
     ssl: false
-    secretName: ''
-    passwordKey: ''
+    secretName: ""
+    passwordKey: ""
 
 # Redis
 redisInternal:
@@ -222,16 +222,16 @@ redisInternal:
   persistence:
     enabled: false
     size: 1Gi
-    storageClass: ''
-    existingClaim: ''
+    storageClass: ""
+    existingClaim: ""
     accessModes:
       - ReadWriteOnce
 
 # External Redis (when redisInternal.enabled=false)
 redis:
   external:
-    host: ''
+    host: ""
     port: 6379
-    password: ''
-    secretName: ''
-    passwordKey: ''
+    password: ""
+    secretName: ""
+    passwordKey: ""

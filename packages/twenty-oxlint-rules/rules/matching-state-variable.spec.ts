@@ -77,14 +77,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const myValue = useAtomComponentStateValue(variableComponentState);',
-      output:
-        'const variable = useAtomComponentStateValue(variableComponentState);',
+      output: 'const variable = useAtomComponentStateValue(variableComponentState);',
       errors: [{ messageId: 'invalidVariableName' }],
     },
     {
       code: 'const [myValue, setMyValue] = useAtomComponentState(variableComponentState);',
-      output:
-        'const [variable, setVariable] = useAtomComponentState(variableComponentState);',
+      output: 'const [variable, setVariable] = useAtomComponentState(variableComponentState);',
       errors: [
         { messageId: 'invalidVariableName' },
         { messageId: 'invalidSetterName' },
@@ -92,20 +90,17 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const myValue = useAtomFamilyStateValue(variableFamilyState, key);',
-      output:
-        'const variable = useAtomFamilyStateValue(variableFamilyState, key);',
+      output: 'const variable = useAtomFamilyStateValue(variableFamilyState, key);',
       errors: [{ messageId: 'invalidVariableName' }],
     },
     {
       code: 'const myValue = useAtomComponentFamilyStateValue(variableComponentFamilyState, key);',
-      output:
-        'const variable = useAtomComponentFamilyStateValue(variableComponentFamilyState, key);',
+      output: 'const variable = useAtomComponentFamilyStateValue(variableComponentFamilyState, key);',
       errors: [{ messageId: 'invalidVariableName' }],
     },
     {
       code: 'const [myValue, setMyValue] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
-      output:
-        'const [variable, setVariable] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
+      output: 'const [variable, setVariable] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
       errors: [
         { messageId: 'invalidVariableName' },
         { messageId: 'invalidSetterName' },
@@ -118,26 +113,22 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const myValue = useSetAtomComponentState(variableComponentState);',
-      output:
-        'const setVariable = useSetAtomComponentState(variableComponentState);',
+      output: 'const setVariable = useSetAtomComponentState(variableComponentState);',
       errors: [{ messageId: 'invalidSetterName' }],
     },
     {
       code: 'const myValue = useSetAtomFamilyState(variableFamilyState, key);',
-      output:
-        'const setVariable = useSetAtomFamilyState(variableFamilyState, key);',
+      output: 'const setVariable = useSetAtomFamilyState(variableFamilyState, key);',
       errors: [{ messageId: 'invalidSetterName' }],
     },
     {
       code: 'const myValue = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
-      output:
-        'const setVariable = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
+      output: 'const setVariable = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
       errors: [{ messageId: 'invalidSetterName' }],
     },
     {
       code: "const variableSorts = useAtomFamilyStateValue(variableFamilyState, 'views');",
-      output:
-        "const variable = useAtomFamilyStateValue(variableFamilyState, 'views');",
+      output: "const variable = useAtomFamilyStateValue(variableFamilyState, 'views');",
       errors: [{ messageId: 'invalidVariableName' }],
     },
   ],

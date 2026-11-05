@@ -22,10 +22,7 @@ describe('generateDocumentPdf', () => {
   });
 
   it('should paginate long content across multiple pages', async () => {
-    const long = Array.from(
-      { length: 120 },
-      (_, i) => `Paragraph number ${i} with some text.`,
-    ).join('\n\n');
+    const long = Array.from({ length: 120 }, (_, i) => `Paragraph number ${i} with some text.`).join('\n\n');
 
     const bytes = await generateDocumentPdf(long);
     const loaded = await PDFDocument.load(bytes);
@@ -36,8 +33,7 @@ describe('generateDocumentPdf', () => {
   it('should render explicit line breaks and non-Latin characters without throwing', async () => {
     // The body fonts use WinAnsi encoding: a naive sanitizer would either
     // throw on unencodable characters or swallow the `\n` line breaks.
-    const content =
-      'Bonjour **José**,\nRendez-vous à 20€ le 5 — merci.\n\n世界 dropped gracefully.';
+    const content = 'Bonjour **José**,\nRendez-vous à 20€ le 5 — merci.\n\n世界 dropped gracefully.';
 
     const bytes = await generateDocumentPdf(content);
 

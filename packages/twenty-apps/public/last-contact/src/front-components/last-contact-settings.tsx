@@ -30,9 +30,7 @@ const LastContactSettings = () => {
         },
       });
       enqueueSnackbar({
-        message: t(
-          'Backfill requested. Records will update in the background.',
-        ),
+        message: t('Backfill requested. Records will update in the background.'),
         variant: 'success',
       });
     } catch {
@@ -67,7 +65,6 @@ const LastContactSettings = () => {
 export default defineFrontComponent({
   universalIdentifier: SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'last-contact-settings',
-  description:
-    'Backfill last-contact fields from existing emails and meetings.',
+  description: 'Backfill last-contact fields from existing emails and meetings.',
   component: LastContactSettings,
 });

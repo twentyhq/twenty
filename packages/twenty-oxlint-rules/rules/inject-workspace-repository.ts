@@ -12,7 +12,8 @@ export const rule = defineRule({
     schema: [],
     messages: {
       invalidClassName: "Class name should end with 'WorkspaceService'.",
-      invalidFileName: "File name should end with '.workspace-service.ts'.",
+      invalidFileName:
+        "File name should end with '.workspace-service.ts'.",
     },
   },
   create: (context) => {
@@ -54,7 +55,9 @@ export const rule = defineRule({
               return false;
             });
 
-          if (hasInjectWorkspaceRepositoryDecoratorOrWorkspaceService) {
+          if (
+            hasInjectWorkspaceRepositoryDecoratorOrWorkspaceService
+          ) {
             const className = (node.parent.parent as any).id?.name;
             const filename = context.filename;
 

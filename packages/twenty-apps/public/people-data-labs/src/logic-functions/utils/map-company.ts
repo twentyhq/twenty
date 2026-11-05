@@ -28,9 +28,7 @@ const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
 const COMPANY_TYPE_VALUES = buildAllowedValues(COMPANY_TYPE_OPTIONS);
 const SIZE_VALUES = buildAllowedValues(SIZE_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
-const LOCATION_CONTINENT_VALUES = buildAllowedValues(
-  LOCATION_CONTINENT_OPTIONS,
-);
+const LOCATION_CONTINENT_VALUES = buildAllowedValues(LOCATION_CONTINENT_OPTIONS);
 const MIC_EXCHANGE_VALUES = buildAllowedValues(MIC_EXCHANGE_OPTIONS);
 const FUNDING_STAGE_VALUES = buildAllowedValues(FUNDING_STAGE_OPTIONS);
 
@@ -40,9 +38,7 @@ export const mapCompany = (companyData: PdlCompanyData): MappedRecord => {
   const standard = pruneUndefined({
     name: toText(companyData.display_name) ?? toText(companyData.name),
     domainName: buildLinks({ url: normalizeDomain(companyData.website) }),
-    linkedinLink: buildLinks({
-      url: normalizeLinkedinUrl(companyData.linkedin_url),
-    }),
+    linkedinLink: buildLinks({ url: normalizeLinkedinUrl(companyData.linkedin_url) }),
     address: buildAddress({
       street1: location.street_address,
       street2: location.address_line_2,
@@ -57,10 +53,7 @@ export const mapCompany = (companyData: PdlCompanyData): MappedRecord => {
   const pdl = pruneUndefined({
     pdlId: toText(companyData.id),
 
-    pdlIndustry: pickSelect({
-      raw: companyData.industry,
-      allowedValues: INDUSTRY_VALUES,
-    }),
+    pdlIndustry: pickSelect({ raw: companyData.industry, allowedValues: INDUSTRY_VALUES }),
     pdlIndustryDetail: toText(companyData.industry_v2),
     pdlCompanyType: pickSelect({
       raw: companyData.type,
@@ -115,9 +108,7 @@ export const mapCompany = (companyData: PdlCompanyData): MappedRecord => {
 
     pdlNaics: toJsonArray(companyData.naics),
     pdlSic: toJsonArray(companyData.sic),
-    pdlEmployeeCountByCountry: toJsonObject(
-      companyData.employee_count_by_country,
-    ),
+    pdlEmployeeCountByCountry: toJsonObject(companyData.employee_count_by_country),
   });
 
   return { standard, pdl };

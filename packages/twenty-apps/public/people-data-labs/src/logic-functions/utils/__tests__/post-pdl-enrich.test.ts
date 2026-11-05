@@ -16,9 +16,7 @@ const buildResponse = (
   status,
   ok: status >= 200 && status < 300,
   json: () =>
-    jsonThrows
-      ? Promise.reject(new Error('invalid json'))
-      : Promise.resolve(json),
+    jsonThrows ? Promise.reject(new Error('invalid json')) : Promise.resolve(json),
 });
 
 const stubFetch = (response: FetchResponse | Error) => {
@@ -43,14 +41,9 @@ describe('postPdlBulkEnrich', () => {
   });
 
   it('sends one request wrapping every record under requests[].params', async () => {
-    const fetchMock = stubFetch(
-      buildResponse(200, [{ status: 200, data: {} }]),
-    );
+    const fetchMock = stubFetch(buildResponse(200, [{ status: 200, data: {} }]));
 
-    await postPdlBulkEnrich({
-      path: '/person/bulk',
-      requests: [{ email: 'a@b.com' }],
-    });
+    await postPdlBulkEnrich({ path: '/person/bulk', requests: [{ email: 'a@b.com' }] });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -87,9 +80,7 @@ describe('postPdlBulkEnrich', () => {
 
   it('matches a 200 company item whose fields are at the top level (no data envelope)', async () => {
     stubFetch(
-      buildResponse(200, [
-        { status: 200, likelihood: 6, id: 'c1', name: 'Acme' },
-      ]),
+      buildResponse(200, [{ status: 200, likelihood: 6, id: 'c1', name: 'Acme' }]),
     );
 
     const results = await postPdlBulkEnrich({
@@ -193,9 +184,9 @@ describe('postPdlBulkEnrich', () => {
   it('returns an empty array without calling fetch for no records', async () => {
     const fetchMock = stubFetch(buildResponse(200, []));
 
-    expect(
-      await postPdlBulkEnrich({ path: '/person/bulk', requests: [] }),
-    ).toEqual([]);
+    expect(await postPdlBulkEnrich({ path: '/person/bulk', requests: [] })).toEqual(
+      [],
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

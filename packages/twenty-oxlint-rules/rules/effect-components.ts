@@ -14,8 +14,10 @@ const isReturningEmptyFragmentOrNull = (node: any) =>
         ((statement.argument?.type === 'JSXFragment' &&
           statement.argument.children.length === 0) ||
           (statement.argument?.type === 'JSXElement' &&
-            statement.argument.openingElement.name.type === 'JSXIdentifier' &&
-            statement.argument.openingElement.name.name === 'React.Fragment' &&
+            statement.argument.openingElement.name.type ===
+              'JSXIdentifier' &&
+            statement.argument.openingElement.name.name ===
+              'React.Fragment' &&
             statement.argument.children.length === 0) ||
           (statement.argument?.type === 'Literal' &&
             statement.argument.value === null)),

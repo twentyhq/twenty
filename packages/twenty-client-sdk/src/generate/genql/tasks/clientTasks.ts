@@ -42,10 +42,7 @@ export const writeClientFiles = async (
 
   await ensurePath([output, 'runtime']);
   for (const { name, content } of RUNTIME_TEMPLATE_FILES) {
-    await writeFileToPath(
-      [output, 'runtime', name],
-      '// @ts-nocheck\n' + content,
-    );
+    await writeFileToPath([output, 'runtime', name], '// @ts-nocheck\n' + content);
   }
 
   const schemaTypesCtx = new RenderContext(schema, config);

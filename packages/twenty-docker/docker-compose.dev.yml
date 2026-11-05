@@ -14,7 +14,7 @@ services:
     volumes:
       - dev-db-data:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,10 +29,10 @@ services:
   redis:
     image: redis:7
     ports:
-      - '6379:6379'
-    command: ['--maxmemory-policy', 'noeviction']
+      - "6379:6379"
+    command: ["--maxmemory-policy", "noeviction"]
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 10
