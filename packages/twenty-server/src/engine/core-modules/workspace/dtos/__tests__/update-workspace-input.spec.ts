@@ -43,7 +43,7 @@ describe('workspace assistant mode updates', () => {
 });
 
 describe('workspace assistant profile inputs', () => {
-  it.each(['aiChatAssistantProfile', 'resetAiChatAssistantProfile'])(
+  it.each(['aiChatAssistantProfile', 'shouldResetAiChatAssistantProfile'])(
     'rejects explicit null for %s',
     async (field) => {
       const input = Object.assign(new UpdateWorkspaceInput(), {

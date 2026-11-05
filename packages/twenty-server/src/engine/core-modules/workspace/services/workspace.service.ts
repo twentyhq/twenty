@@ -163,7 +163,7 @@ export class WorkspaceService {
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
-    resetAiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
+    shouldResetAiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -439,7 +439,7 @@ export class WorkspaceService {
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode) ||
       !isUndefined(payload.aiChatAssistantProfile) ||
-      !isUndefined(payload.resetAiChatAssistantProfile);
+      !isUndefined(payload.shouldResetAiChatAssistantProfile);
     const isInboxRequiredButDisabled =
       isUpdatingAssistantSettings &&
       !(await this.featureFlagService.isFeatureEnabled(
@@ -459,12 +459,12 @@ export class WorkspaceService {
 
     const {
       aiChatAssistantProfile,
-      resetAiChatAssistantProfile,
+      shouldResetAiChatAssistantProfile,
       ...workspaceUpdates
     } = payload;
     const assistantProfileUpdate = parseWorkspaceAssistantProfileUpdateOrThrow({
       profile: aiChatAssistantProfile,
-      reset: resetAiChatAssistantProfile,
+      reset: shouldResetAiChatAssistantProfile,
     });
 
     if (
@@ -1489,7 +1489,9 @@ export class WorkspaceService {
     }
   }
 
-  async getAiChatAssistantProfile(workspace: WorkspaceEntity) {
+  async getAiChatAssistantProfile(
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>,
+  ) {
     if (isDefined(workspace.aiChatAssistantProfile)) {
       return workspace.aiChatAssistantProfile;
     }

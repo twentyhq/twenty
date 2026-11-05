@@ -15036,7 +15036,7 @@ export default {
             "logo": [
                 1
             ],
-            "resetAiChatAssistantProfile": [
+            "shouldResetAiChatAssistantProfile": [
                 4
             ],
             "subdomain": [

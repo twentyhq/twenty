@@ -186,10 +186,10 @@ export class UpdateWorkspaceInput {
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @ValidateIf(
-    ({ resetAiChatAssistantProfile }: UpdateWorkspaceInput) =>
-      !isUndefined(resetAiChatAssistantProfile),
+    ({ shouldResetAiChatAssistantProfile }: UpdateWorkspaceInput) =>
+      !isUndefined(shouldResetAiChatAssistantProfile),
   )
-  resetAiChatAssistantProfile?: boolean;
+  shouldResetAiChatAssistantProfile?: boolean;
 
   @Field({ nullable: true })
   @IsString()

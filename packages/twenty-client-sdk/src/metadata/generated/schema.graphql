@@ -5664,7 +5664,7 @@ input UpdateWorkspaceInput {
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
-  resetAiChatAssistantProfile: Boolean
+  shouldResetAiChatAssistantProfile: Boolean
   subdomain: String
   trashRetentionDays: Float
   workspaceDiscoverability: WorkspaceDiscoverability
