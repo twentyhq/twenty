@@ -940,4 +940,32 @@ describe('BullMQDriver job size limit', () => {
       } as Job),
     ).rejects.toBeInstanceOf(jest.requireActual('bullmq').UnrecoverableError);
   });
+
+  it('lets the job retry when it is refused for memory', async () => {
+    const { driver } = buildDriver('enforce');
+
+    driver.work(MessageQueue.workspaceQueue, async () => {
+      throw new MessageQueueException(
+        'memory limit',
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+        { requestedBytes: 100, availableBytes: 0 },
+      );
+    });
+
+    const processor = jest.mocked(Worker).mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await expect(
+      processor({
+        id: 'job-id',
+        name: 'job',
+        data: {},
+        opts: {},
+        timestamp: Date.now(),
+      } as Job),
+    ).rejects.toBeInstanceOf(MessageQueueException);
+  });
 });

@@ -13,6 +13,10 @@ import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue
 import { JOB_MEMORY_RESIZE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-resize-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import {
   computeJobMemoryAvailableBytes,
@@ -123,13 +127,15 @@ export class JobMemoryLimiter {
       groupKeys.map((groupKey, index) => [groupKey, index + 1]),
     );
 
+    let admitResult: ReturnType<JobMemoryLimiter['parseAdmitResult']>;
+
     try {
       const rawResult = await runRedisScript({
         client: await this.options.getClient(queueName),
         script: JOB_MEMORY_ADMIT_SCRIPT,
         keys: groupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
         args: [
-          1,
+          mode === JOB_QUEUE_MEMORY_LIMIT_MODE.OBSERVE ? 1 : 0,
           capacityBytes,
           memoryInfo.usedMemoryBytes,
           this.options.getShare(),
@@ -145,41 +151,7 @@ export class JobMemoryLimiter {
         ],
       });
 
-      const groupKeyAdmissions = this.parseAdmitResult({
-        rawResult,
-        groupKeys,
-      });
-
-      for (const admission of groupKeyAdmissions) {
-        if (
-          admission.requestedBytes > 0 &&
-          admission.usedBytes + admission.requestedBytes > admission.limitBytes
-        ) {
-          reportJobMemoryLimitRefusal({
-            logger: this.logger,
-            metricsService: this.options.metricsService,
-            refusal: {
-              queueName,
-              groupKey: admission.groupKey,
-              reason: 'share',
-              mode,
-              requestedBytes: admission.requestedBytes,
-              usedBytes: admission.usedBytes,
-              limitBytes: admission.limitBytes,
-            },
-          });
-        }
-      }
-
-      return {
-        isCharged: true,
-        availableBytes: computeJobMemoryAvailableBytes(
-          groupKeyAdmissions.map(({ usedBytesAfter, limitBytes }) => ({
-            usedBytes: usedBytesAfter,
-            limitBytes,
-          })),
-        ),
-      };
+      admitResult = this.parseAdmitResult({ rawResult, groupKeys });
     } catch (error) {
       this.logger.warn(
         `Failed to admit the job memory on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
@@ -187,6 +159,51 @@ export class JobMemoryLimiter {
 
       return NOT_CHARGED;
     }
+
+    const { isRefused, groupKeyAdmissions } = admitResult;
+
+    for (const admission of groupKeyAdmissions) {
+      if (
+        admission.requestedBytes > 0 &&
+        admission.usedBytes + admission.requestedBytes > admission.limitBytes
+      ) {
+        reportJobMemoryLimitRefusal({
+          logger: this.logger,
+          metricsService: this.options.metricsService,
+          refusal: {
+            queueName,
+            groupKey: admission.groupKey,
+            reason: 'share',
+            mode,
+            requestedBytes: admission.requestedBytes,
+            usedBytes: admission.usedBytes,
+            limitBytes: admission.limitBytes,
+          },
+        });
+      }
+    }
+
+    const availableBytes = computeJobMemoryAvailableBytes(
+      groupKeyAdmissions.map(({ usedBytesAfter, limitBytes }) => ({
+        usedBytes: usedBytesAfter,
+        limitBytes,
+      })),
+    );
+
+    if (isRefused && mode === JOB_QUEUE_MEMORY_LIMIT_MODE.ENFORCE) {
+      const requestedBytes = chargedJobs.reduce(
+        (total, { sizeBytes }) => total + sizeBytes,
+        0,
+      );
+
+      throw new MessageQueueException(
+        `Job memory limit reached on queue ${queueName}: ${requestedBytes} bytes requested, ${availableBytes ?? 0} bytes available`,
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+        { requestedBytes, availableBytes: availableBytes ?? 0 },
+      );
+    }
+
+    return { isCharged: true, availableBytes };
   }
 
   async release({ queueName, jobId, groupKeys }: ChargedJob): Promise<void> {
@@ -315,13 +332,16 @@ export class JobMemoryLimiter {
       throw new Error(`unexpected admission result "${String(rawResult)}"`);
     }
 
-    return groupKeys.map((groupKey, index) => ({
-      groupKey,
-      usedBytes: values[1 + 4 * index],
-      limitBytes: values[2 + 4 * index],
-      requestedBytes: values[3 + 4 * index],
-      usedBytesAfter: values[4 + 4 * index],
-    }));
+    return {
+      isRefused: values[0] === 1,
+      groupKeyAdmissions: groupKeys.map((groupKey, index) => ({
+        groupKey,
+        usedBytes: values[1 + 4 * index],
+        limitBytes: values[2 + 4 * index],
+        requestedBytes: values[3 + 4 * index],
+        usedBytesAfter: values[4 + 4 * index],
+      })),
+    };
   }
 
   private buildKeys(groupKey: string): [string, string] {

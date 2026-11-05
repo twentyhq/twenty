@@ -4,6 +4,10 @@ import RedisMock from 'ioredis-mock';
 import { JOB_MEMORY_CHARGE_TTL_SECONDS } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JobMemoryLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type JobQueueMemoryLimitMode } from 'src/engine/core-modules/message-queue/types/job-queue-memory-limit-mode.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -133,6 +137,77 @@ describe('JobMemoryLimiter', () => {
       attributes: { queue: QUEUE, reason: 'share', mode: 'observe' },
       shouldStoreInCache: false,
     });
+  });
+
+  it('refuses the whole batch without charging it in enforce', async () => {
+    const { redis, limiter, metricsService } = await createLimiter({
+      mode: 'enforce',
+      usedMemoryBytes: 600,
+    });
+
+    await limiter.admit({
+      queueName: QUEUE,
+      jobs: [{ jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] }],
+    });
+
+    const refusal = limiter.admit({
+      queueName: QUEUE,
+      jobs: [
+        { jobId: 'job-2', sizeBytes: 200, groupKeys: [WORKSPACE_1] },
+        { jobId: 'job-3', sizeBytes: 300, groupKeys: [WORKSPACE_1] },
+      ],
+    });
+
+    await expect(refusal).rejects.toBeInstanceOf(MessageQueueException);
+    await expect(refusal).rejects.toMatchObject({
+      code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      statusCode: 429,
+      details: { requestedBytes: 500, availableBytes: 400 },
+    });
+    expect(await readUsedBytes(redis, WORKSPACE_1)).toBe(600);
+    expect(await redis.hexists(jobsKeyOf(WORKSPACE_1), `${QUEUE}:job-2`)).toBe(
+      0,
+    );
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
+      key: MetricsKeys.JobMemoryLimitRefused,
+      attributes: { queue: QUEUE, reason: 'share', mode: 'enforce' },
+      shouldStoreInCache: false,
+    });
+  });
+
+  it('admits a batch within the limit in enforce', async () => {
+    const { limiter } = await createLimiter({ mode: 'enforce' });
+
+    const admission = await limiter.admit({
+      queueName: QUEUE,
+      jobs: [{ jobId: 'job-1', sizeBytes: 400, groupKeys: [WORKSPACE_1] }],
+    });
+
+    expect(admission).toEqual({ isCharged: true, availableBytes: 600 });
+  });
+
+  it('admits when Redis cannot be reached in enforce', async () => {
+    const brokenLimiter = new JobMemoryLimiter({
+      getClient: async () =>
+        ({
+          runCommand: async (name: string) =>
+            name === 'info'
+              ? 'used_memory:0\r\nmaxmemory:10000\r\n'
+              : Promise.reject(new Error('connection lost')),
+        }) as never,
+      keyPrefix: KEY_PREFIX,
+      metricsService: { incrementCounterForEvent: jest.fn() } as never,
+      getMode: () => 'enforce',
+      getShare: () => 0.1,
+      getReserve: () => 0,
+    });
+
+    await expect(
+      brokenLimiter.admit({
+        queueName: QUEUE,
+        jobs: [{ jobId: 'job-1', sizeBytes: 5_000, groupKeys: [WORKSPACE_1] }],
+      }),
+    ).resolves.toEqual({ isCharged: false, availableBytes: null });
   });
 
   it('admits a second tenant while the first one is at its limit', async () => {
