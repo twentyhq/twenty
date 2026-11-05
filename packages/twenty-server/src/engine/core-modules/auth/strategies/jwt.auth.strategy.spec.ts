@@ -66,7 +66,7 @@ describe('JwtAuthStrategy', () => {
     };
 
     settingPermissionsService = {
-      userHasWorkspaceSettingPermission: jest.fn(),
+      userWorkspaceHasPermissionFlag: jest.fn(),
     };
 
     twentyConfigService = {
@@ -875,7 +875,7 @@ describe('JwtAuthStrategy', () => {
         user: { id: validUserId, lastName: 'lastNameDefault' },
         workspace: { id: validWorkspaceId },
       });
-      settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         true,
       );
 
@@ -1080,7 +1080,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         false,
       );
 
@@ -1155,7 +1155,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         false,
       );
 
@@ -1264,7 +1264,7 @@ describe('JwtAuthStrategy', () => {
           workspace: mockWorkspace,
         });
 
-      settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      settingPermissionsService.userWorkspaceHasPermissionFlag.mockResolvedValue(
         true,
       );
 

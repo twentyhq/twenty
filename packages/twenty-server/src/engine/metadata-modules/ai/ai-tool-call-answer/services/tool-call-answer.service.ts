@@ -561,14 +561,16 @@ export class ToolCallAnswerService {
         ? requestAuthContext
         : undefined;
 
-    const hasPermission =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting,
-        applicationId: requestUserAuthContext?.application?.id,
-        agentId: requestUserAuthContext?.agentId,
-      });
+    const hasPermission = isDefined(requestUserAuthContext)
+      ? await this.settingPermissionsService.hasPermissionFlag({
+          authContext: requestUserAuthContext,
+          permissionFlag: setting,
+        })
+      : await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
+          workspaceId,
+          userWorkspaceId,
+          permissionFlag: setting,
+        });
 
     if (!hasPermission) {
       throw new AiException(
