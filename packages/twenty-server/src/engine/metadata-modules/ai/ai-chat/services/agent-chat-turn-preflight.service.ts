@@ -1,11 +1,9 @@
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { Injectable } from '@nestjs/common';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
@@ -48,15 +46,6 @@ export class AgentChatTurnPreflightService {
       workspaceMemberId,
       workspaceId: workspace.id,
     });
-
-    if (
-      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
-      throw new AiException(
-        doNotTranslate('Direct messages do not run an assistant'),
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
 
     await this.assertAiExecutionAllowed({ userWorkspaceId, workspace });
 

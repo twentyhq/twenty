@@ -66,7 +66,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
-export type ChatExecutionOptions = {
+type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   sender: AgentChatSender;
@@ -91,6 +91,21 @@ type ChatExecutionResult = Pick<
   'stream' | 'modelConfig' | 'getStopReason'
 > & {
   getStreamError: () => unknown;
+};
+
+type ChatExecutionProfile = {
+  toolset: Parameters<AgentTurnService['start']>[0]['toolset'] & {
+    isWorkspaceSetupThread: boolean;
+  };
+  browsingContext: BrowsingContextType | null;
+  loadSkillContext: () => Promise<
+    Pick<
+      Parameters<typeof buildFullSystemPrompt>[0],
+      'skillCatalog' | 'referencedSkills'
+    >
+  >;
+  isWorkspaceSetupKickoffTurn: boolean;
+  canAttachConversationToRecords: boolean;
 };
 
 @Injectable()
@@ -163,79 +178,24 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const isWorkspaceSetupConversation =
-      threadId ===
-      buildWorkspaceSetupChatThreadId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
-
-    const isWorkspaceSetupThread =
-      isWorkspaceSetupConversation &&
-      !hasSucceededWorkspaceSetupCompletion(messages);
-
-    const isWorkspaceSetupKickoffTurn =
-      isWorkspaceSetupThread && hasNoAssistantMessage(messages);
-
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspace.id,
-    );
-
-    // judged on the conversation, not setup status: onboarding continues here after setup completes
-    const isInboxConversation =
-      !isWorkspaceSetupConversation && isAiChatInboxEnabled;
-
-    const latestUserMessage = [...messages]
-      .reverse()
-      .find((message) => message.role === AgentMessageRole.USER);
+    const executionProfile = await this.buildExecutionProfile({
+      isDirectMessage: authorization.isDirectMessage,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      threadId,
+      messages,
+      browsingContext,
+      toolContext,
+    });
+    const { isWorkspaceSetupThread } = executionProfile.toolset;
+    const { isWorkspaceSetupKickoffTurn } = executionProfile;
 
     let lastUnderlyingStreamError: unknown;
 
     const turn = await this.agentTurnService.start({
       workspace,
       modelId: getChatModelId({ requestedModelId: modelId, workspace }),
-      toolset: {
-        registryAccess: {
-          type: 'assistant',
-          toolContext,
-          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
-          preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
-        },
-        canAskHumans: true,
-        isWorkspaceSetupThread,
-        extraTools: {
-          ...(isWorkspaceSetupThread
-            ? {
-                [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
-                  createCompleteWorkspaceSetupTool(),
-              }
-            : {}),
-          ...(isInboxConversation
-            ? {
-                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
-                  createAttachConversationToRecordTool({
-                    agentChatThreadTargetService:
-                      this.agentChatThreadTargetService,
-                    toolContext,
-                  }),
-              }
-            : {}),
-          ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
-            ? {
-                [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
-                  reactToLatestMemberMessage: (emoji) =>
-                    this.agentChatMessageReactionService.addAssistantReaction({
-                      messageId: latestUserMessage.id,
-                      emoji,
-                      workspaceId: workspace.id,
-                      agentId: null,
-                    }),
-                }),
-              }
-            : {}),
-        },
-      },
+      toolset: executionProfile.toolset,
       buildContext: async ({ registeredModel, modelConfig, toolset }) => {
         tagAiChatExecutionScope({
           isWorkspaceSetupThread,
@@ -247,7 +207,7 @@ export class ChatExecutionService {
             workspace,
             messages,
             modelConfig,
-            browsingContext,
+            browsingContext: executionProfile.browsingContext,
             workspaceMemberId: authorization.authContext.workspaceMemberId,
             timezone: userContext.timezone,
           },
@@ -279,17 +239,12 @@ export class ChatExecutionService {
           onCompaction();
         }
 
+        const skillContext = await executionProfile.loadSkillContext();
+
         return {
           systemPrompt: buildFullSystemPrompt({
             toolCatalog: toolset.toolCatalog,
-            skillCatalog: await this.skillService.findAllFlatSkills(
-              workspace.id,
-            ),
-            // inline tagged skills to save the model a load_skills round trip
-            referencedSkills: await this.skillService.findFlatSkillsByIds(
-              collectReferencedSkillIds(messages),
-              workspace.id,
-            ),
+            ...skillContext,
             preloadedTools: toolset.directToolNames,
             uploadedFilesContext: {
               uploadedFiles: collectUploadedFileReferences(messages),
@@ -301,7 +256,8 @@ export class ChatExecutionService {
             userWorkspaceId,
             workspaceId: workspace.id,
             isWorkspaceSetupThread,
-            canAttachConversationToRecords: isInboxConversation,
+            canAttachConversationToRecords:
+              executionProfile.canAttachConversationToRecords,
           }),
           contextMessages: contexts,
           messages: pruningResult.messages,
@@ -341,6 +297,113 @@ export class ChatExecutionService {
     });
 
     return { ...turn, getStreamError: () => lastUnderlyingStreamError };
+  }
+
+  private async buildExecutionProfile({
+    isDirectMessage,
+    workspaceId,
+    userWorkspaceId,
+    threadId,
+    messages,
+    browsingContext,
+    toolContext,
+  }: {
+    isDirectMessage: boolean;
+    workspaceId: string;
+    userWorkspaceId: string;
+    threadId: string;
+    messages: ExtendedUIMessage[];
+    browsingContext: BrowsingContextType | null;
+    toolContext: ToolContext;
+  }): Promise<ChatExecutionProfile> {
+    if (isDirectMessage) {
+      return {
+        toolset: {
+          registryAccess: { type: 'none' },
+          nativeToolOptions: { webSearch: false, twitterSearch: false },
+          canAskHumans: false,
+          isWorkspaceSetupThread: false,
+          extraTools: {},
+        },
+        browsingContext: null,
+        loadSkillContext: () =>
+          Promise.resolve({ skillCatalog: [], referencedSkills: [] }),
+        isWorkspaceSetupKickoffTurn: false,
+        canAttachConversationToRecords: false,
+      };
+    }
+
+    const isWorkspaceSetupConversation =
+      threadId ===
+      buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId });
+    const isWorkspaceSetupThread =
+      isWorkspaceSetupConversation &&
+      !hasSucceededWorkspaceSetupCompletion(messages);
+    const isWorkspaceSetupKickoffTurn =
+      isWorkspaceSetupThread && hasNoAssistantMessage(messages);
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspaceId,
+    );
+    const canAttachConversationToRecords =
+      !isWorkspaceSetupConversation && isAiChatInboxEnabled;
+    const latestUserMessage = [...messages]
+      .reverse()
+      .find((message) => message.role === AgentMessageRole.USER);
+
+    return {
+      toolset: {
+        registryAccess: {
+          type: 'assistant',
+          toolContext,
+          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
+          preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
+        },
+        canAskHumans: true,
+        isWorkspaceSetupThread,
+        extraTools: {
+          ...(isWorkspaceSetupThread
+            ? {
+                [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
+                  createCompleteWorkspaceSetupTool(),
+              }
+            : {}),
+          ...(canAttachConversationToRecords
+            ? {
+                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
+                  createAttachConversationToRecordTool({
+                    agentChatThreadTargetService:
+                      this.agentChatThreadTargetService,
+                    toolContext,
+                  }),
+              }
+            : {}),
+          ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
+            ? {
+                [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
+                  reactToLatestMemberMessage: (emoji) =>
+                    this.agentChatMessageReactionService.addAssistantReaction({
+                      messageId: latestUserMessage.id,
+                      emoji,
+                      workspaceId,
+                      agentId: null,
+                    }),
+                }),
+              }
+            : {}),
+        },
+      },
+      browsingContext,
+      loadSkillContext: async () => ({
+        skillCatalog: await this.skillService.findAllFlatSkills(workspaceId),
+        referencedSkills: await this.skillService.findFlatSkillsByIds(
+          collectReferencedSkillIds(messages),
+          workspaceId,
+        ),
+      }),
+      isWorkspaceSetupKickoffTurn,
+      canAttachConversationToRecords,
+    };
   }
 
   private prepareMessages({

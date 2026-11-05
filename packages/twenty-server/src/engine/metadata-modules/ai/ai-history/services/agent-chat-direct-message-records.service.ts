@@ -1,5 +1,4 @@
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -15,6 +14,7 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
+import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -77,9 +77,12 @@ export class AgentChatDirectMessageRecordsService {
       ];
 
     if (!isDefined(flatObjectMetadata)) {
-      throw new InternalServerError(
-        doNotTranslate(`Object metadata for ${objectName} was not found`),
-      );
+      throw new AgentHistoryStorageException({
+        code: 'OBJECT_METADATA_NOT_FOUND',
+        message: doNotTranslate(
+          `Object metadata for ${objectName} was not found`,
+        ),
+      });
     }
 
     const activePair = pair.filter((workspaceMemberId) => {

@@ -173,23 +173,17 @@ describe('Private text direct messages', () => {
     expect(response.body.data?.chatMessages).toBeFalsy();
   });
 
-  it.each([
-    { isAssistantMentioned: true },
-    { attachments: [{ id: randomUUID(), filename: 'private.txt' }] },
-  ])(
-    'rejects unsupported Ada and file payloads before creating a message',
-    async (payload) => {
-      const threadId = await openDirectMessage();
-      const response = await sendChatParticipationMessage({
-        threadId,
-        ...payload,
-      });
+  it('rejects unsupported file payloads before creating a message', async () => {
+    const threadId = await openDirectMessage();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      attachments: [{ id: randomUUID(), filename: 'private.txt' }],
+    });
 
-      expect(response.body.errors?.[0]?.extensions).toMatchObject({
-        code: ErrorCode.BAD_USER_INPUT,
-        subCode: AiExceptionCode.INVALID_AGENT_INPUT,
-      });
-      expect(await readContentRecords(threadId)).toHaveLength(1);
-    },
-  );
+    expect(response.body.errors?.[0]?.extensions).toMatchObject({
+      code: ErrorCode.BAD_USER_INPUT,
+      subCode: AiExceptionCode.INVALID_AGENT_INPUT,
+    });
+    expect(await readContentRecords(threadId)).toHaveLength(1);
+  });
 });

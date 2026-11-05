@@ -11,7 +11,6 @@ import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
@@ -96,6 +95,16 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     return threadId;
   };
+  const createDirectMessage = async () =>
+    context.registerThread(
+      await getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
+        'AgentChatDirectMessageIdentityService',
+      ).open({
+        workspaceId: context.workspaceId,
+        firstWorkspaceMemberId: context.workspaceMemberId,
+        secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    );
   const saveMessageWithReplyContext = async ({
     threadId,
     assistantReplyContext,
@@ -134,6 +143,39 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
     });
+
+  it('stops DM admission and queued replies when the Inbox rollout is disabled', async () => {
+    models.enableEvaluation();
+    const threadId = await createDirectMessage();
+
+    await context.setAssistantModes({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
+    });
+    await expect(
+      shouldReply({ threadId, isAssistantMentioned: true }),
+    ).resolves.toBe(true);
+
+    const { messageId } = await saveMessageWithReplyContext({
+      threadId,
+      assistantReplyContext: {
+        isAssistantMentioned: true,
+        isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
+      },
+    });
+
+    await expect(shouldExecute({ threadId, messageId })).resolves.toBe(true);
+    await context.featureFlagService.upsertWorkspaceFeatureFlag({
+      workspaceId: context.workspaceId,
+      featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      value: false,
+    });
+    await expect(shouldExecute({ threadId, messageId })).resolves.toBe(false);
+    await expect(
+      shouldReply({ threadId, isAssistantMentioned: true }),
+    ).resolves.toBe(false);
+    expect(models.evaluate).not.toHaveBeenCalled();
+  });
 
   it('does not invoke the evaluator while Ada is absent', async () => {
     models.enableEvaluation();
@@ -181,12 +223,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
     });
     const groupThreadId = await createGroup();
-    const directMessageThreadId = await context.createThread();
-
-    await context.setConversationType({
-      threadId: directMessageThreadId,
-      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-    });
+    const directMessageThreadId = await createDirectMessage();
 
     await expect(
       shouldReply({
@@ -238,15 +275,13 @@ describe('Assistant reply selection with stored conversation participants', () =
     },
   );
 
-  it('keeps a canonical DM human-only when only one participant remains', async () => {
+  it('uses the DM mention mode independently of Inbox mode and participant count', async () => {
     models.enableEvaluation();
-    const threadId = await context.createThread();
+    const threadId = await createDirectMessage();
 
-    await context.setConversationType({
-      threadId,
-      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-    });
+    await addJonyAsParticipant(threadId);
     await context.setAssistantModes({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
       aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
     });
 
@@ -254,7 +289,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     await expect(shouldReply({ threadId })).resolves.toBe(false);
     await expect(
       shouldReply({ threadId, isAssistantMentioned: true }),
-    ).resolves.toBe(false);
+    ).resolves.toBe(true);
     expect(models.evaluate).not.toHaveBeenCalled();
   });
 
@@ -501,17 +536,7 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('does not exempt a canonical DM with one remaining human at execution time', async () => {
-    const identityService =
-      getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
-        'AgentChatDirectMessageIdentityService',
-      );
-    const threadId = context.registerThread(
-      await identityService.open({
-        workspaceId: context.workspaceId,
-        firstWorkspaceMemberId: context.workspaceMemberId,
-        secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      }),
-    );
+    const threadId = await createDirectMessage();
 
     await context.setStoredAssistantParticipation({
       threadId,

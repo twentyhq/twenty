@@ -79,13 +79,6 @@ export class AgentChatMemberMessageSenderService {
       FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
       actor.workspaceId,
     );
-    const assistantParticipationInput = {
-      isAssistantMentioned: assistant.isMentioned,
-      isInitialAssistantParticipant: assistant.isInitiallyIncluded,
-      mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-      recipientWorkspaceMemberIds:
-        addressing.initialRecipientWorkspaceMemberIds,
-    };
     const preparedMessage =
       await this.memberMessagePartsService.prepareMemberMessage({
         workspaceId: actor.workspaceId,
@@ -99,9 +92,12 @@ export class AgentChatMemberMessageSenderService {
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
-    if (
-      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
+    const isDirectMessage =
+      thread.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE;
+    const messageAddressing = { ...addressing };
+
+    if (isDirectMessage) {
       const isDirectMessageIdentityEnabled =
         await this.featureFlagService.isFeatureEnabled(
           FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
@@ -125,42 +121,16 @@ export class AgentChatMemberMessageSenderService {
         return throwAgentChatThreadNotFound();
       }
 
-      if (
-        isNonEmptyArray(message.attachments) ||
-        assistant.isMentioned ||
-        isDefined(target.channelId)
-      ) {
+      if (isNonEmptyArray(message.attachments) || isDefined(target.channelId)) {
         throw new AiException(
-          doNotTranslate(
-            'Direct messages only support text between two workspace members',
-          ),
+          doNotTranslate('Direct messages do not support files or channels'),
           AiExceptionCode.INVALID_AGENT_INPUT,
         );
       }
 
-      const persistedMessage =
-        await this.memberMessageWriterService.writeMemberMessage({
-          actor,
-          thread,
-          message: preparedMessage,
-          placement: AgentChatMemberMessagePlacement.COMPLETED,
-          participation: {
-            isAssistantParticipant: false,
-            isInitialMessage: true,
-          },
-          addressing: {
-            mentionedWorkspaceMemberIds: [],
-            initialRecipientWorkspaceMemberIds: pair
-              .filter(isDefined)
-              .filter((memberId) => memberId !== actor.workspaceMemberId),
-          },
-        });
-
-      return {
-        messageId: persistedMessage.id,
-        isQueued: false,
-        delivery: persistedMessage.delivery,
-      };
+      messageAddressing.initialRecipientWorkspaceMemberIds = pair
+        .filter(isDefined)
+        .filter((memberId) => memberId !== actor.workspaceMemberId);
     }
 
     const participation =
@@ -168,13 +138,18 @@ export class AgentChatMemberMessageSenderService {
         workspaceId: actor.workspaceId,
         workspaceMemberId: actor.workspaceMemberId,
         thread,
-        ...assistantParticipationInput,
+        isAssistantMentioned: assistant.isMentioned,
+        isInitialAssistantParticipant: assistant.isInitiallyIncluded,
+        mentionedWorkspaceMemberIds:
+          messageAddressing.mentionedWorkspaceMemberIds,
+        recipientWorkspaceMemberIds:
+          messageAddressing.initialRecipientWorkspaceMemberIds,
         isReplyRequested: assistant.isReplyRequested,
       });
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      !isInboxEnabled ||
+      (!isInboxEnabled && !isDirectMessage) ||
       (await this.replyPolicyService.shouldReply({
         decision: replyDecision,
         threadId: thread.id,
@@ -217,7 +192,8 @@ export class AgentChatMemberMessageSenderService {
       actor,
       thread,
       message: preparedMessage,
-      addressing: isInboxEnabled ? addressing : undefined,
+      addressing:
+        isInboxEnabled || isDirectMessage ? messageAddressing : undefined,
       participation,
       assistantReplyContext: {
         isAssistantMentioned: assistant.isMentioned,
@@ -247,7 +223,7 @@ export class AgentChatMemberMessageSenderService {
       };
     }
 
-    if (!isInboxEnabled) {
+    if (!isInboxEnabled && !isDirectMessage) {
       result.delivery = await this.inboxDeliveryService.deliverMessageToInboxes(
         {
           ...threadAccess,
