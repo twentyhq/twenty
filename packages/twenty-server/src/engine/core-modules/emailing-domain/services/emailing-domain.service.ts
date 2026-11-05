@@ -69,19 +69,21 @@ export class EmailingDomainService {
     });
 
     await this.setUpEmailingDomain(emailingDomain).catch(async (error) => {
-      await this.removeEmailingDomain(emailingDomain).catch((removalError) =>
-        this.logger.error(
-          `Could not roll back emailing domain ${domain} of workspace ${workspaceId}: ${removalError}`,
-        ),
-      );
+      await this.findEmailingDomainByIdOrThrow(workspaceId, emailingDomain.id)
+        .then((currentEmailingDomain) =>
+          this.removeEmailingDomain(currentEmailingDomain),
+        )
+        .catch((removalError) =>
+          this.logger.error(
+            `Could not roll back emailing domain ${domain} of workspace ${workspaceId}: ${removalError}`,
+          ),
+        );
 
       throw error;
     });
 
     return this.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
-        where: { id: emailingDomain.id },
-      }),
+      await this.findEmailingDomainByIdOrThrow(workspaceId, emailingDomain.id),
     );
   }
 
