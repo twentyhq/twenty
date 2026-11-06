@@ -1478,6 +1478,11 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-objects.svg');
 }
 
+#content-area:has([data-page-banner='card-page-validation-rules']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-validation-rules.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+}
+
 #content-area:has([data-page-banner='card-page-extending-objects']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-extending-objects.svg');
 }

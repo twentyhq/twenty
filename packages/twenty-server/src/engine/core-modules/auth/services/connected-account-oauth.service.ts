@@ -48,12 +48,10 @@ export class ConnectedAccountOAuthService {
     }
 
     const canConnectAccount =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: userWorkspace.id,
+      await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
-        setting: PermissionFlagType.CONNECTED_ACCOUNTS,
-        applicationId: undefined,
-        agentId: undefined,
+        userWorkspaceId: userWorkspace.id,
+        permissionFlag: PermissionFlagType.CONNECTED_ACCOUNTS,
       });
 
     if (!canConnectAccount) {

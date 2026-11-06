@@ -361,15 +361,11 @@ export class AuthService {
       return false;
     }
 
-    return await this.settingPermissionsService.userHasWorkspaceSettingPermission(
-      {
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: workspace.id,
-        setting: PermissionFlagType.SSO_BYPASS,
-        applicationId: undefined,
-        agentId: undefined,
-      },
-    );
+    return await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
+      workspaceId: workspace.id,
+      userWorkspaceId: userWorkspace.id,
+      permissionFlag: PermissionFlagType.SSO_BYPASS,
+    });
   }
 
   async signInUp(

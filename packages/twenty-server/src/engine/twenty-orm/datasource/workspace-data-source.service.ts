@@ -4,9 +4,10 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -15,7 +16,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class WorkspaceDataSourceService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordRepositoryPermissionsService: RecordRepositoryPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -26,10 +27,18 @@ export class WorkspaceDataSourceService {
     const workspaceContext = getWorkspaceContext();
 
     return new WorkspaceDataSource({
-      pool: this.workspaceQueryExecutorService.getPoolOrThrow({ useReplica }),
+      pool: this.getPoolOrThrow({ useReplica }),
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,
     });
+  }
+
+  private getPoolOrThrow({ useReplica }: { useReplica: boolean }) {
+    try {
+      return this.workspaceQueryExecutorService.getPoolOrThrow({ useReplica });
+    } catch (error) {
+      throw toTwentyOrmException(error);
+    }
   }
 
   private buildInternalContext(
@@ -48,7 +57,7 @@ export class WorkspaceDataSourceService {
       recordReadRestrictions: workspaceContext.recordReadRestrictions,
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
-      recordPermissions: this.recordPermissionsService,
+      recordRepositoryPermissions: this.recordRepositoryPermissionsService,
       coreDataSource: this.coreDataSource,
     };
   }

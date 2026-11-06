@@ -36,10 +36,7 @@ import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import {
-  AUTO_SELECT_MODEL_ID_BY_TIER,
-  isAiDataPolicyActive,
-} from 'twenty-shared/ai';
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/ai`)
@@ -106,6 +103,11 @@ export class AiGenerateTextController {
         workspace,
       );
 
+    const isContentRecordingAllowed =
+      await this.workspaceAiDataPolicyService.isContentRecordingAllowed(
+        workspace,
+      );
+
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId: resolvedModelId,
       aiDataPolicy,
@@ -128,7 +130,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
-            isContentRecordingAllowed: !isAiDataPolicyActive(aiDataPolicy),
+            isContentRecordingAllowed,
             workspaceId: workspace.id,
             userWorkspaceId,
           }),

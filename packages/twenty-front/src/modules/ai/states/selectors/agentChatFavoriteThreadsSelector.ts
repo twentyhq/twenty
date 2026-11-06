@@ -51,6 +51,11 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
             ? {
                 id: loadedThread.id,
                 title: loadedThread.title,
+                conversationType: loadedThread.conversationType,
+                directMessageFirstWorkspaceMemberId:
+                  loadedThread.directMessageFirstWorkspaceMemberId,
+                directMessageSecondWorkspaceMemberId:
+                  loadedThread.directMessageSecondWorkspaceMemberId,
                 deletedAt: loadedThread.deletedAt,
               }
             : {

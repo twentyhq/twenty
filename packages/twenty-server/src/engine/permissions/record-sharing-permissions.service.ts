@@ -12,12 +12,10 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
-import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-rule-record-shares-query.util';
 import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
@@ -49,7 +47,6 @@ export type ViewerRecordAccess = {
 @Injectable()
 export class RecordSharingPermissionsService {
   constructor(
-    private readonly recordAccessDecisionService: RecordAccessDecisionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -133,15 +130,6 @@ export class RecordSharingPermissionsService {
     }).has(recordId);
   }
 
-  findRuleRecordShares(question: {
-    workspaceId: string;
-    objectMetadataId: string;
-    scope: RuleRecordSharesScope;
-    transactionScope: RecordPermissionTransactionScope;
-  }): Promise<RecordShare[]> {
-    return this.recordPermissionReadOrmService.findRuleRecordShares(question);
-  }
-
   async isRecordSharedBeyondMember({
     workspaceId,
     objectMetadataId,
@@ -186,7 +174,7 @@ export class RecordSharingPermissionsService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordAccessDecisionService.canRoleReachSomeRecords({
+      (await this.recordPermissionsService.canRoleReachSomeRecords({
         principals:
           await this.principalPermissionsService.buildPermissionsPrincipals({
             authContext: args.authContext,
@@ -417,6 +405,7 @@ export class RecordSharingPermissionsService {
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],
+        transactionScope: args.transactionScope,
       });
 
     return (

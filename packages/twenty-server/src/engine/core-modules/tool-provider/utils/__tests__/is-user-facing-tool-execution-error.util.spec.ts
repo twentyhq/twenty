@@ -98,6 +98,14 @@ describe('isUserFacingToolExecutionError', () => {
       true,
     ],
     [
+      'a duplicate entry',
+      new TwentyOrmException(
+        'Duplicate entry',
+        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
+      ),
+      true,
+    ],
+    [
       'a database read timeout',
       new TwentyOrmException(
         'Query read timeout',
