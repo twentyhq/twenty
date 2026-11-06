@@ -11,16 +11,16 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+type LoadedPrincipalsPermissions = {
+  metadataMaps: PermissionsMetadataMaps;
+  recordsPermissions: RoleRecordsPermissions;
+};
+
 @Injectable()
 export class PermissionsMetadataMapsService {
-  private readonly metadataMapsByPrincipals = new WeakMap<
+  private readonly loadedPermissionsByPrincipals = new WeakMap<
     PermissionsPrincipalsWithRolesContext,
-    Promise<PermissionsMetadataMaps>
-  >();
-
-  private readonly recordsPermissionsByPrincipals = new WeakMap<
-    PermissionsPrincipalsWithRolesContext,
-    Promise<RoleRecordsPermissions>
+    Promise<LoadedPrincipalsPermissions>
   >();
 
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
@@ -72,46 +72,59 @@ export class PermissionsMetadataMapsService {
     return { ...metadataMaps, flatWorkspaceMemberMaps };
   }
 
-  loadForPrincipals({
+  async loadForPrincipals({
     principals,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
   }): Promise<PermissionsMetadataMaps> {
-    const cachedMetadataMaps = this.metadataMapsByPrincipals.get(principals);
-
-    if (isDefined(cachedMetadataMaps)) {
-      return cachedMetadataMaps;
-    }
-
-    const metadataMaps = this.load({ workspaceId: principals.workspaceId });
-
-    this.metadataMapsByPrincipals.set(principals, metadataMaps);
+    const { metadataMaps } = await this.loadPermissionsForPrincipals({
+      principals,
+    });
 
     return metadataMaps;
   }
 
-  loadRecordsPermissionsForPrincipals({
+  async loadRecordsPermissionsForPrincipals({
     principals,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
   }): Promise<RoleRecordsPermissions> {
-    const cachedRecordsPermissions =
-      this.recordsPermissionsByPrincipals.get(principals);
-
-    if (isDefined(cachedRecordsPermissions)) {
-      return cachedRecordsPermissions;
-    }
-
-    const recordsPermissions = this.loadForPrincipals({ principals }).then(
-      (metadataMaps) =>
-        getPermissionsPrincipalsRecordsPermissions({
-          principals,
-          metadataMaps,
-        }),
-    );
-
-    this.recordsPermissionsByPrincipals.set(principals, recordsPermissions);
+    const { recordsPermissions } = await this.loadPermissionsForPrincipals({
+      principals,
+    });
 
     return recordsPermissions;
+  }
+
+  private loadPermissionsForPrincipals({
+    principals,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<LoadedPrincipalsPermissions> {
+    const cachedPermissions =
+      this.loadedPermissionsByPrincipals.get(principals);
+
+    if (isDefined(cachedPermissions)) {
+      return cachedPermissions;
+    }
+
+    const loadedPermissions = this.load({
+      workspaceId: principals.workspaceId,
+    }).then((metadataMaps) => ({
+      metadataMaps,
+      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+        principals,
+        metadataMaps,
+      }),
+    }));
+
+    this.loadedPermissionsByPrincipals.set(principals, loadedPermissions);
+
+    // A failed load must not fail every later question on these principals
+    loadedPermissions.catch(() => {
+      this.loadedPermissionsByPrincipals.delete(principals);
+    });
+
+    return loadedPermissions;
   }
 }

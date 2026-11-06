@@ -556,6 +556,11 @@ export class RecordPermissionsService {
 
     this.sharedAccessLevelsByPrincipals.set(principals, sharedAccessLevels);
 
+    // A failed query must not fail every later question on these principals
+    sharedAccessLevels.catch(() => {
+      this.sharedAccessLevelsByPrincipals.delete(principals);
+    });
+
     return sharedAccessLevels;
   }
 }
