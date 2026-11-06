@@ -1,3 +1,4 @@
+import { type PageLayoutManifest } from 'twenty-shared/application';
 import {
   PageLayoutFilterType,
   PageLayoutType,
@@ -132,5 +133,24 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     });
 
     expect(result.filters).toBeNull();
+  });
+
+  it('should pass malformed filters through for the validator to reject', () => {
+    const pageLayoutManifest: PageLayoutManifest = JSON.parse(
+      JSON.stringify({
+        universalIdentifier: 'pl-uuid-7',
+        name: 'Malformed Dashboard',
+        type: PageLayoutType.DASHBOARD,
+        filters: '',
+      }),
+    );
+
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.filters).toBe('');
   });
 });

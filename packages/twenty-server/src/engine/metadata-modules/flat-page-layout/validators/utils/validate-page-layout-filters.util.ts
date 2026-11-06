@@ -81,7 +81,9 @@ export const validatePageLayoutFilters = ({
 
       return {
         code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-        message: t`Dashboard filters are malformed at "${issuePath}": ${issue}`,
+        message: isNonEmptyArray(path)
+          ? t`Dashboard filters are malformed at "${issuePath}": ${issue}`
+          : t`Dashboard filters are malformed: ${issue}`,
         userFriendlyMessage: msg`Dashboard filters are malformed`,
       };
     });

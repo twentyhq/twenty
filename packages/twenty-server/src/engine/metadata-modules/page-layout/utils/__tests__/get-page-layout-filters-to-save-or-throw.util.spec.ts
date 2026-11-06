@@ -29,6 +29,14 @@ const PERIOD_FILTER: PageLayoutFilter = {
   },
 };
 
+const CLOSE_DATE_FILTER: PageLayoutFilter = {
+  id: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e02',
+  label: 'Close date',
+  type: PageLayoutFilterType.DATE,
+  position: 1,
+  defaultValue: null,
+};
+
 const withNullPrototype = <TValue extends object>(value: TValue): TValue =>
   Object.assign(Object.create(null), value);
 
@@ -78,6 +86,19 @@ describe('getPageLayoutFiltersToSaveOrThrow', () => {
           INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
         existingFilters,
         filtersInput: [withNullPrototype({ ...PERIOD_FILTER })],
+      }),
+    ).toBe(existingFilters);
+  });
+
+  it('should keep the stored filters of an installed dashboard when the input only reorders them', () => {
+    const existingFilters = [CLOSE_DATE_FILTER, PERIOD_FILTER];
+
+    expect(
+      getFiltersToSave({
+        applicationUniversalIdentifier:
+          INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
+        existingFilters,
+        filtersInput: [PERIOD_FILTER, CLOSE_DATE_FILTER],
       }),
     ).toBe(existingFilters);
   });

@@ -1,3 +1,4 @@
+import { isArray } from '@sniptt/guards';
 import { type PageLayoutManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
@@ -26,7 +27,8 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
     isSystemSideEffect: false,
     isFirstTabPinned: pageLayoutManifest.isFirstTabPinned ?? true,
     filters:
-      pageLayoutManifest.filters?.length === 0
+      isArray(pageLayoutManifest.filters) &&
+      pageLayoutManifest.filters.length === 0
         ? null
         : (pageLayoutManifest.filters ?? null),
     createdAt: now,

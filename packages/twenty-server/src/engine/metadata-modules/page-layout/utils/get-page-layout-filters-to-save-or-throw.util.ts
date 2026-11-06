@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { PageLayoutType } from 'twenty-shared/types';
-import { fastDeepEqual } from 'twenty-shared/utils';
+import { type PageLayoutFilter, PageLayoutType } from 'twenty-shared/types';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { sanitizePageLayoutFilters } from 'src/engine/metadata-modules/flat-page-layout/utils/sanitize-page-layout-filters.util';
@@ -10,6 +10,15 @@ import {
   PageLayoutException,
   PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+
+const sortPageLayoutFiltersById = (
+  filters: PageLayoutFilter[] | null,
+): PageLayoutFilter[] | null =>
+  isDefined(filters)
+    ? [...filters].sort((filterA, filterB) =>
+        filterA.id.localeCompare(filterB.id),
+      )
+    : null;
 
 export const getPageLayoutFiltersToSaveOrThrow = ({
   existingPageLayout,
@@ -31,8 +40,10 @@ export const getPageLayoutFiltersToSaveOrThrow = ({
 
   if (
     fastDeepEqual(
-      filters,
-      sanitizePageLayoutFilters(existingPageLayout.filters),
+      sortPageLayoutFiltersById(filters),
+      sortPageLayoutFiltersById(
+        sanitizePageLayoutFilters(existingPageLayout.filters),
+      ),
     )
   ) {
     return existingPageLayout.filters;

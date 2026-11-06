@@ -1,16 +1,20 @@
-import { PageLayoutFilterType, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  type PageLayoutFilter,
+  PageLayoutFilterType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { z } from 'zod';
 
 export const PAGE_LAYOUT_FILTERS_SCHEMA = z.array(
-  z.object({
+  z.strictObject({
     id: z.string(),
     label: z.string(),
     type: z.enum(PageLayoutFilterType),
     position: z.number(),
     defaultValue: z
-      .object({
+      .strictObject({
         conditions: z.array(
-          z.object({
+          z.strictObject({
             operand: z.enum(ViewFilterOperand),
             value: z.string(),
           }),
@@ -18,4 +22,4 @@ export const PAGE_LAYOUT_FILTERS_SCHEMA = z.array(
       })
       .nullable(),
   }),
-);
+) satisfies z.ZodType<PageLayoutFilter[]>;

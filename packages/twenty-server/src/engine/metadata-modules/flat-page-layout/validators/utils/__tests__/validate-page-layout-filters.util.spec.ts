@@ -99,11 +99,47 @@ describe('validatePageLayoutFilters', () => {
         value: ['2026-01-01'],
       }),
     ],
+    ['an unknown filter key', [{ ...PERIOD_FILTER, secret: 'token' }]],
+    [
+      'an unknown default value key',
+      [
+        {
+          ...PERIOD_FILTER,
+          defaultValue: { ...PERIOD_FILTER.defaultValue, secret: 'token' },
+        },
+      ],
+    ],
+    [
+      'an unknown condition key',
+      withCondition({
+        operand: ViewFilterOperand.IS_RELATIVE,
+        value: 'PAST_1_MONTH',
+        __typename: 'PageLayoutFilterCondition',
+      }),
+    ],
   ])('should report %s as malformed without throwing', (_case, filters) => {
     const errors = validateDashboardFilters(filters);
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].message).toContain('Dashboard filters are malformed');
+  });
+
+  it('should locate an issue inside the filters', () => {
+    const errors = validateDashboardFilters([
+      { ...PERIOD_FILTER, label: null },
+    ]);
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toMatch(
+      /^Dashboard filters are malformed at "0\.label": /,
+    );
+  });
+
+  it('should not locate an issue at the root of the filters', () => {
+    const errors = validateDashboardFilters('Period');
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toMatch(/^Dashboard filters are malformed: /);
   });
 
   it('should reject an id that is not a UUID', () => {
