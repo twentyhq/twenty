@@ -1,7 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { createSettingsAiAssistantProfileSaveQueue } from '@/settings/ai/utils/createSettingsAiAssistantProfileSaveQueue';
+import { useSettingsAiAssistantProfilePersistenceState } from '@/settings/ai/hooks/useSettingsAiAssistantProfilePersistenceState';
 import { type SettingsAiAssistantProfileOperation } from '@/settings/ai/types/SettingsAiAssistantProfileOperation';
+import { type SettingsAiAssistantProfilePersistenceState } from '@/settings/ai/types/SettingsAiAssistantProfilePersistenceState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,7 +11,6 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { useState } from 'react';
 import {
   getAiChatAssistantProfileSchema,
   type AiChatAssistantProfile,
@@ -44,11 +44,15 @@ export const useSettingsAiAssistantProfile = () => {
   const [resetProfile] = useMutation(ResetAiChatAssistantProfileDocument, {
     fetchPolicy: 'no-cache',
   });
-  const [saveQueue] = useState(createSettingsAiAssistantProfileSaveQueue);
-  const [isSaving, setIsSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [hasRefreshError, setHasRefreshError] = useState(false);
+  const {
+    isSaving,
+    errorMessage,
+    isRefreshing,
+    hasRefreshError,
+    getSaveQueue,
+    isCurrentSaveQueue,
+    updatePersistenceState,
+  } = useSettingsAiAssistantProfilePersistenceState(currentWorkspace?.id);
   const parsedProfile = ASSISTANT_PROFILE_SCHEMA.safeParse(
     currentWorkspace?.aiChatAssistantProfile,
   );
@@ -78,9 +82,17 @@ export const useSettingsAiAssistantProfile = () => {
     };
   };
 
-  const save = async (
-    operation: SettingsAiAssistantProfileOperation,
-  ): Promise<boolean> => {
+  const save = async ({
+    operation,
+    saveQueue,
+  }: {
+    operation: SettingsAiAssistantProfileOperation;
+    saveQueue: SettingsAiAssistantProfilePersistenceState['saveQueue'];
+  }): Promise<boolean> => {
+    if (!isCurrentSaveQueue(saveQueue)) {
+      return false;
+    }
+
     const requestedWorkspace = store.get(currentWorkspaceState.atom);
     const hasPermission = store.get(permissionFlagMapSelector.atom)[
       PermissionFlagType.AI_SETTINGS
@@ -94,6 +106,10 @@ export const useSettingsAiAssistantProfile = () => {
       !isDefined(requestedWorkspace) ||
       requestedWorkspace.id !== currentWorkspace?.id
     ) {
+      updatePersistenceState({
+        saveQueue,
+        patch: { errorMessage: defaultSaveErrorMessage },
+      });
       return false;
     }
 
@@ -105,11 +121,14 @@ export const useSettingsAiAssistantProfile = () => {
       ).success ||
       !store.get(isCurrentUserLoadedState.atom)
     ) {
-      setErrorMessage(defaultSaveErrorMessage);
+      updatePersistenceState({
+        saveQueue,
+        patch: { errorMessage: defaultSaveErrorMessage },
+      });
       return false;
     }
 
-    setErrorMessage(undefined);
+    updatePersistenceState({ saveQueue, patch: { errorMessage: undefined } });
 
     try {
       const result = await performOperation({
@@ -120,11 +139,21 @@ export const useSettingsAiAssistantProfile = () => {
       const hasMatchingWorkspace = result.workspaceId === requestedWorkspace.id;
 
       if (!savedProfile.success || !hasMatchingWorkspace) {
-        setErrorMessage(defaultSaveErrorMessage);
+        updatePersistenceState({
+          saveQueue,
+          patch: { errorMessage: defaultSaveErrorMessage },
+        });
         return false;
       }
 
-      if (store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id) {
+      if (
+        !isCurrentSaveQueue(saveQueue) ||
+        store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id
+      ) {
+        updatePersistenceState({
+          saveQueue,
+          patch: { errorMessage: defaultSaveErrorMessage },
+        });
         return false;
       }
 
@@ -139,31 +168,36 @@ export const useSettingsAiAssistantProfile = () => {
         CombinedGraphQLErrors.is(error) &&
         isDefined(error.errors[0]?.extensions?.userFriendlyMessage);
 
-      setErrorMessage(
-        hasUserFriendlyMessage
-          ? getErrorMessageFromApolloError(error)
-          : defaultSaveErrorMessage,
-      );
+      updatePersistenceState({
+        saveQueue,
+        patch: {
+          errorMessage: hasUserFriendlyMessage
+            ? getErrorMessageFromApolloError(error)
+            : defaultSaveErrorMessage,
+        },
+      });
       return false;
     }
   };
 
   const processQueue = async () => {
+    const saveQueue = getSaveQueue();
+
     if (!saveQueue.canProcess()) {
       return;
     }
 
-    setIsSaving(true);
+    updatePersistenceState({ saveQueue, patch: { isSaving: true } });
 
     try {
-      await saveQueue.process(save);
+      await saveQueue.process((operation) => save({ operation, saveQueue }));
     } finally {
-      setIsSaving(false);
+      updatePersistenceState({ saveQueue, patch: { isSaving: false } });
     }
   };
 
   const enqueueOperation = (operation: SettingsAiAssistantProfileOperation) => {
-    saveQueue.append(operation);
+    getSaveQueue().append(operation);
     return processQueue();
   };
 
@@ -173,14 +207,17 @@ export const useSettingsAiAssistantProfile = () => {
   const reset = () => enqueueOperation({ type: 'reset' });
 
   const refreshProfile = async () => {
+    const saveQueue = getSaveQueue();
     const requestedWorkspace = store.get(currentWorkspaceState.atom);
 
     if (!isDefined(requestedWorkspace) || !isVisible || isLoading || isSaving) {
       return;
     }
 
-    setIsRefreshing(true);
-    setHasRefreshError(false);
+    updatePersistenceState({
+      saveQueue,
+      patch: { isRefreshing: true, hasRefreshError: false },
+    });
 
     try {
       const { data } = await client.query({
@@ -192,7 +229,10 @@ export const useSettingsAiAssistantProfile = () => {
         workspace?.aiChatAssistantProfile,
       );
 
-      if (store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id) {
+      if (
+        !isCurrentSaveQueue(saveQueue) ||
+        store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id
+      ) {
         return;
       }
 
@@ -200,7 +240,7 @@ export const useSettingsAiAssistantProfile = () => {
         !refreshedProfile.success ||
         workspace?.id !== requestedWorkspace.id
       ) {
-        setHasRefreshError(true);
+        updatePersistenceState({ saveQueue, patch: { hasRefreshError: true } });
         return;
       }
 
@@ -213,9 +253,9 @@ export const useSettingsAiAssistantProfile = () => {
           : previousWorkspace,
       );
     } catch {
-      setHasRefreshError(true);
+      updatePersistenceState({ saveQueue, patch: { hasRefreshError: true } });
     } finally {
-      setIsRefreshing(false);
+      updatePersistenceState({ saveQueue, patch: { isRefreshing: false } });
     }
   };
 
@@ -225,7 +265,7 @@ export const useSettingsAiAssistantProfile = () => {
     }
 
     if (isDefined(errorMessage)) {
-      saveQueue.resume();
+      getSaveQueue().resume();
       return processQueue();
     }
 

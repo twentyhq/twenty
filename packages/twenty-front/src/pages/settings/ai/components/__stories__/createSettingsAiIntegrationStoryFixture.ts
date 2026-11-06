@@ -6,6 +6,7 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
+import { settingsAiAssistantProfilePersistenceFamilyState } from '@/settings/ai/states/settingsAiAssistantProfilePersistenceFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphql, HttpResponse } from 'msw';
@@ -57,6 +58,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   const reset = async (options: SettingsAiIntegrationStoryOptions) => {
     resetGeneration += 1;
     assistant.reset(options);
+    jotaiStore.set(
+      settingsAiAssistantProfilePersistenceFamilyState.atomFamily(
+        mockCurrentWorkspace.id,
+      ),
+      null,
+    );
     resumeBehaviorSave();
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
