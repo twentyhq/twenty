@@ -7,12 +7,14 @@ import {
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const MAX_JOB_SIZE_BYTES = 100;
+const MAX_OFFLOADED_JOB_SIZE_BYTES = 1_000;
 
 const buildLimiter = (isEnabled: boolean) => {
   const metricsService = { incrementCounterForEvent: jest.fn() };
   const configValues: Record<string, unknown> = {
     IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
+    JOB_QUEUE_MAX_OFFLOADED_JOB_SIZE_BYTES: MAX_OFFLOADED_JOB_SIZE_BYTES,
   };
   const limiter = new JobSizeLimiter(
     metricsService as never,
@@ -85,5 +87,32 @@ describe('JobSizeLimiter', () => {
         jobs: [{ index: 0, groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
       }),
     ).not.toThrow();
+  });
+
+  it('caps offloaded payloads on their own limit even when memory fairness is disabled', () => {
+    const { limiter, metricsService } = buildLimiter(false);
+    const checkOffloadedJobSizes = (sizeBytes: number) =>
+      limiter.checkOffloadedJobSizesOrThrow({
+        queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
+        jobs: [{ index: 0, groupKey: 'workspace:ws-1', sizeBytes }],
+      });
+
+    expect(() =>
+      checkOffloadedJobSizes(MAX_OFFLOADED_JOB_SIZE_BYTES),
+    ).not.toThrow();
+    expect(() =>
+      checkOffloadedJobSizes(MAX_OFFLOADED_JOB_SIZE_BYTES + 1),
+    ).toThrow(
+      expect.objectContaining({
+        code: MessageQueueExceptionCode.JOB_TOO_LARGE,
+        details: {
+          index: 0,
+          sizeBytes: MAX_OFFLOADED_JOB_SIZE_BYTES + 1,
+          maxBytes: MAX_OFFLOADED_JOB_SIZE_BYTES,
+        },
+      }),
+    );
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
   });
 });

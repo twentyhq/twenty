@@ -1,4 +1,5 @@
 import { type RedisScriptClient } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
+import { scanRedisHashEntries } from 'src/engine/core-modules/message-queue/utils/scan-redis-hash-entries.util';
 
 export async function* scanRedisHashFields({
   client,
@@ -9,21 +10,11 @@ export async function* scanRedisHashFields({
   key: string;
   batchSize: number;
 }): AsyncGenerator<string[]> {
-  let cursor = '0';
-
-  do {
-    const [nextCursor, fieldsAndValues] = (await client.runCommand('hscan', [
-      key,
-      cursor,
-      'COUNT',
-      batchSize,
-    ])) as [string, string[]];
-    const fields = fieldsAndValues.filter((_, index) => index % 2 === 0);
-
-    if (fields.length > 0) {
-      yield fields;
-    }
-
-    cursor = String(nextCursor);
-  } while (cursor !== '0');
+  for await (const entries of scanRedisHashEntries({
+    client,
+    key,
+    batchSize,
+  })) {
+    yield entries.map(({ field }) => field);
+  }
 }
