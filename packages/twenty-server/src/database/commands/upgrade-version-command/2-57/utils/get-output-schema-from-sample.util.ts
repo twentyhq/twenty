@@ -21,19 +21,31 @@ const getLeafType = (value: unknown) => {
   return 'unknown';
 };
 
+const getOutputSchemaNode = ({
+  key,
+  value,
+}: {
+  key: string;
+  value: unknown;
+}) => {
+  if (isPlainObject(value)) {
+    return {
+      isLeaf: false,
+      type: 'object',
+      label: key,
+      value: getOutputSchemaFromSample(value),
+    };
+  }
+
+  return { isLeaf: true, value, type: getLeafType(value), label: key };
+};
+
 export const getOutputSchemaFromSample = (
   sample: object,
 ): Record<string, unknown> =>
   Object.fromEntries(
     Object.entries(sample).map(([key, value]) => [
       key,
-      isPlainObject(value)
-        ? {
-            isLeaf: false,
-            type: 'object',
-            label: key,
-            value: getOutputSchemaFromSample(value),
-          }
-        : { isLeaf: true, value, type: getLeafType(value), label: key },
+      getOutputSchemaNode({ key, value }),
     ]),
   );

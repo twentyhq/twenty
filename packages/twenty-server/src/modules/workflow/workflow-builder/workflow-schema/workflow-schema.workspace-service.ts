@@ -228,25 +228,27 @@ export class WorkflowSchemaWorkspaceService {
       };
     }
 
-    const enrichedSteps = isDefined(steps)
-      ? await Promise.all(
-          steps.map(async (step) => {
-            const enrichedStep = { ...step };
+    if (!isDefined(steps)) {
+      return { trigger: enrichedTrigger, steps: null };
+    }
 
-            enrichedStep.settings = {
-              ...enrichedStep.settings,
-              outputSchema: await this.computeStoredOutputSchema({
-                step,
-                workspaceId,
-                workflowVersionContent,
-                shouldKeepStoredSchemaOnError,
-              }),
-            };
+    const enrichedSteps = await Promise.all(
+      steps.map(async (step) => {
+        const enrichedStep = { ...step };
 
-            return enrichedStep;
+        enrichedStep.settings = {
+          ...enrichedStep.settings,
+          outputSchema: await this.computeStoredOutputSchema({
+            step,
+            workspaceId,
+            workflowVersionContent,
+            shouldKeepStoredSchemaOnError,
           }),
-        )
-      : null;
+        };
+
+        return enrichedStep;
+      }),
+    );
 
     return { trigger: enrichedTrigger, steps: enrichedSteps };
   }
