@@ -60,7 +60,7 @@ describe('get_workflow_run tool', () => {
           ],
         },
         stepInfos: {
-          'step-1': { status: StepStatus.SUCCESS },
+          'step-1': { status: StepStatus.SUCCESS, result: { total: 3 } },
           'step-2': { status: StepStatus.FAILED, error: 'Email failed' },
         },
       },
@@ -85,6 +85,7 @@ describe('get_workflow_run tool', () => {
     expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
     expect(result.workflowRun.error).toBe('Something went wrong');
     expect(result.workflowRun.steps).toHaveLength(2);
+    expect(result.workflowRun.steps[0].output).toEqual({ total: 3 });
     expect(result.workflowRun.steps[1].error).toBe('Email failed');
     expect(result.workflowRun.failedStepLogs).toEqual({
       'step-2': [{ message: 'SMTP error' }],

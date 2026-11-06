@@ -30,7 +30,7 @@ export const createGetWorkflowRunTool = (
 ) => ({
   name: 'get_workflow_run' as const,
   description:
-    'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
+    'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status, output and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
   inputSchema: getWorkflowRunSchema,
   execute: async (parameters: GetWorkflowRunInput) => {
     try {
@@ -62,6 +62,7 @@ export const createGetWorkflowRunTool = (
               name: step.name,
               type: step.type,
               status: stepInfo?.status,
+              output: stepInfo?.result,
               error: stepInfo?.error,
             };
           });

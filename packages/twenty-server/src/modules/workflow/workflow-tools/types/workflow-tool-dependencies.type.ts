@@ -4,6 +4,7 @@ import type { CoreWorkflowListService } from 'src/engine/core-modules/workflow/s
 import type { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import type { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import type { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import type { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import type { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import type { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -19,6 +20,7 @@ export type WorkflowToolDependencies = {
   coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService;
   coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService;
   coreWorkflowLifecycleService: CoreWorkflowLifecycleWorkspaceService;
+  coreWorkflowVersionRunService: CoreWorkflowVersionRunService;
   workflowSchemaService: WorkflowSchemaWorkspaceService;
   workspaceOrmManager: WorkspaceOrmManager;
   logicFunctionFromSourceService: LogicFunctionFromSourceService;

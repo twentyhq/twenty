@@ -15,7 +15,7 @@ import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-module
 import { WorkflowVersionEdgeGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-edge-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
-import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -24,8 +24,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
-import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -58,8 +56,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 )
 export class CoreWorkflowRunResolver {
   constructor(
-    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
+    private readonly coreWorkflowVersionRunService: CoreWorkflowVersionRunService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -91,35 +88,15 @@ export class CoreWorkflowRunResolver {
         });
       }, buildSystemAuthContext(workspaceId));
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow(
-      {
-        workspaceId,
-        workspaceCustomApplicationId,
-        callerApplication,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const { payload: triggerPayload, createdBy } =
-      buildWorkflowRunTriggerContext({
-        workspaceMember,
-        payload,
-      });
-
-    return this.coreWorkflowRunnerService.run({
+    return this.coreWorkflowVersionRunService.runAsWorkspaceMember({
       workspaceId,
+      workspaceCustomApplicationId,
+      userWorkspaceId,
+      callerApplication,
+      workspaceMember,
       coreWorkflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: triggerPayload,
-      source: createdBy,
+      payload,
     });
   }
 }
