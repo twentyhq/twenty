@@ -87,41 +87,33 @@ export class AgentChatChannelService {
       throwAgentChatChannelsUnavailable();
     }
 
-    const channel = await this.channelMetadataService.createChannel(args);
+    const { channel, shouldRewriteChannelGrants } =
+      await this.channelMetadataService.createChannel(args);
 
-    await this.rewriteChannelGrants({
-      workspaceId: args.workspaceId,
-      channelIds: [channel.id],
-    });
+    if (shouldRewriteChannelGrants) {
+      await this.rewriteChannelGrants({
+        workspaceId: args.workspaceId,
+        channelIds: [channel.id],
+      });
+    }
 
     return channel;
   }
 
-  async rewriteChannelGrants({
-    workspaceId,
-    channelIds,
-  }: {
-    workspaceId: string;
-    channelIds: string[];
-  }): Promise<void> {
-    const rewriteErrors: unknown[] = [];
+  async transferApplicationChannelsToWorkspace(
+    args: Parameters<
+      AgentChatChannelMetadataService['transferApplicationChannelsToWorkspace']
+    >[0],
+  ): Promise<void> {
+    const transferredChannelIds =
+      await this.channelMetadataService.transferApplicationChannelsToWorkspace(
+        args,
+      );
 
-    for (const channelId of channelIds) {
-      await this.channelGrantService
-        .rewriteChannelGrants({ workspaceId, channelId })
-        .catch(async (error: unknown) => {
-          rewriteErrors.push(error);
-
-          await this.channelGrantService.enqueueChannelGrantsRewrite({
-            workspaceId,
-            channelId,
-          });
-        });
-    }
-
-    if (isNonEmptyArray(rewriteErrors)) {
-      throw rewriteErrors[0];
-    }
+    await this.rewriteChannelGrants({
+      workspaceId: args.workspaceId,
+      channelIds: transferredChannelIds,
+    });
   }
 
   async updateChannel({
@@ -145,16 +137,7 @@ export class AgentChatChannelService {
     });
 
     if (isDefined(roleIds)) {
-      await this.channelGrantService
-        .rewriteChannelGrants({ workspaceId, channelId })
-        .catch(async (error: unknown) => {
-          await this.channelGrantService.enqueueChannelGrantsRewrite({
-            workspaceId,
-            channelId,
-          });
-
-          throw error;
-        });
+      await this.rewriteChannelGrants({ workspaceId, channelIds: [channelId] });
     }
 
     return channel;
@@ -370,5 +353,32 @@ export class AgentChatChannelService {
         return isDefined(after) ? [{ before, after }] : [];
       }),
     });
+  }
+
+  private async rewriteChannelGrants({
+    workspaceId,
+    channelIds,
+  }: {
+    workspaceId: string;
+    channelIds: string[];
+  }): Promise<void> {
+    const rewriteErrors: unknown[] = [];
+
+    for (const channelId of channelIds) {
+      await this.channelGrantService
+        .rewriteChannelGrants({ workspaceId, channelId })
+        .catch(async (error: unknown) => {
+          rewriteErrors.push(error);
+
+          await this.channelGrantService.enqueueChannelGrantsRewrite({
+            workspaceId,
+            channelId,
+          });
+        });
+    }
+
+    if (isNonEmptyArray(rewriteErrors)) {
+      throw rewriteErrors[0];
+    }
   }
 }

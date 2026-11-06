@@ -27,9 +27,12 @@ import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agen
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -42,6 +45,11 @@ type ChannelMaps = Pick<
   'flatAgentChatChannelMaps' | 'flatAgentChatChannelRoleMaps' | 'flatRoleMaps'
 >;
 
+type CreatedChannel = {
+  channel: FlatAgentChatChannelWithRoleIds;
+  shouldRewriteChannelGrants: boolean;
+};
+
 @Injectable()
 export class AgentChatChannelMetadataService {
   constructor(
@@ -50,6 +58,10 @@ export class AgentChatChannelMetadataService {
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
+    private readonly channelRoleRepository: WorkspaceScopedRepository<AgentChatChannelRoleEntity>,
   ) {}
 
   async findChannels(
@@ -133,7 +145,7 @@ export class AgentChatChannelMetadataService {
     icon: string | null;
     color: string | null;
     roleIds: string[];
-  }): Promise<FlatAgentChatChannelWithRoleIds> {
+  }): Promise<CreatedChannel> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
       (await this.findWorkspaceCustomFlatApplication(workspaceId));
@@ -144,7 +156,7 @@ export class AgentChatChannelMetadataService {
     });
 
     if (isDefined(existingChannel)) {
-      const channel = await this.reclaimRetainedChannel({
+      const createdChannel = await this.reclaimRetainedChannel({
         workspaceId,
         channel: existingChannel,
         ownerFlatApplication: resolvedOwnerFlatApplication,
@@ -152,11 +164,11 @@ export class AgentChatChannelMetadataService {
       });
 
       assertAgentChatChannelUniversalIdentifierNotTakenOrThrow({
-        channel,
+        channel: createdChannel.channel,
         applicationId: resolvedOwnerFlatApplication.id,
       });
 
-      return channel;
+      return createdChannel;
     }
 
     const channelMaps = await this.getChannelMaps(workspaceId);
@@ -220,7 +232,10 @@ export class AgentChatChannelMetadataService {
       }),
     });
 
-    return this.findChannelOrThrow({ workspaceId, channelId });
+    return {
+      channel: await this.findChannelOrThrow({ workspaceId, channelId }),
+      shouldRewriteChannelGrants: false,
+    };
   }
 
   async updateChannel({
@@ -376,13 +391,14 @@ export class AgentChatChannelMetadataService {
     applicationUniversalIdentifier: string;
   }): Promise<string[]> {
     const { flatAgentChatChannelMaps } = await this.getChannelMaps(workspaceId);
-    const channels = Object.values(
+    const applicationChannels = findFlatEntitiesByApplicationId({
+      applicationId,
+      flatEntityMaps: flatAgentChatChannelMaps,
+    });
+    const channelIdsRetainedFromEarlierInstallations = Object.values(
       flatAgentChatChannelMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-    const isApplicationOwningChannels = channels.some(
-      (channel) => channel.applicationId === applicationId,
-    );
-    const channelIdsRetainedFromEarlierInstallations = channels
+    )
+      .filter(isDefined)
       .filter(
         (channel) =>
           channel.applicationId !== applicationId &&
@@ -392,7 +408,7 @@ export class AgentChatChannelMetadataService {
       .map(({ id }) => id);
 
     if (
-      !isApplicationOwningChannels &&
+      !isNonEmptyArray(applicationChannels) &&
       !isNonEmptyArray(channelIdsRetainedFromEarlierInstallations)
     ) {
       return [];
@@ -403,12 +419,12 @@ export class AgentChatChannelMetadataService {
 
     const transferredChannelIds = await this.coreDataSource.transaction(
       async (manager) => {
-        const channelRepository = manager.getRepository(AgentChatChannelEntity);
+        const channelRepository = this.channelRepository.withManager(manager);
 
         if (isNonEmptyArray(channelIdsRetainedFromEarlierInstallations)) {
           await channelRepository.update(
+            workspaceId,
             {
-              workspaceId,
               id: In(channelIdsRetainedFromEarlierInstallations),
               applicationId: workspaceCustomFlatApplication.id,
             },
@@ -416,31 +432,36 @@ export class AgentChatChannelMetadataService {
           );
         }
 
-        const transferredChannelsResult = await channelRepository.update(
-          { workspaceId, applicationId },
+        const ownedChannels = await channelRepository.find(workspaceId, {
+          select: { id: true },
+          where: { applicationId },
+        });
+        const ownedChannelIds = ownedChannels.map(({ id }) => id);
+
+        if (!isNonEmptyArray(ownedChannelIds)) {
+          return [];
+        }
+
+        await channelRepository.update(
+          workspaceId,
+          { id: In(ownedChannelIds) },
           {
             applicationId: workspaceCustomFlatApplication.id,
             retainedApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
             retainedApplicationId: applicationId,
           },
-          { returning: ['id'] },
-        );
-        const transferredChannels: Pick<AgentChatChannelEntity, 'id'>[] =
-          transferredChannelsResult.raw;
-        const transferredChannelIds = transferredChannels.map(({ id }) => id);
-
-        if (!isNonEmptyArray(transferredChannelIds)) {
-          return [];
-        }
-
-        await manager.update(
-          AgentChatChannelRoleEntity,
-          { workspaceId, channelId: In(transferredChannelIds), applicationId },
-          { applicationId: workspaceCustomFlatApplication.id },
         );
 
-        return transferredChannelIds;
+        await this.channelRoleRepository
+          .withManager(manager)
+          .update(
+            workspaceId,
+            { channelId: In(ownedChannelIds), applicationId },
+            { applicationId: workspaceCustomFlatApplication.id },
+          );
+
+        return ownedChannelIds;
       },
     );
 
@@ -463,9 +484,9 @@ export class AgentChatChannelMetadataService {
   }: {
     workspaceId: string;
     channel: FlatAgentChatChannelWithRoleIds;
-    ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+    ownerFlatApplication: FlatApplication;
     roleIds: string[];
-  }): Promise<FlatAgentChatChannelWithRoleIds> {
+  }): Promise<CreatedChannel> {
     const isRetainedByCallingApplication =
       channel.retainedApplicationUniversalIdentifier ===
       ownerFlatApplication.universalIdentifier;
@@ -478,65 +499,65 @@ export class AgentChatChannelMetadataService {
       !isRetainedByCallingApplication ||
       !isRetainedByAnotherInstallation
     ) {
-      return channel;
+      return { channel, shouldRewriteChannelGrants: false };
     }
 
     const workspaceCustomFlatApplication =
       await this.findWorkspaceCustomFlatApplication(workspaceId);
 
     if (channel.applicationId !== workspaceCustomFlatApplication.id) {
-      return channel;
+      return { channel, shouldRewriteChannelGrants: false };
     }
 
     const { flatRoleMaps } = await this.getChannelMaps(workspaceId);
-    const applicationRoleUniversalIdentifiersToAdd =
-      findAgentChatChannelRoleUniversalIdentifiersOrThrow({
-        flatRoleMaps,
-        roleIds: roleIds.filter((roleId) => !channel.roleIds.includes(roleId)),
-      }).filter(
-        (roleUniversalIdentifier) =>
-          flatRoleMaps.byUniversalIdentifier[roleUniversalIdentifier]
-            ?.applicationId === ownerFlatApplication.id,
-      );
+    const applicationRoleIdsToAdd = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: roleIds,
+      flatEntityMaps: flatRoleMaps,
+    })
+      .filter(
+        ({ id, applicationId }) =>
+          applicationId === ownerFlatApplication.id &&
+          !channel.roleIds.includes(id),
+      )
+      .map(({ id }) => id);
 
-    const { affected } = await this.coreDataSource
-      .getRepository(AgentChatChannelEntity)
-      .update(
-        {
-          id: channel.id,
-          workspaceId,
-          applicationId: workspaceCustomFlatApplication.id,
-          retainedApplicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
-          retainedApplicationId: Not(ownerFlatApplication.id),
-        },
-        { applicationId: ownerFlatApplication.id },
-      );
+    const { affected } = await this.channelRepository.update(
+      workspaceId,
+      {
+        id: channel.id,
+        applicationId: workspaceCustomFlatApplication.id,
+        retainedApplicationUniversalIdentifier:
+          ownerFlatApplication.universalIdentifier,
+        retainedApplicationId: Not(ownerFlatApplication.id),
+      },
+      { applicationId: ownerFlatApplication.id },
+    );
 
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
       flatMapsKeys: ['flatAgentChatChannelMaps'],
     });
 
-    if (
-      affected === 1 &&
-      isNonEmptyArray(applicationRoleUniversalIdentifiersToAdd)
-    ) {
-      await this.runMigration({
-        workspaceId,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
-        channelRolesToCreate: buildAgentChatChannelRolesToCreate({
-          channelUniversalIdentifier: channel.universalIdentifier,
-          roleUniversalIdentifiers: applicationRoleUniversalIdentifiersToAdd,
-          applicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
-          now: new Date().toISOString(),
+    if (affected !== 1 || !isNonEmptyArray(applicationRoleIdsToAdd)) {
+      return {
+        channel: await this.findChannelOrThrow({
+          workspaceId,
+          channelId: channel.id,
         }),
-      });
+        shouldRewriteChannelGrants: false,
+      };
     }
 
-    return this.findChannelOrThrow({ workspaceId, channelId: channel.id });
+    return {
+      channel: await this.updateChannel({
+        workspaceId,
+        ownerFlatApplication,
+        channelId: channel.id,
+        changes: {},
+        roleIds: [...channel.roleIds, ...applicationRoleIdsToAdd],
+      }),
+      shouldRewriteChannelGrants: true,
+    };
   }
 
   private async findWorkspaceCustomFlatApplication(
