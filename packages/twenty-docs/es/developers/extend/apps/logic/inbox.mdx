@@ -90,7 +90,7 @@ await sendInboxMessage({
 * Ambos leen la etiqueta que muestra el chip, como lo hace el composer: el nombre completo del miembro o su correo electrónico cuando el nombre está vacío, y el identificador de la etiqueta del registro, como el nombre de una empresa. Los corchetes se convierten en paréntesis y los saltos de línea se convierten en espacios, por lo que el chip siempre se renderiza.
 * Leen con el mismo acceso que el resto de la llamada, por lo que el acceso tiene que llegar al miembro o al registro. Una referencia de registro hace dos peticiones, una para el campo de etiqueta del objeto y otra para el registro.
 * Una mención sólo renderiza. No añade al miembro a la conversación o notificarlos, así que lista a todos los que deberían recibir el mensaje en `workspaceMemberIds`.
-* `INBOX_ASSISTANT_MENTION` es el texto que el compositor escribe cuando un miembro menciona al asistente (`@Ada`), así que tus mensajes lo llaman de la misma manera.
+* `INBOX_ASSISTANT_MENTION` escribe la referencia canónica del asistente del compositor. La bandeja de entrada lo muestra como `@Ada`; su identidad estable es independiente de su etiqueta. Esta referencia por sí sola no solicita una respuesta del asistente desde un mensaje de la aplicación.
 
 ## Asociar registros a una conversación
 
