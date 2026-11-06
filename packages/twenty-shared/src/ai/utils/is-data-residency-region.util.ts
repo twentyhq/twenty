@@ -6,4 +6,6 @@ import {
 export const isDataResidencyRegion = (
   value: string | null | undefined,
 ): value is DataResidencyRegion =>
-  DATA_RESIDENCY_REGIONS.some((policy) => policy === value);
+  DATA_RESIDENCY_REGIONS.some(
+    (dataResidencyRegion) => dataResidencyRegion === value,
+  );
