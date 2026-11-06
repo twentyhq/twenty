@@ -93,4 +93,99 @@ describe('validateWorkflowStepParams', () => {
       }
     });
   });
+
+  describe('fieldsToUpdate', () => {
+    const recordStepWithInput = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: object;
+    }) => ({
+      id: '2b7c4e1a-5d3f-4a8b-9c6e-1f0a2d3b4c5e',
+      name: 'Record step',
+      type,
+      valid: true,
+      settings: {
+        input,
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
+        },
+      },
+    });
+
+    const recordStepIssues = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: object;
+    }) =>
+      validateWorkflowStepParams({
+        trigger: undefined,
+        steps: [recordStepWithInput({ type, input })],
+      });
+
+    it('should refuse fieldsToUpdate on create and upsert record steps, empty or not', () => {
+      for (const fieldsToUpdate of [['name'], []]) {
+        for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+          expect(
+            recordStepIssues({
+              type,
+              input: {
+                objectName: 'company',
+                objectRecord: { name: 'Acme' },
+                fieldsToUpdate,
+              },
+            }),
+          ).toEqual([
+            expect.objectContaining({
+              code: 'INVALID_STEP_PARAMS',
+              message: expect.stringContaining(
+                'Step "Record step" configuration is invalid - settings.input: Unrecognized key: "fieldsToUpdate"',
+              ),
+            }),
+          ]);
+        }
+      }
+    });
+
+    it('should accept create and upsert record steps without fieldsToUpdate', () => {
+      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+        expect(
+          recordStepIssues({
+            type,
+            input: { objectName: 'company', objectRecord: { name: 'Acme' } },
+          }),
+        ).toEqual([]);
+      }
+    });
+
+    it('should block activating an update record step with no field to update', () => {
+      const updateRecordInput = {
+        objectName: 'company',
+        objectRecordId: '{{trigger.id}}',
+        objectRecord: { name: 'Acme' },
+      };
+
+      expect(
+        recordStepIssues({
+          type: 'UPDATE_RECORD',
+          input: { ...updateRecordInput, fieldsToUpdate: [] },
+        }),
+      ).toEqual([
+        expect.objectContaining({
+          code: 'UPDATE_RECORD_MISSING_FIELDS_TO_UPDATE',
+        }),
+      ]);
+      expect(
+        recordStepIssues({
+          type: 'UPDATE_RECORD',
+          input: { ...updateRecordInput, fieldsToUpdate: ['name'] },
+        }),
+      ).toEqual([]);
+    });
+  });
 });
