@@ -3,7 +3,6 @@
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type SeatBillingArrangement } from 'src/engine/core-modules/billing/types/seat-billing-arrangement.type';
 
-// Overlapping arrangements of one type are rejected at insert, so at most one is active
 const getSeats = ({
   seatArrangements,
   type,

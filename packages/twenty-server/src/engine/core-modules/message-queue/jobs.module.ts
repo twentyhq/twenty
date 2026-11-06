@@ -11,7 +11,6 @@ import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billin
 import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billing/app-billing/crons/jobs/application-recurring-charge.cron.job';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
-import { BillingSeatArrangementSyncModule } from 'src/engine/core-modules/billing/seat-arrangement-sync/billing-seat-arrangement-sync.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { TriggerInstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
@@ -118,7 +117,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     PreInstalledAppsModule,
     PendingWakeUpModule,
     BillingReminderModule,
-    BillingSeatArrangementSyncModule,
     ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
   ],

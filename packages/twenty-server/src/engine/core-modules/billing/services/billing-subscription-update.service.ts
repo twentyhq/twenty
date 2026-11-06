@@ -271,7 +271,6 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  // Seat jobs and plan switches rewrite the same Stripe schedule, so they must not interleave
   private async withSubscriptionUpdateLock({
     workspaceId,
     update,

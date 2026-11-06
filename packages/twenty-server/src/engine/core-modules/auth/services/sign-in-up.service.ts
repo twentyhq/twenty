@@ -374,7 +374,6 @@ export class SignInUpService {
     }
   }
 
-  // SSO redirects show the AuthException message as is, so it must be the user-facing text
   private buildSeatLimitReachedException() {
     return new AuthException(
       'This workspace has used all its seats. Contact your workspace admin to add more.',

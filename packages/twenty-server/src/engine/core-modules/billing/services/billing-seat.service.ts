@@ -46,6 +46,25 @@ export class BillingSeatService {
     );
   }
 
+  async findSeatArrangements(
+    workspaceId: string,
+  ): Promise<BillingArrangementEntity[]> {
+    return await this.billingArrangementService.findArrangementsByTypes({
+      workspaceId,
+      types: SEAT_BILLING_ARRANGEMENT_TYPES,
+    });
+  }
+
+  async findActiveSeatArrangements(
+    workspaceId: string,
+  ): Promise<BillingArrangementEntity[]> {
+    const now = new Date();
+
+    return (await this.findSeatArrangements(workspaceId)).filter(
+      (arrangement) => isBillingArrangementActive({ arrangement, now }),
+    );
+  }
+
   async computeCurrentBilledSeats(workspaceId: string): Promise<number | null> {
     const memberCount = await this.countWorkspaceMembers(workspaceId);
 
@@ -94,21 +113,6 @@ export class BillingSeatService {
       },
       buildBillingSeatLockKey(workspaceId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
-    );
-  }
-
-  private async findActiveSeatArrangements(
-    workspaceId: string,
-  ): Promise<BillingArrangementEntity[]> {
-    const seatArrangements =
-      await this.billingArrangementService.findArrangementsByTypes({
-        workspaceId,
-        types: SEAT_BILLING_ARRANGEMENT_TYPES,
-      });
-    const now = new Date();
-
-    return seatArrangements.filter((arrangement) =>
-      isBillingArrangementActive({ arrangement, now }),
     );
   }
 }
