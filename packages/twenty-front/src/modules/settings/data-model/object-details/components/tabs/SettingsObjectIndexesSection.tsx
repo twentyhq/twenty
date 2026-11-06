@@ -201,9 +201,9 @@ export const SettingsObjectIndexesSection = ({
           isReadOnly={isReadOnly}
           onDeleteIndex={handleRequestDelete}
         />
-        {!isReadOnly && (
-          <TableFooter>
-            {canCreate ? (
+        <TableFooter>
+          {!isReadOnly &&
+            (canCreate ? (
               <NavigationButton
                 to={getSettingsPath(SettingsPath.ObjectNewIndex, {
                   objectNamePlural: objectMetadataItem.namePlural,
@@ -219,9 +219,8 @@ export const SettingsObjectIndexesSection = ({
                 disabled
                 variant="outline"
               >{t`Add Index`}</Button>
-            )}
-          </TableFooter>
-        )}
+            ))}
+        </TableFooter>
       </StyledTableContainer>
       <ConfirmationDialog
         dialogId={DELETE_INDEX_MODAL_ID}

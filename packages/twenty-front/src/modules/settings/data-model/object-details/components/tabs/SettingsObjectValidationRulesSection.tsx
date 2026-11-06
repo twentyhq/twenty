@@ -167,8 +167,8 @@ export const SettingsObjectValidationRulesSection = ({
           )}
         </TableBody>
       </Table>
-      {!isReadOnly && (
-        <TableFooter>
+      <TableFooter>
+        {!isReadOnly && (
           <Button
             startIcon={<IconPlus />}
             size="sm"
@@ -176,8 +176,8 @@ export const SettingsObjectValidationRulesSection = ({
             disabled={isSaving}
             onClick={handleAddRule}
           >{t`Add rule`}</Button>
-        </TableFooter>
-      )}
+        )}
+      </TableFooter>
     </>
   );
 };
