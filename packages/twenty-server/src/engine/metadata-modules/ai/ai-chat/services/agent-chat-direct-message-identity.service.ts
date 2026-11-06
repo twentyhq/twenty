@@ -110,48 +110,45 @@ export class AgentChatDirectMessageIdentityService {
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
 
     const createdThreadId =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            async (transactionScope) => {
-              const { identifiers } = await transactionScope
-                .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                  'agentChatThread',
-                  { shouldSkipEventEmission: true },
-                )
-                .insert(
-                  {
-                    conversationType:
-                      AgentChatThreadConversationType.DIRECT_MESSAGE,
-                    ...pair,
-                    isAssistantParticipant: false,
-                  },
-                  { onConflictDoNothing: true },
-                );
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          const { identifiers } = await transactionScope
+            .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+              'agentChatThread',
+              { shouldSkipEventEmission: true },
+            )
+            .insert(
+              {
+                conversationType:
+                  AgentChatThreadConversationType.DIRECT_MESSAGE,
+                ...pair,
+                isAssistantParticipant: false,
+              },
+              { onConflictDoNothing: true },
+            );
 
-              const createdThreadId = identifiers[0]?.id;
+          const createdThreadId = identifiers[0]?.id;
 
-              if (!isDefined(createdThreadId)) {
-                return undefined;
-              }
+          if (!isDefined(createdThreadId)) {
+            return undefined;
+          }
 
-              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
-              await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
-                {
-                  workspaceId,
-                  transactionScope,
-                  pair: [
-                    pair.directMessageFirstWorkspaceMemberId,
-                    pair.directMessageSecondWorkspaceMemberId,
-                  ],
-                  conversationObjectName: 'agentChatThread',
-                  conversationRecordIds: [createdThreadId],
-                },
-              );
-
-              return createdThreadId;
+          // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
+          await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+            {
+              workspaceId,
+              transactionScope,
+              pair: [
+                pair.directMessageFirstWorkspaceMemberId,
+                pair.directMessageSecondWorkspaceMemberId,
+              ],
+              conversationObjectName: 'agentChatThread',
+              conversationRecordIds: [createdThreadId],
             },
-          ),
+          );
+
+          return createdThreadId;
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );
