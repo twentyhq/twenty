@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none and a later [delivery status](#delivery-status), so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
@@ -155,6 +155,10 @@ Each file is stored as an attachment record on the message. The file name's exte
 Attachments are stored only while the message has none, so a redelivery never replaces them. Each ingested message reports `hasAttachments`: ingest the text first, then download and upload files only for messages that come back without any, and ingest those messages again with their `attachments`. A file you upload but never attach is not cleaned up, so don't upload for a message that already has attachments.
 
 Attachments follow the channel's `visibility` like the body: unless the conversation is fully shared, other members get an empty list.
+
+### Delivery status
+
+Set `deliveryStatus` on a message you sent to show whether its recipients got it: `SENT`, `DELIVERED` or `READ`. Conversations show it as ticks next to the time. Ingesting the message again with a later status updates it, and an earlier one is ignored, so an out-of-order webhook never moves a read message back to sent. Leave it out on received messages and when the provider reports nothing. Requires `"engines": { "twenty": ">=2.57.0" }`.
 
 ### Linking participants to People
 
