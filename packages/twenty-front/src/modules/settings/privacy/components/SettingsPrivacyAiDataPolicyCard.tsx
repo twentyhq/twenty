@@ -18,7 +18,7 @@ export const SettingsPrivacyAiDataPolicyCard = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isPrivacyEnabled = useIsFeatureEnabled(
+  const isAiDataPolicyEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
   );
   const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();
@@ -26,7 +26,7 @@ export const SettingsPrivacyAiDataPolicyCard = () => {
     PermissionFlagType.SECURITY,
   );
 
-  if (!isPrivacyEnabled || !isAiDataPolicyConfigurable) {
+  if (!isAiDataPolicyEnabled || !isAiDataPolicyConfigurable) {
     return null;
   }
 

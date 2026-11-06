@@ -6,7 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const useHasPrivacySettings = () => {
-  const isPrivacyEnabled = useIsFeatureEnabled(
+  const isAiDataPolicyEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
   );
   const isMultiWorkspaceEnabled = useAtomStateValue(
@@ -15,6 +15,7 @@ export const useHasPrivacySettings = () => {
   const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();
 
   return (
-    isPrivacyEnabled && (isMultiWorkspaceEnabled || isAiDataPolicyConfigurable)
+    isAiDataPolicyEnabled &&
+    (isMultiWorkspaceEnabled || isAiDataPolicyConfigurable)
   );
 };

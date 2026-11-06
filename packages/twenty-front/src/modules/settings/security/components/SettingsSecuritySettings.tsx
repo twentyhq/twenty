@@ -61,7 +61,7 @@ export const SettingsSecuritySettings = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const isPrivacyEnabled = useIsFeatureEnabled(
+  const isAiDataPolicyEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
   );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
@@ -219,7 +219,7 @@ export const SettingsSecuritySettings = () => {
             </StyledContainer>
           </Section.Root>
         )}
-        {isMultiWorkspaceEnabled && !isPrivacyEnabled && (
+        {isMultiWorkspaceEnabled && !isAiDataPolicyEnabled && (
           <Section.Root>
             <Section.Header
               title={t`Support`}
