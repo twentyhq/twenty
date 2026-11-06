@@ -44,7 +44,7 @@ export class WorkspaceAssistantProfileResolver {
           workspaceAgnostic: false,
         },
         apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
+        oauthClient: false,
         application: false,
       },
       requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],

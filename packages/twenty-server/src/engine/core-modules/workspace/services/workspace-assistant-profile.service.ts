@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -152,11 +153,14 @@ export class WorkspaceAssistantProfileService {
       );
     }
 
+    const authContext = workspaceAuthContextStorage.getStore();
     const hasPermission =
-      await this.settingPermissionsService.hasPermissionFlag({
-        authContext: workspaceAuthContextStorage.getStore(),
+      isDefined(authContext) &&
+      isUserAuthContext(authContext) &&
+      (await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
         permissionFlag: PermissionFlagType.AI_SETTINGS,
-      });
+      }));
 
     if (!hasPermission) {
       throw new PermissionsException(
