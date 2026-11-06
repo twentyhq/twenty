@@ -39,8 +39,6 @@ export const SettingsApplicationContentItemIcon = ({
     switch (contentType) {
       case 'objects':
         return resolveObject(item.universalIdentifier)?.color;
-      case 'fields':
-        return resolveObject(item.objectUniversalIdentifier)?.color;
       case 'navigationMenuItems': {
         if (!isDefined(item.tag) || !isNavigationMenuItemType(item.tag)) {
           return undefined;

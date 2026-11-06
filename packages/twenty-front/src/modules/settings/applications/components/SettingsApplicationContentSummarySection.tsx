@@ -1,9 +1,7 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsApplicationContentTypeTable } from '@/settings/applications/components/SettingsApplicationContentTypeTable';
 import { useApplicationContentItemDisplay } from '@/settings/applications/hooks/useApplicationContentItemDisplay';
@@ -13,14 +11,9 @@ import { type ApplicationContentLocation } from '@/settings/applications/types/A
 import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 import { getApplicationContentIncludesText } from '@/settings/applications/utils/getApplicationContentIncludesText';
 import { getNonEmptyApplicationContentTypes } from '@/settings/applications/utils/getNonEmptyApplicationContentTypes';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 
 const SUMMARY_CONTENT_TYPE_LIMIT = 6;
-
-const StyledFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
 
 type SettingsApplicationContentSummarySectionProps = {
   applicationName: string;
@@ -69,7 +62,7 @@ export const SettingsApplicationContentSummarySection = ({
         secondaryColumnLabel={t`Includes`}
         location={location}
       />
-      <StyledFooter>
+      <TableFooter>
         <Button
           variant="outline"
           size="sm"
@@ -79,7 +72,7 @@ export const SettingsApplicationContentSummarySection = ({
         >
           {t`See more`}
         </Button>
-      </StyledFooter>
+      </TableFooter>
     </Section.Root>
   );
 };
