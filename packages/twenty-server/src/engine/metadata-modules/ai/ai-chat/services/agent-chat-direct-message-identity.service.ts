@@ -58,33 +58,11 @@ export class AgentChatDirectMessageIdentityService {
 
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
 
-    const threadId = await this.getOrCreate({
+    return this.getOrCreate({
       workspaceId,
       firstWorkspaceMemberId,
       secondWorkspaceMemberId,
     });
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
-          this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
-            {
-              workspaceId,
-              transactionScope,
-              pair: [
-                pair.directMessageFirstWorkspaceMemberId,
-                pair.directMessageSecondWorkspaceMemberId,
-              ],
-              conversationObjectName: 'agentChatThread',
-              conversationRecordIds: [threadId],
-            },
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
-    );
-
-    return threadId;
   }
 
   async getOrCreate({
