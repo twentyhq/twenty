@@ -61,7 +61,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
-    label: msg`AI data policy`,
-    description: msg`Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes.`,
+    label: msg`AI data policy and Privacy tab`,
+    description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
   },
 };

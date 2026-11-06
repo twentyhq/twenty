@@ -1,19 +1,29 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsIn } from 'class-validator';
+import { IsBoolean, IsIn, ValidateIf } from 'class-validator';
 import {
-  MODEL_RESIDENCIES_ALLOWED_BY_POLICY,
-  type AiDataPolicy,
-  type AiDataResidencyPolicy,
+  DATA_RESIDENCY_REGIONS,
+  type DataResidencyRegion,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 @InputType()
-export class AiDataPolicyInput implements AiDataPolicy {
+export class AiDataPolicyInput {
   @Field(() => String, { nullable: true })
-  @IsIn([...Object.keys(MODEL_RESIDENCIES_ALLOWED_BY_POLICY), null])
-  dataResidency: AiDataResidencyPolicy | null;
+  @IsIn([...DATA_RESIDENCY_REGIONS, null])
+  requiredDataResidencyRegion: DataResidencyRegion | null;
 
   @Field(() => Boolean)
   @IsBoolean()
   isZeroDataRetentionRequired: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @ValidateIf(
+    ({
+      isProductImprovementDataSharingEnabled,
+    }: Pick<AiDataPolicyInput, 'isProductImprovementDataSharingEnabled'>) =>
+      isDefined(isProductImprovementDataSharingEnabled),
+  )
+  isProductImprovementDataSharingEnabled?: boolean;
 }

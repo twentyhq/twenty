@@ -12,7 +12,6 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
@@ -48,7 +47,6 @@ export type ViewerRecordAccess = {
 @Injectable()
 export class RecordSharingPermissionsService {
   constructor(
-    private readonly recordAccessDecisionService: RecordAccessDecisionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
     private readonly recordPermissionsService: RecordPermissionsService,
@@ -176,7 +174,7 @@ export class RecordSharingPermissionsService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordAccessDecisionService.canRoleReachSomeRecords({
+      (await this.recordPermissionsService.canRoleReachSomeRecords({
         principals:
           await this.principalPermissionsService.buildPermissionsPrincipals({
             authContext: args.authContext,
@@ -407,6 +405,7 @@ export class RecordSharingPermissionsService {
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],
+        transactionScope: args.transactionScope,
       });
 
     return (

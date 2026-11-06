@@ -1,10 +1,16 @@
 import { styled } from '@linaria/react';
 import { Plural, useLingui } from '@lingui/react/macro';
-import { IconHourglassHigh } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDivider = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
+`;
+
+const StyledTrial = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledTrialRow = styled.div`
@@ -17,27 +23,32 @@ const StyledTrialRow = styled.div`
 const StyledDaysLeft = styled.span`
   color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
 `;
 
 const StyledTrialLabel = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
 `;
 
 const StyledTrialDays = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledTrialDay = styled.span`
-  background: ${themeCssVariables.background.transparent.medium};
+  background: ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   corner-shape: round;
   flex: 1;
   height: ${themeCssVariables.spacing['1.5']};
 
   &[data-remaining] {
-    background: ${themeCssVariables.color.amber10};
+    background: ${themeCssVariables.color.amber9};
   }
 `;
 
@@ -51,26 +62,26 @@ export const GettingStartedSidebarTrialCountdown = ({
   trialDays,
 }: GettingStartedSidebarTrialCountdownProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
     <>
       <StyledDivider />
-      <StyledTrialRow>
-        <IconHourglassHigh size={theme.icon.size.md} />
-        <StyledDaysLeft>
-          <Plural value={daysLeft} one="# day left" other="# days left" />
-        </StyledDaysLeft>
-        <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
-      </StyledTrialRow>
-      <StyledTrialDays aria-hidden>
-        {Array.from({ length: trialDays }, (_, index) => (
-          <StyledTrialDay
-            key={index}
-            data-remaining={index >= trialDays - daysLeft || undefined}
-          />
-        ))}
-      </StyledTrialDays>
+      <StyledTrial>
+        <StyledTrialRow>
+          <StyledDaysLeft>
+            <Plural value={daysLeft} one="# day left" other="# days left" />
+          </StyledDaysLeft>
+          <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
+        </StyledTrialRow>
+        <StyledTrialDays aria-hidden>
+          {Array.from({ length: trialDays }, (_, index) => (
+            <StyledTrialDay
+              key={index}
+              data-remaining={index >= trialDays - daysLeft || undefined}
+            />
+          ))}
+        </StyledTrialDays>
+      </StyledTrial>
     </>
   );
 };

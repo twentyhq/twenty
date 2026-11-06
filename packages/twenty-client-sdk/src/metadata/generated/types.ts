@@ -719,22 +719,28 @@ export default {
             ]
         },
         "AiDataPolicy": {
-            "dataResidency": [
-                1
+            "isProductImprovementDataSharingEnabled": [
+                4
             ],
             "isZeroDataRetentionRequired": [
                 4
+            ],
+            "requiredDataResidencyRegion": [
+                1
             ],
             "__typename": [
                 1
             ]
         },
         "AiDataPolicyInput": {
-            "dataResidency": [
-                1
+            "isProductImprovementDataSharingEnabled": [
+                4
             ],
             "isZeroDataRetentionRequired": [
                 4
+            ],
+            "requiredDataResidencyRegion": [
+                1
             ],
             "__typename": [
                 1
@@ -2840,12 +2846,21 @@ export default {
             "sdkPackage": [
                 1
             ],
+            "zeroDataRetention": [
+                4
+            ],
             "__typename": [
                 1
             ]
         },
         "ClientAiModelTierConfig": {
+            "isZeroDataRetentionRequired": [
+                4
+            ],
             "modelId": [
+                1
+            ],
+            "requiredDataResidencyRegion": [
                 1
             ],
             "tier": [
@@ -8427,6 +8442,15 @@ export default {
                         545
                     ],
                     "threadId": [
+                        545,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "openDirectMessage": [
+                545,
+                {
+                    "workspaceMemberId": [
                         545,
                         "UUID!"
                     ]

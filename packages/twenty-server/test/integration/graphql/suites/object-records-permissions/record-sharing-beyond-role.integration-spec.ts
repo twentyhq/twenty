@@ -30,6 +30,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -269,7 +270,8 @@ describe('Records shared beyond the role that can access their object', () => {
       });
 
     expect(
-      await recordPermissionsService.canReadSomeRecords({
+      await recordPermissionsService.hasAccessToSomeRecords({
+        operationType: 'select',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -280,13 +282,15 @@ describe('Records shared beyond the role that can access their object', () => {
     const principals = await buildJonyPrincipals();
 
     expect(
-      await recordPermissionsService.canReadSomeRecords({
+      await recordPermissionsService.hasAccessToSomeRecords({
+        operationType: 'select',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.canUpdateSomeRecords({
+      await recordPermissionsService.hasAccessToSomeRecords({
+        operationType: 'update',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -516,8 +520,8 @@ describe('Records shared beyond the role that can access their object', () => {
         throw new Error('Test object metadata is missing');
       }
 
-      return getAppProviderByClassName<RecordPermissionsService>(
-        'RecordPermissionsService',
+      return getAppProviderByClassName<RecordEventPermissionsService>(
+        'RecordEventPermissionsService',
       ).findReadableEventRecordIds({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,

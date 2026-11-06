@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,15 +9,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
@@ -149,18 +147,12 @@ export class WorkspaceInvitationResolver {
     @Args() sendInviteLinkInput: SendInvitationsInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
   ): Promise<SendInvitationsDTO> {
     if (isDefined(sendInviteLinkInput.roleId)) {
       const canAssignRoles =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          setting: PermissionFlagType.ROLES,
-          applicationId: application?.id,
-          agentId: undefined,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: PermissionFlagType.ROLES,
         });
 
       if (!canAssignRoles) {
