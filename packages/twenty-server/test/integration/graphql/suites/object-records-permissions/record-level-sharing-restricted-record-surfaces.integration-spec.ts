@@ -294,10 +294,10 @@ describe('A restricted record on an object open by default', () => {
       throw new Error('Company object metadata is missing');
     }
 
-    const readableRecordIds =
+    const readableEvents =
       await getAppProviderByClassName<RecordEventPermissionsService>(
         'RecordEventPermissionsService',
-      ).filterReadableEventRecordIds({
+      ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -313,7 +313,9 @@ describe('A restricted record on an object open by default', () => {
         },
       });
 
-    expect([...readableRecordIds]).toEqual([OPEN_COMPANY_ID]);
+    expect(readableEvents.map(({ recordId }) => recordId)).toEqual([
+      OPEN_COMPANY_ID,
+    ]);
   });
 
   it('should leave it untouched by bulk updates and deletes that match it', async () => {
