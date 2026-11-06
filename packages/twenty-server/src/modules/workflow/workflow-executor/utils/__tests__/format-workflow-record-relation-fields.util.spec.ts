@@ -50,8 +50,7 @@ const objectMetadataInfo: ObjectMetadataInfo = {
 };
 
 const format = (record: Record<string, unknown>) =>
-  formatWorkflowRecordRelationFields(record, objectMetadataInfo)
-    .formattedRecord;
+  formatWorkflowRecordRelationFields(record, objectMetadataInfo);
 
 describe('formatWorkflowRecordRelationFields', () => {
   it('maps a relation wrapped as an id object to its join column', () => {

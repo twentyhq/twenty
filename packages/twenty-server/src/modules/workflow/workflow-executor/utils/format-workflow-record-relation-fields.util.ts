@@ -1,19 +1,13 @@
 import { isObject, isString, isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { getMorphRelationTargetJoinColumnsByMorphName } from 'src/modules/workflow/workflow-executor/utils/get-morph-relation-target-join-columns-by-morph-name.util';
 import { isNullRelationValue } from 'src/modules/workflow/workflow-executor/utils/is-null-relation-value.util';
-
-type MorphRelationTargetJoinColumn = {
-  joinColumnName: string;
-  targetObjectMetadataId: string;
-};
 
 type ExtractedMorphValue = {
   targetObjectMetadataId: string;
@@ -58,86 +52,28 @@ const extractLegacyRelationId = (value: unknown): string | undefined => {
 const formatWorkflowRecordMorphRelationFields = (
   record: Record<string, unknown>,
   objectMetadataInfo: ObjectMetadataInfo,
-): {
-  formattedRecord: Record<string, unknown>;
-  joinColumnNamesByMorphFieldName: Record<string, string[]>;
-} => {
-  const { flatObjectMetadata, flatObjectMetadataMaps, flatFieldMetadataMaps } =
-    objectMetadataInfo;
-
-  const objectFields = getFlatFieldsFromFlatObjectMetadata(
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-  );
-
-  const targetJoinColumnsByMorphFieldName = new Map<
-    string,
-    MorphRelationTargetJoinColumn[]
-  >();
-
-  for (const field of objectFields) {
-    if (
-      !isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION) ||
-      field.settings.relationType !== RelationType.MANY_TO_ONE ||
-      isMorphRelationHead(field)
-    ) {
-      continue;
-    }
-
-    const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: field.relationTargetObjectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(targetObjectMetadata)) {
-      continue;
-    }
-
-    const morphFieldName = getMorphNameFromMorphFieldMetadataName({
-      morphRelationFlatFieldMetadata: field,
-      nameSingular: targetObjectMetadata.nameSingular,
-      namePlural: targetObjectMetadata.namePlural,
-    });
-
-    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: field.name,
-    });
-
-    const existing =
-      targetJoinColumnsByMorphFieldName.get(morphFieldName) ?? [];
-
-    targetJoinColumnsByMorphFieldName.set(morphFieldName, [
-      ...existing,
-      {
-        joinColumnName,
-        targetObjectMetadataId: field.relationTargetObjectMetadataId,
-      },
-    ]);
-  }
+): Record<string, unknown> => {
+  const targetJoinColumnsByMorphName =
+    getMorphRelationTargetJoinColumnsByMorphName(objectMetadataInfo);
 
   const formattedRecord: Record<string, unknown> = {};
-  const joinColumnNamesByMorphFieldName: Record<string, string[]> = {};
 
   for (const [key, value] of Object.entries(record)) {
-    const targetJoinColumns = targetJoinColumnsByMorphFieldName.get(key);
+    const targetJoinColumns = targetJoinColumnsByMorphName.get(key);
 
     if (!isDefined(targetJoinColumns)) {
       formattedRecord[key] = value;
       continue;
     }
 
-    const registerJoinColumns = () => {
-      joinColumnNamesByMorphFieldName[key] = targetJoinColumns.map(
-        (targetJoinColumn) => targetJoinColumn.joinColumnName,
-      );
-
+    const clearJoinColumns = () => {
       for (const { joinColumnName } of targetJoinColumns) {
         formattedRecord[joinColumnName] = null;
       }
     };
 
     if (value === null) {
-      registerJoinColumns();
+      clearJoinColumns();
       continue;
     }
 
@@ -155,11 +91,11 @@ const formatWorkflowRecordMorphRelationFields = (
       continue;
     }
 
-    registerJoinColumns();
+    clearJoinColumns();
     formattedRecord[matchingTargetJoinColumn.joinColumnName] = morphValue.id;
   }
 
-  return { formattedRecord, joinColumnNamesByMorphFieldName };
+  return formattedRecord;
 };
 
 const formatWorkflowRecordSimpleRelationFields = (
@@ -217,19 +153,8 @@ const formatWorkflowRecordSimpleRelationFields = (
 export const formatWorkflowRecordRelationFields = (
   record: Record<string, unknown>,
   objectMetadataInfo: ObjectMetadataInfo,
-): {
-  formattedRecord: Record<string, unknown>;
-  joinColumnNamesByMorphFieldName: Record<string, string[]>;
-} => {
-  const {
-    formattedRecord: recordWithMorphRelations,
-    joinColumnNamesByMorphFieldName,
-  } = formatWorkflowRecordMorphRelationFields(record, objectMetadataInfo);
-
-  const formattedRecord = formatWorkflowRecordSimpleRelationFields(
-    recordWithMorphRelations,
+): Record<string, unknown> =>
+  formatWorkflowRecordSimpleRelationFields(
+    formatWorkflowRecordMorphRelationFields(record, objectMetadataInfo),
     objectMetadataInfo,
   );
-
-  return { formattedRecord, joinColumnNamesByMorphFieldName };
-};

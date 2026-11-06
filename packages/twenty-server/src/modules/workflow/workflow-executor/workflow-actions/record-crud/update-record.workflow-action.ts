@@ -16,6 +16,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
+import { getWorkflowRecordKeysByFieldReference } from 'src/modules/workflow/workflow-executor/utils/get-workflow-record-keys-by-field-reference.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { convertStepObjectRecordTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-object-record-tiptap-to-markdown.util';
 import { resolveRichTextMarkdownVariables } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-markdown-variables.util';
@@ -86,27 +87,28 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const {
-      formattedRecord: formattedObjectRecord,
-      joinColumnNamesByMorphFieldName,
-    } = formatWorkflowRecordRelationFields(
-      workflowActionInput.objectRecord,
-      objectMetadataInfo,
-    );
-
     const filteredObjectRecord = filterValidFieldsInRecord(
-      formattedObjectRecord,
+      formatWorkflowRecordRelationFields(
+        workflowActionInput.objectRecord,
+        objectMetadataInfo,
+      ),
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );
 
-    const expandedFieldsToUpdate = workflowActionInput.fieldsToUpdate?.flatMap(
-      (fieldName) => joinColumnNamesByMorphFieldName[fieldName] ?? [fieldName],
-    );
+    const recordKeysByFieldReference =
+      getWorkflowRecordKeysByFieldReference(objectMetadataInfo);
 
-    const filteredFieldsToUpdate = expandedFieldsToUpdate?.filter(
-      (fieldName) => fieldName in filteredObjectRecord,
-    );
+    const filteredFieldsToUpdate = isDefined(workflowActionInput.fieldsToUpdate)
+      ? [
+          ...new Set(
+            workflowActionInput.fieldsToUpdate.flatMap(
+              (fieldReference) =>
+                recordKeysByFieldReference.get(fieldReference) ?? [],
+            ),
+          ),
+        ].filter((recordKey) => recordKey in filteredObjectRecord)
+      : undefined;
 
     if (filteredFieldsToUpdate?.length === 0) {
       throw new WorkflowStepExecutorException(

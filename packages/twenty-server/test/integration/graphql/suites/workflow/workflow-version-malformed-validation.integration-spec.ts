@@ -45,6 +45,10 @@ describe('Workflow version malformed validation (e2e)', () => {
     id: string;
     settings: { input: Record<string, unknown> };
   };
+  let updateRecordStep: {
+    id: string;
+    settings: { input: Record<string, unknown> };
+  };
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({
@@ -74,6 +78,12 @@ describe('Workflow version malformed validation (e2e)', () => {
       coreWorkflowVersionId,
       stepType: 'SEND_EMAIL',
       position: { x: 400, y: 0 },
+    });
+
+    updateRecordStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'UPDATE_RECORD',
+      position: { x: 800, y: 0 },
     });
 
     const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
@@ -182,6 +192,43 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
+  });
+
+  const updateRecordStepWithFieldsToUpdate = (fieldsToUpdate: string[]) => ({
+    ...updateRecordStep,
+    settings: {
+      ...updateRecordStep.settings,
+      input: {
+        objectName: 'person',
+        objectRecordId: '{{trigger.id}}',
+        objectRecord: { jobTitle: 'CTO', companyId: '{{trigger.companyId}}' },
+        fieldsToUpdate,
+      },
+    },
+  });
+
+  it('rejects an update step selecting a field the object does not have', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      updateRecordStepWithFieldsToUpdate(['jobTitle', 'employer']),
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toContain(
+      'updates unknown fields of "person": employer',
+    );
+  });
+
+  it('accepts an update step selecting a relation by field name or join column', async () => {
+    for (const fieldsToUpdate of [['company'], ['companyId', 'jobTitle']]) {
+      const response = await updateStepResponse(
+        coreWorkflowVersionId,
+        updateRecordStepWithFieldsToUpdate(fieldsToUpdate),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+    }
   });
 
   it('forbids writing steps through the generic updateWorkflowVersion mutation', async () => {

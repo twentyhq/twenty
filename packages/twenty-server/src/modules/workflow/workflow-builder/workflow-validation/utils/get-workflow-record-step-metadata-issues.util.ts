@@ -12,6 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getFindRecordsFilterValueIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-find-records-filter-value-issues.util';
 import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
+import { getUpdateRecordFieldsToUpdateIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-update-record-fields-to-update-issues.util';
 import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -92,6 +93,28 @@ export const getWorkflowRecordStepMetadataIssues = ({
       );
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      continue;
+    }
+
+    if (step.type === WorkflowActionType.UPDATE_RECORD) {
+      issues.push(
+        ...getUpdateRecordFieldsToUpdateIssues({
+          step,
+          objectMetadataInfo: {
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          },
+        }),
+      );
+    }
+
     const objectRecord =
       RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD.has(step.type) &&
       isObject(input) &&
@@ -101,15 +124,6 @@ export const getWorkflowRecordStepMetadataIssues = ({
         : undefined;
 
     if (!isDefined(objectRecord)) {
-      continue;
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(flatObjectMetadata)) {
       continue;
     }
 

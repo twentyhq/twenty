@@ -44,10 +44,28 @@ const validateUpdate = (
   });
 
 describe('validateWorkflowManifestRecordFields', () => {
-  it('requires the join column to update a many-to-one relation', () => {
-    expect(validateUpdate({ owner: { id: 'person' } }, ['owner'])).toEqual([
-      expect.stringContaining('using the join column for relations'),
+  it.each([
+    ['its field name', { owner: { id: 'person' } }, 'owner'],
+    ['its join column', { ownerId: 'person' }, 'ownerId'],
+    ['its field name, set by its join column', { ownerId: 'person' }, 'owner'],
+    [
+      'its join column, set by its field name',
+      { owner: { id: 'person' } },
+      'ownerId',
+    ],
+  ])(
+    'accepts a many-to-one relation selected by %s',
+    (_, objectRecord, fieldToUpdate) => {
+      expect(validateUpdate(objectRecord, [fieldToUpdate])).toEqual([]);
+    },
+  );
+
+  it('refuses a selected field that matches no field or has no value', () => {
+    expect(validateUpdate({ ownerId: 'person' }, ['employer'])).toEqual([
+      expect.stringContaining('fieldsToUpdate must select existing fields'),
     ]);
-    expect(validateUpdate({ ownerId: 'person' }, ['ownerId'])).toEqual([]);
+    expect(validateUpdate({}, ['owner'])).toEqual([
+      expect.stringContaining('fieldsToUpdate must select existing fields'),
+    ]);
   });
 });

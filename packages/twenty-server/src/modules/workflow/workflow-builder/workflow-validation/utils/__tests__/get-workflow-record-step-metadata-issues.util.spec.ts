@@ -112,6 +112,36 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
     expect(issues).toEqual([]);
   });
 
+  it('flags an update step whose fieldsToUpdate names no field of the object', () => {
+    const issues = getIssues([
+      {
+        id: 'step-1',
+        name: 'Update Record',
+        type: WorkflowActionType.UPDATE_RECORD,
+        valid: true,
+        settings: {
+          input: {
+            objectName: 'note',
+            objectRecordId: '{{trigger.id}}',
+            objectRecord: { body: { markdown: 'hi' } },
+            fieldsToUpdate: ['body', 'title'],
+          },
+          outputSchema: {},
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
+          },
+        },
+      },
+    ]);
+
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toMatchObject({
+      code: 'FIELD_NOT_FOUND',
+      stepId: 'step-1',
+    });
+  });
+
   it('ignores steps that do not target a record object', () => {
     const issues = getIssues([createMockCodeStep('step-1')]);
 
