@@ -413,7 +413,8 @@ export class AdminPanelResolver {
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
         modelId:
-          this.aiModelRegistryService.findDefaultModelForTier(tier)?.modelId,
+          this.aiModelRegistryService.findInstanceDefaultModelForTier(tier)
+            ?.modelId,
       })),
     };
   }

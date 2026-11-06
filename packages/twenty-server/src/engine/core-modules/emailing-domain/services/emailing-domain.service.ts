@@ -255,10 +255,17 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
-    const verificationResult = await emailingDomainDriver.verifyDomain({
+    const resourceInput = {
       domain: emailingDomain.domain,
       workspaceId: emailingDomain.workspaceId,
-    });
+    };
+
+    if (emailingDomain.status === EmailingDomainStatus.FAILED) {
+      await emailingDomainDriver.retryVerification(resourceInput);
+    }
+
+    const verificationResult =
+      await emailingDomainDriver.verifyDomain(resourceInput);
 
     const hasJustBecomeVerified =
       emailingDomain.status !== EmailingDomainStatus.VERIFIED &&

@@ -9,6 +9,8 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
+import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
@@ -17,6 +19,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { type Manifest } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   MessageChannelType,
@@ -128,6 +131,7 @@ const INGEST_MESSAGES_MUTATION = gql`
         externalId
         messageId
         messageThreadId
+        hasAttachments
       }
     }
   }
@@ -222,6 +226,7 @@ type AppMessagePayload = {
   receivedAt: string;
   participants: AppMessageParticipantPayload[];
   folderExternalIds?: string[];
+  attachments?: { fileId: string; label: string }[];
 };
 
 type AppMessageFolderPayload = {
@@ -1187,6 +1192,254 @@ describe('app message channels API (e2e)', () => {
       );
 
       expect(Number(count)).toBe(0);
+    });
+  });
+
+  describe('ingestAppMessages with attachments', () => {
+    const uploadedFileIds: string[] = [];
+
+    const uploadMessageAttachment = async (): Promise<string> => {
+      const [field] = await globalThis.testDataSource.query(
+        `SELECT id FROM core."fieldMetadata"
+           WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+        [
+          SEED_APPLE_WORKSPACE_ID,
+          STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+        ],
+      );
+      const uploadedFile = await uploadFileWithDirectUpload({
+        filename: 'photo.png',
+        content: ONE_BY_ONE_TRANSPARENT_PNG,
+        fileFolder: 'FilesField',
+        fieldMetadataId: field.id,
+      });
+
+      uploadedFileIds.push(uploadedFile.id);
+
+      return uploadedFile.id;
+    };
+
+    const findStoredAttachmentFileIds = async (
+      messageId: string,
+    ): Promise<string[]> => {
+      const attachments: { file: { fileId: string }[] | null }[] =
+        await globalThis.testDataSource.query(
+          `SELECT file FROM "${WORKSPACE_SCHEMA}"."attachment"
+             WHERE "targetMessageId" = $1 AND "deletedAt" IS NULL
+             ORDER BY "createdAt"`,
+          [messageId],
+        );
+
+      return attachments.flatMap(({ file }) =>
+        (file ?? []).map(({ fileId }) => fileId),
+      );
+    };
+
+    afterAll(async () => {
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."file" WHERE id = ANY($1)`,
+        [uploadedFileIds],
+      );
+    });
+
+    it('stores attachments on a new message and keeps them when the message is redelivered with others', async () => {
+      const channel = await createChannelOrThrow();
+      const firstFileId = await uploadMessageAttachment();
+      const secondFileId = await uploadMessageAttachment();
+      const message = buildMessage({
+        externalId: 'with-photo',
+        threadExternalId: `thread-${uuidv4()}`,
+        senderHandle: 'candidate@linkedin.test',
+      });
+
+      const first = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          {
+            ...message,
+            attachments: [{ fileId: firstFileId, label: 'photo.png' }],
+          },
+        ],
+      });
+
+      expect(first.body.errors).toBeUndefined();
+
+      const [ingested] = first.body.data.ingestAppMessages.messages;
+
+      expect(ingested.hasAttachments).toBe(true);
+      expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
+        firstFileId,
+      ]);
+
+      const redelivered = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          {
+            ...message,
+            attachments: [{ fileId: secondFileId, label: 'photo.png' }],
+          },
+        ],
+      });
+
+      expect(redelivered.body.errors).toBeUndefined();
+      expect(redelivered.body.data.ingestAppMessages.messages).toEqual([
+        ingested,
+      ]);
+      expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
+        firstFileId,
+      ]);
+    });
+
+    it('adds attachments to a message first ingested without any', async () => {
+      const channel = await createChannelOrThrow();
+      const fileId = await uploadMessageAttachment();
+      const message = buildMessage({
+        externalId: 'photo-arrives-later',
+        threadExternalId: `thread-${uuidv4()}`,
+        senderHandle: 'candidate@linkedin.test',
+      });
+
+      const textOnly = await ingest({
+        messageChannelId: channel.id,
+        messages: [message],
+      });
+
+      expect(textOnly.body.errors).toBeUndefined();
+      expect(
+        textOnly.body.data.ingestAppMessages.messages[0].hasAttachments,
+      ).toBe(false);
+
+      const withPhoto = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          { ...message, attachments: [{ fileId, label: 'photo.png' }] },
+        ],
+      });
+
+      expect(withPhoto.body.errors).toBeUndefined();
+
+      const [ingested] = withPhoto.body.data.ingestAppMessages.messages;
+
+      expect(ingested.hasAttachments).toBe(true);
+      expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
+        fileId,
+      ]);
+    });
+
+    it('saves nothing from a batch with one unattachable file, and the valid file stays attachable', async () => {
+      const channel = await createChannelOrThrow();
+      const validFileId = await uploadMessageAttachment();
+      const threadExternalId = `thread-${uuidv4()}`;
+      const withValidFile = {
+        ...buildMessage({
+          externalId: 'valid-file',
+          threadExternalId,
+          senderHandle: 'candidate@linkedin.test',
+        }),
+        attachments: [{ fileId: validFileId, label: 'photo.png' }],
+      };
+
+      const rejected = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          withValidFile,
+          {
+            ...buildMessage({
+              externalId: 'unknown-file',
+              threadExternalId,
+              senderHandle: 'candidate@linkedin.test',
+            }),
+            attachments: [{ fileId: uuidv4(), label: 'photo.png' }],
+          },
+        ],
+      });
+
+      expect(rejected.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+
+      const [{ count }] = await globalThis.testDataSource.query(
+        `SELECT count(*) AS count FROM "${WORKSPACE_SCHEMA}"."message"
+           WHERE "headerMessageId" LIKE $1`,
+        [`app:${owningApplicationDbId}:${channel.id}:%`],
+      );
+
+      expect(Number(count)).toBe(0);
+
+      const retried = await ingest({
+        messageChannelId: channel.id,
+        messages: [withValidFile],
+      });
+
+      expect(retried.body.errors).toBeUndefined();
+
+      const [ingested] = retried.body.data.ingestAppMessages.messages;
+
+      expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
+        validFileId,
+      ]);
+    });
+
+    it('refuses a file that was never uploaded', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          {
+            ...buildMessage({
+              externalId: 'missing-file',
+              threadExternalId: `thread-${uuidv4()}`,
+              senderHandle: 'candidate@linkedin.test',
+            }),
+            attachments: [{ fileId: uuidv4(), label: 'photo.png' }],
+          },
+        ],
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+    });
+
+    it('attaches a file to one message only when several channels ingest it at the same time', async () => {
+      const channels = await Promise.all(
+        Array.from({ length: 4 }, (_, index) =>
+          createChannelOrThrow({
+            handle: `shared-file-${index}@linkedin.test`,
+          }),
+        ),
+      );
+      const fileId = await uploadMessageAttachment();
+
+      const responses = await Promise.all(
+        channels.map((channel) =>
+          ingest({
+            messageChannelId: channel.id,
+            messages: [
+              {
+                ...buildMessage({
+                  externalId: 'shared-file',
+                  threadExternalId: `thread-${uuidv4()}`,
+                  senderHandle: 'candidate@linkedin.test',
+                }),
+                attachments: [{ fileId, label: 'photo.png' }],
+              },
+            ],
+          }),
+        ),
+      );
+
+      const attachmentsHoldingFile = await globalThis.testDataSource.query(
+        `SELECT id FROM "${WORKSPACE_SCHEMA}"."attachment"
+           WHERE file::jsonb @> $1::jsonb`,
+        [JSON.stringify([{ fileId }])],
+      );
+
+      expect(
+        responses.filter((response) => response.body.errors === undefined),
+      ).toHaveLength(1);
+      expect(attachmentsHoldingFile).toHaveLength(1);
     });
   });
 

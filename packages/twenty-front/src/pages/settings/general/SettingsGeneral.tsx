@@ -11,18 +11,26 @@ import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
 import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
+import { useHasPrivacySettings } from '@/settings/privacy/hooks/useHasPrivacySettings';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Section } from 'twenty-ui/components/layout';
-import { IconHistory, IconKey, IconSettings2 } from 'twenty-ui/icon';
+import {
+  IconHistory,
+  IconKey,
+  IconSettings2,
+  IconShield,
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
 
 const GENERAL_TAB_GENERAL = 'general';
 const GENERAL_TAB_SECURITY = 'security';
+const GENERAL_TAB_PRIVACY = 'privacy';
 const GENERAL_TAB_LOGS = 'logs';
 
 export const SettingsGeneral = () => {
@@ -37,6 +45,11 @@ export const SettingsGeneral = () => {
   );
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
+  const hasPrivacySettings = useHasPrivacySettings();
+
+  const privacyTabs = hasPrivacySettings
+    ? [{ id: GENERAL_TAB_PRIVACY, title: t`Privacy`, Icon: IconShield }]
+    : [];
 
   const tabs = [
     {
@@ -47,6 +60,7 @@ export const SettingsGeneral = () => {
     ...(hasSecurityPermission
       ? [
           { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
+          ...privacyTabs,
           { id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory },
         ]
       : []),
@@ -60,6 +74,10 @@ export const SettingsGeneral = () => {
   const renderActiveTabContent = () => {
     if (activeTabId === GENERAL_TAB_SECURITY) {
       return <SettingsSecuritySettings />;
+    }
+
+    if (activeTabId === GENERAL_TAB_PRIVACY) {
+      return <SettingsPrivacy />;
     }
 
     if (activeTabId === GENERAL_TAB_LOGS) {
