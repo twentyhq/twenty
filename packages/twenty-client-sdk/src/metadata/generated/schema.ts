@@ -366,6 +366,7 @@ export interface Application {
     availablePackages: Scalars['JSON']
     canBeUninstalled: Scalars['Boolean']
     commandMenuItems: CommandMenuItem[]
+    content?: ApplicationContent
     createdAt: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
     defaultRoleId?: Scalars['String']
@@ -454,6 +455,47 @@ export interface ApplicationConnectionProviderOAuthConfig {
     isClientCredentialsConfigured: Scalars['Boolean']
     scopes: Scalars['String'][]
     __typename: 'ApplicationConnectionProviderOAuthConfig'
+}
+
+export interface ApplicationContent {
+    agents: ApplicationContentItem[]
+    commandMenuItems: ApplicationContentItem[]
+    connectionProviders: ApplicationContentItem[]
+    fields: ApplicationContentItem[]
+    frontComponents: ApplicationContentItem[]
+    indexes: ApplicationContentItem[]
+    logicFunctions: ApplicationContentItem[]
+    navigationMenuItems: ApplicationContentItem[]
+    objects: ApplicationContentItem[]
+    pageLayoutTabs: ApplicationContentItem[]
+    pageLayouts: ApplicationContentItem[]
+    permissionFlags: ApplicationContentItem[]
+    publicAssets: ApplicationContentItem[]
+    roles: ApplicationContentItem[]
+    skills: ApplicationContentItem[]
+    translations: ApplicationContentItem[]
+    viewFields: ApplicationContentItem[]
+    views: ApplicationContentItem[]
+    workflows: ApplicationContentItem[]
+    __typename: 'ApplicationContent'
+}
+
+export interface ApplicationContentItem {
+    color?: Scalars['String']
+    count?: Scalars['Int']
+    description?: Scalars['String']
+    fieldUniversalIdentifier?: Scalars['String']
+    icon?: Scalars['String']
+    id?: Scalars['String']
+    label: Scalars['String']
+    objectUniversalIdentifier?: Scalars['String']
+    parentLabel?: Scalars['String']
+    parentUniversalIdentifier?: Scalars['String']
+    position?: Scalars['Float']
+    tag?: Scalars['String']
+    timeoutSeconds?: Scalars['Int']
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationContentItem'
 }
 
 export interface ApplicationExport {
@@ -2093,6 +2135,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    content?: ApplicationContent
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
     emailSupport?: Scalars['String']
@@ -4780,6 +4823,7 @@ export interface ApplicationGenqlSelection{
     availablePackages?: boolean | number
     canBeUninstalled?: boolean | number
     commandMenuItems?: CommandMenuItemGenqlSelection
+    content?: ApplicationContentGenqlSelection
     createdAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     defaultRoleId?: boolean | number
@@ -4872,6 +4916,49 @@ export interface ApplicationConnectionProviderGenqlSelection{
 export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
     isClientCredentialsConfigured?: boolean | number
     scopes?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationContentGenqlSelection{
+    agents?: ApplicationContentItemGenqlSelection
+    commandMenuItems?: ApplicationContentItemGenqlSelection
+    connectionProviders?: ApplicationContentItemGenqlSelection
+    fields?: ApplicationContentItemGenqlSelection
+    frontComponents?: ApplicationContentItemGenqlSelection
+    indexes?: ApplicationContentItemGenqlSelection
+    logicFunctions?: ApplicationContentItemGenqlSelection
+    navigationMenuItems?: ApplicationContentItemGenqlSelection
+    objects?: ApplicationContentItemGenqlSelection
+    pageLayoutTabs?: ApplicationContentItemGenqlSelection
+    pageLayouts?: ApplicationContentItemGenqlSelection
+    permissionFlags?: ApplicationContentItemGenqlSelection
+    publicAssets?: ApplicationContentItemGenqlSelection
+    roles?: ApplicationContentItemGenqlSelection
+    skills?: ApplicationContentItemGenqlSelection
+    translations?: ApplicationContentItemGenqlSelection
+    viewFields?: ApplicationContentItemGenqlSelection
+    views?: ApplicationContentItemGenqlSelection
+    workflows?: ApplicationContentItemGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationContentItemGenqlSelection{
+    color?: boolean | number
+    count?: boolean | number
+    description?: boolean | number
+    fieldUniversalIdentifier?: boolean | number
+    icon?: boolean | number
+    id?: boolean | number
+    label?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    parentLabel?: boolean | number
+    parentUniversalIdentifier?: boolean | number
+    position?: boolean | number
+    tag?: boolean | number
+    timeoutSeconds?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6807,6 +6894,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    content?: ApplicationContentGenqlSelection
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
     emailSupport?: boolean | number
@@ -9781,6 +9869,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
       return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationContent_possibleTypes: string[] = ['ApplicationContent']
+    export const isApplicationContent = (obj?: { __typename?: any } | null): obj is ApplicationContent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContent"')
+      return ApplicationContent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationContentItem_possibleTypes: string[] = ['ApplicationContentItem']
+    export const isApplicationContentItem = (obj?: { __typename?: any } | null): obj is ApplicationContentItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContentItem"')
+      return ApplicationContentItem_possibleTypes.includes(obj.__typename)
     }
     
 
