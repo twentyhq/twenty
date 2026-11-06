@@ -7,6 +7,7 @@ export type SortableField = {
   id: string;
   name: string;
   type: FieldMetadataType;
+  relationTargetLabelFieldName?: string;
 };
 
 export type InexactlyConvertedSort = {
@@ -27,6 +28,16 @@ const SUB_FIELD_SORTED_FIELD_TYPES = new Set<FieldMetadataType>([
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.ADDRESS,
 ]);
+
+const SORTED_SUB_FIELD_BY_COMPOSITE_FIELD_TYPE: Partial<
+  Record<FieldMetadataType, string>
+> = {
+  [FieldMetadataType.CURRENCY]: 'amountMicros',
+  [FieldMetadataType.ACTOR]: 'name',
+  [FieldMetadataType.LINKS]: 'primaryLinkUrl',
+  [FieldMetadataType.EMAILS]: 'primaryEmail',
+  [FieldMetadataType.PHONES]: 'primaryPhoneNumber',
+};
 
 const RELATION_FIELD_TYPES = new Set<FieldMetadataType>([
   FieldMetadataType.RELATION,
@@ -55,6 +66,37 @@ const findSortedField = ({
     (field) =>
       RELATION_FIELD_TYPES.has(field.type) && `${field.name}Id` === fieldName,
   );
+
+// A record sort orders a relation by its target's label and a composite field by one fixed sub-field
+const isOrderedAsRecordSort = ({
+  field,
+  value,
+}: {
+  field: SortableField;
+  value: unknown;
+}): boolean => {
+  const sortedSubFieldName = isPlainObject(value)
+    ? Object.keys(value)[0]
+    : undefined;
+
+  if (RELATION_FIELD_TYPES.has(field.type)) {
+    return (
+      isString(value) ||
+      sortedSubFieldName === field.relationTargetLabelFieldName
+    );
+  }
+
+  if (SUB_FIELD_SORTED_FIELD_TYPES.has(field.type)) {
+    return isDefined(sortedSubFieldName);
+  }
+
+  const compositeSortedSubFieldName =
+    SORTED_SUB_FIELD_BY_COMPOSITE_FIELD_TYPE[field.type];
+
+  return isDefined(compositeSortedSubFieldName)
+    ? sortedSubFieldName === compositeSortedSubFieldName
+    : isString(value);
+};
 
 // Collapses the builder's position tiebreaker and multi-entry FULL_NAME and relation sorts into one sort per field
 const toRecordSorts = ({
@@ -97,7 +139,11 @@ const toRecordSorts = ({
     }
 
     // a record sort orders nulls last, and orders a relation by its target's label rather than its id
-    if (direction.endsWith('NullsFirst') || field.name !== fieldName) {
+    if (
+      direction.endsWith('NullsFirst') ||
+      field.name !== fieldName ||
+      !isOrderedAsRecordSort({ field, value })
+    ) {
       inexactlyConvertedSorts.push({ stepId, orderByEntry });
     }
 

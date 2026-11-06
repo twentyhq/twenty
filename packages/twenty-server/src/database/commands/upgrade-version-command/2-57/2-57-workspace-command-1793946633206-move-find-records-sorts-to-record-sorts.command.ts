@@ -14,7 +14,11 @@ import {
   type StoredJsonbRow,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -149,11 +153,46 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
         findManyFlatEntityByIdInFlatEntityMaps({
           flatEntityIds: flatObjectMetadata.fieldIds,
           flatEntityMaps: flatFieldMetadataMaps,
-        }).map(({ id, name, type }) => ({ id, name, type })),
+        }).map(({ id, name, type, relationTargetObjectMetadataId }) => ({
+          id,
+          name,
+          type,
+          relationTargetLabelFieldName: isDefined(
+            relationTargetObjectMetadataId,
+          )
+            ? this.findLabelFieldName({
+                objectMetadataId: relationTargetObjectMetadataId,
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+              })
+            : undefined,
+        })),
       );
     }
 
     return fieldsByObjectName;
+  }
+
+  private findLabelFieldName({
+    objectMetadataId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    objectMetadataId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): string | undefined {
+    const labelIdentifierFieldMetadataId = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    })?.labelIdentifierFieldMetadataId;
+
+    return isDefined(labelIdentifierFieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: labelIdentifierFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })?.name
+      : 'name';
   }
 
   private async tableExists({

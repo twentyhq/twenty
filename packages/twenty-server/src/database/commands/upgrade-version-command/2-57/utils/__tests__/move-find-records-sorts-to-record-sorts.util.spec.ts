@@ -19,9 +19,17 @@ const COMPANY: SortableField = {
   id: 'company-field-id',
   name: 'company',
   type: FieldMetadataType.RELATION,
+  relationTargetLabelFieldName: 'name',
+};
+const SALARY: SortableField = {
+  id: 'salary-field-id',
+  name: 'salary',
+  type: FieldMetadataType.CURRENCY,
 };
 
-const fieldsByObjectName = new Map([['person', [STATUS, NAME, COMPANY]]]);
+const fieldsByObjectName = new Map([
+  ['person', [STATUS, NAME, COMPANY, SALARY]],
+]);
 
 const findRecordsStep = (orderBy: Record<string, unknown>) => ({
   id: 'step-id',
@@ -104,6 +112,8 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         { companyId: 'DescNullsLast' },
         { name: { firstName: 'AscNullsLast' } },
         { name: { lastName: 'DescNullsLast' } },
+        { salary: { currencyCode: 'AscNullsLast' } },
+        { company: { employees: 'DescNullsLast' } },
         { unknownField: 'AscNullsLast' },
       ],
     });
@@ -119,6 +129,11 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         direction: 'ASC',
         subFieldName: 'firstName',
       }),
+      expect.objectContaining({ fieldMetadataId: SALARY.id, direction: 'ASC' }),
+      expect.objectContaining({
+        fieldMetadataId: COMPANY.id,
+        direction: 'DESC',
+      }),
     ]);
     expect(inexactlyConvertedSorts).toEqual([
       { stepId: 'step-id', orderByEntry: { status: 'AscNullsFirst' } },
@@ -126,6 +141,14 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
       {
         stepId: 'step-id',
         orderByEntry: { name: { lastName: 'DescNullsLast' } },
+      },
+      {
+        stepId: 'step-id',
+        orderByEntry: { salary: { currencyCode: 'AscNullsLast' } },
+      },
+      {
+        stepId: 'step-id',
+        orderByEntry: { company: { employees: 'DescNullsLast' } },
       },
       { stepId: 'step-id', orderByEntry: { unknownField: 'AscNullsLast' } },
     ]);
