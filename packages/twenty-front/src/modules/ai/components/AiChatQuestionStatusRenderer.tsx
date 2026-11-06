@@ -82,9 +82,7 @@ export const AiChatQuestionStatusRenderer = ({
               )
               .join('')
           ) : (
-            <TextWithChatReferences
-              segments={getChatReferenceSegments(pendingQuestion)}
-            />
+            <TextWithChatReferences text={pendingQuestion} />
           )
         }
         isShimmering={isStreaming}
@@ -124,14 +122,10 @@ export const AiChatQuestionStatusRenderer = ({
         return (
           <StyledAnswerBlock key={index}>
             <StyledAnswerQuestion>
-              <TextWithChatReferences
-                segments={getChatReferenceSegments(question.question)}
-              />
+              <TextWithChatReferences text={question.question} />
             </StyledAnswerQuestion>
             <StyledAiChatAskStatusDetail>
-              <TextWithChatReferences
-                segments={getChatReferenceSegments(value)}
-              />
+              <TextWithChatReferences text={value} />
             </StyledAiChatAskStatusDetail>
           </StyledAnswerBlock>
         );

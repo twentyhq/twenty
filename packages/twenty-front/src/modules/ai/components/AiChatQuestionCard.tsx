@@ -30,7 +30,6 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
@@ -377,9 +376,7 @@ export const AiChatQuestionCard = ({
       <StyledQuestionSection>
         <StyledQuestionHeaderRow>
           <StyledQuestionText>
-            <TextWithChatReferences
-              segments={getChatReferenceSegments(currentQuestion.question)}
-            />
+            <TextWithChatReferences text={currentQuestion.question} />
           </StyledQuestionText>
           {hasMultipleQuestions && (
             <CountPager
@@ -430,9 +427,7 @@ export const AiChatQuestionCard = ({
                     color={themeCssVariables.font.color.tertiary}
                   />
                   <StyledOptionLabel>
-                    <TextWithChatReferences
-                      segments={getChatReferenceSegments(option.label)}
-                    />
+                    <TextWithChatReferences text={option.label} />
                   </StyledOptionLabel>
                   {option.isRecommended === true && (
                     <StyledRecommended>· {t`Recommended`}</StyledRecommended>

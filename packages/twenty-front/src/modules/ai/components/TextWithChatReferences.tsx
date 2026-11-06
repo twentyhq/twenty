@@ -1,28 +1,12 @@
-import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
-import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
-import { isString } from '@sniptt/guards';
-import { isAgentChatAssistantReference } from 'twenty-shared/ai';
+import { ChatReferenceSegments } from '@/ai/components/ChatReferenceSegments';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 
 type TextWithChatReferencesProps = {
-  segments: Array<string | ChatReferenceMatch>;
+  text: string;
 };
 
 export const TextWithChatReferences = ({
-  segments,
-}: TextWithChatReferencesProps) => {
-  return (
-    <>
-      {segments.map((segment) => {
-        if (isString(segment)) {
-          return segment;
-        }
-
-        if (isAgentChatAssistantReference(segment)) {
-          return <span key={segment.index}>@{segment.displayName}</span>;
-        }
-
-        return <ChatReferenceChip key={segment.index} reference={segment} />;
-      })}
-    </>
-  );
-};
+  text,
+}: TextWithChatReferencesProps) => (
+  <ChatReferenceSegments segments={getChatReferenceSegments(text)} />
+);

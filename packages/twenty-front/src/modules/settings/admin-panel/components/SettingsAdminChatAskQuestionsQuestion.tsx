@@ -8,7 +8,6 @@ import { IconCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatAskQuestionsQuestionProps = {
@@ -105,9 +104,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
         )}
       </StyledHeaderRow>
       <StyledQuestionText>
-        <TextWithChatReferences
-          segments={getChatReferenceSegments(question.question)}
-        />
+        <TextWithChatReferences text={question.question} />
       </StyledQuestionText>
       <StyledOptionsList>
         {question.options.map((option, optionIndex) => {
@@ -117,18 +114,14 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
             <StyledOptionRow key={optionIndex} isSelected={isSelected}>
               <StyledOptionLabelRow>
                 {isSelected && <IconCheck size={14} color={theme.color.blue} />}
-                <TextWithChatReferences
-                  segments={getChatReferenceSegments(option.label)}
-                />
+                <TextWithChatReferences text={option.label} />
                 {option.isRecommended === true && (
                   <StyledRecommended>· {t`Recommended`}</StyledRecommended>
                 )}
               </StyledOptionLabelRow>
               {isDefined(option.description) && (
                 <StyledOptionDescription>
-                  <TextWithChatReferences
-                    segments={getChatReferenceSegments(option.description)}
-                  />
+                  <TextWithChatReferences text={option.description} />
                 </StyledOptionDescription>
               )}
             </StyledOptionRow>
@@ -141,9 +134,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
               {t`Other`}
             </StyledOptionLabelRow>
             <StyledOptionDescription>
-              <TextWithChatReferences
-                segments={getChatReferenceSegments(freeText)}
-              />
+              <TextWithChatReferences text={freeText} />
             </StyledOptionDescription>
           </StyledOptionRow>
         )}
