@@ -32,6 +32,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -116,7 +117,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         permissionsPrincipals: undefined,
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
-        recordPermissions: {} as never,
+        recordRepositoryPermissions: {} as never,
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -135,16 +136,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         },
       };
       const workspaceDataSource = new WorkspaceDataSource(options);
+      const executeInWorkspaceContext = async <TResult>(
+        work: () => Promise<TResult>,
+      ) =>
+        withWorkspaceContext(
+          {
+            ...options.internalContext,
+            authContext: options.authContext,
+          },
+          work,
+        );
       return {
-        executeInWorkspaceContext: async <TResult>(
-          work: () => Promise<TResult>,
+        executeInWorkspaceContext,
+        executeTransactionInWorkspaceContext: <TResult>(
+          work: (
+            transactionScope: WorkspaceTransactionScope,
+          ) => Promise<TResult>,
         ) =>
-          withWorkspaceContext(
-            {
-              ...options.internalContext,
-              authContext: options.authContext,
-            },
-            work,
+          executeInWorkspaceContext(() =>
+            workspaceDataSource.transaction(work),
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
@@ -199,7 +209,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: string;
         threadId: string;
       }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-      getAuthContext: jest.fn().mockResolvedValue({
+      getAuthContextOrThrow: jest.fn().mockResolvedValue({
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       }),
@@ -209,8 +219,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const conversationWriter = new AgentConversationWriterService(
-      turns as never,
-      new AgentHistoryTransactionService(orm as never),
+      new AgentHistoryTransactionService(orm as never, {
+        findDirectMessagePairOfThread: jest.fn().mockResolvedValue(null),
+        makeConversationRecordsPrivateToPair: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+        deletePairSharesOfConversationRecords: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+      }),
       {
         getOrRecompute: async () => ({
           flatWorkspaceMemberMaps: {
@@ -249,7 +270,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
-      new AgentChatQueueService(turns, messageRepository, conversationWriter);
+      new AgentChatQueueService(messageRepository, conversationWriter);
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(

@@ -1,0 +1,114 @@
+---
+title: Reglas de validación
+description: Establezca las condiciones que los registros deben cumplir antes de poder guardarse.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+## ¿Qué son las reglas de validación?
+
+Una regla de validación es una condición que debe cumplirse antes de poder crear o actualizar un registro. Si la condición es falsa, Twenty bloquea el guardado y muestra un mensaje que explica qué debe cambiarse.
+
+Usa reglas para exigir información en el momento adecuado, como un importe antes de que una oportunidad se convierta en cliente, o para evitar valores incoherentes, como una fecha de finalización anterior a una fecha de inicio.
+
+<Note>
+  Las reglas de validación están disponibles en el plan Organization. Necesitas permiso
+  para editar el modelo de datos y administrarlas.
+</Note>
+
+## Crear una regla de validación
+
+1. Ve a **Ajustes → Modelo de datos** y selecciona el objeto que quieres configurar.
+2. Abre la pestaña **Ajustes**, busca **Reglas de validación** y haz clic en **Añadir regla**.
+3. Asigna un nombre a la regla y, opcionalmente, una descripción para explicar su propósito.
+4. Escribe una **Condición**. Empieza a escribir un nombre de campo o una función y selecciona sugerencias en el panel de ayuda.
+5. En **Error**, introduce un **Mensaje** que indique a las personas cómo corregir el registro. Usa **Mostrar en** para asociarla a un campo específico o selecciona **Registro completo**.
+6. Consulta la **Vista previa** para ver cómo se comporta la condición en los registros existentes.
+7. Haz clic en **Activar** para empezar a aplicar la regla.
+
+Las nuevas reglas permanecen inactivas hasta que las actives. Una regla necesita un nombre, una condición válida y un mensaje de error antes de poder activarse.
+
+### Obtener una vista previa de la regla
+
+La vista previa usa hasta tres registros recientes del objeto seleccionado. Usa las flechas para desplazarte entre ellos e inspeccionar los valores utilizados por la condición.
+
+| Estado        | Significado                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| **Válido**    | El registro cumple la condición.                                                         |
+| **Bloqueado** | El registro no cumple la condición. La vista previa también muestra tu mensaje de error. |
+| **Error**     | No se pudo evaluar la condición. Consulta los detalles del error y ajusta la expresión.  |
+
+Obtener una vista previa de una regla no modifica ningún registro. Si el objeto todavía no tiene registros, crea algunos para probar la vista previa.
+
+## Escribir una condición
+
+Escribe la condición que permite guardar. Por ejemplo, `employees > 0` permite guardar una empresa solo cuando su número de empleados es mayor que cero.
+
+Usa nombres de campo como `employees`, en lugar de etiquetas de visualización como **Empleados**. Al seleccionar un campo en la ayuda, se inserta la referencia correcta.
+
+| Sintaxis                                                             | Usar                                     |
+| -------------------------------------------------------------------- | ---------------------------------------- |
+| `==`, `!=`, `\<`, `\<=`, `>`, `>=` | Compara valores.                         |
+| `and`, `or`, `not`                                                   | Combina o niega condiciones.             |
+| `+`, `-`, `*`, `/`                                                   | Calcula valores.                         |
+| `stage in ['NEW', 'CUSTOMER']`                                       | Comprueba si un valor está en una lista. |
+| `true`, `false`                                                      | Compara campos booleanos.                |
+| `now`                                                                | Usa la fecha y la hora del guardado.     |
+
+Coloque el texto entre comillas simples o dobles y use paréntesis para agrupar condiciones. Use `and` y `or` en lugar de `&&` y `||`.
+
+### Comprobar valores faltantes
+
+| Función                       | Usar                                                                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isEmpty(value)`              | Compruebe si hay un valor faltante, texto vacío, una lista vacía o un campo compuesto vacío.                                                     |
+| `isDefined(value)`            | Compruebe si se ha establecido un valor. El texto vacío sigue considerándose definido.                                                           |
+| `isNonEmptyString(value)`     | Compruebe que un valor sea texto con al menos un carácter.                                                                                       |
+| `includes(listOrText, value)` | Compruebe si una lista contiene un valor o si un texto contiene una subcadena. La coincidencia de texto distingue entre mayúsculas y minúsculas. |
+| `arrayLength(list)`           | Obtenga el número de elementos de una lista.                                                                                                     |
+
+Para hacer que un campo sea obligatorio, use `not isEmpty(fieldName)`. Esto también funciona para campos compuestos, como correos electrónicos y direcciones.
+
+### Hacer referencia a campos compuestos y relacionados
+
+Use un punto para leer una parte de un campo compuesto, como `name.firstName` o `amount.amountMicros`. También puede leer un campo mediante una relación de varios a uno, como `company.name` en una persona. Seleccione campos en el asistente para encontrar las rutas disponibles.
+
+Los importes de moneda se almacenan en micros: una unidad monetaria equivale a `1000000` micros. Por ejemplo, `amount.amountMicros >= 100000000` requiere un importe de al menos 100 en la moneda del registro.
+
+Para los campos de selección, compare el valor de opción almacenado, como `'CUSTOMER'`, en lugar de su etiqueta de visualización. Consulte los ejemplos del asistente para ver los valores disponibles en su campo.
+
+## Reglas de ejemplo
+
+Adapte los nombres de campo y los valores de opción a su modelo de datos. Los campos `startDate`, `endDate` y `tags` de abajo son ejemplos de campos personalizados.
+
+| Objetivo                                                                          | Condición                                                              | Mensaje de error sugerido                                                            |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Requerir un nombre de empresa                                                     | `not isEmpty(name)`                                                    | Introduzca un nombre de empresa.                                                     |
+| Requerir un importe positivo cuando una oportunidad llegue a Cliente              | `stage != 'CUSTOMER' or amount.amountMicros > 0`                       | Introduzca un importe mayor que cero antes de mover esta oportunidad a Cliente.      |
+| Requerir que una persona esté vinculada a una empresa                             | `isDefined(company)`                                                   | Seleccione una empresa para esta persona.                                            |
+| Requerir que una fecha de finalización sea igual o posterior a la fecha de inicio | `isDefined(startDate) and isDefined(endDate) and endDate >= startDate` | Introduzca una fecha de inicio y una fecha de finalización igual o posterior a ella. |
+| Requerir al menos una etiqueta                                                    | `arrayLength(tags) > 0`                                                | Agregue al menos una etiqueta.                                                       |
+
+El ejemplo de oportunidad usa `or` para hacer que el requisito de importe sea condicional: las demás etapas se pueden guardar sin un importe.
+
+## Cuándo se comprueban las reglas
+
+Las reglas activas se comprueban cuando se crean o actualizan registros, incluidos los cambios realizados mediante la API, las importaciones y los flujos de trabajo. Un registro debe superar todas las reglas activas de su objeto para poder guardarse.
+
+Activar una regla no cambia los registros existentes. Un registro que no cumpla la nueva condición debe corregirse la próxima vez que se guarde.
+
+Una condición que lee un registro relacionado se evalúa cuando se guarda el registro al que pertenece la regla. Editar únicamente el registro relacionado no vuelve a comprobarlo.
+
+## Editar, desactivar o eliminar una regla
+
+Vuelva a **Settings → Data Model → your object → Settings → Validation rules** y, a continuación, haga clic en la regla.
+
+* **Editar:** Actualice la condición o el mensaje, compruebe la vista previa y haga clic en **Guardar**. Para una regla inactiva, este botón es **Activar**.
+* **Desactivar:** En **Zona de peligro**, haga clic en **Desactivar** para dejar de aplicar la regla y conservar su configuración. Haga clic en **Activar** para aplicarla de nuevo.
+* **Eliminar:** En **Zona de peligro**, haga clic en **Eliminar** y confirme para quitar permanentemente la regla. Los registros existentes no cambian.
+
+Desactivar o eliminar un campo usado en una condición también desactiva las reglas que lo leen. Revise esas reglas antes de activarlas de nuevo.
+
+Para definir reglas de validación en una aplicación, consulte la [guía para desarrolladores](/es/developers/extend/apps/data/validation-rules).
+
+<PageBanner illustration="card-page-validation-rules" />

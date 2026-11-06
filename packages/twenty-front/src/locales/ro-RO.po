@@ -2918,6 +2918,11 @@ msgstr "Căutare web a agentului"
 msgid "Agents"
 msgstr "Agenți"
 
+#. js-lingui-id: D2ijkj
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Agents that will fail"
+msgstr "Agenți care vor eșua"
+
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.navigation.stories.tsx
@@ -3006,10 +3011,20 @@ msgstr "Credite AI"
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Creditele AI se reînnoiesc în {0, plural, one {# zi} few {# zile} other {# de zile}}."
 
-#. js-lingui-id: FiB0jU
+#. js-lingui-id: MuT/nD
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "AI data policy"
-msgstr "Politica privind datele AI"
+msgid "AI data policy and Privacy tab"
+msgstr "Politica privind datele IA și fila Confidențialitate"
+
+#. js-lingui-id: WQyHss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI data processing"
+msgstr "Prelucrarea datelor de către IA"
+
+#. js-lingui-id: zNuqPE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI is paused"
+msgstr "IA este întreruptă"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -4244,6 +4259,11 @@ msgstr "Întreabă AI"
 msgid "Ask an admin to raise the limit."
 msgstr "Solicitați unui administrator să mărească limita."
 
+#. js-lingui-id: fy+eXl
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Ask an admin with security access to change this"
+msgstr "Solicitați unui administrator cu acces la securitate să modifice acest lucru."
+
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
@@ -4508,6 +4528,11 @@ msgstr "Jurnale de audit"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr "Jurnale de Audit"
+
+#. js-lingui-id: 7tMFh/
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Audited controls and the agreements that cover your data."
+msgstr "Controale auditate și acordurile care acoperă datele dvs."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5045,6 +5070,11 @@ msgstr "Respinse sau cu reclamații"
 msgid "Bracket access is not supported, use dot access instead"
 msgstr "Accesul cu paranteze nu este acceptat, folosește în schimb accesul cu punct"
 
+#. js-lingui-id: Mh79rW
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Breach notification"
+msgstr "Notificare privind încălcarea securității"
+
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
@@ -5089,11 +5119,6 @@ msgstr "Maro"
 msgid "Browse partners"
 msgstr "Răsfoiește partenerii"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Răsfoiți modificările înregistrărilor, evenimentele de securitate, jurnalele aplicației și multe altele"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -5123,6 +5148,11 @@ msgstr "Suma de control a build-ului"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Creați relații de tip mulți-la-mulți"
+
+#. js-lingui-id: yDcuP6
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Built to meet EU data protection rules"
+msgstr "Conceput pentru a respecta normele UE privind protecția datelor"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5796,6 +5826,11 @@ msgstr "Schimbă tema la luminoasă"
 msgid "Change theme to system"
 msgstr "Schimbă tema la cea a sistemului"
 
+#. js-lingui-id: 3Hphdi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Change where AI providers process requests and what they keep"
+msgstr "Modificați locul în care furnizorii de IA procesează solicitările și ce păstrează"
+
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -6166,6 +6201,11 @@ msgstr "Alege ce se întâmplă când dai clic pe un număr de telefon"
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Alege ce se întâmplă când dai clic pe o adresă de e-mail"
+
+#. js-lingui-id: XDg9PA
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Choose what Twenty can access to support you and improve the product."
+msgstr "Alegeți ce poate accesa Twenty pentru a vă oferi asistență și a îmbunătăți produsul."
 
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -6834,6 +6874,11 @@ msgstr "Locuri de muncă completate vor fi păstrate timp de {completedDuration}
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Complexity"
 msgstr "Complexitate"
+
+#. js-lingui-id: psC+XF
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Compliance"
+msgstr "Conformitate"
 
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
@@ -8835,6 +8880,11 @@ msgstr "Zilnic"
 msgid "Daily AI Usage"
 msgstr "Utilizare AI zilnică"
 
+#. js-lingui-id: /dr6KQ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Daily backups"
+msgstr "Copii de rezervă zilnice"
+
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -8899,6 +8949,11 @@ msgstr "Date și afișare"
 msgid "Data export"
 msgstr "Export de date"
 
+#. js-lingui-id: a4sORy
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
+msgstr "Datele sunt criptate în tranzit și în repaus, iar cheile sunt rotite regulat"
+
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
@@ -8936,7 +8991,13 @@ msgstr "Model de date - Setări"
 msgid "Data on display"
 msgstr "Date afișate"
 
+#. js-lingui-id: oBChYi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Data processing"
+msgstr "Prelucrarea datelor"
+
 #. js-lingui-id: /qrjU8
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -10440,6 +10501,11 @@ msgstr "Fiecare membru primește o alocație AI, utilizată înaintea creditelor
 msgid "Each slice represents"
 msgstr "Fiecare secțiune reprezintă"
 
+#. js-lingui-id: Iz+rDD
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Each workspace has its own database schema"
+msgstr "Fiecare spațiu de lucru are propria schemă de bază de date"
+
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Earlier"
@@ -11082,6 +11148,16 @@ msgstr "Activează microfonul și camera"
 msgid "Enable model-specific features"
 msgstr "Activează funcții specifice modelului"
 
+#. js-lingui-id: sqO0Ni
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted daily snapshots, kept 30 days"
+msgstr "Instantanee zilnice criptate, păstrate timp de 30 de zile"
+
+#. js-lingui-id: qILKh1
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted everywhere"
+msgstr "Criptat peste tot"
+
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Encryption key rotation"
@@ -11199,10 +11275,10 @@ msgstr "Introduceți un obiect JSON"
 msgid "Enter a JSON value"
 msgstr "Introdu o valoare JSON"
 
-#. js-lingui-id: 0mwDxe
+#. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr "Introduceți un nume cuprins între 1 și {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractere."
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr "Introduceți un nume cuprins între 1 și {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractere, pe un singur rând. Parantezele drepte trebuie să fie în perechi și nu pot fi imbricate."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11747,6 +11823,21 @@ msgstr "Stabilește puncte finale Webhook pentru notificări privind evenimentel
 msgid "Estimate a probability"
 msgstr "Estimează o probabilitate"
 
+#. js-lingui-id: MzEfu4
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "EU only"
+msgstr "Doar UE"
+
+#. js-lingui-id: 84VCrZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, standard retention"
+msgstr "Doar UE, retenție standard"
+
+#. js-lingui-id: e8+f0R
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, zero data retention"
+msgstr "Doar UE, retenție zero a datelor"
+
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "European Union"
@@ -11855,6 +11946,11 @@ msgstr "în fiecare zi"
 msgid "every hour"
 msgstr "în fiecare oră"
 
+#. js-lingui-id: loBt0P
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Every line of code is public, so you can audit it yourself"
+msgstr "Fiecare linie de cod este publică, așa că o puteți audita personal."
+
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -11866,6 +11962,11 @@ msgstr "în fiecare minut"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
 msgstr "Fiecare obiect din acest spațiu de lucru ca fișiere CSV într-o arhivă zip, păstrată timp de 1 zi. Funcționează pentru spațiile de lucru suspendate."
+
+#. js-lingui-id: h3QLIe
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Every provider that handles your data"
+msgstr "Fiecare furnizor care vă gestionează datele"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -13509,6 +13610,7 @@ msgid "Formats"
 msgstr "Formate"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Fost membru"
@@ -13751,6 +13853,11 @@ msgstr "Funcții"
 msgid "Functions - Settings"
 msgstr "Funcții - Setări"
 
+#. js-lingui-id: arkG3W
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "GDPR"
+msgstr "GDPR"
+
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Gem"
@@ -13807,6 +13914,11 @@ msgstr "Generează cod de recuperare 2FA"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
 msgstr "Generează un cod de recuperare"
+
+#. js-lingui-id: h9wFH2
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Generate a signed copy in one click"
+msgstr "Generați o copie semnată cu un singur clic"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -13900,6 +14012,11 @@ msgstr "Pașii de inițiere"
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (căutare full-text și JSONB)"
+
+#. js-lingui-id: RkXlPZ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "GitHub"
+msgstr "GitHub"
 
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -14366,6 +14483,11 @@ msgstr "salut, lume"
 msgid "Help center"
 msgstr "Centru de ajutor"
 
+#. js-lingui-id: GY8MUv
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Help improve Twenty"
+msgstr "Ajutați la îmbunătățirea Twenty"
+
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Hexagon"
@@ -14523,6 +14645,11 @@ msgstr "Linie orizontală de separare"
 msgid "Host your workspace's customizations and overrides."
 msgstr "Găzduiește personalizările și suprascrierile spațiului dvs. de lucru."
 
+#. js-lingui-id: fFtUGj
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Hosting"
+msgstr "Găzduire"
+
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-trigger/constants/CronTriggerIntervalOptions.ts
@@ -14558,6 +14685,11 @@ msgstr "Modul în care această regulă apare în setări."
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
 msgstr "Cum veți apărea pentru colegi și agenți."
+
+#. js-lingui-id: iGMucd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "How your data is protected"
+msgstr "Cum vă sunt protejate datele"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -15086,6 +15218,11 @@ msgstr "Creșteți la ${priceDisplay}"
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
 msgstr "Mărește valoarea"
+
+#. js-lingui-id: dW+3Q4
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Independently audited security controls"
+msgstr "Controale de securitate auditate independent"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15719,6 +15856,11 @@ msgstr "Este relativ"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
 msgstr "Este astăzi{timeZoneAbbreviationSuffix}"
+
+#. js-lingui-id: YbqWR4
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Isolated workspace"
+msgstr "Spațiu de lucru izolat"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16463,11 +16605,6 @@ msgstr "Permiteți-i lui {host} să vă folosească microfonul"
 msgid "Let {host} use your microphone and camera"
 msgstr "Permiteți-i lui {host} să vă folosească microfonul și camera"
 
-#. js-lingui-id: lW/fsz
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes."
-msgstr "Permiteți administratorilor să limiteze AI la modele care respectă o politică de rezidență a datelor sau de păstrare zero a datelor. Activați după finalizarea actualizării instanței."
-
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
@@ -17023,11 +17160,6 @@ msgstr "Blochează diagrama"
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Înregistrați o tranzacție nouă (companie, sumă, etapă, închidere estimată). Detalii: "
-
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Consolă de jurnale"
 
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -18013,6 +18145,11 @@ msgstr "Modelul utilizat când discuți cu Twenty"
 msgid "Models"
 msgstr "Modele"
 
+#. js-lingui-id: o4Xn+q
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Models above are limited to the providers your privacy settings allow."
+msgstr "Modelele de mai sus sunt limitate la furnizorii permiși de setările dvs. de confidențialitate."
+
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models for this provider. Toggle to enable or disable."
@@ -18609,7 +18746,7 @@ msgstr "Canal nou"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Chat nou"
 
@@ -18996,12 +19133,22 @@ msgstr "Niciun agent nu corespunde căutării"
 msgid "No AI consumption recorded for this user."
 msgstr "Nu a fost înregistrat niciun consum de AI pentru acest utilizator."
 
+#. js-lingui-id: m/JoOZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "No AI model on this workspace meets these settings."
+msgstr "Niciun model de IA din acest spațiu de lucru nu îndeplinește aceste setări."
+
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nu este configurat niciun furnizor IA pentru această instanță."
+
+#. js-lingui-id: lBnUyA
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No AI provider trains on your data, and neither does Twenty"
+msgstr "Niciun furnizor de IA nu se antrenează pe datele dvs. și nici Twenty"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19750,6 +19897,11 @@ msgstr "Nu au fost apelate instrumente"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No topic"
 msgstr "Fără subiect"
+
+#. js-lingui-id: lNEINd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No training on your data"
+msgstr "Fără antrenare pe datele dvs."
 
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
@@ -20587,6 +20739,11 @@ msgstr "Doar creatorul acestei înregistrări, persoanele cu acces complet la ea
 msgid "Only the subject is shared"
 msgstr "Doar subiectul este partajat"
 
+#. js-lingui-id: 41eae/
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Only use providers that keep no copy of your prompts and responses"
+msgstr "Utilizați doar furnizori care nu păstrează nicio copie a solicitărilor și răspunsurilor dvs."
+
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
@@ -20724,11 +20881,6 @@ msgstr "Deschide în panoul lateral"
 msgid "Open link"
 msgstr "Deschide linkul"
 
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Deschideți consola de jurnale"
-
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -20792,6 +20944,11 @@ msgstr "Deschide setările"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "Deschide panoul lateral"
+
+#. js-lingui-id: v+Wp++
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Open source"
+msgstr "Cu sursă deschisă"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21756,6 +21913,11 @@ msgstr "Roz"
 msgid "Pinned"
 msgstr "Fixat"
 
+#. js-lingui-id: ylGwx6
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Pinned models not in use"
+msgstr "Modele fixate neutilizate"
+
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
@@ -22148,6 +22310,11 @@ msgstr "Suport prioritar"
 msgid "Priority: {0}"
 msgstr "Prioritate: {0}"
 
+#. js-lingui-id: rjGI/Q
+#: src/pages/settings/general/SettingsGeneral.tsx
+msgid "Privacy"
+msgstr "Confidențialitate"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22186,6 +22353,11 @@ msgstr "Se procesează"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Processing Recording"
 msgstr "Se procesează înregistrarea"
+
+#. js-lingui-id: kLAZG6
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Processing region"
+msgstr "Regiunea de prelucrare"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -24927,6 +25099,11 @@ msgstr "Secțiune"
 msgid "Security"
 msgstr "Securitate"
 
+#. js-lingui-id: OpFwR0
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Security you can verify"
+msgstr "Securitate pe care o puteți verifica"
+
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "see"
@@ -25865,6 +26042,11 @@ msgstr "Distribuie"
 msgid "Share calendar events across channels"
 msgstr "Partajați evenimentele din calendar între canale"
 
+#. js-lingui-id: S1jlER
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Share session replays and AI conversations to help us improve Twenty"
+msgstr "Partajați reluările sesiunilor și conversațiile cu IA pentru a ne ajuta să îmbunătățim Twenty"
+
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 msgid "Share this code with {memberName} through a channel you trust. It works once and expires at {formattedExpiresAt}. You won't be able to see it again."
@@ -25920,6 +26102,11 @@ msgstr "Se partajează înregistrarea"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Sharing settings could not be loaded."
 msgstr "Setările de partajare nu au putut fi încărcate."
+
+#. js-lingui-id: K8Q+iX
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Sharing with Twenty"
+msgstr "Partajare cu Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26057,6 +26244,11 @@ msgstr "Afișează doar rândurile cu erori"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
 msgstr "Afișați pagina de inițiere și cardul din bara laterală și deschideți-o la accesare în timpul perioadei de probă."
+
+#. js-lingui-id: fTPKt5
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+msgstr "Afișați fila Confidențialitate și aplicați politica sa privind datele IA și setările de partajare a datelor. Dezactivarea acestei opțiuni elimină orice politică stocată. Activați-o după finalizarea actualizării instanței."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26414,6 +26606,16 @@ msgstr "Amânat"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Amânat până la {eventTime}"
+
+#. js-lingui-id: 01L/Si
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "SOC 2"
+msgstr "SOC 2"
+
+#. js-lingui-id: LBv08V
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
+msgstr "Controale auditate SOC 2, criptare în tranzit și în repaus și cod pe care oricine îl poate revizui."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -27072,6 +27274,11 @@ msgstr "Subiectul, corpul și atașamentele vor fi partajate cu echipa dvs."
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
 msgid "Submit"
 msgstr "Trimite"
+
+#. js-lingui-id: amVqRj
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Subprocessors"
+msgstr "Subprocesatori"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -27943,6 +28150,11 @@ msgstr "Configurația relației nu a putut fi rezolvată."
 msgid "The role attached to this webhook."
 msgstr "Rolul asociat acestui webhook."
 
+#. js-lingui-id: OBY7M0
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "The safeguards behind every Twenty Cloud workspace."
+msgstr "Măsurile de protecție din spatele fiecărui spațiu de lucru Twenty Cloud."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -28060,6 +28272,16 @@ msgstr "Nu există activitate asociată acestei înregistrări."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "A apărut o eroare în timpul actualizării parolei."
+
+#. js-lingui-id: hOYgrt
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
+msgstr "Acești agenți utilizează un model exclus de setările dvs., astfel că eșuează la rulare: {agentLabels}"
+
+#. js-lingui-id: ZSRi5U
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
+msgstr "Aceste niveluri revin la un model permis: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -29248,6 +29470,11 @@ msgctxt "Field type"
 msgid "True/False"
 msgstr "Adevărat/Fals"
 
+#. js-lingui-id: tdZpCd
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Trust Center"
+msgstr "Centrul de încredere"
+
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
@@ -29330,6 +29557,11 @@ msgstr "Câmpuri Twenty"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
 msgstr "Twenty completează fiecare nivel cu cel mai bun model care îndeplinește cerințele dvs."
+
+#. js-lingui-id: 0mWZoP
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
+msgstr "Twenty nu are propriul model de IA. Alegeți ce furnizori pot procesa solicitările dvs. Setările mai stricte lasă mai puține modele, iar unele costă mai mult."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -31316,6 +31548,11 @@ msgstr "Ne-am confruntat cu o problemă la verificare"
 msgid "We match on these fields. If a {0} already exists, we update it. Otherwise, we create a new one."
 msgstr "Potrivim după aceste câmpuri. Dacă un {0} există deja, îl actualizăm. În caz contrar, creăm unul nou."
 
+#. js-lingui-id: AXVG2Y
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "We notify you within 72 hours, as set out in the DPA"
+msgstr "Vă notificăm în termen de 72 de ore, conform DPA"
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -31615,6 +31852,11 @@ msgstr "Când perioada de probă se încheie, vi se va percepe {priceLabel}."
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "Unde"
+
+#. js-lingui-id: I7dUhW
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Where AI providers process your requests"
+msgstr "Unde furnizorii de IA vă procesează solicitările"
 
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -32028,12 +32270,32 @@ msgstr "Vizualizările spațiului de lucru necesită permisiunea de a gestiona v
 msgid "Workspaces"
 msgstr "Spații de lucru"
 
+#. js-lingui-id: yehD4Z
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Workspaces run on AWS in Frankfurt, Germany"
+msgstr "Spațiile de lucru rulează pe AWS în Frankfurt, Germania"
+
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Workspaces status"
 msgstr "Starea spațiilor de lucru"
+
+#. js-lingui-id: C+gilE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Worldwide"
+msgstr "La nivel mondial"
+
+#. js-lingui-id: oR3/ss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, standard retention"
+msgstr "La nivel mondial, retenție standard"
+
+#. js-lingui-id: iTAMb7
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, zero data retention"
+msgstr "La nivel mondial, retenție zero a datelor"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32080,6 +32342,11 @@ msgstr "Scrie o descriere pentru acest agent"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Scrie un mesaj"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Scrie un mesaj..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32583,6 +32850,11 @@ msgstr "Spațiul tău de lucru va fi dezactivat"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2sLNC3
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Zero data retention"
+msgstr "Retenție zero a datelor"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

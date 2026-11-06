@@ -93,14 +93,13 @@ describe('permissions read services', () => {
     );
   });
 
-  const askObjectQuestion = async ({
-    question,
+  const askCanReadSomeRecords = async ({
     authContext,
   }: {
-    question: 'canReadSomeRecords';
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
-    recordPermissionsService[question]({
+    recordPermissionsService.hasAccessToSomeRecords({
+      operationType: 'select',
       principals: await principalPermissionsService.buildPermissionsPrincipals({
         authContext,
       }),
@@ -208,11 +207,10 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canReadSomeRecords', () => {
+  describe('hasAccessToSomeRecords', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
-        await askObjectQuestion({
-          question: 'canReadSomeRecords',
+        await askCanReadSomeRecords({
           authContext: adminAuthContext,
         }),
       ).toBe(true);
@@ -220,8 +218,7 @@ describe('permissions read services', () => {
 
     it('denies an API key with no role', async () => {
       expect(
-        await askObjectQuestion({
-          question: 'canReadSomeRecords',
+        await askCanReadSomeRecords({
           authContext: missingRoleAuthContext,
         }),
       ).toBe(false);

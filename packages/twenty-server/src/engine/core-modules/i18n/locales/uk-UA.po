@@ -1058,16 +1058,6 @@ msgstr "Гілки чатів ШІ, що належать учаснику ро�
 msgid "AI component builder is disabled."
 msgstr "Конструктор компонентів ШІ вимкнено."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Політика даних ШІ недоступна, доки не буде завершено оновлення."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Політику даних ШІ не ввімкнено для цього робочого простору."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "Автентифікація не вдалася, будь ласка, �
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Аутентифікація не ввімкнена з цим постачальником."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Для доступу до цієї функції потрібна автентифікація. Будь ласка, увійдіть і спробуйте знову."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "Не вказано дійсних одержувачів"
 msgid "No verified sending domain matches this from address."
 msgstr "Жоден підтверджений домен надсилання не відповідає цій адресі відправника."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Жоден із вибраних вами людей не може відповісти в цьому чаті. Додайте {AGENT_CHAT_ASSISTANT_NAME} або когось, хто може відповісти."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "ID суб'єкта"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Тип суб'єкта"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Налаштування конфіденційності недоступні, доки не буде завершено оновлення."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Налаштування конфіденційності не ввімкнено для цього робочого простору."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Короткі посилання"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Увійдіть як учасник робочого простору або використайте токен застосунку, щоб змінити цю розмову."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Увійдіть як учасник робочого простору або використайте токен застосунку, щоб виконати цей запит."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Деякі з вибраних вами дозволів недійсні. Спробуйте знову з дійсними налаштуваннями дозволів."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13619,11 +13619,6 @@ msgstr "Агента, якого має запустити цей крок, не
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Шуканого агента не знайдено. Його могли видалити або у вас немає до нього доступу."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "Ключ API не має відповідної ролі. Перевірте налаштування вашого ключа API."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "Маніфест застосунку містить некоректн�
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Канал джерела застосунку не відповідає очікуваному типу."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Застосунок не має відповідної ролі. Перевірте налаштування вашого застосунку."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Ви не можете згенерувати код відновлення для себе. Натомість скиньте двофакторну автентифікацію у своєму профілі."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Ви не можете змінити власну роль. Попросіть іншого адміністратора оновити вашу роль."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Ви не можете забрати доступ до налаштувань у власної ролі. Попросіть іншого адміністратора внести цю зміну."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Ви не можете видалити адміністративну роль у останнього адміністратора. Спочатку призначте іншого адміністратора."
 
@@ -18250,7 +18240,7 @@ msgstr "Ваша роль не може видалити деякі з цих з
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Вашу роль у цьому робочому просторі не знайдено. Зверніться до адміністратора робочого простору."
 

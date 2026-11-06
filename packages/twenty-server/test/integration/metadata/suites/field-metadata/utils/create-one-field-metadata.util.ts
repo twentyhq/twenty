@@ -19,6 +19,7 @@ export const createOneFieldMetadata = async <
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateOneFieldFactoryInput>): CommonResponseBody<{
   createOneField: TField;
 }> => {
@@ -29,7 +30,7 @@ export const createOneFieldMetadata = async <
 
   await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
