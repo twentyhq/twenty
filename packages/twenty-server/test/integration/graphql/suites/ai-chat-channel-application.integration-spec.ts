@@ -467,7 +467,7 @@ describe('Inbox channels for applications', () => {
     ]);
   });
 
-  it('cannot claim, reuse the name of, update or delete a channel owned by another application', async () => {
+  it('numbers a name taken by another application, and cannot claim, update or delete its channel', async () => {
     const universalIdentifier = randomUUID();
     const name = buildChannelName();
     const channelId = await createChannelOrThrow({
@@ -487,10 +487,10 @@ describe('Inbox channels for applications', () => {
       code: 'CONFLICT',
       subCode: AiExceptionCode.CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN,
     });
-    expect(sameNameResponse.body.errors[0].extensions).toMatchObject({
-      code: 'BAD_USER_INPUT',
-      subCode: AiExceptionCode.INVALID_CHAT_CHANNEL_NAME,
-    });
+    assertGraphQLSuccessfulResponse(sameNameResponse);
+    expect(sameNameResponse.body.data.createAgentChatChannel.name).toBe(
+      `${name} 2`,
+    );
 
     const responses = await Promise.all([
       updateChannel({

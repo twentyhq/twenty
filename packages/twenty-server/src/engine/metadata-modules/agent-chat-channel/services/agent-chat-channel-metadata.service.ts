@@ -12,6 +12,7 @@ import { assertAgentChatChannelUniversalIdentifierNotTakenOrThrow } from 'src/en
 import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
 import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
+import { getAvailableAgentChatChannelName } from 'src/engine/metadata-modules/agent-chat-channel/utils/get-available-agent-chat-channel-name.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { validateAgentChatChannelUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-universal-identifier-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
@@ -41,6 +42,7 @@ type ChannelToInsert = ChannelToCreate & {
   workspaceId: string;
   applicationUniversalIdentifier: string;
   universalIdentifier: string;
+  shouldPickAvailableName: boolean;
 };
 
 type ChannelMaps = Pick<
@@ -145,6 +147,9 @@ export class AgentChatChannelMetadataService {
             universalIdentifier,
           )
         : v4(),
+      shouldPickAvailableName: isDefined(
+        getScopedCallingApplication(callingApplication),
+      ),
     });
 
     assertAgentChatChannelUniversalIdentifierNotTakenOrThrow({
@@ -301,13 +306,24 @@ export class AgentChatChannelMetadataService {
     workspaceId,
     applicationUniversalIdentifier,
     universalIdentifier,
+    shouldPickAvailableName,
     name,
     icon,
     color,
     roleIds,
   }: ChannelToInsert): Promise<FlatAgentChatChannelWithRoleIds> {
     const channelMaps = await this.getChannelMaps(workspaceId);
-    const channelName = validateAgentChatChannelNameOrThrow(name);
+    const requestedChannelName = validateAgentChatChannelNameOrThrow(name);
+    const channelName = shouldPickAvailableName
+      ? getAvailableAgentChatChannelName({
+          name: requestedChannelName,
+          takenNames: Object.values(
+            channelMaps.flatAgentChatChannelMaps.byUniversalIdentifier,
+          )
+            .filter(isDefined)
+            .map((channel) => channel.name),
+        })
+      : requestedChannelName;
     const now = new Date().toISOString();
     const channelId = v4();
 
