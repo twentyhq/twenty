@@ -100,7 +100,7 @@ export const computeFieldMetadataOptionOperationsForField = ({
     applicationUniversalIdentifier,
     now,
   })) {
-    // The field validator reports an option id reused across fields.
+    // An option id reused across fields keeps its first field's row.
     if (
       existingOptionUniversalIdentifiers.has(
         targetOption.universalIdentifier,

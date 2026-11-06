@@ -67,7 +67,9 @@ const buildManifest = ({
   });
 };
 
-const findOptionRowsOwnedByTestApp = async () =>
+const findOptionRowsOwnedByTestApp = async (
+  fieldUniversalIdentifier = SELECT_FIELD_ID,
+) =>
   globalThis.testDataSource.query(
     `SELECT option."universalIdentifier", option.value, option.label, option.color, option.position
       FROM core."fieldMetadataOption" option
@@ -77,7 +79,7 @@ const findOptionRowsOwnedByTestApp = async () =>
         AND field."universalIdentifier" = $2
         AND application."universalIdentifier" = $3
       ORDER BY option.position`,
-    [SEED_APPLE_WORKSPACE_ID, SELECT_FIELD_ID, TEST_APP_ID],
+    [SEED_APPLE_WORKSPACE_ID, fieldUniversalIdentifier, TEST_APP_ID],
   );
 
 describe('Sync application keeps field option rows in step with its manifest', () => {
@@ -176,7 +178,7 @@ describe('Sync application keeps field option rows in step with its manifest', (
     ]);
   }, 60000);
 
-  it('rejects two fields of one manifest that share an option id', async () => {
+  it('syncs two fields of one manifest that share an option id, the second without its row', async () => {
     const sharedOption: SelectFieldOptions[number] = {
       id: OPEN_OPTION_ID,
       value: 'OPEN',
@@ -198,11 +200,21 @@ describe('Sync application keeps field option rows in step with its manifest', (
           },
         ],
       }),
-      expectToFail: true,
+      expectToFail: false,
     });
 
-    expect(JSON.stringify(errors)).toContain(
-      `Option id \\"${OPEN_OPTION_ID}\\" is already used by another field`,
+    expect(errors).toBeUndefined();
+    expect(await findOptionRowsOwnedByTestApp()).toEqual([
+      {
+        universalIdentifier: OPEN_OPTION_ID,
+        value: 'OPEN',
+        label: 'Open',
+        color: 'green',
+        position: 0,
+      },
+    ]);
+    expect(await findOptionRowsOwnedByTestApp(SECOND_SELECT_FIELD_ID)).toEqual(
+      [],
     );
   }, 60000);
 
@@ -224,7 +236,7 @@ describe('Sync application keeps field option rows in step with its manifest', (
     });
 
     expect(JSON.stringify(errors)).toContain(
-      `Option id \\"${OPEN_OPTION_ID}\\" is already used by another field`,
+      'fieldMetadataOption property \\"fieldMetadataUniversalIdentifier\\" cannot be updated',
     );
   }, 60000);
 

@@ -770,7 +770,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         now,
       },
     )) {
-      // The field validator reports an option id reused across fields.
+      // An option id reused across fields keeps its first field's row.
       if (
         isDefined(
           allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps
