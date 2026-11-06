@@ -451,30 +451,6 @@ Twenty supports logic functions for workflows and the code interpreter for AI da
 | Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
 | Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
 
-### Logic Functions - Calling Twenty Privately
-
-Logic functions call the API through `SERVER_URL` by default. When an authenticating proxy (Cloudflare Access, Google IAP, oauth2-proxy) sits in front of `SERVER_URL`, it rejects those calls. Set `SERVER_INTERNAL_URL` to a private address of the server so functions skip the proxy:
-
-```bash
-SERVER_INTERNAL_URL=http://server:3000
-```
-
-With Docker Compose, `server` is the server's service name. Compose only passes the variables listed under each service's `environment`, so add it to both the `server` and `worker` services:
-
-```yaml
-services:
-  server:
-    environment:
-      SERVER_INTERNAL_URL: ${SERVER_INTERNAL_URL}
-  worker:
-    environment:
-      SERVER_INTERNAL_URL: ${SERVER_INTERNAL_URL}
-```
-
-On Kubernetes, use the cluster DNS name of the server's Service instead.
-
-It must be reachable from where functions run: from the server and worker containers with the local driver, from the Lambda subnets with the Lambda driver. Keep it private: anything that can reach it skips the proxy. URLs handed to browsers or other services, such as webhook URLs, keep using `SERVER_URL`.
-
 ### Logic Functions - Recommended Configuration
 
 **For development:**
