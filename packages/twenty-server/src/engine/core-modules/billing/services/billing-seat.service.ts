@@ -102,13 +102,7 @@ export class BillingSeatService {
 
     return await this.cacheLockService.withLock(
       async () => {
-        if (
-          isSeatLimitReached({
-            memberCount: await this.countWorkspaceMembers(workspaceId),
-            seatArrangements:
-              await this.findActiveSeatArrangements(workspaceId),
-          })
-        ) {
+        if (await this.isWorkspaceAtSeatLimit(workspaceId)) {
           throw new BillingException(
             `Workspace ${workspaceId} has reached its committed seats`,
             BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED,
