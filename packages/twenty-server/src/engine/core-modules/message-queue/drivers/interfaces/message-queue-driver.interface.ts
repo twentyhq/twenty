@@ -14,6 +14,7 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { type JobMemoryReconciliation } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
+import { type JobPayloadReconciliation } from 'src/engine/core-modules/message-queue/drivers/payload/job-payload-offloader';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export interface MessageQueueDriver {
@@ -63,6 +64,7 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]>;
   reconcileJobMemory?(): Promise<JobMemoryReconciliation>;
+  reconcileJobPayloads?(): Promise<JobPayloadReconciliation>;
   getJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],

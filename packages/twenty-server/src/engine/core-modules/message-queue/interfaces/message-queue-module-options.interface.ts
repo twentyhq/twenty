@@ -1,5 +1,6 @@
 import { type EventEmitter2 } from '@nestjs/event-emitter';
 
+import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { type BullMQDriverOptions } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -15,6 +16,7 @@ export interface BullMQDriverFactoryOptions {
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
   eventEmitter: EventEmitter2;
+  fileStorageDriverFactory?: FileStorageDriverFactory;
 }
 
 export interface SyncDriverFactoryOptions {
