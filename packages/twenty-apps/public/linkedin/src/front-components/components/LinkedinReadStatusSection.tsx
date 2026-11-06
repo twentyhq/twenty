@@ -5,7 +5,15 @@ import { IconCheck } from 'twenty-ui/icon';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 
-export const LinkedinReadStatusSection = () => (
+type LinkedinReadStatusSectionProps = {
+  areChatsMarkedAsRead: boolean;
+  onChange: (areChatsMarkedAsRead: boolean) => void;
+};
+
+export const LinkedinReadStatusSection = ({
+  areChatsMarkedAsRead,
+  onChange,
+}: LinkedinReadStatusSectionProps) => (
   <Section.Root>
     <Section.Header
       title={t('Read status')}
@@ -16,11 +24,10 @@ export const LinkedinReadStatusSection = () => (
         Icon={IconCheck}
         title={t('Mark chats as read on LinkedIn')}
         description={t(
-          'Coming soon: opening a chat in Twenty marks it as read on LinkedIn',
+          'Opening a chat in Twenty marks it as read on LinkedIn, which can show the sender a read receipt',
         )}
-        disabled
-        checked={false}
-        onChange={() => undefined}
+        checked={areChatsMarkedAsRead}
+        onChange={onChange}
       />
     </StyledSettingsCard>
   </Section.Root>

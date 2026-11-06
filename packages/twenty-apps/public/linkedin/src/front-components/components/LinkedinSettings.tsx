@@ -266,7 +266,12 @@ export const LinkedinSettings = () => {
                 handleSettingsChange({ isNameMatchingEnabled })
               }
             />
-            <LinkedinReadStatusSection />
+            <LinkedinReadStatusSection
+              areChatsMarkedAsRead={view.settings.areChatsMarkedAsRead}
+              onChange={(areChatsMarkedAsRead) =>
+                handleSettingsChange({ areChatsMarkedAsRead })
+              }
+            />
           </>
         )}
       </StyledContainer>
