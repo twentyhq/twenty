@@ -1,6 +1,7 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -11,6 +12,7 @@ import {
   type EnumFieldToBackfill,
 } from 'src/database/commands/upgrade-version-command/2-57/utils/compute-field-metadata-option-backfill.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -36,43 +38,48 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
+    const { flatFieldMetadataMaps, flatFieldMetadataOptionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
+      ]);
+
+    // Sorted so the same field keeps a shared option id on every run.
+    const enumFields: EnumFieldToBackfill[] = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(isEnumFlatFieldMetadata)
+      .map(({ id, applicationId, options }) => ({
+        id,
+        applicationId,
+        options,
+      }))
+      .sort((fieldA, fieldB) => fieldA.id.localeCompare(fieldB.id));
+
+    const { optionsToRewriteByFieldMetadataId, optionRowsToInsert } =
+      computeFieldMetadataOptionBackfill({
+        enumFields,
+        existingFieldMetadataIdByUniversalIdentifier: new Map(
+          Object.values(flatFieldMetadataOptionMaps.byUniversalIdentifier)
+            .filter(isDefined)
+            .map(({ universalIdentifier, fieldMetadataId }) => [
+              universalIdentifier,
+              fieldMetadataId,
+            ]),
+        ),
+      });
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Workspace ${workspaceId}: ${optionRowsToInsert.length} field option row(s) to insert, ${optionsToRewriteByFieldMetadataId.size} field(s) with option ids to regenerate`,
+      );
+
+      return;
+    }
+
     const result = await this.coreDataSource.transaction(
       async (entityManager) => {
-        const enumFields: EnumFieldToBackfill[] = await entityManager.query(
-          `SELECT id, "applicationId", options FROM core."fieldMetadata"
-            WHERE "workspaceId" = $1 AND type IN ('SELECT', 'MULTI_SELECT', 'RATING')
-            ORDER BY id FOR UPDATE`,
-          [workspaceId],
-        );
-        const existingOptionRows: {
-          universalIdentifier: string;
-          fieldMetadataId: string;
-        }[] = await entityManager.query(
-          `SELECT "universalIdentifier", "fieldMetadataId" FROM core."fieldMetadataOption"
-            WHERE "workspaceId" = $1`,
-          [workspaceId],
-        );
-
-        const { optionsToRewriteByFieldMetadataId, optionRowsToInsert } =
-          computeFieldMetadataOptionBackfill({
-            enumFields,
-            existingFieldMetadataIdByUniversalIdentifier: new Map(
-              existingOptionRows.map(
-                ({ universalIdentifier, fieldMetadataId }) => [
-                  universalIdentifier,
-                  fieldMetadataId,
-                ],
-              ),
-            ),
-          });
-
-        if (isDryRun) {
-          return {
-            rewrittenFieldCount: optionsToRewriteByFieldMetadataId.size,
-            insertedRowCount: optionRowsToInsert.length,
-          };
-        }
-
         if (optionsToRewriteByFieldMetadataId.size > 0) {
           await entityManager.query(
             `UPDATE core."fieldMetadata" AS field SET options = rewrite.options
@@ -122,12 +129,8 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
     );
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${result.insertedRowCount} field option row(s) inserted, ${result.rewrittenFieldCount} field(s) with regenerated option ids`,
+      `Workspace ${workspaceId}: ${result.insertedRowCount} field option row(s) inserted, ${result.rewrittenFieldCount} field(s) with regenerated option ids`,
     );
-
-    if (isDryRun) {
-      return;
-    }
 
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
