@@ -5,7 +5,7 @@ import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { isDefined } from 'twenty-shared/utils';
 
 type CalculateVisibleTabCountParams = {
-  visibleTabs: SingleTabProps[];
+  visibleTabs: Pick<SingleTabProps, 'id'>[];
   tabWidthsById: TabWidthsById;
   containerWidth: number;
   moreButtonWidth: number;
