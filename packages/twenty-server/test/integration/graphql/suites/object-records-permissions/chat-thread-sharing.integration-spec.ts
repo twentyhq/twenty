@@ -48,7 +48,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
@@ -494,16 +494,17 @@ describe('Conversation sharing through the authenticated API', () => {
             applicationId: null,
           },
         });
-        const senderAuthorization = await actors.authorize({
-          workspaceId,
-          threadId,
-          sender: {
-            userWorkspaceId: sender.userWorkspaceId,
-            applicationId: null,
-          },
-        });
+        const authorizedConversation =
+          await actors.resolveAuthorizedConversation({
+            workspaceId,
+            threadId,
+            sender: {
+              userWorkspaceId: sender.userWorkspaceId,
+              applicationId: null,
+            },
+          });
 
-        expect(senderAuthorization?.authContext).toMatchObject({
+        expect(authorizedConversation.authContext).toMatchObject({
           type: 'user',
           userWorkspaceId: sender.userWorkspaceId,
         });
@@ -996,8 +997,8 @@ describe('Conversations through the record API', () => {
     }
 
     const readableRecordIds =
-      await getAppProviderByClassName<RecordPermissionsService>(
-        'RecordPermissionsService',
+      await getAppProviderByClassName<RecordEventPermissionsService>(
+        'RecordEventPermissionsService',
       ).findReadableEventRecordIds({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,

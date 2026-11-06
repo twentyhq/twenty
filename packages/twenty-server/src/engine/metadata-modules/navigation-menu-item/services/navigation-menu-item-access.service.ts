@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,28 +24,16 @@ export class NavigationMenuItemAccessService {
 
   async canUserCreateNavigationMenuItem({
     userWorkspaceId,
-    workspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
     inputUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
-    workspaceId: string;
-    apiKeyId: string | undefined;
-    applicationId: string | undefined;
-    agentId: string | undefined;
     inputUserWorkspaceId: string | undefined;
   }): Promise<boolean> {
     if (!isDefined(inputUserWorkspaceId)) {
       const hasPermission =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          setting: PermissionFlagType.LAYOUTS,
-          apiKeyId,
-          applicationId,
-          agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: PermissionFlagType.LAYOUTS,
         });
 
       if (!hasPermission) {
@@ -72,28 +61,16 @@ export class NavigationMenuItemAccessService {
 
   async canUserUpdateNavigationMenuItem({
     userWorkspaceId,
-    workspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
-    workspaceId: string;
-    apiKeyId: string | undefined;
-    applicationId: string | undefined;
-    agentId: string | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
       const hasPermission =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          setting: PermissionFlagType.LAYOUTS,
-          apiKeyId,
-          applicationId,
-          agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: PermissionFlagType.LAYOUTS,
         });
 
       if (!hasPermission) {
@@ -128,28 +105,16 @@ export class NavigationMenuItemAccessService {
 
   async canUserDeleteNavigationMenuItem({
     userWorkspaceId,
-    workspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
-    workspaceId: string;
-    apiKeyId: string | undefined;
-    applicationId: string | undefined;
-    agentId: string | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
       const hasPermission =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          setting: PermissionFlagType.LAYOUTS,
-          apiKeyId,
-          applicationId,
-          agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: PermissionFlagType.LAYOUTS,
         });
 
       if (!hasPermission) {
