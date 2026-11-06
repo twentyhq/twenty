@@ -15,7 +15,6 @@ export const hasRecordGroupsComponentSelector =
           instanceId,
         });
 
-        // The All tab shows the view ungrouped
         return (
           recordGroupIds.length > 0 &&
           !get(isAllRecordGroupsTabActiveComponentSelector, { instanceId })
