@@ -15,6 +15,7 @@ import {
   type workflowDraftEmailActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
+  type recordSortSchema,
   type workflowFindRecordsActionSchema,
   type workflowFormActionSchema,
   type workflowHttpRequestActionSchema,
@@ -67,6 +68,7 @@ export type WorkflowUpsertRecordAction = z.infer<
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
+export type WorkflowRecordSort = z.infer<typeof recordSortSchema>;
 export type WorkflowPickRecordAction = z.infer<
   typeof workflowPickRecordActionSchema
 >;

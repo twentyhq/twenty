@@ -321,7 +321,7 @@ describe('resolveAiRunPermissionScope', () => {
           },
           flatObjectMetadata: flatObjectMetadataMaps.byUniversalIdentifier
             .campaign as FlatObjectMetadata,
-          operationType: 'insert',
+          operationType: 'create',
         });
 
       expect(isInsertDenied()).toBe(false);

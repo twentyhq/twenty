@@ -80,7 +80,7 @@ export class RecordPermissionsResolver {
       });
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
-        : await this.recordPermissionsService.findRecordsPermissions({
+        : await this.recordPermissionsService.findRecordsActions({
             authContext,
             objectNameSingular: objectMetadata.nameSingular,
             recordIds: [...recordIds],

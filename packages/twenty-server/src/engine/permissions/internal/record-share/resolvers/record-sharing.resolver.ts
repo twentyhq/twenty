@@ -45,7 +45,7 @@ export class RecordSharingResolver {
 
   @Query(() => RecordSharingDTO)
   recordSharing(@Args('target') target: RecordTargetInput) {
-    return this.recordSharingPermissionsService.findRecordSharing({
+    return this.recordSharingPermissionsService.findRecordSharingPanel({
       ...target,
       authContext: this.getUserContext(),
     });
@@ -57,7 +57,7 @@ export class RecordSharingResolver {
     @Args('isPrivate', { type: () => Boolean }) isPrivate: boolean,
   ) {
     return this.handleRecordShareException(() =>
-      this.recordSharingWriteService.changeRecordPrivacy({
+      this.recordSharingWriteService.setRecordPrivacy({
         ...target,
         isPrivate,
         authContext: this.getUserContext(),

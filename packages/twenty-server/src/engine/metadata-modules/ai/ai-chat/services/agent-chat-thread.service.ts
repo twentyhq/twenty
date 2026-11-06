@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
@@ -14,6 +15,9 @@ import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
+import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { type AgentChatThreadCreationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-creation-args.type';
+import { type AgentChatThreadCreationResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-creation-result.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
@@ -54,17 +58,22 @@ export class AgentChatThreadService {
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
   ) {}
 
-  async createThread({
+  async createThread(
+    args: AgentChatThreadCreationArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
+    return (await this.createThreadWithParticipation(args)).thread;
+  }
+
+  private async createThreadWithParticipation({
     isAssistantMentioned,
     isInitialAssistantParticipant,
     recipientWorkspaceMemberIds,
     mentionedWorkspaceMemberIds,
     shouldApplyAssistantParticipation = true,
+    shouldValidateRecipients = false,
+    isReplyRequested,
     ...args
-  }: Parameters<AgentChatSharingService['createThread']>[0] &
-    AgentChatAssistantParticipationArgs & {
-      shouldApplyAssistantParticipation?: boolean;
-    }): Promise<AgentChatThreadWorkspaceEntity> {
+  }: AgentChatThreadCreationArgs): Promise<AgentChatThreadCreationResult> {
     if (isDefined(args.channelId)) {
       await this.channelAccessService.assertChannelAccess({
         workspaceId: args.workspaceId,
@@ -73,16 +82,38 @@ export class AgentChatThreadService {
       });
     }
 
-    const createdThread = await this.sharingService.createThread(args);
-    const savedThread = await this.reconcileInitialAssistantParticipation({
+    const assistantParticipationInput = {
       workspaceId: args.workspaceId,
       workspaceMemberId: args.workspaceMemberId,
-      thread: createdThread,
       isAssistantMentioned,
       isInitialAssistantParticipant,
       recipientWorkspaceMemberIds,
       mentionedWorkspaceMemberIds,
+      isReplyRequested,
+    };
+    let participation: AgentChatAssistantParticipation | undefined;
+    const createdThread = await this.sharingService.createThread({
+      ...args,
+      validateThread: shouldValidateRecipients
+        ? async ({ thread, transactionScope }) => {
+            participation =
+              await this.assistantParticipationService.resolveAssistantParticipation(
+                {
+                  ...assistantParticipationInput,
+                  thread,
+                  transactionScope,
+                  isInitialMessage: true,
+                  isUncommittedThread: true,
+                },
+              );
+          }
+        : undefined,
+    });
+    const savedThread = await this.reconcileInitialAssistantParticipation({
+      ...assistantParticipationInput,
+      thread: createdThread,
       shouldApplyAssistantParticipation,
+      participation,
     });
 
     // Sent first, so the new thread never shows as unread to its owner
@@ -97,17 +128,19 @@ export class AgentChatThreadService {
       threadId: savedThread.id,
     });
 
-    return savedThread;
+    return { thread: savedThread, participation };
   }
 
   private async reconcileInitialAssistantParticipation({
     thread,
     shouldApplyAssistantParticipation,
+    participation,
     ...args
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> &
     AgentChatAssistantParticipationArgs & {
       thread: AgentChatThreadWorkspaceEntity;
       shouldApplyAssistantParticipation: boolean;
+      participation?: AgentChatAssistantParticipation;
     }): Promise<AgentChatThreadWorkspaceEntity> {
     if (!shouldApplyAssistantParticipation) {
       return thread;
@@ -118,6 +151,7 @@ export class AgentChatThreadService {
       thread,
       isInitialMessage: true,
       shouldEmitEvent: false,
+      participation,
     });
   }
 
@@ -128,29 +162,30 @@ export class AgentChatThreadService {
     title,
     isSubscribed,
     ...args
-  }: AgentChatThreadAccessArgs & {
-    title?: string;
-    isSubscribed?: boolean;
-    channelId?: string;
-    shouldApplyAssistantParticipation?: boolean;
-  } & AgentChatAssistantParticipationArgs): Promise<boolean> {
+  }: AgentChatThreadAccessArgs &
+    Omit<AgentChatThreadCreationArgs, 'id'>): Promise<
+    AgentChatThreadCreationResult | undefined
+  > {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {
-      return false;
+      return;
     }
 
     try {
-      await this.createThread({ ...args, id: threadId, title, isSubscribed });
+      return await this.createThreadWithParticipation({
+        ...args,
+        id: threadId,
+        title,
+        isSubscribed,
+      });
     } catch (error) {
       if (!isUniqueViolationError(error)) {
         throw error;
       }
 
-      return false;
+      return;
     }
-
-    return true;
   }
 
   async claimThreadForRun({
@@ -220,6 +255,25 @@ export class AgentChatThreadService {
     return this.restoreDeletedThread({ args, threadBefore });
   }
 
+  async restoreDirectMessageThread({
+    workspaceId,
+    thread,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+  }): Promise<void> {
+    await this.threadRepository.restore(workspaceId, {
+      id: thread.id,
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+    });
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      action: DatabaseEventAction.RESTORED,
+    });
+  }
+
   private async restoreDeletedThread({
     args,
     threadBefore,
@@ -284,18 +338,15 @@ export class AgentChatThreadService {
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
 
     const setUpThreadIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            (transactionScope) =>
-              this.sharingService.setUpCreatedThreadsInboxState({
-                transactionScope,
-                workspaceId,
-                workspaceMemberId,
-                threadIds: assignedThreadIds,
-                participantObjectMetadata,
-              }),
-          ),
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        (transactionScope) =>
+          this.sharingService.setUpCreatedThreadsInboxState({
+            transactionScope,
+            workspaceId,
+            workspaceMemberId,
+            threadIds: assignedThreadIds,
+            participantObjectMetadata,
+          }),
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );
@@ -398,17 +449,20 @@ export class AgentChatThreadService {
 
   private async reconcileAssistantParticipation({
     shouldEmitEvent,
+    participation: providedParticipation,
     ...args
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> &
     AgentChatAssistantParticipationArgs & {
       thread: AgentChatThreadWorkspaceEntity;
       isInitialMessage: boolean;
       shouldEmitEvent: boolean;
+      participation?: AgentChatAssistantParticipation;
     }): Promise<AgentChatThreadWorkspaceEntity> {
     const participation =
-      await this.assistantParticipationService.resolveAssistantParticipation(
+      providedParticipation ??
+      (await this.assistantParticipationService.resolveAssistantParticipation(
         args,
-      );
+      ));
 
     await this.assistantParticipationService.persistAssistantParticipation({
       workspaceId: args.workspaceId,
@@ -513,6 +567,14 @@ export class AgentChatThreadService {
       threadId,
     });
 
+    if (
+      thread.conversationType ===
+        AgentChatThreadConversationType.DIRECT_MESSAGE &&
+      isDefined(channelId)
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
     if (isDefined(channelId)) {
       await this.channelAccessService.assertCallerChannelAccessOrThrow({
         authContext,
@@ -526,73 +588,69 @@ export class AgentChatThreadService {
 
     // Owner re-checked in the UPDATE: removing a member clears it on their channel chats
     const movedThreadIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            async (transactionScope) => {
-              if (isDefined(channelId)) {
-                await lockAgentChatChannelForThreadWriteOrThrow({
-                  transactionScope,
-                  channelRepository: this.channelRepository,
-                  workspaceId: workspaceId,
-                  channelId,
-                });
-              }
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          if (isDefined(channelId)) {
+            await lockAgentChatChannelForThreadWriteOrThrow({
+              transactionScope,
+              channelRepository: this.channelRepository,
+              workspaceId: workspaceId,
+              channelId,
+            });
+          }
 
-              const threadRepository =
-                transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                  'agentChatThread',
-                  { shouldSkipEventEmission: true },
-                );
-              const currentThread = await threadRepository.findOne({
-                select: ['channelId', 'workspaceMemberId'],
-                where: { id: threadId },
-              });
+          const threadRepository =
+            transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+              'agentChatThread',
+              { shouldSkipEventEmission: true },
+            );
+          const currentThread = await threadRepository.findOne({
+            select: ['channelId', 'workspaceMemberId'],
+            where: { id: threadId },
+          });
 
-              if (!isDefined(currentThread)) {
-                return throwAgentChatThreadNotFound();
-              }
+          if (!isDefined(currentThread)) {
+            return throwAgentChatThreadNotFound();
+          }
 
-              if (
-                !isDefined(channelId) &&
-                !isDefined(currentThread.workspaceMemberId)
-              ) {
-                return [];
-              }
+          if (
+            !isDefined(channelId) &&
+            !isDefined(currentThread.workspaceMemberId)
+          ) {
+            return [];
+          }
 
-              const sourceChannelId = currentThread.channelId ?? null;
-              const { generatedMaps: movedThreads } =
-                await threadRepository.update(
-                  {
-                    id: threadId,
-                    channelId: sourceChannelId ?? IsNull(),
-                    ...(isDefined(channelId)
-                      ? {}
-                      : { workspaceMemberId: Not(IsNull()) }),
-                  },
-                  {
-                    channelId,
-                    channelArchivedAt: null,
-                    channelSnoozedUntil: null,
-                  },
-                );
-
-              if (!isNonEmptyArray(movedThreads)) {
-                return throwAgentChatChannelBusy();
-              }
-
-              const movedThreadIds: string[] = movedThreads.map(({ id }) => id);
-
-              await this.channelGrantService.rewriteThreadGrantsInTransaction({
-                transactionScope,
-                workspaceId: workspaceId,
-                threadIds: movedThreadIds,
-                affectedChannelIds: [sourceChannelId, channelId],
-              });
-
-              return movedThreadIds;
+          const sourceChannelId = currentThread.channelId ?? null;
+          const { generatedMaps: movedThreads } = await threadRepository.update(
+            {
+              id: threadId,
+              channelId: sourceChannelId ?? IsNull(),
+              ...(isDefined(channelId)
+                ? {}
+                : { workspaceMemberId: Not(IsNull()) }),
             },
-          ),
+            {
+              channelId,
+              channelArchivedAt: null,
+              channelSnoozedUntil: null,
+            },
+          );
+
+          if (!isNonEmptyArray(movedThreads)) {
+            return throwAgentChatChannelBusy();
+          }
+
+          const movedThreadIds: string[] = movedThreads.map(({ id }) => id);
+
+          await this.channelGrantService.rewriteThreadGrantsInTransaction({
+            transactionScope,
+            workspaceId: workspaceId,
+            threadIds: movedThreadIds,
+            affectedChannelIds: [sourceChannelId, channelId],
+          });
+
+          return movedThreadIds;
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

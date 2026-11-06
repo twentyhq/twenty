@@ -17,7 +17,7 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   objectMetadataId,
   canReadObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'select',
+    operationType: 'read',
   }),
   canUpdateObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
@@ -25,11 +25,11 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   }),
   canSoftDeleteObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'soft-delete',
+    operationType: 'softDelete',
   }),
   canDestroyObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'delete',
+    operationType: 'destroy',
   }),
   restrictedFields: objectRecordsPermissions.restrictedFields,
   rowLevelPermissionPredicates:

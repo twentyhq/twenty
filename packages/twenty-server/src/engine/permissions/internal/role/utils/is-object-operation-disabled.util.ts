@@ -8,15 +8,14 @@ const getObjectPermissionAction = (
   operationType: ObjectRecordsOperationType,
 ): ObjectPermissionAction => {
   switch (operationType) {
-    case 'select':
+    case 'read':
       return 'canReadObjectRecords';
-    case 'insert':
+    case 'create':
     case 'update':
       return 'canUpdateObjectRecords';
-    case 'delete':
+    case 'destroy':
       return 'canDestroyObjectRecords';
-    case 'restore':
-    case 'soft-delete':
+    case 'softDelete':
       return 'canSoftDeleteObjectRecords';
     default:
       return assertUnreachable(operationType);

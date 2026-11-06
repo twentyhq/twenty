@@ -68,7 +68,7 @@ export class AgentChatChannelAccessService {
     authContext: AgentInboxCallerAuthContext,
   ): Promise<FlatRole | undefined> {
     const [principals, { flatRoleMaps }] = await Promise.all([
-      this.principalPermissionsService.buildPermissionsPrincipals({
+      this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       }),
       this.workspaceCacheService.getOrRecompute(authContext.workspace.id, [

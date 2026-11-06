@@ -108,7 +108,7 @@ const buildRepository = ({
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
       permissionsPrincipals: undefined,
-      recordRepositoryPermissions: {
+      recordPermissions: {
         isOperationDisabled: jest.fn().mockResolvedValue(false),
         assertObjectOperationAccessibleOrThrow: jest.fn(),
         assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
