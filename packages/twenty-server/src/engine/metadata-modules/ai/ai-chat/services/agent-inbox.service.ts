@@ -367,7 +367,7 @@ export class AgentInboxService {
     workspaceMemberIds,
   }: {
     workspaceId: string;
-    thread: AgentChatThreadWorkspaceEntity;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
     workspaceMemberIds: string[];
   }): Promise<void> {
     if (!isDefined(thread.workspaceMemberId)) {
@@ -400,7 +400,7 @@ export class AgentInboxService {
     workspaceMemberIds,
   }: {
     workspaceId: string;
-    thread: AgentChatThreadWorkspaceEntity;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
     workspaceMemberIds: string[];
   }): Promise<void> {
     if (
