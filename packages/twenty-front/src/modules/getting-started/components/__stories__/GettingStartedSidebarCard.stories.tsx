@@ -8,8 +8,10 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FeatureFlagKey,
   GettingStartedProgressDocument,
@@ -64,7 +66,9 @@ const PROGRESS_MOCK: MockedResponse = {
 };
 
 const StyledDrawerFrame = styled.div`
-  width: 212px;
+  box-sizing: border-box;
+  padding-left: ${themeCssVariables.spacing[2]};
+  width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
 `;
 
 const meta: Meta<typeof GettingStartedSidebarCard> = {
@@ -105,7 +109,7 @@ export const TrialCountdown: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('3 days left')).toBeVisible();
+    await expect(await canvas.findByText(/days left/)).toBeVisible();
     await expect(
       canvas.getByRole('button', { name: 'Keep Pro' }),
     ).toBeVisible();

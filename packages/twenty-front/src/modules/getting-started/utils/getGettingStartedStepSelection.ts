@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
 export const getGettingStartedStepSelection = ({
@@ -28,14 +26,14 @@ export const getGettingStartedStepSelection = ({
     ].find(
       (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
     ) ?? displayedStep;
+  const isDisplayedStepCompleted =
+    completedStepActionKeys.includes(displayedStep);
 
   return {
     selectedStepActionKey: displayedStep,
     nextStep,
-    stepAfterSkip:
-      completedStepActionKeys.includes(displayedStep) &&
-      isDefined(firstRemainingStep)
-        ? firstRemainingStep
-        : nextStep,
+    stepAfterSkip: isDisplayedStepCompleted
+      ? (firstRemainingStep ?? nextStep)
+      : nextStep,
   };
 };
