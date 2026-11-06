@@ -358,9 +358,9 @@ describe('application workflow actions', () => {
         ],
       },
     });
-    expect(
-      convert(WorkflowActionType.FIND_RECORDS).settings.input.orderBy,
-    ).toEqual(convert(WorkflowActionType.FIND_RECORDS).settings.input.orderBy);
+    expect(convert(WorkflowActionType.FIND_RECORDS).settings.input).toEqual(
+      convert(WorkflowActionType.FIND_RECORDS).settings.input,
+    );
     expect(
       convert(WorkflowActionType.FIND_RECORDS).settings.input,
     ).not.toHaveProperty('orderBy.gqlOperationOrderBy');
