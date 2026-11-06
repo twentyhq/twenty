@@ -12,58 +12,62 @@ import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/engine/utils/c
 const OPPORTUNITY_ID = '20000000-0000-4000-8000-000000000000';
 const COMPANY_ID = '20000000-0000-4000-8000-000000000001';
 
-const field = (
-  id: string,
-  objectMetadataId: string,
-  name: string,
-  type: FieldMetadataType,
-  overrides: Partial<FlatFieldMetadata> = {},
-) =>
+const field = ({
+  id,
+  objectMetadataId,
+  name,
+  type,
+  relationTargetObjectMetadataId = null,
+}: {
+  id: string;
+  objectMetadataId: string;
+  name: string;
+  type: FieldMetadataType;
+  relationTargetObjectMetadataId?: string | null;
+}) =>
   getFlatFieldMetadataMock({
     id,
     universalIdentifier: id,
     objectMetadataId,
     name,
     type,
-    ...overrides,
+    relationTargetObjectMetadataId,
   });
 
 const opportunityFields = [
-  field(
-    '10000000-0000-4000-8000-000000000001',
-    OPPORTUNITY_ID,
-    'closeDate',
-    FieldMetadataType.DATE_TIME,
-  ),
-  field(
-    '10000000-0000-4000-8000-000000000002',
-    OPPORTUNITY_ID,
-    'amount',
-    FieldMetadataType.CURRENCY,
-  ),
-  field(
-    '10000000-0000-4000-8000-000000000003',
-    OPPORTUNITY_ID,
-    'company',
-    FieldMetadataType.RELATION,
-    {
-      relationTargetObjectMetadataId: COMPANY_ID,
-    },
-  ),
-  field(
-    '10000000-0000-4000-8000-000000000004',
-    OPPORTUNITY_ID,
-    'position',
-    FieldMetadataType.POSITION,
-  ),
+  field({
+    id: '10000000-0000-4000-8000-000000000001',
+    objectMetadataId: OPPORTUNITY_ID,
+    name: 'closeDate',
+    type: FieldMetadataType.DATE_TIME,
+  }),
+  field({
+    id: '10000000-0000-4000-8000-000000000002',
+    objectMetadataId: OPPORTUNITY_ID,
+    name: 'amount',
+    type: FieldMetadataType.CURRENCY,
+  }),
+  field({
+    id: '10000000-0000-4000-8000-000000000003',
+    objectMetadataId: OPPORTUNITY_ID,
+    name: 'company',
+    type: FieldMetadataType.RELATION,
+    relationTargetObjectMetadataId: COMPANY_ID,
+  }),
+  field({
+    id: '10000000-0000-4000-8000-000000000004',
+    objectMetadataId: OPPORTUNITY_ID,
+    name: 'position',
+    type: FieldMetadataType.POSITION,
+  }),
 ];
 const [CLOSE_DATE, AMOUNT, COMPANY_RELATION] = opportunityFields;
-const COMPANY_NAME = field(
-  '10000000-0000-4000-8000-000000000005',
-  COMPANY_ID,
-  'name',
-  FieldMetadataType.TEXT,
-);
+const COMPANY_NAME = field({
+  id: '10000000-0000-4000-8000-000000000005',
+  objectMetadataId: COMPANY_ID,
+  name: 'name',
+  type: FieldMetadataType.TEXT,
+});
 
 const buildMaps = ({
   companyLabelIdentifierFieldMetadataId,
@@ -84,15 +88,19 @@ const buildMaps = ({
     labelIdentifierFieldMetadataId: companyLabelIdentifierFieldMetadataId,
   });
 
-  const flatObjectMetadataMaps = [opportunity, company].reduce(
+  const flatObjectMetadataMaps = [opportunity, company].reduce<
+    FlatEntityMaps<FlatObjectMetadata>
+  >(
     (flatEntityMaps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
+    createEmptyFlatEntityMaps(),
   );
-  const flatFieldMetadataMaps = [...opportunityFields, COMPANY_NAME].reduce(
+  const flatFieldMetadataMaps = [...opportunityFields, COMPANY_NAME].reduce<
+    FlatEntityMaps<FlatFieldMetadata>
+  >(
     (flatEntityMaps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+    createEmptyFlatEntityMaps(),
   );
 
   return {

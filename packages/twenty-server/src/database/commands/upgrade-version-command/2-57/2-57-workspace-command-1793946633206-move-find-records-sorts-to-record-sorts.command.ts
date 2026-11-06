@@ -69,7 +69,7 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
         orderByEntry,
       } of converted.inexactlyConvertedSorts) {
         this.logger.warn(
-          `Workspace ${workspaceId}: find records step ${stepId} sort ${JSON.stringify(orderByEntry)} has no exact record sort; nested or unknown entries are dropped and nulls first becomes nulls last`,
+          `Workspace ${workspaceId}: find records step ${stepId} sort ${JSON.stringify(orderByEntry)} has no exact record sort; it is dropped if nested or unknown, nulls first becomes nulls last and a relation id sorts by the relation's label`,
         );
       }
 
@@ -85,10 +85,10 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
       whereParameters: [workspaceId],
       mapRow: convertSteps,
     });
-    const workspaceVersionCount = (await this.tableExists(
+    const workspaceVersionCount = (await this.tableExists({
       dataSource,
-      workspaceVersionTable,
-    ))
+      tableName: workspaceVersionTable,
+    }))
       ? await rewriteJsonbRowsWithCompareAndSet({
           dataSource,
           isDryRun,
@@ -99,7 +99,10 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
           mapRow: convertSteps,
         })
       : 0;
-    const runCount = (await this.tableExists(dataSource, workspaceRunTable))
+    const runCount = (await this.tableExists({
+      dataSource,
+      tableName: workspaceRunTable,
+    }))
       ? await this.rewriteRunFlowSteps({
           dataSource,
           isDryRun,
@@ -153,10 +156,13 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
     return fieldsByObjectName;
   }
 
-  private async tableExists(
-    dataSource: DataSource,
-    tableName: string,
-  ): Promise<boolean> {
+  private async tableExists({
+    dataSource,
+    tableName,
+  }: {
+    dataSource: DataSource;
+    tableName: string;
+  }): Promise<boolean> {
     const [{ exists }] = await dataSource.query(
       `SELECT to_regclass($1) IS NOT NULL AS "exists"`,
       [tableName],

@@ -10,6 +10,8 @@ import {
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
 const updateStepResponse = (
@@ -45,6 +47,10 @@ describe('Workflow version malformed validation (e2e)', () => {
     id: string;
     settings: { input: Record<string, unknown> };
   };
+  let findRecordsStep: {
+    id: string;
+    settings: { input: Record<string, unknown> };
+  };
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({
@@ -74,6 +80,12 @@ describe('Workflow version malformed validation (e2e)', () => {
       coreWorkflowVersionId,
       stepType: 'SEND_EMAIL',
       position: { x: 400, y: 0 },
+    });
+
+    findRecordsStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'FIND_RECORDS',
+      position: { x: 600, y: 0 },
     });
 
     const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
@@ -158,6 +170,46 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toContain('does not exist');
+  });
+
+  const findRecordsStepWithOrderBy = (orderBy: Record<string, unknown>) => ({
+    ...findRecordsStep,
+    settings: {
+      ...findRecordsStep.settings,
+      input: { objectName: 'company', limit: 1, orderBy },
+    },
+  });
+
+  it('rejects a find records sort stored as a GraphQL order', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      findRecordsStepWithOrderBy({
+        gqlOperationOrderBy: [{ name: 'DescNullsLast' }],
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+  });
+
+  it('accepts a find records sort stored as record sorts', async () => {
+    const [{ id: companyNameFieldId }] = await global.testDataSource.query(
+      `SELECT field.id FROM core."fieldMetadata" field
+       JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
+       WHERE object."workspaceId" = $1 AND object."nameSingular" = 'company' AND field.name = 'name'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      findRecordsStepWithOrderBy({
+        recordSorts: [
+          { fieldMetadataId: companyNameFieldId, direction: 'DESC' },
+        ],
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   it('accepts a valid rich text object', async () => {

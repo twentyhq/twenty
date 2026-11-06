@@ -53,8 +53,7 @@ const findSortedField = (
       RELATION_FIELD_TYPES.has(field.type) && `${field.name}Id` === fieldName,
   );
 
-// Builder orders end with the position tiebreaker and spread FULL_NAME and relation
-// sorts over several entries, so these collapse back to one record sort per field
+// Collapses the builder's position tiebreaker and multi-entry FULL_NAME and relation sorts into one sort per field
 const toRecordSorts = ({
   stepId,
   gqlOperationOrderBy,
@@ -94,7 +93,8 @@ const toRecordSorts = ({
       continue;
     }
 
-    if (direction.endsWith('NullsFirst')) {
+    // a record sort orders nulls last, and orders a relation by its target's label rather than its id
+    if (direction.endsWith('NullsFirst') || field.name !== fieldName) {
       inexactlyConvertedSorts.push({ stepId, orderByEntry });
     }
 

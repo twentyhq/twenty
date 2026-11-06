@@ -39,10 +39,13 @@ type SortedWorkflow = {
   step: FindRecordsStep;
 };
 
-const withOrderBy = (
-  step: FindRecordsStep,
-  orderBy: Record<string, unknown>,
-): FindRecordsStep => ({
+const withOrderBy = ({
+  step,
+  orderBy,
+}: {
+  step: FindRecordsStep;
+  orderBy: Record<string, unknown>;
+}): FindRecordsStep => ({
   ...step,
   settings: {
     ...step.settings,
@@ -128,7 +131,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
       `UPDATE core."workflowVersion" SET steps = $2::jsonb WHERE id = $1`,
       [
         coreWorkflowVersionId,
-        JSON.stringify([withOrderBy(createdStep, orderBy)]),
+        JSON.stringify([withOrderBy({ step: createdStep, orderBy })]),
       ],
     );
 

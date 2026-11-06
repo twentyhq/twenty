@@ -90,32 +90,32 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
   });
 
   it('gives converted sorts the same ids each time it runs', () => {
-    const orderBy = { gqlOperationOrderBy: [{ companyId: 'DescNullsLast' }] };
+    const orderBy = { gqlOperationOrderBy: [{ status: 'DescNullsLast' }] };
 
     expect(recordSortsOf(convert(orderBy).steps)).toEqual(
       recordSortsOf(convert(orderBy).steps),
     );
-    expect(recordSortsOf(convert(orderBy).steps)).toEqual([
-      expect.objectContaining({
-        fieldMetadataId: COMPANY.id,
-        direction: 'DESC',
-      }),
-    ]);
   });
 
   it('reports orders that record sorts cannot express exactly', () => {
     const { steps, inexactlyConvertedSorts } = convert({
       gqlOperationOrderBy: [
         { status: 'AscNullsFirst' },
+        { companyId: 'DescNullsLast' },
         { unknownField: 'AscNullsLast' },
       ],
     });
 
     expect(recordSortsOf(steps)).toEqual([
       expect.objectContaining({ fieldMetadataId: STATUS.id, direction: 'ASC' }),
+      expect.objectContaining({
+        fieldMetadataId: COMPANY.id,
+        direction: 'DESC',
+      }),
     ]);
     expect(inexactlyConvertedSorts).toEqual([
       { stepId: 'step-id', orderByEntry: { status: 'AscNullsFirst' } },
+      { stepId: 'step-id', orderByEntry: { companyId: 'DescNullsLast' } },
       { stepId: 'step-id', orderByEntry: { unknownField: 'AscNullsLast' } },
     ]);
   });
