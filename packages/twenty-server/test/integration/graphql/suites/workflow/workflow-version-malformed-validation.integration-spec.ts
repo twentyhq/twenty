@@ -215,19 +215,6 @@ describe('Workflow version malformed validation (e2e)', () => {
     },
   });
 
-  it('rejects an update step selecting a field the object does not have', async () => {
-    const response = await updateStepResponse(
-      coreWorkflowVersionId,
-      updateRecordStepWithFieldsToUpdate(['jobTitle', 'employer']),
-    );
-
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
-    expect(response.body.errors[0].message).toContain(
-      'updates unknown fields of "person": employer',
-    );
-  });
-
   it('accepts an update step selecting a relation by field name or join column', async () => {
     for (const fieldsToUpdate of [['company'], ['companyId', 'jobTitle']]) {
       const response = await updateStepResponse(

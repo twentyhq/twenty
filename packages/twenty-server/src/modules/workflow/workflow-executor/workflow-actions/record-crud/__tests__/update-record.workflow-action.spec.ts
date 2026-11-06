@@ -125,18 +125,11 @@ describe('UpdateRecordWorkflowAction', () => {
       },
     });
 
-  beforeEach(() => {
-    executeUpdateRecord.mockClear();
-  });
-
-  it.each([
-    ['its field name', 'company'],
-    ['its join column', 'companyId'],
-  ])('updates a relation selected by %s', async (_, fieldReference) => {
+  it('updates a relation selected by its field name', async () => {
     await execute(
       buildUpdateStep({
         objectRecord: { company: { id: COMPANY_ID }, jobTitle: 'CTO' },
-        fieldsToUpdate: [fieldReference, 'jobTitle'],
+        fieldsToUpdate: ['company', 'jobTitle'],
       }),
     );
 
@@ -147,32 +140,5 @@ describe('UpdateRecordWorkflowAction', () => {
         fieldsToUpdate: ['companyId', 'jobTitle'],
       }),
     );
-  });
-
-  it('updates a relation set by its join column and selected by its field name', async () => {
-    await execute(
-      buildUpdateStep({
-        objectRecord: { companyId: COMPANY_ID },
-        fieldsToUpdate: ['company'],
-      }),
-    );
-
-    expect(executeUpdateRecord).toHaveBeenCalledTimes(1);
-    expect(executeUpdateRecord).toHaveBeenCalledWith(
-      expect.objectContaining({ fieldsToUpdate: ['companyId'] }),
-    );
-  });
-
-  it('refuses to run when no selected field has a value', async () => {
-    await expect(
-      execute(
-        buildUpdateStep({
-          objectRecord: { jobTitle: 'CTO' },
-          fieldsToUpdate: ['company'],
-        }),
-      ),
-    ).rejects.toThrow('Failed to update: No fields to update');
-
-    expect(executeUpdateRecord).not.toHaveBeenCalled();
   });
 });

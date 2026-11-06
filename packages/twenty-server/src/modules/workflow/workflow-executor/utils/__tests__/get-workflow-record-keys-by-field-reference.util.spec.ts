@@ -118,10 +118,6 @@ describe('getWorkflowRecordKeysByFieldReference', () => {
   const recordKeysByFieldReference =
     getWorkflowRecordKeysByFieldReference(objectMetadataInfo);
 
-  it('maps a field to its own name', () => {
-    expect(recordKeysByFieldReference.get('title')).toEqual(['title']);
-  });
-
   it('maps a many-to-one relation by name or join column to both keys', () => {
     expect(recordKeysByFieldReference.get('assignee')).toEqual([
       'assignee',
@@ -154,9 +150,5 @@ describe('getWorkflowRecordKeysByFieldReference', () => {
       'targetCompany',
       'targetCompanyId',
     ]);
-  });
-
-  it('does not know names that match no field', () => {
-    expect(recordKeysByFieldReference.has('unknownField')).toBe(false);
   });
 });

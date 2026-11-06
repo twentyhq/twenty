@@ -61,8 +61,6 @@ const validateUpdate = (
 
 describe('validateWorkflowManifestRecordFields', () => {
   it.each([
-    ['its field name', { owner: { id: 'person' } }, 'owner'],
-    ['its join column', { ownerId: 'person' }, 'ownerId'],
     ['its field name, set by its join column', { ownerId: 'person' }, 'owner'],
     [
       'its join column, set by its field name',

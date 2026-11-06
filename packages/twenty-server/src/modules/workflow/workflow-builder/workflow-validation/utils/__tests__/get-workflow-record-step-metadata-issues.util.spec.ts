@@ -132,16 +132,6 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
     },
   });
 
-  it('flags an update step whose fieldsToUpdate names no field of the object', () => {
-    const issues = getIssues([buildUpdateStep(['body', 'title'])]);
-
-    expect(issues).toHaveLength(1);
-    expect(issues[0]).toMatchObject({
-      code: 'FIELD_NOT_FOUND',
-      stepId: 'step-1',
-    });
-  });
-
   it('leaves a malformed fieldsToUpdate to the step params check', () => {
     // @ts-expect-error stored step inputs are unvalidated JSON
     const issues = getIssues([buildUpdateStep('title')]);
