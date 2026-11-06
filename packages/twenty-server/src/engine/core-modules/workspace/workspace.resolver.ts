@@ -15,7 +15,6 @@ import {
 } from '@nestjs/graphql';
 
 import assert from 'assert';
-import { type Request } from 'express';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
@@ -23,13 +22,13 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -70,7 +69,6 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -197,22 +195,12 @@ export class WorkspaceResolver {
   )
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
+    @Context('req') authContext: RawAuthContext,
   ) {
     try {
-      return await this.workspaceService.updateWorkspaceById({
-        payload: {
-          ...data,
-          id: workspace.id,
-        },
-        userWorkspaceId,
-        apiKey,
-        application,
-        agentId: undefined,
+      return await this.workspaceService.writeWorkspace({
+        change: { type: 'update', data },
+        authContext,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -238,19 +226,12 @@ export class WorkspaceResolver {
     }),
   )
   async resetAiChatAssistantProfile(
-    @Context('req') request: Pick<
-      Request,
-      'workspace' | 'userWorkspaceId' | 'apiKey' | 'application'
-    >,
+    @Context('req') authContext: RawAuthContext,
   ) {
     try {
-      assertIsDefinedOrThrow(request.workspace, WorkspaceNotFoundDefaultError);
-
-      return await this.workspaceService.resetAiChatAssistantProfile({
-        workspaceId: request.workspace.id,
-        userWorkspaceId: request.userWorkspaceId,
-        apiKey: request.apiKey ?? undefined,
-        application: request.application ?? undefined,
+      return await this.workspaceService.writeWorkspace({
+        change: { type: 'resetAssistantProfile' },
+        authContext,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);

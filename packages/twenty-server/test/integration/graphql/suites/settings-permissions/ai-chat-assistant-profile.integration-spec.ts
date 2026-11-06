@@ -233,10 +233,10 @@ describe('workspace assistant profile settings', () => {
     }
   });
 
-  it('resets every profile field to Ada defaults and reads them back', async () => {
+  it('resets every profile field to Ada defaults with an API key and reads them back', async () => {
     const response = await makeMetadataApiRequest(
       resetWorkspaceAssistantProfileQueryFactory(),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      API_KEY_ACCESS_TOKEN,
     );
 
     expect(response.body.errors).toBeUndefined();
@@ -264,7 +264,7 @@ describe('workspace assistant profile settings', () => {
     });
   });
 
-  it('preserves concurrent partial edits in only the authenticated workspace', async () => {
+  it('preserves concurrent user and API key partial edits in only the authenticated workspace', async () => {
     const workspaceRepository =
       getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
     const foreignWorkspace = await workspaceRepository.findOneByOrFail({
@@ -273,7 +273,7 @@ describe('workspace assistant profile settings', () => {
     const responses = await Promise.all([
       updateWorkspace({
         data: { aiChatAssistantProfile: { displayName: '  Sage  ' } },
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        token: API_KEY_ACCESS_TOKEN,
       }),
       updateWorkspace({
         data: { aiChatAssistantProfile: { avatarColor: 'purple' } },
