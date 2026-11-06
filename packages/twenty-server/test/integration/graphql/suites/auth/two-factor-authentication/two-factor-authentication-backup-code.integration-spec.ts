@@ -1,13 +1,15 @@
-import gql from 'graphql-tag';
 import IORedis from 'ioredis';
 import { authenticator } from 'otplib';
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
+import { generateTwoFactorAuthenticationBackupCodes } from 'test/integration/graphql/utils/generate-two-factor-authentication-backup-codes.util';
 import { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/get-auth-tokens-from-two-factor-authentication-recovery-code.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
+import { getTwoFactorAuthenticationBackupCodeStatus } from 'test/integration/graphql/utils/get-two-factor-authentication-backup-code-status.util';
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/suites/user-session/utils/delete-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -21,6 +23,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 const TOTP_STEP_DURATION_MS = 30_000;
 const MINIMUM_STEP_REMAINING_MS = 5_000;
+const RECOVERY_CODE_LIFETIME_MS = 60 * 60 * 1000;
 const JONY_EMAIL = 'jony.ive@apple.dev';
 const SEEDED_PASSWORD = 'tim@apple.dev';
 
@@ -75,6 +78,24 @@ const deleteJonyBackupCodes = () =>
     [AppTokenType.TwoFactorAuthenticationBackupCode, USER_DATA_SEED_IDS.JONY],
   );
 
+const deleteJonyRecoveryCodes = () =>
+  global.testDataSource.query(
+    `DELETE FROM core."appToken" WHERE "type" = $1 AND "userId" = $2`,
+    [AppTokenType.TwoFactorAuthenticationRecoveryCode, USER_DATA_SEED_IDS.JONY],
+  );
+
+const insertJonyRecoveryCode = (recoveryCode: string) =>
+  global.testDataSource.query(
+    `INSERT INTO core."appToken" ("userId", "workspaceId", "type", "value", "expiresAt") VALUES ($1, $2, $3, $4, $5)`,
+    [
+      USER_DATA_SEED_IDS.JONY,
+      SEED_APPLE_WORKSPACE_ID,
+      AppTokenType.TwoFactorAuthenticationRecoveryCode,
+      hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+      new Date(Date.now() + RECOVERY_CODE_LIFETIME_MS),
+    ],
+  );
+
 const enrollJonyAuthenticator = async (): Promise<{
   secret: string;
   backupCodes: string[] | null | undefined;
@@ -89,7 +110,7 @@ const enrollJonyAuthenticator = async (): Promise<{
       /[?&]secret=([^&]+)/,
     )?.[1];
 
-  if (secret === undefined) {
+  if (!isDefined(secret)) {
     throw new Error('Expected the otpauth URI to contain a secret');
   }
 
@@ -141,39 +162,15 @@ const countResetSessions = async (): Promise<number> => {
 };
 
 const getRemainingBackupCodeCount = async (): Promise<number> => {
-  const response = await makeMetadataApiRequest(
-    {
-      query: gql`
-        query TwoFactorAuthenticationBackupCodeStatus {
-          twoFactorAuthenticationBackupCodeStatus {
-            remainingBackupCodeCount
-          }
-        }
-      `,
-    },
-    APPLE_JONY_MEMBER_ACCESS_TOKEN,
-  );
+  const { data, errors } = await getTwoFactorAuthenticationBackupCodeStatus({
+    accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    expectToFail: false,
+  });
 
-  expect(response.body.errors).toBeUndefined();
+  expect(errors).toBeUndefined();
 
-  return response.body.data.twoFactorAuthenticationBackupCodeStatus
-    .remainingBackupCodeCount;
+  return data.twoFactorAuthenticationBackupCodeStatus.remainingBackupCodeCount;
 };
-
-const generateBackupCodes = (otp?: string) =>
-  makeMetadataApiRequest(
-    {
-      query: gql`
-        mutation GenerateTwoFactorAuthenticationBackupCodes($otp: String) {
-          generateTwoFactorAuthenticationBackupCodes(otp: $otp) {
-            backupCodes
-          }
-        }
-      `,
-      variables: { otp },
-    },
-    APPLE_JONY_MEMBER_ACCESS_TOKEN,
-  );
 
 describe('Two-factor authentication backup codes (integration)', () => {
   let jonySecret: string;
@@ -182,6 +179,7 @@ describe('Two-factor authentication backup codes (integration)', () => {
   beforeAll(async () => {
     await clearTwoFactorAuthenticationRateLimits();
     await deleteJonyBackupCodes();
+    await deleteJonyRecoveryCodes();
     await deleteJonyMethodRows();
 
     const { secret, backupCodes } = await enrollJonyAuthenticator();
@@ -196,6 +194,7 @@ describe('Two-factor authentication backup codes (integration)', () => {
 
   afterAll(async () => {
     await deleteJonyBackupCodes();
+    await deleteJonyRecoveryCodes();
     await deleteJonyMethodRows();
     await clearTwoFactorAuthenticationRateLimits();
   });
@@ -253,18 +252,26 @@ describe('Two-factor authentication backup codes (integration)', () => {
   });
 
   it('requires a fresh authenticator code to generate new codes, which replace the old ones', async () => {
-    const withoutOtpResponse = await generateBackupCodes();
+    const { errors: withoutOtpErrors } =
+      await generateTwoFactorAuthenticationBackupCodes({
+        accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        expectToFail: true,
+      });
 
-    expect(withoutOtpResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+    expect(withoutOtpErrors?.[0]?.extensions?.subCode).toBe(
       'STEP_UP_AUTHENTICATION_REQUIRED',
     );
 
-    const response = await generateBackupCodes(await generateOtp(jonySecret));
+    const { data, errors } = await generateTwoFactorAuthenticationBackupCodes({
+      otp: await generateOtp(jonySecret),
+      accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
 
-    expect(response.body.errors).toBeUndefined();
+    expect(errors).toBeUndefined();
 
-    const newBackupCodes: string[] =
-      response.body.data.generateTwoFactorAuthenticationBackupCodes.backupCodes;
+    const newBackupCodes =
+      data.generateTwoFactorAuthenticationBackupCodes.backupCodes;
 
     expect(newBackupCodes).toHaveLength(10);
     expect(await getRemainingBackupCodeCount()).toBe(10);
@@ -306,5 +313,35 @@ describe('Two-factor authentication backup codes (integration)', () => {
     const { errors } = await signInWithCode(jonyBackupCodes[0]);
 
     expect(errors?.[0]?.extensions?.subCode).toBe('INVALID_RECOVERY_CODE');
+  });
+
+  it('revokes the backup codes when a recovery code resets two-factor authentication', async () => {
+    const { data: backupCodesData } =
+      await generateTwoFactorAuthenticationBackupCodes({
+        otp: await generateOtp(jonySecret),
+        accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        expectToFail: false,
+      });
+
+    const [backupCode] =
+      backupCodesData.generateTwoFactorAuthenticationBackupCodes.backupCodes;
+    const recoveryCode = 'ABCDE-FGHJK-MNPQR-STVWX';
+
+    await insertJonyRecoveryCode(recoveryCode);
+
+    const { data, errors } = await signInWithCode(recoveryCode);
+
+    expect(errors).toBeUndefined();
+    expect(
+      data.getAuthTokensFromTwoFactorAuthenticationRecoveryCode
+        .isTwoFactorAuthenticationReset,
+    ).toBe(true);
+    expect(await getRemainingBackupCodeCount()).toBe(0);
+
+    const { errors: backupCodeErrors } = await signInWithCode(backupCode);
+
+    expect(backupCodeErrors?.[0]?.extensions?.subCode).toBe(
+      'INVALID_RECOVERY_CODE',
+    );
   });
 });
