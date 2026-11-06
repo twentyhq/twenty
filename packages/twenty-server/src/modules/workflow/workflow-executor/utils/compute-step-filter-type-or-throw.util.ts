@@ -21,7 +21,7 @@ export type StepFilterVariableSource = {
   outputSchema: unknown;
 };
 
-const findVariableType = ({
+const findVariableTypeOrThrow = ({
   stepFilter,
   variableSources,
 }: {
@@ -69,7 +69,7 @@ export const computeStepFilterTypeOrThrow = ({
 }): string => {
   if (!isDefined(stepFilter.fieldMetadataId)) {
     return computeStepFilterType({
-      variableType: findVariableType({ stepFilter, variableSources }),
+      variableType: findVariableTypeOrThrow({ stepFilter, variableSources }),
     });
   }
 
