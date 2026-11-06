@@ -98,7 +98,6 @@ export const describeRecordAccess = (
   recordAccessCases: RecordAccessCases & { name: string },
 ) => registerCases({ ...recordAccessCases, registerTest: it });
 
-// Each case states the wanted rule: it passes while the code differs and fails once the code is fixed
 export const describeKnownRecordAccessDifferences = (
   recordAccessCases: RecordAccessCases & { name: string },
 ) => registerCases({ ...recordAccessCases, registerTest: it.failing });
