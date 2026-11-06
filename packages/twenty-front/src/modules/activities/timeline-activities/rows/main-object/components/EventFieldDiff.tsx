@@ -26,17 +26,19 @@ const StyledEventFieldDiffContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledEmptyValue = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
 `;
 
 const StyledArrowContainer = styled.span`
   color: ${themeCssVariables.font.color.secondary};
+  flex-shrink: 0;
 `;
 
 export const EventFieldDiff = ({
