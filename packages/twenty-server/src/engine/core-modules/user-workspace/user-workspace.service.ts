@@ -164,44 +164,41 @@ export class UserWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
-      async (transactionScope) => {
-        const workspaceMemberRepository =
-          transactionScope.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          );
-
-        const existingWorkspaceMembers = await workspaceMemberRepository.find({
-          where: { userId: user.id },
-        });
-
-        if (existingWorkspaceMembers.length > 0) {
-          return;
-        }
-
-        const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-          where: {
-            userId: user.id,
-            workspaceId,
-          },
-        });
-
-        await workspaceMemberRepository.insert({
-          name: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-          colorScheme: 'System',
-          uiScale: 'Default',
-          openRecordIn: OpenRecordIn.SIDE_PANEL,
-          userId: user.id,
-          userEmail: user.email,
-          avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
-          locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
-        });
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+        workspaceId,
       },
-      authContext,
-    );
+    });
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+        );
+
+      const existingWorkspaceMembers = await workspaceMemberRepository.find({
+        where: { userId: user.id },
+      });
+
+      if (existingWorkspaceMembers.length > 0) {
+        return;
+      }
+
+      await workspaceMemberRepository.insert({
+        name: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        colorScheme: 'System',
+        uiScale: 'Default',
+        openRecordIn: OpenRecordIn.SIDE_PANEL,
+        userId: user.id,
+        userEmail: user.email,
+        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
+        locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+      });
+    }, authContext);
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
@@ -386,29 +383,56 @@ export class UserWorkspaceService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    // Core rows are deleted inside the workspace transaction, so a failure there rolls the member back.
-    // Only a failed commit can still split them, leaving a member that rejoining the workspace reuses.
-    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
-      async (transactionScope) => {
-        await transactionScope
-          .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          )
-          .delete({ userId });
-
-        await this.deleteUserWorkspaceAndRoleTargets({
-          userWorkspaceId,
-          workspaceId,
-        });
-      },
-      buildSystemAuthContext(workspaceId),
+    // Core and workspace writes never share a transaction, so each step must leave a recoverable state:
+    // the soft delete revokes access first and keeps the row, so a removal that fails later can be retried.
+    await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
     );
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+        )
+        .delete({ userId });
+    }, buildSystemAuthContext(workspaceId));
+
+    await this.deleteUserWorkspaceAndRoleTargets({
+      userWorkspaceId,
+      workspaceId,
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatRoleTargetMaps',
       'userApplicationVariableValueMaps',
       'flatWorkspaceMemberMaps',
     ]);
+  }
+
+  async findUserWorkspaceToRemove({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<UserWorkspaceEntity | null> {
+    const userWorkspace = await this.userWorkspaceRepository.findOneBy({
+      userId,
+      workspaceId,
+    });
+
+    if (isDefined(userWorkspace)) {
+      return userWorkspace;
+    }
+
+    // A removal that stopped after its soft delete is resumed from that row
+    return this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+      withDeleted: true,
+      order: { deletedAt: 'DESC' },
+    });
   }
 
   private async deleteUserWorkspaceAndRoleTargets({

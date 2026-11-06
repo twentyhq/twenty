@@ -301,9 +301,11 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    const userWorkspace = user.userWorkspaces.find(
-      (userWorkspace) => userWorkspace.workspaceId === workspaceId,
-    );
+    const userWorkspace =
+      await this.userWorkspaceService.findUserWorkspaceToRemove({
+        userId,
+        workspaceId,
+      });
 
     if (!isDefined(userWorkspace)) {
       throw new Error('User workspace not found.');
@@ -314,7 +316,11 @@ export class UserService {
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
+    const hasOtherWorkspaces = user.userWorkspaces.some(
+      (otherUserWorkspace) => otherUserWorkspace.workspaceId !== workspaceId,
+    );
+
+    if (!hasOtherWorkspaces) {
       await this.userRepository.softDelete(userId);
       await this.coreEntityCacheService.invalidate('user', userId);
     }
