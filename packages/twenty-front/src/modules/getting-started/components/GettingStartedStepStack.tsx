@@ -3,12 +3,14 @@ import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/c
 import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { getGettingStartedAdjacentSteps } from '@/getting-started/utils/getGettingStartedAdjacentSteps';
 import { getGettingStartedStackedSteps } from '@/getting-started/utils/getGettingStartedStackedSteps';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconChevronDown,
@@ -162,10 +164,12 @@ export const GettingStartedStepStack = ({
     ({ actionKey }) => actionKey === selectedStepActionKey,
   );
   const selectedStepDefinition = steps[selectedStepIndex];
-  const hasSeveralSteps = steps.length > 1;
-  const previousStepDefinition =
-    steps[(selectedStepIndex - 1 + steps.length) % steps.length];
-  const nextStepDefinition = steps[(selectedStepIndex + 1) % steps.length];
+  const { previousStepActionKey, nextStepActionKey } =
+    getGettingStartedAdjacentSteps({
+      steps,
+      completedStepActionKeys,
+      selectedStepActionKey,
+    });
   const stackedSteps = getGettingStartedStackedSteps({
     steps,
     completedStepActionKeys,
@@ -222,9 +226,10 @@ export const GettingStartedStepStack = ({
               size="xs"
               emphasis="subtle"
               aria-label={t`Previous step`}
-              disabled={isSaving || !hasSeveralSteps}
+              disabled={isSaving || !isDefined(previousStepActionKey)}
               onClick={() =>
-                selectGettingStartedStep(previousStepDefinition.actionKey)
+                isDefined(previousStepActionKey) &&
+                selectGettingStartedStep(previousStepActionKey)
               }
             >
               <IconChevronUp />
@@ -250,9 +255,10 @@ export const GettingStartedStepStack = ({
               size="xs"
               emphasis="subtle"
               aria-label={t`Next step`}
-              disabled={isSaving || !hasSeveralSteps}
+              disabled={isSaving || !isDefined(nextStepActionKey)}
               onClick={() =>
-                selectGettingStartedStep(nextStepDefinition.actionKey)
+                isDefined(nextStepActionKey) &&
+                selectGettingStartedStep(nextStepActionKey)
               }
             >
               <IconChevronDown />
