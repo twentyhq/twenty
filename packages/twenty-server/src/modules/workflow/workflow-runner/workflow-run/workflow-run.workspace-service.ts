@@ -626,11 +626,24 @@ export class WorkflowRunWorkspaceService {
       return undefined;
     }
 
+    // a run never reads output schemas and a run read computes them, so the snapshot leaves them out
+    const trigger = { ...workflowVersion.trigger };
+
+    trigger.settings = { ...trigger.settings, outputSchema: {} };
+
+    const steps = workflowVersion.steps.map((step) => {
+      const stepWithoutOutputSchema = { ...step };
+
+      stepWithoutOutputSchema.settings = {
+        ...stepWithoutOutputSchema.settings,
+        outputSchema: {},
+      };
+
+      return stepWithoutOutputSchema;
+    });
+
     return {
-      flow: {
-        trigger: workflowVersion.trigger,
-        steps: workflowVersion.steps,
-      },
+      flow: { trigger, steps },
       stepInfos: {
         trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
         ...Object.fromEntries(
