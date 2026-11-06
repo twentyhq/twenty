@@ -22,18 +22,24 @@ export const withCanonicalParticipantHandlesOrThrow = ({
     AppMessageInput['participants'][number]
   >();
 
-  for (const participant of message.participants) {
+  const canonicalizeHandleOrThrow = (rawHandle: string) => {
     const handle = canonicalizePersonHandle({
       type: personHandleField.type,
-      value: participant.handle,
+      value: rawHandle,
     });
 
     if (!isDefined(handle)) {
       throw new MessageChannelException(
-        `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
+        `Participant handle ${rawHandle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
+
+    return handle;
+  };
+
+  for (const participant of message.participants) {
+    const handle = canonicalizeHandleOrThrow(participant.handle);
 
     const key = `${participant.role}:${handle}`;
     const earlierParticipant = participantsByRoleAndHandle.get(key);
@@ -54,5 +60,11 @@ export const withCanonicalParticipantHandlesOrThrow = ({
   return {
     ...message,
     participants: [...participantsByRoleAndHandle.values()],
+    ...(isDefined(message.reactions) && {
+      reactions: message.reactions.map((reaction) => ({
+        ...reaction,
+        handle: canonicalizeHandleOrThrow(reaction.handle),
+      })),
+    }),
   };
 };

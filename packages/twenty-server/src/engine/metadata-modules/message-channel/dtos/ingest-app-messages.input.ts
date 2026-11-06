@@ -35,6 +35,8 @@ export const MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE = 32;
 
 export const MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE = 20;
 
+export const MAX_APP_MESSAGE_REACTIONS_PER_MESSAGE = 256;
+
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {
   @Field(() => MessageParticipantRole)
@@ -78,6 +80,28 @@ export class AppMessageAttachmentInput {
   @IsNotEmpty()
   @MaxLength(255)
   label: string;
+}
+
+@InputType('AppMessageReactionInput')
+export class AppMessageReactionInput {
+  // same namespace as participant handles
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(512)
+  handle: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  displayName?: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(64)
+  emoji: string;
 }
 
 @InputType('AppMessageInput')
@@ -129,6 +153,15 @@ export class AppMessageInput {
   @IsNotEmpty({ each: true })
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
+
+  // the full current list: it replaces the stored reactions, so omit it to keep them
+  @Field(() => [AppMessageReactionInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_REACTIONS_PER_MESSAGE)
+  @ValidateNested({ each: true })
+  @Type(() => AppMessageReactionInput)
+  reactions?: AppMessageReactionInput[];
 
   // unlike the rest of the message, re-ingesting with a new status updates the stored one
   @Field(() => MessageDeliveryStatus, { nullable: true })

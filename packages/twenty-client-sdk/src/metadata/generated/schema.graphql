@@ -459,6 +459,7 @@ input AppMessageInput {
   externalId: String!
   folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
+  reactions: [AppMessageReactionInput!]
   receivedAt: DateTime!
   subject: String
   text: String!
@@ -471,6 +472,12 @@ input AppMessageParticipantInput {
   personId: UUID
   role: MessageParticipantRole!
   workspaceMemberId: UUID
+}
+
+input AppMessageReactionInput {
+  displayName: String
+  emoji: String!
+  handle: String!
 }
 
 type Application {

@@ -35,6 +35,9 @@ export const useEmailThread = (threadId: string | null) => {
   const hasMessageDeliveryStatus = messageObjectMetadataItem.fields.some(
     (field) => field.name === 'deliveryStatus',
   );
+  const hasMessageReactions = messageObjectMetadataItem.fields.some(
+    (field) => field.name === 'reactions',
+  );
 
   const { record: thread, loading: threadRecordLoading } =
     useFindOneRecord<EmailThread>({
@@ -56,6 +59,7 @@ export const useEmailThread = (threadId: string | null) => {
       messageThreadId: threadId,
       isMessageAttachmentEnabled,
       hasMessageDeliveryStatus,
+      hasMessageReactions,
     });
 
   const {

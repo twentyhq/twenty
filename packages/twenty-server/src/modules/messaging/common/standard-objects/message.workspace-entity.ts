@@ -5,6 +5,7 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageReactionWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-reaction.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
@@ -24,4 +25,5 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   isDraft: boolean;
   deliveryStatus: MessageDeliveryStatus | null;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  reactions: EntityRelation<MessageReactionWorkspaceEntity[]>;
 }

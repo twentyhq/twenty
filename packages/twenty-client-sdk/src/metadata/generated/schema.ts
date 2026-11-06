@@ -4769,9 +4769,11 @@ export interface AppMessageAttachmentInput {fileId: Scalars['UUID'],label: Scala
 
 export interface AppMessageFolderInput {externalId: Scalars['String'],isSynced?: (Scalars['Boolean'] | null),name: Scalars['String']}
 
-export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),deliveryStatus?: (MessageDeliveryStatus | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
+export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),deliveryStatus?: (MessageDeliveryStatus | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],reactions?: (AppMessageReactionInput[] | null),receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
+
+export interface AppMessageReactionInput {displayName?: (Scalars['String'] | null),emoji: Scalars['String'],handle: Scalars['String']}
 
 export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection

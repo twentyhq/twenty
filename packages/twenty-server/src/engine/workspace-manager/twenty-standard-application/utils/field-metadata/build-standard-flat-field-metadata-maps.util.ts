@@ -1,3 +1,4 @@
+import { buildMessageReactionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-reaction-standard-flat-field-metadata.util';
 import { buildCampaignDeliveryStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util';
 import { buildMessageSuppressionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util';
 import { buildAgentMessagePartStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util';
@@ -80,6 +81,7 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageList: buildMessageListStandardFlatFieldMetadatas,
   messageListMember: buildMessageListMemberStandardFlatFieldMetadatas,
   message: buildMessageStandardFlatFieldMetadatas,
+  messageReaction: buildMessageReactionStandardFlatFieldMetadatas,
   messageChannelMessageAssociation:
     buildMessageChannelMessageAssociationStandardFlatFieldMetadatas,
   messageChannelMessageAssociationMessageFolder:

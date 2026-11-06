@@ -27,6 +27,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   ],
   dashboard: [{ name: 'title', type: FieldMetadataType.TEXT }],
   message: [{ name: 'subject', type: FieldMetadataType.TEXT }],
+  messageReaction: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   messageCampaign: [
     { name: 'name', type: FieldMetadataType.TEXT },
     { name: 'subject', type: FieldMetadataType.TEXT },

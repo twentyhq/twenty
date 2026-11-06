@@ -229,6 +229,7 @@ type AppMessagePayload = {
   folderExternalIds?: string[];
   attachments?: { fileId: string; label: string }[];
   deliveryStatus?: MessageDeliveryStatus;
+  reactions?: { handle: string; displayName?: string; emoji: string }[];
 };
 
 type AppMessageFolderPayload = {
@@ -1075,6 +1076,55 @@ describe('app message channels API (e2e)', () => {
       }
 
       expect(await findDeliveryStatus()).toBe(MessageDeliveryStatus.READ);
+    });
+
+    it('replaces the reactions of a redelivered message and keeps them when none are sent', async () => {
+      const channel = await createChannelOrThrow();
+      const message = buildMessage({
+        externalId: `reactions-${uuidv4()}`,
+        threadExternalId: `thread-${uuidv4()}`,
+        senderHandle: CHANNEL_HANDLE,
+      });
+
+      const ingestWith = async (reactions?: AppMessagePayload['reactions']) => {
+        const response = await ingest({
+          messageChannelId: channel.id,
+          messages: [{ ...message, reactions }],
+        });
+
+        expect(response.body.errors).toBeUndefined();
+
+        return response.body.data.ingestAppMessages.messages[0].messageId;
+      };
+
+      const findReactions = async (messageId: string) =>
+        globalThis.testDataSource.query(
+          `SELECT "handle", "displayName", "emoji" FROM "${WORKSPACE_SCHEMA}"."messageReaction"
+             WHERE "messageId" = $1 ORDER BY "handle"`,
+          [messageId],
+        );
+
+      const messageId = await ingestWith([
+        { handle: 'candidate@linkedin.test', displayName: 'Ada', emoji: '👍' },
+        { handle: 'candidate@linkedin.test', emoji: '👍' },
+        { handle: 'recruiter@linkedin.test', emoji: '🎉' },
+      ]);
+
+      expect(await findReactions(messageId)).toEqual([
+        { handle: 'candidate@linkedin.test', displayName: null, emoji: '👍' },
+        { handle: 'recruiter@linkedin.test', displayName: null, emoji: '🎉' },
+      ]);
+
+      await ingestWith([{ handle: 'recruiter@linkedin.test', emoji: '❤️' }]);
+      await ingestWith(undefined);
+
+      expect(await findReactions(messageId)).toEqual([
+        { handle: 'recruiter@linkedin.test', displayName: null, emoji: '❤️' },
+      ]);
+
+      await ingestWith([]);
+
+      expect(await findReactions(messageId)).toEqual([]);
     });
 
     it('derives direction from the sender, matching the handle case-insensitively', async () => {

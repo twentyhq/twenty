@@ -21,6 +21,13 @@ export type IngestMessageAttachment = {
   label: string;
 };
 
+export type IngestMessageReaction = {
+  // Same namespace as participant handles
+  handle: string;
+  displayName?: string;
+  emoji: string;
+};
+
 export type IngestMessage = {
   // Ingesting it twice is a no-op, so redelivered webhooks are safe to replay
   externalId: string;
@@ -35,6 +42,8 @@ export type IngestMessage = {
   attachments?: IngestMessageAttachment[];
   // Outgoing messages only; re-ingesting with a later status updates it, an earlier one is ignored
   deliveryStatus?: MessageDeliveryStatus;
+  // The full current list: it replaces the stored reactions, so omit it to keep them
+  reactions?: IngestMessageReaction[];
 };
 
 export type IngestedMessage = {

@@ -1746,6 +1746,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "position": {
         "universalIdentifier": "44735eaf-ce39-5023-8d32-3ba27ef7d11d",
       },
+      "reactions": {
+        "universalIdentifier": "7ff3b4ca-9b73-4e1c-9d2c-30cc4ba9aa4d",
+      },
       "receivedAt": {
         "universalIdentifier": "20202020-140a-4a2a-9f86-f13b6a979afc",
       },
@@ -2520,6 +2523,52 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         },
       },
     },
+  },
+  "messageReaction": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "88dcd4c3-5494-547d-abc1-78995946c4cc",
+      },
+      "createdBy": {
+        "universalIdentifier": "e9686c0c-fa67-5956-8e46-54e256a29fc9",
+      },
+      "deletedAt": {
+        "universalIdentifier": "2e69e4a0-deef-57e0-adbd-eb0341b8249b",
+      },
+      "displayName": {
+        "universalIdentifier": "c83fb6d6-f42c-49e3-9433-47011f979860",
+      },
+      "emoji": {
+        "universalIdentifier": "028ef8b9-96b9-49ad-85a8-6b8a3802b947",
+      },
+      "handle": {
+        "universalIdentifier": "230f6cb0-5e49-4d78-8594-0e06be06c5fc",
+      },
+      "id": {
+        "universalIdentifier": "fd36b2d2-d2f0-5392-b9dc-09f4a05e82da",
+      },
+      "message": {
+        "universalIdentifier": "54e15759-4ef6-4d41-8e65-b40ce2a2157f",
+      },
+      "position": {
+        "universalIdentifier": "c6263f5b-c5a3-5c93-ab8d-e1520fdff075",
+      },
+      "searchVector": {
+        "universalIdentifier": "c8c227fb-bbf5-5aed-83da-23aef51b4054",
+      },
+      "updatedAt": {
+        "universalIdentifier": "401c9580-1595-5747-ac58-cf5e2cc90aac",
+      },
+      "updatedBy": {
+        "universalIdentifier": "ba2cd93f-9ee8-59bd-8f55-52135b07f333",
+      },
+    },
+    "indexes": {
+      "messageHandleEmojiUniqueIndex": {
+        "universalIdentifier": "e403d9ad-f360-4276-ac7d-38174c1e1d2d",
+      },
+    },
+    "universalIdentifier": "f9f7de2d-c59c-43e9-845c-941f5cf2a2af",
   },
   "messageSuppression": {
     "fields": {

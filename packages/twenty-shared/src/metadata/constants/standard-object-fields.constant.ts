@@ -1052,6 +1052,17 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '5bc768db-919f-41da-8c43-df08084d526f',
     },
   },
+  messageReaction: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageReaction,
+    ),
+    message: { universalIdentifier: '54e15759-4ef6-4d41-8e65-b40ce2a2157f' },
+    handle: { universalIdentifier: '230f6cb0-5e49-4d78-8594-0e06be06c5fc' },
+    displayName: {
+      universalIdentifier: 'c83fb6d6-f42c-49e3-9433-47011f979860',
+    },
+    emoji: { universalIdentifier: '028ef8b9-96b9-49ad-85a8-6b8a3802b947' },
+  },
   messageThread: {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
@@ -1144,6 +1155,7 @@ export const STANDARD_OBJECT_FIELDS = {
     deliveryStatus: {
       universalIdentifier: 'c3f1e8a2-5b7d-4e9a-8f21-6d4b0a9e7c53',
     },
+    reactions: { universalIdentifier: '7ff3b4ca-9b73-4e1c-9d2c-30cc4ba9aa4d' },
     attachments: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:

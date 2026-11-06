@@ -336,6 +336,34 @@ describe('ChatThreadMessageGroup', () => {
     expect(screen.queryByLabelText('Read')).not.toBeInTheDocument();
   });
 
+  it('shows the reactions of a message with who reacted', () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadMessageGroup
+          group={{
+            id: 'group-id',
+            isOutgoing: false,
+            messages: [
+              buildMessage({
+                reactions: [
+                  { id: '1', handle: 'ada', displayName: 'Ada', emoji: '👍' },
+                  {
+                    id: '2',
+                    handle: 'grace',
+                    displayName: 'Grace',
+                    emoji: '👍',
+                  },
+                ],
+              }),
+            ],
+          }}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByLabelText('👍 by Ada, Grace')).toHaveTextContent('👍2');
+  });
+
   it('does not render a body masked by metadata visibility', () => {
     render(
       <I18nProvider i18n={i18n}>

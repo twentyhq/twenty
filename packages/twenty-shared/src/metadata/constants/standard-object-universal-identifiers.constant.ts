@@ -41,6 +41,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   messageCampaign: '238acb94-dd4c-4036-bc55-19b99d821efd',
   shortLink: '22c96608-d1b1-49a2-b328-3e738d61d82d',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
+  messageReaction: 'f9f7de2d-c59c-43e9-845c-941f5cf2a2af',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
   messageThreadTarget: '378ad1b0-592d-4084-80ee-86fef44725b9',
 } as const;

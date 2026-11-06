@@ -6,6 +6,7 @@ type FetchAllThreadMessagesOperationSignatureFactory = {
   messageThreadId: string | null;
   isMessageAttachmentEnabled: boolean;
   hasMessageDeliveryStatus: boolean;
+  hasMessageReactions: boolean;
 };
 
 export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
@@ -14,6 +15,7 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
   messageThreadId,
   isMessageAttachmentEnabled,
   hasMessageDeliveryStatus,
+  hasMessageReactions,
 }: FetchAllThreadMessagesOperationSignatureFactory) => ({
   objectNameSingular: StandardObjectNameSingular.Message,
   variables: {
@@ -45,6 +47,15 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       attachments: {
         id: true,
         file: true,
+      },
+    }),
+    // message.reactions only exists once the workspace upgrade has run
+    ...(hasMessageReactions && {
+      reactions: {
+        id: true,
+        handle: true,
+        displayName: true,
+        emoji: true,
       },
     }),
     messageThread: {
