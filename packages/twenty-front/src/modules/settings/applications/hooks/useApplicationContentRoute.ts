@@ -27,51 +27,51 @@ export const useApplicationContentRoute = () => {
   const marketplace = useMarketplaceApplicationContent(availableApplicationId);
 
   const getRouteApplication = () => {
-  if (isNonEmptyString(availableApplicationId)) {
+    if (isNonEmptyString(availableApplicationId)) {
+      const location: ApplicationContentLocation = {
+        kind: 'marketplace',
+        availableApplicationId,
+      };
+
+      return {
+        ...marketplace,
+        contentType,
+        location,
+        applicationPath: getSettingsPath(
+          SettingsPath.AvailableApplicationDetail,
+          {
+            availableApplicationId,
+          },
+        ),
+        contentPath: getApplicationContentPath({ location }),
+      };
+    }
+
+    if (!isNonEmptyString(applicationId)) {
+      throw new CustomError(
+        doNotTranslate('Application id is not defined'),
+        'APPLICATION_ID_NOT_DEFINED',
+      );
+    }
+
     const location: ApplicationContentLocation = {
-      kind: 'marketplace',
-      availableApplicationId,
+      kind: 'installed',
+      applicationId,
     };
 
     return {
-      ...marketplace,
+      name: installed.application?.name,
+      logoUrl: installed.application?.logoUrl,
+      installedApplicationId: installed.application?.id,
+      content: installed.content,
+      error: installed.error,
       contentType,
       location,
-      applicationPath: getSettingsPath(
-        SettingsPath.AvailableApplicationDetail,
-        {
-          availableApplicationId,
-        },
-      ),
+      applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
+        applicationId,
+      }),
       contentPath: getApplicationContentPath({ location }),
     };
-  }
-
-  if (!isNonEmptyString(applicationId)) {
-    throw new CustomError(
-      doNotTranslate('Application id is not defined'),
-      'APPLICATION_ID_NOT_DEFINED',
-    );
-  }
-
-  const location: ApplicationContentLocation = {
-    kind: 'installed',
-    applicationId,
-  };
-
-  return {
-    name: installed.application?.name,
-    logoUrl: installed.application?.logoUrl,
-    installedApplicationId: installed.application?.id,
-    content: installed.content,
-    error: installed.error,
-    contentType,
-    location,
-    applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
-      applicationId,
-    }),
-    contentPath: getApplicationContentPath({ location }),
-  };
   };
 
   const routeApplication = getRouteApplication();
