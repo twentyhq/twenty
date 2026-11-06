@@ -40,6 +40,15 @@ describe('isBuiltInAssistantMessage', () => {
     expect(isBuiltInAssistantMessage({ message, turn: null })).toBe(false);
   });
 
+  it('leaves a turn with no stored actor context unknown', () => {
+    expect(
+      isBuiltInAssistantMessage({
+        message,
+        turn: { ...turn, createdBy: { ...turn.createdBy, context: null } },
+      }),
+    ).toBe(false);
+  });
+
   it.each([
     { agentId: 'agent-id' },
     { senderWorkspaceMemberId: 'member-id' },

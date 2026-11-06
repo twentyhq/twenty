@@ -20,10 +20,12 @@ export const isBuiltInAssistantMessage = ({
   >;
   turn?:
     | (Pick<AgentTurnWorkspaceEntity, 'id' | 'threadId' | 'agentId'> & {
-        createdBy: ActorMetadata & {
-          context: ActorMetadata['context'] & {
-            isBuiltInAssistant?: boolean;
-          };
+        createdBy: {
+          context:
+            | (ActorMetadata['context'] & {
+                isBuiltInAssistant?: boolean;
+              })
+            | null;
         };
       })
     | null;
@@ -41,5 +43,5 @@ export const isBuiltInAssistantMessage = ({
     return false;
   }
 
-  return turn.createdBy.context.isBuiltInAssistant ?? false;
+  return turn.createdBy.context?.isBuiltInAssistant ?? false;
 };
