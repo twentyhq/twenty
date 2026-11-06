@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -17,6 +17,8 @@ import { formatSentMessage } from 'src/modules/messaging/message-outbound-manage
 
 @Injectable()
 export class SentMessagePersistenceService {
+  private readonly logger = new Logger(SentMessagePersistenceService.name);
+
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -84,7 +86,7 @@ export class SentMessagePersistenceService {
       return [];
     }
 
-    return Promise.all(
+    const uploadResults = await Promise.allSettled(
       attachments.map(async ({ filename, content }) => {
         const uploadedFile = await this.filesFieldService.uploadFile({
           file: content,
@@ -97,5 +99,17 @@ export class SentMessagePersistenceService {
         return { fileId: uploadedFile.id, label: filename };
       }),
     );
+
+    return uploadResults.flatMap((uploadResult) => {
+      if (uploadResult.status === 'fulfilled') {
+        return [uploadResult.value];
+      }
+
+      this.logger.warn(
+        `Failed to store sent message attachment: ${uploadResult.reason}`,
+      );
+
+      return [];
+    });
   }
 }
