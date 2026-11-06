@@ -7,7 +7,7 @@ export const createAgentForRole = async ({
   accessToken,
 }: {
   name: string;
-  roleId: string;
+  roleId?: string;
   accessToken: string;
 }) => {
   const { data } = await createOneAgent({

@@ -64,8 +64,5 @@ export const addWorkspaceMemberWithRole = async ({
     token: adminAccessToken,
   });
 
-  return {
-    workspaceMemberId,
-    accessToken,
-  };
+  return workspaceMemberId;
 };

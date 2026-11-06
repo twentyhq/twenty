@@ -1,15 +1,16 @@
-import { type RecordAccessWorkspace } from 'test/integration/permissions/utils/record-access-workspace.type';
+import {
+  type RecordAccessPrincipals,
+  type RecordAccessWorkspace,
+} from 'test/integration/permissions/utils/record-access-workspace.type';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 
-import { type GivenPrincipals } from 'src/engine/permissions/__tests__/framework/given-principals.util';
-import { type RoleGrant } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 const findApplicationPrincipalId = ({
   applicationPrincipal,
   workspace,
 }: {
-  applicationPrincipal: GivenPrincipals<RoleGrant>['applicationPrincipal'];
+  applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
   workspace: RecordAccessWorkspace;
 }): string | undefined => {
   switch (applicationPrincipal.type) {
@@ -17,30 +18,45 @@ const findApplicationPrincipalId = ({
       return workspace.applicationIds[applicationPrincipal.role];
     case 'sameApplicationAsMain':
       return workspace.mainApplicationId;
-    case 'customApplication':
-      return undefined;
     case 'oauthApplication':
       return workspace.oauthApplicationId;
+    case 'customApplication':
+      return undefined;
+  }
+};
+
+const findLimitingAgentId = ({
+  limitingPrincipal,
+  workspace,
+}: {
+  limitingPrincipal: RecordAccessPrincipals['limitingPrincipal'];
+  workspace: RecordAccessWorkspace;
+}): string | undefined => {
+  switch (limitingPrincipal.type) {
+    case 'agent':
+      return workspace.limitingAgentIds[limitingPrincipal.role];
+    case 'agentWithoutRole':
+      return workspace.limitingAgentWithoutRoleId;
+    case 'none':
+      return undefined;
   }
 };
 
 export const buildRecordAccessAuthContext = async ({
-  given: { mainPrincipal, limitingPrincipal, applicationPrincipal },
+  principals: { mainPrincipal, limitingPrincipal, applicationPrincipal },
   workspace,
 }: {
-  given: GivenPrincipals<RoleGrant>;
+  principals: RecordAccessPrincipals;
   workspace: RecordAccessWorkspace;
 }): Promise<PermissionsAuthContext> => {
   const applicationId = findApplicationPrincipalId({
     applicationPrincipal,
     workspace,
   });
+  const workspaceReference = { id: workspace.workspaceId };
   const narrowing = {
-    workspace: { id: workspace.workspaceId },
-    agentId:
-      limitingPrincipal.type === 'agent'
-        ? workspace.limitingAgentIds[limitingPrincipal.role]
-        : undefined,
+    workspace: workspaceReference,
+    agentId: findLimitingAgentId({ limitingPrincipal, workspace }),
     application:
       applicationId === undefined ? undefined : { id: applicationId },
   };
@@ -50,8 +66,7 @@ export const buildRecordAccessAuthContext = async ({
       return {
         ...(await resolveWorkspaceMemberAuthContext({
           workspaceId: workspace.workspaceId,
-          workspaceMemberId:
-            workspace.members[mainPrincipal.role].workspaceMemberId,
+          workspaceMemberId: workspace.workspaceMemberIds[mainPrincipal.role],
         })),
         ...narrowing,
       };
@@ -64,23 +79,21 @@ export const buildRecordAccessAuthContext = async ({
     case 'application':
       return {
         type: 'application',
-        workspace: narrowing.workspace,
+        workspace: workspaceReference,
         application: { id: workspace.mainApplicationId },
       };
     case 'agent':
       return {
         type: 'application',
-        workspace: narrowing.workspace,
+        workspace: workspaceReference,
         application: { id: applicationId as string },
         agentId: workspace.mainAgentId,
       };
     case 'webhook':
       return {
         type: 'webhook',
-        workspace: narrowing.workspace,
+        workspace: workspaceReference,
         webhook: { id: workspace.webhookId },
       };
-    case 'role':
-      throw new Error('No auth context resolves to a bare role');
   }
 };

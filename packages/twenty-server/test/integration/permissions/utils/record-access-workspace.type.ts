@@ -1,38 +1,50 @@
-import { type RoleGrant } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
+export type RoleGrant = 'none' | 'rowLevel' | 'allRecords';
 
-export type ActorsByRole = Record<RoleGrant, string>;
-
-export type RecordAccessWorkspaceMember = {
-  workspaceMemberId: string;
-  accessToken: string;
+export type RecordAccessPrincipals = {
+  mainPrincipal:
+    | { type: 'workspaceMember' | 'apiKey'; role: RoleGrant }
+    | { type: 'application' | 'agent' | 'webhook'; role: 'allRecords' };
+  limitingPrincipal:
+    | { type: 'none' }
+    | { type: 'agent'; role: RoleGrant }
+    | { type: 'agentWithoutRole' };
+  applicationPrincipal:
+    | { type: 'customApplication' }
+    | { type: 'oauthApplication' }
+    | { type: 'sameApplicationAsMain' }
+    | { type: 'application'; role: RoleGrant };
 };
 
 export type RecordAccessRecordName =
   | 'insideEveryFilter'
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
-  | 'outsideRegionFilter'
-  | 'sharedReadToNoAccessMember'
-  | 'sharedWriteToNoAccessMember'
-  | 'sharedFullToNoAccessMember'
-  | 'sharedReadToAnotherMember'
-  | 'sharedReadToNoAccessRole'
-  | 'privateSharedFullToAllRecordsMember'
-  | 'privateSharedWriteToAllRecordsMember';
+  | 'outsideRegionFilter';
 
 export type RecordAccessWorkspace = {
   workspaceId: string;
-  adminAccessToken: string;
   objectMetadataId: string;
   objectNameSingular: string;
-  mainRoleIds: ActorsByRole;
-  members: Record<keyof ActorsByRole, RecordAccessWorkspaceMember>;
-  apiKeyIds: ActorsByRole;
+  roleIds: Record<RoleGrant, string>;
+  workspaceMemberIds: Record<RoleGrant, string>;
+  apiKeyIds: Record<RoleGrant, string>;
   webhookId: string;
-  limitingAgentIds: ActorsByRole;
+  limitingAgentIds: Record<RoleGrant, string>;
+  limitingAgentWithoutRoleId: string;
   mainAgentId: string;
-  applicationIds: ActorsByRole;
+  applicationIds: Record<RoleGrant, string>;
   mainApplicationId: string;
   oauthApplicationId: string;
   recordIds: Record<RecordAccessRecordName, string>;
+};
+
+export type ExpectedRecordAccess = {
+  findRecordsPermissions: {
+    canRead: boolean;
+    canUpdate: boolean;
+    canSoftDelete: boolean;
+    canDelete: boolean;
+  };
+  canReadRecords: boolean;
+  canUpdateRecords: boolean;
 };

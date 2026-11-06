@@ -4,7 +4,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RoleGrant } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
+import { type RoleGrant } from 'test/integration/permissions/utils/record-access-workspace.type';
 
 export const createRecordAccessRole = async ({
   label,
