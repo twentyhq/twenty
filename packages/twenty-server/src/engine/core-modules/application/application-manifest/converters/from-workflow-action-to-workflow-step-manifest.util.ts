@@ -54,14 +54,13 @@ const fromFindRecordsOrderBy = ({
   resolvers,
 }: {
   orderBy: Record<string, unknown>;
-  resolvers: WorkflowManifestInverseReferenceResolvers;
+  resolvers: Pick<WorkflowManifestInverseReferenceResolvers, 'fieldReference'>;
 }) => {
   if (!isDefined(orderBy.recordSorts)) {
-    return orderBy;
+    return {};
   }
 
   return {
-    ...orderBy,
     recordSorts: toArray(orderBy.recordSorts).map((recordSort) =>
       fromRecordSort({ recordSort, resolvers }),
     ),
