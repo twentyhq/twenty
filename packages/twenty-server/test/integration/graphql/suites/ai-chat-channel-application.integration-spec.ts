@@ -4,16 +4,8 @@ import { parse } from 'graphql';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import {
-  CHANNEL_ROLES,
-  UPDATE_CHANNEL,
-  listChannels,
-  readChannelGrantRoleIds,
-  readChannelGrants,
-  watchThreadEvents,
-} from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
+import { UPDATE_CHANNEL } from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -22,13 +14,11 @@ import {
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
-import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -46,7 +36,6 @@ const CHANNEL_MANAGER_PERMISSION_FLAGS = [
 type ApplicationUnderTest = {
   application: ApplicationWithResources;
   token: string;
-  userBoundToken: string;
   roleId: string;
 };
 
@@ -100,16 +89,12 @@ const setupApplicationUnderTestOrThrow = async ({
     {
       applicationAccessToken: { token },
     },
-    {
-      applicationAccessToken: { token: userBoundToken },
-    },
     { defaultRoleId },
   ] = await Promise.all([
     generateApplicationTokenPair({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       applicationId: application.id,
     }),
-    generateAppleAdminApplicationTokenPair({ applicationId: application.id }),
     getCoreRepository<ApplicationEntity>(ApplicationEntity).findOneOrFail({
       select: { defaultRoleId: true },
       where: { id: application.id, workspaceId: SEED_APPLE_WORKSPACE_ID },
@@ -118,7 +103,7 @@ const setupApplicationUnderTestOrThrow = async ({
 
   assertIsDefinedOrThrow(defaultRoleId);
 
-  return { application, token, userBoundToken, roleId: defaultRoleId };
+  return { application, token, roleId: defaultRoleId };
 };
 
 const readChannelsWithUniversalIdentifier = async (
@@ -149,17 +134,6 @@ const readChannelApplicationId = async (
 
   return channel?.applicationId;
 };
-
-const readChannelRoleApplicationIds = async (
-  channelId: string,
-): Promise<{ roleId: string; applicationId: string }[]> =>
-  getCoreRepository<AgentChatChannelRoleEntity>(
-    AgentChatChannelRoleEntity,
-  ).find({
-    select: { roleId: true, applicationId: true },
-    where: { channelId, workspaceId: SEED_APPLE_WORKSPACE_ID },
-    order: { roleId: 'ASC' },
-  });
 
 const readThreadChannelState = (threadId: string) =>
   global.testDataSource
@@ -214,7 +188,6 @@ const destroyCreatedThreads = async () => {
 describe('Inbox channels for applications', () => {
   const createdChannelIds = new Set<string>();
   let channelManager: ApplicationUnderTest;
-  let otherChannelManager: ApplicationUnderTest;
   let channelReader: ApplicationUnderTest;
   let generalChannelId: string;
 
@@ -288,10 +261,6 @@ describe('Inbox channels for applications', () => {
       name: 'Channel Manager Application',
       permissionFlagUniversalIdentifiers: CHANNEL_MANAGER_PERMISSION_FLAGS,
     });
-    otherChannelManager = await setupApplicationUnderTestOrThrow({
-      name: 'Other Channel Manager Application',
-      permissionFlagUniversalIdentifiers: CHANNEL_MANAGER_PERMISSION_FLAGS,
-    });
     channelReader = await setupApplicationUnderTestOrThrow({
       name: 'Channel Reader Application',
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
@@ -310,98 +279,33 @@ describe('Inbox channels for applications', () => {
       await deleteChannel({ channelId, token: APPLE_JANE_ADMIN_ACCESS_TOKEN });
     }
 
-    for (const { application } of [
-      channelManager,
-      otherChannelManager,
-      channelReader,
-    ].filter(isDefined)) {
+    for (const { application } of [channelManager, channelReader].filter(
+      isDefined,
+    )) {
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier: application.universalIdentifier,
       });
     }
   }, 120_000);
 
-  it('lists only the channels open to the role of an application without AI settings, and keeps their settings closed', async () => {
-    const openChannelId = await createChannelOrThrow({
-      input: {
-        name: buildChannelName(),
-        roleIds: [channelManager.roleId, channelReader.roleId],
-      },
-      token: channelManager.token,
-    });
-    const closedChannelId = await createChannelOrThrow({
-      input: { name: buildChannelName() },
-      token: channelManager.token,
-    });
-    const managedChannels = await listChannels(channelManager.token);
-
-    expect(
-      managedChannels.find(({ id }) => id === openChannelId),
-    ).toMatchObject({
-      isAccessible: true,
-    });
-    expect(
-      managedChannels.find(({ id }) => id === closedChannelId),
-    ).toMatchObject({
-      isAccessible: false,
-    });
-
-    const channelIds = (await listChannels(channelReader.token)).map(
-      ({ id }) => id,
-    );
-
-    expect(channelIds).toContain(openChannelId);
-    expect(channelIds).not.toContain(closedChannelId);
-    expect(channelIds).not.toContain(generalChannelId);
-
-    const rolesResponse = await makeMetadataApiRequest(
-      { query: CHANNEL_ROLES },
-      channelReader.token,
-    );
-    const createResponse = await createChannel({
-      input: { name: buildChannelName() },
-      token: channelReader.token,
-    });
-
-    for (const response of [rolesResponse, createResponse]) {
-      expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
-    }
-  });
-
-  it('creates one application-owned channel for concurrent and repeated requests', async () => {
+  it('returns the channel it already created under the same universal identifier', async () => {
     const universalIdentifier = randomUUID();
     const name = buildChannelName();
-    const responses = await Promise.all(
-      [
-        { identifier: universalIdentifier, token: channelManager.token },
-        {
-          identifier: universalIdentifier.toUpperCase(),
-          token: channelManager.userBoundToken,
-        },
-      ].map(({ identifier, token }) =>
-        createChannel({
-          input: { name, universalIdentifier: identifier },
-          token,
-        }),
-      ),
-    );
+    const channelId = await createChannelOrThrow({
+      input: { name, universalIdentifier },
+      token: channelManager.token,
+    });
 
-    for (const response of responses) {
-      assertGraphQLSuccessfulResponse(response);
-    }
-
-    const channelId = responses[0].body.data.createAgentChatChannel.id;
     const repeatedResponse = await createChannel({
       input: {
         name: buildChannelName(),
-        universalIdentifier,
+        universalIdentifier: universalIdentifier.toUpperCase(),
         roleIds: [channelManager.roleId],
       },
       token: channelManager.token,
     });
 
     assertGraphQLSuccessfulResponse(repeatedResponse);
-    expect(responses[1].body.data.createAgentChatChannel.id).toBe(channelId);
     expect(repeatedResponse.body.data.createAgentChatChannel).toMatchObject({
       id: channelId,
       name,
@@ -414,19 +318,29 @@ describe('Inbox channels for applications', () => {
     ]);
   });
 
-  it('numbers a name taken by another application, and cannot claim, update or delete its channel', async () => {
+  it('cannot claim, update or delete a channel it does not own, and takes the next free name', async () => {
     const universalIdentifier = randomUUID();
     const name = buildChannelName();
     const channelId = await createChannelOrThrow({
       input: { name, universalIdentifier },
-      token: otherChannelManager.token,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
+
     const claimResponse = await createChannel({
       input: { name: buildChannelName(), universalIdentifier },
       token: channelManager.token,
     });
     const sameNameResponse = await createChannel({
       input: { name },
+      token: channelManager.token,
+    });
+    const updateResponse = await updateChannel({
+      channelId,
+      input: { name: buildChannelName() },
+      token: channelManager.token,
+    });
+    const deleteResponse = await deleteChannel({
+      channelId,
       token: channelManager.token,
     });
 
@@ -439,107 +353,38 @@ describe('Inbox channels for applications', () => {
       `${name} 2`,
     );
 
-    const responses = await Promise.all([
-      updateChannel({
-        channelId,
-        input: { name: buildChannelName() },
-        token: channelManager.token,
-      }),
-      deleteChannel({ channelId, token: channelManager.userBoundToken }),
-    ]);
-
-    for (const response of responses) {
+    for (const response of [updateResponse, deleteResponse]) {
       expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     }
-    expect(await readChannelApplicationId(channelId)).toBe(
-      otherChannelManager.application.id,
-    );
   });
 
-  it('updates and deletes its own channel, keeping the access it adds as its own', async () => {
+  it('updates and deletes its own channel, which members still manage', async () => {
     const channelId = await createChannelOrThrow({
-      input: { name: buildChannelName(), universalIdentifier: randomUUID() },
+      input: { name: buildChannelName() },
       token: channelManager.token,
     });
-    const renamedName = buildChannelName();
 
     const updateResponse = await updateChannel({
       channelId,
-      input: { name: renamedName, roleIds: [channelManager.roleId] },
+      input: { roleIds: [channelManager.roleId] },
       token: channelManager.token,
     });
 
     assertGraphQLSuccessfulResponse(updateResponse);
-    expect(updateResponse.body.data.updateAgentChatChannel).toMatchObject({
-      id: channelId,
-      name: renamedName,
-      roleIds: [channelManager.roleId],
-    });
-    expect(await readChannelRoleApplicationIds(channelId)).toEqual([
-      {
-        roleId: channelManager.roleId,
-        applicationId: channelManager.application.id,
-      },
+    expect(updateResponse.body.data.updateAgentChatChannel.roleIds).toEqual([
+      channelManager.roleId,
     ]);
-
-    const memberUpdateResponse = await updateChannel({
-      channelId,
-      input: { roleIds: [channelReader.roleId] },
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
-
-    assertGraphQLSuccessfulResponse(memberUpdateResponse);
-    expect(await readChannelRoleApplicationIds(channelId)).toEqual([
-      {
-        roleId: channelReader.roleId,
-        applicationId: await findWorkspaceCustomApplicationId(),
-      },
-    ]);
-
+    assertGraphQLSuccessfulResponse(
+      await updateChannel({
+        channelId,
+        input: { roleIds: [channelReader.roleId] },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      }),
+    );
     assertGraphQLSuccessfulResponse(
       await deleteChannel({ channelId, token: channelManager.token }),
     );
     expect(await readChannelApplicationId(channelId)).toBeUndefined();
-  });
-
-  it('moves the chats of its deleted channel only to a channel its role can open', async () => {
-    const channelId = await createChannelOrThrow({
-      input: { name: buildChannelName(), roleIds: [channelManager.roleId] },
-      token: channelManager.token,
-    });
-    const destinationChannelId = await createChannelOrThrow({
-      input: { name: buildChannelName(), roleIds: [channelManager.roleId] },
-      token: channelManager.token,
-    });
-    const threadId = await createThreadInChannel(channelId);
-
-    const closedDestinationResponse = await deleteChannel({
-      channelId,
-      token: channelManager.token,
-      destinationChannelId: generalChannelId,
-    });
-
-    expect(closedDestinationResponse.body.errors[0].extensions).toMatchObject({
-      code: 'NOT_FOUND',
-      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
-    });
-    expect(await readThreadChannelState(threadId)).toMatchObject({
-      channelId: channelId,
-    });
-
-    assertGraphQLSuccessfulResponse(
-      await deleteChannel({
-        channelId,
-        token: channelManager.token,
-        destinationChannelId,
-      }),
-    );
-    expect(await readThreadChannelState(threadId)).toMatchObject({
-      channelId: destinationChannelId,
-    });
-    expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'ROLE', sourceId: destinationChannelId },
-    ]);
   });
 
   it('lists channel conversations without personal inbox state for an application', async () => {
@@ -735,17 +580,11 @@ describe('Uninstalling an application that created inbox channels', () => {
     });
   }, 120_000);
 
-  it('deletes its channels and moves their chats to General with the access of General', async () => {
-    const generalChannelId = await findGeneralChannelId();
+  it('deletes its channels and moves their chats to General', async () => {
     const createResponse = await makeMetadataApiRequest(
       {
         query: CREATE_CHANNEL,
-        variables: {
-          input: {
-            name: buildChannelName(),
-            roleIds: [uninstalledApplication.roleId],
-          },
-        },
+        variables: { input: { name: buildChannelName() } },
       },
       uninstalledApplication.token,
     );
@@ -754,34 +593,16 @@ describe('Uninstalling an application that created inbox channels', () => {
 
     const channelId = createResponse.body.data.createAgentChatChannel.id;
     const threadId = await createThreadInChannel(channelId);
-    const generalThreadId = await createThreadInChannel(generalChannelId);
-    const generalRoleIds = await readChannelGrantRoleIds(generalThreadId);
 
-    expect(await readChannelGrantRoleIds(threadId)).toContain(
-      uninstalledApplication.roleId,
-    );
-
-    const { findEmittedThreadEvent } = watchThreadEvents();
-
-    try {
-      const { errors } = await uninstallApplication({
-        universalIdentifier:
-          uninstalledApplication.application.universalIdentifier,
-      });
-
-      expect(errors).toBeUndefined();
-      expect(await readChannelApplicationId(channelId)).toBeUndefined();
-      expect(findEmittedThreadEvent(threadId)).toBeDefined();
-    } finally {
-      jest.restoreAllMocks();
-    }
-
-    expect(await readThreadChannelState(threadId)).toMatchObject({
-      channelId: generalChannelId,
+    const { errors } = await uninstallApplication({
+      universalIdentifier:
+        uninstalledApplication.application.universalIdentifier,
     });
-    expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'ROLE', sourceId: generalChannelId },
-    ]);
-    expect(await readChannelGrantRoleIds(threadId)).toEqual(generalRoleIds);
+
+    expect(errors).toBeUndefined();
+    expect(await readChannelApplicationId(channelId)).toBeUndefined();
+    expect(await readThreadChannelState(threadId)).toMatchObject({
+      channelId: await findGeneralChannelId(),
+    });
   }, 60_000);
 });

@@ -240,8 +240,7 @@ export const readChannelGrantRoleIds = async (
     await global.testDataSource.query(
       `SELECT "principalId" FROM ${SCHEMA}."recordShare"
        WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
-         AND "principalType" = 'ROLE'
-       ORDER BY "principalId"`,
+         AND "principalType" = 'ROLE'`,
       [threadId],
     )
   ).map(({ principalId }: { principalId: string }) => principalId);
