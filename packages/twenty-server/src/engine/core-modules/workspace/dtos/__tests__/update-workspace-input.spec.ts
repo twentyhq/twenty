@@ -43,16 +43,13 @@ describe('workspace assistant mode updates', () => {
 });
 
 describe('workspace assistant profile inputs', () => {
-  it.each(['aiChatAssistantProfile', 'shouldResetAiChatAssistantProfile'])(
-    'rejects explicit null for %s',
-    async (field) => {
-      const input = Object.assign(new UpdateWorkspaceInput(), {
-        [field]: null,
-      });
+  it('rejects an explicitly null profile', async () => {
+    const input = Object.assign(new UpdateWorkspaceInput(), {
+      aiChatAssistantProfile: null,
+    });
 
-      expect(await validate(input)).toEqual([
-        expect.objectContaining({ property: field }),
-      ]);
-    },
-  );
+    expect(await validate(input)).toEqual([
+      expect.objectContaining({ property: 'aiChatAssistantProfile' }),
+    ]);
+  });
 });

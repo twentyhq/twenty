@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { currentUserAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/current-user-assistant-profile-query-factory.util';
+import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
 import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -82,22 +83,19 @@ const assignMemberRole = async (roleId: string) => {
   expect(errors).toBeUndefined();
 };
 
-const expectRejectedUpdate = async ({
-  data,
+const expectRejectedOperation = async ({
+  operation,
   token,
   errorCode,
 }: {
-  data: Record<string, unknown>;
+  operation: Parameters<typeof makeMetadataApiRequest>[0];
   token?: string;
   errorCode: ErrorCode;
 }) => {
   const before = await readWorkspace();
-  const response = await makeMetadataApiRequest(
-    updateWorkspaceAssistantProfileQueryFactory({ data }),
-    token,
-  );
+  const response = await makeMetadataApiRequest(operation, token);
 
-  expect(response.body.data?.updateWorkspace).toBeUndefined();
+  expect(response.body.data).toBeNull();
   expect(response.body.errors[0].extensions.code).toBe(errorCode);
 
   const after = await readWorkspace();
@@ -236,15 +234,15 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('resets every profile field to Ada defaults and reads them back', async () => {
-    const response = await updateWorkspace({
-      data: { shouldResetAiChatAssistantProfile: true },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
+    const response = await makeMetadataApiRequest(
+      resetWorkspaceAssistantProfileQueryFactory(),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.aiChatAssistantProfile).toEqual(
-      DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-    );
+    expect(
+      response.body.data.resetAiChatAssistantProfile.aiChatAssistantProfile,
+    ).toEqual(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
 
     const persisted = await readWorkspace(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
@@ -255,11 +253,13 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('rejects an invalid mixed update without committing either change', async () => {
-    await expectRejectedUpdate({
-      data: {
-        displayName: 'Rejected workspace edit',
-        aiChatAssistantProfile: { avatarColor: 'unsupported' },
-      },
+    await expectRejectedOperation({
+      operation: updateWorkspaceAssistantProfileQueryFactory({
+        data: {
+          displayName: 'Rejected workspace edit',
+          aiChatAssistantProfile: { avatarColor: 'unsupported' },
+        },
+      }),
       errorCode: ErrorCode.BAD_USER_INPUT,
     });
   });
@@ -309,11 +309,13 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('enforces permissions for every field in a mixed update and for reset', async () => {
-    await expectRejectedUpdate({
-      data: {
-        displayName: 'Rejected workspace edit',
-        aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
-      },
+    await expectRejectedOperation({
+      operation: updateWorkspaceAssistantProfileQueryFactory({
+        data: {
+          displayName: 'Rejected workspace edit',
+          aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
+        },
+      }),
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       errorCode: ErrorCode.FORBIDDEN,
     });
@@ -326,12 +328,14 @@ describe('workspace assistant profile settings', () => {
       CUSTOM_ASSISTANT_PROFILE,
     );
 
-    for (const data of [
-      { aiChatAssistantProfile: { displayName: 'Denied' } },
-      { shouldResetAiChatAssistantProfile: true },
+    for (const operation of [
+      updateWorkspaceAssistantProfileQueryFactory({
+        data: { aiChatAssistantProfile: { displayName: 'Denied' } },
+      }),
+      resetWorkspaceAssistantProfileQueryFactory(),
     ]) {
-      await expectRejectedUpdate({
-        data,
+      await expectRejectedOperation({
+        operation,
         token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         errorCode: ErrorCode.FORBIDDEN,
       });
@@ -341,12 +345,17 @@ describe('workspace assistant profile settings', () => {
   it('rejects profile updates and reset while Inbox is disabled', async () => {
     await setInboxEnabled(false);
 
-    for (const data of [
-      { aiChatAssistantProfile: { displayName: 'Denied' } },
-      { shouldResetAiChatAssistantProfile: true },
+    for (const operation of [
+      updateWorkspaceAssistantProfileQueryFactory({
+        data: {
+          aiChatAssistantProfile: { displayName: 'Denied' },
+          displayName: 'Rejected disabled inbox update',
+        },
+      }),
+      resetWorkspaceAssistantProfileQueryFactory(),
     ]) {
-      await expectRejectedUpdate({
-        data: { ...data, displayName: 'Rejected disabled inbox update' },
+      await expectRejectedOperation({
+        operation,
         errorCode: ErrorCode.FORBIDDEN,
       });
     }

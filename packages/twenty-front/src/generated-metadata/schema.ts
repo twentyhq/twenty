@@ -3736,6 +3736,7 @@ export type Mutation = {
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
   resendWorkspaceInvitation: SendInvitations;
+  resetAiChatAssistantProfile: Workspace;
   resetCommandMenuItem: CommandMenuItem;
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;
@@ -8029,7 +8030,6 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
-  shouldResetAiChatAssistantProfile?: InputMaybe<Scalars['Boolean']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   workspaceDiscoverability?: InputMaybe<WorkspaceDiscoverability>;

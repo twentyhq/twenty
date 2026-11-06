@@ -8567,6 +8567,9 @@ export default {
                     ]
                 }
             ],
+            "resetAiChatAssistantProfile": [
+                681
+            ],
             "resetCommandMenuItem": [
                 160,
                 {
@@ -15035,9 +15038,6 @@ export default {
             ],
             "logo": [
                 1
-            ],
-            "shouldResetAiChatAssistantProfile": [
-                4
             ],
             "subdomain": [
                 1

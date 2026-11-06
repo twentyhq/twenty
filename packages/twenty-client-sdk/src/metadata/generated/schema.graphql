@@ -3544,6 +3544,7 @@ type Mutation {
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  resetAiChatAssistantProfile: Workspace!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   resetPageLayoutToDefault(id: String!): PageLayout!
@@ -5664,7 +5665,6 @@ input UpdateWorkspaceInput {
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
-  shouldResetAiChatAssistantProfile: Boolean
   subdomain: String
   trashRetentionDays: Float
   workspaceDiscoverability: WorkspaceDiscoverability

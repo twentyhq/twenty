@@ -9,7 +9,11 @@ import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
-import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import {
+  DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+  isAiModelTier,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   FeatureFlagKey,
@@ -88,7 +92,7 @@ import {
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { upsertIframeMediaPermission } from 'src/engine/core-modules/workspace/utils/upsert-iframe-media-permission.util';
-import { parseWorkspaceAssistantProfileUpdateOrThrow } from 'src/engine/core-modules/workspace/utils/parse-workspace-assistant-profile-update-or-throw.util';
+import { parseWorkspaceAssistantProfilePatchOrThrow } from 'src/engine/core-modules/workspace/utils/parse-workspace-assistant-profile-patch-or-throw.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
@@ -163,7 +167,6 @@ export class WorkspaceService {
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
-    shouldResetAiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -438,8 +441,7 @@ export class WorkspaceService {
     const isUpdatingAssistantSettings =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode) ||
-      !isUndefined(payload.aiChatAssistantProfile) ||
-      !isUndefined(payload.shouldResetAiChatAssistantProfile);
+      !isUndefined(payload.aiChatAssistantProfile);
     const isInboxRequiredButDisabled =
       isUpdatingAssistantSettings &&
       !(await this.featureFlagService.isFeatureEnabled(
@@ -457,15 +459,10 @@ export class WorkspaceService {
       );
     }
 
-    const {
-      aiChatAssistantProfile,
-      shouldResetAiChatAssistantProfile,
-      ...workspaceUpdates
-    } = payload;
-    const assistantProfileUpdate = parseWorkspaceAssistantProfileUpdateOrThrow({
-      profile: aiChatAssistantProfile,
-      reset: shouldResetAiChatAssistantProfile,
-    });
+    const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
+    const assistantProfilePatch = isUndefined(aiChatAssistantProfile)
+      ? undefined
+      : parseWorkspaceAssistantProfilePatchOrThrow(aiChatAssistantProfile);
 
     if (
       isDefined(payload.subdomain) &&
@@ -589,7 +586,7 @@ export class WorkspaceService {
             : {}),
           ...(payload.logo === null ? { logoFileId: null } : {}),
         },
-        assistantProfileUpdate,
+        assistantProfilePatch,
       });
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
@@ -1257,7 +1254,7 @@ export class WorkspaceService {
     payload: UpdateWorkspaceInput;
     userWorkspaceId?: string;
     workspaceId: string;
-    apiKey: ApiKeyEntity | undefined;
+    apiKey: Pick<ApiKeyEntity, 'id'> | undefined;
     application?: FlatApplication;
     agentId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
@@ -1365,15 +1362,15 @@ export class WorkspaceService {
   private async persistWorkspaceUpdate({
     workspaceId,
     values,
-    assistantProfileUpdate,
+    assistantProfilePatch,
   }: {
     workspaceId: string;
     values: QueryDeepPartialEntity<WorkspaceEntity>;
-    assistantProfileUpdate: ReturnType<
-      typeof parseWorkspaceAssistantProfileUpdateOrThrow
-    >;
+    assistantProfilePatch:
+      | ReturnType<typeof parseWorkspaceAssistantProfilePatchOrThrow>
+      | undefined;
   }) {
-    if (!isDefined(assistantProfileUpdate)) {
+    if (!isDefined(assistantProfilePatch)) {
       await this.workspaceRepository.update(workspaceId, values);
 
       return;
@@ -1384,16 +1381,14 @@ export class WorkspaceService {
       .update()
       .set({
         ...values,
-        aiChatAssistantProfile: assistantProfileUpdate.shouldReplaceProfile
-          ? assistantProfileUpdate.profile
-          : () =>
-              doNotTranslate(
-                '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
-              ),
+        aiChatAssistantProfile: () =>
+          doNotTranslate(
+            '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
+          ),
       })
       .where({ id: workspaceId })
       .setParameters({
-        assistantProfilePatch: JSON.stringify(assistantProfileUpdate.profile),
+        assistantProfilePatch: JSON.stringify(assistantProfilePatch),
       })
       .execute();
   }
@@ -1487,6 +1482,46 @@ export class WorkspaceService {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
+
+  async resetAiChatAssistantProfile({
+    workspaceId,
+    userWorkspaceId,
+    apiKey,
+    application,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    apiKey: Pick<ApiKeyEntity, 'id'> | undefined;
+    application?: FlatApplication;
+  }) {
+    const workspace = await this.findOneWorkspaceById(workspaceId);
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    await this.validateWorkspaceUpdatePermissions({
+      payload: { aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE },
+      userWorkspaceId,
+      workspaceId,
+      apiKey,
+      application,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    await this.workspaceRepository.update(workspaceId, {
+      aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+    });
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    const updatedWorkspace = await this.findOneWorkspaceById(workspaceId);
+
+    assertIsDefinedOrThrow(updatedWorkspace, WorkspaceNotFoundDefaultError);
+
+    return updatedWorkspace;
   }
 
   async getAiChatAssistantProfile(

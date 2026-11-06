@@ -5,9 +5,17 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import assert from 'assert';
+import { type Request } from 'express';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
@@ -205,6 +213,44 @@ export class WorkspaceResolver {
         apiKey,
         application,
         agentId: undefined,
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => WorkspaceEntity)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
+      requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+    }),
+  )
+  async resetAiChatAssistantProfile(
+    @Context('req') request: Pick<
+      Request,
+      'workspace' | 'userWorkspaceId' | 'apiKey' | 'application'
+    >,
+  ) {
+    try {
+      assertIsDefinedOrThrow(request.workspace, WorkspaceNotFoundDefaultError);
+
+      return await this.workspaceService.resetAiChatAssistantProfile({
+        workspaceId: request.workspace.id,
+        userWorkspaceId: request.userWorkspaceId,
+        apiKey: request.apiKey ?? undefined,
+        application: request.application ?? undefined,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
