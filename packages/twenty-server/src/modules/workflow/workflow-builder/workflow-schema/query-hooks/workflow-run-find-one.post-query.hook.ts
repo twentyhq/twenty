@@ -29,7 +29,6 @@ export class WorkflowRunFindOnePostQueryHook implements WorkspacePostQueryHookIn
     for (const workflowRun of payload) {
       const state = workflowRun.state;
 
-      // state is absent when the query did not select it
       if (!isDefined(state?.flow)) {
         continue;
       }

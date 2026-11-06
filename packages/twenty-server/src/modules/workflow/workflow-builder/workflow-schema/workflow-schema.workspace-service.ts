@@ -739,13 +739,15 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.HTTP_REQUEST:
       case WorkflowActionType.LOGIC_FUNCTION: {
         const propertyPath = extractPropertyPathFromVariable(items);
-        const computedOutputSchema = await this.computeStepOutputSchema({
+        const outputSchema = await this.computeStepOutputSchema({
           step,
           workspaceId,
         });
-        const outputSchema = isBaseOutputSchemaV2(computedOutputSchema)
-          ? computedOutputSchema
-          : {};
+
+        // the only other shape these steps produce is the empty schema of a step with no sample
+        if (!isBaseOutputSchemaV2(outputSchema)) {
+          return DEFAULT_ITERATOR_CURRENT_ITEM;
+        }
 
         const variableTargetsWholeStepOutput = propertyPath.length === 0;
 
