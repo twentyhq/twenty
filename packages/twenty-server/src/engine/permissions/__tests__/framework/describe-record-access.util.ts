@@ -5,7 +5,7 @@ import {
   type RecordAccessWorld,
   type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
-import { resolveWorldOrThrow } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
 import {
   buildStoredRecords,
   type RecordFixture,
@@ -37,11 +37,10 @@ const findGrantedOperations = async ({
   hypotheticalShareAccessLevel?: RecordShareAccessLevel;
 }) => {
   const storedRecords = buildStoredRecords([{ ...record, id: RECORD_ID }]);
-  const { principals, metadataMaps, flatObjectMetadata } =
-    await resolveWorldOrThrow({
-      world,
-      storedRecords,
-    });
+  const { principals, metadataMaps, flatObjectMetadata } = await resolveWorld({
+    world,
+    storedRecords,
+  });
   const grantedOperations: RecordOperation[] = [];
 
   for (const operationType of RECORD_OPERATIONS) {

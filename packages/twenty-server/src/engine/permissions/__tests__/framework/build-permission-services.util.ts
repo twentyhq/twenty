@@ -6,23 +6,26 @@ import {
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
 import { type RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const buildPermissionServices = ({
   cacheValues,
   storedRecords = buildStoredRecords([]),
+  principals,
 }: {
   cacheValues: object;
   storedRecords?: StoredRecords;
+  principals?: PermissionsPrincipalsWithRolesContext;
 }) => {
   const workspaceCacheService = {
     getOrRecompute: async () => cacheValues,
   } as unknown as WorkspaceCacheService;
-  const principalPermissionsService = new PrincipalPermissionsService(
-    workspaceCacheService,
-  );
+  const principalPermissionsService = {
+    buildPermissionsPrincipals: async () => principals,
+  } as unknown as PrincipalPermissionsService;
   const permissionsMetadataMapsService = new PermissionsMetadataMapsService(
     workspaceCacheService,
   );

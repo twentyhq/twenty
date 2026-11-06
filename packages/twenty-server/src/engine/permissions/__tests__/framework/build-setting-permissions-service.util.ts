@@ -12,6 +12,7 @@ import {
   MAIN_ROLE_ID,
   ROLELESS_APPLICATION_ID,
 } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 export type RoleSetting =
@@ -31,15 +32,20 @@ export const FLAG = PermissionFlagType.WORKSPACE;
 
 const ROLE_IDS = [MAIN_ROLE_ID, LIMITING_ROLE_ID, APPLICATION_ROLE_ID];
 
-export const buildSettingPermissionsService = (
-  settingByRoleId: Record<string, RoleSetting>,
-) => {
+export const buildSettingPermissionsService = ({
+  settingByRoleId,
+  principals,
+}: {
+  settingByRoleId: Record<string, RoleSetting>;
+  principals?: PermissionsPrincipalsWithRolesContext;
+}) => {
   const roles = ROLE_IDS.map((id) => ({
     id,
     roleSetting: settingByRoleId[id] ?? 'no flag',
   })).filter(({ roleSetting }) => roleSetting !== 'missing role');
   const cacheValues = buildPermissionCacheValues({});
   const services = buildPermissionServices({
+    principals,
     cacheValues: {
       ...cacheValues,
       flatApplicationMaps: {

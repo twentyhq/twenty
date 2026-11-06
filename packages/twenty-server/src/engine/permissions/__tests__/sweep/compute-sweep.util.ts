@@ -1,13 +1,13 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { isDefined } from 'twenty-shared/utils';
 
+import { UNREAD_AUTH_CONTEXT } from 'src/engine/permissions/__tests__/framework/build-principals.util';
 import {
   RECORD_OPERATIONS,
   type RecordAccessWorld,
   type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import { WORKSPACE_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-import { resolveWorldOrThrow } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
 import { buildStoredRecords } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 import {
   SWEEP_RECORDS,
@@ -52,23 +52,17 @@ export const describeSweepEntry = ({
 const computeWorldEntries = async (
   world: RecordAccessWorld,
 ): Promise<SweepEntry[]> => {
-  const {
-    services,
-    authContext,
-    principals,
-    metadataMaps,
-    flatObjectMetadata,
-  } = await resolveWorldOrThrow({ world, storedRecords: STORED_RECORDS });
-  const readableEventRecordIds = isDefined(authContext)
-    ? await services.recordPermissionsService.findReadableEventRecordIds({
-        authContext,
-        eventBatch: {
-          workspaceId: WORKSPACE_ID,
-          objectMetadata: flatObjectMetadata,
-          events: EVENTS,
-        } as never,
-      })
-    : undefined;
+  const { services, principals, metadataMaps, flatObjectMetadata } =
+    await resolveWorld({ world, storedRecords: STORED_RECORDS });
+  const readableEventRecordIds =
+    await services.recordPermissionsService.findReadableEventRecordIds({
+      authContext: UNREAD_AUTH_CONTEXT,
+      eventBatch: {
+        workspaceId: WORKSPACE_ID,
+        objectMetadata: flatObjectMetadata,
+        events: EVENTS,
+      } as never,
+    });
   const entries: SweepEntry[] = [];
 
   for (const operationType of RECORD_OPERATIONS) {

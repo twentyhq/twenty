@@ -22,13 +22,10 @@ import {
   type RoleGrant,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import {
-  API_KEY_ID,
   APPLICATION_ID,
   APPLICATION_ROLE_ID,
   CATEGORY_FIELD_ID,
-  LIMITING_AGENT_ID,
   LIMITING_ROLE_ID,
-  MAIN_AGENT_ID,
   MAIN_APPLICATION_ID,
   MAIN_ROLE_ID,
   MEMBER_ID,
@@ -38,7 +35,6 @@ import {
   STATUS_FIELD_ID,
   USER_ID,
   USER_WORKSPACE_ID,
-  WEBHOOK_ID,
   WORKSPACE_ID,
 } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
@@ -211,9 +207,6 @@ export type PermissionCacheValues = Omit<
     idByUniversalIdentifier: Record<string, string>;
   };
   userWorkspaceRoleMap: Record<string, string>;
-  apiKeyRoleMap: Record<string, string>;
-  flatRoleTargetByAgentIdMaps: Record<string, { roleId: string }>;
-  flatRoleTargetMaps: object;
   flatWorkspaceMemberMaps: object;
 };
 
@@ -276,16 +269,6 @@ export const buildPermissionCacheValues = ({
     flatRowLevelPermissionPredicateMaps: buildMaps(predicates),
     flatRowLevelPermissionPredicateGroupMaps: buildMaps(predicateGroups),
     userWorkspaceRoleMap: { [USER_WORKSPACE_ID]: MAIN_ROLE_ID },
-    apiKeyRoleMap: { [API_KEY_ID]: MAIN_ROLE_ID },
-    flatRoleTargetByAgentIdMaps: {
-      [MAIN_AGENT_ID]: { roleId: MAIN_ROLE_ID },
-      [LIMITING_AGENT_ID]: { roleId: LIMITING_ROLE_ID },
-    },
-    flatRoleTargetMaps: {
-      byUniversalIdentifier: {
-        'webhook-role-target': { webhookId: WEBHOOK_ID, roleId: MAIN_ROLE_ID },
-      },
-    },
     flatWorkspaceMemberMaps: {
       byId: { [MEMBER_ID]: { userId: USER_ID, deletedAt: null } },
       idByUserId: { [USER_ID]: MEMBER_ID },
