@@ -112,12 +112,4 @@ describe('FindRecordsWorkflowAction', () => {
       run({ recordSorts: [{ fieldMetadataId: 'deleted', direction: 'ASC' }] }),
     ).rejects.toThrow('Sort could not be computed');
   });
-
-  it('keeps the stored order of a step the upgrade has not reached yet', async () => {
-    await run({ gqlOperationOrderBy: [{ closeDate: 'AscNullsFirst' }] });
-
-    expect(execute).toHaveBeenCalledWith(
-      expect.objectContaining({ orderBy: [{ closeDate: 'AscNullsFirst' }] }),
-    );
-  });
 });

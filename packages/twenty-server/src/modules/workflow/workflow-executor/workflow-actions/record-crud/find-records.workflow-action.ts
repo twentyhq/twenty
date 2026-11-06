@@ -5,7 +5,6 @@ import {
   isDefined,
   isEmptyObject,
   isNonEmptyArray,
-  isPlainObject,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -31,16 +30,6 @@ import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workfl
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
 import { findRecordFilterWithMissingField } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/find-record-filter-with-missing-field.util';
 import { resolveRecordFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-record-filters.util';
-
-// Fence for steps that upgrade:2-57:move-find-records-sorts-to-record-sorts has not reached yet; remove once 2.57 leaves the cross-upgrade window
-const getNotYetUpgradedGqlOperationOrderBy = (
-  orderBy: unknown,
-): ObjectRecordOrderBy | undefined =>
-  isPlainObject(orderBy) &&
-  !isDefined(orderBy.recordSorts) &&
-  Array.isArray(orderBy.gqlOperationOrderBy)
-    ? orderBy.gqlOperationOrderBy
-    : undefined;
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -147,14 +136,12 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     let gqlOperationOrderBy: ObjectRecordOrderBy | undefined;
 
     try {
-      gqlOperationOrderBy =
-        getNotYetUpgradedGqlOperationOrderBy(workflowActionInput.orderBy) ??
-        computeRecordGqlOperationOrderByFromFlatMaps({
-          recordSorts: workflowActionInput.orderBy?.recordSorts ?? [],
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        });
+      gqlOperationOrderBy = computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: workflowActionInput.orderBy?.recordSorts ?? [],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
     } catch (error) {
       throw new WorkflowStepExecutorException(
         `Sort could not be computed: ${error.message}`,

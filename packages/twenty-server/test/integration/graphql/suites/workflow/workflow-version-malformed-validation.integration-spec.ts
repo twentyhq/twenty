@@ -180,7 +180,7 @@ describe('Workflow version malformed validation (e2e)', () => {
     },
   });
 
-  it('rejects a find records sort stored only as a GraphQL order', async () => {
+  it('rejects a find records sort written as a GraphQL order', async () => {
     const response = await updateStepResponse(
       coreWorkflowVersionId,
       findRecordsStepWithOrderBy({
@@ -190,42 +190,6 @@ describe('Workflow version malformed validation (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
-  });
-
-  it('stores only the record sorts when an older builder also sends the computed order', async () => {
-    const [{ id: companyNameFieldId }] = await global.testDataSource.query(
-      `SELECT field.id FROM core."fieldMetadata" field
-       JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
-       WHERE object."workspaceId" = $1 AND object."nameSingular" = 'company' AND field.name = 'name'`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
-    const recordSorts = [
-      {
-        id: '5b9f0e64-3c2a-4d1e-9f7b-8a6c4e2d1b0a',
-        fieldMetadataId: companyNameFieldId,
-        direction: 'DESC',
-      },
-    ];
-
-    const response = await updateStepResponse(
-      coreWorkflowVersionId,
-      findRecordsStepWithOrderBy({
-        recordSorts,
-        gqlOperationOrderBy: [{ name: 'DescNullsLast' }],
-      }),
-    );
-
-    expect(response.body.errors).toBeUndefined();
-
-    const [{ steps }] = await global.testDataSource.query(
-      `SELECT steps FROM core."workflowVersion" WHERE id = $1`,
-      [coreWorkflowVersionId],
-    );
-
-    expect(
-      steps.find(({ id }: { id: string }) => id === findRecordsStep.id).settings
-        .input.orderBy,
-    ).toEqual({ recordSorts });
   });
 
   it('accepts a valid rich text object', async () => {
