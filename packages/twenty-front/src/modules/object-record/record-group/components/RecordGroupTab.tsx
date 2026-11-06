@@ -1,8 +1,10 @@
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -35,7 +37,13 @@ export const RecordGroupTab = ({
       { groupValue: recordGroupDefinition?.value ?? '' },
     );
 
+  const isAllRecordGroupsTabActive = useAtomComponentSelectorValue(
+    isAllRecordGroupsTabActiveComponentSelector,
+  );
+
+  // The ungrouped rows shown under All drop by position, not by group
   const { ref: dropTargetRef, isDropTarget } = useDroppable({
+    disabled: isAllRecordGroupsTabActive,
     id: `record-group-tab-${recordGroupId}`,
     accept: dndType,
     collisionPriority: DND_KIT_COLLISION_PRIORITY,
@@ -50,6 +58,7 @@ export const RecordGroupTab = ({
   return (
     <Tabs.Tab
       ref={dropTargetRef}
+      variant="filled"
       value={recordGroupId}
       highlighted={isDropTarget}
       badge={

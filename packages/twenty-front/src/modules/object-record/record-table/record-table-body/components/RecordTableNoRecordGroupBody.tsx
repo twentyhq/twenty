@@ -1,4 +1,6 @@
+import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
+import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
 
@@ -14,6 +16,7 @@ import { RecordTableVirtualizedSSESubscribeEffect } from '@/object-record/record
 import { RecordTableVirtualizedScrollEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedScrollEffect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableNoRecordGroupBody = () => {
   const recordTableHasRecords = useAtomComponentSelectorValue(
@@ -24,24 +27,33 @@ export const RecordTableNoRecordGroupBody = () => {
     isRecordTableInitialLoadingComponentState,
   );
 
-  if (isRecordTableInitialLoading && !recordTableHasRecords) {
-    return <RecordTableBodyLoading />;
-  }
+  const isInitialLoadingDisplayed =
+    isRecordTableInitialLoading && !recordTableHasRecords;
 
   return (
     <RecordTableBodyContextProvider>
       <RecordTableBodyNoRecordGroupDragDropContextProvider>
-        <RecordTableBody>
-          <RecordTableNoRecordGroupRows />
-          <RecordTableCellPortals />
-        </RecordTableBody>
-        {!isRecordTableInitialLoading && recordTableHasRecords && (
-          <RecordTableAggregateFooter />
+        <RecordGroupTabs
+          viewType={ViewType.TABLE}
+          dndType={RECORD_TABLE_ROW_DND_TYPE}
+        />
+        {isInitialLoadingDisplayed ? (
+          <RecordTableBodyLoading />
+        ) : (
+          <>
+            <RecordTableBody>
+              <RecordTableNoRecordGroupRows />
+              <RecordTableCellPortals />
+            </RecordTableBody>
+            {!isRecordTableInitialLoading && recordTableHasRecords && (
+              <RecordTableAggregateFooter />
+            )}
+            <RecordTableVirtualizedScrollEffect />
+            <RecordTableVirtualizedDataChangedEffect />
+            <RecordTableVirtualizedJunctionDataChangedEffect />
+            <RecordTableVirtualizedSSESubscribeEffect />
+          </>
         )}
-        <RecordTableVirtualizedScrollEffect />
-        <RecordTableVirtualizedDataChangedEffect />
-        <RecordTableVirtualizedJunctionDataChangedEffect />
-        <RecordTableVirtualizedSSESubscribeEffect />
       </RecordTableBodyNoRecordGroupDragDropContextProvider>
     </RecordTableBodyContextProvider>
   );

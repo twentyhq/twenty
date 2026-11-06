@@ -100,6 +100,7 @@ export const useSetRecordTableData = ({
 
       const isRecordGroupHiddenByTabs =
         store.get(isRecordGroupTabsDisplayed) &&
+        isDefined(currentRecordGroupId) &&
         currentRecordGroupId !== store.get(activeRecordGroupTabId);
 
       const isAllRowsSelected =

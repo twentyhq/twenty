@@ -1,9 +1,12 @@
+import { RecordGroupAllTab } from '@/object-record/record-group/components/RecordGroupAllTab';
 import { RecordGroupTab } from '@/object-record/record-group/components/RecordGroupTab';
 import { RecordGroupTabsPortalContext } from '@/object-record/record-group/states/context/RecordGroupTabsPortalContext';
+import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { selectedRecordGroupTabIdComponentState } from '@/object-record/record-group/states/selectedRecordGroupTabIdComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -53,6 +56,10 @@ export const RecordGroupTabs = ({
     activeRecordGroupTabIdComponentSelector,
   );
 
+  const isAllRecordGroupsTabActive = useAtomComponentSelectorValue(
+    isAllRecordGroupsTabActiveComponentSelector,
+  );
+
   const setSelectedRecordGroupTabId = useSetAtomComponentState(
     selectedRecordGroupTabIdComponentState,
   );
@@ -77,6 +84,7 @@ export const RecordGroupTabs = ({
     >
       <StyledTabsScrollContainer>
         <Tabs.List aria-label={t`Groups`} render={<StyledTabsList />}>
+          <RecordGroupAllTab />
           {visibleRecordGroupIds.map((recordGroupId) => (
             <RecordGroupTab
               key={recordGroupId}
@@ -84,9 +92,10 @@ export const RecordGroupTabs = ({
               dndType={dndType}
             />
           ))}
-          <Tabs.Indicator />
         </Tabs.List>
       </StyledTabsScrollContainer>
+      {/* The grouped body loads the group totals, but All shows the ungrouped one */}
+      {isAllRecordGroupsTabActive && <RecordIndexGroupAggregatesDataLoader />}
     </Tabs.Root>,
     recordGroupTabsPortalElement,
   );
