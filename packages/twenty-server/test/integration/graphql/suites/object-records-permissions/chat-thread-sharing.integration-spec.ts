@@ -494,16 +494,17 @@ describe('Conversation sharing through the authenticated API', () => {
             applicationId: null,
           },
         });
-        const senderAuthorization = await actors.authorize({
-          workspaceId,
-          threadId,
-          sender: {
-            userWorkspaceId: sender.userWorkspaceId,
-            applicationId: null,
-          },
-        });
+        const authorizedConversation =
+          await actors.resolveAuthorizedConversation({
+            workspaceId,
+            threadId,
+            sender: {
+              userWorkspaceId: sender.userWorkspaceId,
+              applicationId: null,
+            },
+          });
 
-        expect(senderAuthorization?.authContext).toMatchObject({
+        expect(authorizedConversation.authContext).toMatchObject({
           type: 'user',
           userWorkspaceId: sender.userWorkspaceId,
         });

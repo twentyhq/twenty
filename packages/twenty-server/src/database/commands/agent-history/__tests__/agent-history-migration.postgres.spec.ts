@@ -209,8 +209,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const conversationWriter = new AgentConversationWriterService(
-      turns as never,
-      new AgentHistoryTransactionService(orm as never),
+      new AgentHistoryTransactionService(orm as never, {
+        findDirectMessagePairOfThread: jest.fn().mockResolvedValue(null),
+        makeConversationRecordsPrivateToPair: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+        deletePairSharesOfConversationRecords: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+      }),
       {
         getOrRecompute: async () => ({
           flatWorkspaceMemberMaps: {
@@ -249,7 +260,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
-      new AgentChatQueueService(turns, messageRepository, conversationWriter);
+      new AgentChatQueueService(messageRepository, conversationWriter);
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(

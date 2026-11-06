@@ -279,6 +279,7 @@ export const createChatParticipationTestContext = async () => {
     replyExecutionPolicyService,
     featureFlagService,
     setAssistantModes,
+    setStoredAssistantParticipation,
     setConversationType,
     registerThread,
     createThread,
@@ -290,11 +291,18 @@ export const createChatParticipationTestContext = async () => {
     cleanup: async () => {
       await waitForAllJobsToFinish();
       await global.testDataSource.query(
-        `DELETE FROM "${schema}"."agentChatThread" WHERE id = ANY($1::uuid[])`,
+        `DELETE FROM "${schema}"."recordShare" WHERE "recordId" IN (
+          SELECT id FROM "${schema}"."agentChatThread" WHERE id = ANY($1::uuid[])
+          UNION ALL SELECT id FROM "${schema}"."agentTurn" WHERE "threadId" = ANY($1::uuid[])
+          UNION ALL SELECT id FROM "${schema}"."agentMessage" WHERE "threadId" = ANY($1::uuid[])
+          UNION ALL SELECT part.id FROM "${schema}"."agentMessagePart" part
+            JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+            WHERE message."threadId" = ANY($1::uuid[])
+        )`,
         [[...threadIds]],
       );
       await global.testDataSource.query(
-        `DELETE FROM "${schema}"."recordShare" WHERE "recordId" = ANY($1::uuid[])`,
+        `DELETE FROM "${schema}"."agentChatThread" WHERE id = ANY($1::uuid[])`,
         [[...threadIds]],
       );
       await featureFlagService.upsertWorkspaceFeatureFlag({
