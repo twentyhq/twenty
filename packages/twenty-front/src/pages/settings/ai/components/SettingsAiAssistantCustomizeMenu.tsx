@@ -21,6 +21,7 @@ type SettingsAiAssistantCustomizeMenuProps = {
   onChange: (value: Partial<AiChatAssistantProfile>) => void;
   onReset: () => void;
   disabled: boolean;
+  isSaving: boolean;
 };
 
 export const SettingsAiAssistantCustomizeMenu = ({
@@ -28,6 +29,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
   onChange,
   onReset,
   disabled,
+  isSaving,
 }: SettingsAiAssistantCustomizeMenuProps) => {
   const { t } = useLingui();
 
@@ -38,7 +40,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
           <SettingsAiAssistantNameInput
             value={value}
             onChange={onChange}
-            disabled={disabled}
+            disabled={disabled || isSaving}
           />
         </Dropdown.Section>
         <Dropdown.Separator />

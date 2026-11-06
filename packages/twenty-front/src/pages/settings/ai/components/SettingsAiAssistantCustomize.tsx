@@ -67,7 +67,8 @@ export const SettingsAiAssistantCustomize = ({
           value={value}
           onChange={onChange}
           onReset={onReset}
-          disabled={disabled || isSaving}
+          disabled={disabled}
+          isSaving={isSaving}
         />
       </Dropdown.Content>
     </Dropdown.Root>

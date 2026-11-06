@@ -15,7 +15,11 @@ type SettingsAiAssistantAvatarMenuPageProps = {
   attribute: 'avatarShape' | 'avatarColor' | 'avatarFace';
   title: string;
   value: AiChatAssistantProfile;
-  onChange: (value: Partial<AiChatAssistantProfile>) => void;
+  onChange: (
+    value: Partial<
+      Pick<AiChatAssistantProfile, 'avatarShape' | 'avatarColor' | 'avatarFace'>
+    >,
+  ) => void;
   disabled: boolean;
 };
 

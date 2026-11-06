@@ -310,9 +310,10 @@ export const SavingWhileOpen: Story = {
       canvas.getByRole('button', { name: 'Finish saving' }),
     );
     expect(customize).not.toBeDisabled();
-    expect(body.getByRole('dialog')).toBeVisible();
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await userEvent.click(customize);
     expect(
-      body.getByRole('textbox', { name: 'Assistant name' }),
+      await body.findByRole('textbox', { name: 'Assistant name' }),
     ).not.toBeDisabled();
     await userEvent.keyboard('{Escape}');
     expect(args.onChange).toHaveBeenCalledOnce();

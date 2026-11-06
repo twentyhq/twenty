@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { createSettingsAiAssistantProfileSaveQueue } from '@/settings/ai/utils/createSettingsAiAssistantProfileSaveQueue';
 import { type SettingsAiAssistantProfileOperation } from '@/settings/ai/types/SettingsAiAssistantProfileOperation';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
@@ -37,16 +38,14 @@ export const useSettingsAiAssistantProfile = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const isVisible = canEditProfile && isInboxEnabled;
-  const [updateWorkspace, { loading: isUpdating }] = useMutation(
-    UpdateWorkspaceDocument,
-    { fetchPolicy: 'no-cache' },
-  );
-  const [resetProfile, { loading: isResetting }] = useMutation(
-    ResetAiChatAssistantProfileDocument,
-    { fetchPolicy: 'no-cache' },
-  );
-  const [failedOperation, setFailedOperation] =
-    useState<SettingsAiAssistantProfileOperation>();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument, {
+    fetchPolicy: 'no-cache',
+  });
+  const [resetProfile] = useMutation(ResetAiChatAssistantProfileDocument, {
+    fetchPolicy: 'no-cache',
+  });
+  const [saveQueue] = useState(createSettingsAiAssistantProfileSaveQueue);
+  const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasRefreshError, setHasRefreshError] = useState(false);
@@ -54,7 +53,6 @@ export const useSettingsAiAssistantProfile = () => {
     currentWorkspace?.aiChatAssistantProfile,
   );
   const profile = parsedProfile.success ? parsedProfile.data : undefined;
-  const isSaving = isUpdating || isResetting;
   const isLoading = !isCurrentUserLoaded || isRefreshing;
   const defaultSaveErrorMessage = t`Failed to save assistant settings. Try again.`;
 
@@ -80,7 +78,9 @@ export const useSettingsAiAssistantProfile = () => {
     };
   };
 
-  const save = async (operation: SettingsAiAssistantProfileOperation) => {
+  const save = async (
+    operation: SettingsAiAssistantProfileOperation,
+  ): Promise<boolean> => {
     const requestedWorkspace = store.get(currentWorkspaceState.atom);
     const hasPermission = store.get(permissionFlagMapSelector.atom)[
       PermissionFlagType.AI_SETTINGS
@@ -95,15 +95,15 @@ export const useSettingsAiAssistantProfile = () => {
       !hasInbox ||
       !isDefined(requestedWorkspace) ||
       requestedWorkspace.id !== currentWorkspace?.id ||
-      !isDefined(profile) ||
-      isLoading ||
-      isSaving
+      !ASSISTANT_PROFILE_SCHEMA.safeParse(
+        requestedWorkspace.aiChatAssistantProfile,
+      ).success ||
+      !store.get(isCurrentUserLoadedState.atom)
     ) {
-      return;
+      return false;
     }
 
     setErrorMessage(undefined);
-    setFailedOperation(undefined);
 
     try {
       const result = await performOperation({
@@ -114,13 +114,12 @@ export const useSettingsAiAssistantProfile = () => {
       const hasMatchingWorkspace = result.workspaceId === requestedWorkspace.id;
 
       if (!savedProfile.success || !hasMatchingWorkspace) {
-        setFailedOperation(operation);
         setErrorMessage(defaultSaveErrorMessage);
-        return;
+        return false;
       }
 
       if (store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id) {
-        return;
+        return false;
       }
 
       store.set(currentWorkspaceState.atom, (previousWorkspace) =>
@@ -128,24 +127,44 @@ export const useSettingsAiAssistantProfile = () => {
           ? { ...previousWorkspace, aiChatAssistantProfile: savedProfile.data }
           : previousWorkspace,
       );
+      return true;
     } catch (error) {
       const hasUserFriendlyMessage =
         CombinedGraphQLErrors.is(error) &&
         isDefined(error.errors[0]?.extensions?.userFriendlyMessage);
 
-      setFailedOperation(operation);
       setErrorMessage(
         hasUserFriendlyMessage
           ? getErrorMessageFromApolloError(error)
           : defaultSaveErrorMessage,
       );
+      return false;
     }
   };
 
-  const saveProfile = (patch: Partial<AiChatAssistantProfile>) =>
-    save({ type: 'update', patch });
+  const processQueue = async () => {
+    if (!saveQueue.canProcess()) {
+      return;
+    }
 
-  const reset = () => save({ type: 'reset' });
+    setIsSaving(true);
+
+    try {
+      await saveQueue.process(save);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const enqueueOperation = (operation: SettingsAiAssistantProfileOperation) => {
+    saveQueue.append(operation);
+    return processQueue();
+  };
+
+  const saveProfile = (patch: Partial<AiChatAssistantProfile>) =>
+    enqueueOperation({ type: 'update', patch });
+
+  const reset = () => enqueueOperation({ type: 'reset' });
 
   const refreshProfile = async () => {
     const requestedWorkspace = store.get(currentWorkspaceState.atom);
@@ -195,8 +214,9 @@ export const useSettingsAiAssistantProfile = () => {
   };
 
   const retry = () => {
-    if (isDefined(failedOperation)) {
-      return save(failedOperation);
+    if (isDefined(errorMessage)) {
+      saveQueue.resume();
+      return processQueue();
     }
 
     return refreshProfile();
