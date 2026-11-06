@@ -670,7 +670,8 @@ export const useAuth = () => {
         if (isDefined(redemption.provisioningUri)) {
           return {
             provisioningUri: redemption.provisioningUri,
-            isTwoFactorAuthenticationReset: true,
+            isTwoFactorAuthenticationReset:
+              redemption.isTwoFactorAuthenticationReset,
           };
         }
 

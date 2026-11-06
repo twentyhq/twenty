@@ -1,6 +1,6 @@
 import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { TwoFactorAuthenticationBackupCodesDisplay } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay';
-import { TwoFactorAuthenticationRecoveryCodeConfirmationDialog } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog';
+import { TwoFactorAuthenticationOtpConfirmationDialog } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { plural } from '@lingui/core/macro';
@@ -120,7 +120,7 @@ export const TwoFactorAuthenticationBackupCodesSection = ({
           )}
         </StyledActionRow>
       </StyledContent>
-      <TwoFactorAuthenticationRecoveryCodeConfirmationDialog
+      <TwoFactorAuthenticationOtpConfirmationDialog
         dialogId={GENERATE_BACKUP_CODES_DIALOG_ID}
         title={t`Generate backup codes`}
         description={t`New backup codes replace your current ones, which stop working.`}
