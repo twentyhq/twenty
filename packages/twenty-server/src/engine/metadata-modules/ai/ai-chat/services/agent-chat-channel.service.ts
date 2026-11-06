@@ -104,17 +104,23 @@ export class AgentChatChannelService {
     workspaceId: string;
     channelIds: string[];
   }): Promise<void> {
+    const rewriteErrors: unknown[] = [];
+
     for (const channelId of channelIds) {
       await this.channelGrantService
         .rewriteChannelGrants({ workspaceId, channelId })
         .catch(async (error: unknown) => {
+          rewriteErrors.push(error);
+
           await this.channelGrantService.enqueueChannelGrantsRewrite({
             workspaceId,
             channelId,
           });
-
-          throw error;
         });
+    }
+
+    if (isNonEmptyArray(rewriteErrors)) {
+      throw rewriteErrors[0];
     }
   }
 
