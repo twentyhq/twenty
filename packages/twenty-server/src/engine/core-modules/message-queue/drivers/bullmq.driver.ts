@@ -42,6 +42,10 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import {
+  EXPIRED_JOBS_CLEAN_BATCH_SIZE,
+  EXPIRED_JOBS_CLEAN_MAX_BATCHES,
+} from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import {
@@ -168,6 +172,45 @@ export class BullMQDriver
     queueName: MessageQueue,
   ): Promise<JobMemoryReconciliation> {
     return this.jobMemoryLimiter.reconcile(queueName);
+  }
+
+  // BullMQ only applies age-based retention when another job finishes in the same queue
+  async cleanExpiredFinishedJobs(): Promise<number> {
+    const retentionByState = [
+      { state: 'completed', maxAgeSeconds: QUEUE_RETENTION.completedMaxAge },
+      { state: 'failed', maxAgeSeconds: QUEUE_RETENTION.failedMaxAge },
+    ] as const;
+    let cleanedCount = 0;
+
+    for (const [queueName, queue] of Object.entries(this.queueMap)) {
+      for (const { state, maxAgeSeconds } of retentionByState) {
+        try {
+          for (
+            let batchIndex = 0;
+            batchIndex < EXPIRED_JOBS_CLEAN_MAX_BATCHES;
+            batchIndex++
+          ) {
+            const cleanedJobIds = await queue.clean(
+              maxAgeSeconds * 1000,
+              EXPIRED_JOBS_CLEAN_BATCH_SIZE,
+              state,
+            );
+
+            cleanedCount += cleanedJobIds.length;
+
+            if (cleanedJobIds.length < EXPIRED_JOBS_CLEAN_BATCH_SIZE) {
+              break;
+            }
+          }
+        } catch (error) {
+          this.logger.warn(
+            `Failed to clean expired ${state} jobs on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+    }
+
+    return cleanedCount;
   }
 
   private async collectQueueMemoryUsedRatio(): Promise<

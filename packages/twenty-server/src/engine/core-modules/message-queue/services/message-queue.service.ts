@@ -79,6 +79,14 @@ export class MessageQueueService {
     return this.driver.reconcileJobMemory(this.queueName);
   }
 
+  cleanExpiredFinishedJobs(): Promise<number> {
+    if (typeof this.driver.cleanExpiredFinishedJobs !== 'function') {
+      return Promise.resolve(0);
+    }
+
+    return this.driver.cleanExpiredFinishedJobs();
+  }
+
   addCron<T extends MessageQueueJobData | undefined>({
     jobName,
     data,

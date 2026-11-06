@@ -24,6 +24,13 @@ export class JobMemoryReconcileCronJob {
     JOB_MEMORY_RECONCILE_CRON_PATTERN,
   )
   async handle() {
+    const cleanedCount =
+      await this.messageQueueService.cleanExpiredFinishedJobs();
+
+    if (cleanedCount > 0) {
+      this.logger.log(`Cleaned ${cleanedCount} expired finished jobs`);
+    }
+
     const { releasedCount, releasedBytes } =
       await this.messageQueueService.reconcileJobMemory();
 

@@ -280,7 +280,7 @@ The queue Redis runs with `noeviction`: once it is full, every enqueue fails for
 
 The share limit needs `maxmemory` set on the queue Redis. Refusals are logged and counted in `job_memory_limit_refused_total` by queue, job name and reason, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
 
-A job stays charged for as long as Redis holds it, including the time BullMQ retains it after it completes or fails. Charges do not expire: the `cron:job-memory:reconcile` cron releases a charge once two runs in a row find its job gone from Redis, whether retention evicted it or it was removed (admin panel delete, queue clean). The cron runs every 15 minutes and `cron:register:all` registers it.
+A job stays charged for as long as Redis holds it, including the time BullMQ retains it after it completes or fails. Charges do not expire. Every run, the `cron:job-memory:reconcile` cron first deletes finished jobs past their retention age, since BullMQ otherwise only does so when another job finishes in the same queue, then releases a charge once two runs in a row find its job gone from Redis (retention, admin panel delete, queue clean). The cron runs every 15 minutes and `cron:register:all` registers it.
 
 ## Outbound Connections to Internal Hosts
 

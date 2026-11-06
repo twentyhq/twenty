@@ -65,6 +65,7 @@ export interface MessageQueueDriver {
   reconcileJobMemory?(
     queueName: MessageQueue,
   ): Promise<JobMemoryReconciliation>;
+  cleanExpiredFinishedJobs?(): Promise<number>;
   getJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],
