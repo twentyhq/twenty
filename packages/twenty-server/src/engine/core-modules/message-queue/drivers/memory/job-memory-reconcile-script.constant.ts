@@ -1,16 +1,8 @@
 export const JOB_MEMORY_RECONCILE_SCRIPT = `
--- Releases charges whose job left BullMQ without a release (admin delete, queue clean,
--- lost release). A charge is only released when two passes in a row find no live job,
--- so a job charged just before BullMQ added it is never released by mistake.
---
--- KEYS[1]: "used" counter of the group key
--- KEYS[2]: "jobs" hash of the group key
--- KEYS[3]: suspects of the previous pass (members found without a live job)
--- KEYS[4]: suspects of this pass
--- KEYS[4 + i]: BullMQ job key of the i-th member
--- ARGV[1]: ttl of the suspects set, in seconds
--- ARGV[1 + i]: the i-th member, "<queue>:<jobId>"
--- Returns "releasedCount releasedBytes"
+-- Releases charges whose job left BullMQ without a release. A charge is only released when
+-- two passes in a row find no live job, so a job charged just before BullMQ adds it survives.
+-- KEYS: used counter, jobs hash, previous suspects, next suspects, then one BullMQ job key per member
+-- ARGV: suspects ttl, then the members ("<queue>:<jobId>"). Returns "releasedCount releasedBytes"
 
 local ttl = tonumber(ARGV[1])
 local releasedCount = 0

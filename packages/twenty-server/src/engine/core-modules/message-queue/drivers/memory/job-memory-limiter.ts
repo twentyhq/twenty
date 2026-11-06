@@ -237,13 +237,24 @@ export class JobMemoryLimiter {
       releasedBytes: 0,
     };
 
+    const reconciledGroupKeys = new Set<string>();
+
     for await (const jobsKey of scanRedisKeys({
       client,
       pattern: `${jobsKeyPrefix}*`,
     })) {
+      const groupKey = jobsKey.slice(jobsKeyPrefix.length);
+
+      // SCAN can return a key twice, and a second pass in the same run would skip the grace period
+      if (reconciledGroupKeys.has(groupKey)) {
+        continue;
+      }
+
+      reconciledGroupKeys.add(groupKey);
+
       const { releasedCount, releasedBytes } = await this.reconcileGroupKey({
         client,
-        groupKey: jobsKey.slice(jobsKeyPrefix.length),
+        groupKey,
       });
 
       reconciliation.releasedCount += releasedCount;

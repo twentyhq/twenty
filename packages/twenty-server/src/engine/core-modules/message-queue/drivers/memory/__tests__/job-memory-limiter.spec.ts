@@ -445,6 +445,30 @@ describe('JobMemoryLimiter', () => {
       expect(await readUsedBytes({ redis, groupKey: APPLICATION })).toBe(0);
     });
 
+    it('reconciles a group key once per run even when SCAN returns it twice', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await limiter.admit({
+        queueName: QUEUE,
+        jobName: 'job',
+        jobs: [
+          { jobId: 'deleted-job', sizeBytes: 300, groupKeys: [WORKSPACE_1] },
+        ],
+      });
+      jest
+        .spyOn(redis, 'scan')
+        .mockResolvedValue([
+          '0',
+          [jobsKeyOf(WORKSPACE_1), jobsKeyOf(WORKSPACE_1)],
+        ] as never);
+
+      expect(await limiter.reconcile(QUEUE)).toEqual({
+        releasedCount: 0,
+        releasedBytes: 0,
+      });
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+    });
+
     it('keeps the charge of a job that BullMQ still holds unfinished', async () => {
       const { redis, limiter } = await createLimiter();
 
