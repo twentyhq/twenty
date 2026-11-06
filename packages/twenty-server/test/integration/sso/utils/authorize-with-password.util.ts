@@ -1,24 +1,24 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type AuthorizeWithOktaPasswordArgs = {
+type AuthorizeWithPasswordArgs = {
   authorizationUrl: URL;
   username: string;
   password: string;
 };
 
-type OktaAuthnResponse = {
+type AuthnResponse = {
   status?: string;
   sessionToken?: string;
   errorSummary?: string;
 };
 
-// Okta's headless path: /api/v1/authn trades the password for a one-time
+// Headless login: /api/v1/authn trades the password for a one-time
 // sessionToken that /authorize accepts in place of its sign-in page.
-export const authorizeWithOktaPassword = async ({
+export const authorizeWithPassword = async ({
   authorizationUrl,
   username,
   password,
-}: AuthorizeWithOktaPasswordArgs) => {
+}: AuthorizeWithPasswordArgs) => {
   const authnResponse = await fetch(
     new URL('/api/v1/authn', authorizationUrl.origin),
     {
@@ -31,11 +31,11 @@ export const authorizeWithOktaPassword = async ({
     },
   );
 
-  const authn = (await authnResponse.json()) as OktaAuthnResponse;
+  const authn = (await authnResponse.json()) as AuthnResponse;
 
   if (authn.status !== 'SUCCESS' || !isDefined(authn.sessionToken)) {
     throw new Error(
-      `Okta authn did not succeed (HTTP ${authnResponse.status}, status ${authn.status}): ${authn.errorSummary}`,
+      `Identity provider authn did not succeed (HTTP ${authnResponse.status}, status ${authn.status}): ${authn.errorSummary}`,
     );
   }
 
@@ -54,7 +54,7 @@ export const authorizeWithOktaPassword = async ({
 
   if (authorizeResponse.status !== 302 || !isDefined(location)) {
     throw new Error(
-      `Okta authorize did not redirect (HTTP ${authorizeResponse.status}), check the app redirect URI`,
+      `Identity provider authorize did not redirect (HTTP ${authorizeResponse.status}), check the app redirect URI`,
     );
   }
 
@@ -62,7 +62,7 @@ export const authorizeWithOktaPassword = async ({
 
   if (!callbackUrl.searchParams.has('code')) {
     throw new Error(
-      `Okta authorize did not return a code, redirected to ${callbackUrl.origin}${callbackUrl.pathname} with error ${callbackUrl.searchParams.get('error')}: ${callbackUrl.searchParams.get('error_description')}`,
+      `Identity provider authorize did not return a code, redirected to ${callbackUrl.origin}${callbackUrl.pathname} with error ${callbackUrl.searchParams.get('error')}: ${callbackUrl.searchParams.get('error_description')}`,
     );
   }
 
