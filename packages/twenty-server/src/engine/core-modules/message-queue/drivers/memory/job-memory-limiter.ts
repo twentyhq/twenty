@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   JOB_MEMORY_CHARGE_TTL_SECONDS,
   JOB_MEMORY_INFO_CACHE_MS,
-  JOB_MEMORY_UNCHARGED_GROUP_KEY,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
@@ -16,6 +15,8 @@ import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
+import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
+import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
 import { computeJobMemoryAvailableBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-available-bytes.util';
 import { computeJobMemoryCapacityBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-memory-capacity-bytes.util';
 import {
@@ -63,8 +64,15 @@ const NOT_CHARGED: JobMemoryAdmission = {
   availableBytes: null,
 };
 
+const WORKSPACE_GROUP_KEY_PREFIX = buildWorkspaceGroupKey('');
+const APPLICATION_GROUP_KEY_PREFIX = buildApplicationGroupKey('');
+
 export const getChargedGroupKeys = (groupKeys: string[]): string[] =>
-  groupKeys.filter((groupKey) => groupKey !== JOB_MEMORY_UNCHARGED_GROUP_KEY);
+  groupKeys.filter(
+    (groupKey) =>
+      groupKey.startsWith(WORKSPACE_GROUP_KEY_PREFIX) ||
+      groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX),
+  );
 
 export class JobMemoryLimiter {
   private readonly logger = new Logger(JobMemoryLimiter.name);
@@ -124,9 +132,9 @@ export class JobMemoryLimiter {
         args: [
           capacityBytes,
           memoryInfo.usedMemoryBytes,
-          this.options.twentyConfigService.get('JOB_QUEUE_MEMORY_SHARE'),
           JOB_MEMORY_CHARGE_TTL_SECONDS,
           groupKeys.length,
+          ...groupKeys.map((groupKey) => this.getShare(groupKey)),
           chargedJobs.length,
           ...chargedJobs.flatMap(({ jobId, sizeBytes, groupKeys }) => [
             this.buildMember({ queueName, jobId }),
@@ -327,6 +335,16 @@ export class JobMemoryLimiter {
         usedBytesAfter: values[4 + 4 * index],
       })),
     };
+  }
+
+  private getShare(groupKey: string): number {
+    return groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX)
+      ? this.options.twentyConfigService.get(
+          'JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER',
+        )
+      : this.options.twentyConfigService.get(
+          'JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID',
+        );
   }
 
   private buildKeys(groupKey: string): [string, string] {

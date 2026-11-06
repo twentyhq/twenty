@@ -1,287 +1,744 @@
-import { type Job, Worker } from 'bullmq';
-import { type Redis } from 'ioredis';
-import RedisMock from 'ioredis-mock';
+import { Logger } from '@nestjs/common';
 
-import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { JOB_MEMORY_CHARGE_TTL_SECONDS } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
+import {
+  createMemoryHarness,
+  MEMORY_SCENARIO_QUEUE,
+  silenceDriverLogs,
+} from 'src/engine/core-modules/message-queue/drivers/__tests__/memory-harness.test-util';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
-const QUEUE = MessageQueue.logicFunctionQueue;
-const KEY_PREFIX = 'bull';
-const MAX_MEMORY_BYTES = 1_000_000;
+// Default harness: maxmemory 100_000, reserve 0.1, so 90_000 bytes go to jobs.
+// A workspace may use 10% of the memory other keys leave free, an application 40%.
+const CAPACITY_BYTES = 90_000;
+const WORKSPACE_A = 'workspace:A';
+const WORKSPACE_B = 'workspace:B';
+const APPLICATION = 'application:app-1';
 
-const mockQueueClient: { current?: unknown } = {};
-const mockAdd = jest.fn();
-const mockAddBulk = jest.fn();
-const mockGetJob = jest.fn();
+const sumSizes = (jobs: { sizeBytes: number }[]) =>
+  jobs.reduce((total, { sizeBytes }) => total + sizeBytes, 0);
 
-jest.mock('bullmq', () => ({
-  Queue: jest.fn().mockImplementation(() => ({
-    get client() {
-      return Promise.resolve(mockQueueClient.current);
-    },
-    toKey: (jobId: string) => `bull:logic-function-queue:${jobId}`,
-    add: mockAdd,
-    addBulk: mockAddBulk,
-    getJob: mockGetJob,
-    getRanges: jest.fn().mockResolvedValue([]),
-    setGlobalConcurrency: jest.fn(),
-    removeGlobalConcurrency: jest.fn(),
-  })),
-  Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
-  MetricsTime: { ONE_WEEK: 1 },
-  PRIORITY_LIMIT: jest.requireActual('bullmq').PRIORITY_LIMIT,
-  UnrecoverableError: jest.requireActual('bullmq').UnrecoverableError,
-}));
+const expectMessageQueueException = async (
+  promise: Promise<unknown>,
+  code: MessageQueueExceptionCode,
+) => {
+  const error = await promise.catch((caught: unknown) => caught);
 
-jest.mock(
-  'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator',
-  () => ({
-    FairTicketAllocator: jest.fn().mockImplementation(() => ({
-      allocateTickets: jest.fn().mockResolvedValue(undefined),
-      recordDispatch: jest.fn(),
-    })),
-  }),
-);
-
-const buildApplicationJob = ({
-  workspaceId,
-  payload = 'x',
-}: {
-  workspaceId: string;
-  payload?: string;
-}) => ({
-  data: { workspaceId, payload },
-  workspaceId,
-  applicationUniversalIdentifier: 'app-1',
-});
-
-const createDriver = async (isEnabled: boolean) => {
-  const redis: Redis = new RedisMock();
-
-  await redis.flushall();
-
-  mockQueueClient.current = {
-    runCommand: async (name: string, args: (string | number)[]) => {
-      if (name === 'info') {
-        return `used_memory:0\r\nmaxmemory:${MAX_MEMORY_BYTES}\r\n`;
-      }
-
-      const [script, numberOfKeys, ...scriptArguments] = args;
-
-      return name === 'evalsha'
-        ? redis.evalsha(
-            String(script),
-            Number(numberOfKeys),
-            ...scriptArguments,
-          )
-        : redis.eval(String(script), Number(numberOfKeys), ...scriptArguments);
-    },
-  };
-
-  const configValues: Record<string, unknown> = {
-    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
-    JOB_QUEUE_MAX_JOB_SIZE_BYTES: 1_048_576,
-    JOB_QUEUE_MEMORY_SHARE: 0.1,
-    JOB_QUEUE_MEMORY_RESERVE: 0,
-  };
-  const driver = new BullMQDriver(
-    { prefix: KEY_PREFIX } as never,
-    {
-      incrementCounterForEvent: jest.fn(),
-      recordHistogram: jest.fn(),
-    } as never,
-    { get: (key: string) => configValues[key] } as never,
-    {} as never,
-  );
-
-  driver.register(QUEUE);
-
-  const readUsedBytes = async (groupKey: string) =>
-    Number((await redis.get(`${KEY_PREFIX}:jobmem:used:${groupKey}`)) ?? 0);
-
-  return { driver, redis, readUsedBytes };
+  expect(error).toBeInstanceOf(MessageQueueException);
+  expect((error as MessageQueueException).code).toBe(code);
 };
 
-describe('BullMQDriver job memory', () => {
-  beforeAll(() => {
-    jest.useRealTimers();
-  });
+describe('BullMQDriver job memory scenarios', () => {
+  beforeAll(silenceDriverLogs);
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockAddBulk.mockImplementation(
-      async (jobs: { opts: { jobId?: string } }[]) =>
-        jobs.map(({ opts }) => ({ id: opts.jobId })),
-    );
-    mockAdd.mockImplementation(
-      async (_name: string, _data: unknown, opts: { jobId?: string }) => ({
-        id: opts.jobId,
-      }),
-    );
-  });
+  describe('S1: workspace A enqueues app jobs of ~3KB until it reaches its share', () => {
+    it('A is charged on its workspace and application keys and told how much memory is left', async () => {
+      const harness = await createMemoryHarness();
 
-  it('reports job sizes and the memory still available', async () => {
-    const { driver, readUsedBytes } = await createDriver(true);
+      const { jobs, availableBytes } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
+      const chargedBytes = sumSizes(jobs);
 
-    const report = await driver.bulkAddWithReport(QUEUE, 'job', [
-      buildApplicationJob({ workspaceId: 'ws-1' }),
-      buildApplicationJob({ workspaceId: 'ws-1' }),
-    ]);
+      expect(jobs).toHaveLength(2);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(chargedBytes);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(chargedBytes);
+      expect(availableBytes).toBe(CAPACITY_BYTES * 0.1 - chargedBytes);
+    });
 
-    expect(report.jobs).toHaveLength(2);
-    report.jobs.forEach(({ sizeBytes }) =>
-      expect(sizeBytes).toBeGreaterThan(1024),
-    );
+    it('the job that would cross the share is refused, nothing of it is stored or charged', async () => {
+      const harness = await createMemoryHarness();
 
-    const usedBytes = await readUsedBytes('workspace:ws-1');
-    const [addedJob] = mockAddBulk.mock.calls[0][0];
+      await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
+      const usedBytesBefore = await harness.readUsedBytes(WORKSPACE_A);
 
-    expect(usedBytes).toBe(
-      report.jobs.reduce((total, { sizeBytes }) => total + sizeBytes, 0),
-    );
-    expect(report.availableBytes).toBe(MAX_MEMORY_BYTES * 0.1 - usedBytes);
-    expect(addedJob.opts).toMatchObject({
-      memoryGroupKeys: ['workspace:ws-1', 'application:app-1'],
-      memorySizeBytes: report.jobs[0].sizeBytes,
+      await expectMessageQueueException(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A3',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]),
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      );
+
+      expect(harness.storedJobIds()).toHaveLength(2);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(usedBytesBefore);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(usedBytesBefore);
+      expect(
+        harness.metricsService.incrementCounterForEvent,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.JobMemoryLimitRefused,
+          attributes: { queue: MEMORY_SCENARIO_QUEUE, reason: 'share' },
+        }),
+      );
     });
   });
 
-  it('returns a null availability and charges nothing when disabled', async () => {
-    const { driver, readUsedBytes } = await createDriver(false);
+  describe('S2: A bulk-enqueues 3 jobs of ~3KB, the third one crossing its share', () => {
+    it('the whole batch is refused, none of its jobs is stored or charged', async () => {
+      const harness = await createMemoryHarness();
 
-    const report = await driver.bulkAddWithReport(QUEUE, 'job', [
-      { ...buildApplicationJob({ workspaceId: 'ws-1' }), jobId: 'job-1' },
-    ]);
+      await expectMessageQueueException(
+        harness.enqueueBulk(
+          ['A1', 'A2', 'A3'].map((label) =>
+            harness.buildApplicationJob({
+              label,
+              workspaceId: 'A',
+              payloadBytes: 2_000,
+            }),
+          ),
+        ),
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      );
 
-    expect(report.availableBytes).toBeNull();
-    expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+      expect(harness.storedJobIds()).toEqual([]);
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
   });
 
-  it('does not charge a job id that BullMQ still holds', async () => {
-    const { driver, redis, readUsedBytes } = await createDriver(true);
+  describe('S3: A fills its share, then workspace B enqueues a job', () => {
+    it('B is admitted with a share of what A leaves free', async () => {
+      const harness = await createMemoryHarness();
 
-    await redis.hset(`${KEY_PREFIX}:${QUEUE}:finished-job`, 'name', 'job');
+      const { jobs: jobsOfA } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
 
-    const report = await driver.bulkAddWithReport(QUEUE, 'job', [
-      {
-        ...buildApplicationJob({ workspaceId: 'ws-1' }),
-        jobId: 'finished-job',
-      },
-      { ...buildApplicationJob({ workspaceId: 'ws-1' }), jobId: 'new-job' },
-    ]);
+      await expect(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A3',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]),
+      ).rejects.toThrow(MessageQueueException);
 
-    const [finishedJob, newJob] = mockAddBulk.mock.calls[0][0];
+      const {
+        jobs: [jobOfB],
+        availableBytes,
+      } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'B1',
+          workspaceId: 'B',
+          payloadBytes: 2_000,
+        }),
+      ]);
 
-    expect(finishedJob.opts.memoryGroupKeys).toBeUndefined();
-    expect(newJob.opts.memoryGroupKeys).toEqual([
-      'workspace:ws-1',
-      'application:app-1',
-    ]);
-    expect(await readUsedBytes('workspace:ws-1')).toBe(
-      report.jobs[1].sizeBytes,
-    );
+      expect(await harness.readUsedBytes(WORKSPACE_B)).toBe(jobOfB.sizeBytes);
+      expect(availableBytes).toBe(
+        Math.floor(0.1 * (CAPACITY_BYTES - sumSizes(jobsOfA))) -
+          jobOfB.sizeBytes,
+      );
+    });
   });
 
-  it('releases the charge of a job deduplicated into another one', async () => {
-    const { driver, readUsedBytes } = await createDriver(true);
+  describe('S4: workspaces W1 to W8 each enqueue a ~4.5KB job of application H, then W9 does the same', () => {
+    const enqueueHerd = async (
+      harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    ) => {
+      for (let index = 1; index <= 8; index++) {
+        await harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: `W${index}`,
+            workspaceId: `W${index}`,
+            applicationUniversalIdentifier: 'H',
+            payloadBytes: 3_200,
+          }),
+        ]);
+      }
+    };
 
-    mockAdd.mockResolvedValue({ id: 'existing-job' });
+    it('W9 is refused because H reached its 40% share, while W9 alone is far from its own share', async () => {
+      const harness = await createMemoryHarness();
 
-    await driver.add(
-      QUEUE,
-      'job',
-      { workspaceId: 'ws-1' },
-      {
-        workspaceId: 'ws-1',
-        isWorkspaceJob: true,
-        deduplication: { id: 'dedup-1' },
-      },
-    );
+      await enqueueHerd(harness);
 
-    expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+      await expectMessageQueueException(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'W9',
+            workspaceId: 'W9',
+            applicationUniversalIdentifier: 'H',
+            payloadBytes: 3_200,
+          }),
+        ]),
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      );
+
+      expect(jest.mocked(Logger.prototype.warn)).toHaveBeenLastCalledWith(
+        expect.stringContaining('key=application:H reason=share'),
+      );
+      expect(await harness.readUsedBytes('workspace:W9')).toBe(0);
+      expect(await harness.readUsedBytes('application:H')).toBeLessThanOrEqual(
+        CAPACITY_BYTES * 0.4,
+      );
+    });
+
+    it('W9 can still enqueue a job of another application', async () => {
+      const harness = await createMemoryHarness();
+
+      await enqueueHerd(harness);
+
+      const { jobs } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'W9',
+          workspaceId: 'W9',
+          applicationUniversalIdentifier: 'Q',
+          payloadBytes: 3_200,
+        }),
+      ]);
+
+      expect(await harness.readUsedBytes('application:Q')).toBe(
+        jobs[0].sizeBytes,
+      );
+    });
   });
 
-  it('releases the charges of jobs that were not added when the add fails', async () => {
-    const { driver, readUsedBytes } = await createDriver(true);
+  describe('S5: Redis holds 50KB of other data, A enqueues app jobs', () => {
+    it('the share applies to the memory left free, so A is refused sooner', async () => {
+      const harness = await createMemoryHarness({ otherDataBytes: 50_000 });
 
-    mockAddBulk.mockRejectedValue(new Error('connection lost'));
-    mockGetJob.mockResolvedValue(undefined);
+      const {
+        jobs: [jobOfA],
+        availableBytes,
+      } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
 
-    await expect(
-      driver.bulkAdd(QUEUE, 'job', [
-        buildApplicationJob({ workspaceId: 'ws-1' }),
-      ]),
-    ).rejects.toThrow('connection lost');
-    expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+      expect(availableBytes).toBe(
+        Math.floor(0.1 * (CAPACITY_BYTES - 50_000)) - jobOfA.sizeBytes,
+      );
+      await expect(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A2',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]),
+      ).rejects.toThrow(MessageQueueException);
+    });
   });
 
-  it('keeps the charge when the outcome of a failed add is unknown', async () => {
-    const { driver, readUsedBytes } = await createDriver(true);
+  describe('S6: A fills its share, then one of its jobs gets processed', () => {
+    it('a completed job frees its charge, so A can enqueue again', async () => {
+      const harness = await createMemoryHarness();
 
-    mockAddBulk.mockRejectedValue(new Error('connection lost'));
-    mockGetJob.mockRejectedValue(new Error('connection lost'));
+      const {
+        jobs: [firstJob, secondJob],
+      } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
 
-    await expect(
-      driver.bulkAdd(QUEUE, 'job', [
-        buildApplicationJob({ workspaceId: 'ws-1' }),
-      ]),
-    ).rejects.toThrow('connection lost');
-    expect(await readUsedBytes('workspace:ws-1')).toBeGreaterThan(0);
-  });
+      await harness.process(firstJob.jobId);
 
-  it('follows payload updates and releases on completion or final failure only', async () => {
-    const { driver, readUsedBytes } = await createDriver(true);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        secondJob.sizeBytes,
+      );
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(
+        secondJob.sizeBytes,
+      );
+      await expect(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A3',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]),
+      ).resolves.toMatchObject({ jobs: [expect.anything()] });
+    });
 
-    await driver.bulkAdd(QUEUE, 'job', [
-      buildApplicationJob({ workspaceId: 'ws-1' }),
-    ]);
+    it('a failed job keeps its charge while it has retries left, and frees it on its final failure', async () => {
+      const harness = await createMemoryHarness();
 
-    const [{ opts }] = mockAddBulk.mock.calls[0][0];
-    const initialUsedBytes = await readUsedBytes('workspace:ws-1');
-    const job = {
-      id: opts.jobId,
-      name: 'job',
-      data: { workspaceId: 'ws-1' },
-      opts,
-      timestamp: Date.now(),
-      updateData: jest.fn(),
-    } as unknown as Job;
+      const {
+        jobs: [job],
+      } = await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ],
+        { retryLimit: 1 },
+      );
+      const failingHandler = async () => {
+        throw new Error('handler failed');
+      };
 
-    driver.work(QUEUE, async (queueJob) => {
-      await queueJob.updateData({
-        workspaceId: 'ws-1',
-        payload: 'y'.repeat(1_000),
+      await harness.process(job.jobId, failingHandler);
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(job.sizeBytes);
+
+      await harness.process(job.jobId, failingHandler);
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readChargedJobs(WORKSPACE_A)).toEqual({});
+    });
+
+    it('a job failing on an unrecoverable error frees its charge right away', async () => {
+      const harness = await createMemoryHarness();
+
+      const {
+        jobs: [job],
+      } = await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ],
+        { retryLimit: 3 },
+      );
+
+      await harness.process(job.jobId, async () => {
+        throw new MessageQueueException(
+          'payload too large',
+          MessageQueueExceptionCode.JOB_TOO_LARGE,
+          { index: 0, sizeBytes: 2_000_000, maxBytes: 1_048_576 },
+        );
       });
+
+      expect(harness.storedJob(job.jobId)?.finishedOn).toBeDefined();
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+    });
+  });
+
+  describe('S7: a running job of A updates its payload', () => {
+    it('the charge follows the payload when it grows, then when it shrinks', async () => {
+      const harness = await createMemoryHarness();
+
+      const {
+        jobs: [job],
+      } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 100,
+        }),
+      ]);
+      const usedBytesDuringRun: number[] = [];
+
+      await harness.process(job.jobId, async ({ updateData }) => {
+        await updateData?.({
+          label: 'A1',
+          workspaceId: 'A',
+          payload: 'y'.repeat(5_000),
+        });
+        usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
+
+        await updateData?.({ label: 'A1', workspaceId: 'A', payload: '' });
+        usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
+      });
+
+      const [grownBytes, shrunkBytes] = usedBytesDuringRun;
+
+      expect(grownBytes).toBeGreaterThan(job.sizeBytes + 4_800);
+      expect(shrunkBytes).toBeLessThan(grownBytes - 4_800);
     });
 
-    const worker = jest.mocked(Worker).mock.results[0].value as {
-      on: jest.Mock;
-    };
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    it('a grown payload counts against the share of A for its next enqueues', async () => {
+      const harness = await createMemoryHarness({ maxMemoryBytes: 1_000_000 });
+      const {
+        jobs: [job],
+      } = await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 100,
+          }),
+        ],
+        { retryLimit: 1 },
+      );
 
-    if (typeof processor !== 'function') {
-      throw new Error('Worker processor was not registered');
-    }
+      await harness.process(job.jobId, async ({ updateData }) => {
+        await updateData?.({
+          label: 'A1',
+          workspaceId: 'A',
+          payload: 'y'.repeat(85_000),
+        });
 
-    await processor(job);
+        throw new Error('retry me');
+      });
 
-    expect(await readUsedBytes('workspace:ws-1')).toBeGreaterThan(
-      initialUsedBytes + 900,
-    );
+      await expect(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A2',
+            workspaceId: 'A',
+            payloadBytes: 5_000,
+          }),
+        ]),
+      ).rejects.toThrow(MessageQueueException);
+    });
+  });
 
-    const emit = async (event: string, emittedJob: Job) => {
-      worker.on.mock.calls
-        .filter(([eventName]) => eventName === event)
-        .forEach(([, listener]) => listener(emittedJob, new Error('failed')));
-      await new Promise((resolve) => setImmediate(resolve));
-    };
+  describe('S8: A enqueues job ids that BullMQ already holds', () => {
+    it('an id still waiting is skipped, it is neither added nor charged twice', async () => {
+      const harness = await createMemoryHarness();
+      const job = harness.buildApplicationJob({
+        label: 'A1',
+        workspaceId: 'A',
+        payloadBytes: 2_000,
+        jobId: 'same-id',
+      });
 
-    await emit('failed', job);
+      const { jobs } = await harness.enqueueBulk([job]);
+      const second = await harness.enqueueBulk([job]);
 
-    expect(await readUsedBytes('workspace:ws-1')).toBeGreaterThan(0);
+      expect(second.jobs).toEqual([]);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[0].sizeBytes);
+    });
 
-    await emit('failed', { ...job, finishedOn: Date.now() } as Job);
+    it('an id BullMQ keeps after it finished is not charged again, as BullMQ starts no new run for it', async () => {
+      const harness = await createMemoryHarness();
+      const job = harness.buildApplicationJob({
+        label: 'A1',
+        workspaceId: 'A',
+        payloadBytes: 2_000,
+        jobId: 'finished-id',
+      });
 
-    expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+      await harness.enqueueBulk([job]);
+      await harness.process('finished-id');
+
+      const { jobs } = await harness.enqueueBulk([
+        job,
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+          jobId: 'new-id',
+        }),
+      ]);
+
+      expect(jobs.map(({ jobId }) => jobId)).toEqual(['finished-id', 'new-id']);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[1].sizeBytes);
+      expect(Object.keys(await harness.readChargedJobs(WORKSPACE_A))).toEqual([
+        `${MEMORY_SCENARIO_QUEUE}:new-id`,
+      ]);
+    });
+
+    it('a finished id removed from BullMQ is a new run and is charged again', async () => {
+      const harness = await createMemoryHarness();
+      const job = harness.buildApplicationJob({
+        label: 'A1',
+        workspaceId: 'A',
+        payloadBytes: 2_000,
+        jobId: 'removed-id',
+      });
+
+      await harness.enqueueBulk([job]);
+      await harness.process('removed-id');
+      await harness.removeFromBullMQ('removed-id');
+
+      const { jobs } = await harness.enqueueBulk([job]);
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[0].sizeBytes);
+    });
+  });
+
+  describe('S9: A enqueues two jobs with the same deduplication id', () => {
+    it('the second job is merged into the first one by BullMQ and its charge is released', async () => {
+      const harness = await createMemoryHarness();
+      const options = {
+        workspaceId: 'A',
+        isWorkspaceJob: true as const,
+        deduplication: { id: 'dedup-1' },
+      };
+
+      const firstJobId = await harness.enqueue({
+        label: 'A1',
+        payloadBytes: 2_000,
+        options,
+      });
+      const usedBytesAfterFirst = await harness.readUsedBytes(WORKSPACE_A);
+      const secondJobId = await harness.enqueue({
+        label: 'A2',
+        payloadBytes: 2_000,
+        options,
+      });
+
+      expect(secondJobId).toBe(firstJobId);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        usedBytesAfterFirst,
+      );
+      expect(Object.keys(await harness.readChargedJobs(WORKSPACE_A))).toEqual([
+        `${MEMORY_SCENARIO_QUEUE}:${firstJobId}`,
+      ]);
+    });
+  });
+
+  describe('S10: the BullMQ add of a batch of A fails', () => {
+    const enqueueBatch = (
+      harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    ) =>
+      harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
+
+    it('jobs BullMQ did not add are released', async () => {
+      const harness = await createMemoryHarness();
+
+      harness.failNextAdd('not-added');
+
+      await expect(enqueueBatch(harness)).rejects.toThrow('connection lost');
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
+
+    it('jobs BullMQ added before the error keep their charge, as they will run', async () => {
+      const harness = await createMemoryHarness();
+
+      harness.failNextAdd('added-but-unacknowledged');
+
+      await expect(enqueueBatch(harness)).rejects.toThrow('connection lost');
+      expect(harness.storedJobIds()).toHaveLength(2);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBeGreaterThan(0);
+    });
+
+    it('when BullMQ cannot tell whether the jobs were added, the charge is kept rather than lost', async () => {
+      const harness = await createMemoryHarness();
+
+      harness.failNextAdd('unknown-outcome');
+
+      await expect(enqueueBatch(harness)).rejects.toThrow('connection lost');
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBeGreaterThan(0);
+    });
+  });
+
+  describe('S11: jobs that are not owned by a tenant', () => {
+    it('system jobs are not charged and report no availability', async () => {
+      const harness = await createMemoryHarness();
+
+      const { jobs, availableBytes } = await harness.enqueueBulk([
+        {
+          data: { label: 'S1', payload: 'x'.repeat(2_000) },
+          isSystemJob: true,
+        },
+      ]);
+
+      expect(jobs).toHaveLength(1);
+      expect(jobs[0].sizeBytes).toBeGreaterThan(2_000);
+      expect(availableBytes).toBeNull();
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
+
+    it('additional fairness group keys are not charged, the workspace and application keys are', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ],
+        { groupKeys: ['logic-function:fn-1'] },
+      );
+
+      expect(await harness.readUsedBytes('logic-function:fn-1')).toBe(0);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBeGreaterThan(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBeGreaterThan(0);
+    });
+
+    it('core workspace jobs are charged to the workspace only', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueue({
+        label: 'A1',
+        payloadBytes: 2_000,
+        options: { workspaceId: 'A', isWorkspaceJob: true },
+      });
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBeGreaterThan(2_000);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+  });
+
+  describe('S12: A enqueues a job bigger than the job size cap', () => {
+    it('the batch is refused before any memory is charged', async () => {
+      const harness = await createMemoryHarness({
+        maxMemoryBytes: 10_000_000,
+        maxJobSizeBytes: 10_000,
+      });
+
+      await expectMessageQueueException(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+          harness.buildApplicationJob({
+            label: 'A2',
+            workspaceId: 'A',
+            payloadBytes: 20_000,
+          }),
+        ]),
+        MessageQueueExceptionCode.JOB_TOO_LARGE,
+      );
+
+      expect(harness.storedJobIds()).toEqual([]);
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
+  });
+
+  describe('S13: memory fairness is disabled', () => {
+    it('jobs are added uncapped and uncharged, sizes are still reported with a null availability', async () => {
+      const harness = await createMemoryHarness({
+        isEnabled: false,
+        maxJobSizeBytes: 10_000,
+      });
+
+      const { jobs, availableBytes } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 50_000,
+        }),
+      ]);
+
+      expect(jobs[0].sizeBytes).toBeGreaterThan(50_000);
+      expect(availableBytes).toBeNull();
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+      expect(harness.storedJob(jobs[0].jobId)?.opts.memoryGroupKeys).toBe(
+        undefined,
+      );
+    });
+  });
+
+  describe('S14: Redis has no maxmemory', () => {
+    it('jobs are admitted uncharged, as there is no capacity to share', async () => {
+      const harness = await createMemoryHarness({ maxMemoryBytes: 0 });
+
+      const { jobs, availableBytes } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 50_000,
+        }),
+      ]);
+
+      expect(jobs).toHaveLength(1);
+      expect(availableBytes).toBeNull();
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
+  });
+
+  describe('S15: the limiter scripts fail on Redis', () => {
+    it('jobs are still enqueued, uncharged, so the limiter never blocks the queue', async () => {
+      const harness = await createMemoryHarness();
+
+      harness.breakRedis();
+
+      const { jobs, availableBytes } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 50_000,
+        }),
+      ]);
+
+      expect(harness.storedJobIds()).toEqual([jobs[0].jobId]);
+      expect(availableBytes).toBeNull();
+      expect(await harness.readTotalChargedBytes()).toBe(0);
+    });
+  });
+
+  describe('S16: charged keys of A go idle', () => {
+    it('every admission refreshes the expiry of the keys of A', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([
+        harness.buildApplicationJob({ label: 'A1', workspaceId: 'A' }),
+      ]);
+      await harness.redis.expire(`bull:jobmem:used:${WORKSPACE_A}`, 10);
+      await harness.enqueueBulk([
+        harness.buildApplicationJob({ label: 'A2', workspaceId: 'A' }),
+      ]);
+
+      expect(await harness.readTtl(WORKSPACE_A)).toBe(
+        JOB_MEMORY_CHARGE_TTL_SECONDS,
+      );
+      expect(await harness.readTtl(APPLICATION)).toBe(
+        JOB_MEMORY_CHARGE_TTL_SECONDS,
+      );
+    });
+  });
+
+  describe('S17: the memory used ratio gauge', () => {
+    it('reports used memory over the capacity given to jobs', async () => {
+      const harness = await createMemoryHarness({ otherDataBytes: 45_000 });
+
+      harness.driver.onModuleInit();
+
+      expect(await harness.readGaugeCallback()()).toEqual([
+        { value: 45_000 / CAPACITY_BYTES, attributes: {} },
+      ]);
+    });
   });
 });

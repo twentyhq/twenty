@@ -21,16 +21,20 @@ const jobsKeyOf = (groupKey: string) => `${KEY_PREFIX}:jobmem:jobs:${groupKey}`;
 
 const buildConfig = ({
   isEnabled,
-  share,
+  workspaceShare,
+  applicationShare,
   reserve,
 }: {
   isEnabled: boolean;
-  share: number;
+  workspaceShare: number;
+  applicationShare: number;
   reserve: number;
 }) => {
   const configValues: Record<string, unknown> = {
     IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
-    JOB_QUEUE_MEMORY_SHARE: share,
+    JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID: workspaceShare,
+    JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER:
+      applicationShare,
     JOB_QUEUE_MEMORY_RESERVE: reserve,
   };
 
@@ -41,13 +45,15 @@ const createLimiter = async ({
   isEnabled = true,
   maxMemoryBytes = 10_000,
   usedMemoryBytes = 0,
-  share = 0.1,
+  workspaceShare = 0.1,
+  applicationShare = 0.4,
   reserve = 0,
 }: {
   isEnabled?: boolean;
   maxMemoryBytes?: number;
   usedMemoryBytes?: number;
-  share?: number;
+  workspaceShare?: number;
+  applicationShare?: number;
   reserve?: number;
 } = {}) => {
   const redis: Redis = new RedisMock();
@@ -83,7 +89,12 @@ const createLimiter = async ({
     getClient: async () => client as never,
     keyPrefix: KEY_PREFIX,
     metricsService: metricsService as never,
-    twentyConfigService: buildConfig({ isEnabled, share, reserve }),
+    twentyConfigService: buildConfig({
+      isEnabled,
+      workspaceShare,
+      applicationShare,
+      reserve,
+    }),
   });
 
   return { redis, limiter, metricsService };
@@ -118,6 +129,27 @@ describe('JobMemoryLimiter', () => {
     expect(
       Number(await redis.hget(jobsKeyOf(WORKSPACE_1), `${QUEUE}:job-1`)),
     ).toBe(300);
+  });
+
+  it('applies the workspace share to workspace keys and the application share to application keys', async () => {
+    const { limiter } = await createLimiter();
+
+    const applicationAdmission = await limiter.admit({
+      queueName: QUEUE,
+      jobs: [{ jobId: 'job-1', sizeBytes: 3_000, groupKeys: [APPLICATION] }],
+    });
+
+    expect(applicationAdmission).toEqual({
+      isCharged: true,
+      availableBytes: 1_000,
+    });
+
+    await expect(
+      limiter.admit({
+        queueName: QUEUE,
+        jobs: [{ jobId: 'job-2', sizeBytes: 3_000, groupKeys: [WORKSPACE_1] }],
+      }),
+    ).rejects.toThrow(MessageQueueException);
   });
 
   it('does not charge the system group key', async () => {
@@ -202,7 +234,8 @@ describe('JobMemoryLimiter', () => {
       metricsService: { incrementCounterForEvent: jest.fn() } as never,
       twentyConfigService: buildConfig({
         isEnabled: true,
-        share: 0.1,
+        workspaceShare: 0.1,
+        applicationShare: 0.4,
         reserve: 0,
       }),
     });

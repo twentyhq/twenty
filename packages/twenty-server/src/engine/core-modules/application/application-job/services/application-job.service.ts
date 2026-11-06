@@ -125,7 +125,7 @@ export class ApplicationJobService {
     const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
 
     const { jobs, availableBytes } =
-      await this.messageQueueService.bulkAddWithReport<LogicFunctionTriggerJobData>(
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         jobItems.map((jobItem, index) => ({
           data: {

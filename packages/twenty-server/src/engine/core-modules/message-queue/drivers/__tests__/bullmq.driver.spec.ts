@@ -174,12 +174,16 @@ describe('BullMQDriver deduplication', () => {
     it('reads the waiting jobs once and drops the jobs already waiting', async () => {
       mockGetRanges.mockResolvedValue([WAITING_JOB_ID, 'ws-1.exact-job-id']);
 
-      const jobIds = await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
-        { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
-        { data: {}, jobId: 'sync-catalog-ws-1', ...SYSTEM_JOB },
-        { data: {}, jobId: 'ws-1.new-job-id', ...SYSTEM_JOB },
-        { data: {}, ...SYSTEM_JOB },
-      ]);
+      const { jobs } = await driver.bulkAdd(
+        MessageQueue.workspaceQueue,
+        'job',
+        [
+          { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
+          { data: {}, jobId: 'sync-catalog-ws-1', ...SYSTEM_JOB },
+          { data: {}, jobId: 'ws-1.new-job-id', ...SYSTEM_JOB },
+          { data: {}, ...SYSTEM_JOB },
+        ],
+      );
 
       expect(mockGetRanges).toHaveBeenCalledTimes(1);
       expect(mockGetRanges).toHaveBeenCalledWith(
@@ -193,17 +197,22 @@ describe('BullMQDriver deduplication', () => {
           (job: { opts: { jobId?: string } }) => job.opts.jobId,
         ),
       ).toEqual(['ws-1.new-job-id', undefined]);
-      expect(jobIds).toEqual(['ws-1.new-job-id', 'auto-1']);
+      expect(jobs.map(({ jobId }) => jobId)).toEqual([
+        'ws-1.new-job-id',
+        'auto-1',
+      ]);
     });
 
     it('adds nothing when every job is already waiting', async () => {
       mockGetRanges.mockResolvedValue(['ws-1.exact-job-id']);
 
-      const jobIds = await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
-        { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
-      ]);
+      const { jobs } = await driver.bulkAdd(
+        MessageQueue.workspaceQueue,
+        'job',
+        [{ data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB }],
+      );
 
-      expect(jobIds).toEqual([]);
+      expect(jobs).toEqual([]);
       expect(mockAddBulk).not.toHaveBeenCalled();
     });
 

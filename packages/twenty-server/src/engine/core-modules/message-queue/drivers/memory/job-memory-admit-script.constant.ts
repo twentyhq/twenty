@@ -1,22 +1,41 @@
 export const JOB_MEMORY_ADMIT_SCRIPT = `
+-- Admits a batch of jobs against the memory share of each group key (workspace, application),
+-- and charges them only if every key stays within its limit. Runs atomically in Redis.
+--
+-- KEYS, for each group key i:
+--   KEYS[2i - 1]: "used" counter, total bytes currently charged to the key
+--   KEYS[2i]:     "jobs" hash, one field per charged job ("<queue>:<jobId>") holding its size
+--
+-- ARGV:
+--   1: capacity, bytes of Redis memory given to jobs (maxmemory minus the reserve)
+--   2: used memory, bytes Redis reports as used right now
+--   3: ttl, seconds before an idle key's counter and hash expire
+--   4: key count K
+--   5 .. 4 + K: share of the free memory each key may use (0.1 = 10%)
+--   5 + K: job count, then for each job: member, size, number of keys, key indexes
+
 local capacity = tonumber(ARGV[1])
 local usedMemory = tonumber(ARGV[2])
-local share = tonumber(ARGV[3])
-local ttl = tonumber(ARGV[4])
-local keyCount = tonumber(ARGV[5])
-local jobCount = tonumber(ARGV[6])
+local ttl = tonumber(ARGV[3])
+local keyCount = tonumber(ARGV[4])
 
+local shares = {}
 local used = {}
 local requested = {}
 
+-- Read what each key already holds
 for keyIndex = 1, keyCount do
+  shares[keyIndex] = tonumber(ARGV[4 + keyIndex])
   used[keyIndex] = tonumber(redis.call('GET', KEYS[2 * keyIndex - 1]) or '0')
   requested[keyIndex] = 0
 end
 
+local jobCount = tonumber(ARGV[5 + keyCount])
 local jobs = {}
-local cursor = 7
+local cursor = 6 + keyCount
 
+-- Sum, per key, the bytes the batch would add. A job already charged to a key
+-- (same id enqueued twice) is not counted again for that key.
 for jobIndex = 1, jobCount do
   local member = ARGV[cursor]
   local size = tonumber(ARGV[cursor + 1])
@@ -37,11 +56,14 @@ for jobIndex = 1, jobCount do
   cursor = cursor + 3 + jobKeyCount
 end
 
+-- A key may use its share of the memory every other key leaves free:
+-- limit = share * (capacity - (used memory - what this key holds)).
+-- The batch is refused if any key would go over its limit.
 local refused = 0
 local limits = {}
 
 for keyIndex = 1, keyCount do
-  local limit = math.max(0, math.floor(share * (capacity - (usedMemory - used[keyIndex]))))
+  local limit = math.max(0, math.floor(shares[keyIndex] * (capacity - (usedMemory - used[keyIndex]))))
 
   limits[keyIndex] = limit
 
@@ -56,6 +78,8 @@ for keyIndex = 1, keyCount do
   usedAfter[keyIndex] = used[keyIndex]
 end
 
+-- Admitted: record each job in every key's hash (HSETNX skips jobs already
+-- charged) and add its size to the key's counter, then refresh the expiry
 if refused == 0 then
   for _, job in ipairs(jobs) do
     for _, keyIndex in ipairs(job[3]) do
@@ -73,6 +97,8 @@ if refused == 0 then
   end
 end
 
+-- Returned as "refused used1 limit1 requested1 usedAfter1 used2 ..." so the
+-- caller can log refusals and compute the memory still available
 local result = { refused }
 
 for keyIndex = 1, keyCount do

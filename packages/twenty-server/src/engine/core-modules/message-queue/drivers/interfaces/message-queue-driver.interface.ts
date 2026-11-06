@@ -27,13 +27,7 @@ export interface MessageQueueDriver {
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]>;
-  bulkAddWithReport<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-    jobName: string,
-    jobs: QueueJobToAdd<T>[],
-    options?: QueueJobSettings,
-  ): Promise<BulkAddReport>;
+  ): Promise<BulkAddResult>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void> | void,
@@ -77,7 +71,7 @@ export type QueueJobToAdd<T extends MessageQueueJobData> = {
   jobId?: string;
 } & QueueJobScope;
 
-export type BulkAddReport = {
+export type BulkAddResult = {
   jobs: { jobId: string; sizeBytes: number }[];
   availableBytes: number | null;
 };

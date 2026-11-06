@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import {
-  type BulkAddReport,
+  type BulkAddResult,
   type MessageQueueDriver,
   type QueueJobToAdd,
   type QueueJobDetails,
@@ -58,16 +58,19 @@ export class SyncDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-  ): Promise<string[]> {
+  ): Promise<BulkAddResult> {
     let firstError: unknown = undefined;
-    const jobIds: string[] = [];
+    const addedJobs: BulkAddResult['jobs'] = [];
 
     // Each payload is an independent job in BullMQ, so a failing one must not
     // prevent the others from being processed
     for (const { data, jobId } of jobs) {
       const job = this.createJob(jobName, data, jobId);
 
-      jobIds.push(job.id);
+      addedJobs.push({
+        jobId: job.id,
+        sizeBytes: computeJobSizeBytes({ data, options: {} }),
+      });
 
       try {
         await this.processJob(queueName, job);
@@ -80,23 +83,7 @@ export class SyncDriver implements MessageQueueDriver {
       throw firstError;
     }
 
-    return jobIds;
-  }
-
-  async bulkAddWithReport<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-    jobName: string,
-    jobs: QueueJobToAdd<T>[],
-  ): Promise<BulkAddReport> {
-    const jobIds = await this.bulkAdd(queueName, jobName, jobs);
-
-    return {
-      jobs: jobIds.map((jobId, index) => ({
-        jobId,
-        sizeBytes: computeJobSizeBytes({ data: jobs[index].data, options: {} }),
-      })),
-      availableBytes: null,
-    };
+    return { jobs: addedJobs, availableBytes: null };
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({

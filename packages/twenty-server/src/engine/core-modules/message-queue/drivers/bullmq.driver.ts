@@ -28,7 +28,7 @@ import {
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
-  type BulkAddReport,
+  type BulkAddResult,
   type InFlightQueueJob,
   type MessageQueueDriver,
   type QueueJobDetails,
@@ -44,12 +44,11 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
-import { createJobMemoryLimiters } from 'src/engine/core-modules/message-queue/drivers/memory/create-job-memory-limiters.util';
 import {
   getChargedGroupKeys,
-  type JobMemoryLimiter,
+  JobMemoryLimiter,
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
-import { type JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
+import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
 import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -115,15 +114,16 @@ export class BullMQDriver
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
     });
-    const { jobSizeLimiter, jobMemoryLimiter } = createJobMemoryLimiters({
+    this.jobSizeLimiter = new JobSizeLimiter(
+      metricsService,
+      twentyConfigService,
+    );
+    this.jobMemoryLimiter = new JobMemoryLimiter({
       getClient: (queueName) => this.queueMap[queueName].client,
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       twentyConfigService,
     });
-
-    this.jobSizeLimiter = jobSizeLimiter;
-    this.jobMemoryLimiter = jobMemoryLimiter;
   }
 
   onModuleInit() {
@@ -907,46 +907,7 @@ export class BullMQDriver
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]> {
-    const { jobs: addedJobs } = await this.addBulkJobs({
-      queueName,
-      jobName,
-      jobs,
-      options,
-      shouldReportSizes: false,
-    });
-
-    return addedJobs.map(({ jobId }) => jobId);
-  }
-
-  bulkAddWithReport<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-    jobName: string,
-    jobs: QueueJobToAdd<T>[],
-    options?: QueueJobSettings,
-  ): Promise<BulkAddReport> {
-    return this.addBulkJobs({
-      queueName,
-      jobName,
-      jobs,
-      options,
-      shouldReportSizes: true,
-    });
-  }
-
-  private async addBulkJobs<T extends MessageQueueJobData>({
-    queueName,
-    jobName,
-    jobs,
-    options,
-    shouldReportSizes,
-  }: {
-    queueName: MessageQueue;
-    jobName: string;
-    jobs: QueueJobToAdd<T>[];
-    options?: QueueJobSettings;
-    shouldReportSizes: boolean;
-  }): Promise<BulkAddReport> {
+  ): Promise<BulkAddResult> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -979,7 +940,7 @@ export class BullMQDriver
         scope: job,
       })),
       additionalGroupKeys: options?.groupKeys,
-      shouldReportSizes,
+      shouldReportSizes: true,
     });
 
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
