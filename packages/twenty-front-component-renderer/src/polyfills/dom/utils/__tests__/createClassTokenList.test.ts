@@ -373,9 +373,7 @@ describe('createClassTokenList', () => {
       const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
 
-      expect(classTokenList.toggle('open', null as unknown as undefined)).toBe(
-        false,
-      );
+      expect(classTokenList.toggle('open', null)).toBe(false);
       expect(element.getAttribute('class')).toBeNull();
     });
 
@@ -440,18 +438,18 @@ describe('createClassTokenList', () => {
 
       const outOfRangeKey = String(2 ** 32);
 
-      expect(
-        (classTokenList as unknown as Record<string, unknown>)[outOfRangeKey],
-      ).toBeUndefined();
+      expect(Reflect.get(classTokenList, outOfRangeKey)).toBeUndefined();
       expect(outOfRangeKey in classTokenList).toBe(false);
     });
 
     it('should reject numeric writes so enumeration stays consistent', () => {
       const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
+      const writableClassTokenList: { [index: number]: string } =
+        classTokenList;
 
       expect(() => {
-        (classTokenList as unknown as Record<number, string>)[5] = 'expando';
+        writableClassTokenList[5] = 'expando';
       }).toThrow(TypeError);
 
       element.setAttribute('class', 'a b c d e f');

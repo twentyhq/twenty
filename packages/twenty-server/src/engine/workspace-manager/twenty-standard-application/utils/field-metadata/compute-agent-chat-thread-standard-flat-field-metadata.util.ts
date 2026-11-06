@@ -1,3 +1,4 @@
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { msg } from '@lingui/core/macro';
 import {
@@ -87,11 +88,11 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isSystem: true,
         isUIEditable: false,
         isNullable: false,
-        defaultValue: "'STANDARD'",
+        defaultValue: `'${AgentChatThreadConversationType.STANDARD}'`,
         options: [
           {
             id: '3236f63d-b8f8-4339-9562-1f45814338fd',
-            value: 'STANDARD',
+            value: AgentChatThreadConversationType.STANDARD,
             label: i18nLabel(
               msg({ message: 'Regular chat', context: 'fieldMetadata.label' }),
             ),
@@ -100,7 +101,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           },
           {
             id: '293035d8-eaa1-4f12-8a78-e9eec497ef10',
-            value: 'DIRECT_MESSAGE',
+            value: AgentChatThreadConversationType.DIRECT_MESSAGE,
             label: i18nLabel(
               msg({
                 message: 'Direct message',

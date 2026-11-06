@@ -42,7 +42,7 @@ describe('filterOutInvalidRecordFilters', () => {
       { operand: ViewFilterOperand.IS, value: '' },
       {
         operand: ViewFilterOperand.IS_NOT,
-        value: undefined as unknown as string,
+        value: undefined,
       },
     ];
 

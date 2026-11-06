@@ -9,8 +9,9 @@ type GetRelationsSelectFieldsArgs = Parameters<
   typeof buildRelationSelectionFromDepth
 >[0];
 
-type TestFlatObjectMetadata =
-  GetRelationsSelectFieldsArgs['flatObjectMetadata'];
+type TestFlatObjectMetadata = NonNullable<
+  GetRelationsSelectFieldsArgs['flatObjectMetadataMaps']['byUniversalIdentifier'][string]
+>;
 
 type TestFlatFieldMetadata = NonNullable<
   GetRelationsSelectFieldsArgs['flatFieldMetadataMaps']['byUniversalIdentifier'][string]
@@ -168,15 +169,10 @@ const buildArgs = (
   return {
     flatObjectMetadataMaps: buildFlatEntityMaps(objects),
     flatFieldMetadataMaps: buildFlatEntityMaps(fields),
-    flatObjectMetadata: opportunity,
     flatFields: fields.filter((field) =>
       opportunity.fieldIds.includes(field.id),
     ),
-    recordsPermissions: {
-      objects: Object.fromEntries(
-        objects.map((object) => [object.id, { restrictedFields: {} }]),
-      ),
-    },
+    unreadableFieldMetadataIds: new Set<string>(),
     readableObjectMetadataIds: new Set(objects.map((object) => object.id)),
     depth,
   };

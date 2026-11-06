@@ -40,7 +40,7 @@ describe('AiChatToolWidget', () => {
       state: 'output-available',
       input: { subject: 'Hello' },
       output: {},
-    } as unknown as ToolUIPart);
+    });
 
     expect(await screen.findByTestId('front-component')).toHaveTextContent(
       'app_draft_reply:{"subject":"Hello"}',
@@ -57,7 +57,7 @@ describe('AiChatToolWidget', () => {
         arguments: { subject: 'Hello' },
       },
       output: {},
-    } as unknown as ToolUIPart);
+    });
 
     expect(await screen.findByTestId('front-component')).toHaveTextContent(
       'app_draft_reply:{"subject":"Hello"}',

@@ -89,7 +89,6 @@ export const SentryInitEffect = () => {
         try {
           const { setUser } = await import('@sentry/react');
           setUser({
-            email: currentUser?.email,
             id: currentUser?.id,
             workspaceId: currentWorkspace?.id,
             workspaceMemberId: currentWorkspaceMember?.id,

@@ -25,7 +25,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -61,7 +61,7 @@ export class WorkspaceInvitationResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Mutation(() => String)
@@ -155,7 +155,7 @@ export class WorkspaceInvitationResolver {
   ): Promise<SendInvitationsDTO> {
     if (isDefined(sendInviteLinkInput.roleId)) {
       const canAssignRoles =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
+        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId: workspace.id,
           setting: PermissionFlagType.ROLES,

@@ -50,12 +50,12 @@ const StyledHeader = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[6]};
-  padding: 0 ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 
   &[data-countdown] {
     color: ${themeCssVariables.font.color.secondary};
     height: ${themeCssVariables.spacing[8]};
+    padding: 0 ${themeCssVariables.spacing[1]};
   }
 `;
 

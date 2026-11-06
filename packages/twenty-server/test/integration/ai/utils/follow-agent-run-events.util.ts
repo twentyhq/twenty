@@ -1,4 +1,4 @@
-import { type Readable } from 'node:stream';
+import { Readable } from 'node:stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
@@ -45,13 +45,13 @@ export const followAgentRunEventsOrThrow = async ({
     signal: abortController.signal,
   }).finally(() => clearTimeout(connectTimeout));
 
-  if (!response.ok || !isDefined(response.body)) {
+  // the integration setup swaps in node-fetch, whose body is a Node stream, not a web ReadableStream
+  if (!response.ok || !(response.body instanceof Readable)) {
     abortController.abort();
     throw new Error(`The subscription failed with HTTP ${response.status}`);
   }
 
-  // the integration setup swaps in node-fetch, whose body is a Node stream, not a web ReadableStream
-  const body = response.body as unknown as Readable;
+  const body = response.body;
 
   const reading = (async () => {
     const decoder = new TextDecoder();

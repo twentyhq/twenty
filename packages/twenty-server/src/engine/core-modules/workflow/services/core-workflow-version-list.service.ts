@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import {
   WorkflowVersionEntity,
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
@@ -11,6 +12,7 @@ import {
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -30,18 +32,31 @@ export class CoreWorkflowVersionListService {
   async findManyByWorkspaceWorkflowId({
     workspaceId,
     userWorkspaceId,
+    callerApplication,
+    workspaceCustomApplicationId,
     workspaceWorkflowId,
-  }: {
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const parentCoreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
-      { where: { workspaceWorkflowId }, select: { id: true } },
+      {
+        where: { workspaceWorkflowId },
+        select: { id: true, applicationId: true },
+      },
     );
 
-    if (!isDefined(parentCoreWorkflow)) {
+    if (
+      !isDefined(parentCoreWorkflow) ||
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: parentCoreWorkflow.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
       return [];
     }
 
@@ -91,8 +106,10 @@ export class CoreWorkflowVersionListService {
   async findOneByWorkspaceWorkflowVersionId({
     workspaceId,
     userWorkspaceId,
+    callerApplication,
+    workspaceCustomApplicationId,
     workspaceWorkflowVersionId,
-  }: {
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     workspaceWorkflowVersionId: string;
@@ -110,6 +127,8 @@ export class CoreWorkflowVersionListService {
     return this.findOneByCoreWorkflowVersionId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       coreWorkflowVersionId: coreWorkflowVersion.id,
     });
   }
@@ -117,8 +136,10 @@ export class CoreWorkflowVersionListService {
   async findManyByCoreWorkflowId({
     workspaceId,
     userWorkspaceId,
+    callerApplication,
+    workspaceCustomApplicationId,
     coreWorkflowId,
-  }: {
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
@@ -127,11 +148,19 @@ export class CoreWorkflowVersionListService {
       workspaceId,
       {
         where: { id: coreWorkflowId },
-        select: { id: true, workspaceWorkflowId: true },
+        select: { id: true, workspaceWorkflowId: true, applicationId: true },
       },
     );
 
-    if (!isDefined(coreWorkflow)) {
+    if (
+      !isDefined(coreWorkflow) ||
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: coreWorkflow.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
       return [];
     }
 
@@ -186,8 +215,10 @@ export class CoreWorkflowVersionListService {
   async findOneByCoreWorkflowVersionId({
     workspaceId,
     userWorkspaceId,
+    callerApplication,
+    workspaceCustomApplicationId,
     coreWorkflowVersionId,
-  }: {
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
@@ -201,19 +232,30 @@ export class CoreWorkflowVersionListService {
       return null;
     }
 
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowVersion.coreWorkflowId },
+        select: { id: true, workspaceWorkflowId: true, applicationId: true },
+      },
+    );
+
+    if (
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: coreWorkflow?.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return null;
+    }
+
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,
         userWorkspaceId,
         coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-      },
-    );
-
-    const coreWorkflow = await this.coreWorkflowRepository.findOne(
-      workspaceId,
-      {
-        where: { id: coreWorkflowVersion.coreWorkflowId },
-        select: { id: true, workspaceWorkflowId: true },
       },
     );
 

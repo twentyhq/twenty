@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
@@ -340,7 +339,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -387,7 +386,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -413,7 +412,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -439,7 +438,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -478,7 +477,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -521,7 +520,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -587,7 +586,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -626,7 +625,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     enqueueJobsMock.mockRejectedValueOnce(enqueueError);
     const reconcile = () =>
       reconcileCallRecorderForCalendarEventIds({
-        client: client as unknown as CoreApiClient,
+        client,
         calendarEventIds: ['calendar-event-1'],
         now: NOW,
       });
@@ -670,7 +669,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -722,7 +721,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const resultPromise = reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -768,7 +767,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -807,7 +806,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -839,7 +838,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -871,7 +870,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -905,7 +904,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: [],
       removedOccurrences: [
         {
@@ -961,7 +960,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       removedOccurrences: [
         {
@@ -1047,7 +1046,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1', 'calendar-event-2'],
       now: NOW,
     });
@@ -1095,7 +1094,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -1145,7 +1144,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -1200,7 +1199,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -1234,7 +1233,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });
@@ -1256,7 +1255,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     await Promise.all(
       Array.from({ length: 4 }, () =>
         reconcileCallRecorderForCalendarEventIds({
-          client: client as unknown as CoreApiClient,
+          client,
           calendarEventIds: ['calendar-event-1'],
           now: NOW,
         }),
@@ -1290,7 +1289,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
+      client,
       calendarEventIds: ['calendar-event-1'],
       now: NOW,
     });

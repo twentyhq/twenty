@@ -57,7 +57,6 @@ describe('NavigationMenuItem update should succeed', () => {
         expectToFail: false,
         input: { id: createdNavigationMenuItemId },
       });
-      createdNavigationMenuItemId = undefined as unknown as string;
     }
     if (createdFolderId) {
       await deleteNavigationMenuItem({

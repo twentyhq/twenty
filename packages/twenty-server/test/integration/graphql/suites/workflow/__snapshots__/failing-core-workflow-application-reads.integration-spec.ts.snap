@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Core workflow reads through an application should fail called by a member through the application reading a private member workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by a member through the application reading a workspace workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by a member through the application reading another application workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by another member through the application reading a private member workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by another member through the application reading a workspace workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by another member through the application reading another application workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow version not found",
+  },
+  "message": "Core workflow version '<id>' not found",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by the application alone reading a private member workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by the application alone reading a workspace workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Core workflow reads through an application should fail called by the application alone reading another application workflow should refuse to compute a step output schema from the workflow version 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

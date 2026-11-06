@@ -11,16 +11,21 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   StandardObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { channels: viewerMessageChannels } = useMyMessageChannels();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
+  const isMessageAttachmentEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+  );
 
   const { record: thread, loading: threadRecordLoading } =
     useFindOneRecord<EmailThread>({
@@ -40,6 +45,7 @@ export const useEmailThread = (threadId: string | null) => {
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
     fetchAllThreadMessagesOperationSignatureFactory({
       messageThreadId: threadId,
+      isMessageAttachmentEnabled,
     });
 
   const {

@@ -9,7 +9,7 @@ export const findCompanyId = async ({
   client,
   matchKeys,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   matchKeys: CompanyMatchKeys;
 }): Promise<string | undefined> => {
   const { pdlId, website, linkedinUrl, name } = matchKeys;

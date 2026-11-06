@@ -5,6 +5,7 @@ import { type CSSProperties } from 'react';
 import { themeCssVariables } from '@ui/theme/themeCssVariables';
 
 import styles from './AssistantAvatar.module.scss';
+import { AnimatedAssistantAvatarFace } from './internal/components/AnimatedAssistantAvatarFace';
 import { ASSISTANT_AVATAR_BODY_ASSET_BY_SHAPE } from './internal/constants/assistantAvatarBodyAssetByShape.constant';
 import { ASSISTANT_AVATAR_FACE_ASSET_BY_FACE } from './internal/constants/assistantAvatarFaceAssetByFace.constant';
 import { type AssistantAvatarProps } from './types/AssistantAvatarProps';
@@ -14,6 +15,7 @@ export const AssistantAvatar = ({
   color = 'blue',
   face = 'default',
   size = 24,
+  isAnimated = false,
   className,
   style,
   'aria-label': ariaLabel,
@@ -45,6 +47,7 @@ export const AssistantAvatar = ({
       data-color={color}
       data-face={face}
       data-size={size}
+      data-animated={isAnimated}
       role={hasAccessibleName ? 'img' : undefined}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
@@ -64,6 +67,7 @@ export const AssistantAvatar = ({
           maskImage: `url("${ASSISTANT_AVATAR_FACE_ASSET_BY_FACE[face]}")`,
         }}
       />
+      {isAnimated && <AnimatedAssistantAvatarFace key={face} face={face} />}
     </span>
   );
 };
