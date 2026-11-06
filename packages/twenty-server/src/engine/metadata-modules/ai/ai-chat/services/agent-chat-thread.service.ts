@@ -16,6 +16,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
+import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -499,15 +500,22 @@ export class AgentChatThreadService {
 
   async moveToChannel({
     channelId,
-    ...args
-  }: AgentChatThreadAccessArgs & {
+    authContext,
+    threadId,
+  }: {
+    authContext: AgentInboxCallerAuthContext;
+    threadId: string;
     channelId: string | null;
   }): Promise<void> {
-    const thread = await this.getWritableThread(args);
+    const workspaceId = authContext.workspace.id;
+    const thread = await this.sharingService.getCallerWritableThreadOrThrow({
+      authContext,
+      threadId,
+    });
 
     if (isDefined(channelId)) {
-      await this.channelAccessService.assertChannelAccess({
-        ...args,
+      await this.channelAccessService.assertCallerChannelAccessOrThrow({
+        authContext,
         channelId,
       });
     }
@@ -526,7 +534,7 @@ export class AgentChatThreadService {
                 await lockAgentChatChannelForThreadWriteOrThrow({
                   transactionScope,
                   channelRepository: this.channelRepository,
-                  workspaceId: args.workspaceId,
+                  workspaceId: workspaceId,
                   channelId,
                 });
               }
@@ -538,7 +546,7 @@ export class AgentChatThreadService {
                 );
               const currentThread = await threadRepository.findOne({
                 select: ['channelId', 'workspaceMemberId'],
-                where: { id: args.threadId },
+                where: { id: threadId },
               });
 
               if (!isDefined(currentThread)) {
@@ -556,7 +564,7 @@ export class AgentChatThreadService {
               const { generatedMaps: movedThreads } =
                 await threadRepository.update(
                   {
-                    id: args.threadId,
+                    id: threadId,
                     channelId: sourceChannelId ?? IsNull(),
                     ...(isDefined(channelId)
                       ? {}
@@ -577,7 +585,7 @@ export class AgentChatThreadService {
 
               await this.channelGrantService.rewriteThreadGrantsInTransaction({
                 transactionScope,
-                workspaceId: args.workspaceId,
+                workspaceId: workspaceId,
                 threadIds: movedThreadIds,
                 affectedChannelIds: [sourceChannelId, channelId],
               });
@@ -585,7 +593,7 @@ export class AgentChatThreadService {
               return movedThreadIds;
             },
           ),
-        buildSystemAuthContext(args.workspaceId),
+        buildSystemAuthContext(workspaceId),
         { lite: true },
       );
 
@@ -597,7 +605,7 @@ export class AgentChatThreadService {
     }
 
     await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId: args.workspaceId,
+      workspaceId,
       threadBefore: thread,
     });
   }

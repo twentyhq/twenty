@@ -1000,7 +1000,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!this.options.shouldBypassPermissionChecks) {
-      await this.options.internalContext.recordPermissions.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
+      await this.options.internalContext.recordRepositoryPermissions.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
         {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           flatObjectMetadata: this.options.flatObjectMetadata,
@@ -1671,7 +1671,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
     });
 
-    await this.options.internalContext.recordPermissions.assertColumnsReadableAndUpdatableOrThrow(
+    await this.options.internalContext.recordRepositoryPermissions.assertColumnsReadableAndUpdatableOrThrow(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata: this.options.flatObjectMetadata,
@@ -1692,7 +1692,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    await this.options.internalContext.recordPermissions.assertUpdatesKeepRecordAccessOrThrow(
+    await this.options.internalContext.recordRepositoryPermissions.assertUpdatesKeepRecordAccessOrThrow(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata: this.options.flatObjectMetadata,
@@ -1795,7 +1795,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         operationType: 'select',
       });
 
-      await this.options.internalContext.recordPermissions.assertColumnsReadableAndUpdatableOrThrow(
+      await this.options.internalContext.recordRepositoryPermissions.assertColumnsReadableAndUpdatableOrThrow(
         {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           flatObjectMetadata,
@@ -1898,7 +1898,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       });
     }
 
-    return this.options.internalContext.recordPermissions.buildRecordsAccessCondition(
+    return this.options.internalContext.recordRepositoryPermissions.buildRecordsAccessCondition(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata,
@@ -1915,7 +1915,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: ObjectRecordsOperationType;
   }): Promise<void> {
-    await this.options.internalContext.recordPermissions.assertObjectOperationAccessibleOrThrow(
+    await this.options.internalContext.recordRepositoryPermissions.assertObjectOperationAccessibleOrThrow(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         flatObjectMetadata,
@@ -1939,11 +1939,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return false;
     }
 
-    return this.options.internalContext.recordPermissions.isOperationDisabled({
-      principals: this.resolvePermissionsPrincipalsOrThrow(),
-      flatObjectMetadata,
-      operationType,
-    });
+    return this.options.internalContext.recordRepositoryPermissions.isOperationDisabled(
+      {
+        principals: this.resolvePermissionsPrincipalsOrThrow(),
+        flatObjectMetadata,
+        operationType,
+      },
+    );
   }
 
   private resolvePermissionsPrincipalsOrThrow(): PermissionsPrincipalsWithRolesContext {
