@@ -43,6 +43,7 @@ const buildInput = (
 describe('SentMessagePersistenceService', () => {
   const saveMessagesAndEnqueueContactCreation = jest.fn();
   const uploadFile = jest.fn();
+  const deleteFilesFieldFile = jest.fn();
   const isFeatureEnabled = jest.fn();
 
   const service = new SentMessagePersistenceService(
@@ -52,7 +53,7 @@ describe('SentMessagePersistenceService', () => {
     {
       saveMessagesAndEnqueueContactCreation,
     } as unknown as MessagingSaveMessagesAndEnqueueContactCreationService,
-    { uploadFile } as unknown as FilesFieldService,
+    { uploadFile, deleteFilesFieldFile } as unknown as FilesFieldService,
     { isFeatureEnabled } as unknown as FeatureFlagService,
   );
 
@@ -97,5 +98,27 @@ describe('SentMessagePersistenceService', () => {
 
     expect(uploadFile).not.toHaveBeenCalled();
     expect(getSavedMessage().attachmentFiles).toEqual([]);
+  });
+
+  it('should delete uploaded attachment copies when the message save fails', async () => {
+    uploadFile
+      .mockResolvedValueOnce({ id: 'file-1' })
+      .mockResolvedValueOnce({ id: 'file-2' });
+    saveMessagesAndEnqueueContactCreation.mockRejectedValue(
+      new Error('Save failed'),
+    );
+
+    await expect(service.persistSentMessage(buildInput())).rejects.toThrow(
+      'Save failed',
+    );
+
+    expect(deleteFilesFieldFile).toHaveBeenCalledWith({
+      fileId: 'file-1',
+      workspaceId: 'workspace-1',
+    });
+    expect(deleteFilesFieldFile).toHaveBeenCalledWith({
+      fileId: 'file-2',
+      workspaceId: 'workspace-1',
+    });
   });
 });

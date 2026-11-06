@@ -38,20 +38,22 @@ export class SentMessagePersistenceService {
       relations: { connectedAccount: true },
     });
 
-    const messageToSave = formatSentMessage(
-      input,
-      await this.uploadAttachmentFiles(input),
-    );
+    const attachmentFiles = await this.uploadAttachmentFiles(input);
+    const messageToSave = formatSentMessage(input, attachmentFiles);
 
     const savedMessagesResult =
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-        {
+      await this.saveMessagesAndEnqueueContactCreationService
+        .saveMessagesAndEnqueueContactCreation({
           messagesToSave: [messageToSave],
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
           workspaceId: input.workspaceId,
-        },
-      );
+        })
+        .catch(async (saveError) => {
+          await this.deleteAttachmentFiles(attachmentFiles, input.workspaceId);
+
+          throw saveError;
+        });
 
     const messageId = savedMessagesResult?.messageExternalIdsAndIdsMap.get(
       messageToSave.externalId,
@@ -111,5 +113,17 @@ export class SentMessagePersistenceService {
 
       return [];
     });
+  }
+
+  // Uploaded copies are temporary files without an expiry, so cleanup crons never collect them
+  private async deleteAttachmentFiles(
+    attachmentFiles: MessageAttachmentFile[],
+    workspaceId: string,
+  ): Promise<void> {
+    await Promise.allSettled(
+      attachmentFiles.map(({ fileId }) =>
+        this.filesFieldService.deleteFilesFieldFile({ fileId, workspaceId }),
+      ),
+    );
   }
 }
