@@ -196,6 +196,12 @@ describe('validateWorkflowGraph', () => {
     expect(getCodes(workflow)).toEqual(
       expect.arrayContaining(['IF_ELSE_HAS_NEXT_STEP_IDS', 'UNREACHABLE_STEP']),
     );
+    expect(
+      validateWorkflowGraph({
+        workflow,
+        graph: buildWorkflowGraph(workflow),
+      }).find((issue) => issue.code === 'IF_ELSE_HAS_NEXT_STEP_IDS')?.message,
+    ).toContain('outside its branches (outside)');
   });
 
   it('should accept an if-else step with empty next steps', () => {
