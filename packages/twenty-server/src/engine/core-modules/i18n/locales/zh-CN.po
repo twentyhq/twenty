@@ -1058,16 +1058,6 @@ msgstr "由工作区成员拥有的 AI 聊天线程"
 msgid "AI component builder is disabled."
 msgstr "AI 组件构建器已禁用。"
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "升级完成后，AI 数据政策才可用。"
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "此工作区未启用 AI 数据政策。"
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -10989,6 +10979,16 @@ msgstr "主体 ID"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "主体类型"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr ""
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts

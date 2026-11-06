@@ -1058,16 +1058,6 @@ msgstr "KI-Chat-Threads, die dem Arbeitsbereichsmitglied gehören"
 msgid "AI component builder is disabled."
 msgstr "Der KI-Komponenten-Builder ist deaktiviert."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Die KI-Datenrichtlinie ist erst verfügbar, wenn das Upgrade abgeschlossen ist."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Die KI-Datenrichtlinie ist für diesen Arbeitsbereich nicht aktiviert."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -10989,6 +10979,16 @@ msgstr "ID des Berechtigten"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Typ des Berechtigten"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr ""
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts

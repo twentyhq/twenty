@@ -1058,16 +1058,6 @@ msgstr "Các chuỗi trò chuyện AI do thành viên không gian làm việc s�
 msgid "AI component builder is disabled."
 msgstr "Trình tạo thành phần AI đã bị vô hiệu hóa."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Chính sách dữ liệu AI không khả dụng cho đến khi quá trình nâng cấp hoàn tất."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Chính sách dữ liệu AI chưa được bật cho không gian làm việc này."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -10989,6 +10979,16 @@ msgstr "ID chủ thể"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Loại chủ thể"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr ""
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts

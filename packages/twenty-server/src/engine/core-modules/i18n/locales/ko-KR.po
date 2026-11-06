@@ -1058,16 +1058,6 @@ msgstr "워크스페이스 멤버가 소유한 AI 채팅 스레드"
 msgid "AI component builder is disabled."
 msgstr "AI 컴포넌트 빌더가 비활성화되어 있습니다."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "업그레이드가 완료될 때까지 AI 데이터 정책을 사용할 수 없습니다."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "이 워크스페이스에서는 AI 데이터 정책이 활성화되어 있지 않습니다."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -10989,6 +10979,16 @@ msgstr "주체 ID"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "주체 유형"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr ""
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
