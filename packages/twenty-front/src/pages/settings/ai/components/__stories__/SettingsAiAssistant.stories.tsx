@@ -25,7 +25,6 @@ const meta = {
       key={JSON.stringify(args.value)}
       value={args.value}
       onChange={args.onChange}
-      onReset={args.onReset}
       disabled={args.disabled}
       isSaving={args.isSaving}
       errorMessage={args.errorMessage}
@@ -35,7 +34,6 @@ const meta = {
   args: {
     value: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
     onChange: fn(),
-    onReset: fn(),
   },
 } satisfies Meta<typeof SettingsAiAssistantExample>;
 
@@ -128,12 +126,18 @@ export const CustomEditsAndReset: Story = {
     await userEvent.type(name, '  Nimbus  ');
     onChange.mockClear();
     await userEvent.tab();
-    await waitFor(() => expect(name).toHaveValue('Nimbus'));
+    await waitFor(() =>
+      expect(body.getByRole('textbox', { name: 'Assistant name' })).toHaveValue(
+        'Nimbus',
+      ),
+    );
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith({
       displayName: 'Nimbus',
     });
-    expect(name).not.toHaveAttribute('aria-invalid', 'true');
+    expect(
+      body.getByRole('textbox', { name: 'Assistant name' }),
+    ).not.toHaveAttribute('aria-invalid', 'true');
 
     onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: /^Shape/ }));
@@ -181,8 +185,8 @@ export const CustomEditsAndReset: Story = {
 
     onChange.mockClear();
     await userEvent.click(body.getByRole('button', { name: 'Reset to Ada' }));
-    expect(args.onReset).toHaveBeenCalledOnce();
-    expect(onChange).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalledWith(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
     expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(customize).toHaveAttribute('aria-pressed', 'false');
   },
@@ -279,7 +283,6 @@ export const SavingWhileOpen: Story = {
             setValue((previousValue) => ({ ...previousValue, ...nextValue }));
             setIsSaving(true);
           }}
-          onReset={() => setValue(DEFAULT_AI_CHAT_ASSISTANT_PROFILE)}
           isSaving={isSaving}
         />
         <Button onClick={() => setIsSaving(false)}>Finish saving</Button>

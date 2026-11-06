@@ -1,16 +1,19 @@
-import { useSettingsAiAssistantNameInput } from '@/settings/ai/hooks/useSettingsAiAssistantNameInput';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import {
   AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
+  getAiChatAssistantProfileSchema,
   type AiChatAssistantProfile,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const ASSISTANT_DISPLAY_NAME_SCHEMA =
+  getAiChatAssistantProfileSchema().shape.displayName;
 
 type SettingsAiAssistantNameInputProps = {
   value: AiChatAssistantProfile;
@@ -37,8 +40,10 @@ export const SettingsAiAssistantNameInput = ({
 }: SettingsAiAssistantNameInputProps) => {
   const { t } = useLingui();
   const nameErrorId = useId();
-  const { draftDisplayName, isNameInvalid, setDraftDisplayName, commitName } =
-    useSettingsAiAssistantNameInput(value.displayName);
+  const [draftDisplayName, setDraftDisplayName] = useState(value.displayName);
+  const parsedDisplayName =
+    ASSISTANT_DISPLAY_NAME_SCHEMA.safeParse(draftDisplayName);
+  const isNameInvalid = !parsedDisplayName.success;
 
   return (
     <>
@@ -60,19 +65,19 @@ export const SettingsAiAssistantNameInput = ({
           maxLength={AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}
           onValueChange={setDraftDisplayName}
           onKeyDown={(event) => {
-            if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+            if (
+              event.key === 'Enter' &&
+              !isKeyboardEventComposing(event.nativeEvent)
+            ) {
               event.currentTarget.blur();
             }
           }}
           onBlur={() => {
-            if (disabled) {
-              return;
-            }
-
-            const patch = commitName();
-
-            if (isDefined(patch)) {
-              onChange(patch);
+            if (
+              parsedDisplayName.success &&
+              parsedDisplayName.data !== value.displayName
+            ) {
+              onChange({ displayName: parsedDisplayName.data });
             }
           }}
         />

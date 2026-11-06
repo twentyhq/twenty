@@ -1,16 +1,15 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   currentWorkspaceState,
   type CurrentWorkspace,
 } from '@/auth/states/currentWorkspaceState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
-import { settingsAiAssistantProfilePersistenceFamilyState } from '@/settings/ai/states/settingsAiAssistantProfilePersistenceFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
+import { getAiChatAssistantProfileSchema } from 'twenty-shared/ai';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
@@ -25,59 +24,39 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { createSettingsAiAssistantStoryFixture } from '~/pages/settings/ai/components/__stories__/createSettingsAiAssistantStoryFixture';
 
 type SettingsAiIntegrationStoryOptions = {
   permissionFlags: PermissionFlagType[];
   isInboxEnabled: boolean;
-  shouldFailAssistantLoad?: boolean;
-  shouldPauseAssistantLoad?: boolean;
-  hasInvalidAssistantProfile?: boolean;
 };
 
 export const createSettingsAiIntegrationStoryFixture = () => {
   const saveInstructions = fn();
   const saveBehavior = fn();
+  const saveAssistantProfile = fn();
   const loadSystemPrompts = fn();
-  let pendingBehaviorSave: Promise<void> | undefined;
-  let releaseBehaviorSave: (() => void) | undefined;
+  let pausedSave: Promise<void> | undefined;
+  let releasePausedSave: (() => void) | undefined;
   let shouldFailNextBehaviorSave = false;
+  let shouldFailNextAssistantSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
-  let hasLoadedInitialUser = false;
-  let initialAssistantProfile: CurrentWorkspace['aiChatAssistantProfile'] =
-    mockCurrentWorkspace.aiChatAssistantProfile;
   let workspace: CurrentWorkspace = {
     ...mockCurrentWorkspace,
     aiAdditionalInstructions: null,
   };
-  const assistant = createSettingsAiAssistantStoryFixture({
-    getWorkspace: () => workspace,
-  });
 
   const reset = async (options: SettingsAiIntegrationStoryOptions) => {
     resetGeneration += 1;
-    assistant.reset(options);
-    jotaiStore.set(
-      settingsAiAssistantProfilePersistenceFamilyState.atomFamily(
-        mockCurrentWorkspace.id,
-      ),
-      null,
-    );
-    resumeBehaviorSave();
+    resumeSave();
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
     saveBehavior.mockClear();
+    saveAssistantProfile.mockClear();
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
+    shouldFailNextAssistantSave = false;
     permissionFlags = options.permissionFlags;
-    hasLoadedInitialUser = false;
-    initialAssistantProfile = {
-      ...assistant.getProfile(),
-      displayName: options.hasInvalidAssistantProfile
-        ? ''
-        : assistant.getProfile().displayName,
-    };
     workspace = {
       ...mockCurrentWorkspace,
       aiAdditionalInstructions: null,
@@ -90,11 +69,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
       ],
     };
     jotaiStore.set(isCookieAuthActiveState.atom, true);
-    jotaiStore.set(isCurrentUserLoadedState.atom, false);
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...workspace,
-      aiChatAssistantProfile: initialAssistantProfile,
-    });
+    jotaiStore.set(currentWorkspaceState.atom, workspace);
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags,
@@ -111,20 +86,24 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     shouldFailNextBehaviorSave = true;
   };
 
-  const pauseBehaviorSave = () => {
-    if (isDefined(pendingBehaviorSave)) {
+  const failNextAssistantSave = () => {
+    shouldFailNextAssistantSave = true;
+  };
+
+  const pauseSave = () => {
+    if (isDefined(pausedSave)) {
       return;
     }
 
-    pendingBehaviorSave = new Promise<void>((resolve) => {
-      releaseBehaviorSave = resolve;
+    pausedSave = new Promise<void>((resolve) => {
+      releasePausedSave = resolve;
     });
   };
 
-  const resumeBehaviorSave = () => {
-    releaseBehaviorSave?.();
-    pendingBehaviorSave = undefined;
-    releaseBehaviorSave = undefined;
+  const resumeSave = () => {
+    releasePausedSave?.();
+    pausedSave = undefined;
+    releasePausedSave = undefined;
   };
 
   const reloadWorkspace = async () => {
@@ -147,7 +126,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   };
 
   const handlers = [
-    ...assistant.handlers,
     graphql.query('GetAgentChatOpenThreadsSummary', () =>
       HttpResponse.json({
         data: {
@@ -170,30 +148,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     graphql.query('MyConnectedAccounts', () =>
       HttpResponse.json({ data: { myConnectedAccounts: [] } }),
     ),
-    graphql.query('GetCurrentUser', async () => {
-      const isInitialUserLoad = !hasLoadedInitialUser;
-      hasLoadedInitialUser = true;
-      const loadErrorResponse = isInitialUserLoad
-        ? undefined
-        : await assistant.load();
-
-      if (isDefined(loadErrorResponse)) {
-        return loadErrorResponse;
-      }
-
-      return HttpResponse.json({
+    graphql.query('GetCurrentUser', () =>
+      HttpResponse.json({
         data: {
           currentUser: {
             ...mockedUserData,
-            currentWorkspace: {
-              ...workspace,
-              aiChatAssistantProfile: {
-                ...(isInitialUserLoad
-                  ? initialAssistantProfile
-                  : assistant.getProfile()),
-                __typename: 'AiChatAssistantProfile',
-              },
-            },
+            currentWorkspace: workspace,
             currentUserWorkspace: {
               ...mockedUserData.currentUserWorkspace,
               id: 'ai-settings-user-workspace',
@@ -201,28 +161,37 @@ export const createSettingsAiIntegrationStoryFixture = () => {
             },
           },
         },
-      });
-    }),
+      }),
+    ),
     graphql.mutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(
       'UpdateWorkspace',
       async ({ variables }) => {
-        if (isDefined(variables.input.aiChatAssistantProfile)) {
-          return assistant.save(variables.input);
-        }
-
         const requestGeneration = resetGeneration;
         const hasBehaviorUpdate =
           isDefined(variables.input.aiChatDirectMessageAssistantMode) ||
           isDefined(variables.input.aiChatInboxAssistantMode);
         const hasInstructionsUpdate =
           'aiAdditionalInstructions' in variables.input;
-        const pendingSave = hasBehaviorUpdate ? pendingBehaviorSave : undefined;
+        const hasAssistantProfileUpdate = isDefined(
+          variables.input.aiChatAssistantProfile,
+        );
+        const pendingSave =
+          hasBehaviorUpdate || hasAssistantProfileUpdate
+            ? pausedSave
+            : undefined;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
+        const shouldRejectAssistantSave =
+          hasAssistantProfileUpdate && shouldFailNextAssistantSave;
 
         if (hasBehaviorUpdate) {
           saveBehavior(variables.input);
           shouldFailNextBehaviorSave = false;
+        }
+
+        if (hasAssistantProfileUpdate) {
+          saveAssistantProfile(variables.input);
+          shouldFailNextAssistantSave = false;
         }
 
         if (isDefined(pendingSave)) {
@@ -247,11 +216,23 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           });
         }
 
+        if (shouldRejectAssistantSave) {
+          return HttpResponse.json({
+            errors: [{ message: 'Assistant settings could not be saved' }],
+          });
+        }
+
         workspace = {
           ...workspace,
           aiAdditionalInstructions: hasInstructionsUpdate
             ? (variables.input.aiAdditionalInstructions ?? null)
             : workspace.aiAdditionalInstructions,
+          aiChatAssistantProfile: {
+            ...workspace.aiChatAssistantProfile,
+            ...getAiChatAssistantProfileSchema()
+              .partial()
+              .parse(variables.input.aiChatAssistantProfile ?? {}),
+          },
           aiChatDirectMessageAssistantMode:
             variables.input.aiChatDirectMessageAssistantMode ??
             workspace.aiChatDirectMessageAssistantMode,
@@ -270,7 +251,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
               ...workspace,
               __typename: 'Workspace',
               aiChatAssistantProfile: {
-                ...assistant.getProfile(),
+                ...workspace.aiChatAssistantProfile,
                 __typename: 'AiChatAssistantProfile',
               },
               customDomain: workspace.customDomain ?? null,
@@ -298,15 +279,16 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   ];
 
   return {
-    assistant,
     reset,
     handlers,
     saveInstructions,
     saveBehavior,
+    saveAssistantProfile,
     loadSystemPrompts,
     failNextBehaviorSave,
-    pauseBehaviorSave,
-    resumeBehaviorSave,
+    failNextAssistantSave,
+    pauseSave,
+    resumeSave,
     reloadWorkspace,
   };
 };

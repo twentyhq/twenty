@@ -5,13 +5,6 @@ import { useEffect } from 'react';
 import { fireEvent, within } from 'storybook/test';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
-import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { GET_WORKSPACE_FROM_INVITE_HASH } from '@/workspace/graphql/queries/getWorkspaceFromInviteHash';
@@ -20,7 +13,6 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { AppPath } from 'twenty-shared/types';
 import { SignInUp } from '~/pages/auth/SignInUp';
@@ -48,24 +40,6 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/Invite',
   component: SignInUpWithCaptcha,
   decorators: [PageDecorator],
-  beforeEach: async () => {
-    const previousIsCookieAuthActive = jotaiStore.get(
-      isCookieAuthActiveState.atom,
-    );
-    const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-    const previousSignInUpStep = jotaiStore.get(signInUpStepState.atom);
-
-    jotaiStore.set(isCookieAuthActiveState.atom, false);
-    jotaiStore.set(currentWorkspaceState.atom, null);
-    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
-    await mockedApolloClient.clearStore();
-
-    return () => {
-      jotaiStore.set(isCookieAuthActiveState.atom, previousIsCookieAuthActive);
-      jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
-      jotaiStore.set(signInUpStepState.atom, previousSignInUpStep);
-    };
-  },
   args: {
     routePath: AppPath.Invite,
     routeParams: { ':workspaceInviteHash': 'my-hash' },

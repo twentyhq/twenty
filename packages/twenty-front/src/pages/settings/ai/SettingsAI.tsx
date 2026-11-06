@@ -1,8 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
 import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -43,7 +41,6 @@ const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
   const { t } = useLingui();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
   const isInboxEnabled = useIsFeatureEnabled(
@@ -73,9 +70,7 @@ export const SettingsAI = () => {
     return (
       <SettingsAiOverview
         secondaryBar={secondaryBar}
-        avatarSection={
-          <SettingsAiWorkspaceAssistantSection key={currentWorkspace?.id} />
-        }
+        avatarSection={<SettingsAiWorkspaceAssistantSection />}
         behaviorSection={<SettingsAiWorkspaceBehaviorSection />}
         mcpSection={<SettingsAiMcpSection />}
         workspaceInstructionsSection={

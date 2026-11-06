@@ -1,5 +1,4 @@
 import { type ComponentProps, useState } from 'react';
-import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { SettingsAiAssistantSection } from '~/pages/settings/ai/components/SettingsAiAssistantSection';
 
 type SettingsAiAssistantExampleProps = ComponentProps<
@@ -11,7 +10,6 @@ type SettingsAiAssistantExampleProps = ComponentProps<
 export const SettingsAiAssistantExample = ({
   value,
   onChange,
-  onReset,
   disabled,
   isSaving,
   errorMessage,
@@ -30,12 +28,6 @@ export const SettingsAiAssistantExample = ({
             ...previousValue,
             ...nextValue,
           }));
-        }
-      }}
-      onReset={() => {
-        onReset();
-        if (!shouldRejectChanges) {
-          setDraftValue(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
         }
       }}
       disabled={disabled}

@@ -1,5 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { type AiChatAssistantProfile } from 'twenty-shared/ai';
+import {
+  DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+  type AiChatAssistantProfile,
+} from 'twenty-shared/ai';
 import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -19,17 +22,13 @@ import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constant
 type SettingsAiAssistantCustomizeMenuProps = {
   value: AiChatAssistantProfile;
   onChange: (value: Partial<AiChatAssistantProfile>) => void;
-  onReset: () => void;
   disabled: boolean;
-  isSaving: boolean;
 };
 
 export const SettingsAiAssistantCustomizeMenu = ({
   value,
   onChange,
-  onReset,
   disabled,
-  isSaving,
 }: SettingsAiAssistantCustomizeMenuProps) => {
   const { t } = useLingui();
 
@@ -38,9 +37,10 @@ export const SettingsAiAssistantCustomizeMenu = ({
       <Dropdown.Page id="root">
         <Dropdown.Section>
           <SettingsAiAssistantNameInput
+            key={value.displayName}
             value={value}
             onChange={onChange}
-            disabled={disabled || isSaving}
+            disabled={disabled}
           />
         </Dropdown.Section>
         <Dropdown.Separator />
@@ -105,7 +105,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
           <Dropdown.ActionItem
             disabled={disabled}
             startIcon={<IconHistory />}
-            onClick={onReset}
+            onClick={() => onChange(DEFAULT_AI_CHAT_ASSISTANT_PROFILE)}
           >
             {t`Reset to Ada`}
           </Dropdown.ActionItem>
