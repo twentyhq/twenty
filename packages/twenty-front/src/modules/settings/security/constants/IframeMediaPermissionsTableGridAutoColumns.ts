@@ -1,0 +1,2 @@
+export const IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS =
+  'minmax(0, 1fr) 224px 32px';

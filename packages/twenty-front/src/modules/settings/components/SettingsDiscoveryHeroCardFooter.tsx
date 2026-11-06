@@ -56,7 +56,7 @@ const StyledDescription = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   line-height: ${themeCssVariables.text.lineHeight.lg};
   overflow: hidden;
-  text-box-edge: cap alphabetic;
+  text-box-edge: text;
   text-box-trim: trim-both;
 `;
 

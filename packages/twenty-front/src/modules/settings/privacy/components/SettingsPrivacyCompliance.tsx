@@ -2,17 +2,17 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
-import {
-  IconFileCheck,
-  IconFileText,
-  IconListCheck,
-  IconStack2,
-} from 'twenty-ui/icon';
+import { IconRosetteDiscountCheck, IconSignature } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { TWENTY_TRUST_CENTER_URLS } from '@/settings/privacy/constants/TwentyTrustCenterUrls';
+
+const EU_STAR_POSITIONS = Array.from({ length: 12 }, (_, index) => {
+  const angle = (index * Math.PI) / 6;
+
+  return { cx: 12 + 5.5 * Math.sin(angle), cy: 8 - 5.5 * Math.cos(angle) };
+});
 
 const StyledCardsGrid = styled.div`
   display: grid;
@@ -24,46 +24,69 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
+const StyledProviderLogo = styled.span`
+  background-color: currentColor;
+  border-radius: 1px;
+  height: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[1]};
+`;
+
 export const SettingsPrivacyCompliance = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const gdprCard = (
-    <SettingsCard
-      href={TWENTY_TRUST_CENTER_URLS.gdpr}
-      Icon={<IconListCheck size={theme.icon.size.md} />}
-      title={t`GDPR`}
-      description={t`Built to meet EU data protection rules`}
-    />
-  );
-
   return (
-    <Section.Root>
-      <Section.Header
-        title={t`Compliance`}
-        description={t`Audited controls and the agreements that cover your data.`}
+    <StyledCardsGrid>
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.soc2}
+        illustrationColor="green"
+        Icon={
+          <IconRosetteDiscountCheck
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        }
+        title={t`SOC 2`}
+        description={t`Independently audited security controls`}
       />
-      <StyledCardsGrid>
-        <SettingsCard
-          href={TWENTY_TRUST_CENTER_URLS.soc2}
-          Icon={<IconFileCheck size={theme.icon.size.md} />}
-          title={t`SOC 2`}
-          description={t`Independently audited security controls`}
-        />
-        <SettingsCard
-          to={getSettingsPath(SettingsPath.LegalDpa)}
-          Icon={<IconFileText size={theme.icon.size.md} />}
-          title={t`Data Processing Agreement`}
-          description={t`Generate a signed copy in one click`}
-        />
-        <SettingsCard
-          href={TWENTY_TRUST_CENTER_URLS.subprocessors}
-          Icon={<IconStack2 size={theme.icon.size.md} />}
-          title={t`Subprocessors`}
-          description={t`Every provider that handles your data`}
-        />
-        {gdprCard}
-      </StyledCardsGrid>
-    </Section.Root>
+      <SettingsCard
+        to={getSettingsPath(SettingsPath.LegalDpa)}
+        illustrationColor="orange"
+        Icon={
+          <IconSignature
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        }
+        title={t`Data Processing Agreement`}
+        description={t`Generate a signed copy in one click`}
+      />
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.subprocessors}
+        illustrationColor="purple"
+        Icon={
+          <>
+            <StyledProviderLogo />
+            <StyledProviderLogo />
+            <StyledProviderLogo />
+          </>
+        }
+        title={t`Subprocessors`}
+        description={t`Every provider that handles your data`}
+      />
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.gdpr}
+        illustrationColor="blue"
+        Icon={
+          <svg width={24} height={16} viewBox="0 0 24 16" fill="currentColor">
+            {EU_STAR_POSITIONS.map(({ cx, cy }) => (
+              <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={1} />
+            ))}
+          </svg>
+        }
+        title={t`GDPR`}
+        description={t`Built to meet EU data protection rules`}
+      />
+    </StyledCardsGrid>
   );
 };
