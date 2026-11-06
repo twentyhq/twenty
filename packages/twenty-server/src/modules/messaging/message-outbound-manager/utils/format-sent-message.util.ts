@@ -3,6 +3,7 @@ import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
+  type MessageAttachmentFile,
   type MessageParticipant,
   type MessageWithParticipants,
 } from 'src/modules/messaging/message-import-manager/types/message.type';
@@ -11,6 +12,7 @@ import { resolveOutboundThreadExternalId } from 'src/modules/messaging/message-o
 
 export const formatSentMessage = (
   input: PersistSentMessageInput,
+  attachmentFiles: MessageAttachmentFile[] = [],
 ): MessageWithParticipants => {
   const senderHandle = input.connectedAccount.handle ?? '';
 
@@ -54,6 +56,7 @@ export const formatSentMessage = (
     receivedAt: new Date(),
     direction: MessageDirection.OUTGOING,
     attachments: [],
+    attachmentFiles,
     participants,
     isDraft: false,
   };

@@ -103,4 +103,12 @@ describe('formatSentMessage', () => {
     expect(message.attachments).toEqual([]);
     expect(message.messageFolderIds).toBeUndefined();
   });
+
+  it('should carry the uploaded attachment files so they are saved as message attachments', () => {
+    const attachmentFiles = [{ fileId: 'file-1', label: 'report.pdf' }];
+
+    const message = formatSentMessage(buildInput(), attachmentFiles);
+
+    expect(message.attachmentFiles).toEqual(attachmentFiles);
+  });
 });
