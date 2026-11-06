@@ -1,5 +1,6 @@
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -128,6 +129,10 @@ describe('Generated client wrapper uploadFile', () => {
       .frontComponentHostCommunicationApi;
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   afterAll(async () => {
     await cleanup();
   });
@@ -169,6 +174,41 @@ describe('Generated client wrapper uploadFile', () => {
     );
     expect(parseGraphqlBody(completeRequest.requestInit).variables).toEqual({
       fileId: uploadTarget.fileId,
+    });
+  });
+
+  describe('with an internal API URL', () => {
+    const serverUploadTarget = {
+      ...uploadTarget,
+      uploadUrl: 'https://example.com/file-upload/file-id?token=upload-token',
+    };
+
+    beforeEach(() => {
+      vi.stubEnv('TWENTY_API_URL', 'https://example.com');
+      vi.stubEnv('TWENTY_INTERNAL_API_URL', 'http://twenty-server:3000');
+    });
+
+    it('sends the bytes for a server upload to the internal URL', async () => {
+      const { fetchMock, capturedRequests } = createFetchMock({
+        createFileUploadResponse: () =>
+          createJsonResponse({
+            body: { data: { createFileUpload: serverUploadTarget } },
+          }),
+      });
+
+      await uploadInvoice(createClient(fetchMock));
+
+      expect(capturedRequests[1].url).toBe(
+        'http://twenty-server:3000/file-upload/file-id?token=upload-token',
+      );
+    });
+
+    it('keeps a presigned storage URL as it is', async () => {
+      const { fetchMock, capturedRequests } = createFetchMock();
+
+      await uploadInvoice(createClient(fetchMock));
+
+      expect(capturedRequests[1].url).toBe(uploadTarget.uploadUrl);
     });
   });
 
