@@ -3,20 +3,25 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { AiChatAgentMessageHeader } from '@/ai/components/AiChatAgentMessageHeader';
+import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { AppChip } from '@/applications/components/AppChip';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatMessageAuthorHeaderProps = {
   metadata: ExtendedUIMessage['metadata'];
   role: ExtendedUIMessage['role'];
+  sender:
+    | Pick<PartialWorkspaceMember, 'name' | 'userEmail' | 'avatarUrl'>
+    | undefined;
   messageId: string;
   createdAt: Date | string;
 };
@@ -24,15 +29,13 @@ type AiChatMessageAuthorHeaderProps = {
 export const AiChatMessageAuthorHeader = ({
   metadata,
   role,
+  sender,
   messageId,
   createdAt,
 }: AiChatMessageAuthorHeaderProps) => {
   const { t } = useLingui();
-  const assistantProfile = useAiChatAssistantProfile();
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
   const applicationId = metadata?.senderApplicationId;
   const senderId = metadata?.senderWorkspaceMemberId;
   const agentId = metadata?.agentId;
@@ -46,47 +49,41 @@ export const AiChatMessageAuthorHeader = ({
     return (
       <AiChatMessageHeader
         avatar={<AiChatAssistantAvatar />}
-        name={assistantProfile.displayName}
+        name={assistantDisplayName}
         createdAt={createdAt}
       />
     );
   }
 
-  if (isDefined(agentId) && !isDefined(applicationId) && !isDefined(senderId)) {
+  if (isDefined(applicationId)) {
+    return (
+      <AiChatMessageHeader
+        avatar={<AppChip applicationId={applicationId} chipOnly rounded />}
+        name={getInstalledApplicationDisplayName({
+          applicationId,
+          currentWorkspace,
+        })}
+        createdAt={createdAt}
+      />
+    );
+  }
+
+  if (isDefined(agentId) && !isDefined(senderId)) {
     return <AiChatAgentMessageHeader agentId={agentId} createdAt={createdAt} />;
   }
 
-  const application = currentWorkspace?.installedApplications.find(
-    ({ id }) => id === applicationId,
-  );
-  const sender = currentWorkspaceMembers.find(({ id }) => id === senderId);
-  const getAuthorName = () => {
-    if (isDefined(applicationId)) {
-      return application?.name ?? t`Application`;
-    }
-
-    if (isDefined(senderId)) {
-      return getAgentChatSenderLabel({
-        sender,
-        isCurrentWorkspaceMember: false,
-      });
-    }
-
-    return role === AGENT_MESSAGE_ROLE.ASSISTANT
-      ? t`Assistant`
-      : t`Unknown sender`;
-  };
-  const authorName = getAuthorName();
-  const avatarUrl = isDefined(applicationId)
-    ? application?.logoUrl
-    : sender?.avatarUrl;
+  const unknownAuthorName =
+    role === AGENT_MESSAGE_ROLE.ASSISTANT ? t`Assistant` : t`Unknown sender`;
+  const authorName = isDefined(senderId)
+    ? getAgentChatSenderLabel({ sender, isCurrentWorkspaceMember: false })
+    : unknownAuthorName;
 
   return (
     <AiChatMessageHeader
       avatar={
         <Avatar
-          src={getAbsoluteImageUrl(avatarUrl)}
-          colorSeed={applicationId ?? senderId ?? agentId ?? messageId}
+          src={getAbsoluteImageUrl(sender?.avatarUrl)}
+          colorSeed={senderId ?? agentId ?? messageId}
           name={authorName}
           size="sm"
           shape="circle"

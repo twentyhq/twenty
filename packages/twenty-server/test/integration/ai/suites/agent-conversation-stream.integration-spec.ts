@@ -23,8 +23,11 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -223,10 +226,12 @@ describe('Agent conversations read by their application (integration)', () => {
     ).toBe(true);
     expect(
       (
-        await recorder.findTurn({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          turnId,
-        })
+        await global.app
+          .get<string, AgentHistoryRepository<AgentTurnWorkspaceEntity>>(
+            getAgentHistoryRepositoryToken('agentTurn'),
+            { strict: false },
+          )
+          .findOne(SEED_APPLE_WORKSPACE_ID, { where: { id: turnId } })
       )?.createdBy,
     ).toEqual({
       ...createdBy,

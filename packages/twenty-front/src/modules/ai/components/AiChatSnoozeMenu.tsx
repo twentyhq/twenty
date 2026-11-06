@@ -23,7 +23,6 @@ type AiChatSnoozeMenuProps = {
   onPickDate: () => void;
   onSomeoneReplies?: () => void;
   onAssistantFinishes?: () => void;
-  assistantName?: string;
   disabled?: boolean;
 };
 
@@ -35,12 +34,10 @@ export const AiChatSnoozeMenu = ({
   onPickDate,
   onSomeoneReplies,
   onAssistantFinishes,
-  assistantName,
   disabled = false,
 }: AiChatSnoozeMenuProps) => {
   const { t } = useLingui();
-  const assistantProfile = useAiChatAssistantProfile();
-  const resolvedAssistantName = assistantName ?? assistantProfile.displayName;
+  const { displayName: assistantName } = useAiChatAssistantProfile();
   const hasEventOptions =
     isDefined(onSomeoneReplies) || isDefined(onAssistantFinishes);
 
@@ -100,7 +97,7 @@ export const AiChatSnoozeMenu = ({
                   disabled={disabled}
                   onClick={onAssistantFinishes}
                 >
-                  {t`When ${resolvedAssistantName} finishes`}
+                  {t`When ${assistantName} finishes`}
                 </Dropdown.ActionItem>
               )}
             </Dropdown.Section>

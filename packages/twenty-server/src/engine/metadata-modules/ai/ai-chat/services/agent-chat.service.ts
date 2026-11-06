@@ -307,19 +307,6 @@ export class AgentChatService {
       }),
       this.turnRepository.find(workspaceId, { where: { threadId } }),
     ]);
-    // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
-    const turnIdsOpenedByOtherMembers = new Set(
-      turns
-        .filter(({ createdBy }) =>
-          isAgentTurnOpenedByOtherMember({
-            createdBy,
-            workspaceMemberId,
-            applicationId,
-          }),
-        )
-        .map(({ id }) => id),
-    );
-
     const turnsById = new Map(turns.map((turn) => [turn.id, turn]));
 
     // their message and attachments are theirs to show; only the reply ran under their permissions
@@ -327,18 +314,20 @@ export class AgentChatService {
       const turn = isDefined(message.turnId)
         ? turnsById.get(message.turnId)
         : undefined;
-      const assistantTurnAgentId =
-        message.role === AgentMessageRole.ASSISTANT ? turn?.agentId : null;
       const messageWithAuthor = {
         ...message,
-        agentId: message.agentId ?? assistantTurnAgentId ?? null,
         isBuiltInAssistant: isBuiltInAssistantMessage({ message, turn }),
       };
 
+      // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
       if (
-        !isDefined(message.turnId) ||
-        !turnIdsOpenedByOtherMembers.has(message.turnId) ||
-        message.role === AgentMessageRole.USER
+        !isDefined(turn) ||
+        message.role === AgentMessageRole.USER ||
+        !isAgentTurnOpenedByOtherMember({
+          createdBy: turn.createdBy,
+          workspaceMemberId,
+          applicationId,
+        })
       ) {
         return messageWithAuthor;
       }
