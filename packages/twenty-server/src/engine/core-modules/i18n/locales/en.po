@@ -12792,7 +12792,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Some workspace memberships could not be found. They may no longer have access to this workspace."
 
@@ -17988,7 +17988,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "You can't generate a recovery code for yourself. Reset two-factor authentication from your profile instead."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "You cannot change your own role. Please ask another administrator to update your role."
 
@@ -18009,7 +18009,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "You cannot remove settings access from your own role. Ask another administrator to make this change."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 
@@ -18261,7 +18261,7 @@ msgstr "Your role cannot delete some of these records, so they cannot be merged.
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Your role in this workspace could not be found. Please contact your workspace administrator."
 

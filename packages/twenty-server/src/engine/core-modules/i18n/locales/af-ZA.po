@@ -12797,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Sommige van die toestemmings wat jy gekies het is nie geldig nie. Probeer asseblief weer met geldige toestemmingsinstellings."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Sommige werkruimte-lidmaatskappe kon nie gevind word nie. Hulle mag nie meer toegang hê tot hierdie werkruimte nie."
 
@@ -17993,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Jy kan nie ’n herstelkode vir jouself genereer nie. Stel eerder twee-faktor-outentikasie vanaf jou profiel terug."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Jy kan nie jou eie rol verander nie. Vra asseblief 'n ander admin om jou rol op te dateer."
 
@@ -18014,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Jy kan nie instellings-toegang van jou eie rol verwyder nie. Vra ’n ander administrateur om hierdie verandering aan te bring."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Jy kan nie die administrateurrol van die laaste administrateur verwyder nie. Ken asseblief eers 'n ander administrateur toe."
 
@@ -18266,7 +18266,7 @@ msgstr "Jou rol kan sommige van hierdie rekords nie uitvee nie, dus kan hulle ni
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Jou rol in hierdie werkruimte kon nie gevind word nie. Kontak asseblief jou werkruimte administrateur."
 

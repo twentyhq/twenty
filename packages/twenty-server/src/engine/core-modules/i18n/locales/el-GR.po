@@ -12797,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Μερικές από τις άδειες που επιλέξατε δεν είναι έγκυρες. Παρακαλώ δοκιμάστε ξανά με έγκυρες ρυθμίσεις άδειας."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
 
@@ -17993,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για τον εαυτό σας. Αντ' αυτού, επαναφέρετε τον έλεγχο ταυτότητας δύο παραγόντων από το προφίλ σας."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Δεν μπορείτε να αλλάξετε το δικό σας ρόλο. Παρακαλώ ζητήστε από άλλον διαχειριστή να ενημερώσει το ρόλο σας."
 
@@ -18014,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Δεν μπορείτε να αφαιρέσετε την πρόσβαση στις ρυθμίσεις από τον δικό σας ρόλο. Ζητήστε από έναν άλλο διαχειριστή να κάνει αυτή την αλλαγή."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο διαχειριστή από τον τελευταίο διαχειριστή. Παρακαλώ αναθέστε έναν άλλο διαχειριστή πρώτα."
 
@@ -18266,7 +18266,7 @@ msgstr "Ο ρόλος σας δεν μπορεί να διαγράψει ορι�
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ο ρόλος σας σε αυτό το workspace δεν μπορεί να βρεθεί. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 
