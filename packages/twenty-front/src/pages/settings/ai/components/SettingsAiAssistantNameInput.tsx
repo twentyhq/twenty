@@ -1,11 +1,12 @@
+import { useSettingsAiAssistantNameInput } from '@/settings/ai/hooks/useSettingsAiAssistantNameInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import {
   AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
-  getAiChatAssistantProfileSchema,
   type AiChatAssistantProfile,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -16,8 +17,6 @@ type SettingsAiAssistantNameInputProps = {
   onChange: (value: Pick<AiChatAssistantProfile, 'displayName'>) => void;
   disabled: boolean;
 };
-
-const ASSISTANT_PROFILE_SCHEMA = getAiChatAssistantProfileSchema();
 
 const StyledNameRow = styled.div`
   align-items: center;
@@ -38,23 +37,8 @@ export const SettingsAiAssistantNameInput = ({
 }: SettingsAiAssistantNameInputProps) => {
   const { t } = useLingui();
   const nameErrorId = useId();
-  const [nameInput, setNameInput] = useState({
-    confirmedDisplayName: value.displayName,
-    displayName: value.displayName,
-  });
-
-  if (nameInput.confirmedDisplayName !== value.displayName) {
-    setNameInput({
-      confirmedDisplayName: value.displayName,
-      displayName: value.displayName,
-    });
-  }
-
-  const parsedProfile = ASSISTANT_PROFILE_SCHEMA.safeParse({
-    ...value,
-    displayName: nameInput.displayName,
-  });
-  const isNameInvalid = !parsedProfile.success;
+  const { draftDisplayName, isNameInvalid, setDraftDisplayName, commitName } =
+    useSettingsAiAssistantNameInput(value.displayName);
 
   return (
     <>
@@ -71,29 +55,24 @@ export const SettingsAiAssistantNameInput = ({
           aria-invalid={isNameInvalid}
           aria-describedby={isNameInvalid ? nameErrorId : undefined}
           size="sm"
-          value={nameInput.displayName}
+          value={draftDisplayName}
           disabled={disabled}
           maxLength={AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}
-          onValueChange={(displayName) =>
-            setNameInput((previousInput) => ({ ...previousInput, displayName }))
-          }
+          onValueChange={setDraftDisplayName}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
               event.currentTarget.blur();
             }
           }}
           onBlur={() => {
-            if (!parsedProfile.success || disabled) {
+            if (disabled) {
               return;
             }
 
-            setNameInput((previousInput) => ({
-              ...previousInput,
-              displayName: parsedProfile.data.displayName,
-            }));
+            const patch = commitName();
 
-            if (parsedProfile.data.displayName !== value.displayName) {
-              onChange({ displayName: parsedProfile.data.displayName });
+            if (isDefined(patch)) {
+              onChange(patch);
             }
           }}
         />
