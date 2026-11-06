@@ -16,7 +16,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // the server derives these steps' output schema from expectedOutputSchema, so a test-run schema moves there
-@RegisteredWorkspaceCommand('2.57.0', 1793954468406)
+@RegisteredWorkspaceCommand('2.57.0', 1793966468406)
 @Command({
   name: 'upgrade:2-57:move-step-output-samples-to-expected-output',
   description:
