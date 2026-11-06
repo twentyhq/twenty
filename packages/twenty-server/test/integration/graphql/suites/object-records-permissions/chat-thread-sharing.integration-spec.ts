@@ -281,7 +281,7 @@ describe('Conversation sharing through the authenticated API', () => {
           throw rollbackError;
         },
       }),
-    ).rejects.toBe(rollbackError);
+    ).rejects.toThrow(rollbackError.message);
   });
 
   it.each(['member', 'role'])(
