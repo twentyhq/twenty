@@ -61,7 +61,7 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-type WorkflowVersionContent = {
+export type WorkflowVersionContent = {
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
 };

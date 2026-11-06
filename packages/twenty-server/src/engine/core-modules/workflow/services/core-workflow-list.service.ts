@@ -29,6 +29,10 @@ import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import {
+  type WorkflowVersionContent,
+  WorkflowSchemaWorkspaceService,
+} from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -150,6 +154,7 @@ export class CoreWorkflowListService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   async findManyWithCurrentVersions({
@@ -234,8 +239,22 @@ export class CoreWorkflowListService {
             where: { id: In(currentVersionIds) },
             select: { id: true, triggers: true, steps: true },
           });
+    // computed like a single version read, as both write the same Apollo cache entry
     const currentVersionContentById = new Map(
-      currentVersionContents.map((version) => [version.id, version]),
+      await Promise.all(
+        currentVersionContents.map(
+          async (version): Promise<[string, WorkflowVersionContent]> => [
+            version.id,
+            await this.workflowSchemaWorkspaceService.enrichWorkflowVersionContentOutputSchemas(
+              {
+                trigger: version.triggers?.[0] ?? null,
+                steps: version.steps ?? null,
+                workspaceId,
+              },
+            ),
+          ],
+        ),
+      ),
     );
 
     return coreWorkflowIds.flatMap((coreWorkflowId) => {
@@ -277,7 +296,7 @@ export class CoreWorkflowListService {
       );
       const currentVersion = {
         ...currentVersionMetadata,
-        trigger: currentVersionContent?.triggers?.[0] ?? null,
+        trigger: currentVersionContent?.trigger ?? null,
         steps: currentVersionContent?.steps ?? null,
       };
 
