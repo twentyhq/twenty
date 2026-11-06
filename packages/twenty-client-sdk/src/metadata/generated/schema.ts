@@ -236,6 +236,15 @@ export type AggregateOperations = 'AVG' | 'COUNT' | 'COUNT_EMPTY' | 'COUNT_FALSE
 
 export type AiChatAssistantMode = 'AUTOMATIC' | 'MENTION_ONLY' | 'NEVER'
 
+export interface AiChatAssistantProfile {
+    avatarColor: Scalars['String']
+    avatarFace: Scalars['String']
+    avatarShape: Scalars['String']
+    displayName: Scalars['String']
+    isAvatarAnimated: Scalars['Boolean']
+    __typename: 'AiChatAssistantProfile'
+}
+
 export interface AiChatUsage {
     consumedValue?: Scalars['BigInt']
     kind: Scalars['String']
@@ -2514,6 +2523,7 @@ export interface Mutation {
     reportAppConnectionAuthFailure: Scalars['Boolean']
     resendEmailVerificationToken: ResendEmailVerificationToken
     resendWorkspaceInvitation: SendInvitations
+    resetAiChatAssistantProfile: AiChatAssistantProfile
     resetCommandMenuItem: CommandMenuItem
     resetPageLayoutTabToDefault: PageLayoutTab
     resetPageLayoutToDefault: PageLayout
@@ -4221,6 +4231,7 @@ export interface Workspace {
     activationStatus: WorkspaceActivationStatus
     aiAdditionalInstructions?: Scalars['String']
     aiAgentModelTier: AiModelTier
+    aiChatAssistantProfile: AiChatAssistantProfile
     aiChatDirectMessageAssistantMode: AiChatAssistantMode
     aiChatInboxAssistantMode: AiChatAssistantMode
     aiChatModelTier: AiModelTier
@@ -4622,6 +4633,18 @@ export interface AggregateChartConfigurationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface AiChatAssistantProfileGenqlSelection{
+    avatarColor?: boolean | number
+    avatarFace?: boolean | number
+    avatarShape?: boolean | number
+    displayName?: boolean | number
+    isAvatarAnimated?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AiChatAssistantProfileInput {avatarColor?: (Scalars['String'] | null),avatarFace?: (Scalars['String'] | null),avatarShape?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),isAvatarAnimated?: (Scalars['Boolean'] | null)}
 
 export interface AiChatUsageGenqlSelection{
     consumedValue?: boolean | number
@@ -7205,6 +7228,7 @@ export interface MutationGenqlSelection{
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
+    resetAiChatAssistantProfile?: AiChatAssistantProfileGenqlSelection
     resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     resetPageLayoutTabToDefault?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutToDefault?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
@@ -8782,7 +8806,7 @@ export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars
 
 export interface UpdateWorkspaceIframeMediaPermissionsInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantProfile?: (AiChatAssistantProfileInput | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -9327,6 +9351,7 @@ export interface WorkspaceGenqlSelection{
     activationStatus?: boolean | number
     aiAdditionalInstructions?: boolean | number
     aiAgentModelTier?: boolean | number
+    aiChatAssistantProfile?: AiChatAssistantProfileGenqlSelection
     aiChatDirectMessageAssistantMode?: boolean | number
     aiChatInboxAssistantMode?: boolean | number
     aiChatModelTier?: boolean | number
@@ -9596,6 +9621,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAggregateChartConfiguration = (obj?: { __typename?: any } | null): obj is AggregateChartConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAggregateChartConfiguration"')
       return AggregateChartConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiChatAssistantProfile_possibleTypes: string[] = ['AiChatAssistantProfile']
+    export const isAiChatAssistantProfile = (obj?: { __typename?: any } | null): obj is AiChatAssistantProfile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatAssistantProfile"')
+      return AiChatAssistantProfile_possibleTypes.includes(obj.__typename)
     }
     
 
