@@ -249,6 +249,42 @@ describe('Chat message participation with real storage', () => {
     ]);
   });
 
+  it('returns a stored first message sent again after a later message without revising its choices', async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    await context.saveMessage({ threadId });
+
+    const retried = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+      isAssistantParticipant: false,
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: null,
+    });
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      true,
+    );
+  });
+
   it('delivers valid initial recipients when sharing with a mentioned member fails', async () => {
     const threadId = await context.createThread();
     const messageId = randomUUID();

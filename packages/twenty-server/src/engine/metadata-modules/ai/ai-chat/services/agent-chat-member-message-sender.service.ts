@@ -214,15 +214,15 @@ export class AgentChatMemberMessageSenderService {
       text: message.text,
     };
 
-    if (isInitialMessage && isDefined(storedMessage)) {
-      return this.replayStoredFirstMessage({
+    if (isDefined(storedMessage)) {
+      return this.replayStoredMessage({
         ...assistantReplyPolicyInput,
         storedMessage,
         execution,
         addressing: {
           ...messageAddressing,
           initialRecipientWorkspaceMemberIds:
-            isInboxEnabled || isDirectMessage
+            (isInboxEnabled && isInitialMessage) || isDirectMessage
               ? messageAddressing.initialRecipientWorkspaceMemberIds
               : [],
         },
@@ -358,7 +358,7 @@ export class AgentChatMemberMessageSenderService {
     return workspace;
   }
 
-  private async replayStoredFirstMessage({
+  private async replayStoredMessage({
     storedMessage,
     execution,
     addressing,
@@ -374,11 +374,13 @@ export class AgentChatMemberMessageSenderService {
     }): Promise<AgentChatMemberMessageResult> {
     const { actor, thread, participation } = assistantReplyPolicyInput;
 
-    await this.assistantParticipationService.persistAssistantParticipation({
-      workspaceId: actor.workspaceId,
-      thread,
-      participation,
-    });
+    if (participation.isInitialMessage) {
+      await this.assistantParticipationService.persistAssistantParticipation({
+        workspaceId: actor.workspaceId,
+        thread,
+        participation,
+      });
+    }
 
     const storedResult = {
       messageId: storedMessage.id,
@@ -410,6 +412,7 @@ export class AgentChatMemberMessageSenderService {
     }
 
     if (
+      !participation.isInitialMessage ||
       storedTurn?.status !== AgentTurnStatus.FAILED ||
       !(await this.shouldGenerateAssistantReply(assistantReplyPolicyInput))
     ) {
