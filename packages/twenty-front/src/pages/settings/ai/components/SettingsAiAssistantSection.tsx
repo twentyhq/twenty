@@ -13,7 +13,7 @@ import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constant
 import { SETTINGS_AI_ASSISTANT_PRESETS } from '~/pages/settings/ai/constants/SettingsAiAssistantPresets';
 import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantShapeLabels';
 import { type SettingsAiAssistantSectionProps } from '~/pages/settings/ai/types/SettingsAiAssistantSectionProps';
-import { getSettingsAiAssistantPreset } from '~/pages/settings/ai/utils/getSettingsAiAssistantPreset';
+import { getSettingsAiAssistantPreset } from '@/settings/ai/utils/getSettingsAiAssistantPreset';
 
 export const SettingsAiAssistantSection = ({
   value,
@@ -26,7 +26,10 @@ export const SettingsAiAssistantSection = ({
   const sectionId = useId();
   const errorId = `${sectionId}-error`;
   const hasError = isNonEmptyString(errorMessage);
-  const selectedPreset = getSettingsAiAssistantPreset(value);
+  const selectedPreset = getSettingsAiAssistantPreset({
+    value,
+    presets: SETTINGS_AI_ASSISTANT_PRESETS,
+  });
   const isDisabled = disabled || isSaving;
 
   return (

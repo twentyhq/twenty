@@ -18,7 +18,7 @@ import { resolveObjectIcon } from 'src/engine/core-modules/tool-provider/utils/r
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import type { DashboardToolWorkspaceService } from 'src/modules/dashboard/tools/services/dashboard-tool.workspace-service';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class DashboardToolProvider implements ToolProvider {
     @Optional()
     @Inject(DASHBOARD_TOOL_SERVICE_TOKEN)
     private readonly dashboardToolService: DashboardToolWorkspaceService | null,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -38,9 +38,9 @@ export class DashboardToolProvider implements ToolProvider {
       return false;
     }
 
-    return this.permissionsService.hasPermissionFlag({
+    return this.settingPermissionsService.hasPermissionFlag({
       authContext: context.authContext,
-      setting: PermissionFlagType.LAYOUTS,
+      permissionFlag: PermissionFlagType.LAYOUTS,
     });
   }
 

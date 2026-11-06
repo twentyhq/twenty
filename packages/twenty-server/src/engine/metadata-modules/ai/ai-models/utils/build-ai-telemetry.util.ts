@@ -5,6 +5,7 @@ import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/co
 
 type BuildAiTelemetryArgs = {
   functionId: string;
+  isContentRecordingAllowed: boolean;
   workspaceId?: string;
   userWorkspaceId?: string | null;
   agentId?: string | null;
@@ -21,6 +22,7 @@ type AiTelemetryCallOptions = {
 // telemetry integrations only receive per-call attributes opted in from runtime context
 export const buildAiTelemetry = ({
   functionId,
+  isContentRecordingAllowed,
   ...identifiers
 }: BuildAiTelemetryArgs): AiTelemetryCallOptions => {
   const runtimeContext = Object.fromEntries(
@@ -30,6 +32,8 @@ export const buildAiTelemetry = ({
   return {
     telemetry: {
       ...AI_TELEMETRY_CONFIG,
+      recordInputs: isContentRecordingAllowed,
+      recordOutputs: isContentRecordingAllowed,
       functionId,
       includeRuntimeContext: Object.fromEntries(
         Object.keys(runtimeContext).map((key) => [key, true]),

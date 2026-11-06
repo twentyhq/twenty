@@ -6,10 +6,16 @@ import assert from 'assert';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
-import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import {
+  isAiModelCompliantWithDataPolicy,
+  isAiModelTier,
+  type AiDataPolicy,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import {
   FeatureFlagKey,
   type IframeMediaPermission,
@@ -99,6 +105,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -108,7 +115,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -160,6 +167,7 @@ export class WorkspaceService {
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
+    aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -175,12 +183,13 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -211,12 +220,37 @@ export class WorkspaceService {
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
+  private async assertFeatureIsEnabledOrThrow({
+    featureFlagKey,
+    workspaceId,
+    userFriendlyMessage,
+  }: {
+    featureFlagKey: FeatureFlagKey;
+    workspaceId: string;
+    userFriendlyMessage: MessageDescriptor;
+  }): Promise<void> {
+    const isFeatureEnabled = await this.featureFlagService.isFeatureEnabled(
+      featureFlagKey,
+      workspaceId,
+    );
+
+    if (!isFeatureEnabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        { userFriendlyMessage },
+      );
+    }
+  }
+
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
+    aiDataPolicy,
   }: {
     aiModelIdByTier: Partial<Record<AiModelTier, string>>;
     storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
+    aiDataPolicy: AiDataPolicy;
   }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
       if (!isAiModelTier(tier)) {
@@ -251,9 +285,20 @@ export class WorkspaceService {
         );
       }
 
-      if (!isDefined(this.aiModelRegistryService.getModelConfig(modelId))) {
+      const modelConfig = this.aiModelRegistryService.getModelConfig(modelId);
+
+      if (!isDefined(modelConfig)) {
         throw new WorkspaceException(
           `Model "${modelId}" is not in this instance's catalog`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (
+        !isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
+      ) {
+        throw new WorkspaceException(
+          `Model "${modelId}" does not meet the workspace's AI data policy`,
           WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
         );
       }
@@ -433,21 +478,33 @@ export class WorkspaceService {
     const isUpdatingAssistantModes =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode);
-    const isInboxRequiredButDisabled =
-      isUpdatingAssistantModes &&
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-        workspace.id,
-      ));
 
-    if (isInboxRequiredButDisabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
-        },
-      );
+    if (isUpdatingAssistantModes) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+      });
+    }
+
+    if (isDefined(payload.aiDataPolicy)) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
+      });
+
+      const isAiDataPolicyColumnHidden = !isDefined(workspace.aiDataPolicy);
+
+      if (isAiDataPolicyColumnHidden) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`AI data policy is not available until the upgrade has completed.`,
+          },
+        );
+      }
     }
 
     if (
@@ -550,6 +607,11 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
+        aiDataPolicy:
+          payload.aiDataPolicy ??
+          (await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          )),
       });
     }
 
@@ -1318,7 +1380,7 @@ export class WorkspaceService {
 
     for (const [permission, fields] of fieldsByPermission.entries()) {
       const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
+        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
           setting: permission,

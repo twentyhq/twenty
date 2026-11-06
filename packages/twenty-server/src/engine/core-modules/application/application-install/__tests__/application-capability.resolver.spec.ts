@@ -21,8 +21,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -68,7 +68,7 @@ describe('ApplicationCapabilityResolver', () => {
     findOneApplicationWithRelationsOrThrow: jest.fn(),
     update: jest.fn(),
   };
-  const permissionsService = {
+  const settingPermissionsService = {
     userHasWorkspaceSettingPermission: jest.fn(),
   };
 
@@ -102,7 +102,10 @@ describe('ApplicationCapabilityResolver', () => {
         TestQueryResolver,
         ApplicationCapabilityResolver,
         { provide: ApplicationService, useValue: applicationService },
-        { provide: PermissionsService, useValue: permissionsService },
+        {
+          provide: SettingPermissionsService,
+          useValue: settingPermissionsService,
+        },
         { provide: FeatureFlagService, useValue: {} },
         AccessPolicyService,
       ],
@@ -115,7 +118,7 @@ describe('ApplicationCapabilityResolver', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
       true,
     );
     applicationService.findOneApplicationWithRelationsOrThrow.mockResolvedValue(
@@ -146,7 +149,7 @@ describe('ApplicationCapabilityResolver', () => {
       grantedCapabilities: ['microphone', 'camera'],
     });
     expect(
-      permissionsService.userHasWorkspaceSettingPermission,
+      settingPermissionsService.userHasWorkspaceSettingPermission,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
@@ -192,7 +195,7 @@ describe('ApplicationCapabilityResolver', () => {
   });
 
   it('rejects members without the manage-apps permission', async () => {
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    settingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
       false,
     );
 

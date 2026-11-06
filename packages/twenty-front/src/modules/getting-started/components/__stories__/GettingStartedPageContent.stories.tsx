@@ -274,9 +274,12 @@ export const AllDone: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
-    await expect(
-      await within(canvasElement).findByText('All steps done'),
-    ).toBeVisible();
+    const canvas = within(canvasElement);
+    const mailboxStepCard = await canvas.findByRole('region', {
+      name: 'Mailbox connected',
+    });
+
+    await waitFor(() => expect(mailboxStepCard).toBeVisible());
   },
 };
 

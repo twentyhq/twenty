@@ -27,7 +27,7 @@ export type GeneratedClientClass = new (options?: {
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
   uploadFile: (input: {
-    fileBuffer: Buffer;
+    fileBuffer: Uint8Array;
     filename: string;
     fieldMetadataUniversalIdentifier: string;
   }) => Promise<GeneratedUploadedFile>;

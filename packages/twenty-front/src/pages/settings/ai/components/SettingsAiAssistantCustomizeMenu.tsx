@@ -63,6 +63,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
               shape={value.avatarShape}
               color={value.avatarColor}
               face={value.avatarFace}
+              isAnimated={value.isAvatarAnimated}
               size={20}
             />
             <Input

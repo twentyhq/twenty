@@ -1,3 +1,4 @@
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
@@ -35,7 +36,6 @@ import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/worksp
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -108,24 +108,15 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
         flatFieldMetadataMaps: metadata.flatFieldMetadataMaps,
         flatIndexMaps: metadata.flatIndexMaps,
-        flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-        flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
         objectIdByNameSingular: buildObjectIdByNameMaps(
           metadata.flatObjectMetadataMaps,
         ).idByNameSingular,
         featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
         billingEntitlements: {},
-        userWorkspaceRoleMap: {},
-        apiKeyRoleMap: {},
-        rolesPermissions: {},
-        flatRoleTargetByAgentIdMaps: {},
-        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-        roleIdsWithAllRecordsAccess: [],
+        permissionsPrincipals: undefined,
+        recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
-        recordPermissionReadOrm: {
-          findRecordShares: async () => [],
-          findPrivateRecordStates: async () => new Map(),
-        },
+        recordPermissions: {} as never,
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -152,7 +143,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             {
               ...options.internalContext,
               authContext: options.authContext,
-              permissionsPerRoleId: {},
             },
             work,
           ),
@@ -272,6 +262,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceMemberId: MEMBER_ID,
           }),
         } as never,
+        {} as never,
         {} as never,
       );
 

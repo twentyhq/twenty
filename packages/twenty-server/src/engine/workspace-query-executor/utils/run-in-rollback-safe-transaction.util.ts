@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { type Pool, type PoolClient } from 'pg';
 
-import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeWorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/error-handling/compute-workspace-query-executor-exception.util';
 
 const logger = new Logger('runInRollbackSafeTransaction');
 
@@ -14,7 +14,7 @@ export const runInRollbackSafeTransaction = async <T>({
   work: (client: PoolClient) => Promise<T>;
 }): Promise<T> => {
   const client = await pool.connect().catch((error: unknown) => {
-    throw computeTwentyOrmException(error);
+    throw computeWorkspaceQueryExecutorException(error);
   });
   let shouldDestroyConnection = false;
 
@@ -41,7 +41,7 @@ export const runInRollbackSafeTransaction = async <T>({
       );
     }
 
-    throw computeTwentyOrmException(error);
+    throw computeWorkspaceQueryExecutorException(error);
   } finally {
     client.release(shouldDestroyConnection);
   }
