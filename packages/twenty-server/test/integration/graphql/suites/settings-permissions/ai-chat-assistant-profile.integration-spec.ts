@@ -152,8 +152,13 @@ describe('workspace assistant profile settings', () => {
     };
 
     await expectPreviewName(CUSTOM_ASSISTANT_PROFILE.displayName);
-    await setInboxEnabled(false);
-    await expectPreviewName(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName);
+
+    try {
+      await setInboxEnabled(false);
+      await expectPreviewName(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName);
+    } finally {
+      await setInboxEnabled(true);
+    }
   });
 
   it('resets every profile field to Ada defaults and reads them back', async () => {

@@ -20,7 +20,6 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { type AgentStepLoopInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
@@ -127,7 +126,6 @@ export class ChatExecutionService {
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly agentTurnService: AgentTurnService,
   ) {}
 
@@ -333,7 +331,7 @@ export class ChatExecutionService {
       workspaceId,
     );
     const assistantDisplayName = isAiChatInboxEnabled
-      ? (await this.workspaceAssistantProfileService.get(workspace)).displayName
+      ? workspace.aiChatAssistantProfile.displayName
       : undefined;
 
     if (

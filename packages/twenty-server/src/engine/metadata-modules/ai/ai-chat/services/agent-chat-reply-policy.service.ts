@@ -4,7 +4,6 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
@@ -22,7 +21,6 @@ export class AgentChatReplyPolicyService {
 
   constructor(
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly aiEvaluationService: AiEvaluationService,
     private readonly conversationReaderService: AgentConversationReaderService,
   ) {}
@@ -73,8 +71,6 @@ export class AgentChatReplyPolicyService {
 
       assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-      const assistantProfile =
-        await this.workspaceAssistantProfileService.get(workspace);
       const { answers } = await this.aiEvaluationService.evaluate({
         workspaceId,
         userWorkspaceId,
@@ -82,7 +78,7 @@ export class AgentChatReplyPolicyService {
         abortSignal: AbortSignal.timeout(ASSISTANT_REPLY_EVALUATION_TIMEOUT_MS),
         state: {
           assistant: {
-            displayName: assistantProfile.displayName,
+            displayName: workspace.aiChatAssistantProfile.displayName,
           },
           conversation,
           message: { text, isAssistantMentioned: false },
