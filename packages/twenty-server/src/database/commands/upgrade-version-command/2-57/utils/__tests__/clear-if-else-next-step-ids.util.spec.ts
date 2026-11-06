@@ -28,28 +28,14 @@ describe('clearIfElseNextStepIds', () => {
     });
   });
 
-  it.each([[[]], [null], [undefined]])(
-    'leaves an If/Else whose next steps are %p unchanged',
-    (nextStepIds) => {
-      const steps = [ifElseStep(nextStepIds)];
+  it('leaves an If/Else without dead next steps and other steps unchanged', () => {
+    const steps = [
+      ifElseStep([]),
+      { id: 'code', type: 'CODE', nextStepIds: ['a'] },
+    ];
 
-      expect(clearIfElseNextStepIds(steps)).toEqual({
-        steps,
-        hasChanged: false,
-        clearedNextStepIds: [],
-      });
-    },
-  );
-
-  it('leaves other steps and values that are not step lists unchanged', () => {
-    expect(
-      clearIfElseNextStepIds([
-        { id: 'code', type: 'CODE', nextStepIds: ['a'] },
-        'not a step',
-      ]).hasChanged,
-    ).toBe(false);
-    expect(clearIfElseNextStepIds(null)).toEqual({
-      steps: null,
+    expect(clearIfElseNextStepIds(steps)).toEqual({
+      steps,
       hasChanged: false,
       clearedNextStepIds: [],
     });

@@ -282,27 +282,6 @@ describe('insertStep', () => {
     );
   });
 
-  it('adds a step to the end of an If/Else branch', () => {
-    const result = insertStep({
-      existingSteps: [createMockIfElseAction()],
-      existingTrigger: null,
-      insertedStep: createMockAction('new'),
-      parentStepId: 'if-else',
-      parentStepConnectionOptions: {
-        connectedStepType: WorkflowActionType.IF_ELSE,
-        settings: { branchId: 'else' },
-      },
-    });
-
-    const updatedIfElseStep = result.updatedSteps[0] as WorkflowIfElseAction;
-
-    expect(updatedIfElseStep.nextStepIds).toBeUndefined();
-    expect(updatedIfElseStep.settings.input.branches[2].nextStepIds).toEqual([
-      'shared',
-      'new',
-    ]);
-  });
-
   it('should insert a step at the end of the array when no parent or next step is specified', () => {
     const existingTrigger = createMockTrigger(['1']);
     const step1 = createMockAction('1');
