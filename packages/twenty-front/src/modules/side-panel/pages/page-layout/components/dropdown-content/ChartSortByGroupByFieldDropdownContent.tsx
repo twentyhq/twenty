@@ -84,7 +84,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     }
 
     if (shouldClearManualSortOrder) {
-      configToUpdate.secondaryAxisManualSortOrder = null;
+      configToUpdate.secondaryAxisManualSortOrder = undefined;
     }
 
     updateCurrentWidgetConfig({ configToUpdate });

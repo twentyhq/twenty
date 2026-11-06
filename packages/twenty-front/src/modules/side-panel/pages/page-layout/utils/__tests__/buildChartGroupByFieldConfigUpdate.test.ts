@@ -80,8 +80,8 @@ describe('buildChartGroupByFieldConfigUpdate', () => {
     });
 
     expect(result).toMatchObject({
-      primaryAxisOrderBy: null,
-      primaryAxisDateGranularity: null,
+      primaryAxisOrderBy: undefined,
+      primaryAxisDateGranularity: undefined,
     });
   });
 

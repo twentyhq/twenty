@@ -80,7 +80,7 @@ export const SidePanelDashboardIframeSettings = () => {
       configuration: {
         __typename: 'IframeConfiguration',
         configurationType: WidgetConfigurationType.IFRAME,
-        url: isNonEmptyString(trimmedValue) ? trimmedValue : null,
+        url: isNonEmptyString(trimmedValue) ? trimmedValue : undefined,
       },
     });
   };

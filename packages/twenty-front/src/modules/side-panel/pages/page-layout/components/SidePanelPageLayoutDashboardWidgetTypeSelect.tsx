@@ -158,7 +158,6 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
         title: t`Untitled iFrame`,
         configuration: {
           configurationType: WidgetConfigurationType.IFRAME,
-          url: null,
         },
       });
       setPageLayoutEditingWidgetId(newWidget.id);
