@@ -1,162 +1,146 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
-import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import {
+  WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS,
+  type WorkflowPersistedOutputSchemaLabel,
+} from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
 import {
   type FieldOutputSchemaV2,
   type RecordOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { t } from '@lingui/core/macro';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { isBaseOutputSchemaV2 } from 'twenty-shared/workflow';
-
-// server labels whose object name the front shows in the viewer's language
-const OBJECT_LABEL_PATTERNS: Array<{
-  stepType: string;
-  key: string;
-  pattern: RegExp;
-  translate: (objectLabel: string) => string;
-}> = [
-  {
-    stepType: 'ITERATOR',
-    key: 'currentItem',
-    pattern: /^Current Item \((.+)\)$/,
-    translate: (objectLabel) => t`Current Item (${objectLabel})`,
-  },
-  {
-    stepType: 'FIND_RECORDS',
-    key: 'first',
-    pattern: /^First (.+)$/,
-    translate: (objectLabel) => t`First ${objectLabel}`,
-  },
-  {
-    stepType: 'FIND_RECORDS',
-    key: 'all',
-    pattern: /^All (.+)$/,
-    translate: (objectLabel) => t`All ${objectLabel}`,
-  },
-  {
-    stepType: 'WAIT_FOR_EVENT',
-    key: 'before',
-    pattern: /^(.+) Before Update$/,
-    translate: (objectLabel) => t`${objectLabel} Before Update`,
-  },
-];
+import { isDefined } from 'twenty-shared/utils';
+import {
+  type BaseOutputSchemaV2,
+  isBaseOutputSchemaV2,
+} from 'twenty-shared/workflow';
 
 type TranslationContext = {
-  stepType: string;
+  labels: Record<string, WorkflowPersistedOutputSchemaLabel>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
+  stepObjectMetadataItem?: EnrichedObjectMetadataItem;
 };
 
-const findObjectMetadataItem = (
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-  objectMetadataId: string,
-) => objectMetadataItems.find(({ id }) => id === objectMetadataId);
+const findObjectMetadataItem = ({
+  objectMetadataItems,
+  objectMetadataId,
+}: {
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataId: string;
+}) => objectMetadataItems.find(({ id }) => id === objectMetadataId);
 
-const findSchemaObjectMetadataId = (value: unknown): string | undefined => {
+const findObjectMetadataId = (value: unknown): string | undefined => {
   if (isRecordOutputSchemaV2(value)) {
     return value.object.objectMetadataId;
   }
 
-  if (!isPlainObject(value)) {
+  if (!isBaseOutputSchemaV2(value)) {
     return undefined;
   }
 
-  for (const entry of Object.values(value)) {
-    const objectMetadataId = isPlainObject(entry)
-      ? findSchemaObjectMetadataId(entry.value)
-      : undefined;
+  return Object.values(value)
+    .map((node) => findObjectMetadataId(node.value))
+    .find(isDefined);
+};
 
-    if (isDefined(objectMetadataId)) {
-      return objectMetadataId;
-    }
-  }
+const matchesPath = ({
+  labelPath,
+  path,
+}: {
+  labelPath: string;
+  path: string[];
+}) => {
+  const labelPathSegments = labelPath.split('.');
 
-  return undefined;
+  return (
+    labelPathSegments.length === path.length &&
+    labelPathSegments.every(
+      (segment, index) => segment === '*' || segment === path[index],
+    )
+  );
 };
 
 const translateLabel = ({
-  key,
-  label,
-  stepObjectMetadataItem,
-  stepType,
+  path,
+  node,
+  context,
 }: {
-  key: string;
-  label: string;
-  stepObjectMetadataItem?: EnrichedObjectMetadataItem;
-  stepType: string;
+  path: string[];
+  node: BaseOutputSchemaV2[string];
+  context: TranslationContext;
 }): string => {
-  const persistedLabel = WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.find(
-    (persistedLabel) =>
-      persistedLabel.stepType === stepType &&
-      persistedLabel.key === key &&
-      persistedLabel.label === label,
+  const label = Object.entries(context.labels).find(([labelPath]) =>
+    matchesPath({ labelPath, path }),
+  )?.[1];
+
+  if (!isDefined(label)) {
+    return node.label;
+  }
+
+  if (typeof label !== 'function') {
+    return t(label);
+  }
+
+  return (
+    label({
+      objectMetadataItem: context.stepObjectMetadataItem,
+      value: node.value,
+    }) ?? node.label
   );
-
-  if (isDefined(persistedLabel)) {
-    return t(persistedLabel.message);
-  }
-
-  for (const objectLabelPattern of OBJECT_LABEL_PATTERNS) {
-    if (
-      objectLabelPattern.stepType !== stepType ||
-      objectLabelPattern.key !== key
-    ) {
-      continue;
-    }
-
-    const objectLabel = objectLabelPattern.pattern.exec(label)?.[1];
-
-    if (isDefined(objectLabel)) {
-      const isPluralLabel = key === 'all';
-
-      return objectLabelPattern.translate(
-        (isPluralLabel
-          ? stepObjectMetadataItem?.labelPlural
-          : stepObjectMetadataItem?.labelSingular) ?? objectLabel,
-      );
-    }
-  }
-
-  return label;
 };
 
-const translateRecordOutputSchema = (
-  recordOutputSchema: RecordOutputSchemaV2,
-  context: TranslationContext,
-): RecordOutputSchemaV2 => {
-  const objectMetadataItem = findObjectMetadataItem(
-    context.objectMetadataItems,
-    recordOutputSchema.object.objectMetadataId,
+const translateRecordField = ({
+  key,
+  field,
+  objectMetadataItem,
+  context,
+}: {
+  key: string;
+  field: FieldOutputSchemaV2;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
+  context: TranslationContext;
+}): FieldOutputSchemaV2 => {
+  const fieldMetadataItem = objectMetadataItem?.fields.find(
+    ({ id }) => id === field.fieldMetadataId,
   );
 
-  const translateField = (
-    key: string,
-    field: FieldOutputSchemaV2,
-  ): FieldOutputSchemaV2 => {
-    const fieldMetadataItem = objectMetadataItem?.fields.find(
-      ({ id }) => id === field.fieldMetadataId,
-    );
+  // a relation id field is shown under its own label, not the relation's
+  const label =
+    isDefined(fieldMetadataItem) &&
+    key.split('.').pop() === fieldMetadataItem.name
+      ? fieldMetadataItem.label
+      : field.label;
 
-    // relation id fields carry their own label, so only a field shown under its own name takes the field label
-    const translatedField = {
+  if (field.isLeaf) {
+    return { ...field, label };
+  }
+
+  if (isRecordOutputSchemaV2(field.value)) {
+    return {
       ...field,
-      label:
-        isDefined(fieldMetadataItem) &&
-        key.split('.').pop() === fieldMetadataItem.name
-          ? fieldMetadataItem.label
-          : field.label,
-    } as FieldOutputSchemaV2;
+      label,
+      value: translateRecordOutputSchema({
+        recordOutputSchema: field.value,
+        context,
+      }),
+    };
+  }
 
-    if (!translatedField.isLeaf && isRecordOutputSchemaV2(field.value)) {
-      return {
-        ...translatedField,
-        value: translateRecordOutputSchema(field.value, context),
-      };
-    }
+  return { ...field, label };
+};
 
-    return translatedField;
-  };
+const translateRecordOutputSchema = ({
+  recordOutputSchema,
+  context,
+}: {
+  recordOutputSchema: RecordOutputSchemaV2;
+  context: TranslationContext;
+}): RecordOutputSchemaV2 => {
+  const objectMetadataItem = findObjectMetadataItem({
+    objectMetadataItems: context.objectMetadataItems,
+    objectMetadataId: recordOutputSchema.object.objectMetadataId,
+  });
 
   return {
     ...recordOutputSchema,
@@ -168,72 +152,78 @@ const translateRecordOutputSchema = (
     fields: Object.fromEntries(
       Object.entries(recordOutputSchema.fields).map(([key, field]) => [
         key,
-        translateField(key, field),
+        translateRecordField({ key, field, objectMetadataItem, context }),
       ]),
     ),
   };
 };
 
-const translateOutputSchema = (
-  outputSchema: unknown,
-  context: TranslationContext,
-): OutputSchemaV2 => {
+const translateOutputSchema = ({
+  outputSchema,
+  path,
+  context,
+}: {
+  outputSchema: unknown;
+  path: string[];
+  context: TranslationContext;
+}): OutputSchemaV2 => {
   if (isRecordOutputSchemaV2(outputSchema)) {
-    return translateRecordOutputSchema(outputSchema, context);
+    return translateRecordOutputSchema({
+      recordOutputSchema: outputSchema,
+      context,
+    });
   }
 
-  if (!isPlainObject(outputSchema)) {
+  if (!isBaseOutputSchemaV2(outputSchema)) {
     return {};
   }
 
-  const stepObjectMetadataId = findSchemaObjectMetadataId(outputSchema);
-  const stepObjectMetadataItem = isDefined(stepObjectMetadataId)
-    ? findObjectMetadataItem(context.objectMetadataItems, stepObjectMetadataId)
-    : undefined;
-
   return Object.fromEntries(
-    Object.entries(outputSchema).map(([key, entry]) => {
-      if (!isPlainObject(entry)) {
-        return [key, entry];
+    Object.entries(outputSchema).map(([key, node]) => {
+      const nodePath = [...path, key];
+      const label = translateLabel({ path: nodePath, node, context });
+
+      if (node.isLeaf) {
+        return [key, { ...node, label }];
       }
 
-      const translatedEntry = {
-        ...entry,
-        ...(typeof entry.label === 'string'
-          ? {
-              label: translateLabel({
-                key,
-                label: entry.label,
-                stepObjectMetadataItem,
-                stepType: context.stepType,
-              }),
-            }
-          : {}),
-      };
-
-      return entry.isLeaf === false
-        ? [
-            key,
-            {
-              ...translatedEntry,
-              value: translateOutputSchema(entry.value, context),
-            },
-          ]
-        : [key, translatedEntry];
+      return [
+        key,
+        {
+          ...node,
+          label,
+          value: translateOutputSchema({
+            outputSchema: node.value,
+            path: nodePath,
+            context,
+          }),
+        },
+      ];
     }),
-  ) as OutputSchemaV2;
+  );
 };
 
-// the server writes output schemas in English, with the object and field labels it stores
+// the server writes labels in English and stores object and field labels as they were then
 export const translatePersistedOutputSchemaLabels = ({
   stepType,
   outputSchema,
   objectMetadataItems = [],
 }: {
-  stepType: string;
-  outputSchema: unknown;
+  stepType: keyof typeof WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS;
+  outputSchema: Record<string, unknown>;
   objectMetadataItems?: EnrichedObjectMetadataItem[];
-}): OutputSchemaV2 =>
-  isRecordOutputSchemaV2(outputSchema) || isBaseOutputSchemaV2(outputSchema)
-    ? translateOutputSchema(outputSchema, { stepType, objectMetadataItems })
-    : {};
+}): OutputSchemaV2 => {
+  const objectMetadataId = findObjectMetadataId(outputSchema);
+
+  return translateOutputSchema({
+    outputSchema,
+    path: [],
+    context: {
+      labels: WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS[stepType] ?? {},
+      objectMetadataItems,
+      stepObjectMetadataItem: isDefined(objectMetadataId)
+        ? findObjectMetadataItem({ objectMetadataItems, objectMetadataId })
+        : undefined,
+    },
+  });
+};

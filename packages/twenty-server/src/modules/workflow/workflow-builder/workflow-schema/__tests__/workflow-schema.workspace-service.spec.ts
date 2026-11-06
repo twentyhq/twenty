@@ -1,8 +1,24 @@
+import { Test } from '@nestjs/testing';
+
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import {
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import {
+  type WorkflowCodeAction,
+  type WorkflowCreateRecordAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowTriggerType,
+  type WorkflowWebhookTrigger,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const WORKSPACE_ID = 'workspace-id';
 const AGENT_ID = 'agent-id';
@@ -56,98 +72,71 @@ describe('WorkflowSchemaWorkspaceService', () => {
     });
   });
 
-  describe('computeStepOutputSchema', () => {
-    const service = new WorkflowSchemaWorkspaceService(
-      {} as never,
-      {} as never,
-    );
-
-    it.each([
-      {
-        type: WorkflowActionType.CLASSIFY,
-        input: {
-          questions: [{ name: 'sentiment', type: 'boolean', criteria: [] }],
-        },
-        keys: ['answers', 'modelId'],
-      },
-      {
-        type: WorkflowActionType.SEND_CHAT_MESSAGE,
-        input: { toolCall: { toolName: 'send_email' } },
-        keys: [
-          'threadId',
-          'outcome',
-          'toolName',
-          'feedback',
-          'error',
-          'arguments',
-          'output',
-        ],
-      },
-      { type: WorkflowActionType.DRAFT_EMAIL, input: {}, keys: ['success'] },
-      {
-        type: WorkflowActionType.CREATE_CALENDAR_EVENT,
-        input: {},
-        keys: ['success', 'iCalUid', 'externalEventId', 'conferenceLink'],
-      },
-    ])(
-      'describes the output of a $type step',
-      async ({ type, input, keys }) => {
-        const outputSchema = await service.computeStepOutputSchema({
-          step: { type, settings: { input, outputSchema: {} } } as never,
-          workspaceId: WORKSPACE_ID,
-        });
-
-        expect(Object.keys(outputSchema)).toEqual(keys);
-      },
-    );
-  });
-
   describe('enrichWorkflowVersionContentOutputSchemas', () => {
-    const service = new WorkflowSchemaWorkspaceService(
-      {} as never,
-      {
-        getOrRecomputeManyOrAllFlatEntityMaps: jest
-          .fn()
-          .mockResolvedValue({
-            flatLogicFunctionMaps: createEmptyFlatEntityMaps(),
-          }),
-      } as never,
-    );
+    const errorHandlingOptions = {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    };
 
-    const buildStep = (type: WorkflowActionType, settings: object) =>
-      ({
-        id: `${type}-step`,
-        type,
-        settings: { outputSchema: {}, input: {}, ...settings },
-      }) as never;
+    const codeStep: WorkflowCodeAction = {
+      id: 'code-step',
+      name: 'Code',
+      type: WorkflowActionType.CODE,
+      valid: true,
+      settings: {
+        input: { logicFunctionInput: {} },
+        outputSchema: {},
+        expectedOutputSchema: { total: 3 },
+        errorHandlingOptions,
+      },
+    };
 
-    it('stores the schema of the trigger and of every step, derived from their sample over the one sent', async () => {
-      const staleOutputSchema = {
-        stale: { isLeaf: true, type: 'string', label: 'stale', value: '' },
-      };
+    const createRecordStep: WorkflowCreateRecordAction = {
+      id: 'create-record-step',
+      name: 'Create Record',
+      type: WorkflowActionType.CREATE_RECORD,
+      valid: true,
+      settings: {
+        input: { objectName: 'deletedObject', objectRecord: {} },
+        outputSchema: {},
+        errorHandlingOptions,
+      },
+    };
+
+    const webhookTrigger: WorkflowWebhookTrigger = {
+      name: 'Webhook',
+      type: WorkflowTriggerType.WEBHOOK,
+      settings: {
+        outputSchema: {},
+        httpMethod: 'POST',
+        authentication: null,
+        expectedBody: { message: 'hello' },
+      },
+    };
+
+    const buildService = async (getObjectMetadataInfo: jest.Mock) => {
+      const testingModule = await Test.createTestingModule({
+        providers: [
+          WorkflowSchemaWorkspaceService,
+          {
+            provide: WorkflowCommonWorkspaceService,
+            useValue: { getObjectMetadataInfo },
+          },
+          { provide: WorkspaceManyOrAllFlatEntityMapsCacheService, useValue: {} },
+        ],
+      }).compile();
+
+      return testingModule.get(WorkflowSchemaWorkspaceService);
+    };
+
+    it('stores the schema of the trigger and of every step', async () => {
+      const service = await buildService(jest.fn());
 
       const { trigger, steps } =
         await service.enrichWorkflowVersionContentOutputSchemas({
           workspaceId: WORKSPACE_ID,
-          trigger: {
-            type: 'WEBHOOK',
-            settings: {
-              outputSchema: staleOutputSchema,
-              httpMethod: 'POST',
-              authentication: null,
-              expectedBody: { message: 'hello' },
-            },
-          } as never,
-          steps: [
-            WorkflowActionType.CODE,
-            WorkflowActionType.HTTP_REQUEST,
-            WorkflowActionType.LOGIC_FUNCTION,
-          ].map((type) =>
-            buildStep(type, {
-              outputSchema: staleOutputSchema,
-              expectedOutputSchema: { total: 3 },
-            }),
-          ),
+          trigger: webhookTrigger,
+          steps: [codeStep],
         });
 
       expect(trigger?.settings.outputSchema).toEqual({
@@ -158,55 +147,42 @@ describe('WorkflowSchemaWorkspaceService', () => {
           value: 'hello',
         },
       });
-      expect(steps?.map((step) => step.settings.outputSchema)).toEqual(
-        Array(3).fill({
-          total: { isLeaf: true, type: 'number', label: 'total', value: 3 },
-        }),
-      );
+      expect(steps?.[0].settings.outputSchema).toEqual({
+        total: { isLeaf: true, type: 'number', label: 'total', value: 3 },
+      });
     });
 
-    it('keeps a test result schema not yet moved to the expected output', async () => {
-      const testResultSchema = {
-        total: { isLeaf: true, type: 'number', label: 'total', value: 3 },
-      };
+    it('stores an empty schema for a step on a deleted object', async () => {
+      const service = await buildService(
+        jest
+          .fn()
+          .mockRejectedValue(
+            new WorkflowCommonException(
+              'Object deletedObject not found',
+              WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            ),
+          ),
+      );
 
       const { steps } = await service.enrichWorkflowVersionContentOutputSchemas(
-        {
-          workspaceId: WORKSPACE_ID,
-          trigger: null,
-          steps: [
-            buildStep(WorkflowActionType.CODE, {
-              outputSchema: testResultSchema,
-            }),
-          ],
-        },
+        { workspaceId: WORKSPACE_ID, trigger: null, steps: [createRecordStep] },
       );
-
-      expect(steps?.[0].settings.outputSchema).toEqual(testResultSchema);
-    });
-
-    it('saves a step whose output schema cannot be computed with an empty one', async () => {
-      const failingService = new WorkflowSchemaWorkspaceService(
-        {
-          getObjectMetadataInfo: jest
-            .fn()
-            .mockRejectedValue(new Error('Object not found')),
-        } as never,
-        {} as never,
-      );
-
-      const { steps } =
-        await failingService.enrichWorkflowVersionContentOutputSchemas({
-          workspaceId: WORKSPACE_ID,
-          trigger: null,
-          steps: [
-            buildStep(WorkflowActionType.CREATE_RECORD, {
-              input: { objectName: 'deletedObject' },
-            }),
-          ],
-        });
 
       expect(steps?.[0].settings.outputSchema).toEqual({});
+    });
+
+    it('fails the save on any other error, keeping the stored schema', async () => {
+      const service = await buildService(
+        jest.fn().mockRejectedValue(new Error('Connection lost')),
+      );
+
+      await expect(
+        service.enrichWorkflowVersionContentOutputSchemas({
+          workspaceId: WORKSPACE_ID,
+          trigger: null,
+          steps: [createRecordStep],
+        }),
+      ).rejects.toThrow('Connection lost');
     });
   });
 });

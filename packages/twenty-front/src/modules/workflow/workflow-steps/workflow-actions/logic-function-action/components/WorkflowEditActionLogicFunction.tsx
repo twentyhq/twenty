@@ -123,7 +123,7 @@ export const WorkflowEditActionLogicFunction = ({
 
   const updateExpectedOutputFromTestResult = (testResult: object) => {
     if (
-      actionOptions.readonly === true ||
+      actionOptions.readonly ||
       !(isPlainObject(testResult) || Array.isArray(testResult))
     ) {
       return;

@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import {
   type WorkflowStep,
@@ -16,15 +15,14 @@ import { stepsOutputSchemaLocaleFamilyState } from '@/workflow/workflow-variable
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { ComputeStepOutputSchemaDocument } from '~/generated/graphql';
 
 export const useStepsOutputSchema = () => {
   const store = useStore();
-  const client = useApolloCoreClient();
   const { i18n } = useLingui();
 
   const populateStepsOutputSchema = useCallback(
@@ -52,20 +50,14 @@ export const useStepsOutputSchema = () => {
           return;
         }
 
-        const translate = (outputSchema: unknown) =>
-          translatePersistedOutputSchemaLabels({
-            stepType: step.type,
-            outputSchema,
-            objectMetadataItems,
-          });
-
-        const storedStepOutputSchema: StepOutputSchemaV2 = {
+        store.set(stepsOutputSchemaFamilyState.atomFamily(stepKey), {
           ...stepOutputSchemaWithoutSchema,
-          outputSchema: translate(step.settings?.outputSchema),
-        };
-        const schemaState = stepsOutputSchemaFamilyState.atomFamily(stepKey);
-
-        store.set(schemaState, storedStepOutputSchema);
+          outputSchema: translatePersistedOutputSchemaLabels({
+            stepType: step.type,
+            outputSchema: step.settings.outputSchema,
+            objectMetadataItems,
+          }),
+        });
         store.set(
           stepsOutputSchemaLocaleFamilyState.atomFamily(stepKey),
           locale,
@@ -74,25 +66,6 @@ export const useStepsOutputSchema = () => {
           shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
           false,
         );
-
-        // a stored schema can predate a metadata change, so the server recomputes it
-        void client
-          .mutate({
-            mutation: ComputeStepOutputSchemaDocument,
-            variables: {
-              input: { coreWorkflowVersionId: workflowVersion.id, step },
-            },
-          })
-          .then(({ data }) => {
-            if (store.get(schemaState) === storedStepOutputSchema) {
-              store.set(schemaState, {
-                ...storedStepOutputSchema,
-                outputSchema: translate(data?.computeStepOutputSchema),
-              });
-            }
-          })
-          // the stored schema stays shown, as for a step whose object was deleted since
-          .catch(() => undefined);
       };
 
       workflowVersion.steps?.forEach((step) =>
@@ -110,8 +83,11 @@ export const useStepsOutputSchema = () => {
             }),
             type: step.type,
             icon: getActionIcon(step.type),
-            objectName: (step.settings?.input as { objectName?: string })
-              ?.objectName,
+            objectName:
+              'objectName' in step.settings.input &&
+              isNonEmptyString(step.settings.input.objectName)
+                ? step.settings.input.objectName
+                : undefined,
           },
         }),
       );
@@ -139,7 +115,7 @@ export const useStepsOutputSchema = () => {
         });
       }
     },
-    [store, client, i18n.locale],
+    [store, i18n.locale],
   );
 
   const markStepForRecomputation = useCallback(

@@ -14,6 +14,7 @@ import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dt
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
+import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -27,6 +28,7 @@ export class CoreWorkflowVersionListService {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   async findManyByWorkspaceWorkflowId({
@@ -265,6 +267,16 @@ export class CoreWorkflowVersionListService {
       coreWorkflowVersionId: coreWorkflowVersion.id,
     });
 
+    // computed again on read, as a stored schema predates any later metadata change
+    const { trigger, steps } =
+      await this.workflowSchemaWorkspaceService.enrichWorkflowVersionContentOutputSchemas(
+        {
+          trigger: coreWorkflowVersion.triggers?.[0] ?? null,
+          steps: coreWorkflowVersion.steps ?? null,
+          workspaceId,
+        },
+      );
+
     return {
       id: coreWorkflowVersion.id,
       coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
@@ -273,8 +285,8 @@ export class CoreWorkflowVersionListService {
       workspaceWorkflowVersionId:
         coreWorkflowVersion.workspaceWorkflowVersionId,
       workspaceWorkflowId: coreWorkflow?.workspaceWorkflowId ?? null,
-      trigger: coreWorkflowVersion.triggers?.[0] ?? null,
-      steps: coreWorkflowVersion.steps ?? null,
+      trigger,
+      steps,
       createdAt: coreWorkflowVersion.createdAt.toISOString(),
       updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
     };

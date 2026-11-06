@@ -1,215 +1,103 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { doNotTranslate } from 'twenty-shared/i18n';
+import { msg, t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
-export const WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS: Array<{
-  stepType: WorkflowActionType | WorkflowTriggerType;
-  key: string;
-  label: string;
-  message: MessageDescriptor;
-}> = doNotTranslate([
-  {
-    stepType: 'ITERATOR',
-    key: 'currentItem',
-    label: 'Current Item',
-    message: msg`Current Item`,
+// a label naming the step's object is built from the viewer's metadata, or left as stored without it
+export type WorkflowPersistedOutputSchemaLabel =
+  | MessageDescriptor
+  | ((node: {
+      objectMetadataItem?: EnrichedObjectMetadataItem;
+      value: unknown;
+    }) => string | undefined);
+
+const SUCCESS_LABELS = { success: msg`Success` };
+
+// keyed by node path, '*' standing for a user-defined key such as a question name
+export const WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS: Partial<
+  Record<
+    WorkflowActionType | WorkflowTriggerType,
+    Record<string, WorkflowPersistedOutputSchemaLabel>
+  >
+> = {
+  ITERATOR: {
+    currentItem: ({ objectMetadataItem }) => {
+      if (!isDefined(objectMetadataItem)) {
+        return t`Current Item`;
+      }
+
+      const objectLabel = objectMetadataItem.labelSingular;
+
+      return t`Current Item (${objectLabel})`;
+    },
+    currentItemIndex: msg`Current Item Index`,
+    hasProcessedAllItems: msg`Has Processed All Items`,
   },
-  {
-    stepType: 'ITERATOR',
-    key: 'currentItemIndex',
-    label: 'Current Item Index',
-    message: msg`Current Item Index`,
+  AI_AGENT: { response: msg`Response` },
+  MANUAL: {
+    payload: ({ value }) =>
+      isRecordOutputSchemaV2(value) ? t`Record` : t`Records`,
+    metadata: msg`Metadata`,
+    'metadata.workspaceMemberId': msg`Workspace Member ID`,
   },
-  {
-    stepType: 'ITERATOR',
-    key: 'hasProcessedAllItems',
-    label: 'Has Processed All Items',
-    message: msg`Has Processed All Items`,
+  FIND_RECORDS: {
+    first: ({ objectMetadataItem }) => {
+      const objectLabel = objectMetadataItem?.labelSingular;
+
+      return isDefined(objectLabel) ? t`First ${objectLabel}` : undefined;
+    },
+    all: ({ objectMetadataItem }) => {
+      const objectLabel = objectMetadataItem?.labelPlural;
+
+      return isDefined(objectLabel) ? t`All ${objectLabel}` : undefined;
+    },
+    totalCount: msg`Total Count`,
   },
-  {
-    stepType: 'AI_AGENT',
-    key: 'response',
-    label: 'Response',
-    message: msg`Response`,
+  WAIT_FOR_EVENT: {
+    record: ({ objectMetadataItem }) => objectMetadataItem?.labelSingular,
+    recordId: msg`Record ID`,
+    before: ({ objectMetadataItem }) => {
+      const objectLabel = objectMetadataItem?.labelSingular;
+
+      return isDefined(objectLabel) ? t`${objectLabel} Before Update` : undefined;
+    },
+    updatedFields: msg`Updated Fields`,
+    hasTimedOut: msg`Has Timed Out`,
   },
-  {
-    stepType: 'MANUAL',
-    key: 'payload',
-    label: 'Record',
-    message: msg`Record`,
+  SEND_EMAIL: {
+    ...SUCCESS_LABELS,
+    headerMessageId: msg`Message-ID header`,
+    messageId: msg`Message record ID`,
+    messageThreadId: msg`Message thread ID`,
   },
-  {
-    stepType: 'MANUAL',
-    key: 'payload',
-    label: 'Records',
-    message: msg`Records`,
+  DRAFT_EMAIL: SUCCESS_LABELS,
+  CREATE_CALENDAR_EVENT: {
+    ...SUCCESS_LABELS,
+    iCalUid: msg`iCal UID`,
+    externalEventId: msg`External Event ID`,
+    conferenceLink: msg`Conference Link`,
   },
-  {
-    stepType: 'MANUAL',
-    key: 'metadata',
-    label: 'Metadata',
-    message: msg`Metadata`,
+  SEND_CHAT_MESSAGE: {
+    threadId: msg`Conversation ID`,
+    outcome: msg`Outcome`,
+    toolName: msg`Action`,
+    feedback: msg`Feedback`,
+    error: msg`Error`,
+    arguments: msg`Arguments`,
+    output: msg`Output`,
   },
-  {
-    stepType: 'MANUAL',
-    key: 'workspaceMemberId',
-    label: 'Workspace Member ID',
-    message: msg`Workspace Member ID`,
+  CLASSIFY: {
+    answers: msg`Answers`,
+    modelId: msg`Model`,
+    'answers.*.type': msg`Type`,
+    'answers.*.choice': msg`Choice`,
+    'answers.*.score': msg`Score`,
+    'answers.*.probabilities': msg`Probabilities`,
+    'answers.*.probability': msg`Probability of true`,
   },
-  {
-    stepType: 'FIND_RECORDS',
-    key: 'totalCount',
-    label: 'Total Count',
-    message: msg`Total Count`,
-  },
-  {
-    stepType: 'WAIT_FOR_EVENT',
-    key: 'recordId',
-    label: 'Record ID',
-    message: msg`Record ID`,
-  },
-  {
-    stepType: 'WAIT_FOR_EVENT',
-    key: 'updatedFields',
-    label: 'Updated Fields',
-    message: msg`Updated Fields`,
-  },
-  {
-    stepType: 'WAIT_FOR_EVENT',
-    key: 'hasTimedOut',
-    label: 'Has Timed Out',
-    message: msg`Has Timed Out`,
-  },
-  ...(['SEND_EMAIL', 'DRAFT_EMAIL', 'CREATE_CALENDAR_EVENT'] as const).map(
-    (stepType) => ({
-      stepType,
-      key: 'success',
-      label: 'Success',
-      message: msg`Success`,
-    }),
-  ),
-  {
-    stepType: 'SEND_EMAIL',
-    key: 'headerMessageId',
-    label: 'Message-ID header',
-    message: msg`Message-ID header`,
-  },
-  {
-    stepType: 'SEND_EMAIL',
-    key: 'messageId',
-    label: 'Message record ID',
-    message: msg`Message record ID`,
-  },
-  {
-    stepType: 'SEND_EMAIL',
-    key: 'messageThreadId',
-    label: 'Message thread ID',
-    message: msg`Message thread ID`,
-  },
-  {
-    stepType: 'CREATE_CALENDAR_EVENT',
-    key: 'iCalUid',
-    label: 'iCal UID',
-    message: msg`iCal UID`,
-  },
-  {
-    stepType: 'CREATE_CALENDAR_EVENT',
-    key: 'externalEventId',
-    label: 'External Event ID',
-    message: msg`External Event ID`,
-  },
-  {
-    stepType: 'CREATE_CALENDAR_EVENT',
-    key: 'conferenceLink',
-    label: 'Conference Link',
-    message: msg`Conference Link`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'threadId',
-    label: 'Conversation ID',
-    message: msg`Conversation ID`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'outcome',
-    label: 'Outcome',
-    message: msg`Outcome`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'toolName',
-    label: 'Action',
-    message: msg`Action`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'feedback',
-    label: 'Feedback',
-    message: msg`Feedback`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'error',
-    label: 'Error',
-    message: msg`Error`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'arguments',
-    label: 'Arguments',
-    message: msg`Arguments`,
-  },
-  {
-    stepType: 'SEND_CHAT_MESSAGE',
-    key: 'output',
-    label: 'Output',
-    message: msg`Output`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'answers',
-    label: 'Answers',
-    message: msg`Answers`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'modelId',
-    label: 'Model',
-    message: msg`Model`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'type',
-    label: 'Type',
-    message: msg`Type`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'choice',
-    label: 'Choice',
-    message: msg`Choice`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'score',
-    label: 'Score',
-    message: msg`Score`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'probabilities',
-    label: 'Probabilities',
-    message: msg`Probabilities`,
-  },
-  {
-    stepType: 'CLASSIFY',
-    key: 'probability',
-    label: 'Probability of true',
-    message: msg`Probability of true`,
-  },
-]);
+};

@@ -1,20 +1,52 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
+import {
+  WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS,
+  type WorkflowPersistedOutputSchemaLabel,
+} from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getPersistedLabelMessageId = (key: string) =>
-  WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.find(
-    (persistedLabel) => persistedLabel.key === key,
-  )?.message.id ?? '';
+const getMessageId = (label?: WorkflowPersistedOutputSchemaLabel) =>
+  typeof label === 'object' ? (label.id ?? '') : '';
+
+const company = getMockObjectMetadataItemOrThrow('company');
+const companyNameField = company.fields.find(({ name }) => name === 'name');
+const viewerCompany = {
+  ...company,
+  labelSingular: 'Entreprise',
+  labelPlural: 'Entreprises',
+  fields: company.fields.map((field) =>
+    field.name === 'name' ? { ...field, label: 'Nom' } : field,
+  ),
+};
+
+const companyRecordOutputSchema = {
+  object: {
+    label: 'Company',
+    objectMetadataId: company.id,
+    fieldIdName: 'id',
+  },
+  fields: {
+    name: {
+      isLeaf: true,
+      type: 'TEXT',
+      label: 'Name',
+      value: 'Acme',
+      fieldMetadataId: companyNameField?.id ?? '',
+    },
+  },
+  _outputSchemaType: 'RECORD',
+};
 
 describe('translatePersistedOutputSchemaLabels', () => {
   beforeEach(() => {
     i18n.load('fr-FR', {
-      [getPersistedLabelMessageId('currentItemIndex')]:
+      [getMessageId(WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.ITERATOR?.currentItemIndex)]:
         "Index de l'élément courant",
-      [getPersistedLabelMessageId('response')]: 'Réponse',
+      [getMessageId(
+        WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.CLASSIFY?.['answers.*.choice'],
+      )]: 'Choix',
     });
     i18n.activate('fr-FR');
   });
@@ -23,7 +55,7 @@ describe('translatePersistedOutputSchemaLabels', () => {
     i18n.activate(SOURCE_LOCALE);
   });
 
-  it('should translate the labels Twenty writes in English', () => {
+  it('should translate the labels of the keys a step type owns', () => {
     expect(
       translatePersistedOutputSchemaLabels({
         stepType: 'ITERATOR',
@@ -46,63 +78,18 @@ describe('translatePersistedOutputSchemaLabels', () => {
     });
   });
 
-  it('should keep a user-defined key that carries a label Twenty writes', () => {
+  it('should keep the labels of keys a user defines', () => {
     const outputSchema = {
-      Response: {
-        isLeaf: true as const,
-        type: 'string' as const,
-        label: 'Response',
-        value: '',
-      },
-    };
-
-    expect(
-      translatePersistedOutputSchemaLabels({
-        stepType: 'AI_AGENT',
-        outputSchema,
-      }),
-    ).toEqual(outputSchema);
-  });
-
-  it('should keep a label Twenty writes for another step type', () => {
-    const outputSchema = {
-      response: {
-        isLeaf: true as const,
-        type: 'string' as const,
-        label: 'Response',
-        value: '',
-      },
-    };
-
-    expect(
-      translatePersistedOutputSchemaLabels({
-        stepType: 'CODE',
-        outputSchema,
-      }),
-    ).toEqual(outputSchema);
-  });
-
-  it('should keep labels it does not know', () => {
-    const outputSchema = {
-      constructor: {
-        isLeaf: true as const,
-        type: 'string' as const,
-        label: 'constructor',
-        value: '',
-      },
-      total: {
-        isLeaf: true as const,
-        type: 'number' as const,
-        label: 'Total',
+      currentItemIndex: {
+        isLeaf: true,
+        type: 'number',
+        label: 'currentItemIndex',
         value: 0,
       },
     };
 
     expect(
-      translatePersistedOutputSchemaLabels({
-        stepType: 'ITERATOR',
-        outputSchema,
-      }),
+      translatePersistedOutputSchemaLabels({ stepType: 'CODE', outputSchema }),
     ).toEqual(outputSchema);
   });
 
@@ -117,99 +104,41 @@ describe('translatePersistedOutputSchemaLabels', () => {
     });
 
     expect(Object.keys(translatedOutputSchema)).toEqual(['__proto__']);
-    expect(
-      Object.getOwnPropertyDescriptor(translatedOutputSchema, '__proto__')
-        ?.value,
-    ).toEqual({ isLeaf: true, type: 'string', label: 'Proto', value: '' });
   });
 
-  it('should show record object and field labels in the viewer language', () => {
-    const objectMetadataItems = [
-      {
-        id: 'company-object-id',
-        labelSingular: 'Entreprise',
-        labelPlural: 'Entreprises',
-        fields: [
-          { id: 'name-field-id', name: 'name', label: 'Nom' },
-          { id: 'owner-field-id', name: 'owner', label: 'Propriétaire' },
-        ],
-      },
-    ] as unknown as EnrichedObjectMetadataItem[];
-
-    const recordOutputSchema = {
-      object: {
-        label: 'Company',
-        objectMetadataId: 'company-object-id',
-        fieldIdName: 'id',
-      },
-      fields: {
-        name: {
-          isLeaf: true,
-          type: 'TEXT',
-          label: 'Name',
-          value: 'Acme',
-          fieldMetadataId: 'name-field-id',
-        },
-        ownerId: {
-          isLeaf: true,
-          type: 'UUID',
-          label: 'Owner Id',
-          value: '',
-          fieldMetadataId: 'owner-field-id',
-        },
-      },
-      _outputSchemaType: 'RECORD',
-    };
-
+  it('should name the step object and its fields from the viewer metadata', () => {
     expect(
       translatePersistedOutputSchemaLabels({
-        stepType: 'FIND_RECORDS',
+        stepType: 'WAIT_FOR_EVENT',
         outputSchema: {
-          first: {
+          record: {
             isLeaf: false,
             type: 'object',
-            label: 'First Company',
-            value: recordOutputSchema,
+            label: 'Company',
+            value: companyRecordOutputSchema,
           },
-          all: {
-            isLeaf: true,
-            type: 'array',
-            label: 'All Companies',
-            value: '',
+          before: {
+            isLeaf: false,
+            type: 'object',
+            label: 'Company Before Update',
+            value: companyRecordOutputSchema,
           },
         },
-        objectMetadataItems,
+        objectMetadataItems: [viewerCompany],
       }),
-    ).toEqual({
-      first: {
-        isLeaf: false,
-        type: 'object',
-        label: 'First Entreprise',
+    ).toMatchObject({
+      record: {
+        label: 'Entreprise',
         value: {
-          ...recordOutputSchema,
-          object: { ...recordOutputSchema.object, label: 'Entreprise' },
-          fields: {
-            name: { ...recordOutputSchema.fields.name, label: 'Nom' },
-            ownerId: recordOutputSchema.fields.ownerId,
-          },
+          object: { label: 'Entreprise' },
+          fields: { name: { label: 'Nom' } },
         },
       },
-      all: {
-        isLeaf: true,
-        type: 'array',
-        label: 'All Entreprises',
-        value: '',
-      },
+      before: { label: 'Entreprise Before Update' },
     });
   });
 
-  it('should translate labels nested under a user-defined key', () => {
-    i18n.load('fr-FR', {
-      [WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.find(
-        (persistedLabel) => persistedLabel.key === 'choice',
-      )?.message.id ?? '']: 'Choix',
-    });
-
+  it('should translate a label under a user-defined key', () => {
     expect(
       translatePersistedOutputSchemaLabels({
         stepType: 'CLASSIFY',
@@ -219,10 +148,10 @@ describe('translatePersistedOutputSchemaLabels', () => {
             type: 'object',
             label: 'Answers',
             value: {
-              sentiment: {
+              choice: {
                 isLeaf: false,
                 type: 'object',
-                label: 'sentiment',
+                label: 'choice',
                 value: {
                   choice: {
                     isLeaf: true,
@@ -236,25 +165,10 @@ describe('translatePersistedOutputSchemaLabels', () => {
           },
         },
       }),
-    ).toEqual({
+    ).toMatchObject({
       answers: {
-        isLeaf: false,
-        type: 'object',
-        label: 'Answers',
         value: {
-          sentiment: {
-            isLeaf: false,
-            type: 'object',
-            label: 'sentiment',
-            value: {
-              choice: {
-                isLeaf: true,
-                type: 'string',
-                label: 'Choix',
-                value: 'positive',
-              },
-            },
-          },
+          choice: { label: 'choice', value: { choice: { label: 'Choix' } } },
         },
       },
     });

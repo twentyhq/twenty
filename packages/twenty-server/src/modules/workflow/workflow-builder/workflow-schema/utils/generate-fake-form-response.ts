@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -35,8 +39,9 @@ export const generateFakeFormResponse = ({
         objectIdByNameSingular[formFieldMetadata?.settings?.objectName];
 
       if (!isDefined(objectId)) {
-        throw new Error(
+        throw new WorkflowCommonException(
           `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
+          WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
@@ -46,8 +51,9 @@ export const generateFakeFormResponse = ({
       });
 
       if (!isDefined(flatObjectMetadata)) {
-        throw new Error(
+        throw new WorkflowCommonException(
           `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
+          WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
@@ -70,6 +76,7 @@ export const generateFakeFormResponse = ({
           type: formFieldMetadata.type,
           label: formFieldMetadata.label,
           value: formFieldMetadata.placeholder,
+          selectedFieldId: formFieldMetadata.settings?.selectedFieldId,
         }),
       };
     }

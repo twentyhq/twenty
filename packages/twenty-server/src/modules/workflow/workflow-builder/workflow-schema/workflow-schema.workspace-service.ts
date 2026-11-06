@@ -1,20 +1,17 @@
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
+import { computeOutputSchemaFromExpectedOutput } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-output-schema-from-expected-output.util';
+import { computeOutputSchemaFromSample } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-output-schema-from-sample.util';
 import { computeClassifyOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-classify-output-schema.util';
-import {
-  computeCreateCalendarEventOutputSchema,
-  computeDraftEmailOutputSchema,
-  computeSendChatMessageOutputSchema,
-  computeSendEmailOutputSchema,
-} from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-messaging-action-output-schemas.util';
+import { computeCreateCalendarEventOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-create-calendar-event-output-schema.util';
+import { computeDraftEmailOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-draft-email-output-schema.util';
+import { computeSendChatMessageOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-send-chat-message-output-schema.util';
+import { computeSendEmailOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-send-email-output-schema.util';
 import { WAIT_FOR_EVENT_NAME_PATTERN } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/constants/wait-for-event-name-pattern.constant';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isObject, isString } from '@sniptt/guards';
-import {
-  getOutputSchemaFromValue,
-  inputSchemaToOutputSchema,
-} from 'twenty-shared/logic-function';
-import { isDefined, isEmptyObject, isValidVariable } from 'twenty-shared/utils';
+import { isString } from '@sniptt/guards';
+import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
+import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
   buildManualTriggerMetadataNode,
@@ -40,6 +37,10 @@ import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/ut
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import {
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
@@ -178,11 +179,11 @@ export class WorkflowSchemaWorkspaceService {
       }
       case WorkflowTriggerType.WEBHOOK:
         return step.settings.httpMethod === 'POST'
-          ? this.computeOutputSchemaFromSample(step.settings.expectedBody)
+          ? computeOutputSchemaFromSample(step.settings.expectedBody)
           : {};
       case WorkflowActionType.CODE:
       case WorkflowActionType.HTTP_REQUEST:
-        return this.computeOutputSchemaFromExpectedOutput(step.settings);
+        return computeOutputSchemaFromExpectedOutput(step.settings);
       case WorkflowActionType.LOGIC_FUNCTION: {
         const declaredOutputSchema =
           await this.getLogicFunctionDeclaredOutputSchema({
@@ -192,7 +193,7 @@ export class WorkflowSchemaWorkspaceService {
 
         return (
           declaredOutputSchema ??
-          this.computeOutputSchemaFromExpectedOutput(step.settings)
+          computeOutputSchemaFromExpectedOutput(step.settings)
         );
       }
       default:
@@ -211,85 +212,71 @@ export class WorkflowSchemaWorkspaceService {
   }): Promise<WorkflowVersionContent> {
     const workflowVersionContent = { trigger, steps };
 
-    const [enrichedTrigger, enrichedSteps] = await Promise.all([
-      isDefined(trigger)
-        ? this.withComputedOutputSchema({
-            step: trigger,
-            workspaceId,
-            workflowVersionContent,
-          })
-        : null,
-      isDefined(steps)
-        ? Promise.all(
-            steps.map((step) =>
-              this.withComputedOutputSchema({
+    const enrichedTrigger = isDefined(trigger) ? { ...trigger } : null;
+
+    if (isDefined(enrichedTrigger)) {
+      enrichedTrigger.settings = {
+        ...enrichedTrigger.settings,
+        outputSchema: await this.computeStoredOutputSchema({
+          step: enrichedTrigger,
+          workspaceId,
+          workflowVersionContent,
+        }),
+      };
+    }
+
+    const enrichedSteps = isDefined(steps)
+      ? await Promise.all(
+          steps.map(async (step) => {
+            const enrichedStep = { ...step };
+
+            enrichedStep.settings = {
+              ...enrichedStep.settings,
+              outputSchema: await this.computeStoredOutputSchema({
                 step,
                 workspaceId,
                 workflowVersionContent,
               }),
-            ),
-          )
-        : null,
-    ]);
+            };
+
+            return enrichedStep;
+          }),
+        )
+      : null;
 
     return { trigger: enrichedTrigger, steps: enrichedSteps };
   }
 
-  private async withComputedOutputSchema<
-    TStep extends WorkflowTrigger | WorkflowAction,
-  >({
+  private async computeStoredOutputSchema({
     step,
     workspaceId,
     workflowVersionContent,
   }: {
-    step: TStep;
+    step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
     workflowVersionContent: WorkflowVersionContent;
-  }): Promise<TStep> {
-    let outputSchema: OutputSchema;
-
+  }): Promise<OutputSchema> {
     try {
-      outputSchema = await this.computeStepOutputSchema({
+      return await this.computeStepOutputSchema({
         step,
         workspaceId,
         workflowVersionContent,
       });
     } catch (error) {
-      // a step whose source no longer resolves (e.g. a deleted object) must still save; validation reports it
+      if (
+        !(error instanceof WorkflowCommonException) ||
+        error.code !== WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND
+      ) {
+        throw error;
+      }
+
+      // a step on a deleted object must still save; validation reports the object
       this.logger.warn(
-        `Could not compute the output schema of step ${step.id}: ${error}`,
+        `Workspace ${workspaceId}: a ${step.type} step reads a deleted object, its output schema is empty`,
       );
-      outputSchema = {};
-    }
 
-    return { ...step, settings: { ...step.settings, outputSchema } } as TStep;
-  }
-
-  private computeOutputSchemaFromSample(sample: unknown): OutputSchema {
-    if (!isObject(sample) || isEmptyObject(sample)) {
       return {};
     }
-
-    return getOutputSchemaFromValue(sample);
-  }
-
-  private computeOutputSchemaFromExpectedOutput(settings: {
-    outputSchema: OutputSchema;
-    expectedOutputSchema?: object;
-  }): OutputSchema {
-    const outputSchema = this.computeOutputSchemaFromSample(
-      settings.expectedOutputSchema,
-    );
-
-    // Fence until upgrade:2-57:move-step-output-samples-to-expected-output reaches every workspace; remove in 2.59
-    if (
-      isEmptyObject(outputSchema) &&
-      isBaseOutputSchemaV2(settings.outputSchema)
-    ) {
-      return settings.outputSchema;
-    }
-
-    return outputSchema;
   }
 
   private async getLogicFunctionDeclaredOutputSchema({
@@ -698,13 +685,16 @@ export class WorkflowSchemaWorkspaceService {
         }
         case WorkflowTriggerType.WEBHOOK: {
           const propertyPath = extractPropertyPathFromVariable(items);
-          const schemaNode = navigateOutputSchemaProperty({
-            schema: (await this.computeStepOutputSchema({
-              step: trigger,
-              workspaceId,
-            })) as BaseOutputSchemaV2,
-            propertyPath,
+          const triggerOutputSchema = await this.computeStepOutputSchema({
+            step: trigger,
+            workspaceId,
           });
+          const schemaNode = isBaseOutputSchemaV2(triggerOutputSchema)
+            ? navigateOutputSchemaProperty({
+                schema: triggerOutputSchema,
+                propertyPath,
+              })
+            : undefined;
 
           if (!isDefined(schemaNode)) {
             return DEFAULT_ITERATOR_CURRENT_ITEM;

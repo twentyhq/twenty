@@ -2,6 +2,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -15,8 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// the server now derives these steps' output schema from expectedOutputSchema, so a schema
-// the builder stored from a test run moves there as a sample
+// the server derives these steps' output schema from expectedOutputSchema, so a test-run schema moves there
 @RegisteredWorkspaceCommand('2.57.0', 1793954468406)
 @Command({
   name: 'upgrade:2-57:move-step-output-samples-to-expected-output',
@@ -53,28 +53,34 @@ export class MoveStepOutputSamplesToExpectedOutputCommand extends ProvisionedWor
         'flatObjectMetadataMaps',
       ]);
 
-    const declaredOutputSchemaByLogicFunctionId = new Map(
-      Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .flatMap(({ id, workflowActionTriggerSettings }) =>
-          isDefined(workflowActionTriggerSettings?.outputSchema)
-            ? [
-                [
-                  id,
-                  inputSchemaToOutputSchema(
-                    workflowActionTriggerSettings.outputSchema,
-                  ),
-                ] as const,
-              ]
-            : [],
-        ),
-    );
+    const declaredOutputSchemaByLogicFunctionId = new Map<
+      string,
+      BaseOutputSchemaV2
+    >();
 
-    const sources = [
+    for (const flatLogicFunction of Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    )) {
+      const declaredInputSchema =
+        flatLogicFunction?.workflowActionTriggerSettings?.outputSchema;
+
+      if (isDefined(flatLogicFunction) && isDefined(declaredInputSchema)) {
+        declaredOutputSchemaByLogicFunctionId.set(
+          flatLogicFunction.id,
+          inputSchemaToOutputSchema(declaredInputSchema),
+        );
+      }
+    }
+
+    const sources: {
+      tableName: string;
+      whereClause: string;
+      whereParameters: string[];
+    }[] = [
       {
         tableName: 'core."workflowVersion"',
         whereClause: '"workspaceId" = $1',
-        whereParameters: [workspaceId] as unknown[],
+        whereParameters: [workspaceId],
       },
     ];
 

@@ -1,32 +1,30 @@
 import isEqual from 'lodash.isequal';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  type BaseOutputSchemaV2,
+  isBaseOutputSchemaV2,
+} from 'twenty-shared/workflow';
 
 // the step types whose output schema the builder derived from a sample, as of 2.57
 const SAMPLE_STEP_TYPES = new Set(['CODE', 'HTTP_REQUEST', 'LOGIC_FUNCTION']);
 
-type StoredSchemaEntry = { isLeaf?: boolean; value?: unknown };
-
 const convertOutputSchemaToSample = (
-  outputSchema: Record<string, unknown>,
+  outputSchema: BaseOutputSchemaV2,
 ): Record<string, unknown> | unknown[] => {
   const keys = Object.keys(outputSchema);
 
-  const toValue = (entry: unknown) => {
-    const { isLeaf, value } = (entry ?? {}) as StoredSchemaEntry;
+  const values = keys.map((key) => {
+    const entry = outputSchema[key];
 
-    return isLeaf === false && isPlainObject(value)
-      ? convertOutputSchemaToSample(value)
-      : value;
-  };
+    return entry.isLeaf ? entry.value : convertOutputSchemaToSample(entry.value);
+  });
 
   if (keys.length > 0 && keys.every((key, index) => key === String(index))) {
-    return keys.map((key) => toValue(outputSchema[key]));
+    return values;
   }
 
-  return Object.fromEntries(
-    keys.map((key) => [key, toValue(outputSchema[key])]),
-  );
+  return Object.fromEntries(keys.map((key, index) => [key, values[index]]));
 };
 
 const isNonEmptySample = (sample: unknown): sample is object =>
@@ -38,7 +36,7 @@ export const moveStepOutputSamplesToExpectedOutput = ({
   declaredOutputSchemaByLogicFunctionId,
 }: {
   steps: unknown;
-  declaredOutputSchemaByLogicFunctionId: Map<string, unknown>;
+  declaredOutputSchemaByLogicFunctionId: Map<string, BaseOutputSchemaV2>;
 }): { steps: unknown; movedStepIds: string[] } => {
   if (!Array.isArray(steps)) {
     return { steps, movedStepIds: [] };
@@ -55,12 +53,10 @@ export const moveStepOutputSamplesToExpectedOutput = ({
       return step;
     }
 
-    const { outputSchema, expectedOutputSchema } = step.settings;
+    const { outputSchema, expectedOutputSchema, input } = step.settings;
 
-    if (
-      !isPlainObject(outputSchema) ||
-      Object.keys(outputSchema).length === 0
-    ) {
+    // a legacy placeholder such as the LINK one is not an output, so it has no sample to move
+    if (!isBaseOutputSchemaV2(outputSchema)) {
       return step;
     }
 
@@ -68,13 +64,11 @@ export const moveStepOutputSamplesToExpectedOutput = ({
       isNonEmptySample(expectedOutputSchema) &&
       isEqual(getOutputSchemaFromValue(expectedOutputSchema), outputSchema);
 
-    const logicFunctionId = isPlainObject(step.settings.input)
-      ? step.settings.input.logicFunctionId
-      : undefined;
-
     const declaredOutputSchema =
-      step.type === 'LOGIC_FUNCTION' && isDefined(logicFunctionId)
-        ? declaredOutputSchemaByLogicFunctionId.get(String(logicFunctionId))
+      step.type === 'LOGIC_FUNCTION' && isPlainObject(input)
+        ? declaredOutputSchemaByLogicFunctionId.get(
+            String(input.logicFunctionId),
+          )
         : undefined;
 
     if (
