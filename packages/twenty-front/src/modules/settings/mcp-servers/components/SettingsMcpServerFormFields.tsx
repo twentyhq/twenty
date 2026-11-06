@@ -13,7 +13,7 @@ import { type McpServer } from '~/generated-metadata/graphql';
 const StyledInputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[6]};
 `;
 
 type SettingsMcpServerFormFieldsProps = {
