@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 
-import { JOB_MEMORY_CHARGE_TTL_SECONDS } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import {
   createMemoryHarness,
   MEMORY_SCENARIO_JOB_NAME,
@@ -654,24 +653,16 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S15: charged keys of A go idle', () => {
-    it('every admission refreshes the expiry of the keys of A', async () => {
+  describe('S15: charged keys of A stay idle for a long time', () => {
+    it('charges never expire, so a long-delayed job keeps its charge', async () => {
       const harness = await createMemoryHarness();
 
       await harness.enqueueBulk([
         harness.buildApplicationJob({ label: 'A1', workspaceId: 'A' }),
       ]);
-      await harness.redis.expire(`bull:jobmem:used:${WORKSPACE_A}`, 10);
-      await harness.enqueueBulk([
-        harness.buildApplicationJob({ label: 'A2', workspaceId: 'A' }),
-      ]);
 
-      expect(await harness.readTtl(WORKSPACE_A)).toBe(
-        JOB_MEMORY_CHARGE_TTL_SECONDS,
-      );
-      expect(await harness.readTtl(APPLICATION)).toBe(
-        JOB_MEMORY_CHARGE_TTL_SECONDS,
-      );
+      expect(await harness.readTtl(WORKSPACE_A)).toBe(-1);
+      expect(await harness.readTtl(APPLICATION)).toBe(-1);
     });
   });
 
@@ -684,6 +675,49 @@ describe('BullMQDriver job memory scenarios', () => {
       expect(await harness.readGaugeCallback()()).toEqual([
         { value: 45_000 / CAPACITY_BYTES, attributes: {} },
       ]);
+    });
+  });
+
+  describe('S17: A fills its share, then one of its waiting jobs is deleted outside the worker', () => {
+    it('the reconcile cron gives the charge back on its second pass, so A can enqueue again', async () => {
+      const harness = await createMemoryHarness();
+
+      const {
+        jobs: [deletedJob],
+      } = await harness.enqueueBulk([
+        harness.buildApplicationJob({
+          label: 'A1',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+        harness.buildApplicationJob({
+          label: 'A2',
+          workspaceId: 'A',
+          payloadBytes: 2_000,
+        }),
+      ]);
+      const enqueueThirdJob = () =>
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A3',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]);
+
+      await harness.removeFromBullMQ(deletedJob.jobId);
+      await expect(enqueueThirdJob()).rejects.toThrow(MessageQueueException);
+
+      await harness.driver.reconcileJobMemory();
+      await expect(enqueueThirdJob()).rejects.toThrow(MessageQueueException);
+
+      expect(await harness.driver.reconcileJobMemory()).toEqual({
+        releasedCount: 2,
+        releasedBytes: 2 * deletedJob.sizeBytes,
+      });
+      await expect(enqueueThirdJob()).resolves.toMatchObject({
+        jobs: [expect.anything()],
+      });
     });
   });
 });
