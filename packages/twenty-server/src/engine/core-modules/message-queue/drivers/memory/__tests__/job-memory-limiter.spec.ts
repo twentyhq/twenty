@@ -96,6 +96,7 @@ const createLimiter = async ({
   const metricsService = { incrementCounterForEvent: jest.fn() };
   const limiter = new JobMemoryLimiter({
     getClient: async () => client as never,
+    getJobKey: ({ queueName, jobId }) => `${KEY_PREFIX}:${queueName}:${jobId}`,
     keyPrefix: KEY_PREFIX,
     metricsService: metricsService as never,
     twentyConfigService: buildConfig({
@@ -290,6 +291,8 @@ describe('JobMemoryLimiter', () => {
               ? 'used_memory:0\r\nmaxmemory:10000\r\n'
               : Promise.reject(new Error('connection lost')),
         }) as never,
+      getJobKey: ({ queueName, jobId }) =>
+        `${KEY_PREFIX}:${queueName}:${jobId}`,
       keyPrefix: KEY_PREFIX,
       metricsService: { incrementCounterForEvent: jest.fn() } as never,
       twentyConfigService: buildConfig({

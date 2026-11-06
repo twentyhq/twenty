@@ -4,7 +4,7 @@ export const JOB_MEMORY_RECONCILE_SCRIPT = `
 -- KEYS: used counter, jobs hash, previous suspects, next suspects, then one BullMQ job key per member
 -- ARGV: suspects ttl, then the members ("<queue>:<jobId>"). Returns "releasedCount releasedBytes"
 
-local ttl = tonumber(ARGV[1])
+local suspectsTtlSeconds = tonumber(ARGV[1])
 local releasedCount = 0
 local releasedBytes = 0
 
@@ -32,7 +32,7 @@ for index = 2, #ARGV do
       else
         -- First time missing: check it again on the next pass
         redis.call('SADD', KEYS[4], member)
-        redis.call('EXPIRE', KEYS[4], ttl)
+        redis.call('EXPIRE', KEYS[4], suspectsTtlSeconds)
       end
     end
   end

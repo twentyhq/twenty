@@ -58,6 +58,7 @@ export type ChargedJob = {
 
 type JobMemoryLimiterOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisScriptClient>;
+  getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
@@ -293,7 +294,7 @@ export class JobMemoryLimiter {
             jobsKey,
             previousSuspectsKey,
             nextSuspectsKey,
-            ...members.map((member) => `${this.options.keyPrefix}:${member}`),
+            ...members.map((member) => this.buildJobKeyOfMember(member)),
           ],
           args: [JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS, ...members],
         }),
@@ -306,9 +307,10 @@ export class JobMemoryLimiter {
     }
 
     await client.runCommand('del', [previousSuspectsKey]);
-    await client
-      .runCommand('rename', [nextSuspectsKey, previousSuspectsKey])
-      .catch(() => undefined);
+
+    if (Number(await client.runCommand('exists', [nextSuspectsKey])) === 1) {
+      await client.runCommand('rename', [nextSuspectsKey, previousSuspectsKey]);
+    }
 
     return reconciliation;
   }
@@ -439,6 +441,15 @@ export class JobMemoryLimiter {
       `${this.options.keyPrefix}:jobmem:used:${groupKey}`,
       `${this.options.keyPrefix}:jobmem:jobs:${groupKey}`,
     ];
+  }
+
+  private buildJobKeyOfMember(member: string): string {
+    const separatorIndex = member.indexOf(':');
+
+    return this.options.getJobKey({
+      queueName: member.slice(0, separatorIndex) as MessageQueue,
+      jobId: member.slice(separatorIndex + 1),
+    });
   }
 
   private buildMember({

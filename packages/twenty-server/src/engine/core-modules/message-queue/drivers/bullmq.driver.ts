@@ -121,6 +121,8 @@ export class BullMQDriver
     );
     this.jobMemoryLimiter = new JobMemoryLimiter({
       getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       twentyConfigService,
