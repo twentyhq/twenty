@@ -227,8 +227,6 @@ export class UserWorkspaceService {
       locale: user.locale,
     });
 
-    // The member sits on the workspace connection, so no transaction spans both: a userWorkspace left without
-    // a member locks the user out, so undo it by hand. The member goes last, as the rollback does not remove it.
     try {
       await this.roleAssignmentService.assignRoleToManyUserWorkspace({
         workspaceId: workspace.id,
