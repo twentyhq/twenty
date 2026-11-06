@@ -12,8 +12,7 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
-// Default harness: maxmemory 100_000, reserve 0.1, so 90_000 bytes go to jobs.
-// A workspace may use 10% of the memory other keys leave free, an application 40%.
+// Default harness: maxmemory 100_000 minus a 0.1 reserve, workspace share 0.1, application share 0.4
 const CAPACITY_BYTES = 90_000;
 const WORKSPACE_A = 'workspace:A';
 const WORKSPACE_B = 'workspace:B';

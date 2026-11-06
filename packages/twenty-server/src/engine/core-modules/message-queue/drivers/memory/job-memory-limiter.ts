@@ -318,13 +318,15 @@ export class JobMemoryLimiter {
   }
 
   private getShare(groupKey: string): number {
-    return groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX)
-      ? this.options.twentyConfigService.get(
-          'JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER',
-        )
-      : this.options.twentyConfigService.get(
-          'JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID',
-        );
+    if (groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX)) {
+      return this.options.twentyConfigService.get(
+        'JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER',
+      );
+    }
+
+    return this.options.twentyConfigService.get(
+      'JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID',
+    );
   }
 
   private buildKeys(groupKey: string): [string, string] {
