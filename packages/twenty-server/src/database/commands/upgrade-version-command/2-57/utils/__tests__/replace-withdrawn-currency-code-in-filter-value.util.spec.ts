@@ -12,7 +12,14 @@ describe('replaceWithdrawnCurrencyCodeInFilterValue', () => {
     });
   });
 
-  it.each([['["USD"]'], ['[]'], ['ANG'], ['not json'], [null], [['ANG']]])(
+  it('replaces the currency code in values stored as arrays', () => {
+    expect(replaceWithdrawnCurrencyCodeInFilterValue(['USD', 'ANG'])).toEqual({
+      value: ['USD', 'XCG'],
+      hasChanged: true,
+    });
+  });
+
+  it.each([['["USD"]'], ['[]'], ['ANG'], ['not json'], [null], [['USD']]])(
     'leaves %p unchanged',
     (value) => {
       expect(replaceWithdrawnCurrencyCodeInFilterValue(value)).toEqual({

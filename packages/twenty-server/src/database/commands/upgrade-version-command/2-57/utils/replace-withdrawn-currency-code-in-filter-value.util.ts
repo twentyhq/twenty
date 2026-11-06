@@ -8,11 +8,7 @@ import { type MappedValue } from 'src/database/commands/upgrade-version-command/
 export const replaceWithdrawnCurrencyCodeInFilterValue = (
   value: unknown,
 ): MappedValue => {
-  if (!isString(value)) {
-    return { value, hasChanged: false };
-  }
-
-  const currencyCodes = parseJson<unknown>(value);
+  const currencyCodes = isString(value) ? parseJson<unknown>(value) : value;
 
   if (
     !Array.isArray(currencyCodes) ||
@@ -31,5 +27,10 @@ export const replaceWithdrawnCurrencyCodeInFilterValue = (
     ),
   ];
 
-  return { value: JSON.stringify(replacedCurrencyCodes), hasChanged: true };
+  return {
+    value: isString(value)
+      ? JSON.stringify(replacedCurrencyCodes)
+      : replacedCurrencyCodes,
+    hasChanged: true,
+  };
 };

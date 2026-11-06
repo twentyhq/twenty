@@ -205,7 +205,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow<unknown>) =>
         replaceWithdrawnCurrencyCodeInFilterValue(value);
 
-      const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
+      const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) IN ('string', 'array')`;
       const recordFilterWhereParameters = [
         workspaceId,
         [...currencyFieldMetadataIds],
@@ -402,28 +402,11 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         continue;
       }
 
-      const migrationArgs = {
-        allFlatEntityOperationByMetadataName: {
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: flatFieldMetadatasToUpdate,
-          },
-        },
+      const result = await this.updateFieldMetadatas({
         workspaceId,
-        isSystemBuild: true,
         applicationUniversalIdentifier,
-      };
-
-      const result =
-        applicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-          ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-              migrationArgs,
-            )
-          : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-              migrationArgs,
-            );
+        flatFieldMetadatasToUpdate,
+      });
 
       if (result.status === 'fail') {
         throw new WorkspaceMigrationBuilderException(
@@ -504,6 +487,42 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     }
 
     return recordCount;
+  }
+
+  private async updateFieldMetadatas({
+    workspaceId,
+    applicationUniversalIdentifier,
+    flatFieldMetadatasToUpdate,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    flatFieldMetadatasToUpdate: FlatFieldMetadata[];
+  }) {
+    const migrationArgs = {
+      allFlatEntityOperationByMetadataName: {
+        fieldMetadata: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: flatFieldMetadatasToUpdate,
+        },
+      },
+      workspaceId,
+      isSystemBuild: true,
+      applicationUniversalIdentifier,
+    };
+
+    if (
+      applicationUniversalIdentifier ===
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+    ) {
+      return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        migrationArgs,
+      );
+    }
+
+    return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      migrationArgs,
+    );
   }
 
   private getFlatObjectMetadataOrThrow({
