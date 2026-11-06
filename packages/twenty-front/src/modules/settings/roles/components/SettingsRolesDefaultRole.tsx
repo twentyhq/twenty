@@ -80,15 +80,13 @@ export const SettingsRoleDefaultRole = ({
       description={t`For members who join without a role or lose theirs`}
       divider={divider}
     >
-      <Select
+      <Select<string>
         selectSizeVariant="small"
         withSearchInput
         dropdownId="default-role-select"
         options={options}
         value={defaultRole?.id ?? ''}
-        onChange={(value) =>
-          updateDefaultRole(value as string, currentWorkspace)
-        }
+        onChange={(value) => updateDefaultRole(value, currentWorkspace)}
       />
     </SettingsOptionCardContentSelect>
   );
