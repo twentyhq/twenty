@@ -41,6 +41,7 @@ const validateMessagingProviderReferences = ({
     | 'applicationUniversalIdentifier'
     | 'connectionProviderUniversalIdentifier'
     | 'sendMessageLogicFunctionUniversalIdentifier'
+    | 'startConversationLogicFunctionUniversalIdentifier'
   >;
   flatConnectionProviderMaps: MetadataUniversalFlatEntityMaps<'connectionProvider'>;
   flatLogicFunctionMaps: MetadataUniversalFlatEntityMaps<'logicFunction'>;
@@ -79,6 +80,25 @@ const validateMessagingProviderReferences = ({
       code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
       message: t`Send message logic function "${sendMessageLogicFunctionUniversalIdentifier}" was not found in this application`,
       userFriendlyMessage: msg`The logic function this messaging provider sends with was not found in its application.`,
+    });
+  }
+
+  const startConversationLogicFunctionUniversalIdentifier =
+    flatMessagingProvider.startConversationLogicFunctionUniversalIdentifier;
+
+  if (
+    isDefined(startConversationLogicFunctionUniversalIdentifier) &&
+    !isInApplication({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: startConversationLogicFunctionUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Start conversation logic function "${startConversationLogicFunctionUniversalIdentifier}" was not found in this application`,
+      userFriendlyMessage: msg`The logic function this messaging provider starts conversations with was not found in its application.`,
     });
   }
 

@@ -74,6 +74,7 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       key === 'onConnectLogicFunction' ||
       key === 'onDisconnectLogicFunction' ||
       key === 'sendMessageLogicFunction' ||
+      key === 'startConversationLogicFunction' ||
       key === 'connectionProvider' ||
       key === 'settingsFrontComponent' ||
       key === 'input' ||

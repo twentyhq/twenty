@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { type StartAppConversationRecipient } from 'twenty-shared/application';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -24,6 +26,10 @@ import {
   type AppMessageReplyRecipient,
   buildAppMessageReplyRecipients,
 } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
+import {
+  MessagingProviderException,
+  MessagingProviderExceptionCode,
+} from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
 import { MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -31,6 +37,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
 
@@ -45,6 +52,17 @@ type SendArgs = {
   messageThreadId: string;
   text: string;
   idempotencyKey: string;
+};
+
+type StartConversationArgs = Omit<SendArgs, 'messageThreadId'> & {
+  personId: string;
+};
+
+type SendableChannel = {
+  messageChannel: MessageChannelEntity;
+  connectedAccountId: string;
+  applicationId: string;
+  connectionProviderId: string;
 };
 
 type Conversation = {
@@ -81,6 +99,73 @@ export class ApplicationMessageSendService {
     text,
     idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
+    const sendableChannel = await this.findSendableChannelOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      messageChannelId,
+    });
+
+    return this.deliverOnceAndIngest({
+      workspaceId,
+      userWorkspaceId,
+      sendableChannel,
+      deliveryKey: `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`,
+      deliver: (deliveryKey) =>
+        this.deliver({
+          workspaceId,
+          messageChannel: sendableChannel.messageChannel,
+          connectionProviderId: sendableChannel.connectionProviderId,
+          connectedAccountId: sendableChannel.connectedAccountId,
+          messageThreadId,
+          idempotencyKey,
+          text,
+          deliveryKey,
+        }),
+    });
+  }
+
+  async startConversation({
+    workspaceId,
+    userWorkspaceId,
+    messageChannelId,
+    personId,
+    text,
+    idempotencyKey,
+  }: StartConversationArgs): Promise<SendAppChannelMessageOutput> {
+    const sendableChannel = await this.findSendableChannelOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      messageChannelId,
+    });
+
+    return this.deliverOnceAndIngest({
+      workspaceId,
+      userWorkspaceId,
+      sendableChannel,
+      deliveryKey: `app-conversation-start:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${personId}:${idempotencyKey}`,
+      deliver: (deliveryKey) =>
+        this.deliverConversationStart({
+          workspaceId,
+          messageChannel: sendableChannel.messageChannel,
+          connectionProviderId: sendableChannel.connectionProviderId,
+          connectedAccountId: sendableChannel.connectedAccountId,
+          personId,
+          idempotencyKey,
+          text,
+          deliveryKey,
+        }),
+    });
+  }
+
+  private async findSendableChannelOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    messageChannelId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    messageChannelId: string;
+  }): Promise<SendableChannel> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
         id: messageChannelId,
@@ -120,31 +205,38 @@ export class ApplicationMessageSendService {
       );
     }
 
-    const { applicationId, connectionProviderId } = connectedAccount;
+    return {
+      messageChannel,
+      connectedAccountId: connectedAccount.id,
+      applicationId: connectedAccount.applicationId,
+      connectionProviderId: connectedAccount.connectionProviderId,
+    };
+  }
 
+  private async deliverOnceAndIngest({
+    workspaceId,
+    userWorkspaceId,
+    sendableChannel: { messageChannel, applicationId },
+    deliveryKey,
+    deliver,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    sendableChannel: SendableChannel;
+    deliveryKey: string;
+    deliver: (deliveryKey: string) => Promise<AppMessageDelivery>;
+  }): Promise<SendAppChannelMessageOutput> {
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
-
-    const deliveryKey = `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`;
 
     return this.cacheLockService.withLock(
       async () => {
         const delivery =
           (await this.cacheStorageService.get<AppMessageDelivery>(
             deliveryKey,
-          )) ??
-          (await this.deliver({
-            workspaceId,
-            messageChannel,
-            connectionProviderId,
-            connectedAccountId: connectedAccount.id,
-            messageThreadId,
-            idempotencyKey,
-            text,
-            deliveryKey,
-          }));
+          )) ?? (await deliver(deliveryKey));
 
         const {
           messages: [ingestedMessage],
@@ -152,7 +244,7 @@ export class ApplicationMessageSendService {
           applicationId,
           workspaceId,
           requestUserWorkspaceId: userWorkspaceId,
-          messageChannelId,
+          messageChannelId: messageChannel.id,
           messages: [
             {
               externalId: delivery.externalId,
@@ -256,6 +348,195 @@ export class ApplicationMessageSendService {
     );
 
     return delivery;
+  }
+
+  private async deliverConversationStart({
+    workspaceId,
+    messageChannel,
+    connectionProviderId,
+    connectedAccountId,
+    personId,
+    idempotencyKey,
+    text,
+    deliveryKey,
+  }: {
+    workspaceId: string;
+    messageChannel: MessageChannelEntity;
+    connectionProviderId: string;
+    connectedAccountId: string;
+    personId: string;
+    idempotencyKey: string;
+    text: string;
+    deliveryKey: string;
+  }): Promise<AppMessageDelivery> {
+    const conversationStarter =
+      await this.messagingProviderMessageSenderService.resolveConversationStarterOrThrow(
+        {
+          messagingProviderUniversalIdentifier:
+            messageChannel.messagingProviderUniversalIdentifier,
+          connectionProviderId,
+          messageChannelId: messageChannel.id,
+          workspaceId,
+        },
+      );
+
+    const recipient = await this.findConversationRecipientOrThrow({
+      workspaceId,
+      messageChannel,
+      personId,
+    });
+
+    const startedConversation =
+      await this.messagingProviderMessageSenderService.startConversationOrThrow(
+        {
+          conversationStarter,
+          workspaceId,
+          payload: {
+            connectedAccountId,
+            messageChannelId: messageChannel.id,
+            text,
+            idempotencyKey,
+            recipients: [recipient],
+          },
+        },
+      );
+
+    const handle =
+      startedConversation.recipients?.find(
+        (startedRecipient) => startedRecipient.personId === personId,
+      )?.handle ?? recipient.handle;
+
+    if (!isNonEmptyString(handle)) {
+      throw new MessagingProviderException(
+        `startConversation logic function of messaging provider ${conversationStarter.messagingProvider.id} returned no handle for person ${personId}`,
+        MessagingProviderExceptionCode.SEND_MESSAGE_FAILED,
+      );
+    }
+
+    const delivery: AppMessageDelivery = {
+      externalId: startedConversation.externalId,
+      threadExternalId: startedConversation.threadExternalId,
+      text,
+      sentAt: startedConversation.sentAt ?? new Date().toISOString(),
+      recipients: [
+        {
+          handle,
+          displayName: recipient.displayName ?? undefined,
+          personId,
+        },
+      ],
+    };
+
+    await this.cacheStorageService.set(
+      deliveryKey,
+      delivery,
+      APP_MESSAGE_DELIVERY_TTL_MS,
+    );
+
+    return delivery;
+  }
+
+  private async findConversationRecipientOrThrow({
+    workspaceId,
+    messageChannel,
+    personId,
+  }: {
+    workspaceId: string;
+    messageChannel: Pick<MessageChannelEntity, 'id' | 'handle'>;
+    personId: string;
+  }): Promise<StartAppConversationRecipient> {
+    const recipient = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const person = await this.workspaceOrmManager
+          .getRepositoryWithoutPermissionChecks<PersonWorkspaceEntity>('person')
+          .findOne({
+            where: { id: personId },
+            select: { id: true, name: true },
+          });
+
+        if (!isDefined(person)) {
+          return null;
+        }
+
+        const displayName = [person.name?.firstName, person.name?.lastName]
+          .filter(isNonEmptyString)
+          .join(' ');
+
+        return {
+          personId,
+          displayName: isNonEmptyString(displayName) ? displayName : null,
+          handle: await this.findKnownPersonHandle({
+            messageChannel,
+            personId,
+          }),
+        };
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
+
+    if (!isDefined(recipient)) {
+      throw new MessageChannelException(
+        `Person ${personId} not found`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return recipient;
+  }
+
+  private async findKnownPersonHandle({
+    messageChannel,
+    personId,
+  }: {
+    messageChannel: Pick<MessageChannelEntity, 'id' | 'handle'>;
+    personId: string;
+  }): Promise<string | null> {
+    const participants = (
+      await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
+          'messageParticipant',
+        )
+        .find({
+          where: { personId },
+          select: { messageId: true, handle: true },
+          order: { createdAt: 'DESC' },
+          take: CONVERSATION_LOOKUP_MESSAGE_LIMIT,
+        })
+    ).filter(
+      (participant): participant is typeof participant & { handle: string } =>
+        isNonEmptyString(participant.handle) &&
+        participant.handle.toLowerCase() !==
+          messageChannel.handle.toLowerCase(),
+    );
+
+    if (!isNonEmptyArray(participants)) {
+      return null;
+    }
+
+    const associations = await this.workspaceOrmManager
+      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
+      )
+      .find({
+        where: {
+          messageChannelId: messageChannel.id,
+          messageId: In(
+            participants.map((participant) => participant.messageId),
+          ),
+        },
+        select: { messageId: true },
+      });
+
+    const channelMessageIds = new Set(
+      associations.map((association) => association.messageId),
+    );
+
+    return (
+      participants.find((participant) =>
+        channelMessageIds.has(participant.messageId),
+      )?.handle ?? null
+    );
   }
 
   private async findConversation({

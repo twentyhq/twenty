@@ -40,6 +40,9 @@ export class MessagingProviderEntity
   @Column({ nullable: true, type: 'uuid' })
   sendMessageLogicFunctionUniversalIdentifier: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  startConversationLogicFunctionUniversalIdentifier: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

@@ -384,7 +384,7 @@ describe('manifestValidate', () => {
       },
     );
 
-    it('should not flag a messaging provider referencing its connection provider and send logic function as duplicates', () => {
+    it('should not flag a messaging provider referencing its connection provider and logic functions as duplicates', () => {
       const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
       const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';
 
@@ -423,6 +423,9 @@ describe('manifestValidate', () => {
             displayName: 'LinkedIn Messages',
             connectionProvider: { universalIdentifier: connectionProviderId },
             sendMessageLogicFunction: {
+              universalIdentifier: sendMessageLogicFunctionId,
+            },
+            startConversationLogicFunction: {
               universalIdentifier: sendMessageLogicFunctionId,
             },
           },

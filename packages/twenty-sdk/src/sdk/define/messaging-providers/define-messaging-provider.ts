@@ -51,5 +51,16 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
+  if (
+    isDefined(config.startConversationLogicFunction) &&
+    !isValidPostgresUuid(
+      config.startConversationLogicFunction.universalIdentifier,
+    )
+  ) {
+    errors.push(
+      `Messaging provider startConversationLogicFunction.universalIdentifier "${config.startConversationLogicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+    );
+  }
+
   return createValidationResult({ config, errors });
 };

@@ -10,6 +10,7 @@ export enum MessagingProviderExceptionCode {
   MESSAGING_PROVIDER_NAME_ALREADY_EXISTS = 'MESSAGING_PROVIDER_NAME_ALREADY_EXISTS',
   SEND_MESSAGE_NOT_AVAILABLE = 'SEND_MESSAGE_NOT_AVAILABLE',
   SEND_MESSAGE_FAILED = 'SEND_MESSAGE_FAILED',
+  START_CONVERSATION_NOT_AVAILABLE = 'START_CONVERSATION_NOT_AVAILABLE',
 }
 
 const getMessagingProviderExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getMessagingProviderExceptionUserFriendlyMessage = (
       return msg`This message channel cannot send messages.`;
     case MessagingProviderExceptionCode.SEND_MESSAGE_FAILED:
       return msg`We could not send your message. Please try again.`;
+    case MessagingProviderExceptionCode.START_CONVERSATION_NOT_AVAILABLE:
+      return msg`This message channel cannot start new conversations.`;
     default:
       assertUnreachable(code);
   }
