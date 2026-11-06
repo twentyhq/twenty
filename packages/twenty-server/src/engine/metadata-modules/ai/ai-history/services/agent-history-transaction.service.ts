@@ -35,148 +35,144 @@ export class AgentHistoryTransactionService {
     threadId: string | null;
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
   }): Promise<TResult> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          (transactionScope) => {
-            const getRepository = (name: AgentHistoryObjectName) =>
-              transactionScope.getRepositoryWithoutPermissionChecks(name, {
-                shouldSkipEventEmission: true,
+    return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      (transactionScope) => {
+        const getRepository = (name: AgentHistoryObjectName) =>
+          transactionScope.getRepositoryWithoutPermissionChecks(name, {
+            shouldSkipEventEmission: true,
+          });
+
+        const writtenMessageIds = new Set<string>();
+        let directMessagePair: Promise<readonly [string, string] | null>;
+
+        const resolveDirectMessagePair = () => {
+          directMessagePair ??= isDefined(threadId)
+            ? this.directMessageConversationPrivacyService.findDirectMessagePairOfThread(
+                { workspaceId, transactionScope, threadId },
+              )
+            : Promise.resolve(null);
+
+          return directMessagePair;
+        };
+
+        const shareInsertedRecords = async ({
+          name,
+          identifiers,
+        }: {
+          name: AgentHistoryObjectName;
+          identifiers: ObjectLiteral[];
+        }) => {
+          const recordIds = identifiers.map(({ id }) => {
+            if (!isString(id)) {
+              throw new AgentHistoryStorageException({
+                code: 'INVALID_RECORD_IDENTIFIER',
+                message: doNotTranslate(
+                  `Agent history ${name} write returned a non-string record ID`,
+                ),
               });
+            }
 
-            const writtenMessageIds = new Set<string>();
-            let directMessagePair: Promise<readonly [string, string] | null>;
+            return id;
+          });
 
-            const resolveDirectMessagePair = () => {
-              directMessagePair ??= isDefined(threadId)
-                ? this.directMessageConversationPrivacyService.findDirectMessagePairOfThread(
-                    { workspaceId, transactionScope, threadId },
-                  )
-                : Promise.resolve(null);
+          if (name === 'agentMessage') {
+            for (const recordId of recordIds) {
+              writtenMessageIds.add(recordId.toLowerCase());
+            }
+          }
 
-              return directMessagePair;
-            };
+          const pair = await resolveDirectMessagePair();
 
-            const shareInsertedRecords = async ({
+          if (!isDefined(pair)) {
+            return;
+          }
+
+          await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+            {
+              workspaceId,
+              transactionScope,
+              pair,
+              conversationObjectName: name,
+              conversationRecordIds: recordIds,
+            },
+          );
+        };
+
+        return work({
+          threadId,
+          executeRawQuery: transactionScope.executeRawQuery,
+          insert: async ({ name, values }) => {
+            validateAgentHistoryConversationRecordsOrThrow({
               name,
-              identifiers,
-            }: {
-              name: AgentHistoryObjectName;
-              identifiers: ObjectLiteral[];
-            }) => {
-              const recordIds = identifiers.map(({ id }) => {
-                if (!isString(id)) {
-                  throw new AgentHistoryStorageException({
-                    code: 'INVALID_RECORD_IDENTIFIER',
-                    message: doNotTranslate(
-                      `Agent history ${name} write returned a non-string record ID`,
-                    ),
-                  });
-                }
-
-                return id;
-              });
-
-              if (name === 'agentMessage') {
-                for (const recordId of recordIds) {
-                  writtenMessageIds.add(recordId.toLowerCase());
-                }
-              }
-
-              const pair = await resolveDirectMessagePair();
-
-              if (!isDefined(pair)) {
-                return;
-              }
-
-              await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
-                {
-                  workspaceId,
-                  transactionScope,
-                  pair,
-                  conversationObjectName: name,
-                  conversationRecordIds: recordIds,
-                },
-              );
-            };
-
-            return work({
+              values,
               threadId,
-              executeRawQuery: transactionScope.executeRawQuery,
-              insert: async ({ name, values }) => {
-                validateAgentHistoryConversationRecordsOrThrow({
-                  name,
-                  values,
-                  threadId,
-                  writtenMessageIds,
-                });
+              writtenMessageIds,
+            });
 
-                const { identifiers } =
-                  await getRepository(name).insert(values);
+            const { identifiers } = await getRepository(name).insert(values);
 
-                await shareInsertedRecords({ name, identifiers });
-              },
-              update: async ({ name, where, values }) => {
-                const result = await getRepository(name).update(where, values);
+            await shareInsertedRecords({ name, identifiers });
+          },
+          update: async ({ name, where, values }) => {
+            const result = await getRepository(name).update(where, values);
 
-                return result.generatedMaps.length;
-              },
-              upsert: async ({ name, values, conflictPaths }) => {
-                const normalizedValues = { ...values };
+            return result.generatedMaps.length;
+          },
+          upsert: async ({ name, values, conflictPaths }) => {
+            const normalizedValues = { ...values };
 
-                if (isString(normalizedValues.id)) {
-                  normalizedValues.id = normalizedValues.id.toLowerCase();
-                }
+            if (isString(normalizedValues.id)) {
+              normalizedValues.id = normalizedValues.id.toLowerCase();
+            }
 
-                validateAgentHistoryConversationRecordsOrThrow({
-                  name,
-                  values: normalizedValues,
-                  threadId,
-                  writtenMessageIds,
-                });
+            validateAgentHistoryConversationRecordsOrThrow({
+              name,
+              values: normalizedValues,
+              threadId,
+              writtenMessageIds,
+            });
 
-                const identity = [...conflictPaths]
-                  .sort()
-                  .map((field) => [field, normalizedValues[field]]);
+            const identity = [...conflictPaths]
+              .sort()
+              .map((field) => [field, normalizedValues[field]]);
 
-                await transactionScope.executeRawQuery(
-                  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-                  [
-                    `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
-                  ],
-                );
+            await transactionScope.executeRawQuery(
+              'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+              [
+                `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
+              ],
+            );
 
-                const { identifiers } = await getRepository(name).upsert(
-                  normalizedValues,
-                  conflictPaths,
-                );
+            const { identifiers } = await getRepository(name).upsert(
+              normalizedValues,
+              conflictPaths,
+            );
 
-                await shareInsertedRecords({ name, identifiers });
-              },
-              delete: async ({ name, where }) => {
-                const pair = await resolveDirectMessagePair();
+            await shareInsertedRecords({ name, identifiers });
+          },
+          delete: async ({ name, where }) => {
+            const pair = await resolveDirectMessagePair();
 
-                if (!isDefined(pair)) {
-                  const { raw } = await getRepository(name).delete(where);
+            if (!isDefined(pair)) {
+              const { raw } = await getRepository(name).delete(where);
 
-                  return raw.length;
-                }
+              return raw.length;
+            }
 
-                return deleteAgentHistoryRecordsWithShares({
-                  workspaceId,
-                  transactionScope,
-                  name,
-                  where,
-                  deleteShares: (records) =>
-                    this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
-                      { workspaceId, transactionScope, ...records },
-                    ),
-                });
-              },
-              afterCommit: transactionScope.afterCommit,
+            return deleteAgentHistoryRecordsWithShares({
+              workspaceId,
+              transactionScope,
+              name,
+              where,
+              deleteShares: (records) =>
+                this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
+                  { workspaceId, transactionScope, ...records },
+                ),
             });
           },
-        ),
+          afterCommit: transactionScope.afterCommit,
+        });
+      },
       buildSystemAuthContext(workspaceId),
       { lite: true },
     );

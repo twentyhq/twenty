@@ -2921,7 +2921,7 @@ msgstr "Агенти"
 #. js-lingui-id: D2ijkj
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Agents that will fail"
-msgstr ""
+msgstr "Агенти, які зазнають невдачі"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3014,17 +3014,17 @@ msgstr "Кредити ШІ буде поновлено через {0, plural, o
 #. js-lingui-id: MuT/nD
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy and Privacy tab"
-msgstr ""
+msgstr "Політика даних ШІ та вкладка «Конфіденційність»"
 
 #. js-lingui-id: WQyHss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI data processing"
-msgstr ""
+msgstr "Обробка даних ШІ"
 
 #. js-lingui-id: zNuqPE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
-msgstr ""
+msgstr "ШІ призупинено"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -4262,7 +4262,7 @@ msgstr "Попросіть адміністратора збільшити лі�
 #. js-lingui-id: fy+eXl
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Ask an admin with security access to change this"
-msgstr ""
+msgstr "Попросіть адміністратора з доступом до безпеки змінити це"
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
@@ -4532,7 +4532,7 @@ msgstr "Журнали аудиту"
 #. js-lingui-id: 7tMFh/
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Audited controls and the agreements that cover your data."
-msgstr ""
+msgstr "Перевірені засоби контролю та угоди, що охоплюють ваші дані."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5073,7 +5073,7 @@ msgstr "Доступ через квадратні дужки не підтри�
 #. js-lingui-id: Mh79rW
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Breach notification"
-msgstr ""
+msgstr "Сповіщення про порушення"
 
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
@@ -5152,7 +5152,7 @@ msgstr "Створюйте зв’язки «багато-до-багатьох�
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Built to meet EU data protection rules"
-msgstr ""
+msgstr "Створено відповідно до правил захисту даних ЄС"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5829,7 +5829,7 @@ msgstr "Змінити тему на системну"
 #. js-lingui-id: 3Hphdi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Change where AI providers process requests and what they keep"
-msgstr ""
+msgstr "Змініть, де постачальники ШІ обробляють запити та що вони зберігають"
 
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -6205,7 +6205,7 @@ msgstr "Виберіть, що станеться під час натискан
 #. js-lingui-id: XDg9PA
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Choose what Twenty can access to support you and improve the product."
-msgstr ""
+msgstr "Виберіть, до чого Twenty може отримувати доступ, щоб підтримувати вас і вдосконалювати продукт."
 
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -6878,7 +6878,7 @@ msgstr "Складність"
 #. js-lingui-id: psC+XF
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Compliance"
-msgstr ""
+msgstr "Відповідність вимогам"
 
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
@@ -8883,7 +8883,7 @@ msgstr "Щоденне використання ШІ"
 #. js-lingui-id: /dr6KQ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Daily backups"
-msgstr ""
+msgstr "Щоденні резервні копії"
 
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -8952,7 +8952,7 @@ msgstr "Експорт даних"
 #. js-lingui-id: a4sORy
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
-msgstr ""
+msgstr "Дані шифруються під час передавання та зберігання, а ключі регулярно оновлюються"
 
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8994,7 +8994,7 @@ msgstr "Дані на екрані"
 #. js-lingui-id: oBChYi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Data processing"
-msgstr ""
+msgstr "Обробка даних"
 
 #. js-lingui-id: /qrjU8
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -10504,7 +10504,7 @@ msgstr "Кожний сегмент відображає"
 #. js-lingui-id: Iz+rDD
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Each workspace has its own database schema"
-msgstr ""
+msgstr "Кожен робочий простір має власну схему бази даних"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -11151,12 +11151,12 @@ msgstr "Увімкнути функції, специфічні для моде�
 #. js-lingui-id: sqO0Ni
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted daily snapshots, kept 30 days"
-msgstr ""
+msgstr "Зашифровані щоденні знімки, що зберігаються 30 днів"
 
 #. js-lingui-id: qILKh1
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted everywhere"
-msgstr ""
+msgstr "Шифрування всюди"
 
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11278,7 +11278,7 @@ msgstr "Введіть значення JSON"
 #. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
-msgstr ""
+msgstr "Введіть ім’я від 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} символів в одному рядку. Квадратні дужки мають бути парними та не можуть бути вкладеними."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11826,17 +11826,17 @@ msgstr "Оцінити ймовірність"
 #. js-lingui-id: MzEfu4
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "EU only"
-msgstr ""
+msgstr "Лише ЄС"
 
 #. js-lingui-id: 84VCrZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, standard retention"
-msgstr ""
+msgstr "Лише ЄС, стандартне зберігання"
 
 #. js-lingui-id: e8+f0R
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, zero data retention"
-msgstr ""
+msgstr "Лише ЄС, без зберігання даних"
 
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -11949,7 +11949,7 @@ msgstr "кожну годину"
 #. js-lingui-id: loBt0P
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Every line of code is public, so you can audit it yourself"
-msgstr ""
+msgstr "Кожен рядок коду є публічним, тож ви можете самостійно його перевірити"
 
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
@@ -11966,7 +11966,7 @@ msgstr "Усі об’єкти цього робочого простору як
 #. js-lingui-id: h3QLIe
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Every provider that handles your data"
-msgstr ""
+msgstr "Кожен постачальник, який обробляє ваші дані"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -13610,6 +13610,7 @@ msgid "Formats"
 msgstr "Формати"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Колишній учасник"
@@ -13855,7 +13856,7 @@ msgstr "Функції - Налаштування"
 #. js-lingui-id: arkG3W
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "GDPR"
-msgstr ""
+msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -13917,7 +13918,7 @@ msgstr "Згенерувати код відновлення"
 #. js-lingui-id: h9wFH2
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Generate a signed copy in one click"
-msgstr ""
+msgstr "Створіть підписану копію одним клацанням"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14015,7 +14016,7 @@ msgstr "GIN (повнотекстовий пошук і JSONB)"
 #. js-lingui-id: RkXlPZ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -14485,7 +14486,7 @@ msgstr "Довідковий центр"
 #. js-lingui-id: GY8MUv
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Help improve Twenty"
-msgstr ""
+msgstr "Допоможіть покращити Twenty"
 
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -14647,7 +14648,7 @@ msgstr "Містить налаштування та перевизначенн�
 #. js-lingui-id: fFtUGj
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Hosting"
-msgstr ""
+msgstr "Хостинг"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -14688,7 +14689,7 @@ msgstr "Як ви виглядатимете для членів команди 
 #. js-lingui-id: iGMucd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "How your data is protected"
-msgstr ""
+msgstr "Як захищено ваші дані"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -15221,7 +15222,7 @@ msgstr "Збільшити значення"
 #. js-lingui-id: dW+3Q4
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Independently audited security controls"
-msgstr ""
+msgstr "Незалежно перевірені засоби контролю безпеки"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15859,7 +15860,7 @@ msgstr "Сьогодні{timeZoneAbbreviationSuffix}"
 #. js-lingui-id: YbqWR4
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Isolated workspace"
-msgstr ""
+msgstr "Ізольований робочий простір"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -18147,7 +18148,7 @@ msgstr "Моделі"
 #. js-lingui-id: o4Xn+q
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Models above are limited to the providers your privacy settings allow."
-msgstr ""
+msgstr "Доступні вище моделі обмежені постачальниками, яких дозволяють ваші налаштування конфіденційності."
 
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -18745,7 +18746,7 @@ msgstr "Новий канал"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Новий чат"
 
@@ -19135,7 +19136,7 @@ msgstr "Для цього користувача не зафіксовано с�
 #. js-lingui-id: m/JoOZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "No AI model on this workspace meets these settings."
-msgstr ""
+msgstr "Жодна модель ШІ в цьому робочому просторі не відповідає цим налаштуванням."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
@@ -19147,7 +19148,7 @@ msgstr "Для цього екземпляра не налаштовано по�
 #. js-lingui-id: lBnUyA
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No AI provider trains on your data, and neither does Twenty"
-msgstr ""
+msgstr "Жоден постачальник ШІ не навчається на ваших даних, як і Twenty"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19900,7 +19901,7 @@ msgstr "Без теми"
 #. js-lingui-id: lNEINd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No training on your data"
-msgstr ""
+msgstr "Без навчання на ваших даних"
 
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
@@ -20741,7 +20742,7 @@ msgstr "Спільною є лише тема"
 #. js-lingui-id: 41eae/
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Only use providers that keep no copy of your prompts and responses"
-msgstr ""
+msgstr "Використовуйте лише постачальників, які не зберігають копій ваших запитів і відповідей"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20947,7 +20948,7 @@ msgstr "Відкрити бічну панель"
 #. js-lingui-id: v+Wp++
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Open source"
-msgstr ""
+msgstr "Відкритий вихідний код"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21915,7 +21916,7 @@ msgstr "Закріплено"
 #. js-lingui-id: ylGwx6
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Pinned models not in use"
-msgstr ""
+msgstr "Закріплені моделі, що не використовуються"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -22312,7 +22313,7 @@ msgstr "Пріоритет: {0}"
 #. js-lingui-id: rjGI/Q
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Privacy"
-msgstr ""
+msgstr "Конфіденційність"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22356,7 +22357,7 @@ msgstr "Обробка запису"
 #. js-lingui-id: kLAZG6
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Processing region"
-msgstr ""
+msgstr "Регіон обробки"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -25101,7 +25102,7 @@ msgstr "Безпека"
 #. js-lingui-id: OpFwR0
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Security you can verify"
-msgstr ""
+msgstr "Безпека, яку можна перевірити"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -26044,7 +26045,7 @@ msgstr "Поширювати події календаря між каналам
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Share session replays and AI conversations to help us improve Twenty"
-msgstr ""
+msgstr "Діліться повторами сеансів і розмовами зі ШІ, щоб допомогти нам покращити Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -26105,7 +26106,7 @@ msgstr "Не вдалося завантажити налаштування сп
 #. js-lingui-id: K8Q+iX
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Sharing with Twenty"
-msgstr ""
+msgstr "Спільне використання з Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26247,7 +26248,7 @@ msgstr "Показувати сторінку «Початок роботи» т
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Показувати вкладку «Конфіденційність» і застосовувати її політику даних ШІ та налаштування спільного використання даних. Вимкнення цього параметра скасовує всі збережені політики. Увімкніть після завершення оновлення екземпляра."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26609,12 +26610,12 @@ msgstr "Відкладено до {eventTime}"
 #. js-lingui-id: 01L/Si
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "SOC 2"
-msgstr ""
+msgstr "SOC 2"
 
 #. js-lingui-id: LBv08V
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
-msgstr ""
+msgstr "Перевірені засоби контролю SOC 2, шифрування під час передавання та зберігання, а також код, який може переглянути будь-хто."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -27277,7 +27278,7 @@ msgstr "Відправити"
 #. js-lingui-id: amVqRj
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Subprocessors"
-msgstr ""
+msgstr "Субпідрядники з обробки даних"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -28152,7 +28153,7 @@ msgstr "Роль, пов’язана з цим вебхуком."
 #. js-lingui-id: OBY7M0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "The safeguards behind every Twenty Cloud workspace."
-msgstr ""
+msgstr "Заходи захисту для кожного робочого простору Twenty Cloud."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -28275,12 +28276,12 @@ msgstr "Сталася помилка під час оновлення паро�
 #. js-lingui-id: hOYgrt
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
-msgstr ""
+msgstr "Ці агенти використовують модель, яку виключають ваші налаштування, тому під час запуску вони завершуються з помилкою: {agentLabels}"
 
 #. js-lingui-id: ZSRi5U
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
-msgstr ""
+msgstr "Ці рівні використовують дозволену модель як резервну: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -29474,7 +29475,7 @@ msgstr "Так/Ні"
 #. js-lingui-id: tdZpCd
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Trust Center"
-msgstr ""
+msgstr "Центр довіри"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -29562,7 +29563,7 @@ msgstr "Twenty заповнює кожен рівень найкращою мо�
 #. js-lingui-id: 0mWZoP
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
-msgstr ""
+msgstr "Twenty не має власної моделі ШІ. Виберіть, які постачальники можуть обробляти ваші запити. Суворіші налаштування залишають менше моделей, а деякі коштують дорожче."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -31552,7 +31553,7 @@ msgstr "Ми зіставляємо ці поля. Якщо {0} вже існу�
 #. js-lingui-id: AXVG2Y
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "We notify you within 72 hours, as set out in the DPA"
-msgstr ""
+msgstr "Ми повідомимо вас протягом 72 годин, як зазначено в DPA"
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -31857,7 +31858,7 @@ msgstr "Де"
 #. js-lingui-id: I7dUhW
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Where AI providers process your requests"
-msgstr ""
+msgstr "Де постачальники ШІ обробляють ваші запити"
 
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -32274,7 +32275,7 @@ msgstr "Робочі простори"
 #. js-lingui-id: yehD4Z
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Workspaces run on AWS in Frankfurt, Germany"
-msgstr ""
+msgstr "Робочі простори працюють на AWS у Франкфурті, Німеччина"
 
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -32286,17 +32287,17 @@ msgstr "Статус робочих просторів"
 #. js-lingui-id: C+gilE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Worldwide"
-msgstr ""
+msgstr "По всьому світу"
 
 #. js-lingui-id: oR3/ss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, standard retention"
-msgstr ""
+msgstr "По всьому світу, стандартне зберігання"
 
 #. js-lingui-id: iTAMb7
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, zero data retention"
-msgstr ""
+msgstr "По всьому світу, без зберігання даних"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32343,6 +32344,11 @@ msgstr "Напишіть опис для цього агента"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Напишіть повідомлення"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Напишіть повідомлення..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32850,7 +32856,7 @@ msgstr "Zed"
 #. js-lingui-id: 2sLNC3
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Zero data retention"
-msgstr ""
+msgstr "Без зберігання даних"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

@@ -9469,7 +9469,7 @@ msgstr "Κανένα επαληθευμένο όνομα τομέα αποστο
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
-msgstr ""
+msgstr "Κανένα από τα άτομα που επιλέξατε δεν μπορεί να απαντήσει σε αυτή τη συνομιλία. Προσθέστε τον/την {AGENT_CHAT_ASSISTANT_NAME} ή κάποιον που μπορεί να απαντήσει."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10988,12 +10988,12 @@ msgstr "Τύπος οντότητας"
 #. js-lingui-id: gSSOI6
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not available until the upgrade has completed."
-msgstr ""
+msgstr "Οι ρυθμίσεις απορρήτου δεν είναι διαθέσιμες μέχρι να ολοκληρωθεί η αναβάθμιση."
 
 #. js-lingui-id: xIeg8k
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not enabled for this workspace."
-msgstr ""
+msgstr "Οι ρυθμίσεις απορρήτου δεν είναι ενεργοποιημένες για αυτόν τον χώρο εργασίας."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12687,7 +12687,7 @@ msgstr "Σύντομοι σύνδεσμοι"
 #. js-lingui-id: kIPldv
 #: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
 msgid "Sign in as a workspace member or use an application token to make this request."
-msgstr ""
+msgstr "Συνδεθείτε ως μέλος του χώρου εργασίας ή χρησιμοποιήστε ένα διακριτικό εφαρμογής για να υποβάλετε αυτό το αίτημα."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts

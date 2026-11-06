@@ -266,6 +266,22 @@ enum AiChatAssistantMode {
   NEVER
 }
 
+type AiChatAssistantProfile {
+  avatarColor: String!
+  avatarFace: String!
+  avatarShape: String!
+  displayName: String!
+  isAvatarAnimated: Boolean!
+}
+
+input AiChatAssistantProfileInput {
+  avatarColor: String
+  avatarFace: String
+  avatarShape: String
+  displayName: String
+  isAvatarAnimated: Boolean
+}
+
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
@@ -3587,6 +3603,7 @@ type Mutation {
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  resetAiChatAssistantProfile: AiChatAssistantProfile!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   resetPageLayoutToDefault(id: String!): PageLayout!
@@ -5681,6 +5698,7 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatAssistantProfile: AiChatAssistantProfileInput
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
@@ -6454,6 +6472,7 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatAssistantProfile: AiChatAssistantProfile!
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!

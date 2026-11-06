@@ -1,3 +1,4 @@
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
@@ -34,7 +35,6 @@ import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-mo
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { isAgentChatDirectMessageAddressedWithinPair } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-direct-message-addressed-within-pair.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -192,7 +192,12 @@ export class AgentChatMemberMessageSenderService {
       });
     }
 
-    if (isDefined(thread.deletedAt)) {
+    if (isDefined(thread.deletedAt) && isDirectMessage) {
+      await this.chatThreadService.restoreDirectMessageThread({
+        workspaceId: actor.workspaceId,
+        thread,
+      });
+    } else if (isDefined(thread.deletedAt)) {
       await this.chatThreadService.restoreThread(threadAccess);
     }
 
