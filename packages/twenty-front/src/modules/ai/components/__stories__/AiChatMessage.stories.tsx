@@ -29,6 +29,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
@@ -352,6 +353,31 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Ada]]';
+const RENAMED_ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Scout Bot: [support] 100%]]';
+
+const mockAssistantMentionMessage: ExtendedUIMessage = {
+  id: 'msg-assistant-mentions',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'text',
+      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review [[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]].
+
+Legacy text: @Ada wrote this.
+
+\`\`\`text
+${ASSISTANT_MENTION}
+\`\`\``,
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+  },
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockLongUserMessage,
@@ -518,6 +544,26 @@ export const LongUserMessage: Story = {
 
 export const AssistantTextResponse: Story = {
   render: () => <AiChatMessage messageId={mockSimpleTextResponse.id} />,
+};
+
+export const AssistantMentions: Story = {
+  decorators: [MemoryRouterDecorator],
+  parameters: { messages: [mockAssistantMentionMessage] },
+  render: () => <AiChatMessage messageId={mockAssistantMentionMessage.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('@Ada')).toBeVisible();
+    await expect(canvas.getByText('@Scout Bot: [support] 100%')).toBeVisible();
+    await expect(canvas.getByText('Charles Test')).toBeVisible();
+    await expect(
+      canvas.getByText('Legacy text: @Ada wrote this.'),
+    ).toBeVisible();
+    await expect(canvas.getByText(ASSISTANT_MENTION)).toBeVisible();
+    await expect(
+      canvas.queryByText(RENAMED_ASSISTANT_MENTION),
+    ).not.toBeInTheDocument();
+  },
 };
 
 export const AssistantStreaming: Story = {

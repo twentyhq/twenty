@@ -186,7 +186,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, application, agentId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof createNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
@@ -204,8 +204,6 @@ export class CreateNavigationMenuItemTool extends BaseTool<
         input: toServiceInput(input, userWorkspaceId),
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
-        authApplicationId: application?.id,
-        authAgentId: agentId,
       });
 
       return {

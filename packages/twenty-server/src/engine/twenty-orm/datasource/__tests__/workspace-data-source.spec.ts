@@ -90,7 +90,8 @@ const sumPetColumn = ({
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       permissionsPrincipals: undefined,
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-      recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
+      recordRepositoryPermissions:
+        {} as WorkspaceInternalContext['recordRepositoryPermissions'],
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

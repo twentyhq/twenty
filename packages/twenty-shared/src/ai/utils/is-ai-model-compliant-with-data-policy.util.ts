@@ -1,6 +1,6 @@
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from '../constants/model-residencies-allowed-by-policy.const';
+import { DATA_RESIDENCIES_BY_REGION } from '../constants/data-residencies-by-region.const';
 import { type DataResidency } from '../constants/data-residency.const';
 import { type AiDataPolicy } from '../types/AiDataPolicy';
 import { isDataResidency } from './is-data-residency.util';
@@ -13,7 +13,10 @@ export const isAiModelCompliantWithDataPolicy = ({
     dataResidency?: string | null;
     zeroDataRetention?: boolean | null;
   };
-  aiDataPolicy: AiDataPolicy;
+  aiDataPolicy: Pick<
+    AiDataPolicy,
+    'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
+  >;
 }): boolean => {
   if (
     aiDataPolicy.isZeroDataRetentionRequired &&
@@ -22,16 +25,16 @@ export const isAiModelCompliantWithDataPolicy = ({
     return false;
   }
 
-  if (!isDefined(aiDataPolicy.dataResidency)) {
+  if (!isDefined(aiDataPolicy.requiredDataResidencyRegion)) {
     return true;
   }
 
-  const allowedResidencies: readonly DataResidency[] =
-    MODEL_RESIDENCIES_ALLOWED_BY_POLICY[aiDataPolicy.dataResidency];
+  const allowedDataResidencies: readonly DataResidency[] =
+    DATA_RESIDENCIES_BY_REGION[aiDataPolicy.requiredDataResidencyRegion];
 
   return (
     isDefined(model.dataResidency) &&
     isDataResidency(model.dataResidency) &&
-    allowedResidencies.includes(model.dataResidency)
+    allowedDataResidencies.includes(model.dataResidency)
   );
 };

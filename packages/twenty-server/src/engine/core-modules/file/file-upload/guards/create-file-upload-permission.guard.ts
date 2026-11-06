@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,13 +50,9 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
 
     for (const permissionFlag of acceptedPermissionFlags) {
       const hasPermission =
-        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId: request.userWorkspaceId,
-          workspaceId: request.workspace.id,
-          setting: permissionFlag,
-          apiKeyId: request.apiKey?.id,
-          applicationId: request.application?.id,
-          agentId: request.agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: buildWorkspaceAuthContextFromRequest(request),
+          permissionFlag: permissionFlag,
         });
 
       if (hasPermission) {

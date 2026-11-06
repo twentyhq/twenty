@@ -1,11 +1,10 @@
+import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
@@ -31,8 +30,40 @@ export class AgentChatDirectMessageIdentityService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly directMessageConversationPrivacyService: AgentChatDirectMessageConversationPrivacyService,
   ) {}
+
+  async open({
+    workspaceId,
+    firstWorkspaceMemberId,
+    secondWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    firstWorkspaceMemberId: string;
+    secondWorkspaceMemberId: string;
+  }): Promise<string> {
+    const pair = normalizeAgentChatDirectMessagePairOrThrow({
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+    const { flatWorkspaceMemberMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'featureFlagsMap',
+      ]);
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
+
+    return this.getOrCreate({
+      workspaceId,
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+  }
 
   async getOrCreate({
     workspaceId,
@@ -57,20 +88,12 @@ export class AgentChatDirectMessageIdentityService {
       return existingThread.id;
     }
 
-    const { flatWorkspaceMemberMaps, flatObjectMetadataMaps } =
+    const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
       ]);
 
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
-
-    const threadObjectMetadata =
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThread',
-      ) ?? throwAgentChatThreadNotFound();
 
     const createdThreadId =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -92,16 +115,27 @@ export class AgentChatDirectMessageIdentityService {
                   { onConflictDoNothing: true },
                 );
 
-              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
-              await this.recordSharingWriteService.setRecordsPrivate({
-                workspaceId,
-                flatObjectMetadata: threadObjectMetadata,
-                recordIds: identifiers.map(({ id }) => id),
-                isPrivate: true,
-                transactionScope,
-              });
+              const createdThreadId = identifiers[0]?.id;
 
-              return identifiers[0]?.id;
+              if (!isDefined(createdThreadId)) {
+                return undefined;
+              }
+
+              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
+              await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+                {
+                  workspaceId,
+                  transactionScope,
+                  pair: [
+                    pair.directMessageFirstWorkspaceMemberId,
+                    pair.directMessageSecondWorkspaceMemberId,
+                  ],
+                  conversationObjectName: 'agentChatThread',
+                  conversationRecordIds: [createdThreadId],
+                },
+              );
+
+              return createdThreadId;
             },
           ),
         buildSystemAuthContext(workspaceId),

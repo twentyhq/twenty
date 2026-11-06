@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { In, IsNull, Repository } from 'typeorm';
 
 import {
@@ -225,18 +226,12 @@ export class ConnectedAccountMetadataService {
   async isAdministrableByCaller({
     connectedAccount,
     userWorkspaceId,
-    workspaceId,
-    applicationId,
-    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
       'scope' | 'userWorkspaceId' | 'provider'
     >;
     userWorkspaceId: string;
-    workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
@@ -244,17 +239,12 @@ export class ConnectedAccountMetadataService {
 
     switch (connectedAccount.scope) {
       case 'WORKSPACE':
-        return this.settingPermissionsService.userHasWorkspaceSettingPermission(
-          {
-            userWorkspaceId,
-            workspaceId,
-            applicationId,
-            agentId,
-            setting: getConnectedAccountAdministrationPermissionFlag(
-              connectedAccount.provider,
-            ),
-          },
-        );
+        return this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: getConnectedAccountAdministrationPermissionFlag(
+            connectedAccount.provider,
+          ),
+        });
       case 'USER':
         return false;
       default:
@@ -266,23 +256,16 @@ export class ConnectedAccountMetadataService {
     id,
     userWorkspaceId,
     workspaceId,
-    applicationId,
-    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
     const isAdministrableByCaller = await this.isAdministrableByCaller({
       connectedAccount,
       userWorkspaceId,
-      workspaceId,
-      applicationId,
-      agentId,
     });
 
     if (!isAdministrableByCaller) {
