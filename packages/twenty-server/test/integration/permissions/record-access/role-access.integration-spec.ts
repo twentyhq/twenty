@@ -276,10 +276,16 @@ describePermissionTestWorkspace({
           );
 
         expect(
-          await recordPermissionsService.canReadRecords(recordsQuestion),
+          await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
         ).toBe(true);
         expect(
-          await recordPermissionsService.canUpdateRecords(recordsQuestion),
+          await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'update',
+          }),
         ).toBe(true);
       });
     });

@@ -39,7 +39,7 @@ export class CallRecordingService {
 
       if (
         !(await this.recordPermissionsService.canRoleAccessSomeRecords({
-          operationType: 'select',
+          operationType: 'read',
           principals: permissionsPrincipals,
           objectMetadataId: objectIdByNameSingular.callRecording,
         }))

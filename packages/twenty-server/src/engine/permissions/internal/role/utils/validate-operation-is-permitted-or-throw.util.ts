@@ -72,10 +72,10 @@ export const validateOperationIsPermittedOrThrow = ({
   const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
 
   switch (operationType) {
-    case 'select':
-    case 'delete':
+    case 'read':
+    case 'destroy':
     case 'restore':
-    case 'soft-delete':
+    case 'softDelete':
       validateReadFieldPermissionOrThrow({
         restrictedFields,
         selectedColumns,
@@ -84,7 +84,7 @@ export const validateOperationIsPermittedOrThrow = ({
         flatFieldMetadataMaps,
       });
       break;
-    case 'insert':
+    case 'create':
       validateReadFieldPermissionOrThrow({
         restrictedFields,
         selectedColumns,

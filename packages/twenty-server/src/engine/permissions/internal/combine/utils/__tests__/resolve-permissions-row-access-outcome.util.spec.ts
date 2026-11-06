@@ -54,7 +54,7 @@ const owningApplicationPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 const resolveOutcome = ({
   principals = readOnlyPrincipals,
-  operationType = 'select',
+  operationType = 'read',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
@@ -121,7 +121,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        operationType: 'delete',
+        operationType: 'destroy',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toBe(false);

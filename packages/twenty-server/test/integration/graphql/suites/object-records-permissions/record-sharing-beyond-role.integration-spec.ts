@@ -271,7 +271,7 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(
       await recordPermissionsService.canAccessSomeRecords({
-        operationType: 'select',
+        operationType: 'read',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -283,7 +283,7 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(
       await recordPermissionsService.canAccessSomeRecords({
-        operationType: 'select',
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -296,21 +296,24 @@ describe('Records shared beyond the role that can access their object', () => {
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [OTHER_RECORD_ID],
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID],
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],

@@ -144,13 +144,13 @@ export class DatabaseToolProvider implements ToolProvider {
         isExplicitlyGranted('canUpdateObjectRecords') &&
         (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'insert',
+          operationType: 'create',
         }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
         (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'select',
+          operationType: 'read',
         }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
@@ -162,13 +162,13 @@ export class DatabaseToolProvider implements ToolProvider {
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
         (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'soft-delete',
+          operationType: 'softDelete',
         }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
         (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'delete',
+          operationType: 'destroy',
         }));
 
       if (

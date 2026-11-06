@@ -473,7 +473,7 @@ describe('buildEffectiveSelectedFields', () => {
             .filter(([, objectRecordsPermissions]) =>
               canReachSomeRecords({
                 objectRecordsPermissions,
-                operationType: 'select',
+                operationType: 'read',
               }),
             )
             .map(([objectMetadataId]) => objectMetadataId),

@@ -58,7 +58,7 @@ export const isNavigationMenuItemReadable = ({
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       })
     );
   }

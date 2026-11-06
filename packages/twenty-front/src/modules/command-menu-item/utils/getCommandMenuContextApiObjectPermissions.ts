@@ -15,7 +15,7 @@ export const getCommandMenuContextApiObjectPermissions = ({
   objectMetadataId,
   canReadObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'select',
+    operationType: 'read',
   }),
   canUpdateObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
@@ -23,11 +23,11 @@ export const getCommandMenuContextApiObjectPermissions = ({
   }),
   canSoftDeleteObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'soft-delete',
+    operationType: 'softDelete',
   }),
   canDestroyObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'delete',
+    operationType: 'destroy',
   }),
   restrictedFields: objectRecordsPermissions.restrictedFields,
   rowLevelPermissionPredicates:
