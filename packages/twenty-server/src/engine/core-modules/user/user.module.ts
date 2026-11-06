@@ -20,7 +20,7 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
+import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { UserService } from './services/user.service';
@@ -34,7 +34,7 @@ import { UserService } from './services/user.service';
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserVarsModule,
     UserWorkspaceModule,
-    UserRoleModule,
+    RoleAssignmentModule,
     ConnectedAccountMetadataModule,
     RecordShareModule,
     AgentHistoryModule,

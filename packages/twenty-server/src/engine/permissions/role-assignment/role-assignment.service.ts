@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -10,20 +11,21 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
-export class UserRoleService {
+@Injectable()
+export class RoleAssignmentService {
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
     private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
@@ -75,9 +77,7 @@ export class UserRoleService {
       return { workspaceMember, userWorkspaceId: userWorkspace.id };
     }
 
-    await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-      { roleId, workspaceId },
-    );
+    await this.validateRoleAssignableToUsersOrThrow({ roleId, workspaceId });
 
     await this.assignRoleToManyUserWorkspace({
       workspaceId,
@@ -130,6 +130,54 @@ export class UserRoleService {
       ),
       workspaceId,
     });
+  }
+
+  public async validateRoleAssignableToUsersOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatRoleMaps, billingEntitlements } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleMaps',
+        'billingEntitlements',
+      ]);
+
+    const role = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    if (!role.canBeAssignedToUsers) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+      );
+    }
+
+    const entitlementError = validateFlatRoleTargetRoleIsEntitled({
+      flatRole: role,
+      flatRoleTarget: { agentUniversalIdentifier: null },
+      billingEntitlements,
+      buildOptions: { isSystemBuild: false },
+    });
+
+    if (isDefined(entitlementError)) {
+      throw new PermissionsException(
+        entitlementError.message,
+        PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
+        { userFriendlyMessage: entitlementError.userFriendlyMessage },
+      );
+    }
   }
 
   private validateNotSelfAssignmentOrThrow({

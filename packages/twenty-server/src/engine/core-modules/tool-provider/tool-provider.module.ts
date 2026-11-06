@@ -26,7 +26,6 @@ import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { ViewToolsModule } from 'src/engine/metadata-modules/view/tools/view-tools.module';
 import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -56,7 +55,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookToolsModule,
     RoleToolsModule,
     AgentToolsModule,
-    UserRoleModule,
     MetadataToolsModule,
     EmailingModule,
     TypeOrmModule.forFeature([UserEntity, FileEntity]),

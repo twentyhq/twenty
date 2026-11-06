@@ -49,7 +49,7 @@ import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/met
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,7 +66,7 @@ export class UserService {
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentService: RoleAssignmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
@@ -350,7 +350,7 @@ export class UserService {
 
     if (workspaceMembers.length > 1) {
       try {
-        await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+        await this.roleAssignmentService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
           {
             workspaceId,
             userWorkspaceId: userWorkspace.id,
