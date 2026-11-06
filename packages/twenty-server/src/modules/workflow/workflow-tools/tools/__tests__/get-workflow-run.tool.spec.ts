@@ -1,7 +1,8 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { createGetWorkflowRunTool } from '../get-workflow-run.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { GetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const WORKFLOW_RUN_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
@@ -29,7 +30,10 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps({ id: WORKFLOW_RUN_ID, state: {}, stepLogs: {} });
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(deps, context);
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
+      context,
+    );
 
     await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
@@ -72,7 +76,10 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps(workflowRun);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(deps, context);
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
+      context,
+    );
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
@@ -95,19 +102,21 @@ describe('get_workflow_run tool', () => {
       })),
     };
 
-    const tool = createGetWorkflowRunTool(
-      buildDeps({
-        id: WORKFLOW_RUN_ID,
-        state: {
-          flow: {
-            steps: [{ id: 'step-1', name: 'Find', type: 'FIND_RECORDS' }],
-          },
-          stepInfos: {
-            'step-1': { status: StepStatus.SUCCESS, result: largeOutput },
-          },
+    const deps = buildDeps({
+      id: WORKFLOW_RUN_ID,
+      state: {
+        flow: {
+          steps: [{ id: 'step-1', name: 'Find', type: 'FIND_RECORDS' }],
         },
-        stepLogs: {},
-      }),
+        stepInfos: {
+          'step-1': { status: StepStatus.SUCCESS, result: largeOutput },
+        },
+      },
+      stepLogs: {},
+    });
+
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
       buildContext(),
     );
 
@@ -126,7 +135,10 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps(null);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(deps, context);
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
+      context,
+    );
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 

@@ -1,23 +1,22 @@
-import { createGetLogicFunctionSourceTool } from '../get-logic-function-source.tool';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { GetLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/get-logic-function-source.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const LOGIC_FUNCTION_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 
-const buildDeps = (getSourceCode: jest.Mock) => ({
-  logicFunctionFromSourceService: { getSourceCode },
-});
-
-const buildContext = () => ({ workspaceId: WORKSPACE_ID });
+const buildTool = (getSourceCode: jest.Mock) =>
+  buildWorkflowToolExecutor(
+    new GetLogicFunctionSourceTool({ getSourceCode } as never),
+    { workspaceId: WORKSPACE_ID } as ToolProviderContext,
+  );
 
 describe('get_logic_function_source tool', () => {
   it('returns the source code from the service', async () => {
     const source = 'export const main = async () => ({ ok: true });';
     const getSourceCode = jest.fn().mockResolvedValue(source);
 
-    const tool = createGetLogicFunctionSourceTool(
-      buildDeps(getSourceCode),
-      buildContext(),
-    );
+    const tool = buildTool(getSourceCode);
 
     const result = await tool.execute({ logicFunctionId: LOGIC_FUNCTION_ID });
 
@@ -37,10 +36,7 @@ describe('get_logic_function_source tool', () => {
       .fn()
       .mockRejectedValue(new Error('Logic function not found'));
 
-    const tool = createGetLogicFunctionSourceTool(
-      buildDeps(getSourceCode),
-      buildContext(),
-    );
+    const tool = buildTool(getSourceCode);
 
     const result = await tool.execute({ logicFunctionId: LOGIC_FUNCTION_ID });
 

@@ -1,13 +1,19 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const baseStepFields = {
   coreWorkflowVersionId: z
@@ -92,18 +98,36 @@ const enrichResultWithNextStep = ({
   }
 };
 
-export const createCreateWorkflowVersionStepTool = (
-  deps: Pick<
-    WorkflowToolDependencies,
-    'coreWorkflowVersionMutationService' | 'coreWorkflowVersionWriteService'
-  >,
-  context: WorkflowToolContext,
-) => ({
-  name: 'create_workflow_version_step' as const,
+@DefineTool({
+  name: 'create_workflow_version_step',
+  category: ToolCategory.WORKFLOW,
   description:
     'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration. If parentStepId is not provided, the step will be appended at the end of the workflow.',
-  inputSchema: createWorkflowVersionStepSchema,
-  execute: async (parameters: CreateCoreWorkflowVersionStepInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class CreateWorkflowVersionStepTool extends BaseTool<
+  typeof createWorkflowVersionStepSchema
+> {
+  readonly inputSchema = createWorkflowVersionStepSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+    private readonly coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof createWorkflowVersionStepSchema
+  >): Promise<ToolOutput> {
+    if (!canCallerReachEveryApplication(context)) {
+      return buildToolNotAvailableOutput('create_workflow_version_step');
+    }
+
     try {
       const { workspaceId } = context;
       const { coreWorkflowVersionId } = parameters;
@@ -112,7 +136,7 @@ export const createCreateWorkflowVersionStepTool = (
 
       if (!isDefined(effectiveParentStepId)) {
         const { steps } =
-          await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+          await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
             {
               workspaceId,
               userWorkspaceId: context.userWorkspaceId,
@@ -135,16 +159,16 @@ export const createCreateWorkflowVersionStepTool = (
         }
       }
 
-      const result = await deps.coreWorkflowVersionMutationService.createStep({
+      const result = await this.coreWorkflowVersionMutationService.createStep({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         input: {
           ...parameters,
           parentStepId: effectiveParentStepId,
-        },
+        } as CreateCoreWorkflowVersionStepInput,
       });
 
-      await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
+      await this.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
         {
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,
@@ -157,7 +181,7 @@ export const createCreateWorkflowVersionStepTool = (
         message: 'Workflow version step created',
         result: enrichResultWithNextStep({
           result,
-          stepType: parameters.stepType,
+          stepType: parameters.stepType as WorkflowActionType,
         }),
       };
     } catch (error) {
@@ -167,5 +191,5 @@ export const createCreateWorkflowVersionStepTool = (
         message: `Failed to create workflow version step: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

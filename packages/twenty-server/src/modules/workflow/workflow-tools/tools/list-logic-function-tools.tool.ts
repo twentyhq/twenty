@@ -1,25 +1,49 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type WorkflowToolContext } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const listLogicFunctionToolsSchema = z.object({});
 
-export const createListLogicFunctionToolsTool = (
-  deps: {
-    flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
-  },
-  context: WorkflowToolContext,
-) => ({
-  name: 'list_logic_function_tools' as const,
+@DefineTool({
+  name: 'list_logic_function_tools',
+  category: ToolCategory.WORKFLOW,
   description:
     'List all logic functions exposed as workflow actions, which can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, names, and descriptions.',
-  inputSchema: listLogicFunctionToolsSchema,
-  execute: async () => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class ListLogicFunctionToolsTool extends BaseTool<
+  typeof listLogicFunctionToolsSchema
+> {
+  readonly inputSchema = listLogicFunctionToolsSchema;
+
+  constructor(
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {
+    super();
+  }
+
+  async execute({
+    context,
+  }: ToolExecuteArgs<
+    typeof listLogicFunctionToolsSchema
+  >): Promise<ToolOutput> {
+    if (!canCallerReachEveryApplication(context)) {
+      return buildToolNotAvailableOutput('list_logic_function_tools');
+    }
+
     const { flatLogicFunctionMaps } =
-      await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
           flatMapsKeys: ['flatLogicFunctionMaps'],
@@ -47,5 +71,5 @@ export const createListLogicFunctionToolsTool = (
         })),
       },
     };
-  },
-});
+  }
+}

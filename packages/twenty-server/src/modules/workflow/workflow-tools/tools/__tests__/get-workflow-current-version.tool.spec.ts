@@ -1,7 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-
-import { createGetWorkflowCurrentVersionTool } from '../get-workflow-current-version.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { GetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const CORE_WORKFLOW_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
@@ -42,7 +42,13 @@ const buildDeps = ({
 });
 
 const buildTool = (deps: ReturnType<typeof buildDeps>) =>
-  createGetWorkflowCurrentVersionTool(deps, buildContext());
+  buildWorkflowToolExecutor(
+    new GetWorkflowCurrentVersionTool(
+      deps.coreWorkflowListService as never,
+      deps.coreWorkflowVersionListService as never,
+    ),
+    buildContext(),
+  );
 
 describe('get_workflow_current_version tool', () => {
   it('should read the definition from core using the core workflow id', async () => {

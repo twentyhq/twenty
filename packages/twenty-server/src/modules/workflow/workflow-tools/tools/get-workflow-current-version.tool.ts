@@ -1,11 +1,17 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
+import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const getWorkflowCurrentVersionSchema = z.object({
   coreWorkflowId: z
@@ -16,33 +22,41 @@ const getWorkflowCurrentVersionSchema = z.object({
     ),
 });
 
-type GetWorkflowCurrentVersionInput = z.infer<
-  typeof getWorkflowCurrentVersionSchema
->;
-
-export const createGetWorkflowCurrentVersionTool = (
-  deps: {
-    coreWorkflowListService: Pick<
-      WorkflowToolDependencies['coreWorkflowListService'],
-      'findOneById'
-    >;
-    coreWorkflowVersionListService: Pick<
-      WorkflowToolDependencies['coreWorkflowVersionListService'],
-      'findManyByCoreWorkflowId' | 'findOneByCoreWorkflowVersionId'
-    >;
-  },
-  context: WorkflowToolContext,
-) => ({
-  name: 'get_workflow_current_version' as const,
+@DefineTool({
+  name: 'get_workflow_current_version',
+  category: ToolCategory.WORKFLOW,
   description:
     'Get the current version of a workflow. Returns the draft version if one exists, otherwise the last published version. Returns a core workflow version ID (coreWorkflowVersionId), which the editing tools expect.',
-  inputSchema: getWorkflowCurrentVersionSchema,
-  execute: async (parameters: GetWorkflowCurrentVersionInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class GetWorkflowCurrentVersionTool extends BaseTool<
+  typeof getWorkflowCurrentVersionSchema
+> {
+  readonly inputSchema = getWorkflowCurrentVersionSchema;
+
+  constructor(
+    private readonly coreWorkflowListService: CoreWorkflowListService,
+    private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof getWorkflowCurrentVersionSchema
+  >): Promise<ToolOutput> {
+    if (!canCallerReachEveryApplication(context)) {
+      return buildToolNotAvailableOutput('get_workflow_current_version');
+    }
+
     try {
       const { workspaceId } = context;
       const { coreWorkflowId } = parameters;
 
-      const coreWorkflow = await deps.coreWorkflowListService.findOneById({
+      const coreWorkflow = await this.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         callerApplication: undefined,
@@ -58,7 +72,7 @@ export const createGetWorkflowCurrentVersionTool = (
       }
 
       const coreWorkflowVersions =
-        await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
+        await this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,
           callerApplication: undefined,
@@ -85,7 +99,7 @@ export const createGetWorkflowCurrentVersionTool = (
       }
 
       const coreWorkflowVersion =
-        await deps.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
+        await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
           {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -121,5 +135,5 @@ export const createGetWorkflowCurrentVersionTool = (
         message: `Failed to get workflow current version: ${error.message}`,
       };
     }
-  },
-});
+  }
+}
