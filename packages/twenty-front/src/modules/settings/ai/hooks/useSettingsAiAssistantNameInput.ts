@@ -13,12 +13,14 @@ export const useSettingsAiAssistantNameInput = (
   const [nameInput, setNameInput] = useState({
     confirmedDisplayName,
     displayName: confirmedDisplayName,
+    hasEditedName: false,
   });
 
   if (nameInput.confirmedDisplayName !== confirmedDisplayName) {
     setNameInput({
       confirmedDisplayName,
       displayName: confirmedDisplayName,
+      hasEditedName: false,
     });
   }
 
@@ -27,21 +29,25 @@ export const useSettingsAiAssistantNameInput = (
   );
 
   const setDraftDisplayName = (displayName: string) => {
-    setNameInput((previousInput) => ({ ...previousInput, displayName }));
+    setNameInput((previousInput) => ({
+      ...previousInput,
+      displayName,
+      hasEditedName: true,
+    }));
   };
 
   const commitName = ():
     | Pick<AiChatAssistantProfile, 'displayName'>
     | undefined => {
-    if (!parsedDisplayName.success) {
+    if (!parsedDisplayName.success || !nameInput.hasEditedName) {
       return;
     }
 
-    setDraftDisplayName(parsedDisplayName.data);
-
-    if (parsedDisplayName.data === confirmedDisplayName) {
-      return;
-    }
+    setNameInput((previousInput) => ({
+      ...previousInput,
+      displayName: parsedDisplayName.data,
+      hasEditedName: false,
+    }));
 
     return { displayName: parsedDisplayName.data };
   };

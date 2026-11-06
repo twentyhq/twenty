@@ -1,5 +1,10 @@
 import { type SettingsAiAssistantProfileOperation } from '@/settings/ai/types/SettingsAiAssistantProfileOperation';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
+const isNameOnlyUpdate = (operation: SettingsAiAssistantProfileOperation) =>
+  operation.type === 'update' &&
+  isDefined(operation.patch.displayName) &&
+  Object.keys(operation.patch).every((field) => field === 'displayName');
 
 export const createSettingsAiAssistantProfileSaveQueue = () => {
   const operations: SettingsAiAssistantProfileOperation[] = [];
@@ -9,6 +14,14 @@ export const createSettingsAiAssistantProfileSaveQueue = () => {
   const canProcess = () => !isProcessing && !isPaused;
 
   const append = (operation: SettingsAiAssistantProfileOperation) => {
+    if (isPaused && isNameOnlyUpdate(operation)) {
+      const retainedOperations = operations.filter(
+        (queuedOperation) => !isNameOnlyUpdate(queuedOperation),
+      );
+
+      operations.splice(0, operations.length, ...retainedOperations);
+    }
+
     operations.push(operation);
   };
 

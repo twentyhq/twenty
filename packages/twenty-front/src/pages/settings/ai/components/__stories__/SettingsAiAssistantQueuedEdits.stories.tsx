@@ -121,6 +121,55 @@ export const NameBlurPreservesQueuedEditsThroughRetry: Story = {
   },
 };
 
+export const RevertedNameReplacesFailedSaveBeforeRetry: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const customize = await canvas.findByRole('button', { name: 'Customize' });
+
+    fixture.assistant.failNextSave();
+    await userEvent.click(customize);
+    const name = await body.findByRole('textbox', { name: 'Assistant name' });
+
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Nimbus');
+    await userEvent.keyboard('{Enter}');
+    expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Failed to save assistant settings. Try again.',
+    );
+    await waitFor(() => expect(name).not.toBeDisabled());
+    await userEvent.keyboard('{Escape}');
+    await userEvent.click(customize);
+    const reopenedName = await body.findByRole('textbox', {
+      name: 'Assistant name',
+    });
+
+    await userEvent.clear(reopenedName);
+    await userEvent.type(reopenedName, 'Ada');
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard('{Escape}');
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    await waitFor(() =>
+      expect(fixture.assistant.saveProfile).toHaveBeenCalledTimes(2),
+    );
+    await waitFor(() =>
+      expect(canvas.queryByRole('alert')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(customize).not.toBeDisabled());
+    expect(
+      jotaiStore.get(currentWorkspaceState.atom)?.aiChatAssistantProfile
+        .displayName,
+    ).toBe('Ada');
+    expect(
+      fixture.assistant.saveProfile.mock.calls.map(([input]) => input),
+    ).toEqual([
+      { aiChatAssistantProfile: { displayName: 'Nimbus' } },
+      { aiChatAssistantProfile: { displayName: 'Ada' } },
+    ]);
+  },
+};
+
 export const QueuedEditRetriesAfterHydrationResumes: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

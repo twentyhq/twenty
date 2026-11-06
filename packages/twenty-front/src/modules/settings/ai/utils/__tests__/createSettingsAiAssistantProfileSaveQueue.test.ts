@@ -60,4 +60,46 @@ describe('createSettingsAiAssistantProfileSaveQueue', () => {
     expect(retry.mock.calls).toEqual([[namePatch], [reset]]);
     expect(queue.canProcess()).toBe(true);
   });
+
+  it('replaces failed name edits while preserving avatar edits, presets and resets', async () => {
+    const queue = createSettingsAiAssistantProfileSaveQueue();
+    const avatarPatch: SettingsAiAssistantProfileOperation = {
+      type: 'update',
+      patch: { avatarShape: 'cloud' },
+    };
+    const preset: SettingsAiAssistantProfileOperation = {
+      type: 'update',
+      patch: {
+        displayName: 'Comet',
+        avatarShape: 'circle',
+        avatarColor: 'purple',
+        avatarFace: 'default',
+        isAvatarAnimated: false,
+      },
+    };
+    const reset: SettingsAiAssistantProfileOperation = { type: 'reset' };
+    const revertedName: SettingsAiAssistantProfileOperation = {
+      type: 'update',
+      patch: { displayName: 'Ada' },
+    };
+
+    queue.append({ type: 'update', patch: { displayName: 'Nimbus' } });
+    queue.append(avatarPatch);
+    queue.append(preset);
+    queue.append(reset);
+    await queue.process(async () => false);
+    queue.append({ type: 'update', patch: { displayName: 'Orbit' } });
+    queue.append(revertedName);
+
+    const retry = jest.fn(async () => true);
+
+    queue.resume();
+    await queue.process(retry);
+    expect(retry.mock.calls).toEqual([
+      [avatarPatch],
+      [preset],
+      [reset],
+      [revertedName],
+    ]);
+  });
 });
