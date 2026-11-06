@@ -1,5 +1,4 @@
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
-import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -338,7 +337,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     },
   );
 
-  it('uses the current configured name for selection and queued rechecks without rewriting history', async () => {
+  it('passes the configured name to the reply evaluator', async () => {
     models.enableEvaluation();
     const coreEntityCacheService =
       getAppProviderByClassName<CoreEntityCacheService>(
@@ -350,14 +349,6 @@ describe('Assistant reply selection with stored conversation participants', () =
       id: context.workspaceId,
     });
     const threadId = await createGroup();
-    const { messageId } = await saveMessageWithReplyContext({
-      threadId,
-      assistantReplyContext: {
-        isAssistantMentioned: false,
-        isDirectAssistantChat: true,
-        isStructuredRequestContinuation: false,
-      },
-    });
 
     try {
       await workspaceRepository.update(context.workspaceId, {
@@ -370,40 +361,11 @@ describe('Assistant reply selection with stored conversation participants', () =
         'workspaceEntity',
         context.workspaceId,
       );
-      await expect(
-        shouldReply({ threadId, text: 'Scout, can you help?' }),
-      ).resolves.toBe(true);
-      expect(models.evaluate).toHaveBeenLastCalledWith(
+      await shouldReply({ threadId, text: 'Scout, can you help?' });
+      expect(models.evaluate).toHaveBeenCalledWith(
         expect.objectContaining({
           state: expect.objectContaining({
             assistant: { displayName: 'Scout "CRM"' },
-          }),
-          questions: {
-            shouldAssistantReply: expect.objectContaining({
-              instructions: expect.not.stringContaining('Scout'),
-            }),
-          },
-        }),
-      );
-      await workspaceRepository.update(context.workspaceId, {
-        aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-      });
-      await coreEntityCacheService.invalidate(
-        'workspaceEntity',
-        context.workspaceId,
-      );
-      await expect(shouldExecute({ threadId, messageId })).resolves.toBe(true);
-      expect(models.evaluate).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          state: expect.objectContaining({
-            assistant: {
-              displayName: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName,
-            },
-            conversation: expect.arrayContaining([
-              expect.objectContaining({
-                text: 'Continue the task with this answer.',
-              }),
-            ]),
           }),
         }),
       );

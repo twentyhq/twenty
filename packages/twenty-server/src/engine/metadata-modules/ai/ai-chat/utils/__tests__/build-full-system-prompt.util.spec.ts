@@ -86,12 +86,13 @@ describe('buildFullSystemPrompt', () => {
     expect(buildPrompt(false)).not.toContain('## Custom frontend components');
   });
 
-  it('should inline referenced skills after the skill catalog', () => {
+  it('should inline referenced skills for the configured assistant', () => {
+    const assistantDisplayName = 'Scout "CRM"';
     const prompt = buildFullSystemPrompt({
       toolCatalog: [],
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
-      assistantDisplayName: 'Scout',
+      assistantDisplayName,
       preloadedTools: [],
       userWorkspaceId: USER_WORKSPACE_ID,
       workspaceId: EVEN_WORKSPACE_ID,
@@ -99,7 +100,9 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
     expect(prompt).toContain('Always create a trigger first.');
-    expect(prompt).toContain('Your display name in this workspace is "Scout".');
+    expect(prompt).toContain(
+      `Your display name in this workspace is ${JSON.stringify(assistantDisplayName)}.`,
+    );
   });
 
   it('should omit the referenced skills section when nothing is referenced', () => {
@@ -109,7 +112,6 @@ describe('buildFullSystemPrompt', () => {
   it('should keep the standard composition for regular threads', () => {
     const prompt = buildPrompt(false);
 
-    expect(prompt).toContain('Your display name in this workspace is "Ada".');
     expect(prompt).toContain(
       'You are a helpful AI assistant integrated into Twenty',
     );

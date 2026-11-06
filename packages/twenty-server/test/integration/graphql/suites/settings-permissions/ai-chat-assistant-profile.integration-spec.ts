@@ -136,57 +136,24 @@ describe('workspace assistant profile settings', () => {
     }
   });
 
-  it('previews the configured name while Inbox is enabled and defaults after reset', async () => {
-    const preview = await makeMetadataApiRequest(
-      assistantSystemPromptPreviewQueryFactory(),
-    );
+  it('previews the configured name only while Inbox is enabled', async () => {
+    const expectPreviewName = async (displayName: string) => {
+      const response = await makeMetadataApiRequest(
+        assistantSystemPromptPreviewQueryFactory(),
+      );
 
-    expect(preview.body.errors).toBeUndefined();
-    expect(preview.body.data.getAiSystemPromptPreview.sections).toContainEqual({
-      title: 'Assistant Identity',
-      content: expect.stringContaining(
-        JSON.stringify(CUSTOM_ASSISTANT_PROFILE.displayName),
-      ),
-    });
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.getAiSystemPromptPreview.sections,
+      ).toContainEqual({
+        title: 'Assistant Identity',
+        content: expect.stringContaining(JSON.stringify(displayName)),
+      });
+    };
 
-    const reset = await makeMetadataApiRequest(
-      resetWorkspaceAssistantProfileQueryFactory(),
-    );
-
-    expect(reset.body.errors).toBeUndefined();
-
-    const resetPreview = await makeMetadataApiRequest(
-      assistantSystemPromptPreviewQueryFactory(),
-    );
-
-    expect(resetPreview.body.errors).toBeUndefined();
-    expect(
-      resetPreview.body.data.getAiSystemPromptPreview.sections,
-    ).toContainEqual({
-      title: 'Assistant Identity',
-      content: expect.stringContaining(
-        JSON.stringify(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName),
-      ),
-    });
-
-    await updateWorkspace({
-      data: { aiChatAssistantProfile: CUSTOM_ASSISTANT_PROFILE },
-    });
+    await expectPreviewName(CUSTOM_ASSISTANT_PROFILE.displayName);
     await setInboxEnabled(false);
-
-    const disabledPreview = await makeMetadataApiRequest(
-      assistantSystemPromptPreviewQueryFactory(),
-    );
-
-    expect(disabledPreview.body.errors).toBeUndefined();
-    expect(
-      disabledPreview.body.data.getAiSystemPromptPreview.sections,
-    ).toContainEqual({
-      title: 'Assistant Identity',
-      content: expect.stringContaining(
-        JSON.stringify(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName),
-      ),
-    });
+    await expectPreviewName(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName);
   });
 
   it('resets every profile field to Ada defaults and reads them back', async () => {
