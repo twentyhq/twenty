@@ -455,6 +455,7 @@ input AppMessageFolderInput {
 
 input AppMessageInput {
   attachments: [AppMessageAttachmentInput!]
+  deliveryStatus: MessageDeliveryStatus
   externalId: String!
   folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
@@ -3245,6 +3246,12 @@ enum MessageChannelVisibility {
   METADATA
   SHARE_EVERYTHING
   SUBJECT
+}
+
+enum MessageDeliveryStatus {
+  DELIVERED
+  READ
+  SENT
 }
 
 type MessageFolder {
