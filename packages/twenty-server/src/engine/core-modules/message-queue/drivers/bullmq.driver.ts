@@ -46,6 +46,7 @@ import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import {
   getChargedGroupKeys,
+  type JobMemoryReconciliation,
   JobMemoryLimiter,
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
@@ -159,6 +160,12 @@ export class BullMQDriver
       },
       callback: () => this.collectQueueMemoryUsedRatio(),
     });
+  }
+
+  async reconcileJobMemory(
+    queueName: MessageQueue,
+  ): Promise<JobMemoryReconciliation> {
+    return this.jobMemoryLimiter.reconcile(queueName);
   }
 
   private async collectQueueMemoryUsedRatio(): Promise<

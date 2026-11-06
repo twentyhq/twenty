@@ -67,6 +67,15 @@ const createLimiter = async ({
         return `# Memory\r\nused_memory:${memoryInfo.usedMemoryBytes}\r\nmaxmemory:${memoryInfo.maxMemoryBytes}\r\n`;
       }
 
+      if (name !== 'eval' && name !== 'evalsha') {
+        const redisCommands = redis as unknown as Record<
+          string,
+          (...commandArguments: (string | number)[]) => Promise<unknown>
+        >;
+
+        return redisCommands[name](...args);
+      }
+
       const [script, numberOfKeys, ...scriptArguments] = args;
 
       if (name === 'evalsha') {
@@ -397,5 +406,96 @@ describe('JobMemoryLimiter', () => {
     });
 
     expect(await limiter.getUsedRatio(QUEUE)).toBe(0.5);
+  });
+
+  describe('reconcile', () => {
+    const jobKeyOf = (jobId: string) => `${KEY_PREFIX}:${QUEUE}:${jobId}`;
+
+    const chargeJob = async ({
+      limiter,
+      jobId,
+      sizeBytes = 300,
+    }: {
+      limiter: JobMemoryLimiter;
+      jobId: string;
+      sizeBytes?: number;
+    }) =>
+      limiter.admit({
+        queueName: QUEUE,
+        jobName: 'job',
+        jobs: [{ jobId, sizeBytes, groupKeys: [WORKSPACE_1, APPLICATION] }],
+      });
+
+    it('releases a charge only when two passes in a row find no job for it', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await chargeJob({ limiter, jobId: 'deleted-job' });
+
+      expect(await limiter.reconcile(QUEUE)).toEqual({
+        releasedCount: 0,
+        releasedBytes: 0,
+      });
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+
+      expect(await limiter.reconcile(QUEUE)).toEqual({
+        releasedCount: 2,
+        releasedBytes: 600,
+      });
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(0);
+      expect(await readUsedBytes({ redis, groupKey: APPLICATION })).toBe(0);
+    });
+
+    it('keeps the charge of a job that BullMQ still holds unfinished', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await chargeJob({ limiter, jobId: 'waiting-job' });
+      await redis.hset(jobKeyOf('waiting-job'), 'name', 'job');
+
+      await limiter.reconcile(QUEUE);
+      await limiter.reconcile(QUEUE);
+
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+    });
+
+    it('releases a job that BullMQ finished but kept, since its release was lost', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await chargeJob({ limiter, jobId: 'finished-job' });
+      await redis.hset(jobKeyOf('finished-job'), 'finishedOn', Date.now());
+
+      await limiter.reconcile(QUEUE);
+      await limiter.reconcile(QUEUE);
+
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(0);
+    });
+
+    it('forgets a suspect once BullMQ adds its job, so a late add is never released', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await chargeJob({ limiter, jobId: 'late-job' });
+      await limiter.reconcile(QUEUE);
+      await redis.hset(jobKeyOf('late-job'), 'name', 'job');
+      await limiter.reconcile(QUEUE);
+      await redis.del(jobKeyOf('late-job'));
+      await limiter.reconcile(QUEUE);
+
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+    });
+
+    it('leaves other charges of the key untouched', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await chargeJob({ limiter, jobId: 'deleted-job', sizeBytes: 300 });
+      await chargeJob({ limiter, jobId: 'live-job', sizeBytes: 200 });
+      await redis.hset(jobKeyOf('live-job'), 'name', 'job');
+
+      await limiter.reconcile(QUEUE);
+      await limiter.reconcile(QUEUE);
+
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(200);
+      expect(Object.keys(await redis.hgetall(jobsKeyOf(WORKSPACE_1)))).toEqual([
+        `${QUEUE}:live-job`,
+      ]);
+    });
   });
 });

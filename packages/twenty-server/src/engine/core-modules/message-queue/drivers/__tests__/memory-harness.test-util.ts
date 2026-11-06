@@ -284,6 +284,15 @@ export const createMemoryHarness = async ({
         throw new Error('connection lost');
       }
 
+      if (name !== 'eval' && name !== 'evalsha') {
+        const redisCommands = redis as unknown as Record<
+          string,
+          (...commandArguments: (string | number)[]) => Promise<unknown>
+        >;
+
+        return redisCommands[name](...args);
+      }
+
       const [script, numberOfKeys, ...scriptArguments] = args;
 
       if (name === 'evalsha') {

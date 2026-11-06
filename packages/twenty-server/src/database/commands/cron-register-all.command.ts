@@ -14,6 +14,7 @@ import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file
 import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
+import { JobMemoryReconcileCronCommand } from 'src/engine/core-modules/message-queue/crons/commands/job-memory-reconcile.cron.command';
 import { PendingWakeUpSweepCronCommand } from 'src/engine/core-modules/pending-wake-up/crons/commands/pending-wake-up-sweep.cron.command';
 import { AgentCronTriggerCronCommand } from 'src/engine/metadata-modules/ai/ai-agent-trigger/crons/agent-cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
@@ -68,6 +69,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
     private readonly pendingWakeUpSweepCronCommand: PendingWakeUpSweepCronCommand,
+    private readonly jobMemoryReconcileCronCommand: JobMemoryReconcileCronCommand,
 
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
@@ -182,6 +184,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'PendingWakeUpSweep',
         command: this.pendingWakeUpSweepCronCommand,
+      },
+      {
+        name: 'JobMemoryReconcile',
+        command: this.jobMemoryReconcileCronCommand,
       },
       {
         name: 'CronTrigger',

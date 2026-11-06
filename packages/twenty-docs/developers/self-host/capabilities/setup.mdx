@@ -280,6 +280,8 @@ The queue Redis runs with `noeviction`: once it is full, every enqueue fails for
 
 The share limit needs `maxmemory` set on the queue Redis. Refusals are logged and counted in `job_memory_limit_refused_total` by queue, job name and reason, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
 
+A job removed from a queue outside the worker (admin panel delete, queue clean) keeps its memory charge until the `cron:job-memory:reconcile` cron releases it. The cron runs every 15 minutes and releases a charge once two runs in a row find no live job for it. `cron:register:all` registers it.
+
 ## Outbound Connections to Internal Hosts
 
 By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:
