@@ -25,13 +25,15 @@ const TABS_ITEM_ID = doNotTranslate('Tabs');
 export const ObjectOptionsDropdownRecordGroupDisplayContent = () => {
   const { t } = useLingui();
 
-  const { onContentChange, dropdownId } = useObjectOptionsDropdown();
+  const { onContentChange, dropdownId, recordIndexId } =
+    useObjectOptionsDropdown();
 
   const recordIndexShouldDisplayGroupsAsTabs = useAtomComponentStateValue(
     recordIndexShouldDisplayGroupsAsTabsComponentState,
   );
 
-  const { updateRecordGroupDisplay } = useUpdateRecordGroupDisplay();
+  const { updateRecordGroupDisplay } =
+    useUpdateRecordGroupDisplay(recordIndexId);
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
