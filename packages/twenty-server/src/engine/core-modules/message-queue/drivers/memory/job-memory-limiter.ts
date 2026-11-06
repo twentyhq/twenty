@@ -156,26 +156,26 @@ export class JobMemoryLimiter {
     }
 
     const { isRefused, groupKeyAdmissions } = admitResult;
-
-    for (const admission of groupKeyAdmissions) {
-      if (
+    const refusedAdmissions = groupKeyAdmissions.filter(
+      (admission) =>
         admission.requestedBytes > 0 &&
-        admission.usedBytes + admission.requestedBytes > admission.limitBytes
-      ) {
-        reportJobMemoryLimitRefusal({
-          logger: this.logger,
-          metricsService: this.options.metricsService,
-          refusal: {
-            queueName,
-            jobName,
-            groupKey: admission.groupKey,
-            reason: 'share',
-            requestedBytes: admission.requestedBytes,
-            usedBytes: admission.usedBytes,
-            limitBytes: admission.limitBytes,
-          },
-        });
-      }
+        admission.usedBytes + admission.requestedBytes > admission.limitBytes,
+    );
+
+    for (const admission of refusedAdmissions) {
+      reportJobMemoryLimitRefusal({
+        logger: this.logger,
+        metricsService: this.options.metricsService,
+        refusal: {
+          queueName,
+          jobName,
+          groupKey: admission.groupKey,
+          reason: 'share',
+          requestedBytes: admission.requestedBytes,
+          usedBytes: admission.usedBytes,
+          limitBytes: admission.limitBytes,
+        },
+      });
     }
 
     const availableBytes = computeJobMemoryAvailableBytes(
@@ -191,10 +191,18 @@ export class JobMemoryLimiter {
         0,
       );
 
+      const refusedGroupKeys = refusedAdmissions.map(
+        ({ groupKey }) => groupKey,
+      );
+
       throw new MessageQueueException(
-        `Job memory limit reached on queue ${queueName}: ${requestedBytes} bytes requested, ${availableBytes ?? 0} bytes available`,
+        `Job memory limit reached on queue ${queueName} for ${refusedGroupKeys.join(', ')}: ${requestedBytes} bytes requested, ${availableBytes ?? 0} bytes available`,
         MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
-        { requestedBytes, availableBytes: availableBytes ?? 0 },
+        {
+          requestedBytes,
+          availableBytes: availableBytes ?? 0,
+          refusedGroupKeys,
+        },
       );
     }
 

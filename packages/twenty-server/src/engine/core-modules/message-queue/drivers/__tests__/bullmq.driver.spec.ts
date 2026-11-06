@@ -974,7 +974,11 @@ describe('BullMQDriver job size limit', () => {
       throw new MessageQueueException(
         'memory limit',
         MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
-        { requestedBytes: 100, availableBytes: 0 },
+        {
+          requestedBytes: 100,
+          availableBytes: 0,
+          refusedGroupKeys: ['workspace:ws-1'],
+        },
       );
     });
 

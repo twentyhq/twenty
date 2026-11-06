@@ -218,7 +218,11 @@ describe('JobMemoryLimiter', () => {
     await expect(refusal).rejects.toMatchObject({
       code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
       statusCode: 429,
-      details: { requestedBytes: 500, availableBytes: 400 },
+      details: {
+        requestedBytes: 500,
+        availableBytes: 400,
+        refusedGroupKeys: [WORKSPACE_1],
+      },
     });
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
     expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(600);
@@ -230,6 +234,30 @@ describe('JobMemoryLimiter', () => {
       attributes: { queue: QUEUE, job_name: 'job', reason: 'share' },
       shouldStoreInCache: false,
     });
+  });
+
+  it('lists every workspace over its share when refusing a batch that spans several workspaces', async () => {
+    const { redis, limiter } = await createLimiter();
+    const WORKSPACE_3 = 'workspace:ws-3';
+
+    const refusal = limiter.admit({
+      queueName: QUEUE,
+      jobName: 'job',
+      jobs: [
+        { jobId: 'job-1', sizeBytes: 2_000, groupKeys: [WORKSPACE_1] },
+        { jobId: 'job-2', sizeBytes: 100, groupKeys: [WORKSPACE_2] },
+        { jobId: 'job-3', sizeBytes: 2_000, groupKeys: [WORKSPACE_3] },
+      ],
+    });
+
+    await expect(refusal).rejects.toMatchObject({
+      code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      details: { refusedGroupKeys: [WORKSPACE_1, WORKSPACE_3] },
+    });
+    await expect(refusal).rejects.toThrow(
+      `for ${WORKSPACE_1}, ${WORKSPACE_3}:`,
+    );
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_2 })).toBe(0);
   });
 
   it('admits a batch within the limit', async () => {

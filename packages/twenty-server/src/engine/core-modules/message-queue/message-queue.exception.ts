@@ -20,6 +20,7 @@ export type JobTooLargeDetails = {
 export type JobQueueMemoryLimitReachedDetails = {
   requestedBytes: number;
   availableBytes: number;
+  refusedGroupKeys: string[];
 };
 
 const getMessageQueueExceptionUserFriendlyMessage = (

@@ -22,6 +22,8 @@ export interface MessageQueueDriver {
     data: T,
     options: QueueJobOptions,
   ): Promise<string | undefined>;
+  // All or nothing: one workspace or app over its share refuses the whole batch,
+  // so a fan-out across tenants should enqueue one batch per workspace
   bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,

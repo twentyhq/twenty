@@ -131,7 +131,7 @@ When a limit is reached, the whole call is refused and nothing is enqueued:
 | Error `subCode` | When | Details |
 |-----------------|------|---------|
 | `JOB_TOO_LARGE` | A job is over the size cap. | `index`, `sizeBytes`, `maxBytes` |
-| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | The batch does not fit in your share. Retry later. | `requestedBytes`, `availableBytes` |
+| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | The batch does not fit in your share. Retry later. | `requestedBytes`, `availableBytes`, `refusedGroupKeys` |
 
 Keep payloads small: pass record ids and fetch the records inside the run instead of embedding them. If `availableBytes` runs low, enqueue fewer jobs at once or chain them with `delayMs`.
 

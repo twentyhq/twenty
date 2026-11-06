@@ -43,7 +43,11 @@ describe('MessageQueueRestApiExceptionFilter', () => {
     const exception = new MessageQueueException(
       'Job memory limit reached',
       MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
-      { requestedBytes: 2_000, availableBytes: 0 },
+      {
+        requestedBytes: 2_000,
+        availableBytes: 0,
+        refusedGroupKeys: ['workspace:ws-1'],
+      },
     );
 
     filter.catch(exception, {
