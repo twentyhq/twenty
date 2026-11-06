@@ -562,9 +562,6 @@ export class LogicFunctionExecutorService {
     const serverInternalUrl = this.twentyConfigService.get(
       'SERVER_INTERNAL_URL',
     );
-    const internalBaseUrl = isNonEmptyString(serverInternalUrl)
-      ? cleanServerUrl(serverInternalUrl)
-      : baseUrl;
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
       workspaceId,
       flatApplication,
@@ -596,7 +593,9 @@ export class LogicFunctionExecutorService {
       ...workspaceVariables,
       ...userVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      [DEFAULT_INTERNAL_API_URL_NAME]: internalBaseUrl ?? '',
+      ...(isNonEmptyString(serverInternalUrl)
+        ? { [DEFAULT_INTERNAL_API_URL_NAME]: cleanServerUrl(serverInternalUrl) }
+        : {}),
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken
