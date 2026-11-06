@@ -8,9 +8,9 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
-import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_STATIC_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-static-tool-annotations.constant';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import {
   McpException,
@@ -31,7 +31,6 @@ import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-quer
 import { type McpInitializeResult } from 'src/engine/api/mcp/types/mcp-initialize-result.type';
 import { type McpMethod } from 'src/engine/api/mcp/types/mcp-method.type';
 import { type McpResult } from 'src/engine/api/mcp/types/mcp-result.type';
-import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { type McpToolCallResult } from 'src/engine/api/mcp/types/mcp-tool-call-result.type';
 import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
 import { type McpToolsListResult } from 'src/engine/api/mcp/types/mcp-tools-list-result.type';
@@ -69,15 +68,11 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
-  search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-};
-
 const annotatePreloadedMcpTools = (toolSet: ToolSet): McpToolSet =>
   Object.fromEntries(
     Object.entries(toolSet).map(
       ([name, toolDefinition]): [string, McpAnnotatedTool] => {
-        const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
+        const annotations = MCP_STATIC_TOOL_ANNOTATIONS[name];
 
         if (!isDefined(annotations)) {
           throw new Error(
@@ -432,9 +427,10 @@ export class McpProtocolService {
             descriptor.name,
             {
               ...registryTools[descriptor.name],
-              annotations: getMcpRegistryToolAnnotations(
-                descriptor.executionRef,
-              ),
+              annotations: {
+                ...getMcpRegistryToolAnnotations(descriptor.executionRef),
+                title: descriptor.label,
+              },
             },
           ]),
         );
