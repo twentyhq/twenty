@@ -146,12 +146,9 @@ export class AgentChatActorService {
       );
     }
     if (
-      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId: sender.userWorkspaceId,
-        applicationId: sender.applicationId ?? undefined,
-        agentId: authContext.agentId,
-        setting: PermissionFlagType.AI,
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
+        permissionFlag: PermissionFlagType.AI,
       }))
     ) {
       throw new AiException(

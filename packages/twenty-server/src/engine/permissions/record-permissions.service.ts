@@ -2,12 +2,20 @@ import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  type ObjectRecord,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordAccessDecisionService } from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  RecordAccessDecisionService,
+  type RecordOperationQuestion,
+} from 'src/engine/permissions/internal/combine/services/record-access-decision.service';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -75,6 +83,84 @@ export class RecordPermissionsService {
     );
   }
 
+  public findRestrictedFields({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<RestrictedFieldsPermissions> {
+    return this.recordAccessDecisionService.findRestrictedFields({
+      principals,
+      objectMetadataId,
+    });
+  }
+
+  public findRecordReadRestrictions({
+    principals,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<RecordReadRestrictions> {
+    return this.recordAccessDecisionService.findRecordReadRestrictions(
+      principals,
+    );
+  }
+
+  public isOperationDisabled(
+    question: RecordOperationQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessDecisionService.isOperationDisabled(question);
+  }
+
+  public assertObjectOperationAccessibleOrThrow(
+    question: RecordOperationQuestion,
+  ): Promise<void> {
+    return this.recordAccessDecisionService.assertObjectOperationAccessibleOrThrow(
+      question,
+    );
+  }
+
+  public assertColumnsReadableAndUpdatableOrThrow(
+    question: RecordOperationQuestion & {
+      selectedColumns: string[];
+      updatedColumns: string[];
+    },
+  ): Promise<void> {
+    return this.recordAccessDecisionService.assertColumnsReadableAndUpdatableOrThrow(
+      question,
+    );
+  }
+
+  public buildRecordsAccessCondition(
+    question: RecordOperationQuestion & { tableAlias: string },
+  ): Promise<SqlCondition | boolean> {
+    return this.recordAccessDecisionService.buildRecordsAccessCondition(
+      question,
+    );
+  }
+
+  public assertCreatedRecordsMatchRowLevelPermissionsOrThrow(question: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    flatObjectMetadata: FlatObjectMetadata;
+    records: ObjectRecord[];
+  }): Promise<void> {
+    return this.recordAccessDecisionService.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
+      question,
+    );
+  }
+
+  public assertUpdatesKeepRecordAccessOrThrow(question: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    flatObjectMetadata: FlatObjectMetadata;
+    updates: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[];
+    formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    return this.recordAccessDecisionService.assertUpdatesKeepRecordAccessOrThrow(
+      question,
+    );
+  }
+
   public canReadSomeRecords({
     principals,
     objectMetadataId,
@@ -138,6 +224,17 @@ export class RecordPermissionsService {
     return this.coversEveryRecord({ question, operationType: 'update' });
   }
 
+  public findGrantedRecordIdsForOperation({
+    operationType,
+    ...question
+  }: RecordsQuestion & {
+    operationType: ObjectRecordsOperationType;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findGrantedRecordIdsOnReadableObject(
+      { ...question, operationType },
+    );
+  }
+
   public findUnreadableFieldMetadataIdsOrThrow({
     principals,
     objectMetadataId,
@@ -177,11 +274,44 @@ export class RecordPermissionsService {
     return this.recordAccessDecisionService.findReadableEvents(question);
   }
 
-  public isUpdatePermittedByRole({
+  public canRoleReadSomeRecords({
     principals,
     objectMetadataId,
   }: ObjectQuestion): Promise<boolean> {
-    return this.recordAccessDecisionService.isOperationPermittedByRole({
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'select',
+    });
+  }
+
+  public findRoleIdsUnableToReadObject(question: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+  }): Promise<Set<string>> {
+    return this.recordAccessDecisionService.findRoleIdsUnableToReachObject({
+      ...question,
+      operationType: 'select',
+    });
+  }
+
+  public canRoleCreateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
+      principals,
+      objectMetadataId,
+      operationType: 'insert',
+    });
+  }
+
+  public canRoleUpdateSomeRecords({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<boolean> {
+    return this.recordAccessDecisionService.canRoleReachSomeRecords({
       principals,
       objectMetadataId,
       operationType: 'update',

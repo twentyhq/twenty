@@ -21,7 +21,6 @@ export const isTwentyOrmUserInputError = (
     case TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND:
     case TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED:
     case TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR:
-    case TwentyOrmExceptionCode.RLS_VALIDATION_FAILED:
       return true;
     default:
       return false;

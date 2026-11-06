@@ -1,9 +1,9 @@
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  WorkspaceQueryExecutorException,
+  WorkspaceQueryExecutorExceptionCode,
+} from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 
 const buildClient = () => ({
   query: jest.fn().mockResolvedValue({ rows: [] }),
@@ -29,9 +29,9 @@ describe('runInRollbackSafeTransaction', () => {
       work: async () => 'never runs',
     }).catch((thrownError: Error) => thrownError);
 
-    expect(error).toBeInstanceOf(TwentyOrmException);
-    expect((error as TwentyOrmException).code).toBe(
-      TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+    expect(error).toBeInstanceOf(WorkspaceQueryExecutorException);
+    expect((error as WorkspaceQueryExecutorException).code).toBe(
+      WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
     );
   });
 
@@ -131,9 +131,9 @@ describe('runInRollbackSafeTransaction', () => {
         work: async () => 'done',
       }).catch((thrownError: Error) => thrownError);
 
-      expect(error).toBeInstanceOf(TwentyOrmException);
-      expect((error as TwentyOrmException).code).toBe(
-        TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+      expect(error).toBeInstanceOf(WorkspaceQueryExecutorException);
+      expect((error as WorkspaceQueryExecutorException).code).toBe(
+        WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
       );
       expect((error as Error & { cause?: Error }).cause).toBe(commitError);
     },
@@ -159,8 +159,8 @@ describe('runInRollbackSafeTransaction', () => {
       },
     }).catch((thrownError: Error) => thrownError);
 
-    expect((error as TwentyOrmException).code).toBe(
-      TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+    expect((error as WorkspaceQueryExecutorException).code).toBe(
+      WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR,
     );
     expect((error as Error & { cause?: Error }).cause).toBe(workError);
   });

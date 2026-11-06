@@ -519,10 +519,10 @@ export class AgentChatThreadParticipantService {
     });
 
     const [summary] = await this.workspaceOrmManager
-      .executeInWorkspaceContext(() => {
+      .executeInWorkspaceContext(async () => {
         const repository =
           this.workspaceOrmManager.getRepository('agentChatThread');
-        const readableThreads = repository
+        const readableThreads = await repository
           .createQueryBuilder('thread')
           .select([])
           .addSelect('"thread"."id"', 'id')

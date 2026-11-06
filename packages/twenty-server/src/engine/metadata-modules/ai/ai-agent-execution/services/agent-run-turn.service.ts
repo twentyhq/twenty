@@ -167,8 +167,15 @@ export class AgentRunTurnService {
       (persona.modelConfiguration?.webSearch?.enabled ?? false) ||
       (persona.modelConfiguration?.twitterSearch?.enabled ?? false);
 
+    if (!isDefined(workspace)) {
+      throw new AiException(
+        `Workspace ${workspaceId} not found`,
+        AiExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const turn = await this.agentTurnService.start({
-      workspace: workspace ?? undefined,
+      workspace,
       modelId: persona.modelId,
       toolset: {
         registryAccess,
@@ -313,6 +320,7 @@ export class AgentRunTurnService {
         }),
         ...buildAiTelemetry({
           functionId: 'agent-structured-output',
+          isContentRecordingAllowed: turn.isContentRecordingAllowed,
           workspaceId,
           userWorkspaceId,
           agentId: persona.agentId ?? undefined,

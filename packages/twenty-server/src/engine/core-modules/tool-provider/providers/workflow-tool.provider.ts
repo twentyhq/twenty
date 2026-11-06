@@ -45,7 +45,7 @@ export class WorkflowToolProvider implements ToolProvider {
 
     return this.settingPermissionsService.hasPermissionFlag({
       authContext: context.authContext,
-      setting: PermissionFlagType.WORKFLOWS,
+      permissionFlag: PermissionFlagType.WORKFLOWS,
     });
   }
 

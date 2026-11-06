@@ -18,9 +18,12 @@ import {
   Max,
   Min,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AiDataPolicyInput } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.input';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -178,6 +181,15 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   aiAdditionalInstructions?: string;
+
+  @Field(() => AiDataPolicyInput, { nullable: true })
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AiDataPolicyInput)
+  @ValidateIf(
+    ({ aiDataPolicy }: UpdateWorkspaceInput) => !isUndefined(aiDataPolicy),
+  )
+  aiDataPolicy?: AiDataPolicyInput;
 
   @Field(() => [String], { nullable: true })
   @IsArray()

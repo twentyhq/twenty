@@ -37,7 +37,7 @@ export class AiFrontComponentToolService {
       )) ||
       !(await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.APPLICATIONS,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
       }))
     ) {
       return {};

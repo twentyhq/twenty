@@ -86,12 +86,10 @@ export class ImpersonationAuthorizationService {
     }
 
     const hasWorkspaceLevelImpersonatePermission =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        setting: PermissionFlagType.IMPERSONATE,
+      await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId: targetUserWorkspace.workspace.id,
-        applicationId: undefined,
-        agentId: undefined,
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        permissionFlag: PermissionFlagType.IMPERSONATE,
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
