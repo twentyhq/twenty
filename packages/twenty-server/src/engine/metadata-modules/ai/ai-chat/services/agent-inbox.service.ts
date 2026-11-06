@@ -269,15 +269,15 @@ export class AgentInboxService {
         });
 
     if (!isDefined(openedThread.thread.deletedAt)) {
-      await this.addParticipants({
-        workspaceId,
-        thread: openedThread.thread,
-        workspaceMemberIds,
-      });
       await this.assertCanMentionOrThrow({
         workspaceId,
         thread: openedThread.thread,
         workspaceMemberIds: mentionedWorkspaceMemberIds,
+      });
+      await this.addParticipants({
+        workspaceId,
+        thread: openedThread.thread,
+        workspaceMemberIds,
       });
     }
 
