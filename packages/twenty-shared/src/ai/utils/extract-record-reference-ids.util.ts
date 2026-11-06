@@ -1,9 +1,9 @@
 import { CHAT_REFERENCE_UUID_REGEX } from '@/ai/constants/chat-reference-uuid-regex.const';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const RECORD_REFERENCE_PATTERN = /\[\[record:([^:\]]+):([^:\]]+):/g;
+const RECORD_REFERENCE_PATTERN = /\[\[(?:record:)?([^:\]]+):([^:\]]+):/g;
 
-// Reads back the references written by formatRecordReference
+// Reads back the references written by formatRecordReference, and the unprefixed form the chat still renders as a record chip
 export const extractRecordReferenceIds = ({
   text,
   objectNameSingular,

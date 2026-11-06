@@ -48,6 +48,15 @@ describe('extractRecordReferenceIds', () => {
     ).toEqual([TIM_ID]);
   });
 
+  it('reads references written without the record prefix, as the chat renders them', () => {
+    expect(
+      extractRecordReferenceIds({
+        text: `[[workspaceMember:${JONY_ID}:Jony]] and [[object:workspaceMember:Members]]`,
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([JONY_ID]);
+  });
+
   it('follows the uuid rule of the chat chips, whatever the uuid version', () => {
     const unversionedId = '20202020-0000-0000-0000-000000000004';
 
