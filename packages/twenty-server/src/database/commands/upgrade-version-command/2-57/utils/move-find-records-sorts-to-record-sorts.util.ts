@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
 export type SortableField = {
@@ -242,7 +242,7 @@ export const moveFindRecordsSortsToRecordSorts = ({
 
       inexactlyConvertedSorts.push(...converted.inexactlyConvertedSorts);
 
-      if (converted.recordSorts.length > 0) {
+      if (isNonEmptyArray(converted.recordSorts)) {
         orderBy.recordSorts = converted.recordSorts;
       }
     }
