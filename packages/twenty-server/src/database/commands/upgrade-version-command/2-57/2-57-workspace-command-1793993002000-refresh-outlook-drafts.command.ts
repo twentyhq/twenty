@@ -90,11 +90,6 @@ export class RefreshOutlookDraftsCommand extends ProvisionedWorkspaceCommandRunn
       }
 
       await this.cacheStorage.setAdd(
-        `messages-to-refresh:${workspaceId}:${messageChannel.id}`,
-        draftExternalIds,
-        ONE_WEEK_IN_MILLISECONDS,
-      );
-      await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
         draftExternalIds,
         ONE_WEEK_IN_MILLISECONDS,

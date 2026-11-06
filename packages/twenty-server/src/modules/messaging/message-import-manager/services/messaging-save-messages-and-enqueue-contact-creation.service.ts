@@ -53,14 +53,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     connectedAccount,
     workspaceId,
     personHandleField,
-    messageExternalIdsToRefresh = [],
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
     personHandleField?: PersonHandleField;
-    messageExternalIdsToRefresh?: string[];
   }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
@@ -75,20 +73,20 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
         async (transactionScope) => {
           const {
-            messageExternalIdsRefreshedWithoutSend,
+            movedMessageExternalIdsWithoutSend,
             messageExternalIdsAndIdsMap,
             messageExternalIdToMessageChannelMessageAssociationIdMap,
             messageExternalIdToMessageThreadIdMap,
           } = await this.messageService.saveMessagesWithinTransaction({
             messages: messagesToSave,
             messageChannelId: messageChannel.id,
-            messageExternalIdsToRefresh,
+            messageChannelType: messageChannel.type,
             transactionScope,
             workspaceId,
           });
 
-          const messageExternalIdsRefreshedWithoutSendSet = new Set(
-            messageExternalIdsRefreshedWithoutSend,
+          const movedMessageExternalIdsWithoutSendSet = new Set(
+            movedMessageExternalIdsWithoutSend,
           );
 
           const participantsWithMessageId: (ParticipantWithMessageId & {
@@ -98,9 +96,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               message.externalId,
             );
 
-            if (
-              messageExternalIdsRefreshedWithoutSendSet.has(message.externalId)
-            ) {
+            if (movedMessageExternalIdsWithoutSendSet.has(message.externalId)) {
               return [];
             }
 

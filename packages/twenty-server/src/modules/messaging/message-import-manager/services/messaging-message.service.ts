@@ -2,7 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { MessageChannelType } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -19,7 +20,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 type MessageToRefresh = Pick<
   MessageWorkspaceEntity,
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
-> & { messageChannelMessageAssociationId: string; isSentDraft: boolean };
+>;
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -35,7 +36,7 @@ type MessageAccumulator = {
     | 'messageThreadId'
     | 'isDraft'
   >;
-  messageToRefresh?: MessageToRefresh;
+  sentDraftToRefresh?: MessageToRefresh;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
@@ -56,18 +57,18 @@ export class MessagingMessageService {
   public async saveMessagesWithinTransaction({
     messages,
     messageChannelId,
-    messageExternalIdsToRefresh,
+    messageChannelType,
     transactionScope,
     workspaceId,
   }: {
     messages: MessageWithParticipants[];
     messageChannelId: string;
-    messageExternalIdsToRefresh: string[];
+    messageChannelType: MessageChannelType;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
-    messageExternalIdsRefreshedWithoutSend: string[];
+    movedMessageExternalIdsWithoutSend: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -76,8 +77,8 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
-    const messageExternalIdsToRefreshSet = new Set(messageExternalIdsToRefresh);
-    const messageExternalIdsRefreshedWithoutSend: string[] = [];
+    const movedMessageExternalIdsWithoutSend: string[] = [];
+    const messageChannelMessageAssociationIdsToRelink: string[] = [];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -153,6 +154,18 @@ export class MessagingMessageService {
           messageAccumulatorMap,
         );
 
+        // Apps redeliver on purpose: their folders add up and their participants merge
+        const storedFolderIdsByAssociationId =
+          messageChannelType === MessageChannelType.APP
+            ? undefined
+            : await this.findStoredFolderIdsByAssociationId(
+                [
+                  ...existingMessageChannelMessageAssociations,
+                  ...messageChannelMessageAssociationsReferencingMessageThread,
+                ],
+                transactionScope,
+              );
+
         const associationToCreateByMessageId = new Map<
           string,
           NonNullable<
@@ -205,27 +218,38 @@ export class MessagingMessageService {
             messageAccumulator.existingMessageChannelMessageAssociationInDB;
 
           if (
+            isDefined(storedFolderIdsByAssociationId) &&
             isDefined(existingAssociation) &&
-            existingAssociation.messageExternalId === message.externalId &&
-            messageExternalIdsToRefreshSet.has(message.externalId)
+            existingAssociation.messageExternalId === message.externalId
           ) {
             const isSentDraft =
               messageAccumulator.existingMessageInDB?.isDraft === true &&
               !message.isDraft;
 
-            if (!isSentDraft) {
-              messageExternalIdsRefreshedWithoutSend.push(message.externalId);
+            const hasMoved = this.hasMovedBetweenFolders(
+              storedFolderIdsByAssociationId.get(existingAssociation.id) ?? [],
+              message.messageFolderIds ?? [],
+            );
+
+            if (hasMoved) {
+              messageChannelMessageAssociationIdsToRelink.push(
+                existingAssociation.id,
+              );
             }
 
-            messageAccumulator.messageToRefresh = {
-              id: newOrExistingMessageId,
-              subject: message.subject,
-              receivedAt: message.receivedAt,
-              text: message.text,
-              isDraft: message.isDraft,
-              messageChannelMessageAssociationId: existingAssociation.id,
-              isSentDraft,
-            };
+            if (hasMoved && !isSentDraft) {
+              movedMessageExternalIdsWithoutSend.push(message.externalId);
+            }
+
+            if (isSentDraft) {
+              messageAccumulator.sentDraftToRefresh = {
+                id: newOrExistingMessageId,
+                subject: message.subject,
+                receivedAt: message.receivedAt,
+                text: message.text,
+                isDraft: message.isDraft,
+              };
+            }
           }
 
           if (!isDefined(existingAssociation)) {
@@ -273,7 +297,7 @@ export class MessagingMessageService {
           }
 
           const hasRefreshedSubject =
-            isDefined(messageAccumulator.messageToRefresh) &&
+            isDefined(messageAccumulator.sentDraftToRefresh) &&
             messageAccumulator.existingMessageInDB?.subject !== message.subject;
 
           if (
@@ -314,11 +338,16 @@ export class MessagingMessageService {
 
         await messageRepository.insert(messagesToCreate);
 
-        const messagesToRefresh = Array.from(messageAccumulatorMap.values())
-          .map((accumulator) => accumulator.messageToRefresh)
+        const sentDraftsToRefresh = Array.from(messageAccumulatorMap.values())
+          .map((accumulator) => accumulator.sentDraftToRefresh)
           .filter(isDefined);
 
-        await this.refreshMessages(messagesToRefresh, transactionScope);
+        await this.refreshSentDrafts(sentDraftsToRefresh, transactionScope);
+
+        await this.deleteFolderLinks(
+          messageChannelMessageAssociationIdsToRelink,
+          transactionScope,
+        );
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
@@ -378,7 +407,7 @@ export class MessagingMessageService {
 
         return {
           createdMessages: messagesToCreate,
-          messageExternalIdsRefreshedWithoutSend,
+          movedMessageExternalIdsWithoutSend,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,
@@ -389,11 +418,68 @@ export class MessagingMessageService {
     );
   }
 
-  private async refreshMessages(
-    messagesToRefresh: MessageToRefresh[],
+  private async findStoredFolderIdsByAssociationId(
+    messageChannelMessageAssociations: Pick<
+      MessageChannelMessageAssociationWorkspaceEntity,
+      'id'
+    >[],
+    transactionScope: WorkspaceTransactionScope,
+  ): Promise<Map<string, string[]>> {
+    const storedFolderIdsByAssociationId = new Map<string, string[]>();
+
+    if (messageChannelMessageAssociations.length === 0) {
+      return storedFolderIdsByAssociationId;
+    }
+
+    const folderLinks = await transactionScope
+      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+        'messageChannelMessageAssociationMessageFolder',
+      )
+      .find({
+        where: {
+          messageChannelMessageAssociationId: In(
+            messageChannelMessageAssociations.map(({ id }) => id),
+          ),
+        },
+      });
+
+    for (const {
+      messageChannelMessageAssociationId,
+      messageFolderId,
+    } of folderLinks) {
+      storedFolderIdsByAssociationId.set(messageChannelMessageAssociationId, [
+        ...(storedFolderIdsByAssociationId.get(
+          messageChannelMessageAssociationId,
+        ) ?? []),
+        messageFolderId,
+      ]);
+    }
+
+    return storedFolderIdsByAssociationId;
+  }
+
+  private hasMovedBetweenFolders(
+    storedFolderIds: string[],
+    fetchedFolderIds: string[],
+  ): boolean {
+    if (!isNonEmptyArray(fetchedFolderIds)) {
+      return false;
+    }
+
+    const storedFolderIdsSet = new Set(storedFolderIds);
+    const fetchedFolderIdsSet = new Set(fetchedFolderIds);
+
+    return (
+      storedFolderIdsSet.size !== fetchedFolderIdsSet.size ||
+      fetchedFolderIds.some((folderId) => !storedFolderIdsSet.has(folderId))
+    );
+  }
+
+  private async refreshSentDrafts(
+    sentDrafts: MessageToRefresh[],
     transactionScope: WorkspaceTransactionScope,
   ) {
-    if (messagesToRefresh.length === 0) {
+    if (sentDrafts.length === 0) {
       return;
     }
 
@@ -408,44 +494,38 @@ export class MessagingMessageService {
         { shouldSkipEventEmission: true },
       );
 
-    const messageFolderAssociationRepository =
-      transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+    for (const sentDraftsChunk of chunk(sentDrafts, QUERY_MAX_RECORDS)) {
+      await messageRepository.updateMany(
+        sentDraftsChunk.map(({ id, subject, receivedAt, text, isDraft }) => ({
+          criteria: id,
+          partialEntity: { subject, receivedAt, text, isDraft },
+        })),
+      );
+    }
+
+    await messageParticipantRepository.delete({
+      messageId: In(sentDrafts.map(({ id }) => id)),
+    });
+  }
+
+  private async deleteFolderLinks(
+    messageChannelMessageAssociationIds: string[],
+    transactionScope: WorkspaceTransactionScope,
+  ) {
+    if (messageChannelMessageAssociationIds.length === 0) {
+      return;
+    }
+
+    await transactionScope
+      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
         'messageChannelMessageAssociationMessageFolder',
         { shouldSkipEventEmission: true },
-      );
-
-    for (const messagesToRefreshChunk of chunk(
-      messagesToRefresh,
-      QUERY_MAX_RECORDS,
-    )) {
-      await messageRepository.updateMany(
-        messagesToRefreshChunk.map(
-          ({ id, subject, receivedAt, text, isDraft }) => ({
-            criteria: id,
-            partialEntity: { subject, receivedAt, text, isDraft },
-          }),
+      )
+      .delete({
+        messageChannelMessageAssociationId: In(
+          messageChannelMessageAssociationIds,
         ),
-      );
-    }
-
-    const sentDraftMessageIds = messagesToRefresh
-      .filter(({ isSentDraft }) => isSentDraft)
-      .map(({ id }) => id);
-
-    if (sentDraftMessageIds.length > 0) {
-      await messageParticipantRepository.delete({
-        messageId: In(sentDraftMessageIds),
       });
-    }
-
-    await messageFolderAssociationRepository.delete({
-      messageChannelMessageAssociationId: In(
-        messagesToRefresh.map(
-          ({ messageChannelMessageAssociationId }) =>
-            messageChannelMessageAssociationId,
-        ),
-      ),
-    });
   }
 
   private async enrichMessageAccumulatorWithExistingMessages(

@@ -99,7 +99,6 @@ export class MessageChannelSyncStatusService {
         `messages-to-import:${workspaceId}:${messageChannelId}`,
         `messages-to-import-total:${workspaceId}:${messageChannelId}`,
         `messages-imported:${workspaceId}:${messageChannelId}`,
-        `messages-to-refresh:${workspaceId}:${messageChannelId}`,
       ]);
     }
 
