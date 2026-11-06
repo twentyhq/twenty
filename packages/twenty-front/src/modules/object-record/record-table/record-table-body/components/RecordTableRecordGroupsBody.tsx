@@ -47,9 +47,8 @@ export const RecordTableRecordGroupsBody = () => {
     ? [activeRecordGroupTabId].filter(isDefined)
     : visibleRecordGroupIds;
 
-  if (isRecordTableInitialLoading && !recordTableHasRecords) {
-    return <RecordTableBodyLoading />;
-  }
+  const isInitialLoadingDisplayed =
+    isRecordTableInitialLoading && !recordTableHasRecords;
 
   return (
     <>
@@ -58,21 +57,29 @@ export const RecordTableRecordGroupsBody = () => {
           viewType={ViewType.TABLE}
           dndType={RECORD_TABLE_ROW_DND_TYPE}
         />
-        {displayedRecordGroupIds.map((recordGroupId, index) => (
-          <RecordTableBodyContextProvider key={recordGroupId}>
-            <RecordGroupContext.Provider value={{ recordGroupId }}>
-              <RecordTableBody data-replay-ignore-mutations="true">
-                {!isRecordGroupTabsDisplayed && (
-                  <RecordTableRecordGroupSection />
-                )}
-                <RecordTableRecordGroupRows />
-                {index === 0 && <RecordTableCellPortals />}
-              </RecordTableBody>
-            </RecordGroupContext.Provider>
-          </RecordTableBodyContextProvider>
-        ))}
-        {!isRecordGroupTabsDisplayed && <RecordTableRecordGroupAddNewGroup />}
-        <RecordIndexGroupAggregatesDataLoader />
+        {isInitialLoadingDisplayed && <RecordTableBodyLoading />}
+        {!isInitialLoadingDisplayed &&
+          displayedRecordGroupIds.map((recordGroupId, index) => (
+            <RecordTableBodyContextProvider key={recordGroupId}>
+              <RecordGroupContext.Provider value={{ recordGroupId }}>
+                <RecordTableBody data-replay-ignore-mutations="true">
+                  {!isRecordGroupTabsDisplayed && (
+                    <RecordTableRecordGroupSection />
+                  )}
+                  <RecordTableRecordGroupRows />
+                  {index === 0 && <RecordTableCellPortals />}
+                </RecordTableBody>
+              </RecordGroupContext.Provider>
+            </RecordTableBodyContextProvider>
+          ))}
+        {!isInitialLoadingDisplayed && (
+          <>
+            {!isRecordGroupTabsDisplayed && (
+              <RecordTableRecordGroupAddNewGroup />
+            )}
+            <RecordIndexGroupAggregatesDataLoader />
+          </>
+        )}
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>
   );

@@ -31,8 +31,7 @@ type RecordGroupTabsProps = {
   dndType: string;
 };
 
-// Mounted inside the rows' drag-and-drop provider so tabs can be drop targets,
-// and portaled above the rows' scroll container
+// Mounted in the rows' drag-and-drop provider to be drop targets, portaled above the rows
 export const RecordGroupTabs = ({
   viewType,
   dndType,
