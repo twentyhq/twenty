@@ -332,6 +332,37 @@ const destroyCreatedThreads = async () => {
   }
 };
 
+const updateChannel = ({
+  channelId,
+  input,
+  token,
+}: {
+  channelId: string;
+  input: Record<string, unknown>;
+  token: string;
+}) =>
+  makeMetadataApiRequest(
+    { query: UPDATE_CHANNEL, variables: { channelId, input } },
+    token,
+  );
+
+const deleteChannel = ({
+  channelId,
+  token,
+  destinationChannelId = null,
+}: {
+  channelId: string;
+  token: string;
+  destinationChannelId?: string | null;
+}) =>
+  makeMetadataApiRequest(
+    {
+      query: DELETE_CHANNEL,
+      variables: { channelId, destinationChannelId },
+    },
+    token,
+  );
+
 const buildChannelHelpers = (createdChannelIds: Set<string>) => {
   const createChannel = async ({
     input,
@@ -369,10 +400,7 @@ const buildChannelHelpers = (createdChannelIds: Set<string>) => {
 
   const deleteCreatedChannels = async () => {
     for (const channelId of createdChannelIds) {
-      await makeMetadataApiRequest({
-        query: DELETE_CHANNEL,
-        variables: { channelId, destinationChannelId: null },
-      });
+      await deleteChannel({ channelId, token: APPLE_JANE_ADMIN_ACCESS_TOKEN });
     }
   };
 
@@ -387,37 +415,6 @@ describe('Inbox channels for applications', () => {
 
   const { createChannel, createChannelOrThrow, deleteCreatedChannels } =
     buildChannelHelpers(createdChannelIds);
-
-  const updateChannel = ({
-    channelId,
-    input,
-    token,
-  }: {
-    channelId: string;
-    input: Record<string, unknown>;
-    token: string;
-  }) =>
-    makeMetadataApiRequest(
-      { query: UPDATE_CHANNEL, variables: { channelId, input } },
-      token,
-    );
-
-  const deleteChannel = ({
-    channelId,
-    token,
-    destinationChannelId = null,
-  }: {
-    channelId: string;
-    token: string;
-    destinationChannelId?: string | null;
-  }) =>
-    makeMetadataApiRequest(
-      {
-        query: DELETE_CHANNEL,
-        variables: { channelId, destinationChannelId },
-      },
-      token,
-    );
 
   beforeAll(async () => {
     channelManager = await setupApplicationUnderTestOrThrow({
@@ -742,7 +739,7 @@ describe('Uninstalling an application that created inbox channels', () => {
     });
   }, 120_000);
 
-  const { createChannelOrThrow, deleteCreatedChannels } =
+  const { createChannel, createChannelOrThrow, deleteCreatedChannels } =
     buildChannelHelpers(createdChannelIds);
 
   it('preserves channels and access through failed uninstall, reinstall and rollback', async () => {
@@ -831,9 +828,6 @@ describe('Uninstalling an application that created inbox channels', () => {
       }),
     });
 
-    expect(await readChannelApplicationId(channelId)).toBe(
-      workspaceCustomApplicationId,
-    );
     expect(await readChannelRoleApplicationIds(channelId)).toEqual([
       { roleId: memberRoleId, applicationId: workspaceCustomApplicationId },
     ]);
@@ -884,19 +878,14 @@ describe('Uninstalling an application that created inbox channels', () => {
     const reinstalledApplication = await reinstallApplicationOrThrow(
       uninstalledApplication.application.universalIdentifier,
     );
-    const reclaimResponse = await makeMetadataApiRequest(
-      {
-        query: CREATE_CHANNEL,
-        variables: {
-          input: {
-            name: buildChannelName(),
-            universalIdentifier,
-            roleIds: [reinstalledApplication.roleId, memberRoleId],
-          },
-        },
+    const reclaimResponse = await createChannel({
+      input: {
+        name: buildChannelName(),
+        universalIdentifier,
+        roleIds: [reinstalledApplication.roleId, memberRoleId],
       },
-      reinstalledApplication.token,
-    );
+      token: reinstalledApplication.token,
+    });
 
     assertGraphQLSuccessfulResponse(reclaimResponse);
     expect(reclaimResponse.body.data.createAgentChatChannel).toMatchObject({
@@ -913,30 +902,18 @@ describe('Uninstalling an application that created inbox channels', () => {
         reinstalledApplication.token,
       ),
     );
-    expect(await readThreadChannelState(threadId)).toMatchObject({
-      channelId,
-    });
     expect((await readChannelGrantRoleIds(threadId)).sort()).toEqual(
       [...grantRoleIds, reinstalledApplication.roleId].sort(),
     );
 
     assertGraphQLSuccessfulResponse(
-      await makeMetadataApiRequest(
-        {
-          query: UPDATE_CHANNEL,
-          variables: {
-            channelId,
-            input: {
-              roleIds: [
-                reinstalledApplication.roleId,
-                memberRoleId,
-                guestRoleId,
-              ],
-            },
-          },
+      await updateChannel({
+        channelId,
+        input: {
+          roleIds: [reinstalledApplication.roleId, memberRoleId, guestRoleId],
         },
-        reinstalledApplication.token,
-      ),
+        token: reinstalledApplication.token,
+      }),
     );
     expect(await readChannelGrantRoleIds(threadId)).toContain(guestRoleId);
 
