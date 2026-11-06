@@ -108,7 +108,7 @@ export class SettingPermissionsService {
     }
 
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
 

@@ -2400,10 +2400,18 @@ export type EnqueueJobsInput = {
 
 export type EnqueueJobsResult = {
   __typename?: 'EnqueueJobsResult';
+  availableBytes?: Maybe<Scalars['Float']['output']>;
   enqueued: Scalars['Boolean']['output'];
   enqueuedJobsCount: Scalars['Int']['output'];
   jobIds: Array<Scalars['String']['output']>;
+  jobs: Array<EnqueuedJob>;
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
+};
+
+export type EnqueuedJob = {
+  __typename?: 'EnqueuedJob';
+  jobId: Scalars['String']['output'];
+  sizeBytes: Scalars['Int']['output'];
 };
 
 export type EnterpriseLicenseInfoDto = {

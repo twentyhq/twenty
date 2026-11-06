@@ -78,7 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const objectSharing = resolveObjectSharing(queryRunnerContext);
 
     if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
-      await this.recordSharingWriteService.validateShareWithOrThrow({
+      await this.recordSharingWriteService.assertShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
       });

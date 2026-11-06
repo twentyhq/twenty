@@ -2270,10 +2270,17 @@ input EnqueueJobsInput {
 }
 
 type EnqueueJobsResult {
+  availableBytes: Float
   enqueued: Boolean!
   enqueuedJobsCount: Int!
   jobIds: [String!]!
+  jobs: [EnqueuedJob!]!
   logicFunctionUniversalIdentifier: String!
+}
+
+type EnqueuedJob {
+  jobId: String!
+  sizeBytes: Int!
 }
 
 type EnterpriseLicenseInfoDTO {

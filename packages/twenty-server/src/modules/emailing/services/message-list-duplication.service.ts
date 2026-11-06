@@ -75,7 +75,7 @@ export class MessageListDuplicationService {
     userWorkspaceId: string;
   }): Promise<void> {
     const [principals, { flatObjectMetadataMaps }] = await Promise.all([
-      this.principalPermissionsService.buildUserWorkspacePermissionsPrincipalsOrThrow(
+      this.principalPermissionsService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
         { workspaceId, userWorkspaceId },
       ),
       this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -93,12 +93,12 @@ export class MessageListDuplicationService {
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsService.canRoleReachSomeRecords({
-              operationType: 'select',
+            this.recordPermissionsService.canRoleAccessSomeRecords({
+              operationType: 'read',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsService.canRoleReachSomeRecords({
+            this.recordPermissionsService.canRoleAccessSomeRecords({
               operationType: 'update',
               principals,
               objectMetadataId,
