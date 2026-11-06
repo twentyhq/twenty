@@ -1,54 +1,36 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type PrincipalSlot } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import { OTHER_MEMBER_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-
-export type RecordShareFixture = {
-  principalId: string;
-  accessLevel: RecordShareAccessLevel;
-};
+import { ROLE_FILTERS } from 'src/engine/permissions/__tests__/framework/role-filters.constant';
 
 export type RecordFixture = {
   isPrivate?: boolean;
   createdBy?: string;
-  share?: RecordShareFixture;
-  isOutsideMainRoleFilter?: boolean;
-  isOutsideLimitingRoleFilter?: boolean;
-  isOutsideApplicationRoleFilter?: boolean;
+  share?: { principalId: string; accessLevel: RecordShareAccessLevel };
+  outsideFilterOf?: PrincipalSlot[];
 };
 
 export type StoredRecordFixture = RecordFixture & { id: string };
 
 export const EVERYONE = EVERYONE_PRINCIPAL_ID;
 
-export const read = (principalId: string): RecordShareFixture => ({
-  principalId,
-  accessLevel: RecordShareAccessLevel.READ,
-});
-
-export const readWrite = (principalId: string): RecordShareFixture => ({
-  principalId,
-  accessLevel: RecordShareAccessLevel.READ_WRITE,
-});
-
-export const fullAccess = (principalId: string): RecordShareFixture => ({
-  principalId,
-  accessLevel: RecordShareAccessLevel.FULL,
-});
-
-export const noAccess = (principalId: string): RecordShareFixture => ({
-  principalId,
-  accessLevel: RecordShareAccessLevel.NONE,
-});
-
 export const buildStoredRecords = (fixtures: StoredRecordFixture[]) => ({
-  records: fixtures.map((fixture) => ({
-    id: fixture.id,
-    status: fixture.isOutsideMainRoleFilter ? 'archived' : 'active',
-    category: fixture.isOutsideLimitingRoleFilter ? 'other' : 'core',
-    region: fixture.isOutsideApplicationRoleFilter ? 'americas' : 'europe',
+  records: fixtures.map(({ id, outsideFilterOf = [] }) => ({
+    id,
     deletedAt: null,
+    ...Object.fromEntries(
+      ROLE_FILTERS.map(
+        ({ principalSlot, fieldName, matchingValue, outsideValue }) => [
+          fieldName,
+          outsideFilterOf.includes(principalSlot)
+            ? outsideValue
+            : matchingValue,
+        ],
+      ),
+    ),
   })),
   shares: fixtures.flatMap(({ id, share }) =>
     isDefined(share) ? [{ ...share, recordId: id }] : [],

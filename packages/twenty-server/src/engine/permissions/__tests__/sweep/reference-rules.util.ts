@@ -4,10 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   findHeldRoles,
   type GivenPrincipals,
-  type RecordAccessWorld,
-  type RoleGrant,
-  type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
+import {
+  type RecordAccessScenario,
+  type RoleGrant,
+} from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
+import { type RecordOperation } from 'src/engine/permissions/__tests__/framework/record-operations.constant';
 import {
   APPLICATION_ROLE_ID,
   LIMITING_ROLE_ID,
@@ -52,21 +54,21 @@ const findShareKeys = ({
 ];
 
 export const decideRecordAccess = ({
-  world,
+  scenario,
   operationType,
   record,
 }: {
-  world: RecordAccessWorld;
+  scenario: RecordAccessScenario;
   operationType: RecordOperation;
   record: StoredRecordFixture;
 }): { isGranted: boolean; reason: RecordAccessReason } => {
-  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = world;
-  const isReachedByRoles = findHeldRoles(world).every(
+  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = scenario;
+  const isReachedByRoles = findHeldRoles(scenario).every(
     (grant) => grant !== 'none',
   );
   const isSharedBeyondRole =
-    world.isSharingEnabled &&
-    !isDefined(world.aiRunScope) &&
+    scenario.isSharingEnabled &&
+    !isDefined(scenario.aiRunScope) &&
     (operationType === 'select' || operationType === 'update');
 
   if (!isReachedByRoles && !isSharedBeyondRole) {
@@ -75,13 +77,14 @@ export const decideRecordAccess = ({
 
   const isOutsideFilter =
     isReachedByRoles &&
-    ((mainPrincipal.role === 'rowLevel' && record.isOutsideMainRoleFilter) ||
+    ((mainPrincipal.role === 'rowLevel' &&
+      record.outsideFilterOf?.includes('mainPrincipal')) ||
       (limitingPrincipal.type === 'agent' &&
         limitingPrincipal.role === 'rowLevel' &&
-        record.isOutsideLimitingRoleFilter) ||
+        record.outsideFilterOf?.includes('limitingPrincipal')) ||
       (applicationPrincipal.type === 'application' &&
         applicationPrincipal.role === 'rowLevel' &&
-        record.isOutsideApplicationRoleFilter));
+        record.outsideFilterOf?.includes('applicationPrincipal')));
 
   if (isReachedByRoles && !isOutsideFilter && !record.isPrivate) {
     return { isGranted: true, reason: 'role' };
@@ -104,7 +107,7 @@ export const decideRecordAccess = ({
     ACCESS_LEVELS_BY_OPERATION[operationType].includes(
       record.share.accessLevel,
     ) &&
-    findShareKeys(world).includes(record.share.principalId);
+    findShareKeys(scenario).includes(record.share.principalId);
 
   if (isShareSufficient && (isSharedBeyondRole || record.isPrivate)) {
     return { isGranted: true, reason: 'share' };

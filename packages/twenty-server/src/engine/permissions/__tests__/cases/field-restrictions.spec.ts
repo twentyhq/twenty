@@ -2,26 +2,25 @@ import {
   agent,
   CUSTOM_APPLICATION,
   NO_LIMITING_PRINCIPAL,
-  type RecordAccessWorld,
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
+import { type RecordAccessScenario } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
 import {
   LIMITING_ROLE_ID,
   MAIN_ROLE_ID,
   OBJECT_ID,
   STATUS_FIELD_ID,
 } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { buildScenarioServices } from 'src/engine/permissions/__tests__/framework/build-permission-services.util';
 
-const MEMBER_WITH_ALL_RECORDS: RecordAccessWorld = {
+const MEMBER_WITH_ALL_RECORDS: RecordAccessScenario = {
   mainPrincipal: workspaceMember({ role: 'allRecords' }),
   limitingPrincipal: NO_LIMITING_PRINCIPAL,
   applicationPrincipal: CUSTOM_APPLICATION,
-  isSharingEnabled: false,
 };
 
-const findDeniedFields = async (world: RecordAccessWorld) => {
-  const { services, principals } = await resolveWorld({ world });
+const findDeniedFields = async (scenario: RecordAccessScenario) => {
+  const { services, principals } = await buildScenarioServices({ scenario });
   const question = { principals, objectMetadataId: OBJECT_ID };
 
   return {

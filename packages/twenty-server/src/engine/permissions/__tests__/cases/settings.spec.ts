@@ -6,13 +6,12 @@ import {
 import {
   buildSettingPermissionsService,
   FLAG,
+  isRoleGranting,
   type RoleSetting,
   ROLE_SETTINGS,
 } from 'src/engine/permissions/__tests__/framework/build-setting-permissions-service.util';
 import {
-  buildReachablePrincipals,
   CUSTOM_APPLICATION,
-  findHeldRoles,
   NO_LIMITING_PRINCIPAL,
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
@@ -40,42 +39,7 @@ const MEMBER_PRINCIPALS = buildPrincipals({
   applicationPrincipal: CUSTOM_APPLICATION,
 });
 
-const isRoleGranting = (roleSetting: RoleSetting) =>
-  roleSetting === 'all settings' || roleSetting === 'flag assigned';
-
 describe('hasPermissionFlag', () => {
-  it('requires every role the principals hold', async () => {
-    const violations: string[] = [];
-
-    for (const principals of buildReachablePrincipals({
-      roles: ROLE_SETTINGS,
-    })) {
-      const { mainPrincipal, limitingPrincipal, applicationPrincipal } =
-        principals;
-      const isGranted = await buildSettingPermissionsService({
-        settingByRoleId: {
-          [MAIN_ROLE_ID]: mainPrincipal.role,
-          ...(limitingPrincipal.type === 'agent' && {
-            [LIMITING_ROLE_ID]: limitingPrincipal.role,
-          }),
-          ...(applicationPrincipal.type === 'application' && {
-            [APPLICATION_ROLE_ID]: applicationPrincipal.role,
-          }),
-        },
-        principals: buildPrincipals(principals),
-      }).hasPermissionFlag({
-        authContext: UNREAD_AUTH_CONTEXT,
-        permissionFlag: FLAG,
-      });
-
-      if (isGranted !== findHeldRoles(principals).every(isRoleGranting)) {
-        violations.push(JSON.stringify(principals));
-      }
-    }
-
-    expect(violations).toEqual([]);
-  });
-
   it.each<{
     it: string;
     authContext: WorkspaceAuthContext | undefined;

@@ -1,4 +1,10 @@
-import { OBJECT_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
+import { buildScenarioCacheValues } from 'src/engine/permissions/__tests__/framework/build-permission-cache-values.util';
+import { buildPrincipals } from 'src/engine/permissions/__tests__/framework/build-principals.util';
+import {
+  OBJECT_ID,
+  WORKSPACE_ID,
+} from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
+import { type RecordAccessScenario } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
 import {
   buildStoredRecords,
   type StoredRecords,
@@ -63,5 +69,31 @@ export const buildPermissionServices = ({
     recordPermissionsService: new RecordPermissionsService(
       recordAccessDecisionService,
     ),
+  };
+};
+
+export const buildScenarioServices = async ({
+  scenario,
+  storedRecords,
+}: {
+  scenario: RecordAccessScenario;
+  storedRecords?: StoredRecords;
+}) => {
+  const { cacheValues, flatObjectMetadata } =
+    buildScenarioCacheValues(scenario);
+  const principals = buildPrincipals(scenario);
+  const services = buildPermissionServices({
+    cacheValues,
+    storedRecords,
+    principals,
+  });
+
+  return {
+    services,
+    principals,
+    flatObjectMetadata,
+    metadataMaps: await services.permissionsMetadataMapsService.load({
+      workspaceId: WORKSPACE_ID,
+    }),
   };
 };

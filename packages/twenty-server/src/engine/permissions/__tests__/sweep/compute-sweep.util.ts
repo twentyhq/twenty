@@ -1,17 +1,17 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { UNREAD_AUTH_CONTEXT } from 'src/engine/permissions/__tests__/framework/build-principals.util';
+import { type RecordAccessScenario } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
 import {
   RECORD_OPERATIONS,
-  type RecordAccessWorld,
   type RecordOperation,
-} from 'src/engine/permissions/__tests__/framework/given-principals.util';
+} from 'src/engine/permissions/__tests__/framework/record-operations.constant';
 import { WORKSPACE_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { buildScenarioServices } from 'src/engine/permissions/__tests__/framework/build-permission-services.util';
 import { buildStoredRecords } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 import {
   SWEEP_RECORDS,
-  SWEEP_WORLDS,
+  SWEEP_SCENARIOS,
 } from 'src/engine/permissions/__tests__/sweep/sweep-dimensions.util';
 import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
@@ -35,7 +35,7 @@ const EVENTS = STORED_RECORDS.records.map(
 );
 
 export type SweepEntry = {
-  world: RecordAccessWorld;
+  scenario: RecordAccessScenario;
   operationType: RecordOperation;
   grantedRecordIds: Set<string>;
   sqlCondition: SqlCondition | boolean;
@@ -44,16 +44,16 @@ export type SweepEntry = {
 };
 
 export const describeSweepEntry = ({
-  world,
+  scenario,
   operationType,
-}: Pick<SweepEntry, 'world' | 'operationType'>) =>
-  `${operationType} / ${JSON.stringify(world)}`;
+}: Pick<SweepEntry, 'scenario' | 'operationType'>) =>
+  `${operationType} / ${JSON.stringify(scenario)}`;
 
-const computeWorldEntries = async (
-  world: RecordAccessWorld,
+const computeScenarioEntries = async (
+  scenario: RecordAccessScenario,
 ): Promise<SweepEntry[]> => {
   const { services, principals, metadataMaps, flatObjectMetadata } =
-    await resolveWorld({ world, storedRecords: STORED_RECORDS });
+    await buildScenarioServices({ scenario, storedRecords: STORED_RECORDS });
   const readableEventRecordIds =
     await services.recordPermissionsService.findReadableEventRecordIds({
       authContext: UNREAD_AUTH_CONTEXT,
@@ -74,7 +74,7 @@ const computeWorldEntries = async (
     };
 
     entries.push({
-      world,
+      scenario,
       operationType,
       grantedRecordIds: await findGrantedRecordIds({
         ...request,
@@ -104,8 +104,8 @@ const computeWorldEntries = async (
 export const computeSweep = async (): Promise<SweepEntry[]> => {
   const entries: SweepEntry[] = [];
 
-  for (const world of SWEEP_WORLDS) {
-    entries.push(...(await computeWorldEntries(world)));
+  for (const scenario of SWEEP_SCENARIOS) {
+    entries.push(...(await computeScenarioEntries(scenario)));
   }
 
   return entries;

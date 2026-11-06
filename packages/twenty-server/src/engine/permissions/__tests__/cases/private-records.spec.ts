@@ -3,12 +3,14 @@ import {
   apiKey,
   application,
   CUSTOM_APPLICATION,
-  EVERY_OPERATION,
   NO_LIMITING_PRINCIPAL,
-  NO_OPERATION,
   SAME_APPLICATION_AS_MAIN,
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
+import {
+  EVERY_OPERATION,
+  NO_OPERATION,
+} from 'src/engine/permissions/__tests__/framework/record-operations.constant';
 import {
   MEMBER_ID,
   OTHER_MEMBER_ID,
@@ -16,12 +18,9 @@ import {
 
 describeRecordAccess({
   name: 'a private record, with a role reaching it',
-  given: {
-    mainPrincipal: workspaceMember({ role: 'allRecords' }),
-    limitingPrincipal: NO_LIMITING_PRINCIPAL,
-    applicationPrincipal: CUSTOM_APPLICATION,
-    isSharingEnabled: false,
-  },
+  mainPrincipal: workspaceMember({ role: 'allRecords' }),
+  limitingPrincipal: NO_LIMITING_PRINCIPAL,
+  applicationPrincipal: CUSTOM_APPLICATION,
   cases: [
     {
       it: 'is hidden from a role with all records',
@@ -43,16 +42,14 @@ describeRecordAccess({
 
 describeRecordAccess({
   name: 'a private record, with no role reaching it',
-  given: {
-    mainPrincipal: workspaceMember({ role: 'none' }),
-    limitingPrincipal: NO_LIMITING_PRINCIPAL,
-    applicationPrincipal: CUSTOM_APPLICATION,
-    isSharingEnabled: true,
-  },
+  mainPrincipal: workspaceMember({ role: 'none' }),
+  limitingPrincipal: NO_LIMITING_PRINCIPAL,
+  applicationPrincipal: CUSTOM_APPLICATION,
+  isSharingEnabled: true,
   cases: [
     {
       it: 'gives its creator nothing while sharing is off',
-      given: { isSharingEnabled: false },
+      isSharingEnabled: false,
       record: { isPrivate: true, createdBy: MEMBER_ID },
       grants: NO_OPERATION,
     },
@@ -66,12 +63,10 @@ describeRecordAccess({
 
 describeRecordAccess({
   name: 'only a workspace member can be a creator',
-  given: {
-    mainPrincipal: apiKey({ role: 'allRecords' }),
-    limitingPrincipal: NO_LIMITING_PRINCIPAL,
-    applicationPrincipal: CUSTOM_APPLICATION,
-    isSharingEnabled: true,
-  },
+  mainPrincipal: apiKey({ role: 'allRecords' }),
+  limitingPrincipal: NO_LIMITING_PRINCIPAL,
+  applicationPrincipal: CUSTOM_APPLICATION,
+  isSharingEnabled: true,
   cases: [
     {
       it: 'not an API key',
@@ -80,10 +75,8 @@ describeRecordAccess({
     },
     {
       it: 'not an application',
-      given: {
-        mainPrincipal: application({ role: 'allRecords' }),
-        applicationPrincipal: SAME_APPLICATION_AS_MAIN,
-      },
+      mainPrincipal: application({ role: 'allRecords' }),
+      applicationPrincipal: SAME_APPLICATION_AS_MAIN,
       record: { isPrivate: true, createdBy: MEMBER_ID },
       grants: NO_OPERATION,
     },

@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildAiRunScope } from 'src/engine/permissions/__tests__/framework/build-permission-cache-values.util';
 import {
   type GivenApplicationPrincipal,
   type GivenLimitingPrincipal,
@@ -22,6 +21,7 @@ import {
   WEBHOOK_ID,
   WORKSPACE_ID,
 } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
+import { buildAiRunScope } from 'src/engine/permissions/__tests__/framework/role-fixtures.util';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,

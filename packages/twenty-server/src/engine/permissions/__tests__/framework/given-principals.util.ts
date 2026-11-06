@@ -1,21 +1,3 @@
-import { type ObjectPermissionAction } from 'twenty-shared/application';
-import { type ObjectRecordsOperationType } from 'twenty-shared/types';
-
-export type RoleGrant = 'none' | 'rowLevel' | 'allRecords';
-
-export const RECORD_OPERATIONS = [
-  'select',
-  'update',
-  'soft-delete',
-  'restore',
-  'delete',
-] as const satisfies ObjectRecordsOperationType[];
-
-export type RecordOperation = (typeof RECORD_OPERATIONS)[number];
-
-export const EVERY_OPERATION: RecordOperation[] = [...RECORD_OPERATIONS];
-export const NO_OPERATION: RecordOperation[] = [];
-
 export type GivenMainPrincipal<TRole> = {
   type:
     | 'workspaceMember'
@@ -43,18 +25,7 @@ export type GivenPrincipals<TRole> = {
   applicationPrincipal: GivenApplicationPrincipal<TRole>;
 };
 
-export type RestrictedFieldsByRoleId = Record<
-  string,
-  Record<string, { canRead: boolean | null; canUpdate: boolean | null }>
->;
-
-export type RecordAccessWorld = GivenPrincipals<RoleGrant> & {
-  isSharingEnabled: boolean;
-  aiRunScope?: 'none' | 'allRecords';
-  disabledObjectPermissionActions?: ObjectPermissionAction[];
-  isObjectOwnedByMainApplication?: boolean;
-  restrictedFieldsByRoleId?: RestrictedFieldsByRoleId;
-};
+export type PrincipalSlot = keyof GivenPrincipals<unknown>;
 
 export const workspaceMember = <TRole>({ role }: { role: TRole }) => ({
   type: 'workspaceMember' as const,
@@ -104,51 +75,3 @@ export const findHeldRoles = <TRole>({
     ? [applicationPrincipal.role]
     : []),
 ];
-
-export const buildReachablePrincipals = <TRole>({
-  roles,
-}: {
-  roles: TRole[];
-}): GivenPrincipals<TRole>[] =>
-  roles.flatMap((mainRole) => [
-    ...[workspaceMember, apiKey].flatMap((buildMainPrincipal) => {
-      const limitingPrincipals: GivenLimitingPrincipal<TRole>[] = [
-        NO_LIMITING_PRINCIPAL,
-        ...roles.map((role) => agent({ role })),
-      ];
-      const applicationPrincipals: GivenApplicationPrincipal<TRole>[] = [
-        CUSTOM_APPLICATION,
-        // An OAuth application borrows the role of a member, an API key has none to lend
-        ...(buildMainPrincipal === workspaceMember ? [OAUTH_APPLICATION] : []),
-        ...roles.map((role) => application({ role })),
-      ];
-
-      return limitingPrincipals.flatMap((limitingPrincipal) =>
-        applicationPrincipals.map((applicationPrincipal) => ({
-          mainPrincipal: buildMainPrincipal({ role: mainRole }),
-          limitingPrincipal,
-          applicationPrincipal,
-        })),
-      );
-    }),
-    {
-      mainPrincipal: application({ role: mainRole }),
-      limitingPrincipal: NO_LIMITING_PRINCIPAL,
-      applicationPrincipal: SAME_APPLICATION_AS_MAIN,
-    },
-    ...roles.map((role) => ({
-      mainPrincipal: agent({ role: mainRole }),
-      limitingPrincipal: NO_LIMITING_PRINCIPAL,
-      applicationPrincipal: application({ role }),
-    })),
-    {
-      mainPrincipal: webhook({ role: mainRole }),
-      limitingPrincipal: NO_LIMITING_PRINCIPAL,
-      applicationPrincipal: CUSTOM_APPLICATION,
-    },
-    {
-      mainPrincipal: bareRole({ role: mainRole }),
-      limitingPrincipal: NO_LIMITING_PRINCIPAL,
-      applicationPrincipal: CUSTOM_APPLICATION,
-    },
-  ]);

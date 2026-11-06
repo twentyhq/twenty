@@ -3,9 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   findHeldRoles,
   type GivenPrincipals,
-  type RecordOperation,
-  type RoleGrant,
+  type PrincipalSlot,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
+import { type RoleGrant } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
+import { type RecordOperation } from 'src/engine/permissions/__tests__/framework/record-operations.constant';
 import { MEMBER_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
 import {
   describeSweepEntry,
@@ -17,33 +18,29 @@ import {
 } from 'src/engine/permissions/__tests__/sweep/reference-rules.util';
 import { SWEEP_RECORDS } from 'src/engine/permissions/__tests__/sweep/sweep-dimensions.util';
 
-type PrincipalSlot =
-  | 'mainPrincipal'
-  | 'limitingPrincipal'
-  | 'applicationPrincipal';
-
 const NARROWER_TO_WIDER_GRANTS: [RoleGrant, RoleGrant][] = [
   ['none', 'rowLevel'],
   ['rowLevel', 'allRecords'],
 ];
 
 const toEntryKey = ({
-  world,
+  scenario,
   operationType,
 }: {
-  world: object;
+  scenario: object;
   operationType: RecordOperation;
-}) => JSON.stringify({ world, operationType });
+}) => JSON.stringify({ scenario, operationType });
 
 const buildEntryWithSlotKey = ({
-  entry: { world, operationType },
+  entry: { scenario, operationType },
   slot,
   principal,
 }: {
-  entry: Pick<SweepEntry, 'world' | 'operationType'>;
+  entry: Pick<SweepEntry, 'scenario' | 'operationType'>;
   slot: PrincipalSlot;
   principal: object;
-}) => toEntryKey({ operationType, world: { ...world, [slot]: principal } });
+}) =>
+  toEntryKey({ operationType, scenario: { ...scenario, [slot]: principal } });
 
 const findRecordIdsMissingFrom = ({
   recordIds,
@@ -78,7 +75,7 @@ export const findAccessLostByWideningRole = ({
   );
 
   return entries.flatMap((entry) => {
-    const principal = entry.world[slot];
+    const principal = entry.scenario[slot];
 
     if (!('role' in principal)) {
       return [];
@@ -159,9 +156,9 @@ export const findPlainSqlDisagreements = (entries: SweepEntry[]) =>
       : [];
   });
 
-const findFiltersHeldByPrincipals = (world: GivenPrincipals<RoleGrant>) => {
-  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = world;
-  const isReachedByRoles = findHeldRoles(world).every(
+const findFiltersHeldByPrincipals = (scenario: GivenPrincipals<RoleGrant>) => {
+  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = scenario;
+  const isReachedByRoles = findHeldRoles(scenario).every(
     (grant) => grant !== 'none',
   );
 
@@ -197,7 +194,7 @@ export const findSqlContentViolations = (entries: SweepEntry[]) =>
       ),
     );
     const filterViolations = Object.entries(
-      findFiltersHeldByPrincipals(entry.world),
+      findFiltersHeldByPrincipals(entry.scenario),
     ).flatMap(([columnName, isHeld]) =>
       isHeld === sql.includes(`"${columnName}"`)
         ? []

@@ -1,10 +1,11 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import {
-  buildReachablePrincipals,
-  type RecordAccessWorld,
+  type RecordAccessScenario,
   type RoleGrant,
-} from 'src/engine/permissions/__tests__/framework/given-principals.util';
+} from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
+import { buildReachablePrincipals } from 'src/engine/permissions/__tests__/sweep/reachable-principals.util';
+import { type PrincipalSlot } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import {
   APPLICATION_ROLE_ID,
   LIMITING_ROLE_ID,
@@ -28,9 +29,11 @@ const SHARE_TARGETS = [
   EVERYONE,
 ];
 
-export const SWEEP_WORLDS: RecordAccessWorld[] = buildReachablePrincipals({
-  roles: ROLE_GRANTS,
-}).flatMap((principals) =>
+export const SWEEP_SCENARIOS: RecordAccessScenario[] = buildReachablePrincipals(
+  {
+    roles: ROLE_GRANTS,
+  },
+).flatMap((principals) =>
   FLAGS.flatMap((isSharingEnabled) => [
     { ...principals, isSharingEnabled },
     ...(principals.mainPrincipal.type === 'workspaceMember'
@@ -49,16 +52,22 @@ const SHARES = [
   ),
 ];
 
+const OUTSIDE_FILTER_COMBINATIONS: PrincipalSlot[][] = FLAGS.flatMap((isMain) =>
+  FLAGS.flatMap((isLimiting) =>
+    FLAGS.map((isApplication) => [
+      ...(isMain ? ['mainPrincipal' as const] : []),
+      ...(isLimiting ? ['limitingPrincipal' as const] : []),
+      ...(isApplication ? ['applicationPrincipal' as const] : []),
+    ]),
+  ),
+);
+
 // Lowercase because the event path lowercases record ids
 const toRecordId = (record: Omit<StoredRecordFixture, 'id'>) =>
   [
     record.isPrivate ? 'private' : 'public',
     record.createdBy === MEMBER_ID ? 'mine' : 'theirs',
-    record.isOutsideMainRoleFilter ? 'main-miss' : 'main-match',
-    record.isOutsideLimitingRoleFilter ? 'limiting-miss' : 'limiting-match',
-    record.isOutsideApplicationRoleFilter
-      ? 'application-miss'
-      : 'application-match',
+    `outside-${record.outsideFilterOf?.join('-') || 'none'}`,
     record.share?.principalId ?? 'unshared',
     record.share?.accessLevel ?? 'none',
   ]
@@ -67,23 +76,12 @@ const toRecordId = (record: Omit<StoredRecordFixture, 'id'>) =>
 
 export const SWEEP_RECORDS: StoredRecordFixture[] = FLAGS.flatMap((isPrivate) =>
   [MEMBER_ID, OTHER_MEMBER_ID].flatMap((createdBy) =>
-    FLAGS.flatMap((isOutsideMainRoleFilter) =>
-      FLAGS.flatMap((isOutsideLimitingRoleFilter) =>
-        FLAGS.flatMap((isOutsideApplicationRoleFilter) =>
-          SHARES.map((share) => {
-            const record = {
-              isPrivate,
-              createdBy,
-              isOutsideMainRoleFilter,
-              isOutsideLimitingRoleFilter,
-              isOutsideApplicationRoleFilter,
-              share,
-            };
+    OUTSIDE_FILTER_COMBINATIONS.flatMap((outsideFilterOf) =>
+      SHARES.map((share) => {
+        const record = { isPrivate, createdBy, outsideFilterOf, share };
 
-            return { ...record, id: toRecordId(record) };
-          }),
-        ),
-      ),
+        return { ...record, id: toRecordId(record) };
+      }),
     ),
   ),
 );

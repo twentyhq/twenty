@@ -30,6 +30,9 @@ export const ROLE_SETTINGS: RoleSetting[] = [
 
 export const FLAG = PermissionFlagType.WORKSPACE;
 
+export const isRoleGranting = (roleSetting: RoleSetting) =>
+  roleSetting === 'all settings' || roleSetting === 'flag assigned';
+
 const ROLE_IDS = [MAIN_ROLE_ID, LIMITING_ROLE_ID, APPLICATION_ROLE_ID];
 
 export const buildSettingPermissionsService = ({

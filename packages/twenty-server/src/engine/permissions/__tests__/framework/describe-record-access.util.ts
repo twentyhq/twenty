@@ -1,11 +1,11 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
+import { buildScenarioServices } from 'src/engine/permissions/__tests__/framework/build-permission-services.util';
+import { type RecordAccessScenario } from 'src/engine/permissions/__tests__/framework/record-access-scenario.type';
 import {
   RECORD_OPERATIONS,
-  type RecordAccessWorld,
   type RecordOperation,
-} from 'src/engine/permissions/__tests__/framework/given-principals.util';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+} from 'src/engine/permissions/__tests__/framework/record-operations.constant';
 import {
   buildStoredRecords,
   type RecordFixture,
@@ -14,33 +14,30 @@ import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/ut
 
 const RECORD_ID = 'record-id';
 
-export type RecordAccessCase = {
+export type RecordAccessCase = Partial<RecordAccessScenario> & {
   it: string;
-  given?: Partial<RecordAccessWorld>;
   record?: RecordFixture;
   hypotheticalShareAccessLevel?: RecordShareAccessLevel;
   grants: RecordOperation[];
 };
 
-type RecordAccessCases = {
-  given: RecordAccessWorld;
+type RecordAccessCases = RecordAccessScenario & {
+  name: string;
   cases: RecordAccessCase[];
 };
 
 const findGrantedOperations = async ({
-  world,
+  scenario,
   record = {},
   hypotheticalShareAccessLevel,
 }: {
-  world: RecordAccessWorld;
+  scenario: RecordAccessScenario;
   record?: RecordFixture;
   hypotheticalShareAccessLevel?: RecordShareAccessLevel;
 }) => {
   const storedRecords = buildStoredRecords([{ ...record, id: RECORD_ID }]);
-  const { principals, metadataMaps, flatObjectMetadata } = await resolveWorld({
-    world,
-    storedRecords,
-  });
+  const { principals, metadataMaps, flatObjectMetadata } =
+    await buildScenarioServices({ scenario, storedRecords });
   const grantedOperations: RecordOperation[] = [];
 
   for (const operationType of RECORD_OPERATIONS) {
@@ -67,37 +64,37 @@ const findGrantedOperations = async ({
 };
 
 const registerCases = ({
-  name,
-  given,
-  cases,
+  recordAccessCases: { name, cases, ...sharedScenario },
   registerTest,
-}: RecordAccessCases & {
-  name: string;
+}: {
+  recordAccessCases: RecordAccessCases;
   registerTest: (title: string, run: () => Promise<void>) => void;
 }) =>
   describe(name, () => {
-    for (const recordAccessCase of cases) {
-      registerTest(recordAccessCase.it, async () => {
+    for (const {
+      it: title,
+      record,
+      hypotheticalShareAccessLevel,
+      grants,
+      ...caseScenario
+    } of cases) {
+      registerTest(title, async () => {
         const grantedOperations = await findGrantedOperations({
-          world: { ...given, ...recordAccessCase.given },
-          record: recordAccessCase.record,
-          hypotheticalShareAccessLevel:
-            recordAccessCase.hypotheticalShareAccessLevel,
+          scenario: { ...sharedScenario, ...caseScenario },
+          record,
+          hypotheticalShareAccessLevel,
         });
 
         expect(grantedOperations).toEqual(
-          RECORD_OPERATIONS.filter((operation) =>
-            recordAccessCase.grants.includes(operation),
-          ),
+          RECORD_OPERATIONS.filter((operation) => grants.includes(operation)),
         );
       });
     }
   });
 
-export const describeRecordAccess = (
-  recordAccessCases: RecordAccessCases & { name: string },
-) => registerCases({ ...recordAccessCases, registerTest: it });
+export const describeRecordAccess = (recordAccessCases: RecordAccessCases) =>
+  registerCases({ recordAccessCases, registerTest: it });
 
 export const describeKnownRecordAccessDifferences = (
-  recordAccessCases: RecordAccessCases & { name: string },
-) => registerCases({ ...recordAccessCases, registerTest: it.failing });
+  recordAccessCases: RecordAccessCases,
+) => registerCases({ recordAccessCases, registerTest: it.failing });
