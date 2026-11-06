@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -226,7 +227,7 @@ export const SettingsCard = ({
             </StyledIllustration>
             <StyledIllustratedText>
               <StyledHeader>{titleAndActions}</StyledHeader>
-              {description && (
+              {isNonEmptyString(description) && (
                 <StyledIllustratedDescription disabled={disabled}>
                   {description}
                 </StyledIllustratedDescription>
@@ -241,7 +242,7 @@ export const SettingsCard = ({
               </StyledIconContainer>
               {titleAndActions}
             </StyledHeader>
-            {description && (
+            {isNonEmptyString(description) && (
               <StyledDescription disabled={disabled}>
                 {description}
               </StyledDescription>

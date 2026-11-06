@@ -3,10 +3,8 @@ import { type IframeMediaPermission } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconMicrophone, IconPhoto, IconVideo, IconX } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SettingsSecurityOriginFavicon } from '@/settings/security/components/SettingsSecurityOriginFavicon';
+import { SettingsSecurityOriginTableCell } from '@/settings/security/components/SettingsSecurityOriginTableCell';
 import { IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS } from '@/settings/security/constants/IframeMediaPermissionsTableGridAutoColumns';
 import { useSettingsSecurityIframeMediaPermissionsOrThrow } from '@/settings/security/contexts/SettingsSecurityIframeMediaPermissionsContext';
 import { Select } from '@/ui/input/components/Select';
@@ -58,15 +56,7 @@ export const SettingsSecurityIframeMediaPermissionRow = ({
     <TableRow
       gridAutoColumns={IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS}
     >
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
-        minWidth="0"
-        overflow="hidden"
-      >
-        <SettingsSecurityOriginFavicon origin={origin} />
-        <OverflowingTextWithTooltip text={origin} />
-      </TableCell>
+      <SettingsSecurityOriginTableCell origin={origin} />
       <TableCell>
         <Select<IframeMediaAccess>
           dropdownId={`iframe-media-permission-access-${origin}`}

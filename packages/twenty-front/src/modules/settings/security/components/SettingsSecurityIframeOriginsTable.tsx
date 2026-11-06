@@ -3,10 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SettingsSecurityOriginFavicon } from '@/settings/security/components/SettingsSecurityOriginFavicon';
+import { SettingsSecurityOriginTableCell } from '@/settings/security/components/SettingsSecurityOriginTableCell';
 import { IFRAME_ORIGINS_TABLE_GRID_AUTO_COLUMNS } from '@/settings/security/constants/IframeOriginsTableGridAutoColumns';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -48,15 +47,7 @@ export const SettingsSecurityIframeOriginsTable = ({
               key={origin}
               gridAutoColumns={IFRAME_ORIGINS_TABLE_GRID_AUTO_COLUMNS}
             >
-              <TableCell
-                color={themeCssVariables.font.color.primary}
-                gap={themeCssVariables.spacing[2]}
-                minWidth="0"
-                overflow="hidden"
-              >
-                <SettingsSecurityOriginFavicon origin={origin} />
-                <OverflowingTextWithTooltip text={origin} />
-              </TableCell>
+              <SettingsSecurityOriginTableCell origin={origin} />
               <TableCell align="right">
                 <IconButton
                   aria-label={t`Remove ${origin}`}
