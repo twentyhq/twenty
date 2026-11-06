@@ -95,9 +95,14 @@ export class StepFilterVariableSourcesWorkspaceService {
         workflowVersionContent: { trigger, steps },
       });
 
-    return STEP_TYPES_WITH_TEST_RUN_SCHEMA.includes(node.type) &&
-      isEmptyObject(computedOutputSchema)
-      ? node.settings.outputSchema
-      : computedOutputSchema;
+    const isAwaitingTestRunSchema =
+      STEP_TYPES_WITH_TEST_RUN_SCHEMA.includes(node.type) &&
+      isEmptyObject(computedOutputSchema);
+
+    if (isAwaitingTestRunSchema) {
+      return node.settings.outputSchema;
+    }
+
+    return computedOutputSchema;
   }
 }
