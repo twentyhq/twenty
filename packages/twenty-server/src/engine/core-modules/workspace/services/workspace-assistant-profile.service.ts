@@ -157,6 +157,7 @@ export class WorkspaceAssistantProfileService {
     const hasPermission =
       isDefined(authContext) &&
       isUserAuthContext(authContext) &&
+      !isDefined(authContext.application) &&
       (await this.settingPermissionsService.hasPermissionFlag({
         authContext,
         permissionFlag: PermissionFlagType.AI_SETTINGS,
