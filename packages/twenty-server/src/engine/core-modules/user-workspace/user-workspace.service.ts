@@ -44,7 +44,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { assert } from 'src/utils/assert';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
 export class UserWorkspaceService {
@@ -200,17 +199,6 @@ export class UserWorkspaceService {
           avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
           locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
         });
-
-        const workspaceMember = await workspaceMemberRepository.find({
-          where: {
-            userId: user.id,
-          },
-        });
-
-        assert(
-          workspaceMember?.length === 1,
-          `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
-        );
       },
       authContext,
     );
