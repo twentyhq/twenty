@@ -370,9 +370,14 @@ export class AgentInboxService {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
     workspaceMemberIds: string[];
   }): Promise<void> {
-    if (!isDefined(thread.workspaceMemberId)) {
+    if (
+      !isNonEmptyArray(workspaceMemberIds) ||
+      !isDefined(thread.workspaceMemberId)
+    ) {
       return;
     }
+
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
     const mentionedParticipantWorkspaceMemberIds = workspaceMemberIds.filter(
       (workspaceMemberId) => workspaceMemberId !== thread.workspaceMemberId,
