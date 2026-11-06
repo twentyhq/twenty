@@ -394,17 +394,19 @@ export class AgentTurnStreamService {
       ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
       : null;
     const agentId = turn?.agentId ?? null;
-    const isBuiltInAssistant = isBuiltInAssistantMessage({
-      message: {
-        role: AgentMessageRole.ASSISTANT,
-        threadId: claim?.threadId ?? '',
-        turnId,
-        agentId,
-        senderWorkspaceMemberId: null,
-        senderApplicationId: null,
-      },
-      turn,
-    });
+    const isBuiltInAssistant =
+      isDefined(claim) &&
+      isBuiltInAssistantMessage({
+        message: {
+          role: AgentMessageRole.ASSISTANT,
+          threadId: claim.threadId,
+          turnId,
+          agentId,
+          senderWorkspaceMemberId: null,
+          senderApplicationId: null,
+        },
+        turn,
+      });
     const usage: AgentTurnStreamUsage = {
       inputTokens: 0,
       outputTokens: 0,

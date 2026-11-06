@@ -41,5 +41,5 @@ export const isBuiltInAssistantMessage = ({
     return false;
   }
 
-  return turn.createdBy?.context?.isBuiltInAssistant ?? false;
+  return turn.createdBy.context.isBuiltInAssistant ?? false;
 };
