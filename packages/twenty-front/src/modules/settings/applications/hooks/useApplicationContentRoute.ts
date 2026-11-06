@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { CustomError, getSettingsPath } from 'twenty-shared/utils';
 
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { useMarketplaceApplicationContent } from '@/settings/applications/hooks/useMarketplaceApplicationContent';
@@ -45,7 +45,10 @@ export const useApplicationContentRoute = () => {
   }
 
   if (!isNonEmptyString(applicationId)) {
-    throw new Error(doNotTranslate('Application id is not defined'));
+    throw new CustomError(
+      doNotTranslate('Application id is not defined'),
+      'APPLICATION_ID_NOT_DEFINED',
+    );
   }
 
   const location: ApplicationContentLocation = {
