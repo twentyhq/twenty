@@ -1496,11 +1496,19 @@ export interface EnqueueJobResult {
 }
 
 export interface EnqueueJobsResult {
+    availableBytes?: Scalars['Float']
     enqueued: Scalars['Boolean']
     enqueuedJobsCount: Scalars['Int']
     jobIds: Scalars['String'][]
+    jobs: EnqueuedJob[]
     logicFunctionUniversalIdentifier: Scalars['String']
     __typename: 'EnqueueJobsResult'
+}
+
+export interface EnqueuedJob {
+    jobId: Scalars['String']
+    sizeBytes: Scalars['Int']
+    __typename: 'EnqueuedJob'
 }
 
 export interface EnterpriseLicenseInfoDTO {
@@ -6139,10 +6147,19 @@ export interface EnqueueJobResultGenqlSelection{
 export interface EnqueueJobsInput {delayMs?: (Scalars['Int'] | null),jobs?: (EnqueueJobItemInput[] | null),logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),retryLimit?: (Scalars['Int'] | null)}
 
 export interface EnqueueJobsResultGenqlSelection{
+    availableBytes?: boolean | number
     enqueued?: boolean | number
     enqueuedJobsCount?: boolean | number
     jobIds?: boolean | number
+    jobs?: EnqueuedJobGenqlSelection
     logicFunctionUniversalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnqueuedJobGenqlSelection{
+    jobId?: boolean | number
+    sizeBytes?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10621,6 +10638,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isEnqueueJobsResult = (obj?: { __typename?: any } | null): obj is EnqueueJobsResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobsResult"')
       return EnqueueJobsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnqueuedJob_possibleTypes: string[] = ['EnqueuedJob']
+    export const isEnqueuedJob = (obj?: { __typename?: any } | null): obj is EnqueuedJob => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueuedJob"')
+      return EnqueuedJob_possibleTypes.includes(obj.__typename)
     }
     
 

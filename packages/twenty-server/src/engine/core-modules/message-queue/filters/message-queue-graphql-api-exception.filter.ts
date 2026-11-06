@@ -2,7 +2,11 @@ import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  BaseGraphQLError,
+  ErrorCode,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   MessageQueueException,
   MessageQueueExceptionCode,
@@ -14,6 +18,13 @@ export class MessageQueueGraphqlApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case MessageQueueExceptionCode.JOB_TOO_LARGE: {
         const error = new UserInputError(exception);
+
+        error.extensions = { ...error.extensions, ...exception.details };
+
+        throw error;
+      }
+      case MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED: {
+        const error = new BaseGraphQLError(exception, ErrorCode.RATE_LIMITED);
 
         error.extensions = { ...error.extensions, ...exception.details };
 
