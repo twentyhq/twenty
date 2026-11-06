@@ -4,11 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageAttachmentFile } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
@@ -25,6 +28,8 @@ export class SentMessagePersistenceService {
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly filesFieldService: FilesFieldService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
 
   async persistSentMessage(
@@ -50,7 +55,10 @@ export class SentMessagePersistenceService {
           workspaceId: input.workspaceId,
         })
         .catch(async (saveError) => {
-          await this.deleteAttachmentFiles(attachmentFiles, input.workspaceId);
+          await this.deleteUnclaimedAttachmentFiles(
+            attachmentFiles,
+            input.workspaceId,
+          );
 
           throw saveError;
         });
@@ -117,15 +125,29 @@ export class SentMessagePersistenceService {
     });
   }
 
-  // Uploaded copies are temporary files without an expiry, so cleanup crons never collect them
-  private async deleteAttachmentFiles(
+  // Copies without an expiry are never collected by cleanup crons; claimed ones back committed attachments
+  private async deleteUnclaimedAttachmentFiles(
     attachmentFiles: MessageAttachmentFile[],
     workspaceId: string,
   ): Promise<void> {
+    if (attachmentFiles.length === 0) {
+      return;
+    }
+
+    const files = await this.fileRepository.find(workspaceId, {
+      where: { id: In(attachmentFiles.map(({ fileId }) => fileId)) },
+      select: { id: true, settings: true },
+    });
+
     await Promise.allSettled(
-      attachmentFiles.map(({ fileId }) =>
-        this.filesFieldService.deleteFilesFieldFile({ fileId, workspaceId }),
-      ),
+      files
+        .filter((file) => file.settings?.isTemporaryFile === true)
+        .map((file) =>
+          this.filesFieldService.deleteFilesFieldFile({
+            fileId: file.id,
+            workspaceId,
+          }),
+        ),
     );
   }
 }

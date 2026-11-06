@@ -1,9 +1,11 @@
 import { type Repository } from 'typeorm';
 
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { SentMessagePersistenceService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-persistence.service';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
@@ -45,6 +47,7 @@ describe('SentMessagePersistenceService', () => {
   const uploadFile = jest.fn();
   const deleteFilesFieldFile = jest.fn();
   const isFeatureEnabled = jest.fn();
+  const findFiles = jest.fn();
 
   const service = new SentMessagePersistenceService(
     {
@@ -55,6 +58,7 @@ describe('SentMessagePersistenceService', () => {
     } as unknown as MessagingSaveMessagesAndEnqueueContactCreationService,
     { uploadFile, deleteFilesFieldFile } as unknown as FilesFieldService,
     { isFeatureEnabled } as unknown as FeatureFlagService,
+    { find: findFiles } as unknown as WorkspaceScopedRepository<FileEntity>,
   );
 
   const getSavedMessage = () =>
@@ -100,10 +104,14 @@ describe('SentMessagePersistenceService', () => {
     expect(getSavedMessage().attachmentFiles).toEqual([]);
   });
 
-  it('should delete uploaded attachment copies when the message save fails', async () => {
+  it('should delete only unclaimed attachment copies when the message save fails', async () => {
     uploadFile
       .mockResolvedValueOnce({ id: 'file-1' })
       .mockResolvedValueOnce({ id: 'file-2' });
+    findFiles.mockResolvedValue([
+      { id: 'file-1', settings: { isTemporaryFile: true } },
+      { id: 'file-2', settings: { isTemporaryFile: false } },
+    ]);
     saveMessagesAndEnqueueContactCreation.mockRejectedValue(
       new Error('Save failed'),
     );
@@ -112,12 +120,9 @@ describe('SentMessagePersistenceService', () => {
       'Save failed',
     );
 
+    expect(deleteFilesFieldFile).toHaveBeenCalledTimes(1);
     expect(deleteFilesFieldFile).toHaveBeenCalledWith({
       fileId: 'file-1',
-      workspaceId: 'workspace-1',
-    });
-    expect(deleteFilesFieldFile).toHaveBeenCalledWith({
-      fileId: 'file-2',
       workspaceId: 'workspace-1',
     });
   });

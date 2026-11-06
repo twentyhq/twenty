@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -40,6 +41,7 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
       MessageChannelEntity,
       MessageFolderEntity,
       EmailingDomainEntity,
+      FileEntity,
     ]),
   ],
   providers: [
@@ -53,6 +55,7 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
     SentMessagePersistenceService,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageFolderEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [MessagingMessageOutboundService, SendEmailService],
 })
