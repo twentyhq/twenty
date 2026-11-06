@@ -626,7 +626,7 @@ export class WorkflowRunWorkspaceService {
       return undefined;
     }
 
-    // a run never reads output schemas and a run read computes them, so the snapshot leaves them out
+    // a run never reads output schemas, and the run view takes them from the version
     const trigger = { ...workflowVersion.trigger };
 
     trigger.settings = { ...trigger.settings, outputSchema: {} };
