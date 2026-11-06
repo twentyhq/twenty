@@ -81,8 +81,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
 
   return {
     loading: isDefined(workspacePublicData) ? false : loading,
-    data:
-      data?.getPublicWorkspaceDataByDomain ?? workspacePublicData ?? undefined,
+    data: workspacePublicData,
     error,
   };
 };

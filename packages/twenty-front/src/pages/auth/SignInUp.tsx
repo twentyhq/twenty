@@ -71,8 +71,6 @@ export const SignInUp = () => {
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isPublicWorkspaceDataLoading =
-    getPublicWorkspaceDataLoading && !isDefined(workspacePublicData);
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -144,7 +142,7 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (isPublicWorkspaceDataLoading || !clientConfigApiStatus.isLoadedOnce) {
+    if (getPublicWorkspaceDataLoading || !clientConfigApiStatus.isLoadedOnce) {
       return (
         <StyledLoaderContainer>
           <Loader color="gray" />
@@ -207,7 +205,7 @@ export const SignInUp = () => {
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
-    isPublicWorkspaceDataLoading,
+    getPublicWorkspaceDataLoading,
     signInUpStep,
     workspacePublicData,
   ]);
