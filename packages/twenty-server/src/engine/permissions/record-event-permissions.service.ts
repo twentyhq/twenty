@@ -41,7 +41,7 @@ export class RecordEventPermissionsService {
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
-  async findReadableEventRecordIds({
+  async filterReadableEventRecordIds({
     authContext,
     eventBatch,
   }: {
@@ -60,7 +60,7 @@ export class RecordEventPermissionsService {
       : new Set<string>();
   }
 
-  async findReadableEvents<TEvent extends ObjectRecordEvent>({
+  async filterReadableEvents<TEvent extends ObjectRecordEvent>({
     authContext,
     eventBatch,
     events = eventBatch.events,
