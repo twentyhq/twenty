@@ -65,12 +65,9 @@ export class BlocklistAccessService {
   private async hasWorkspaceBlocklistPermission(
     context: BlocklistMutationContext,
   ): Promise<boolean> {
-    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
-      userWorkspaceId: context.userWorkspaceId,
-      setting: PermissionFlagType.WORKSPACE,
-      workspaceId: context.workspaceId,
-      applicationId: context.applicationId,
-      agentId: context.agentId,
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      permissionFlag: PermissionFlagType.WORKSPACE,
     });
   }
 

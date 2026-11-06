@@ -47,7 +47,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
@@ -66,7 +66,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   constructor(
     private readonly recordPositionService: RecordPositionService,
-    private readonly shareWithService: ShareWithService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
   ) {
     super();
   }
@@ -78,7 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const objectSharing = resolveObjectSharing(queryRunnerContext);
 
     if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
-      await this.shareWithService.validateShareWithOrThrow({
+      await this.recordSharingWriteService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
       });
@@ -624,7 +624,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    await this.shareWithService.insertRecordSharesForCreatedRecords({
+    await this.recordSharingWriteService.insertRecordSharesForCreatedRecords({
       authContext,
       flatObjectMetadata,
       objectSharing,

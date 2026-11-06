@@ -280,13 +280,15 @@ type AiChatUserCreditsUsage {
 }
 
 type AiDataPolicy {
-  dataResidency: String
+  isProductImprovementDataSharingEnabled: Boolean!
   isZeroDataRetentionRequired: Boolean!
+  requiredDataResidencyRegion: String
 }
 
 input AiDataPolicyInput {
-  dataResidency: String
+  isProductImprovementDataSharingEnabled: Boolean
   isZeroDataRetentionRequired: Boolean!
+  requiredDataResidencyRegion: String
 }
 
 enum AiModelTier {
@@ -1325,10 +1327,13 @@ type ClientAiModelConfig {
   providerLabel: String
   providerName: String
   sdkPackage: String
+  zeroDataRetention: Boolean
 }
 
 type ClientAiModelTierConfig {
+  isZeroDataRetentionRequired: Boolean!
   modelId: String!
+  requiredDataResidencyRegion: String
   tier: AiModelTier!
 }
 
