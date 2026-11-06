@@ -1053,16 +1053,6 @@ msgstr ""
 msgid "AI component builder is disabled."
 msgstr ""
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr ""
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr ""
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1820,11 +1810,6 @@ msgstr ""
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
-msgstr ""
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr ""
 
 #. js-lingui-id: ukc8Lp
@@ -9476,6 +9461,11 @@ msgstr ""
 msgid "No verified sending domain matches this from address."
 msgstr ""
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr ""
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10988,6 +10978,16 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
+msgstr ""
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr ""
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
 msgstr ""
 
 #. js-lingui-id: 5BFz2t
@@ -12679,9 +12679,9 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr ""
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
 msgstr ""
 
 #. js-lingui-id: dOTj0U
@@ -12786,7 +12786,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr ""
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13614,11 +13614,6 @@ msgstr ""
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr ""
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr ""
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13628,11 +13623,6 @@ msgstr ""
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
-msgstr ""
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr ""
 
 #. js-lingui-id: QyGlqv
@@ -17977,7 +17967,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr ""
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr ""
 
@@ -17998,7 +17988,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr ""
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr ""
 
@@ -18245,7 +18235,7 @@ msgstr ""
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr ""
 
