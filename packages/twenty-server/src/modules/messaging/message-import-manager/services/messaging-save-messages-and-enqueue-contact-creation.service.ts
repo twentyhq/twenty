@@ -75,7 +75,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
         async (transactionScope) => {
           const {
-            sentDraftMessageExternalIds,
+            messageExternalIdsRefreshedWithoutSend,
             messageExternalIdsAndIdsMap,
             messageExternalIdToMessageChannelMessageAssociationIdMap,
             messageExternalIdToMessageThreadIdMap,
@@ -87,11 +87,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             workspaceId,
           });
 
-          const refreshedMessageExternalIds = new Set(
-            messageExternalIdsToRefresh,
-          );
-          const sentDraftMessageExternalIdsSet = new Set(
-            sentDraftMessageExternalIds,
+          const messageExternalIdsRefreshedWithoutSendSet = new Set(
+            messageExternalIdsRefreshedWithoutSend,
           );
 
           const participantsWithMessageId: (ParticipantWithMessageId & {
@@ -101,9 +98,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               message.externalId,
             );
 
-            const isRefreshWithoutSend =
-              refreshedMessageExternalIds.has(message.externalId) &&
-              !sentDraftMessageExternalIdsSet.has(message.externalId);
+            if (
+              messageExternalIdsRefreshedWithoutSendSet.has(message.externalId)
+            ) {
+              return [];
+            }
 
             return messageId
               ? message.participants.map((participant: Participant) => {
@@ -131,7 +130,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   // Drafts are outgoing, so recipients of an unsent email don't become contacts
                   const shouldCreateContact =
                     !message.isDraft &&
-                    !isRefreshWithoutSend &&
                     !!participant.handle &&
                     !isParticipantConnectedAccount &&
                     !isExcludedByNonProfessionalEmails &&

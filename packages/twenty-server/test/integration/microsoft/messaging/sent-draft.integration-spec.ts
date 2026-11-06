@@ -10,6 +10,7 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
+import { findCreatedPeopleEmails } from 'test/integration/utils/find-imported-records.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -40,7 +41,7 @@ const RECEIVED_MESSAGE = {
   conversationId: 'microsoft-received-conversation',
   parentFolderId: 'inbox',
   isDraft: false,
-  from: { emailAddress: { address: KEPT_RECIPIENT } },
+  from: { emailAddress: { address: KEPT_RECIPIENT, name: 'Kept Recipient' } },
   toRecipients: [{ emailAddress: { address: HANDLE } }],
 };
 
@@ -61,6 +62,21 @@ const SCHEDULED_MESSAGE = {
     { emailAddress: { address: KEPT_RECIPIENT } },
     { emailAddress: { address: REMOVED_RECIPIENT } },
   ],
+};
+
+const QUICKLY_SENT_RECIPIENT = 'quickly-sent-recipient@external.test';
+
+const QUICKLY_SENT_MESSAGE = {
+  id: 'microsoft-quickly-sent-message',
+  subject: `Microsoft quickly sent message ${randomUUID()}`,
+  body: { contentType: 'text', content: 'Quickly sent body' },
+  receivedDateTime: '2026-08-14T00:00:00.000Z',
+  internetMessageId: '<microsoft-quickly-sent-message@example.com>',
+  conversationId: 'microsoft-quickly-sent-conversation',
+  parentFolderId: 'drafts',
+  isDraft: false,
+  from: { emailAddress: { address: HANDLE } },
+  toRecipients: [{ emailAddress: { address: QUICKLY_SENT_RECIPIENT } }],
 };
 
 type ImportedMessage = {
@@ -156,10 +172,12 @@ const findImportedMessageState = async (
 };
 
 describe('Microsoft draft sent from Outlook (integration)', () => {
+  const mailbox = [SCHEDULED_MESSAGE, RECEIVED_MESSAGE];
+
   const microsoftMock = setupMicrosoftMock({
     handle: HANDLE,
     folders: FOLDERS,
-    messages: [SCHEDULED_MESSAGE, RECEIVED_MESSAGE],
+    messages: mailbox,
   });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -183,7 +201,10 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
       RECEIVED_MESSAGE_HEADER_ID,
     );
 
+    mailbox.push(QUICKLY_SENT_MESSAGE);
+    microsoftMock.moveMessageToFolder(QUICKLY_SENT_MESSAGE.id, 'sentitems');
     microsoftMock.moveMessageToFolder(RECEIVED_MESSAGE_ID, 'archive');
+    RECEIVED_MESSAGE.from.emailAddress.name = 'Renamed Recipient';
     microsoftMock.moveMessageToFolder(SCHEDULED_MESSAGE_ID, 'sentitems');
     SCHEDULED_MESSAGE.isDraft = false;
     SCHEDULED_MESSAGE.subject = SENT_SUBJECT;
@@ -241,6 +262,12 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
 
   it('links the message to Sent Items instead of Drafts', () => {
     expect(stateAfterSend.folderExternalIds).toEqual(['sentitems']);
+  });
+
+  it('creates the contact of a draft written and sent between two syncs', async () => {
+    expect(await findCreatedPeopleEmails([QUICKLY_SENT_RECIPIENT])).toEqual([
+      QUICKLY_SENT_RECIPIENT,
+    ]);
   });
 
   it('moves an archived email to Archive and keeps its participants', () => {
