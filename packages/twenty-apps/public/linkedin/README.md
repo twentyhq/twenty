@@ -6,6 +6,7 @@
 
 - **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
 - **Replies from Twenty**: answer a LinkedIn conversation from its thread in Twenty, sent from your own LinkedIn account
+- **Read receipts**: see whether each message you sent was delivered and read
 - **One connection per member**: each teammate connects their own LinkedIn account in a few clicks
 
 ## 💳 Billing

@@ -12,6 +12,9 @@ export type UnipileMessage = {
   is_sender: boolean;
   is_deleted: boolean;
   is_event: boolean;
+  // left out of some webhook payloads, so a missing flag reads as not yet
+  is_seen?: boolean;
+  is_delivered?: boolean;
   provider: UnipileProvider;
   attachments?: UnipileMessageAttachment[];
 };

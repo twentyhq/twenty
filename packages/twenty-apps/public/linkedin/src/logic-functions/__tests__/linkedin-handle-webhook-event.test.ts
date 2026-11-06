@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   kvSet: vi.fn(),
   getUnipileUser: vi.fn(),
   getUnipileChat: vi.fn(),
+  getUnipileMessage: vi.fn(),
   downloadUnipileMessageAttachment: vi.fn(),
   query: vi.fn(),
   mutation: vi.fn(),
@@ -42,6 +43,10 @@ vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
 
 vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
   getUnipileChat: mocks.getUnipileChat,
+}));
+
+vi.mock('src/unipile/utils/get-unipile-message.util', () => ({
+  getUnipileMessage: mocks.getUnipileMessage,
 }));
 
 vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
@@ -103,6 +108,62 @@ describe('linkedinHandleWebhookEventHandler', () => {
       ...DAPHNE,
       public_identifier: 'daphne-muller',
     });
+  });
+
+  it('refetches the message named by a read receipt and ingests it as read', async () => {
+    mocks.getUnipileMessage.mockResolvedValue({
+      id: 'message-1',
+      chat_id: 'chat-1',
+      sender_id: 'ACoME',
+      text: 'Hello',
+      timestamp: '2026-10-29T07:44:08.382Z',
+      is_sender: true,
+      is_seen: true,
+      is_deleted: false,
+      is_event: false,
+      provider: 'linkedin',
+    });
+
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        id: 'evt_2',
+        created_at: '2026-10-29T07:50:00.000Z',
+        account_id: 'acc_1',
+        account_provider: 'linkedin',
+        type: 'message.receipt.read',
+        payload: { chat_id: 'chat-1', message_id: 'message-1' },
+      }),
+    ).resolves.toEqual({ handled: true });
+
+    expect(mocks.getUnipileMessage).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      messageId: 'message-1',
+    });
+    expect(mocks.ingestMessages).toHaveBeenCalledExactlyOnceWith({
+      messageChannelId: 'channel-id',
+      messages: [
+        expect.objectContaining({
+          externalId: 'message-1',
+          deliveryStatus: 'READ',
+        }),
+      ],
+    });
+  });
+
+  it('ignores a receipt that names no message', async () => {
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        id: 'evt_3',
+        created_at: '2026-10-29T07:50:00.000Z',
+        account_id: 'acc_1',
+        account_provider: 'linkedin',
+        type: 'message.receipt.delivery',
+        payload: {},
+      }),
+    ).resolves.toEqual({ handled: false, reason: 'Receipt names no message' });
+
+    expect(mocks.getUnipileMessage).not.toHaveBeenCalled();
   });
 
   it('ingests a received message under the sender public profile URL', async () => {

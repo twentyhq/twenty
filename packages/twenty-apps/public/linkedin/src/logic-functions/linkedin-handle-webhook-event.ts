@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   listMessageChannels,
@@ -16,6 +17,7 @@ import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedi
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { getUnipileMessage } from 'src/unipile/utils/get-unipile-message.util';
 
 type LinkedinWebhookEventResult = { handled: boolean; reason?: string };
 
@@ -98,6 +100,26 @@ export const linkedinHandleWebhookEventHandler = async (
         message: event.payload,
         attachmentDeadlineAtMs,
       });
+    case 'message.receipt.read':
+    case 'message.receipt.delivery': {
+      const chatId = event.payload.chat_id;
+      const messageId = event.payload.message_id ?? event.payload.id;
+
+      if (!isNonEmptyString(chatId) || !isNonEmptyString(messageId)) {
+        return { handled: false, reason: 'Receipt names no message' };
+      }
+
+      return ingestUnipileMessage({
+        connectedAccountId: connection.id,
+        unipileAccountId: event.account_id,
+        message: await getUnipileMessage({
+          accountId: event.account_id,
+          chatId,
+          messageId,
+        }),
+        attachmentDeadlineAtMs,
+      });
+    }
     case 'account.status.disconnected':
     case 'account.status.errored':
       await reportConnectionAuthFailure({
@@ -115,7 +137,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-handle-webhook-event',
   description:
-    'Imports new LinkedIn messages into the connection message channel and flags connections LinkedIn signed out.',
+    'Imports new LinkedIn messages and their read receipts into the connection message channel and flags connections LinkedIn signed out.',
   timeoutSeconds: LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS,
   handler: linkedinHandleWebhookEventHandler,
 });
