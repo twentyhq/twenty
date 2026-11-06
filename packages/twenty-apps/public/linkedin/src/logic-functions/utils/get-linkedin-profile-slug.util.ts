@@ -8,8 +8,12 @@ const decodeSlug = (slug: string): string => {
   }
 };
 
-export const getLinkedinProfileSlug = (url: string): string | null => {
+// keeps the case, which internal ACo… profile ids need when sent back to Unipile
+export const getLinkedinProfileIdentifier = (url: string): string | null => {
   const slug = LINKEDIN_PROFILE_SLUG_PATTERN.exec(url)?.[1];
 
-  return slug ? decodeSlug(slug).normalize('NFC').toLowerCase() : null;
+  return slug ? decodeSlug(slug).normalize('NFC') : null;
 };
+
+export const getLinkedinProfileSlug = (url: string): string | null =>
+  getLinkedinProfileIdentifier(url)?.toLowerCase() ?? null;

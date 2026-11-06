@@ -18,6 +18,7 @@ export const messagingProviderGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NOT_FOUND:
       case MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE:
+      case MessagingProviderExceptionCode.START_CONVERSATION_NOT_AVAILABLE:
         throw new NotFoundError(error);
       case MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT:
         throw new UserInputError(error);
