@@ -5,6 +5,8 @@ import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflow
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { setFlowNodeOutputSchema } from '@/workflow/utils/setFlowNodeOutputSchema';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useStore } from 'jotai';
@@ -44,6 +46,24 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
 
+  // only the schema is taken, as the user may have edited the step again while it saved
+  const writeSavedOutputSchemaToFlow = useCallback(
+    ({
+      flowKey,
+      outputSchema,
+    }: {
+      flowKey: string;
+      outputSchema: WorkflowStep['settings']['outputSchema'];
+    }) => {
+      store.set(flowState, (flow) =>
+        isDefined(flow)
+          ? setFlowNodeOutputSchema({ flow, flowKey, outputSchema })
+          : flow,
+      );
+    },
+    [flowState, store],
+  );
+
   const saveFlowKeys = useCallback(
     async (flowKeys: string[]): Promise<string[]> => {
       const workflowVersionId = await getUpdatableWorkflowVersion();
@@ -54,13 +74,21 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
         const flow = store.get(flowState);
 
         if (flowKey === TRIGGER_STEP_ID) {
-          if (
-            isDefined(flow?.trigger) &&
-            !(await updateWorkflowVersionTrigger({
-              workflowVersionId,
-              trigger: flow.trigger,
-            }))
-          ) {
+          if (!isDefined(flow?.trigger)) {
+            continue;
+          }
+
+          const savedTrigger = await updateWorkflowVersionTrigger({
+            workflowVersionId,
+            trigger: flow.trigger,
+          });
+
+          if (isDefined(savedTrigger)) {
+            writeSavedOutputSchemaToFlow({
+              flowKey,
+              outputSchema: savedTrigger.settings.outputSchema,
+            });
+          } else {
             failedFlowKeys.push(flowKey);
           }
 
@@ -69,12 +97,20 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
 
         const step = flow?.steps?.find((flowStep) => flowStep.id === flowKey);
 
-        if (
-          isDefined(step) &&
-          !isDefined(
-            await updateWorkflowVersionStep({ workflowVersionId, step }),
-          )
-        ) {
+        if (!isDefined(step)) {
+          continue;
+        }
+
+        const savedStep = (
+          await updateWorkflowVersionStep({ workflowVersionId, step })
+        )?.data?.updateWorkflowVersionStep;
+
+        if (isDefined(savedStep)) {
+          writeSavedOutputSchemaToFlow({
+            flowKey,
+            outputSchema: savedStep.settings.outputSchema,
+          });
+        } else {
           failedFlowKeys.push(flowKey);
         }
       }
@@ -87,6 +123,7 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
       store,
       updateWorkflowVersionStep,
       updateWorkflowVersionTrigger,
+      writeSavedOutputSchemaToFlow,
     ],
   );
 

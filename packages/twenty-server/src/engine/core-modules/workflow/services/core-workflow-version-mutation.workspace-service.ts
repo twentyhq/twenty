@@ -303,15 +303,16 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
-    await this.coreWorkflowVersionWriteService.writeContent({
-      workspaceId,
-      coreWorkflowVersionId,
-      expectedVersion: coreWorkflowVersion,
-      trigger,
-      steps,
-    });
+    const persistedContent =
+      await this.coreWorkflowVersionWriteService.writeContent({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
+        steps,
+      });
 
-    return { trigger };
+    return { trigger: persistedContent.trigger ?? trigger };
   }
 
   async deleteStep({
