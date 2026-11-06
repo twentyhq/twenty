@@ -46,6 +46,8 @@ import { useStore } from 'jotai';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const StyledConversationContainer = styled.div`
@@ -758,7 +760,12 @@ export const ConfiguredAssistantIdentity: Story = {
         graphql.query('FindChatMessageAgent', ({ variables }) => {
           if (variables.id !== CUSTOM_AGENT_ID) {
             return HttpResponse.json({
-              errors: [{ message: 'Agent not found' }],
+              errors: [
+                {
+                  message: 'Agent not found',
+                  extensions: { code: 'NOT_FOUND' },
+                },
+              ],
             });
           }
 
@@ -795,5 +802,52 @@ export const ConfiguredAssistantIdentity: Story = {
     await expect(
       canvas.getByText('Legacy prose mentions Ada unchanged.'),
     ).toBeVisible();
+  },
+};
+
+const mockRepeatedAgentMessage: ExtendedUIMessage = {
+  ...mockDistinctAgentMessage,
+  id: 'msg-repeated-agent',
+};
+
+export const AgentLookupFailure: Story = {
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+  },
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockDistinctAgentMessage, mockRepeatedAgentMessage],
+    msw: {
+      handlers: [
+        graphql.query('FindChatMessageAgent', () =>
+          HttpResponse.json({
+            errors: [
+              {
+                message: 'Agent lookup failed',
+                extensions: { code: 'INTERNAL_SERVER_ERROR' },
+              },
+            ],
+          }),
+        ),
+      ],
+    },
+  },
+  render: () => (
+    <ToastStoryContainer>
+      <StyledConversationContainer>
+        <AiChatMessage messageId={mockDistinctAgentMessage.id} />
+        <AiChatMessage messageId={mockRepeatedAgentMessage.id} />
+      </StyledConversationContainer>
+    </ToastStoryContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await expect(
+      await body.findByText('Failed to load agent details.'),
+    ).toBeVisible();
+    expect(body.getAllByText('Failed to load agent details.')).toHaveLength(1);
+    expect(canvas.getAllByText('Agent')).toHaveLength(2);
   },
 };
