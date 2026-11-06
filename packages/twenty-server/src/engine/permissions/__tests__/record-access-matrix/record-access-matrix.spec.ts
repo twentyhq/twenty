@@ -336,11 +336,11 @@ describe('record access matrix', () => {
 
     it('filters events like it decides records', () => {
       const violations = entries
-        .filter(({ readableEventRecordIds }) => readableEventRecordIds)
         .filter(
           ({ readableEventRecordIds, grantedRecordIds }) =>
-            [...(readableEventRecordIds as Set<string>)].sort().join() !==
-            [...grantedRecordIds].sort().join(),
+            isDefined(readableEventRecordIds) &&
+            [...readableEventRecordIds].sort().join() !==
+              [...grantedRecordIds].sort().join(),
         )
         .map(describeEntry);
 
