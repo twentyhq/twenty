@@ -5,7 +5,11 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { type AiModelTier, type AiSdkPackage } from 'twenty-shared/ai';
+import {
+  type DataResidencyRegion,
+  type AiModelTier,
+  type AiSdkPackage,
+} from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -79,6 +83,9 @@ export class ClientAiModelConfig {
   @Field(() => String, { nullable: true })
   dataResidency?: string;
 
+  @Field(() => Boolean, { nullable: true })
+  zeroDataRetention?: boolean;
+
   @Field(() => Number, { nullable: true })
   intelligenceIndex?: number;
 
@@ -146,6 +153,12 @@ export class ClientAiModelTierConfig {
 
   @Field(() => String)
   modelId: ModelId;
+
+  @Field(() => String, { nullable: true })
+  requiredDataResidencyRegion: DataResidencyRegion | null;
+
+  @Field(() => Boolean)
+  isZeroDataRetentionRequired: boolean;
 }
 
 @ObjectType()

@@ -43,13 +43,13 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -61,12 +61,12 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentService: RoleAssignmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
@@ -350,7 +350,7 @@ export class UserService {
 
     if (workspaceMembers.length > 1) {
       try {
-        await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+        await this.roleAssignmentService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
           {
             workspaceId,
             userWorkspaceId: userWorkspace.id,
@@ -387,13 +387,11 @@ export class UserService {
       },
     );
 
-    await this.recordShareOwnershipTransferService.transferRecordSharesToSuccessor(
-      {
-        removedUserWorkspace: userWorkspace,
-        removedWorkspaceMemberId: workspaceMember.id,
-        actingUserWorkspaceId,
-      },
-    );
+    await this.recordSharingWriteService.transferRecordSharesToSuccessor({
+      removedUserWorkspace: userWorkspace,
+      removedWorkspaceMemberId: workspaceMember.id,
+      actingUserWorkspaceId,
+    });
 
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

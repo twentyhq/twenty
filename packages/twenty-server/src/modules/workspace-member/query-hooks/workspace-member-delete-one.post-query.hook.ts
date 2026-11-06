@@ -7,7 +7,7 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -36,7 +36,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -104,16 +104,14 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       },
     );
 
-    await this.recordShareOwnershipTransferService.transferRecordSharesToSuccessor(
-      {
-        removedUserWorkspace: userWorkspace,
-        removedWorkspaceMemberId: workspaceMember.id,
-        actingUserWorkspaceId:
-          'userWorkspaceId' in authContext
-            ? authContext.userWorkspaceId
-            : undefined,
-      },
-    );
+    await this.recordSharingWriteService.transferRecordSharesToSuccessor({
+      removedUserWorkspace: userWorkspace,
+      removedWorkspaceMemberId: workspaceMember.id,
+      actingUserWorkspaceId:
+        'userWorkspaceId' in authContext
+          ? authContext.userWorkspaceId
+          : undefined,
+    });
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,

@@ -315,13 +315,15 @@ export type AiChatUserCreditsUsage = {
 
 export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
-  dataResidency?: Maybe<Scalars['String']['output']>;
+  isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
 };
 
 export type AiDataPolicyInput = {
-  dataResidency?: InputMaybe<Scalars['String']['input']>;
+  isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
+  requiredDataResidencyRegion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum AiModelTier {
@@ -1482,11 +1484,14 @@ export type ClientAiModelConfig = {
   providerLabel?: Maybe<Scalars['String']['output']>;
   providerName?: Maybe<Scalars['String']['output']>;
   sdkPackage?: Maybe<Scalars['String']['output']>;
+  zeroDataRetention?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type ClientAiModelTierConfig = {
   __typename?: 'ClientAiModelTierConfig';
+  isZeroDataRetentionRequired: Scalars['Boolean']['output'];
   modelId: Scalars['String']['output'];
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
   tier: AiModelTier;
 };
 

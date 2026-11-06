@@ -116,7 +116,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         permissionsPrincipals: undefined,
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
-        recordPermissions: {} as never,
+        recordRepositoryPermissions: {} as never,
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -199,7 +199,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: string;
         threadId: string;
       }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-      getAuthContext: jest.fn().mockResolvedValue({
+      getAuthContextOrThrow: jest.fn().mockResolvedValue({
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       }),

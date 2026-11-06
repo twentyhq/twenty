@@ -247,7 +247,7 @@ describe('Chat message participation with real storage', () => {
           workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             'agentChatThreadParticipant',
           ),
-        await context.sharingService.getAuthContext(context),
+        await context.sharingService.getAuthContextOrThrow(context),
       );
     const repositoryPrototype: WorkspaceRepository = Object.getPrototypeOf(
       participantRepository,

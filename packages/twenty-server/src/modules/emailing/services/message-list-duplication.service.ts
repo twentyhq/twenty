@@ -12,7 +12,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -33,7 +32,6 @@ const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -97,11 +95,13 @@ export class MessageListDuplicationService {
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsService.canRoleReadSomeRecords({
+            this.recordPermissionsService.canRoleReachSomeRecords({
+              operationType: 'select',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsService.canRoleUpdateSomeRecords({
+            this.recordPermissionsService.canRoleReachSomeRecords({
+              operationType: 'update',
               principals,
               objectMetadataId,
             }),

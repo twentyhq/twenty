@@ -3,7 +3,11 @@ import { type AnthropicLanguageModelOptions } from '@ai-sdk/anthropic';
 import { type GoogleLanguageModelOptions } from '@ai-sdk/google';
 import { type MistralLanguageModelOptions } from '@ai-sdk/mistral';
 import { type XaiLanguageModelResponsesOptions } from '@ai-sdk/xai';
-import { type AiModelEffort, type AiSdkPackage } from 'twenty-shared/ai';
+import {
+  AI_MODEL_EFFORTS,
+  type AiModelEffort,
+  type AiSdkPackage,
+} from 'twenty-shared/ai';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -12,6 +16,7 @@ import {
   AI_SDK_GOOGLE,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
+  AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
@@ -51,6 +56,7 @@ export const AI_SDK_PACKAGE_EFFORTS: Partial<
   ] satisfies readonly BedrockEffort[],
   [AI_SDK_OPENAI]: ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
   [AI_SDK_AZURE]: ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
+  [AI_SDK_OPENAI_COMPATIBLE]: AI_MODEL_EFFORTS,
   [AI_SDK_GOOGLE]: [
     'minimal',
     'low',

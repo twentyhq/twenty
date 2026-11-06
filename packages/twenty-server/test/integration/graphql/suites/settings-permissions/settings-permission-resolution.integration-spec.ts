@@ -178,7 +178,6 @@ describe('Settings permission resolution', () => {
 
   let grantedApiKeyToken: string;
   let deniedApiKeyToken: string;
-  let unassignedApiKeyId: string;
   let unassignedApiKeyToken: string;
 
   let grantedApplication: ApplicationWithVariable;
@@ -218,7 +217,6 @@ describe('Settings permission resolution', () => {
 
     grantedApiKeyToken = grantedApiKey.token;
     deniedApiKeyToken = deniedApiKey.token;
-    unassignedApiKeyId = unassignedApiKey.apiKeyId;
     unassignedApiKeyToken = unassignedApiKey.token;
 
     await globalThis.testDataSource.query(
@@ -315,13 +313,8 @@ describe('Settings permission resolution', () => {
       expectPermissionDenied(await queryApiKeys(deniedApiKeyToken));
     });
 
-    it('rejects a key without any role', async () => {
-      const response = await queryApiKeys(unassignedApiKeyToken);
-
-      expect(response.body.data).toBeNull();
-      expect(response.body.errors?.[0].message).toBe(
-        `API key ${unassignedApiKeyId} has no role assigned`,
-      );
+    it('denies a key without any role', async () => {
+      expectPermissionDenied(await queryApiKeys(unassignedApiKeyToken));
     });
   });
 
