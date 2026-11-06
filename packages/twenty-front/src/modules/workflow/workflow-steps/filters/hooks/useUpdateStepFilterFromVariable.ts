@@ -71,10 +71,14 @@ export const useUpdateStepFilterFromVariable = ({
         fieldMetadataType: filterFieldMetadataItem?.type,
         compositeFieldSubFieldName,
       });
-    const value = isFilterableFieldType(filterType)
-      ? getInitialFilterValue(filterType, variableSelectionSettings.operand)
-          .value
-      : '';
+    let value = '';
+
+    if (isFilterableFieldType(filterType)) {
+      value = getInitialFilterValue(
+        filterType,
+        variableSelectionSettings.operand,
+      ).value;
+    }
 
     upsertStepFilterSettings({
       stepFilterToUpsert: {
