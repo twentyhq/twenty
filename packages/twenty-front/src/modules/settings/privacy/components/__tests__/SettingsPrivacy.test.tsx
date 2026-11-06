@@ -59,7 +59,7 @@ const renderSettingsPrivacy = ({
   isMultiWorkspaceEnabled: boolean;
   aiModels: ClientAiModelConfig[];
   aiDataPolicy?: {
-    dataResidency: string | null;
+    requiredDataResidency: string | null;
     isZeroDataRetentionRequired: boolean;
     isProductImprovementDataSharingEnabled: boolean;
   } | null;
@@ -167,7 +167,7 @@ describe('SettingsPrivacy', () => {
       isMultiWorkspaceEnabled: true,
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
       aiDataPolicy: {
-        dataResidency: 'eu',
+        requiredDataResidency: 'eu',
         isZeroDataRetentionRequired: true,
         isProductImprovementDataSharingEnabled: true,
       },

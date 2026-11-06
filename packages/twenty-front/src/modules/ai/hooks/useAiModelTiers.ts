@@ -49,7 +49,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
   const isAutoModelSelectionEnabled =
     currentWorkspace?.isAutoModelSelectionEnabled ?? true;
   const aiModelIdByTier = currentWorkspace?.aiModelIdByTier;
-  const { dataResidency, isZeroDataRetentionRequired } =
+  const { requiredDataResidency, isZeroDataRetentionRequired } =
     getWorkspaceAiDataPolicy(currentWorkspace);
 
   return useMemo(() => {
@@ -71,7 +71,10 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
           findAiModelTierForDataPolicy({
             aiModelTiers,
             tier,
-            aiDataPolicy: { dataResidency, isZeroDataRetentionRequired },
+            aiDataPolicy: {
+              requiredDataResidency,
+              isZeroDataRetentionRequired,
+            },
           })?.modelId,
         ),
         isPinned: false,
@@ -109,7 +112,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
     aiModelTiers,
     isAutoModelSelectionEnabled,
     aiModelIdByTier,
-    dataResidency,
+    requiredDataResidency,
     isZeroDataRetentionRequired,
   ]);
 };

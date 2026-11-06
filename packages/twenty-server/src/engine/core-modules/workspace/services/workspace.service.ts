@@ -272,7 +272,7 @@ export class WorkspaceService {
     storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
     aiDataPolicy: Pick<
       AiDataPolicy,
-      'dataResidency' | 'isZeroDataRetentionRequired'
+      'requiredDataResidency' | 'isZeroDataRetentionRequired'
     >;
   }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {

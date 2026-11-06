@@ -1,7 +1,7 @@
 import {
-  AI_DATA_RESIDENCY_POLICIES,
+  DATA_RESIDENCY_REGIONS,
   type AiDataPolicy,
-  type AiDataResidencyPolicy,
+  type DataResidencyRegion,
   isAiModelCompliantWithDataPolicy,
 } from 'twenty-shared/ai';
 
@@ -14,19 +14,22 @@ export const getAvailableAiDataPolicyOptions = ({
   aiModels: Pick<ClientAiModelConfig, 'dataResidency' | 'zeroDataRetention'>[];
   aiDataPolicy: Pick<
     AiDataPolicy,
-    'dataResidency' | 'isZeroDataRetentionRequired'
+    'requiredDataResidency' | 'isZeroDataRetentionRequired'
   >;
 }): {
-  dataResidencies: AiDataResidencyPolicy[];
+  dataResidencyRegions: DataResidencyRegion[];
   isZeroDataRetentionAvailable: boolean;
 } => ({
-  dataResidencies: AI_DATA_RESIDENCY_POLICIES.filter(
-    (dataResidency) =>
-      dataResidency === aiDataPolicy.dataResidency ||
+  dataResidencyRegions: DATA_RESIDENCY_REGIONS.filter(
+    (dataResidencyRegion) =>
+      dataResidencyRegion === aiDataPolicy.requiredDataResidency ||
       aiModels.some((model) =>
         isAiModelCompliantWithDataPolicy({
           model,
-          aiDataPolicy: { dataResidency, isZeroDataRetentionRequired: false },
+          aiDataPolicy: {
+            requiredDataResidency: dataResidencyRegion,
+            isZeroDataRetentionRequired: false,
+          },
         }),
       ),
   ),

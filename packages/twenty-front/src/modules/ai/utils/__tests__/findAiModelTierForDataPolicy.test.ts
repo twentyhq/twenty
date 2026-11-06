@@ -4,13 +4,13 @@ import { AiModelTier } from '~/generated-metadata/graphql';
 const OPEN_FAST_TIER = {
   tier: AiModelTier.fast,
   modelId: 'open',
-  dataResidency: null,
+  requiredDataResidency: null,
   isZeroDataRetentionRequired: false,
 };
 const EU_FAST_TIER = {
   tier: AiModelTier.fast,
   modelId: 'eu',
-  dataResidency: 'eu',
+  requiredDataResidency: 'eu',
   isZeroDataRetentionRequired: false,
 };
 const AI_MODEL_TIERS = [OPEN_FAST_TIER, EU_FAST_TIER];
@@ -22,7 +22,7 @@ describe('findAiModelTierForDataPolicy', () => {
         aiModelTiers: AI_MODEL_TIERS,
         tier: AiModelTier.fast,
         aiDataPolicy: {
-          dataResidency: 'eu',
+          requiredDataResidency: 'eu',
           isZeroDataRetentionRequired: false,
         },
       }),
@@ -35,7 +35,7 @@ describe('findAiModelTierForDataPolicy', () => {
         aiModelTiers: AI_MODEL_TIERS,
         tier: AiModelTier.fast,
         aiDataPolicy: {
-          dataResidency: null,
+          requiredDataResidency: null,
           isZeroDataRetentionRequired: true,
         },
       }),

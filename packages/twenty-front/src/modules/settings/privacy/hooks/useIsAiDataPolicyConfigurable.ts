@@ -3,8 +3,8 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useAvailableAiDataPolicyOptions } from '@/settings/privacy/hooks/useAvailableAiDataPolicyOptions';
 
 export const useIsAiDataPolicyConfigurable = () => {
-  const { dataResidencies, isZeroDataRetentionAvailable } =
+  const { dataResidencyRegions, isZeroDataRetentionAvailable } =
     useAvailableAiDataPolicyOptions();
 
-  return isNonEmptyArray(dataResidencies) || isZeroDataRetentionAvailable;
+  return isNonEmptyArray(dataResidencyRegions) || isZeroDataRetentionAvailable;
 };

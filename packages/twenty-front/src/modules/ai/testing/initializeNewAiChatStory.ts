@@ -71,7 +71,7 @@ export const initializeNewAiChatStory = ({
     {
       tier: AiModelTier.fast,
       modelId: MODEL_ID,
-      dataResidency: null,
+      requiredDataResidency: null,
       isZeroDataRetentionRequired: false,
     },
   ]);

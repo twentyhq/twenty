@@ -719,28 +719,28 @@ export default {
             ]
         },
         "AiDataPolicy": {
-            "dataResidency": [
-                1
-            ],
             "isProductImprovementDataSharingEnabled": [
                 4
             ],
             "isZeroDataRetentionRequired": [
                 4
+            ],
+            "requiredDataResidency": [
+                1
             ],
             "__typename": [
                 1
             ]
         },
         "AiDataPolicyInput": {
-            "dataResidency": [
-                1
-            ],
             "isProductImprovementDataSharingEnabled": [
                 4
             ],
             "isZeroDataRetentionRequired": [
                 4
+            ],
+            "requiredDataResidency": [
+                1
             ],
             "__typename": [
                 1
@@ -2854,13 +2854,13 @@ export default {
             ]
         },
         "ClientAiModelTierConfig": {
-            "dataResidency": [
-                1
-            ],
             "isZeroDataRetentionRequired": [
                 4
             ],
             "modelId": [
+                1
+            ],
+            "requiredDataResidency": [
                 1
             ],
             "tier": [

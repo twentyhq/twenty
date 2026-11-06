@@ -1,15 +1,15 @@
-import { type AiDataPolicy, isAiDataResidencyPolicy } from 'twenty-shared/ai';
+import { type AiDataPolicy, isDataResidencyRegion } from 'twenty-shared/ai';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 
 export const getWorkspaceAiDataPolicy = (
   workspace: Pick<CurrentWorkspace, 'aiDataPolicy'> | null,
 ): AiDataPolicy => {
-  const dataResidency = workspace?.aiDataPolicy?.dataResidency;
+  const requiredDataResidency = workspace?.aiDataPolicy?.requiredDataResidency;
 
   return {
-    dataResidency: isAiDataResidencyPolicy(dataResidency)
-      ? dataResidency
+    requiredDataResidency: isDataResidencyRegion(requiredDataResidency)
+      ? requiredDataResidency
       : null,
     isZeroDataRetentionRequired:
       workspace?.aiDataPolicy?.isZeroDataRetentionRequired ?? false,

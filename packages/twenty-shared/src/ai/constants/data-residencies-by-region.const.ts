@@ -1,8 +1,7 @@
 import { type DataResidency } from './data-residency.const';
 
-export const MODEL_RESIDENCIES_ALLOWED_BY_POLICY = {
+export const DATA_RESIDENCIES_BY_REGION = {
   eu: ['eu', 'de', 'fr'],
 } as const satisfies Record<string, readonly DataResidency[]>;
 
-export type AiDataResidencyPolicy =
-  keyof typeof MODEL_RESIDENCIES_ALLOWED_BY_POLICY;
+export type DataResidencyRegion = keyof typeof DATA_RESIDENCIES_BY_REGION;

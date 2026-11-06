@@ -30,11 +30,11 @@ export const SettingsPrivacyAiDataPolicyCard = () => {
     return null;
   }
 
-  const { dataResidency, isZeroDataRetentionRequired } =
+  const { requiredDataResidency, isZeroDataRetentionRequired } =
     getWorkspaceAiDataPolicy(currentWorkspace);
 
   const getTitle = () => {
-    if (isDefined(dataResidency)) {
+    if (isDefined(requiredDataResidency)) {
       return isZeroDataRetentionRequired
         ? t`EU only, zero data retention`
         : t`EU only, standard retention`;

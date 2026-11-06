@@ -8,13 +8,13 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 
 const NO_POLICY = {
-  dataResidency: null,
+  requiredDataResidency: null,
   isZeroDataRetentionRequired: false,
   isProductImprovementDataSharingEnabled: true,
 };
 const EU_ZERO_RETENTION_POLICY = {
   ...NO_POLICY,
-  dataResidency: 'eu',
+  requiredDataResidency: 'eu',
   isZeroDataRetentionRequired: true,
 };
 const ZERO_RETENTION_POLICY = {
@@ -52,7 +52,7 @@ const readAiDataPolicy = () =>
         query {
           currentWorkspace {
             aiDataPolicy {
-              dataResidency
+              requiredDataResidency
             }
           }
         }
@@ -106,11 +106,11 @@ describe('workspace AI data policy', () => {
   });
 
   it.each([
-    ['an unknown residency', { ...NO_POLICY, dataResidency: 'us' }],
-    ['a missing residency', { ...NO_POLICY, dataResidency: undefined }],
+    ['an unknown residency', { ...NO_POLICY, requiredDataResidency: 'us' }],
+    ['a missing residency', { ...NO_POLICY, requiredDataResidency: undefined }],
     [
       'a null retention requirement',
-      { dataResidency: 'eu', isZeroDataRetentionRequired: null },
+      { requiredDataResidency: 'eu', isZeroDataRetentionRequired: null },
     ],
     ['a null policy', null],
   ])('refuses %s', async (_label, aiDataPolicy) => {
@@ -183,7 +183,7 @@ describe('workspace AI data policy', () => {
     const response = await updateAiDataPolicy({
       data: {
         aiDataPolicy: {
-          dataResidency: 'eu',
+          requiredDataResidency: 'eu',
           isZeroDataRetentionRequired: true,
         },
       },
@@ -192,7 +192,7 @@ describe('workspace AI data policy', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
-      dataResidency: 'eu',
+      requiredDataResidency: 'eu',
       isZeroDataRetentionRequired: true,
       isProductImprovementDataSharingEnabled: false,
     });

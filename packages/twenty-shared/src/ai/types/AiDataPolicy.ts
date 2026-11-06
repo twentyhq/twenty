@@ -1,7 +1,7 @@
-import { type AiDataResidencyPolicy } from '../constants/model-residencies-allowed-by-policy.const';
+import { type DataResidencyRegion } from '../constants/data-residencies-by-region.const';
 
 export type AiDataPolicy = {
-  dataResidency: AiDataResidencyPolicy | null;
+  requiredDataResidency: DataResidencyRegion | null;
   isZeroDataRetentionRequired: boolean;
   isProductImprovementDataSharingEnabled: boolean;
 };

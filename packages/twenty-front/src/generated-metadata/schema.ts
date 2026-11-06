@@ -315,15 +315,15 @@ export type AiChatUserCreditsUsage = {
 
 export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
-  dataResidency?: Maybe<Scalars['String']['output']>;
   isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
+  requiredDataResidency?: Maybe<Scalars['String']['output']>;
 };
 
 export type AiDataPolicyInput = {
-  dataResidency?: InputMaybe<Scalars['String']['input']>;
   isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
+  requiredDataResidency?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum AiModelTier {
@@ -1447,9 +1447,9 @@ export type ClientAiModelConfig = {
 
 export type ClientAiModelTierConfig = {
   __typename?: 'ClientAiModelTierConfig';
-  dataResidency?: Maybe<Scalars['String']['output']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
   modelId: Scalars['String']['output'];
+  requiredDataResidency?: Maybe<Scalars['String']['output']>;
   tier: AiModelTier;
 };
 

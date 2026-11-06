@@ -1,6 +1,9 @@
 import { getAvailableAiDataPolicyOptions } from '@/settings/privacy/utils/getAvailableAiDataPolicyOptions';
 
-const NO_POLICY = { dataResidency: null, isZeroDataRetentionRequired: false };
+const NO_POLICY = {
+  requiredDataResidency: null,
+  isZeroDataRetentionRequired: false,
+};
 
 describe('getAvailableAiDataPolicyOptions', () => {
   it('offers nothing when no model states a residency or retention', () => {
@@ -9,7 +12,10 @@ describe('getAvailableAiDataPolicyOptions', () => {
         aiModels: [{ dataResidency: null, zeroDataRetention: null }],
         aiDataPolicy: NO_POLICY,
       }),
-    ).toEqual({ dataResidencies: [], isZeroDataRetentionAvailable: false });
+    ).toEqual({
+      dataResidencyRegions: [],
+      isZeroDataRetentionAvailable: false,
+    });
   });
 
   it('offers what the served models can satisfy', () => {
@@ -18,7 +24,10 @@ describe('getAvailableAiDataPolicyOptions', () => {
         aiModels: [{ dataResidency: 'de', zeroDataRetention: true }],
         aiDataPolicy: NO_POLICY,
       }),
-    ).toEqual({ dataResidencies: ['eu'], isZeroDataRetentionAvailable: true });
+    ).toEqual({
+      dataResidencyRegions: ['eu'],
+      isZeroDataRetentionAvailable: true,
+    });
   });
 
   it('keeps a restriction in force listed so it can be lifted', () => {
@@ -26,10 +35,13 @@ describe('getAvailableAiDataPolicyOptions', () => {
       getAvailableAiDataPolicyOptions({
         aiModels: [],
         aiDataPolicy: {
-          dataResidency: 'eu',
+          requiredDataResidency: 'eu',
           isZeroDataRetentionRequired: true,
         },
       }),
-    ).toEqual({ dataResidencies: ['eu'], isZeroDataRetentionAvailable: true });
+    ).toEqual({
+      dataResidencyRegions: ['eu'],
+      isZeroDataRetentionAvailable: true,
+    });
   });
 });

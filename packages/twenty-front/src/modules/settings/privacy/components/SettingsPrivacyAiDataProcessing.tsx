@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type AiDataResidencyPolicy } from 'twenty-shared/ai';
+import { type DataResidencyRegion } from 'twenty-shared/ai';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAlertTriangle, IconEyeOff, IconWorld } from 'twenty-ui/icon';
@@ -25,8 +25,8 @@ const StyledCalloutContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-type AiDataResidencyOptionValue =
-  | AiDataResidencyPolicy
+type DataResidencyRegionOptionValue =
+  | DataResidencyRegion
   | typeof WORLDWIDE_OPTION_VALUE;
 
 export const SettingsPrivacyAiDataProcessing = () => {
@@ -38,21 +38,21 @@ export const SettingsPrivacyAiDataProcessing = () => {
     useUpdateWorkspaceAiDataPolicyField();
 
   const aiDataPolicy = getWorkspaceAiDataPolicy(currentWorkspace);
-  const { dataResidencies, isZeroDataRetentionAvailable } =
+  const { dataResidencyRegions, isZeroDataRetentionAvailable } =
     useAvailableAiDataPolicyOptions();
 
-  const aiDataResidencyLabels: Record<AiDataResidencyPolicy, string> = {
+  const dataResidencyRegionLabels: Record<DataResidencyRegion, string> = {
     eu: t`EU only`,
   };
 
-  const aiDataResidencyOptions: {
-    value: AiDataResidencyOptionValue;
+  const dataResidencyRegionOptions: {
+    value: DataResidencyRegionOptionValue;
     label: string;
   }[] = [
     { value: WORLDWIDE_OPTION_VALUE, label: t`Worldwide` },
-    ...dataResidencies.map((value) => ({
+    ...dataResidencyRegions.map((value) => ({
       value,
-      label: aiDataResidencyLabels[value],
+      label: dataResidencyRegionLabels[value],
     })),
   ];
 
@@ -66,23 +66,25 @@ export const SettingsPrivacyAiDataProcessing = () => {
         description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
       />
       <Card.Root>
-        {dataResidencies.length > 0 && (
+        {dataResidencyRegions.length > 0 && (
           <SettingsOptionCardContentSelect
             Icon={IconWorld}
             title={t`Processing region`}
             description={t`Where AI providers process your requests`}
             divider={isZeroDataRetentionAvailable}
           >
-            <Select<AiDataResidencyOptionValue>
+            <Select<DataResidencyRegionOptionValue>
               dropdownId="settings-privacy-ai-data-residency"
-              value={aiDataPolicy.dataResidency ?? WORLDWIDE_OPTION_VALUE}
+              value={
+                aiDataPolicy.requiredDataResidency ?? WORLDWIDE_OPTION_VALUE
+              }
               onChange={(value) =>
                 updateWorkspaceAiDataPolicyField({
-                  field: 'dataResidency',
+                  field: 'requiredDataResidency',
                   value: value === WORLDWIDE_OPTION_VALUE ? null : value,
                 })
               }
-              options={aiDataResidencyOptions}
+              options={dataResidencyRegionOptions}
               selectSizeVariant="small"
             />
           </SettingsOptionCardContentSelect>

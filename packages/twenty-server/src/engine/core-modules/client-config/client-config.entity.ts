@@ -6,7 +6,7 @@ import {
 } from '@nestjs/graphql';
 
 import {
-  type AiDataResidencyPolicy,
+  type DataResidencyRegion,
   type AiModelTier,
   type AiSdkPackage,
 } from 'twenty-shared/ai';
@@ -155,7 +155,7 @@ export class ClientAiModelTierConfig {
   modelId: ModelId;
 
   @Field(() => String, { nullable: true })
-  dataResidency: AiDataResidencyPolicy | null;
+  requiredDataResidency: DataResidencyRegion | null;
 
   @Field(() => Boolean)
   isZeroDataRetentionRequired: boolean;
