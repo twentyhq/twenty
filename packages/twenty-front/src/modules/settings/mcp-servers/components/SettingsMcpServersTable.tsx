@@ -36,7 +36,6 @@ export const SettingsMcpServersTable = () => {
         gridTemplateColumns={MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       >
         <TableHeader>{t`Label`}</TableHeader>
-        <TableHeader>{t`Name`}</TableHeader>
         <TableHeader>{t`URL`}</TableHeader>
         <TableHeader>{t`Status`}</TableHeader>
         <TableHeader></TableHeader>

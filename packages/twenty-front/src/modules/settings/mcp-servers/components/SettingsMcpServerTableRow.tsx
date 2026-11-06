@@ -19,7 +19,7 @@ const StyledIconChevronRightContainer = styled.span`
 type SettingsMcpServerTableRowProps = {
   mcpServer: Pick<
     McpServerFragmentFragment,
-    'label' | 'name' | 'url' | 'isActive' | 'toolsSyncError' | 'tools'
+    'label' | 'url' | 'isActive' | 'toolsSyncError' | 'tools'
   >;
   to: string;
 };
@@ -37,9 +37,6 @@ export const SettingsMcpServerTableRow = ({
     >
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
         <OverflowingTextWithTooltip text={mcpServer.label} />
-      </TableCell>
-      <TableCell overflow="hidden">
-        <OverflowingTextWithTooltip text={mcpServer.name} />
       </TableCell>
       <TableCell overflow="hidden">
         <OverflowingTextWithTooltip
