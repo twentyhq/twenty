@@ -34,6 +34,16 @@ const RUN_PAGE_SIZE = 500;
 
 const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `(steps::text LIKE '%gqlOperationOrderBy%' OR steps::text LIKE '%recordSorts%')`;
 
+type RewriteStoredStepsArgs = {
+  dataSource: DataSource;
+  isDryRun: boolean;
+  tableName: string;
+  mapRow: (row: StoredJsonbRow<unknown>) => {
+    value: unknown;
+    hasChanged: boolean;
+  };
+};
+
 @RegisteredWorkspaceCommand('2.57.0', 1793965625303)
 @Command({
   name: 'upgrade:2-57:move-find-records-sorts-to-record-sorts',
@@ -94,31 +104,18 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
       whereParameters: [workspaceId],
       mapRow: convertSteps,
     });
-    const workspaceVersionCount = (await this.tableExists({
+    const workspaceVersionCount = await this.rewriteWorkspaceVersionSteps({
       dataSource,
+      isDryRun,
       tableName: workspaceVersionTable,
-    }))
-      ? await rewriteJsonbRowsWithCompareAndSet({
-          dataSource,
-          isDryRun,
-          tableName: workspaceVersionTable,
-          columnName: 'steps',
-          whereClause: FIND_RECORDS_ORDER_BY_STEPS_CLAUSE,
-          whereParameters: [],
-          mapRow: convertSteps,
-        })
-      : 0;
-    const runCount = (await this.tableExists({
+      mapRow: convertSteps,
+    });
+    const runCount = await this.rewriteRunFlowSteps({
       dataSource,
+      isDryRun,
       tableName: workspaceRunTable,
-    }))
-      ? await this.rewriteRunFlowSteps({
-          dataSource,
-          isDryRun,
-          tableName: workspaceRunTable,
-          mapRow: convertSteps,
-        })
-      : 0;
+      mapRow: convertSteps,
+    });
 
     // refreshed even when nothing is left, so a rerun after an interrupted run still clears stale versions
     if (!isDryRun) {
@@ -224,20 +221,37 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
   }
 
   // Sets only the flow snapshot, and only if it is still the one read, so state the worker writes meanwhile is kept
+  private async rewriteWorkspaceVersionSteps({
+    dataSource,
+    isDryRun,
+    tableName,
+    mapRow,
+  }: RewriteStoredStepsArgs): Promise<number> {
+    if (!(await this.tableExists({ dataSource, tableName }))) {
+      return 0;
+    }
+
+    return rewriteJsonbRowsWithCompareAndSet({
+      dataSource,
+      isDryRun,
+      tableName,
+      columnName: 'steps',
+      whereClause: FIND_RECORDS_ORDER_BY_STEPS_CLAUSE,
+      whereParameters: [],
+      mapRow,
+    });
+  }
+
   private async rewriteRunFlowSteps({
     dataSource,
     isDryRun,
     tableName,
     mapRow,
-  }: {
-    dataSource: DataSource;
-    isDryRun: boolean;
-    tableName: string;
-    mapRow: (row: StoredJsonbRow<unknown>) => {
-      value: unknown;
-      hasChanged: boolean;
-    };
-  }): Promise<number> {
+  }: RewriteStoredStepsArgs): Promise<number> {
+    if (!(await this.tableExists({ dataSource, tableName }))) {
+      return 0;
+    }
+
     let rewrittenRunCount = 0;
     let lastRunId: string | undefined;
 
