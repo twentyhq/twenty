@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
@@ -45,6 +45,8 @@ type ChannelChanges = {
 
 @Injectable()
 export class AgentChatChannelService {
+  private readonly logger = new Logger(AgentChatChannelService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -370,10 +372,17 @@ export class AgentChatChannelService {
         .catch(async (error: unknown) => {
           rewriteErrors.push(error);
 
-          await this.channelGrantService.enqueueChannelGrantsRewrite({
-            workspaceId,
-            channelId,
-          });
+          await this.channelGrantService
+            .enqueueChannelGrantsRewrite({ workspaceId, channelId })
+            .catch((enqueueError: unknown) =>
+              this.logger.warn(
+                `Failed to queue a grant rewrite for channel ${channelId}: ${
+                  enqueueError instanceof Error
+                    ? enqueueError.message
+                    : String(enqueueError)
+                }`,
+              ),
+            );
         });
     }
 
