@@ -16,7 +16,10 @@ type BaseChartConfiguration = {
   firstDayOfTheWeek?: number;
 };
 
-export type AggregateChartConfiguration = BaseChartConfiguration & {
+export type AggregateChartConfiguration = Omit<
+  BaseChartConfiguration,
+  'color'
+> & {
   configurationType: 'AGGREGATE_CHART';
   label?: string;
   numberFormat?: string;

@@ -10,3 +10,14 @@ exports[`Page layout with tabs update should fail when updating a non-existent p
   "name": "NotFoundError",
 }
 `;
+
+exports[`Page layout with tabs update should fail widget configuration validation failures when updating a widget with settings of another chart type 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "layout: property layout should not exist",
+  "name": "UserInputError",
+}
+`;

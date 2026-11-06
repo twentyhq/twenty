@@ -7,7 +7,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/build-flat-page-layout-widget-common-properties.util';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { sanitizeWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-input-or-throw.util';
+import { validateWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input-or-throw.util';
 
 export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
@@ -41,7 +41,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
       ['pageLayoutTabId'],
     );
 
-  const configuration = sanitizeWidgetConfigurationInputOrThrow({
+  validateWidgetConfigurationInputOrThrow({
     configuration: createPageLayoutWidgetInput.configuration,
   });
 
@@ -70,7 +70,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     universalIdentifier: pageLayoutWidgetId,
-    configuration,
+    configuration: createPageLayoutWidgetInput.configuration,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     conditionalDisplay: null,
@@ -79,7 +79,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     universalOverrides: null,
     universalConfiguration:
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-        configuration,
+        configuration: createPageLayoutWidgetInput.configuration,
         fieldMetadataUniversalIdentifierById:
           flatFieldMetadataMaps.universalIdentifierById,
         frontComponentUniversalIdentifierById:
