@@ -28,6 +28,7 @@ import { useContext, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Tabs } from 'twenty-ui/primitives/navigation';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTabsRow = styled.div`
   align-items: center;
@@ -35,9 +36,9 @@ const StyledTabsRow = styled.div`
   min-width: 0;
 `;
 
-const StyledTabsList = styled.div`
+const StyledTabsList = styled.div<{ isScrollable: boolean }>`
   min-width: 0;
-  overflow: hidden;
+  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
 `;
 
 const StyledNodeDimension = styled(NodeDimension)`
@@ -104,7 +105,17 @@ export const RecordGroupTabs = ({
     onTabWidthChange,
     onContainerWidthChange,
     onMoreButtonWidthChange,
-  } = useTabListMeasurements({ visibleTabs: recordGroupTabs });
+  } = useTabListMeasurements({
+    visibleTabs: recordGroupTabs,
+    horizontalPadding: 0,
+  });
+
+  // Matches TabList, which scrolls tabs on mobile instead of collapsing them
+  const isMobile = useIsMobile();
+
+  const renderedRecordGroupTabs = isMobile
+    ? recordGroupTabs
+    : recordGroupTabs.slice(0, visibleTabCount);
 
   const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
 
@@ -122,29 +133,32 @@ export const RecordGroupTabs = ({
       value={activeRecordGroupTabId}
       onValueChange={handleRecordGroupTabChange}
     >
-      <RecordGroupTabsHiddenMeasurements
-        recordGroupTabIds={recordGroupTabs.map(({ id }) => id)}
-        onTabWidthChange={onTabWidthChange}
-        onMoreButtonWidthChange={onMoreButtonWidthChange}
-      />
+      {!isMobile && (
+        <RecordGroupTabsHiddenMeasurements
+          recordGroupTabIds={recordGroupTabs.map(({ id }) => id)}
+          onTabWidthChange={onTabWidthChange}
+          onMoreButtonWidthChange={onMoreButtonWidthChange}
+        />
+      )}
       <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
         <StyledTabsRow>
-          <Tabs.List aria-label={t`Groups`} render={<StyledTabsList />}>
-            {recordGroupTabs
-              .slice(0, visibleTabCount)
-              .map(({ id: recordGroupTabId }) =>
-                recordGroupTabId === ALL_RECORD_GROUPS_TAB_ID ? (
-                  <RecordGroupAllTab key={recordGroupTabId} />
-                ) : (
-                  <RecordGroupTab
-                    key={recordGroupTabId}
-                    recordGroupId={recordGroupTabId}
-                    dndType={dndType}
-                  />
-                ),
-              )}
+          <Tabs.List
+            aria-label={t`Groups`}
+            render={<StyledTabsList isScrollable={isMobile} />}
+          >
+            {renderedRecordGroupTabs.map(({ id: recordGroupTabId }) =>
+              recordGroupTabId === ALL_RECORD_GROUPS_TAB_ID ? (
+                <RecordGroupAllTab key={recordGroupTabId} />
+              ) : (
+                <RecordGroupTab
+                  key={recordGroupTabId}
+                  recordGroupId={recordGroupTabId}
+                  dndType={dndType}
+                />
+              ),
+            )}
           </Tabs.List>
-          {hiddenTabs.length > 0 && (
+          {!isMobile && hiddenTabs.length > 0 && (
             <RecordGroupTabsMoreDropdown
               dropdownId={`record-group-tabs-more-${recordIndexId}`}
               hiddenRecordGroupTabIds={hiddenTabs.map(({ id }) => id)}

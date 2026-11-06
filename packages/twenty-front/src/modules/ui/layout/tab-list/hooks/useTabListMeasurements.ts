@@ -9,6 +9,7 @@ type UseTabListMeasurementsOptions<TTab extends Pick<SingleTabProps, 'id'>> = {
   visibleTabs: TTab[];
   hasAddButton?: boolean;
   rightPadding?: number;
+  horizontalPadding?: number;
 };
 
 type UseTabListMeasurementsResult<TTab extends Pick<SingleTabProps, 'id'>> = {
@@ -28,6 +29,7 @@ export const useTabListMeasurements = <
   visibleTabs,
   hasAddButton = false,
   rightPadding = 0,
+  horizontalPadding,
 }: UseTabListMeasurementsOptions<TTab>): UseTabListMeasurementsResult<TTab> => {
   const [tabWidthsById, setTabWidthsById] = useState<TabWidthsById>({});
   const [containerWidth, setContainerWidth] = useState(0);
@@ -42,6 +44,7 @@ export const useTabListMeasurements = <
       moreButtonWidth,
       addButtonWidth: hasAddButton ? addButtonWidth : 0,
       rightPadding,
+      horizontalPadding,
     });
   }, [
     visibleTabs,
@@ -51,6 +54,7 @@ export const useTabListMeasurements = <
     addButtonWidth,
     hasAddButton,
     rightPadding,
+    horizontalPadding,
   ]);
 
   const hiddenTabs = useMemo(() => {
