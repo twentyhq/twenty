@@ -36,7 +36,11 @@ const buildService = async ({
       { provide: AgentConversationWriterService, useValue: {} },
       {
         provide: AgentTurnRecorderService,
-        useValue: { finish, recordUsage: jest.fn() },
+        useValue: {
+          finish,
+          recordUsage: jest.fn(),
+          findTurn: jest.fn().mockResolvedValue(null),
+        },
       },
       { provide: AgentChatThreadService, useValue: {} },
     ],

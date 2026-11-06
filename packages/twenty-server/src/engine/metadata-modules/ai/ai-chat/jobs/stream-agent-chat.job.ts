@@ -198,6 +198,7 @@ export class StreamAgentChatJob {
       createdBy: buildActorMetadataFromAuthContext(
         authorizedConversation.authContext,
       ),
+      isBuiltInAssistant: true,
       streamClaim: claim,
     });
 

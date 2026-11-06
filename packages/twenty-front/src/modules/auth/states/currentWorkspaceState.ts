@@ -1,3 +1,5 @@
+import { getAiChatAssistantProfileSchema } from 'twenty-shared/ai';
+
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import {
   type Application,
@@ -65,9 +67,13 @@ export type CurrentWorkspace = Pick<
   >[];
 };
 
+const ASSISTANT_PROFILE_SCHEMA = getAiChatAssistantProfileSchema();
+
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',
   defaultValue: null,
   useLocalStorage: true,
   localStorageOptions: { getOnInit: true },
+  validateInitFn: ({ aiChatAssistantProfile }) =>
+    ASSISTANT_PROFILE_SCHEMA.safeParse(aiChatAssistantProfile).success,
 });

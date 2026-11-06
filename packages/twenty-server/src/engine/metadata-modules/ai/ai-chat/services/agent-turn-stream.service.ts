@@ -44,6 +44,8 @@ import {
   mapErrorToStreamError,
   type StreamErrorPayload,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { isBuiltInAssistantMessage } from 'src/engine/metadata-modules/ai/ai-history/utils/is-built-in-assistant-message.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -75,6 +77,7 @@ export type AgentTurnStreamSource = Pick<AgentTurn, 'modelConfig'> & {
 
 export type AgentTurnStreamResult = {
   assistantMessageId: string;
+  agentId: string | null;
   replyParts: ExtendedUIMessagePart[];
   isAborted: boolean;
   streamError: unknown;
@@ -387,6 +390,21 @@ export class AgentTurnStreamService {
       claim?.streamId ?? turnId,
       ASSISTANT_MESSAGE_ID_NAMESPACE,
     );
+    const turn = isDefined(claim)
+      ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
+      : null;
+    const agentId = turn?.agentId ?? null;
+    const isBuiltInAssistant = isBuiltInAssistantMessage({
+      message: {
+        role: AgentMessageRole.ASSISTANT,
+        threadId: claim?.threadId ?? '',
+        turnId,
+        agentId,
+        senderWorkspaceMemberId: null,
+        senderApplicationId: null,
+      },
+      turn,
+    });
     const usage: AgentTurnStreamUsage = {
       inputTokens: 0,
       outputTokens: 0,
@@ -398,6 +416,7 @@ export class AgentTurnStreamService {
     };
     const result: AgentTurnStreamResult = {
       assistantMessageId,
+      agentId,
       replyParts: [],
       isAborted: false,
       streamError: undefined,
@@ -436,6 +455,9 @@ export class AgentTurnStreamService {
                 part,
                 modelConfig: source.modelConfig,
                 usage,
+                turnId,
+                agentId,
+                isBuiltInAssistant,
               }),
             onEnd: async ({ responseMessage, isAborted }) => {
               try {
@@ -495,6 +517,7 @@ export class AgentTurnStreamService {
                   id: assistantMessageId,
                   threadId: claim.threadId,
                   turnId,
+                  agentId,
                   parts,
                 });
               })
@@ -640,6 +663,7 @@ export class AgentTurnStreamService {
       id: assistantMessageId,
       threadId: claim.threadId,
       turnId,
+      agentId: result.agentId,
       parts: replyParts,
     });
 
@@ -748,6 +772,9 @@ export class AgentTurnStreamService {
     part,
     modelConfig,
     usage,
+    turnId,
+    agentId,
+    isBuiltInAssistant,
   }: {
     part: {
       type: string;
@@ -761,6 +788,9 @@ export class AgentTurnStreamService {
     };
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
+    turnId: string;
+    agentId: string | null;
+    isBuiltInAssistant: boolean;
   }) {
     // a step that failed before the model answered still ends with a finish-step, one without token counts;
     // one whose model answered with an error finish reason reports real usage and is billed
@@ -775,7 +805,12 @@ export class AgentTurnStreamService {
     }
 
     if (part.type === 'start') {
-      return { startedAt: new Date().toISOString() };
+      return {
+        startedAt: new Date().toISOString(),
+        turnId,
+        agentId,
+        isBuiltInAssistant,
+      };
     }
 
     if (part.type === 'finish') {

@@ -10,7 +10,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { type AiChatSnoozePreset } from '@/ai/types/AiChatSnoozePreset';
 
 const SNOOZE_MENU_WIDTH = 240;
@@ -35,10 +35,12 @@ export const AiChatSnoozeMenu = ({
   onPickDate,
   onSomeoneReplies,
   onAssistantFinishes,
-  assistantName = AGENT_CHAT_ASSISTANT_NAME,
+  assistantName,
   disabled = false,
 }: AiChatSnoozeMenuProps) => {
   const { t } = useLingui();
+  const assistantProfile = useAiChatAssistantProfile();
+  const resolvedAssistantName = assistantName ?? assistantProfile.displayName;
   const hasEventOptions =
     isDefined(onSomeoneReplies) || isDefined(onAssistantFinishes);
 
@@ -98,7 +100,7 @@ export const AiChatSnoozeMenu = ({
                   disabled={disabled}
                   onClick={onAssistantFinishes}
                 >
-                  {t`When ${assistantName} finishes`}
+                  {t`When ${resolvedAssistantName} finishes`}
                 </Dropdown.ActionItem>
               )}
             </Dropdown.Section>

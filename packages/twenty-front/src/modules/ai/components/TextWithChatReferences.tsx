@@ -1,4 +1,5 @@
 import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
+import { AiChatAssistantMentionChip } from '@/ai/components/AiChatAssistantMentionChip';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { isString } from '@sniptt/guards';
 import { isAgentChatAssistantReference } from 'twenty-shared/ai';
@@ -18,7 +19,7 @@ export const TextWithChatReferences = ({
         }
 
         if (isAgentChatAssistantReference(segment)) {
-          return <span key={segment.index}>@{segment.displayName}</span>;
+          return <AiChatAssistantMentionChip key={segment.index} />;
         }
 
         return <ChatReferenceChip key={segment.index} reference={segment} />;
