@@ -12127,12 +12127,12 @@ msgstr "Forventet svar-body"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Experience"
-msgstr "Erfaring"
+msgstr "Oplevelse"
 
 #. js-lingui-id: 8TiwZn
 #: src/utils/title-utils.ts
 msgid "Experience - Settings"
-msgstr "Erfaring - Indstillinger"
+msgstr "Oplevelse - Indstillinger"
 
 #. js-lingui-id: LxRNPw
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx

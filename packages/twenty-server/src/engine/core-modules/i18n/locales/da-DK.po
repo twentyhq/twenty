@@ -5319,7 +5319,7 @@ msgstr "Forventede, at de samme begrænsningsfelter blev brugt konsekvent på tv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Experience"
-msgstr "Erfaring"
+msgstr "Oplevelse"
 
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
