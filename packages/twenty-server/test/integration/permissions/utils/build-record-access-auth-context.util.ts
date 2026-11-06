@@ -12,7 +12,10 @@ const findApplicationPrincipalId = ({
   workspace,
 }: {
   applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
-  workspace: RecordAccessWorkspace;
+  workspace: Pick<
+    RecordAccessWorkspace,
+    'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
+  >;
 }): string | undefined => {
   switch (applicationPrincipal.type) {
     case 'application':
@@ -31,7 +34,10 @@ const findLimitingAgentId = ({
   workspace,
 }: {
   limitingPrincipal: RecordAccessPrincipals['limitingPrincipal'];
-  workspace: RecordAccessWorkspace;
+  workspace: Pick<
+    RecordAccessWorkspace,
+    'limitingAgentIds' | 'limitingAgentWithoutRoleId'
+  >;
 }): string | undefined => {
   switch (limitingPrincipal.type) {
     case 'agent':
