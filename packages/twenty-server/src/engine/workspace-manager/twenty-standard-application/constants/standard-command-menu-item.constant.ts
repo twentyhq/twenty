@@ -175,6 +175,25 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.REMOVE_FROM_FAVORITES,
     hotKeys: null,
   },
+  exportNoteToPdf: {
+    universalIdentifier: '0dc33397-5b58-415d-a08c-35b93b01a9a0',
+    label: i18nLabel(
+      msg({ message: `Export to PDF`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconFileExport',
+    isPinned: false,
+    position: 9,
+    shortLabel: i18nLabel(
+      msg({ message: `Export`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and (objectMetadataItem.nameSingular == "note" or objectMetadataItem.nameSingular == "task") and someNonEmptyString(selectedRecords, "bodyV2.markdown")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_NOTE_TO_PDF,
+    hotKeys: null,
+  },
   exportRecords: {
     universalIdentifier: 'c6f5c54d-d52b-4e75-8188-2190d77126f2',
     label: i18nLabel(
