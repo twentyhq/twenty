@@ -6,6 +6,7 @@ import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
+import { MCP_SERVER_TABLE_BODY_MAX_HEIGHT } from '@/settings/mcp-servers/constants/McpServerTableBodyMaxHeight';
 import { MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-servers/constants/McpServerTableRowGridTemplateColumns';
 import { SettingsMcpServerTableRow } from '@/settings/mcp-servers/components/SettingsMcpServerTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -16,7 +17,7 @@ import { FindManyMcpServersDocument } from '~/generated-metadata/graphql';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  max-height: 260px;
+  max-height: ${MCP_SERVER_TABLE_BODY_MAX_HEIGHT};
   overflow-y: auto;
 `;
 

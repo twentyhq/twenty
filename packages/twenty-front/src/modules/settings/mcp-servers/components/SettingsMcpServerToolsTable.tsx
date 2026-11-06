@@ -5,6 +5,7 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { MCP_SERVER_TOOL_TABLE_BODY_MAX_HEIGHT } from '@/settings/mcp-servers/constants/McpServerToolTableBodyMaxHeight';
 import { MCP_SERVER_TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-servers/constants/McpServerToolTableRowGridTemplateColumns';
 import { getMcpServerToolAnnotationBadges } from '@/settings/mcp-servers/utils/getMcpServerToolAnnotationBadges';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -16,7 +17,7 @@ import { type McpServerTool } from '~/generated-metadata/graphql';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  max-height: 400px;
+  max-height: ${MCP_SERVER_TOOL_TABLE_BODY_MAX_HEIGHT};
   overflow-y: auto;
 `;
 
