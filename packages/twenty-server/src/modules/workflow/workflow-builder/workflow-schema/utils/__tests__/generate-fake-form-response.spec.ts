@@ -148,4 +148,29 @@ describe('generateFakeFormResponse', () => {
       fieldMetadataId: 'stage-field-metadata-id',
     });
   });
+
+  it('skips a record field on a deleted object and keeps the others', () => {
+    const result = generateFakeFormResponse({
+      formFieldMetadataItems: [
+        {
+          id: '96939213-49ac-4dee-949d-56e6c7be98eb',
+          name: 'deletedRecord',
+          type: 'RECORD',
+          label: 'Deleted Record',
+          settings: { objectName: 'deletedObject' },
+        },
+        {
+          id: '96939213-49ac-4dee-949d-56e6c7be98ec',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          label: 'Name',
+        },
+      ],
+      flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+      objectIdByNameSingular: mockObjectIdByNameSingular,
+    });
+
+    expect(Object.keys(result)).toEqual(['name']);
+  });
 });

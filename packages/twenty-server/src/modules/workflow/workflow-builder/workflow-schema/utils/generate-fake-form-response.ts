@@ -1,9 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  WorkflowCommonException,
-  WorkflowCommonExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -38,23 +34,16 @@ export const generateFakeFormResponse = ({
       const objectId =
         objectIdByNameSingular[formFieldMetadata?.settings?.objectName];
 
-      if (!isDefined(objectId)) {
-        throw new WorkflowCommonException(
-          `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
-          WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
+      const flatObjectMetadata = isDefined(objectId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: objectId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
 
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
+      // a field on a deleted object offers nothing, while the other fields keep their variables
       if (!isDefined(flatObjectMetadata)) {
-        throw new WorkflowCommonException(
-          `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
-          WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
+        return undefined;
       }
 
       return {
