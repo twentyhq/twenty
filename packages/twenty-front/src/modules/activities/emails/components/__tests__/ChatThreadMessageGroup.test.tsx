@@ -2,11 +2,18 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider as JotaiProvider } from 'jotai';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 const asAttachments = (
   files: FieldFilesValue[],
@@ -252,6 +259,38 @@ describe('ChatThreadMessageGroup', () => {
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+
+  it.each([
+    [TimeFormat.HOUR_24, '14:07'],
+    [TimeFormat.HOUR_12, '2:07 PM'],
+  ])(
+    'renders the time of each message in the member time format (%s)',
+    (timeFormat, expectedTime) => {
+      jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
+        timeZone: 'Europe/Paris',
+        dateFormat: DateFormat.MONTH_FIRST,
+        timeFormat,
+        numberFormat: NumberFormat.COMMAS_AND_DOT,
+        calendarStartDay: CalendarStartDay.MONDAY,
+      });
+
+      render(
+        <JotaiProvider store={jotaiStore}>
+          <ChatThreadMessageGroup
+            group={{
+              id: 'group-id',
+              isOutgoing: true,
+              messages: [
+                buildMessage({ receivedAt: '2026-01-05T13:07:00.000Z' }),
+              ],
+            }}
+          />
+        </JotaiProvider>,
+      );
+
+      expect(screen.getByText(expectedTime)).toBeInTheDocument();
+    },
+  );
 
   it('does not render a body masked by metadata visibility', () => {
     render(
