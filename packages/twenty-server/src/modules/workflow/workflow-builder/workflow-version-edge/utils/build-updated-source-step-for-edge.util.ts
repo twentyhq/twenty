@@ -5,35 +5,175 @@ import {
   WorkflowVersionEdgeException,
   WorkflowVersionEdgeExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-edge.exception';
+import { getIfElseBranchConnectionHint } from 'src/modules/workflow/workflow-builder/utils/get-if-else-branch-connection-hint.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
+import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
+import {
+  type WorkflowAction,
+  type WorkflowIfElseAction,
+  type WorkflowIteratorAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type UpdatedSourceStepResult = {
   updatedSourceStep: WorkflowAction;
   shouldPersist: boolean;
 };
 
-const buildSourceStepWithAddedNextStepId = ({
+type UpdateTargetStepIds = (stepIds: string[]) => string[];
+
+const addTarget =
+  (target: string): UpdateTargetStepIds =>
+  (stepIds) =>
+    stepIds.includes(target) ? stepIds : [...stepIds, target];
+
+const removeTarget =
+  (target: string): UpdateTargetStepIds =>
+  (stepIds) =>
+    stepIds.filter((stepId) => stepId !== target);
+
+const toResult = ({
   sourceStep,
-  target,
+  updatedSourceStep,
+  previousStepIds,
+  updatedStepIds,
 }: {
   sourceStep: WorkflowAction;
-  target: string;
+  updatedSourceStep: WorkflowAction;
+  previousStepIds: string[];
+  updatedStepIds: string[];
+}): UpdatedSourceStepResult =>
+  previousStepIds.length === updatedStepIds.length
+    ? { updatedSourceStep: sourceStep, shouldPersist: false }
+    : { updatedSourceStep, shouldPersist: true };
+
+const updateIfElseBranchStepIds = ({
+  sourceStep,
+  sourceConnectionOptions,
+  updateStepIds,
+}: {
+  sourceStep: WorkflowIfElseAction;
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
+  updateStepIds: UpdateTargetStepIds;
 }): UpdatedSourceStepResult => {
-  if (sourceStep.nextStepIds?.includes(target)) {
-    return {
-      updatedSourceStep: sourceStep,
-      shouldPersist: false,
-    };
+  if (
+    sourceConnectionOptions?.connectedStepType !== WorkflowActionType.IF_ELSE
+  ) {
+    throw new WorkflowVersionEdgeException(
+      getIfElseBranchConnectionHint(sourceStep),
+      WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+    );
   }
 
-  return {
+  const { branchId } = sourceConnectionOptions.settings;
+  const branch = sourceStep.settings.input.branches.find(
+    (branch) => branch.id === branchId,
+  );
+
+  if (!isDefined(branch)) {
+    throw new WorkflowVersionEdgeException(
+      `Branch '${branchId}' not found. ${getIfElseBranchConnectionHint(sourceStep)}`,
+      WorkflowVersionEdgeExceptionCode.NOT_FOUND,
+    );
+  }
+
+  const updatedStepIds = updateStepIds(branch.nextStepIds);
+
+  return toResult({
+    sourceStep,
+    previousStepIds: branch.nextStepIds,
+    updatedStepIds,
     updatedSourceStep: {
       ...sourceStep,
-      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
+      settings: {
+        ...sourceStep.settings,
+        input: {
+          ...sourceStep.settings.input,
+          branches: sourceStep.settings.input.branches.map((branch) =>
+            branch.id === branchId
+              ? { ...branch, nextStepIds: updatedStepIds }
+              : branch,
+          ),
+        },
+      },
     },
-    shouldPersist: true,
-  };
+  });
+};
+
+const updateIteratorLoopStepIds = ({
+  sourceStep,
+  updateStepIds,
+}: {
+  sourceStep: WorkflowIteratorAction;
+  updateStepIds: UpdateTargetStepIds;
+}): UpdatedSourceStepResult => {
+  const initialLoopStepIds = sourceStep.settings.input.initialLoopStepIds ?? [];
+  const updatedStepIds = updateStepIds(initialLoopStepIds);
+
+  return toResult({
+    sourceStep,
+    previousStepIds: initialLoopStepIds,
+    updatedStepIds,
+    updatedSourceStep: {
+      ...sourceStep,
+      settings: {
+        ...sourceStep.settings,
+        input: {
+          ...sourceStep.settings.input,
+          initialLoopStepIds: updatedStepIds,
+        },
+      },
+    },
+  });
+};
+
+const updateSourceStepTargets = ({
+  sourceStep,
+  sourceConnectionOptions,
+  updateStepIds,
+}: {
+  sourceStep: WorkflowAction;
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
+  updateStepIds: UpdateTargetStepIds;
+}): UpdatedSourceStepResult => {
+  // A run only follows an If/Else's branches, so its edges always belong to one
+  if (isWorkflowIfElseAction(sourceStep)) {
+    return updateIfElseBranchStepIds({
+      sourceStep,
+      sourceConnectionOptions,
+      updateStepIds,
+    });
+  }
+
+  switch (sourceConnectionOptions?.connectedStepType) {
+    case WorkflowActionType.IF_ELSE:
+      throw new WorkflowVersionEdgeException(
+        `Source step '${sourceStep.id}' is not an If/Else step`,
+        WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+      );
+    case WorkflowActionType.ITERATOR:
+      if (!isWorkflowIteratorAction(sourceStep)) {
+        throw new WorkflowVersionEdgeException(
+          `Source step '${sourceStep.id}' is not an iterator`,
+          WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      if (sourceConnectionOptions.settings.isConnectedToLoop) {
+        return updateIteratorLoopStepIds({ sourceStep, updateStepIds });
+      }
+      break;
+  }
+
+  const nextStepIds = sourceStep.nextStepIds ?? [];
+  const updatedStepIds = updateStepIds(nextStepIds);
+
+  return toResult({
+    sourceStep,
+    previousStepIds: nextStepIds,
+    updatedStepIds,
+    updatedSourceStep: { ...sourceStep, nextStepIds: updatedStepIds },
+  });
 };
 
 export const buildSourceStepWithAddedEdge = ({
@@ -44,71 +184,12 @@ export const buildSourceStepWithAddedEdge = ({
   sourceStep: WorkflowAction;
   target: string;
   sourceConnectionOptions?: WorkflowStepConnectionOptions;
-}): UpdatedSourceStepResult => {
-  if (!isDefined(sourceConnectionOptions)) {
-    return buildSourceStepWithAddedNextStepId({ sourceStep, target });
-  }
-
-  switch (sourceConnectionOptions.connectedStepType) {
-    case WorkflowActionType.ITERATOR:
-      if (sourceStep.type !== WorkflowActionType.ITERATOR) {
-        throw new WorkflowVersionEdgeException(
-          `Source step '${sourceStep.id}' is not an iterator`,
-          WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      if (sourceConnectionOptions.settings.isConnectedToLoop) {
-        const currentInitialLoopStepIds =
-          sourceStep.settings.input.initialLoopStepIds;
-
-        if (currentInitialLoopStepIds?.includes(target)) {
-          return {
-            updatedSourceStep: sourceStep,
-            shouldPersist: false,
-          };
-        }
-
-        return {
-          updatedSourceStep: {
-            ...sourceStep,
-            settings: {
-              ...sourceStep.settings,
-              input: {
-                ...sourceStep.settings.input,
-                initialLoopStepIds: [
-                  ...(currentInitialLoopStepIds ?? []),
-                  target,
-                ],
-              },
-            },
-          },
-          shouldPersist: true,
-        };
-      }
-
-      return buildSourceStepWithAddedNextStepId({ sourceStep, target });
-
-    default:
-      return buildSourceStepWithAddedNextStepId({ sourceStep, target });
-  }
-};
-
-const buildSourceStepWithRemovedNextStepId = ({
-  sourceStep,
-  target,
-}: {
-  sourceStep: WorkflowAction;
-  target: string;
-}): UpdatedSourceStepResult => ({
-  updatedSourceStep: {
-    ...sourceStep,
-    nextStepIds: sourceStep.nextStepIds?.filter(
-      (nextStepId) => nextStepId !== target,
-    ),
-  },
-  shouldPersist: true,
-});
+}): UpdatedSourceStepResult =>
+  updateSourceStepTargets({
+    sourceStep,
+    sourceConnectionOptions,
+    updateStepIds: addTarget(target),
+  });
 
 export const buildSourceStepWithRemovedEdge = ({
   sourceStep,
@@ -118,64 +199,9 @@ export const buildSourceStepWithRemovedEdge = ({
   sourceStep: WorkflowAction;
   target: string;
   sourceConnectionOptions?: WorkflowStepConnectionOptions;
-}): UpdatedSourceStepResult => {
-  if (!isDefined(sourceConnectionOptions)) {
-    return buildSourceStepWithRemovedNextStepId({ sourceStep, target });
-  }
-
-  switch (sourceConnectionOptions.connectedStepType) {
-    case WorkflowActionType.ITERATOR:
-      if (sourceStep.type !== WorkflowActionType.ITERATOR) {
-        throw new WorkflowVersionEdgeException(
-          `Source step '${sourceStep.id}' is not an iterator`,
-          WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      if (sourceConnectionOptions.settings.isConnectedToLoop) {
-        const currentInitialLoopStepIds =
-          sourceStep.settings.input.initialLoopStepIds;
-
-        if (!currentInitialLoopStepIds?.includes(target)) {
-          return {
-            updatedSourceStep: sourceStep,
-            shouldPersist: false,
-          };
-        }
-
-        return {
-          updatedSourceStep: {
-            ...sourceStep,
-            settings: {
-              ...sourceStep.settings,
-              input: {
-                ...sourceStep.settings.input,
-                initialLoopStepIds: currentInitialLoopStepIds.filter(
-                  (id) => id !== target,
-                ),
-              },
-            },
-          },
-          shouldPersist: true,
-        };
-      }
-
-      return buildSourceStepWithRemovedNextStepId({ sourceStep, target });
-
-    default:
-      return buildSourceStepWithRemovedNextStepId({ sourceStep, target });
-  }
-};
-
-export const assertEdgeConnectionOptionsAreSupported = (
-  sourceConnectionOptions?: WorkflowStepConnectionOptions,
-): void => {
-  if (
-    sourceConnectionOptions?.connectedStepType === WorkflowActionType.IF_ELSE
-  ) {
-    throw new WorkflowVersionEdgeException(
-      'If/Else connections must be updated through their branch settings',
-      WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-    );
-  }
-};
+}): UpdatedSourceStepResult =>
+  updateSourceStepTargets({
+    sourceStep,
+    sourceConnectionOptions,
+    updateStepIds: removeTarget(target),
+  });

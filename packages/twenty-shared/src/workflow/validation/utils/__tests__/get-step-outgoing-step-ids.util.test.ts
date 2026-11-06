@@ -45,7 +45,7 @@ describe('getStepOutgoingStepIds', () => {
     ).toEqual(['a']);
   });
 
-  it('should include if-else branch nextStepIds', () => {
+  it('should follow only the branches of an if-else step, as a run does', () => {
     const step: ValidatableWorkflowStep = {
       id: 'step-1',
       type: WorkflowActionType.IF_ELSE,
@@ -55,7 +55,7 @@ describe('getStepOutgoingStepIds', () => {
       },
     };
 
-    expect(getStepOutgoingStepIds(step).sort()).toEqual(['b1', 'b2', 'x']);
+    expect(getStepOutgoingStepIds(step).sort()).toEqual(['b1', 'b2']);
   });
 
   it('should include iterator initialLoopStepIds', () => {

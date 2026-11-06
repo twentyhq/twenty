@@ -25,10 +25,6 @@ export const findParentSteps = ({
       return false;
     }
 
-    if (candidateParent.nextStepIds?.includes(step.id)) {
-      return true;
-    }
-
     if (isWorkflowIfElseAction(candidateParent)) {
       return isIfElseBranchTarget({
         ifElseStep: candidateParent,
@@ -36,6 +32,6 @@ export const findParentSteps = ({
       });
     }
 
-    return false;
+    return candidateParent.nextStepIds?.includes(step.id) ?? false;
   });
 };

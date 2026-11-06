@@ -269,6 +269,40 @@ describe('insertStep', () => {
     ).toThrow('Step parent is not an If/Else action');
   });
 
+  it('rejects a step inserted after an If/Else without one of its branches', () => {
+    expect(() =>
+      insertStep({
+        existingSteps: [createMockIfElseAction()],
+        existingTrigger: null,
+        insertedStep: createMockAction('new'),
+        parentStepId: 'if-else',
+      }),
+    ).toThrow(
+      'Connect If/Else step \'if-else\' through one of its branches with connection options { connectedStepType: "IF_ELSE", settings: { branchId } }, where branchId is one of: "if", "else-if", "else"',
+    );
+  });
+
+  it('adds a step to the end of an If/Else branch', () => {
+    const result = insertStep({
+      existingSteps: [createMockIfElseAction()],
+      existingTrigger: null,
+      insertedStep: createMockAction('new'),
+      parentStepId: 'if-else',
+      parentStepConnectionOptions: {
+        connectedStepType: WorkflowActionType.IF_ELSE,
+        settings: { branchId: 'else' },
+      },
+    });
+
+    const updatedIfElseStep = result.updatedSteps[0] as WorkflowIfElseAction;
+
+    expect(updatedIfElseStep.nextStepIds).toBeUndefined();
+    expect(updatedIfElseStep.settings.input.branches[2].nextStepIds).toEqual([
+      'shared',
+      'new',
+    ]);
+  });
+
   it('should insert a step at the end of the array when no parent or next step is specified', () => {
     const existingTrigger = createMockTrigger(['1']);
     const step1 = createMockAction('1');
@@ -436,6 +470,7 @@ describe('insertStep', () => {
     expect(updatedIteratorStep.settings.input.initialLoopStepIds).toEqual([
       'existing-loop-step',
     ]);
+    expect(updatedIteratorStep.nextStepIds).toEqual(['new']);
   });
 
   it('should handle inserting a step between two steps within an iterator', () => {

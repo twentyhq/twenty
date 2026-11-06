@@ -70,9 +70,20 @@ export const SidePanelWorkflowCreateStepContent = () => {
     const { parentStepId, nextStepId, position, connectionOptions } =
       workflowInsertStepIds;
 
+    const steps = flow?.steps;
+    const parentStep =
+      isDefined(parentStepId) && isDefined(steps) && isDefined(position)
+        ? steps.find((step) => step.id === parentStepId)
+        : undefined;
+
+    const isNewIfElseBranch =
+      parentStep?.type === 'IF_ELSE' &&
+      connectionOptions?.connectedStepType !== 'IF_ELSE';
+
+    // The step joins the If/Else through the new branch, not as its child
     const createdStep = await createStep({
       newStepType: selection.type,
-      parentStepId,
+      parentStepId: isNewIfElseBranch ? undefined : parentStepId,
       nextStepId,
       position,
       connectionOptions,
@@ -83,16 +94,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
       return;
     }
 
-    const steps = flow?.steps;
-    const parentStep =
-      isDefined(parentStepId) && isDefined(steps) && isDefined(position)
-        ? steps.find((step) => step.id === parentStepId)
-        : undefined;
-
-    if (
-      parentStep?.type === 'IF_ELSE' &&
-      connectionOptions?.connectedStepType !== 'IF_ELSE'
-    ) {
+    if (isNewIfElseBranch) {
       await handleIfElseParentStep({
         parentStep,
         createdStepId: createdStep.id,

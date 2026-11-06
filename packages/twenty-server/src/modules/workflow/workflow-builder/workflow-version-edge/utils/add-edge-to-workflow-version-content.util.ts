@@ -5,10 +5,7 @@ import {
   WorkflowVersionEdgeException,
   WorkflowVersionEdgeExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-edge.exception';
-import {
-  assertEdgeConnectionOptionsAreSupported,
-  buildSourceStepWithAddedEdge,
-} from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
+import { buildSourceStepWithAddedEdge } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -30,8 +27,6 @@ export const addEdgeToWorkflowVersionContent = ({
   steps: WorkflowAction[] | null;
   hasChanged: boolean;
 } => {
-  assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
-
   if (!isDefined(steps?.find((step) => step.id === target))) {
     throw new WorkflowVersionEdgeException(
       `Target step '${target}' not found`,

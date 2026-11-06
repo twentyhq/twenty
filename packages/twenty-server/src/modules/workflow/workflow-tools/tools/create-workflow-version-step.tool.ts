@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { type CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -20,13 +21,7 @@ const baseStepFields = {
     .describe(
       'Optional ID of the parent step this step should come after (UUID, or "trigger" for the trigger step). If not provided, the step will be added at the end of the workflow.',
     ),
-  parentStepConnectionOptions: z
-    .object({
-      type: z.string().optional(),
-      conditionGroupIndex: z.number().optional(),
-    })
-    .optional()
-    .describe('Optional parent step connection options'),
+  parentStepConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
   nextStepId: z
     .string()
     .optional()
@@ -125,9 +120,11 @@ export const createCreateWorkflowVersionStepTool = (
         if (existingSteps.length === 0) {
           effectiveParentStepId = TRIGGER_STEP_ID;
         } else {
+          // An If/Else continues only through its branches, so the end of the workflow is never after it
           const leafSteps = existingSteps.filter(
             (step) =>
-              !isDefined(step.nextStepIds) || step.nextStepIds.length === 0,
+              step.type !== WorkflowActionType.IF_ELSE &&
+              (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0),
           );
 
           effectiveParentStepId =

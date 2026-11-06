@@ -40,6 +40,22 @@ describe('findParentSteps', () => {
     expect(result).toEqual([ifElseStep]);
   });
 
+  it('should not treat an IF-ELSE as the parent of a step it lists outside its branches', () => {
+    const child = createMockCodeStep('child');
+    const ifElseStep = createMockIfElseStep(
+      'if-else',
+      [
+        { id: 'true-branch', nextStepIds: ['other-child'] },
+        { id: 'false-branch', nextStepIds: ['other-child'] },
+      ],
+      ['child'],
+    );
+
+    expect(
+      findParentSteps({ step: child, steps: [ifElseStep, child] }),
+    ).toEqual([]);
+  });
+
   it('should find IF-ELSE parent for else branch child', () => {
     const elseChild = createMockCodeStep('else-child');
     const ifElseStep = createMockIfElseStep('if-else', [
