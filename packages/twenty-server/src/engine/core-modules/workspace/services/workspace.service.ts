@@ -83,6 +83,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { buildAiDataPolicy } from 'src/engine/core-modules/workspace/utils/build-ai-data-policy.util';
 import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
@@ -250,7 +251,10 @@ export class WorkspaceService {
   }: {
     aiModelIdByTier: Partial<Record<AiModelTier, string>>;
     storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
-    aiDataPolicy: AiDataPolicy;
+    aiDataPolicy: Pick<
+      AiDataPolicy,
+      'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
+    >;
   }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
       if (!isAiModelTier(tier)) {
@@ -484,7 +488,7 @@ export class WorkspaceService {
       await this.assertFeatureIsEnabledOrThrow({
         featureFlagKey: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
         workspaceId: workspace.id,
-        userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
+        userFriendlyMessage: msg`Privacy settings are not enabled for this workspace.`,
       });
 
       const isAiDataPolicyColumnHidden = !isDefined(workspace.aiDataPolicy);
@@ -494,7 +498,7 @@ export class WorkspaceService {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage: msg`AI data policy is not available until the upgrade has completed.`,
+            userFriendlyMessage: msg`Privacy settings are not available until the upgrade has completed.`,
           },
         );
       }
@@ -621,6 +625,12 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(isDefined(payload.aiDataPolicy) && {
+          aiDataPolicy: buildAiDataPolicy({
+            aiDataPolicyInput: payload.aiDataPolicy,
+            storedAiDataPolicy: workspace.aiDataPolicy,
+          }),
+        }),
         ...(payload.customDomain === null
           ? { isCustomDomainEnabled: false }
           : {}),
@@ -1286,7 +1296,8 @@ export class WorkspaceService {
     application,
     workspaceActivationStatus,
   }: {
-    payload: Partial<WorkspaceEntity>;
+    payload: Omit<Partial<WorkspaceEntity>, 'aiDataPolicy'> &
+      Pick<UpdateWorkspaceInput, 'aiDataPolicy'>;
     userWorkspaceId?: string;
     application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;

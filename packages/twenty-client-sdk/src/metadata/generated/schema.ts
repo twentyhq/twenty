@@ -252,8 +252,9 @@ export interface AiChatUserCreditsUsage {
 }
 
 export interface AiDataPolicy {
-    dataResidency?: Scalars['String']
+    isProductImprovementDataSharingEnabled: Scalars['Boolean']
     isZeroDataRetentionRequired: Scalars['Boolean']
+    requiredDataResidencyRegion?: Scalars['String']
     __typename: 'AiDataPolicy'
 }
 
@@ -1184,11 +1185,14 @@ export interface ClientAiModelConfig {
     providerLabel?: Scalars['String']
     providerName?: Scalars['String']
     sdkPackage?: Scalars['String']
+    zeroDataRetention?: Scalars['Boolean']
     __typename: 'ClientAiModelConfig'
 }
 
 export interface ClientAiModelTierConfig {
+    isZeroDataRetentionRequired: Scalars['Boolean']
     modelId: Scalars['String']
+    requiredDataResidencyRegion?: Scalars['String']
     tier: AiModelTier
     __typename: 'ClientAiModelTierConfig'
 }
@@ -4636,13 +4640,14 @@ export interface AiChatUserCreditsUsageGenqlSelection{
 }
 
 export interface AiDataPolicyGenqlSelection{
-    dataResidency?: boolean | number
+    isProductImprovementDataSharingEnabled?: boolean | number
     isZeroDataRetentionRequired?: boolean | number
+    requiredDataResidencyRegion?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface AiDataPolicyInput {dataResidency?: (Scalars['String'] | null),isZeroDataRetentionRequired: Scalars['Boolean']}
+export interface AiDataPolicyInput {isProductImprovementDataSharingEnabled?: (Scalars['Boolean'] | null),isZeroDataRetentionRequired: Scalars['Boolean'],requiredDataResidencyRegion?: (Scalars['String'] | null)}
 
 export interface AiRunUsageGenqlSelection{
     inputTokens?: boolean | number
@@ -5628,12 +5633,15 @@ export interface ClientAiModelConfigGenqlSelection{
     providerLabel?: boolean | number
     providerName?: boolean | number
     sdkPackage?: boolean | number
+    zeroDataRetention?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface ClientAiModelTierConfigGenqlSelection{
+    isZeroDataRetentionRequired?: boolean | number
     modelId?: boolean | number
+    requiredDataResidencyRegion?: boolean | number
     tier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
