@@ -11,7 +11,7 @@ import {
 export class AiDataPolicyInput {
   @Field(() => String, { nullable: true })
   @IsIn([...DATA_RESIDENCY_REGIONS, null])
-  requiredDataResidency: DataResidencyRegion | null;
+  requiredDataResidencyRegion: DataResidencyRegion | null;
 
   @Field(() => Boolean)
   @IsBoolean()

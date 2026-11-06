@@ -14,7 +14,7 @@ export const getAvailableAiDataPolicyOptions = ({
   aiModels: Pick<ClientAiModelConfig, 'dataResidency' | 'zeroDataRetention'>[];
   aiDataPolicy: Pick<
     AiDataPolicy,
-    'requiredDataResidency' | 'isZeroDataRetentionRequired'
+    'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
   >;
 }): {
   dataResidencyRegions: DataResidencyRegion[];
@@ -22,12 +22,12 @@ export const getAvailableAiDataPolicyOptions = ({
 } => ({
   dataResidencyRegions: DATA_RESIDENCY_REGIONS.filter(
     (dataResidencyRegion) =>
-      dataResidencyRegion === aiDataPolicy.requiredDataResidency ||
+      dataResidencyRegion === aiDataPolicy.requiredDataResidencyRegion ||
       aiModels.some((model) =>
         isAiModelCompliantWithDataPolicy({
           model,
           aiDataPolicy: {
-            requiredDataResidency: dataResidencyRegion,
+            requiredDataResidencyRegion: dataResidencyRegion,
             isZeroDataRetentionRequired: false,
           },
         }),

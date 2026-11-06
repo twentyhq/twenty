@@ -138,7 +138,7 @@ export const USER_QUERY_FRAGMENT = gql`
       aiModelIdByTier
       aiAdditionalInstructions
       aiDataPolicy {
-        requiredDataResidency
+        requiredDataResidencyRegion
         isZeroDataRetentionRequired
         isProductImprovementDataSharingEnabled
       }

@@ -170,7 +170,8 @@ export class ClientConfigService {
               {
                 tier,
                 modelId: model.modelId,
-                requiredDataResidency: aiDataPolicy.requiredDataResidency,
+                requiredDataResidencyRegion:
+                  aiDataPolicy.requiredDataResidencyRegion,
                 isZeroDataRetentionRequired:
                   aiDataPolicy.isZeroDataRetentionRequired,
               },

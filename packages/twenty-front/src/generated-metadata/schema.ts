@@ -317,13 +317,13 @@ export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
   isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
-  requiredDataResidency?: Maybe<Scalars['String']['output']>;
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
 };
 
 export type AiDataPolicyInput = {
   isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
-  requiredDataResidency?: InputMaybe<Scalars['String']['input']>;
+  requiredDataResidencyRegion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum AiModelTier {
@@ -1449,7 +1449,7 @@ export type ClientAiModelTierConfig = {
   __typename?: 'ClientAiModelTierConfig';
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
   modelId: Scalars['String']['output'];
-  requiredDataResidency?: Maybe<Scalars['String']['output']>;
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
   tier: AiModelTier;
 };
 

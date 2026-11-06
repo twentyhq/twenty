@@ -71,31 +71,31 @@ const instanceTiers = [
   {
     tier: AiModelTier.extraFast,
     modelId: 'openai/luna',
-    requiredDataResidency: null,
+    requiredDataResidencyRegion: null,
     isZeroDataRetentionRequired: false,
   },
   {
     tier: AiModelTier.fast,
     modelId: 'openai/luna',
-    requiredDataResidency: null,
+    requiredDataResidencyRegion: null,
     isZeroDataRetentionRequired: false,
   },
   {
     tier: AiModelTier.balanced,
     modelId: 'openai/terra',
-    requiredDataResidency: null,
+    requiredDataResidencyRegion: null,
     isZeroDataRetentionRequired: false,
   },
   {
     tier: AiModelTier.smart,
     modelId: 'openai/sol',
-    requiredDataResidency: null,
+    requiredDataResidencyRegion: null,
     isZeroDataRetentionRequired: false,
   },
   {
     tier: AiModelTier.extraSmart,
     modelId: 'openai/missing',
-    requiredDataResidency: null,
+    requiredDataResidencyRegion: null,
     isZeroDataRetentionRequired: false,
   },
 ];

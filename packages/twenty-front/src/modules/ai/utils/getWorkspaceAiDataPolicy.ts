@@ -5,11 +5,14 @@ import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 export const getWorkspaceAiDataPolicy = (
   workspace: Pick<CurrentWorkspace, 'aiDataPolicy'> | null,
 ): AiDataPolicy => {
-  const requiredDataResidency = workspace?.aiDataPolicy?.requiredDataResidency;
+  const requiredDataResidencyRegion =
+    workspace?.aiDataPolicy?.requiredDataResidencyRegion;
 
   return {
-    requiredDataResidency: isDataResidencyRegion(requiredDataResidency)
-      ? requiredDataResidency
+    requiredDataResidencyRegion: isDataResidencyRegion(
+      requiredDataResidencyRegion,
+    )
+      ? requiredDataResidencyRegion
       : null,
     isZeroDataRetentionRequired:
       workspace?.aiDataPolicy?.isZeroDataRetentionRequired ?? false,

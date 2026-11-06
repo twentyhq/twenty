@@ -45,7 +45,7 @@ export const AiModelPickerExample = ({
       Object.values(AiModelTier).map((tier) => ({
         tier,
         modelId: 'story/reasoning-one',
-        requiredDataResidency: null,
+        requiredDataResidencyRegion: null,
         isZeroDataRetentionRequired: false,
       })),
     );

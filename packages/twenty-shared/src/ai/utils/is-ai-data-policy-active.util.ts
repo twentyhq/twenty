@@ -5,7 +5,8 @@ import { type AiDataPolicy } from '../types/AiDataPolicy';
 export const isAiDataPolicyActive = (
   policy: Pick<
     AiDataPolicy,
-    'requiredDataResidency' | 'isZeroDataRetentionRequired'
+    'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
   >,
 ): boolean =>
-  isDefined(policy.requiredDataResidency) || policy.isZeroDataRetentionRequired;
+  isDefined(policy.requiredDataResidencyRegion) ||
+  policy.isZeroDataRetentionRequired;

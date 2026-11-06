@@ -8,13 +8,13 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 
 const NO_POLICY = {
-  requiredDataResidency: null,
+  requiredDataResidencyRegion: null,
   isZeroDataRetentionRequired: false,
   isProductImprovementDataSharingEnabled: true,
 };
 const EU_ZERO_RETENTION_POLICY = {
   ...NO_POLICY,
-  requiredDataResidency: 'eu',
+  requiredDataResidencyRegion: 'eu',
   isZeroDataRetentionRequired: true,
 };
 const ZERO_RETENTION_POLICY = {
@@ -52,7 +52,7 @@ const readAiDataPolicy = () =>
         query {
           currentWorkspace {
             aiDataPolicy {
-              requiredDataResidency
+              requiredDataResidencyRegion
             }
           }
         }
@@ -106,11 +106,17 @@ describe('workspace AI data policy', () => {
   });
 
   it.each([
-    ['an unknown residency', { ...NO_POLICY, requiredDataResidency: 'us' }],
-    ['a missing residency', { ...NO_POLICY, requiredDataResidency: undefined }],
+    [
+      'an unknown residency',
+      { ...NO_POLICY, requiredDataResidencyRegion: 'us' },
+    ],
+    [
+      'a missing residency',
+      { ...NO_POLICY, requiredDataResidencyRegion: undefined },
+    ],
     [
       'a null retention requirement',
-      { requiredDataResidency: 'eu', isZeroDataRetentionRequired: null },
+      { requiredDataResidencyRegion: 'eu', isZeroDataRetentionRequired: null },
     ],
     ['a null policy', null],
   ])('refuses %s', async (_label, aiDataPolicy) => {
@@ -183,7 +189,7 @@ describe('workspace AI data policy', () => {
     const response = await updateAiDataPolicy({
       data: {
         aiDataPolicy: {
-          requiredDataResidency: 'eu',
+          requiredDataResidencyRegion: 'eu',
           isZeroDataRetentionRequired: true,
         },
       },
@@ -192,7 +198,7 @@ describe('workspace AI data policy', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
-      requiredDataResidency: 'eu',
+      requiredDataResidencyRegion: 'eu',
       isZeroDataRetentionRequired: true,
       isProductImprovementDataSharingEnabled: false,
     });

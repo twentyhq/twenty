@@ -725,7 +725,7 @@ export default {
             "isZeroDataRetentionRequired": [
                 4
             ],
-            "requiredDataResidency": [
+            "requiredDataResidencyRegion": [
                 1
             ],
             "__typename": [
@@ -739,7 +739,7 @@ export default {
             "isZeroDataRetentionRequired": [
                 4
             ],
-            "requiredDataResidency": [
+            "requiredDataResidencyRegion": [
                 1
             ],
             "__typename": [
@@ -2860,7 +2860,7 @@ export default {
             "modelId": [
                 1
             ],
-            "requiredDataResidency": [
+            "requiredDataResidencyRegion": [
                 1
             ],
             "tier": [

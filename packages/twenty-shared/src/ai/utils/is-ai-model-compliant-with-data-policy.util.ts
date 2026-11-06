@@ -15,7 +15,7 @@ export const isAiModelCompliantWithDataPolicy = ({
   };
   aiDataPolicy: Pick<
     AiDataPolicy,
-    'requiredDataResidency' | 'isZeroDataRetentionRequired'
+    'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
   >;
 }): boolean => {
   if (
@@ -25,12 +25,12 @@ export const isAiModelCompliantWithDataPolicy = ({
     return false;
   }
 
-  if (!isDefined(aiDataPolicy.requiredDataResidency)) {
+  if (!isDefined(aiDataPolicy.requiredDataResidencyRegion)) {
     return true;
   }
 
   const allowedDataResidencies: readonly DataResidency[] =
-    DATA_RESIDENCIES_BY_REGION[aiDataPolicy.requiredDataResidency];
+    DATA_RESIDENCIES_BY_REGION[aiDataPolicy.requiredDataResidencyRegion];
 
   return (
     isDefined(model.dataResidency) &&

@@ -76,11 +76,12 @@ export const SettingsPrivacyAiDataProcessing = () => {
             <Select<DataResidencyRegionOptionValue>
               dropdownId="settings-privacy-ai-data-residency"
               value={
-                aiDataPolicy.requiredDataResidency ?? WORLDWIDE_OPTION_VALUE
+                aiDataPolicy.requiredDataResidencyRegion ??
+                WORLDWIDE_OPTION_VALUE
               }
               onChange={(value) =>
                 updateWorkspaceAiDataPolicyField({
-                  field: 'requiredDataResidency',
+                  field: 'requiredDataResidencyRegion',
                   value: value === WORLDWIDE_OPTION_VALUE ? null : value,
                 })
               }

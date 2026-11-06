@@ -11,14 +11,14 @@ export const findAiModelTierForDataPolicy = ({
   tier: AiModelTier;
   aiDataPolicy: Pick<
     AiDataPolicy,
-    'requiredDataResidency' | 'isZeroDataRetentionRequired'
+    'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
   >;
 }): ClientAiModelTierConfig | undefined =>
   aiModelTiers.find(
     (aiModelTier) =>
       aiModelTier.tier === tier &&
-      (aiModelTier.requiredDataResidency ?? null) ===
-        aiDataPolicy.requiredDataResidency &&
+      (aiModelTier.requiredDataResidencyRegion ?? null) ===
+        aiDataPolicy.requiredDataResidencyRegion &&
       aiModelTier.isZeroDataRetentionRequired ===
         aiDataPolicy.isZeroDataRetentionRequired,
   );

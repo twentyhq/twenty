@@ -155,7 +155,7 @@ export class ClientAiModelTierConfig {
   modelId: ModelId;
 
   @Field(() => String, { nullable: true })
-  requiredDataResidency: DataResidencyRegion | null;
+  requiredDataResidencyRegion: DataResidencyRegion | null;
 
   @Field(() => Boolean)
   isZeroDataRetentionRequired: boolean;

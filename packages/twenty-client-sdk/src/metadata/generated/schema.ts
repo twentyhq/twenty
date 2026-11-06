@@ -254,7 +254,7 @@ export interface AiChatUserCreditsUsage {
 export interface AiDataPolicy {
     isProductImprovementDataSharingEnabled: Scalars['Boolean']
     isZeroDataRetentionRequired: Scalars['Boolean']
-    requiredDataResidency?: Scalars['String']
+    requiredDataResidencyRegion?: Scalars['String']
     __typename: 'AiDataPolicy'
 }
 
@@ -1192,7 +1192,7 @@ export interface ClientAiModelConfig {
 export interface ClientAiModelTierConfig {
     isZeroDataRetentionRequired: Scalars['Boolean']
     modelId: Scalars['String']
-    requiredDataResidency?: Scalars['String']
+    requiredDataResidencyRegion?: Scalars['String']
     tier: AiModelTier
     __typename: 'ClientAiModelTierConfig'
 }
@@ -4642,12 +4642,12 @@ export interface AiChatUserCreditsUsageGenqlSelection{
 export interface AiDataPolicyGenqlSelection{
     isProductImprovementDataSharingEnabled?: boolean | number
     isZeroDataRetentionRequired?: boolean | number
-    requiredDataResidency?: boolean | number
+    requiredDataResidencyRegion?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface AiDataPolicyInput {isProductImprovementDataSharingEnabled?: (Scalars['Boolean'] | null),isZeroDataRetentionRequired: Scalars['Boolean'],requiredDataResidency?: (Scalars['String'] | null)}
+export interface AiDataPolicyInput {isProductImprovementDataSharingEnabled?: (Scalars['Boolean'] | null),isZeroDataRetentionRequired: Scalars['Boolean'],requiredDataResidencyRegion?: (Scalars['String'] | null)}
 
 export interface AiRunUsageGenqlSelection{
     inputTokens?: boolean | number
@@ -5641,7 +5641,7 @@ export interface ClientAiModelConfigGenqlSelection{
 export interface ClientAiModelTierConfigGenqlSelection{
     isZeroDataRetentionRequired?: boolean | number
     modelId?: boolean | number
-    requiredDataResidency?: boolean | number
+    requiredDataResidencyRegion?: boolean | number
     tier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

@@ -1,7 +1,7 @@
 import { getAvailableAiDataPolicyOptions } from '@/settings/privacy/utils/getAvailableAiDataPolicyOptions';
 
 const NO_POLICY = {
-  requiredDataResidency: null,
+  requiredDataResidencyRegion: null,
   isZeroDataRetentionRequired: false,
 };
 
@@ -35,7 +35,7 @@ describe('getAvailableAiDataPolicyOptions', () => {
       getAvailableAiDataPolicyOptions({
         aiModels: [],
         aiDataPolicy: {
-          requiredDataResidency: 'eu',
+          requiredDataResidencyRegion: 'eu',
           isZeroDataRetentionRequired: true,
         },
       }),
