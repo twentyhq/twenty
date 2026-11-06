@@ -74,6 +74,20 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
     ]);
   });
 
+  it('leaves a step whose test result is already its sample', () => {
+    const testResultSchema = {
+      total: { isLeaf: true, type: 'number', label: 'Total', value: 3 },
+    };
+    const steps = [
+      buildStep('CODE', {
+        outputSchema: testResultSchema,
+        expectedOutputSchema: { total: 3 },
+      }),
+    ];
+
+    expect(moveSamples({ steps })).toEqual({ steps, movedStepIds: [] });
+  });
+
   it('leaves steps whose schema is not a test result', () => {
     const declaredOutputSchema: BaseOutputSchemaV2 = {
       result: { isLeaf: true, type: 'string', label: 'result', value: '' },

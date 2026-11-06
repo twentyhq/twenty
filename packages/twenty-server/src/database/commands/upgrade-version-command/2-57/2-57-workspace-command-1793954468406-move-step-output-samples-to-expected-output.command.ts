@@ -106,7 +106,9 @@ export class MoveStepOutputSamplesToExpectedOutputCommand extends ProvisionedWor
     const rewrittenRowCounts: number[] = [];
 
     for (const source of sources) {
-      rewrittenRowCounts.push(
+      let changedRowCount = 0;
+
+      const rewrittenRowCount =
         await rewriteJsonbRowsWithCompareAndSet<unknown>({
           dataSource,
           isDryRun,
@@ -121,10 +123,22 @@ export class MoveStepOutputSamplesToExpectedOutputCommand extends ProvisionedWor
                 declaredOutputSchemaByLogicFunctionId,
               });
 
-            return { value: steps, hasChanged: movedStepIds.length > 0 };
+            const hasChanged = movedStepIds.length > 0;
+
+            changedRowCount += hasChanged ? 1 : 0;
+
+            return { value: steps, hasChanged };
           },
-        }),
-      );
+        });
+
+      // the compare-and-set write skips a row edited since it was read; a later run moves it
+      if (rewrittenRowCount < changedRowCount) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: ${changedRowCount - rewrittenRowCount} row(s) of ${source.tableName} changed during the move and were skipped`,
+        );
+      }
+
+      rewrittenRowCounts.push(rewrittenRowCount);
     }
 
     const [coreWorkflowVersionCount, workflowVersionCount = 0] =

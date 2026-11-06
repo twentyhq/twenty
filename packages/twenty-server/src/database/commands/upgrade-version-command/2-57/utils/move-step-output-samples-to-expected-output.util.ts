@@ -1,10 +1,11 @@
 import isEqual from 'lodash.isequal';
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
   isBaseOutputSchemaV2,
 } from 'twenty-shared/workflow';
+
+import { getOutputSchemaFromSample } from 'src/database/commands/upgrade-version-command/2-57/utils/get-output-schema-from-sample.util';
 
 const SAMPLE_STEP_TYPES = new Set(['CODE', 'HTTP_REQUEST', 'LOGIC_FUNCTION']);
 
@@ -68,7 +69,7 @@ export const moveStepOutputSamplesToExpectedOutput = ({
 
     const isDerivedFromExpectedOutput =
       isNonEmptySample(expectedOutputSchema) &&
-      isEqual(getOutputSchemaFromValue(expectedOutputSchema), outputSchema);
+      isEqual(getOutputSchemaFromSample(expectedOutputSchema), outputSchema);
 
     const declaredOutputSchema =
       step.type === 'LOGIC_FUNCTION' && isPlainObject(input)
@@ -85,14 +86,17 @@ export const moveStepOutputSamplesToExpectedOutput = ({
       return step;
     }
 
+    const sample = convertOutputSchemaToSample(outputSchema);
+
+    if (isEqual(sample, expectedOutputSchema)) {
+      return step;
+    }
+
     movedStepIds.push(String(step.id));
 
     return {
       ...step,
-      settings: {
-        ...step.settings,
-        expectedOutputSchema: convertOutputSchemaToSample(outputSchema),
-      },
+      settings: { ...step.settings, expectedOutputSchema: sample },
     };
   });
 
