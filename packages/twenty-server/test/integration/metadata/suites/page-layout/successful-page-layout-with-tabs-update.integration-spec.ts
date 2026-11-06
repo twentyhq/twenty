@@ -445,9 +445,6 @@ describe('Page layout with tabs update should succeed', () => {
         rowSpan: 1,
         columnSpan: 1,
       },
-      // Sent as stored, so the save diff sees this widget as unchanged
-      conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
     };
     const iframeWidget = {
       id: v4(),
