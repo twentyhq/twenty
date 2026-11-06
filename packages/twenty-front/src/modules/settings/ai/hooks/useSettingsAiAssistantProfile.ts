@@ -91,15 +91,21 @@ export const useSettingsAiAssistantProfile = () => {
     );
 
     if (
+      !isDefined(requestedWorkspace) ||
+      requestedWorkspace.id !== currentWorkspace?.id
+    ) {
+      return false;
+    }
+
+    if (
       !hasPermission ||
       !hasInbox ||
-      !isDefined(requestedWorkspace) ||
-      requestedWorkspace.id !== currentWorkspace?.id ||
       !ASSISTANT_PROFILE_SCHEMA.safeParse(
         requestedWorkspace.aiChatAssistantProfile,
       ).success ||
       !store.get(isCurrentUserLoadedState.atom)
     ) {
+      setErrorMessage(defaultSaveErrorMessage);
       return false;
     }
 
@@ -214,6 +220,10 @@ export const useSettingsAiAssistantProfile = () => {
   };
 
   const retry = () => {
+    if (!isDefined(profile)) {
+      return refreshProfile();
+    }
+
     if (isDefined(errorMessage)) {
       saveQueue.resume();
       return processQueue();

@@ -1,4 +1,7 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -114,6 +117,61 @@ export const NameBlurPreservesQueuedEditsThroughRetry: Story = {
       expect(canvas.getByRole('radio', { name: 'Ada' })).toBeChecked(),
     );
     expect(customize).toHaveAttribute('aria-pressed', 'false');
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+  },
+};
+
+export const QueuedEditRetriesAfterHydrationResumes: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const customize = await canvas.findByRole('button', { name: 'Customize' });
+
+    await userEvent.click(customize);
+    const name = await body.findByRole('textbox', { name: 'Assistant name' });
+
+    fixture.assistant.pauseSave();
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Orbit');
+    await userEvent.click(body.getByRole('button', { name: /^Shape/ }));
+    await userEvent.click(
+      await body.findByRole('menuitemradio', { name: 'Cloud' }),
+    );
+    await waitFor(() =>
+      expect(fixture.assistant.saveProfile).toHaveBeenCalledOnce(),
+    );
+    expect(fixture.assistant.saveProfile).toHaveBeenCalledWith({
+      aiChatAssistantProfile: { displayName: 'Orbit' },
+    });
+
+    jotaiStore.set(isCurrentUserLoadedState.atom, false);
+    fixture.assistant.resumeSave();
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(currentWorkspaceState.atom)?.aiChatAssistantProfile
+          .displayName,
+      ).toBe('Orbit'),
+    );
+    expect(fixture.assistant.saveProfile).toHaveBeenCalledOnce();
+    jotaiStore.set(isCurrentUserLoadedState.atom, true);
+
+    expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Failed to save assistant settings. Try again.',
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+    await waitFor(() =>
+      expect(fixture.assistant.saveProfile).toHaveBeenCalledTimes(2),
+    );
+    expect(fixture.assistant.saveProfile).toHaveBeenLastCalledWith({
+      aiChatAssistantProfile: { avatarShape: 'cloud' },
+    });
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(currentWorkspaceState.atom)?.aiChatAssistantProfile
+          .avatarShape,
+      ).toBe('cloud'),
+    );
+    expect(fixture.assistant.resetProfile).not.toHaveBeenCalled();
     expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
   },
 };
