@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
@@ -41,15 +41,22 @@ export const SettingsMcpServerEditForm = ({
   }: McpServerFormValues) => {
     const savedFormValues = getMcpServerFormValues(mcpServer);
 
+    const update = {
+      ...(label !== savedFormValues.label && { label }),
+      ...(url !== savedFormValues.url && { url }),
+      ...(connectionProviderId !== savedFormValues.connectionProviderId && {
+        connectionProviderId,
+      }),
+    };
+
+    if (isEmptyObject(update)) {
+      formConfig.reset(savedFormValues);
+      return;
+    }
+
     const updatedMcpServer = await updateMcpServer({
       mcpServerId: mcpServer.id,
-      update: {
-        ...(label !== savedFormValues.label && { label }),
-        ...(url !== savedFormValues.url && { url }),
-        ...(connectionProviderId !== savedFormValues.connectionProviderId && {
-          connectionProviderId,
-        }),
-      },
+      update,
     });
 
     if (isDefined(updatedMcpServer)) {
