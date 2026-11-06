@@ -282,6 +282,18 @@ The share limit needs `maxmemory` set on the queue Redis. Refusals are logged an
 
 A job is charged until it completes or fails for good, and charges do not expire. A job removed from a queue outside the worker (admin panel delete, queue clean) keeps its charge until you run `yarn command:prod job-memory:reconcile`. The command releases the charge of every job that is gone or finished, checking twice a few seconds apart (`--grace-seconds`, default 10) so a job being enqueued is not released by mistake.
 
+### Offloading large job payloads
+
+Large job payloads can be kept in file storage (`STORAGE_TYPE`) instead of Redis. Above the threshold, the payload is written under the workspace storage folder (`<workspaceId>/job-payloads/`, or `system/job-payloads/` for jobs without a workspace) and Redis only holds a small reference, which is what the memory limits above count. The worker loads the payload back before running the job and deletes it once the job completes or fails for good.
+
+| Variable | Default | What it does |
+|----------|---------|--------------|
+| `IS_JOB_QUEUE_PAYLOAD_OFFLOAD_ENABLED` | `false` | Store payloads above the threshold in file storage. |
+| `JOB_QUEUE_PAYLOAD_OFFLOAD_THRESHOLD_BYTES` | `262144` | Serialized payload size above which it is offloaded. |
+| `JOB_QUEUE_MAX_OFFLOADED_JOB_SIZE_BYTES` | `52428800` | Largest offloaded payload accepted. Applies whether or not memory fairness is enabled. |
+
+The server and the worker must read the same storage: with `STORAGE_TYPE=local`, they need a shared volume. If a payload cannot be written, the job is kept in Redis and the failure is counted in `job_payload_offload_failed_total`. Offloaded jobs are counted in `job_payload_offloaded_total` and `job_payload_offloaded_bytes_total`. A job whose payload is missing or does not match its checksum fails without retry and is counted in `job_payload_load_failed_total`. `job-memory:reconcile` also deletes payloads whose job is gone or finished, with the same two-pass check.
+
 ## Outbound Connections to Internal Hosts
 
 By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:
