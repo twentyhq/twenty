@@ -24,12 +24,14 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -147,30 +149,56 @@ describe('workflow deletion cleanup', () => {
       return response.body.data.runCoreWorkflowVersion.workflowRunId;
     };
 
+    // Only legacy CODE steps own a logic function for the cleanup to delete
+    const createLegacyCodeStep = async (coreWorkflowVersionId: string) => {
+      const codeStep = await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId,
+        stepType: 'CODE',
+      });
+
+      const { data } = await createOneLogicFunction({
+        input: {
+          name: `${PREFIX} code step ${randomUUID()}`,
+          workflowActionTriggerSettings: SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
+        },
+        expectToFail: false,
+      });
+
+      const logicFunctionId = data.createOneLogicFunction.id;
+
+      await updateCoreWorkflowVersionStep({
+        coreWorkflowVersionId,
+        step: {
+          ...codeStep,
+          settings: {
+            ...codeStep.settings,
+            input: { logicFunctionId, logicFunctionInput: {} },
+          },
+        },
+      });
+
+      return { codeStep, logicFunctionId };
+    };
+
     beforeAll(async () => {
       deletedWorkflow = await createWorkspaceWorkflow(`${PREFIX} deleted`);
       keptWorkflow = await createWorkspaceWorkflow(`${PREFIX} kept`);
 
-      const codeStep = await createCoreWorkflowVersionStep({
-        coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,
-        stepType: 'CODE',
-      });
+      const { codeStep, logicFunctionId } = await createLegacyCodeStep(
+        deletedWorkflow.coreWorkflowVersionId,
+      );
       const formStepOfVersion = await createCoreWorkflowVersionStep({
         coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,
         stepType: 'FORM',
         parentStepId: codeStep.id,
       });
 
-      codeLogicFunctionId = codeStep.settings.input.logicFunctionId as string;
+      codeLogicFunctionId = logicFunctionId;
       formStepId = formStepOfVersion.id;
 
-      const keptCodeStep = await createCoreWorkflowVersionStep({
-        coreWorkflowVersionId: keptWorkflow.coreWorkflowVersionId,
-        stepType: 'CODE',
-      });
-
-      keptCodeLogicFunctionId = keptCodeStep.settings.input
-        .logicFunctionId as string;
+      keptCodeLogicFunctionId = (
+        await createLegacyCodeStep(keptWorkflow.coreWorkflowVersionId)
+      ).logicFunctionId;
 
       await updateCoreWorkflowVersionStep({
         coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,

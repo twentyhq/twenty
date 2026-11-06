@@ -279,6 +279,16 @@ type AiChatUserCreditsUsage {
   periodEnd: DateTime!
 }
 
+type AiDataPolicy {
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
+}
+
+input AiDataPolicyInput {
+  dataResidency: String
+  isZeroDataRetentionRequired: Boolean!
+}
+
 enum AiModelTier {
   balanced
   extraFast
@@ -311,6 +321,7 @@ enum AllMetadataName {
   commandMenuItem
   connectionProvider
   fieldMetadata
+  fieldMetadataOption
   fieldPermission
   frontComponent
   index
@@ -413,6 +424,11 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageAttachmentInput {
+  fileId: UUID!
+  label: String!
+}
+
 input AppMessageFolderInput {
   externalId: String!
   isSynced: Boolean
@@ -420,6 +436,7 @@ input AppMessageFolderInput {
 }
 
 input AppMessageInput {
+  attachments: [AppMessageAttachmentInput!]
   externalId: String!
   folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
@@ -975,6 +992,11 @@ type BillingMeteredProduct implements BillingProductDTO {
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceMetered!]
+}
+
+type BillingPartnerCode {
+  isEditable: Boolean!
+  partnerCode: String
 }
 
 type BillingPaymentIntent {
@@ -2334,11 +2356,13 @@ enum FeatureFlagKey {
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
+  IS_AI_DATA_POLICY_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
+  IS_MESSAGE_ATTACHMENT_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2643,7 +2667,10 @@ enum GettingStartedStepActionKey {
 type GettingStartedStepDefinition {
   actionKey: GettingStartedStepActionKey!
   description: String!
+  doneChatThreadId: String
+  doneDescription: String!
   doneTitle: String!
+  doneWorkflowId: String
   icon: String!
   iconColor: String!
   kind: GettingStartedStepKind!
@@ -2810,6 +2837,7 @@ type IngestAppMessagesOutput {
 
 type IngestedAppMessage {
   externalId: String!
+  hasAttachments: Boolean!
   messageId: UUID!
   messageThreadId: UUID!
 }
@@ -3536,6 +3564,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
@@ -3842,6 +3871,16 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
+}
+
+type ObjectRecordsPermissions {
+  canDestroyAllRecords: Boolean!
+  canReadAllRecords: Boolean!
+  canSoftDeleteAllRecords: Boolean!
+  canUpdateAllRecords: Boolean!
+  objectMetadataId: UUID!
+  restrictedFields: JSON!
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions
 }
 
 """Onboarding status"""
@@ -4172,6 +4211,7 @@ type Query {
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
@@ -4581,6 +4621,15 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   LESS_THAN_OR_EQUAL
   VECTOR_SEARCH
+}
+
+type RowLevelRecordsPermissions {
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
+  predicates: [RowLevelPermissionPredicate!]!
 }
 
 input RunAgentInput {
@@ -5198,6 +5247,7 @@ input UpdateFrontComponentInputUpdates {
 
 input UpdateGettingStartedInput {
   completedStepActionKey: GettingStartedStepActionKey
+  completedStepChatThreadId: String
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
@@ -5587,6 +5637,7 @@ input UpdateWorkspaceInput {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
+  aiDataPolicy: AiDataPolicyInput
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -5992,8 +6043,9 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!]
-  objectsPermissions: [ObjectPermission!]
+  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
+  objectRecordsPermissions: [ObjectRecordsPermissions!]
+  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!
@@ -6358,6 +6410,7 @@ type Workspace {
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
+  aiDataPolicy: AiDataPolicy
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!

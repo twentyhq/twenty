@@ -511,7 +511,7 @@ describe('AiChatAssistantMessageRenderer', () => {
         input: {},
         output: {},
       },
-    ] as unknown as ExtendedUIMessagePart[]);
+    ]);
 
     expect(screen.getByTestId('tool-widget')).toHaveTextContent(
       'tool-app_show_chart',
@@ -532,7 +532,7 @@ describe('AiChatAssistantMessageRenderer', () => {
         input: { toolName: 'app_show_chart', arguments: {} },
         output: {},
       },
-    ] as unknown as ExtendedUIMessagePart[]);
+    ]);
 
     expect(screen.getByTestId('tool-widget')).toBeInTheDocument();
   });
@@ -549,7 +549,7 @@ describe('AiChatAssistantMessageRenderer', () => {
         state: 'input-streaming',
         input: {},
       },
-    ] as unknown as ExtendedUIMessagePart[]);
+    ]);
 
     expect(screen.getByTestId('thinking-steps-display')).toBeInTheDocument();
     expect(screen.queryByTestId('tool-widget')).toBeNull();

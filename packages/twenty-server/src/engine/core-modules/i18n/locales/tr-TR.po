@@ -219,11 +219,6 @@ msgstr "Bir fırsat kazanıldı"
 msgid "A DNS manager error occurred."
 msgstr "Bir DNS yöneticisi hatası oluştu."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Yinelenen bir kayıt tespit edildi."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Zorunlu bir alan eksik."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Gerekli bir alan eksik. Lütfen tüm gerekli değerleri sağlayın ve tekrar deneyin."
 
@@ -1063,6 +1058,16 @@ msgstr "Çalışma alanı üyesine ait yapay zeka sohbet dizileri"
 msgid "AI component builder is disabled."
 msgstr "Yapay zeka bileşen oluşturucu devre dışı bırakıldı."
 
+#. js-lingui-id: 1G2GHA
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not available until the upgrade has completed."
+msgstr "Yükseltme tamamlanana kadar yapay zeka veri politikası kullanılamaz."
+
+#. js-lingui-id: gt0M4i
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "AI data policy is not enabled for this workspace."
+msgstr "Yapay zeka veri politikası bu çalışma alanı için etkinleştirilmemiştir."
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1173,7 +1178,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "İki faktörlü kimlik doğrulama verilerinde bir hata oluştu."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1197,6 +1202,11 @@ msgstr "Bu çalışma alanı için zaten bir dışa aktarma çalışıyor."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Bu çalışma alanında zaten bir dışa aktarma çalışıyor. Lütfen tamamlanmasını bekleyin."
+
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Harici bir hizmetin yanıt vermesi çok uzun sürdü."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1663,6 +1673,7 @@ msgstr "bir dosya ekledi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Eklendiği"
@@ -1710,6 +1721,7 @@ msgid "Attachment record position"
 msgstr "Ek kaydının konumu"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1816,7 +1828,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Kimlik doğrulama bu sağlayıcı ile etkin değil."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Bu özelliğe erişim için kimlik doğrulaması gereklidir. Lütfen giriş yapın ve tekrar deneyin."
 
@@ -2959,7 +2971,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Geçersiz kılmak için mevcut bir zaman çizelgesi etkinlik türü seçin."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Paylaşmak için bir kişi veya bir rol seçin."
 
@@ -3018,6 +3030,11 @@ msgstr "Talep belirteci"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "Sahiplenme bu sunucuda yapılandırılmadı. Bir yöneticiden GitHub OAuth uygulamasını yapılandırmasını isteyin."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "Sınıflandırma, bu çalışma alanının gizlilik ayarlarıyla kullanılamaz."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3343,10 +3360,10 @@ msgstr "Önce bu MCP sunucusu için bir hesap bağlayın."
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "{objectMetadataNameSingular} üzerinde {connectFieldName} için bağlantı izni yoktur."
 
-#. js-lingui-id: eTJ1jL
+#. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Connect your mailbox"
-msgstr "Posta kutunuzu bağlayın"
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr "E-postanızı ve takviminizi bağlayarak tüm ağınızı anında görün. Yalnızca 30 saniye sürer."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3822,7 +3839,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Alan metadatası oluşturuldu, üst nesne metadatası bulunamadı"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Özel bir nesnenin kaydını oluşturmak için shareWith bağımsız değişkeni gereklidir"
 
@@ -4057,6 +4074,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "Gösterge Panelleri"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr "Veriler içe aktarıldı"
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -4070,6 +4092,7 @@ msgid "Data Model"
 msgstr "Veri Modeli"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Veri yapısı geçersiz."
@@ -4167,6 +4190,11 @@ msgstr "Fırsat"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "Fırsat"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr "Fırsat takipleri yolunda"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4498,11 +4526,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "Teslim edildiği tarih"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "reddedildi"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4734,9 +4757,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Her ilgili kayıt yolu alanı, önceki ilişkinin ulaştığı nesneye ait olmalıdır"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Her shareWith girdisi workspaceMemberId, roleId veya everyone öğelerinden tam olarak birini hedeflemelidir"
+
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr "Her hafta, kapanmak üzere olan her fırsat için bir takip taslağı oluşturulur."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5591,6 +5619,23 @@ msgstr "Alan adı etiketle senkronize değil."
 msgid "Field not found."
 msgstr "Alan bulunamadı."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Alan seçeneği alanı bulunamadı"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Alan seçeneği bulunamadı"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Alan seçeneği bulunamadı."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -5807,6 +5852,7 @@ msgstr "Dosya"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Dosya {fileId} zaten kalıcı bir dosya alanıyla ilişkilendirilmiş. Lütfen dosyayı yeniden yükleyin."
 
@@ -5896,6 +5942,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Dosyalar"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr "İletiye eklenen dosyalar"
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -5979,11 +6031,6 @@ msgstr "Kapanmak üzere olan fırsatları takip edin"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
 msgstr "Takip talimatları"
-
-#. js-lingui-id: xRdoZk
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Follow-up request sent"
-msgstr "Takip isteği gönderildi"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6407,6 +6454,11 @@ msgstr "İşleyici adı geçersiz"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "handlerName geçerli bir JavaScript tanımlayıcısı veya noktalı yol olmalıdır"
 
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr "Devir teslim için hazır"
+
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6592,6 +6644,11 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "{objectLabelPlural} içe aktar"
 
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr "Kişilerinizi içe aktarın"
+
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
@@ -6729,8 +6786,8 @@ msgid "Internal name of the campaign"
 msgstr "Kampanyanın dahili adı"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Geçersiz erişim düzeyi."
 
@@ -6948,6 +7005,11 @@ msgstr "Geçersiz özellik bayrağı anahtarı."
 msgid "Invalid field input."
 msgstr "Geçersiz alan girdisi."
 
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Geçersiz alan seçeneği girdisi."
+
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
 msgid "Invalid field selection. Check the requested fields and relation depth."
@@ -6992,7 +7054,7 @@ msgid "Invalid filter parameter."
 msgstr "Geçersiz filtre parametresi."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Geçersiz filtre değeri"
 
@@ -7104,9 +7166,9 @@ msgid "Invalid input for application registration."
 msgstr "Uygulama kaydı için geçersiz girdi."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Geçersiz girdi sağlandı."
 
@@ -7443,8 +7505,8 @@ msgstr "Geçersiz URL biçimi."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Geçersiz UUID biçimi."
 
@@ -7693,6 +7755,11 @@ msgstr "Davetiyeler gönderildi"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
 msgstr "Takımını davet et"
+
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr "Davetler gönderildi. İstediğiniz zaman daha fazla kişi ekleyin."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8329,6 +8396,11 @@ msgstr "Gizli yap"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "İş akışını gizli yap"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr "Uygulamalarınızı ayarlardan yönetin."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9278,6 +9350,11 @@ msgstr "Yeni çalışma alanı kurulumu devre dışı"
 msgid "No"
 msgstr "Hayır"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "Hiçbir yapay zeka modeli bu çalışma alanının gizlilik ayarlarını karşılamıyor."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9814,6 +9891,11 @@ msgstr "Bir görünüm oluşturmak için ObjeMetaVeriKimliği gereklidir."
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "Bir görünüm oluştururken ObjectMetadataId gereklidir"
 
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr "Nesneler, alanlar ve görünümler ekibinizin çalışma biçimine uyum sağlar."
+
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
@@ -10130,6 +10212,12 @@ msgstr "Seçenek etiketi en az bir karakter uzunluğunda bir dize olmalıdır"
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Seçenek değeri \"{sanitizedValue}\" 1 karakter altındadır"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Seçenek değeri \"{value}\" bu alanda zaten mevcut"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10244,12 @@ msgstr "Seçenek değeri en az bir karakter uzunluğunda bir dize olmalıdır"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Enum alanlar için seçenekler gereklidir"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Seçenekler yalnızca seçim, çoklu seçim veya derecelendirme alanlarına ait olabilir"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10383,6 +10477,11 @@ msgstr "Katılımcılar"
 msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr "Katılımcılar"
+
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr "İş ortağı kodları yalnızca yeni Twenty müşterileri için geçerlidir."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -11034,11 +11133,6 @@ msgstr "Sorgu yürütülemedi."
 msgid "Query failed."
 msgstr "Sorgu başarısız oldu."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Sorguda zaman aşımı. Lütfen tekrar deneyin."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11169,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Bir temsilci sohbet dizisinin eklendiği kayıt"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "Kayıt güvenlik kısıtlamalarını karşılamıyor."
 
@@ -12509,11 +12603,6 @@ msgstr "Ayarlar menüsü öğesi başlığı gerekli"
 msgid "Setup instructions"
 msgstr "Kurulum talimatları"
 
-#. js-lingui-id: gIoyTf
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Setup request sent"
-msgstr "Kurulum isteği gönderildi"
-
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
@@ -12569,17 +12658,17 @@ msgid "Shared record"
 msgstr "Paylaşılan kayıt"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith bu çalışma alanına ait olmayan bir rolü belirtir"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith bu çalışma alanına ait olmayan bir çalışma alanı üyesini belirtir"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith aynı asıl kişiyi birden fazla kez belirtir"
 
@@ -12863,11 +12952,6 @@ msgstr "Boşluk ve virgül"
 msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "Elektronik tablo"
-
-#. js-lingui-id: 73/iLE
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Spreadsheet uploaded"
-msgstr "Elektronik tablo yüklendi"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -13536,7 +13620,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Aradığınız ajan bulunamadı. Silinmiş olabilir ya da erişiminiz olmayabilir."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API anahtarı için geçerli bir rol atanmadı. Lütfen API anahtarı yapılandırmanızı kontrol edin."
 
@@ -13552,7 +13636,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Uygulamanın kaynak kanalı beklenen türle uyuşmuyor."
 
 #. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/setting-permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Uygulamaya geçerli bir rol atanmadı. Lütfen uygulama yapılandırmanızı kontrol edin."
 
@@ -13994,6 +14078,11 @@ msgstr "Fırsat adı"
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr "Paket kaydına, paketin kökenini doğrulamak için erişilemedi. Daha sonra tekrar deneyin."
 
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr "İş ortağı kodu artık eklenemez veya değiştirilemez. Lütfen destek ekibiyle iletişime geçin."
+
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14098,6 +14187,11 @@ msgstr "Sabit doğrudan mesaj çiftindeki ikinci üye"
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "Seçilen model yönetici tarafından devre dışı bırakıldı."
+
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "Seçilen modele bu çalışma alanının gizlilik ayarları tarafından izin verilmiyor."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
@@ -14305,12 +14399,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Kaydı en son güncelleyen çalışma alanı üyesi"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rolleri bu kayıtlara erişemez ve bu nesne yalnızca erişebilen rollerle paylaşılır."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rolleri bu kaydı göremez ve bu nesne yalnızca görebilen kişilerle paylaşılır."
 
@@ -14855,7 +14949,7 @@ msgid "This operation is not supported."
 msgstr "Bu işlem desteklenmiyor."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Bu işlem, var olmayan veya mevcut ilişkiler nedeniyle değiştirilemeyen bir kayda referans veriyor."
 
@@ -14863,6 +14957,11 @@ msgstr "Bu işlem, var olmayan veya mevcut ilişkiler nedeniyle değiştirilemey
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
 msgstr "Bu Kuruluş anahtarı zaten başka bir sunucu örneğinde kullanılıyor. Onu o sunucudan serbest bırakın veya bu sunucuya taşıyın."
+
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
+msgstr "Bu iş ortağı kodu geçerli değil."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -14901,12 +15000,12 @@ msgid "This public domain is already registered."
 msgstr "Bu genel alan adı zaten kayıtlı."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Bu kayıt zaten mevcut. Lütfen verilerinizi kontrol edin ve tekrar deneyin."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Bu kayıt, diğer kayıtlar tarafından hâlâ referans verildiği için silinemez."
 
@@ -15685,6 +15784,11 @@ msgstr "Tur"
 msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Tur"
+
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr "Etkinleştirin; kazanılan fırsatlar kendiliğinden teslimata taşınır."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16823,8 +16927,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "İzlenen alanlar yalnızca \"updated\" veritabanı olay tetikleyicileri için geçerlidir"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Veritabanımızla ilgili geçici bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyiniz."
 
@@ -17197,11 +17301,6 @@ msgstr "İş akışı çoğaltılamadı, lütfen tekrar deneyin"
 msgid "Workflow edge not found."
 msgstr "İş akışı kenarı bulunamadı."
 
-#. js-lingui-id: 5ENQ3i
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Workflow enabled"
-msgstr "İş akışı etkinleştirildi"
-
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
@@ -17537,6 +17636,11 @@ msgstr "Çalışma alanı tanıtım verileri ekleme"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
 msgstr "Çalışma alanı mevcut değil."
+
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr "Sürecinize uygun çalışma alanı"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -18134,13 +18238,18 @@ msgstr "Ödeme yönteminiz reddedildi. Lütfen güncelleyip tekrar deneyin."
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Satın aldığınız krediler eklenemedi. Lütfen destek ekibiyle iletişime geçin."
 
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr "Kayıtlarınız eklendi ve çalışma şeklinize göre düzenlendi."
+
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Rolünüz bu kayıtların bazılarını silemez, bu nedenle birleştirilemezler."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
 #: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Bu çalışma alanındaki rolünüz bulunamadı. Lütfen çalışma alanı yöneticinizle iletişime geçin."

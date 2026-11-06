@@ -67,8 +67,10 @@ export function AffiliateProgramTermsDocument() {
         <li>
           <strong>The link</strong> saves your code in the visitor&rsquo;s
           browser for 30 days. If they create their Twenty workspace in that
-          time, the workspace is attributed to you. If they click another
-          partner&rsquo;s link afterwards, the last click counts.
+          time, the workspace is attributed to you. Until the workspace is
+          created, a click on another partner&rsquo;s link replaces yours: the
+          latest click counts. Once the workspace exists, its attribution to you
+          is final.
         </li>
         <li>
           <strong>The code</strong> is how a customer who did not come through
@@ -92,8 +94,8 @@ export function AffiliateProgramTermsDocument() {
         A referral covers that customer&rsquo;s first paid workspace and
         everything that follows for 12 months: plan and seat changes, cancelling
         and coming back, or moving to Enterprise. It never restarts. If the
-        customer moves to a new workspace, your code must be added again on it
-        to keep the months left.
+        customer moves to a new workspace, ask us to add your code on it to keep
+        the months left.
       </p>
       <p>How a customer gets attributed to you:</p>
       <ul>
@@ -102,19 +104,22 @@ export function AffiliateProgramTermsDocument() {
           within 30 days of clicking your link.
         </li>
         <li>
-          <strong>Code added after sign-up:</strong> the customer (or you, on
-          their behalf) asks us to add your code within 30 days of their first
-          payment, if no partner is attributed yet. You still earn from the
-          first invoice. After 30 days, only Twenty can attach a code, at its
-          discretion; you then earn from the next invoice only.
+          <strong>Code added after sign-up:</strong> if no partner is attributed
+          yet, the customer can enter your code on the /settings/partner page of
+          their workspace during their free trial. Twenty refuses the code if
+          the customer created a Twenty workspace before. Within 30 days of
+          their first payment, the customer (or you, on their behalf) can also
+          ask us to add it. Either way, you earn from the first invoice. After
+          30 days, only Twenty can attach a code, at its discretion; you then
+          earn from the next invoice only.
         </li>
       </ul>
       <p>
-        One customer, one partner. Once a customer is attributed, only Twenty
-        can change it, and a change never starts a new 12 months. If two
-        partners claim the same customer, the saved attribution decides.
-        Referrals belong to your partner account, not to the person at your
-        company who brought them.
+        One customer, one partner. The first partner code saved on a workspace,
+        through a link or entered in billing, is final: only Twenty can change
+        it, and a change never starts a new 12 months. If two partners claim the
+        same customer, the saved attribution decides. Referrals belong to your
+        partner account, not to the person at your company who brought them.
       </p>
       <p>These never qualify:</p>
       <ul>

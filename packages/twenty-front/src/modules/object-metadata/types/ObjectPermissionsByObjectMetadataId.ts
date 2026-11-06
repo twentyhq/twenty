@@ -1,6 +1,6 @@
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectPermissionsWithObjectMetadataId
+  ObjectRecordsPermissions
 >;

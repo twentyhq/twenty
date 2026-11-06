@@ -1,7 +1,6 @@
 import {
   type CompositeProperty,
   FieldMetadataType,
-  type ObjectsPermissions,
   type OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
@@ -9,14 +8,14 @@ import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
-import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -24,6 +23,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 export type OrderByLeaf = {
   // Both the cursor value path and the keyset filter nesting, e.g. ['company', 'name', 'firstName']
@@ -85,7 +85,7 @@ const resolveRelationLeaf = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   strictValidation,
-  objectsPermissions,
+  recordReadRestrictions,
 }: {
   fieldMetadata: OrmFlatFieldMetadata;
   path: string[];
@@ -93,7 +93,7 @@ const resolveRelationLeaf = ({
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   strictValidation: boolean;
-  objectsPermissions?: ObjectsPermissions;
+  recordReadRestrictions?: RecordReadRestrictions;
 }): OrderByLeaf | null => {
   const targetObjectMetadata =
     isDefined(flatObjectMetadataMaps) &&
@@ -133,7 +133,7 @@ const resolveRelationLeaf = ({
   }
 
   assertFieldIsReadableOrThrow({
-    objectsPermissions,
+    recordReadRestrictions,
     flatObjectMetadata: targetObjectMetadata,
     flatFieldMetadata: targetFieldMetadata,
   });
@@ -191,7 +191,7 @@ export const resolveOrderByLeaves = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   strictValidation = false,
-  objectsPermissions,
+  recordReadRestrictions,
 }: {
   orderBy: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
@@ -199,7 +199,7 @@ export const resolveOrderByLeaves = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   strictValidation?: boolean;
   // Sort values embed into cursors, so ordering by an unreadable field is rejected
-  objectsPermissions?: ObjectsPermissions;
+  recordReadRestrictions?: RecordReadRestrictions;
 }): OrderByLeaf[] => {
   if (!isDefined(orderBy) || !isNonEmptyArray(orderBy)) {
     return [];
@@ -246,7 +246,7 @@ export const resolveOrderByLeaves = ({
       }
 
       assertFieldIsReadableOrThrow({
-        objectsPermissions,
+        recordReadRestrictions,
         flatObjectMetadata,
         flatFieldMetadata: fieldMetadata,
       });
@@ -280,7 +280,7 @@ export const resolveOrderByLeaves = ({
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             strictValidation,
-            objectsPermissions,
+            recordReadRestrictions,
           });
 
           if (isDefined(relationLeaf)) {

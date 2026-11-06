@@ -10,8 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -20,7 +20,6 @@ import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
-import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 
@@ -33,8 +32,8 @@ const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -77,37 +76,42 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
-      await Promise.all([
-        this.permissionsService.getUserWorkspacePermissions({
-          workspaceId,
-          userWorkspaceId,
-        }),
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]),
-      ]);
+    const [principals, { flatObjectMetadataMaps }] = await Promise.all([
+      this.principalPermissionsService.buildUserWorkspacePermissionsPrincipalsOrThrow(
+        { workspaceId, userWorkspaceId },
+      ),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]),
+    ]);
 
-    const objectsPermissions = fromRoleRecordsPermissionsToObjectsPermissions({
-      roleRecordsPermissions: recordsPermissions,
-    });
+    const duplicatedObjects = DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+      (objectUniversalIdentifier) =>
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
+    );
 
-    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
-      const objectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectPermissions = isDefined(objectMetadata)
-        ? objectsPermissions[objectMetadata.id]
-        : undefined;
+    const canReadAndUpdateDuplicatedObjects =
+      duplicatedObjects.every(isDefined) &&
+      (
+        await Promise.all(
+          duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
+            this.recordPermissionsService.canRoleReadSomeRecords({
+              principals,
+              objectMetadataId,
+            }),
+            this.recordPermissionsService.canRoleUpdateSomeRecords({
+              principals,
+              objectMetadataId,
+            }),
+          ]),
+        )
+      ).every((isGranted) => isGranted);
 
-      if (
-        !objectPermissions?.canReadObjectRecords ||
-        !objectPermissions.canUpdateObjectRecords
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    if (!canReadAndUpdateDuplicatedObjects) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 

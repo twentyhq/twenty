@@ -6,7 +6,7 @@ import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 const createObservationFixture = () => {
   const polyfillWindow = new Window();
-  const documentTarget = polyfillWindow.document as unknown as Document;
+  const documentTarget = polyfillWindow.document;
   const observation = installOutsidePressObservation({
     hooks: resolvePolyfillHooks([toGlobalScopeRecord(polyfillWindow)]),
     documentTarget,

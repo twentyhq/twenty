@@ -1,6 +1,9 @@
 import { useStore } from 'jotai';
 
+import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import {
   type AgentChatPrepromptMode,
   agentChatPrepromptState,
@@ -24,14 +27,25 @@ export const useStageAiChatPreprompt = () => {
     serializedDocument: string;
     mode: AgentChatPrepromptMode;
   }) => {
+    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threadId =
-      store.get(currentAiChatThreadState.atom) ??
-      store.get(newAiChatThreadIdState.atom);
+      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
+    const isIdleNewChat =
+      threadId === newAiChatThreadId &&
+      !store.get(agentChatIsSendingMessageFamilyState.atomFamily({ threadId }));
 
     setAgentChatDraftsByThreadId((previousDrafts) => ({
       ...previousDrafts,
       [threadId]: serializedDocument,
     }));
+
+    if (isIdleNewChat) {
+      store.set(
+        agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
+        AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+      );
+    }
+
     setAgentChatPreprompt({ serializedDocument, mode });
   };
 

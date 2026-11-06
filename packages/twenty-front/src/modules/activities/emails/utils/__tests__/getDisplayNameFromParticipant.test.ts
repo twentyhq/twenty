@@ -100,7 +100,7 @@ describe('getDisplayNameFromParticipant', () => {
       handle: '',
       role: MessageParticipantRole.FROM,
       person: { name: { firstName: 'John', lastName: '' } },
-    } as unknown as EmailThreadMessageParticipant;
+    };
 
     expect(
       getDisplayNameFromParticipant({
@@ -116,7 +116,7 @@ describe('getDisplayNameFromParticipant', () => {
       handle: '',
       role: MessageParticipantRole.FROM,
       person: { name: { firstName: '', lastName: '' } },
-    } as unknown as EmailThreadMessageParticipant;
+    };
 
     expect(
       getDisplayNameFromParticipant({

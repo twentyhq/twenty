@@ -23,7 +23,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
@@ -120,12 +120,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
     const restrictedFields =
-      context.repository.recordsPermissions.objects[
-        context.flatObjectMetadata.id
-      ]?.restrictedFields;
+      await this.recordPermissionsService.findRestrictedFields({
+        principals: context.permissionsPrincipals,
+        objectMetadataId: context.flatObjectMetadata.id,
+      });
 
     const columnsToSelect = getAllSelectableColumnNames({
-      restrictedFields: restrictedFields ?? {},
+      restrictedFields,
       objectMetadata: {
         objectMetadataMapItem: context.flatObjectMetadata,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
@@ -209,13 +210,16 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const {
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      permissionsPrincipals,
       repository,
       transactionScope,
     } = queryRunnerContext;
 
     const restrictedFields =
-      repository.recordsPermissions.objects[flatObjectMetadata.id]
-        ?.restrictedFields ?? {};
+      await this.recordPermissionsService.findRestrictedFields({
+        principals: permissionsPrincipals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const unreadableFieldIds = new Set(
       Object.entries(restrictedFields)

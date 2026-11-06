@@ -29,7 +29,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -49,8 +48,6 @@ export interface FormatResult {
 export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
-  @Inject()
-  protected readonly recordAccessPolicyService: RecordAccessPolicyService;
   @Inject()
   protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
@@ -85,19 +82,19 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
-    const objectsPermissions =
-      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
-        authContext,
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
+        },
       );
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
-      objectsPermissions,
-      readableObjectMetadataIds:
-        await this.findRelationReadableObjectMetadataIds({
-          authContext,
-          flatObjectMetadataMaps,
-          depth,
-        }),
+      readableObjectMetadataIds,
+      unreadableFieldMetadataIds,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -124,44 +121,25 @@ export abstract class RestApiBaseHandler {
   }): Promise<{
     selectedFields: CommonSelectedFields;
   }> {
-    const objectsPermissions =
-      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
-        authContext,
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: isDefined(depth) && depth > 0,
+        },
       );
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
-      objectsPermissions,
-      readableObjectMetadataIds:
-        await this.findRelationReadableObjectMetadataIds({
-          authContext,
-          flatObjectMetadataMaps,
-          depth,
-        }),
+      readableObjectMetadataIds,
+      unreadableFieldMetadataIds,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
       requestedFields,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
-    });
-  }
-
-  private async findRelationReadableObjectMetadataIds({
-    authContext,
-    flatObjectMetadataMaps,
-    depth,
-  }: Parameters<
-    CommonSelectFieldsBuilder['findReadableObjectMetadataIds']
-  >[0] & {
-    depth: SelectionDepth | undefined;
-  }): Promise<ReadonlySet<string>> {
-    if (!isDefined(depth) || depth === 0) {
-      return new Set();
-    }
-
-    return this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-      authContext,
-      flatObjectMetadataMaps,
     });
   }
 

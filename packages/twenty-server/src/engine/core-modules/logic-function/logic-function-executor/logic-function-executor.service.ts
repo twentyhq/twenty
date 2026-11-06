@@ -45,6 +45,7 @@ import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-functi
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
+import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
@@ -57,6 +58,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -97,6 +99,20 @@ export enum LogicFunctionExecutionExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
+
+type ExecutionArgs = {
+  workspaceId: string;
+  flatApplication: FlatApplication;
+  flatLogicFunction: FlatLogicFunction;
+  flatApplicationVariableMaps: FlatApplicationVariableMaps;
+  spenders: UsageSpenders;
+  payload: object;
+  userId?: string;
+  userWorkspaceId?: string;
+  executionMode?: LogicFunctionExecutionMode;
+  workspaceDeletionRequestTimestamp?: string;
+  retry?: LogicFunctionRetryContext;
+};
 
 @Injectable()
 export class LogicFunctionExecutorService {
@@ -152,13 +168,7 @@ export class LogicFunctionExecutorService {
   async execute({
     logicFunctionId,
     workspaceId,
-    payload,
-    userId,
-    userWorkspaceId,
-    executionMode,
-    workspaceDeletionRequestTimestamp,
-    retry = { retryCount: 0, maxRetries: 0 },
-    shouldEnforceUsageLimits = true,
+    ...executionArgs
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -176,6 +186,91 @@ export class LogicFunctionExecutorService {
         logicFunctionId,
       });
 
+    return this.executeResolved({
+      ...executionArgs,
+      workspaceId,
+      flatApplication,
+      flatLogicFunction,
+      flatApplicationVariableMaps,
+      spenders: {
+        logicFunctionId: flatLogicFunction.id,
+        applicationId: flatApplication.id,
+      },
+    });
+  }
+
+  // The build runs after admission so a rejected run never spends a compilation
+  async executeBuiltCode({
+    workspaceId,
+    flatApplication,
+    getBuiltHandlerPath,
+    payload,
+    userId,
+    userWorkspaceId,
+    workflowId,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    getBuiltHandlerPath: () => Promise<string>;
+    payload: object;
+    userId?: string;
+    userWorkspaceId?: string;
+    workflowId?: string;
+  }): Promise<LogicFunctionExecuteResult> {
+    const spenders: UsageSpenders = {
+      logicFunctionId: null,
+      applicationId: flatApplication.id,
+      workflowId,
+    };
+
+    await this.admitExecution({ workspaceId, flatApplication, spenders });
+
+    const builtHandlerPath = await getBuiltHandlerPath();
+
+    const { flatApplicationVariableMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationVariableMaps',
+      ]);
+
+    return this.executeAdmitted({
+      workspaceId,
+      payload,
+      userId,
+      userWorkspaceId,
+      flatApplication,
+      flatLogicFunction: buildWorkflowCodeStepFlatLogicFunction({
+        flatApplication,
+        builtHandlerPath,
+      }),
+      flatApplicationVariableMaps,
+      spenders,
+    });
+  }
+
+  private async executeResolved({
+    shouldEnforceUsageLimits = true,
+    ...executionArgs
+  }: ExecutionArgs & {
+    shouldEnforceUsageLimits?: boolean;
+  }): Promise<LogicFunctionExecuteResult> {
+    await this.admitExecution({
+      workspaceId: executionArgs.workspaceId,
+      flatApplication: executionArgs.flatApplication,
+      spenders: executionArgs.spenders,
+      shouldEnforceUsageLimits,
+    });
+
+    return this.executeAdmitted(executionArgs);
+  }
+
+  private async admitExecution({
+    workspaceId,
+    flatApplication,
+    spenders,
+    shouldEnforceUsageLimits = true,
+  }: Pick<ExecutionArgs, 'workspaceId' | 'flatApplication' | 'spenders'> & {
+    shouldEnforceUsageLimits?: boolean;
+  }): Promise<void> {
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
@@ -185,10 +280,24 @@ export class LogicFunctionExecutorService {
       await this.assertExecutionAllowed({
         workspaceId,
         flatApplication,
-        flatLogicFunction,
+        spenders,
       });
     }
+  }
 
+  private async executeAdmitted({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+    flatApplicationVariableMaps,
+    spenders,
+    payload,
+    userId,
+    userWorkspaceId,
+    executionMode,
+    workspaceDeletionRequestTimestamp,
+    retry = { retryCount: 0, maxRetries: 0 },
+  }: ExecutionArgs): Promise<LogicFunctionExecuteResult> {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
@@ -234,7 +343,7 @@ export class LogicFunctionExecutorService {
     } catch (error) {
       this.logger.error(
         `Logic function execution failed: ` +
-          `functionId=${logicFunctionId}, ` +
+          `functionId=${flatLogicFunction.id}, ` +
           `workspaceId=${workspaceId}, ` +
           `driver=${driver.constructor.name}, ` +
           `mode=${effectiveExecutionMode}: ` +
@@ -249,6 +358,7 @@ export class LogicFunctionExecutorService {
       flatApplication,
       flatLogicFunction,
       workspaceId,
+      spenders,
     });
 
     return resultLogicFunction;
@@ -280,11 +390,11 @@ export class LogicFunctionExecutorService {
   private async assertExecutionAllowed({
     workspaceId,
     flatApplication,
-    flatLogicFunction,
+    spenders,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    flatLogicFunction: FlatLogicFunction;
+    spenders: UsageSpenders;
   }): Promise<void> {
     if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
       return;
@@ -294,10 +404,7 @@ export class LogicFunctionExecutorService {
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       operationType: UsageOperationType.CODE_EXECUTION,
-      spenders: {
-        logicFunctionId: flatLogicFunction.id,
-        applicationId: flatApplication.id,
-      },
+      spenders,
     });
   }
 
@@ -580,11 +687,13 @@ export class LogicFunctionExecutorService {
     flatApplication,
     flatLogicFunction,
     workspaceId,
+    spenders,
   }: {
     result: LogicFunctionExecuteResult;
     workspaceId: string;
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
+    spenders: UsageSpenders;
   }) {
     const executionId = v4();
 
@@ -649,10 +758,7 @@ export class LogicFunctionExecutorService {
           flatApplication.universalIdentifier,
         ),
         resourceId: flatLogicFunction.id,
-        spenders: {
-          logicFunctionId: flatLogicFunction.id,
-          applicationId: flatApplication.id,
-        },
+        spenders,
       }),
     });
   }

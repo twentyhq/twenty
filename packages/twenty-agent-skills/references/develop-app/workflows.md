@@ -14,11 +14,18 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 
 - The workflow and each step need a stable `universalIdentifier`. The trigger's is optional.
 - `nextStepIds` wires the graph: the trigger points to the first steps, each step to the steps after it.
-- Trigger types: `MANUAL`, `CRON`, `DATABASE_EVENT`, `WEBHOOK`. Step types exclude the builder's `CODE` — use `LOGIC_FUNCTION`.
+- Trigger types: `MANUAL`, `CRON`, `DATABASE_EVENT`, `WEBHOOK`.
 - Reference objects, fields, logic functions and agents by universal identifier, never by name or id.
 - Triggers take optional `name`, `position` and `outputSchema`; steps take optional `position` and `outputSchema`. They only shape the builder view. Omit them to get the derived defaults.
 - `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
 - `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
+
+## Code Steps
+
+- `CODE` carries its TypeScript source in `input.code`: a module exporting `main`, called with `input.logicFunctionInput`. Use `LOGIC_FUNCTION` for code other workflows or triggers reuse.
+- `twenty app pull` writes each code step's source to `<workflow-file-name>/<step-name>.code.ts` beside the workflow file, which reads it back with `readFileSync(join(__dirname, ...), 'utf8')`. Edit that file; keep it exporting `main`.
+- A builder Code step created before inline code is reported as unsupported until it is edited once in the builder or upgraded.
+- Requires twenty-sdk 2.56.0 or later and `"engines": { "twenty": ">=2.56.0" }`.
 
 ## AI Agent Steps
 

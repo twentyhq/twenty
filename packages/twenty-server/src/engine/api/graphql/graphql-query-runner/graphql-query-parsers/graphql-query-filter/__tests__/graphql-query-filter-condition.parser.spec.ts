@@ -12,7 +12,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -117,9 +118,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   universalIdentifiersByApplicationId: {},
 };
 
-const outerQueryBuilder = {
-  recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
-} as unknown as WorkspaceSelectQueryBuilder;
+const { queryBuilder: outerQueryBuilder } = buildQueryBuilder();
 
 const recordFilterEntries = (
   filter: Record<string, unknown>,
@@ -449,16 +448,12 @@ describe('GraphqlQueryFilterConditionParser', () => {
     });
 
     it('rejects a referenced field the role cannot read', () => {
-      const restrictedQueryBuilder = {
-        recordsPermissions: {
-          ...NO_ROLE_RECORDS_PERMISSIONS,
-          objects: {
-            [companyObjectMetadata.id]: {
-              restrictedFields: { [createdAtField.id]: { canRead: false } },
-            },
-          },
+      const { queryBuilder: restrictedQueryBuilder } = buildQueryBuilder({
+        recordReadRestrictions: {
+          ...NO_RECORD_READ_RESTRICTIONS,
+          unreadableFieldMetadataIds: new Set([createdAtField.id]),
         },
-      } as unknown as WorkspaceSelectQueryBuilder;
+      });
 
       expect(() =>
         recordFilterEntries(

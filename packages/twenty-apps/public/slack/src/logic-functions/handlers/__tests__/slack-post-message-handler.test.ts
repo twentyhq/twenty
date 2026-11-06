@@ -137,7 +137,7 @@ describe('slackPostMessageHandler', () => {
     await slackPostMessageHandler({
       slackChannelId: CHANNEL_ID,
       messageText: 'standalone',
-      parentMessageTimestamp: null as unknown as undefined,
+      parentMessageTimestamp: null,
     });
 
     expect(postMessageMock).toHaveBeenCalledWith(
@@ -151,7 +151,7 @@ describe('slackPostMessageHandler', () => {
     const result = await slackPostMessageHandler({
       slackChannelId: CHANNEL_ID,
       messageText: 'standalone',
-      parentMessageTimestamp: 1700000000 as unknown as string,
+      parentMessageTimestamp: 1700000000,
     });
 
     expect(postMessageMock).toHaveBeenCalledWith(

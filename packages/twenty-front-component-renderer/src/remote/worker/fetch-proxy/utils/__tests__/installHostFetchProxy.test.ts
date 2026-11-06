@@ -1,54 +1,19 @@
+/**
+ * @jest-environment node
+ */
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { installHostFetchProxy } from '../installHostFetchProxy';
 
-class StubResponse {
-  body: string;
-  status: number;
-  statusText: string;
-  headers: Headers;
-
-  constructor(
-    body: string,
-    init?: {
-      status?: number;
-      statusText?: string;
-      headers?: Record<string, string>;
-    },
-  ) {
-    this.body = body;
-    this.status = init?.status ?? 200;
-    this.statusText = init?.statusText ?? '';
-    this.headers = new Headers(init?.headers);
-  }
-
-  get ok() {
-    return this.status >= 200 && this.status < 300;
-  }
-
-  async text() {
-    return this.body;
-  }
-}
-
 const originalFetch = globalThis.fetch;
-const originalResponse = (globalThis as { Response?: unknown }).Response;
 
 describe('installHostFetchProxy', () => {
-  beforeAll(() => {
-    (globalThis as { Response?: unknown }).Response = StubResponse;
-  });
-
-  afterAll(() => {
-    (globalThis as { Response?: unknown }).Response = originalResponse;
-  });
-
   afterEach(() => {
     globalThis.fetch = originalFetch;
   });
 
   it('should route proxied origins through the host fetch bridge', async () => {
-    const nativeFetch = jest.fn(async () => new StubResponse('native'));
-    globalThis.fetch = nativeFetch as unknown as typeof fetch;
+    const nativeFetch = jest.fn(async () => new Response('native'));
+    globalThis.fetch = nativeFetch;
 
     const hostFetch: HostFetchFunction = jest.fn(async () => ({
       status: 200,
@@ -76,8 +41,8 @@ describe('installHostFetchProxy', () => {
   });
 
   it('should pass non-proxied origins through to the native fetch', async () => {
-    const nativeFetch = jest.fn(async () => new StubResponse('native'));
-    globalThis.fetch = nativeFetch as unknown as typeof fetch;
+    const nativeFetch = jest.fn(async () => new Response('native'));
+    globalThis.fetch = nativeFetch;
 
     const hostFetch: HostFetchFunction = jest.fn(async () => ({
       status: 200,

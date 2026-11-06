@@ -3,9 +3,11 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
-export const isFieldWidget = (
-  widget: PageLayoutWidget,
-): widget is PageLayoutWidget & {
+export const isFieldWidget = <
+  TWidget extends Pick<PageLayoutWidget, 'type' | 'configuration'>,
+>(
+  widget: TWidget,
+): widget is TWidget & {
   type: typeof WidgetType.FIELD;
   configuration: FieldConfiguration;
 } => {

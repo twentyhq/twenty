@@ -56,4 +56,12 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
+  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
+    label: msg`Message attachments`,
+    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
+    label: msg`AI data policy`,
+    description: msg`Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes.`,
+  },
 };

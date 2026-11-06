@@ -38,8 +38,11 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.FOLDER`      | Grupează elementele îmbricate sub o etichetă     | `name` (iar elementele copil fac referire la dosar prin `folderUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Deschide pagina implicită de index a unui obiect | `targetObjectUniversalIdentifier`                                                    |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Deschide un aranjament de pagină independent     | `pageLayoutUniversalIdentifier`                                                      |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Deschide o pagină integrată                      | `nativePageKey`: `'workflows'` sau `'agents'`                                        |
 
 * `position` controlează ordonarea în bara laterală.
+
+* Un element `NATIVE_PAGE` este ascuns membrilor cărora le lipsește permisiunea paginii (Fluxuri de lucru pentru `'workflows'`, IA pentru `'agents'`).
 
 * Enumul conține și `NavigationMenuItemType.RECORD`, utilizat intern pentru favoritele de înregistrări create de utilizatori, și `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizat pentru canalele de chat fixate la favorite. Niciunul nu poate fi utilizat dintr-un manifest de aplicație (nu există niciun câmp pentru a face referire la o înregistrare sau la un canal).
 

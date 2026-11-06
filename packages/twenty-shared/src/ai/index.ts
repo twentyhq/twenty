@@ -10,6 +10,10 @@
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
+export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
+export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
+export { AI_CHAT_ASSISTANT_AVATAR_SHAPES } from './constants/ai-chat-assistant-avatar-shapes.const';
+export { AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH } from './constants/ai-chat-assistant-display-name-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -32,8 +36,11 @@ export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
+export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-assistant-profile.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export type { AiDataResidencyPolicy } from './constants/model-residencies-allowed-by-policy.const';
+export { MODEL_RESIDENCIES_ALLOWED_BY_POLICY } from './constants/model-residencies-allowed-by-policy.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
@@ -45,6 +52,7 @@ export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-na
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export { getAiChatAssistantProfileSchema } from './schemas/get-ai-chat-assistant-profile-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
@@ -61,6 +69,11 @@ export type {
 } from './types/AgentResponseSchema';
 export type { AgentRunSummary } from './types/AgentRunSummary';
 export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
+export type { AiChatAssistantAvatarColor } from './types/AiChatAssistantAvatarColor';
+export type { AiChatAssistantAvatarFace } from './types/AiChatAssistantAvatarFace';
+export type { AiChatAssistantAvatarShape } from './types/AiChatAssistantAvatarShape';
+export type { AiChatAssistantProfile } from './types/AiChatAssistantProfile';
+export type { AiDataPolicy } from './types/AiDataPolicy';
 export type {
   AiRunScope,
   AiRunScopeObjectPermission,
@@ -122,7 +135,9 @@ export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
+export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
+export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

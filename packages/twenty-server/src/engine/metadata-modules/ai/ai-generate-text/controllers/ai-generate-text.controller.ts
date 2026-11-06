@@ -30,12 +30,16 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_MODEL_ID_BY_TIER,
+  isAiDataPolicyActive,
+} from 'twenty-shared/ai';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/ai`)
@@ -68,6 +72,7 @@ export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
@@ -96,13 +101,20 @@ export class AiGenerateTextController {
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+        workspace,
+      );
 
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId: resolvedModelId,
+      aiDataPolicy,
+    });
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(
         { modelId: resolvedModelId },
-        workspace,
+        { ...workspace, effectiveAiDataPolicy: aiDataPolicy },
       );
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
@@ -116,6 +128,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
+            isContentRecordingAllowed: !isAiDataPolicyActive(aiDataPolicy),
             workspaceId: workspace.id,
             userWorkspaceId,
           }),

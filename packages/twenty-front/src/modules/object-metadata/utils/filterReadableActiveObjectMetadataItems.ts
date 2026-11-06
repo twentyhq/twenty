@@ -1,13 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const filterReadableActiveObjectMetadataItems = (
   objectMetadataItems: EnrichedObjectMetadataItem[],
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >,
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>,
 ): EnrichedObjectMetadataItem[] =>
   objectMetadataItems.filter((objectMetadataItem) => {
     if (!objectMetadataItem.isActive) {
@@ -21,5 +18,8 @@ export const filterReadableActiveObjectMetadataItems = (
       return true;
     }
 
-    return objectPermissions.canReadObjectRecords;
+    return canReachSomeRecords({
+      objectRecordsPermissions: objectPermissions,
+      operationType: 'select',
+    });
   });

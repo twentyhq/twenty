@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum PermissionsExceptionCode {
@@ -54,6 +55,10 @@ export enum PermissionsExceptionCode {
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
   ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
+  RECORD_PERMISSION_QUERY_INVALID = 'RECORD_PERMISSION_QUERY_INVALID',
+  RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
+  RLS_PREDICATE_FIELD_NOT_FOUND = 'RLS_PREDICATE_FIELD_NOT_FOUND',
+  RECORD_PERMISSION_QUERY_FAILED = 'RECORD_PERMISSION_QUERY_FAILED',
 }
 
 const getPermissionsExceptionUserFriendlyMessage = (
@@ -158,6 +163,13 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
       return msg`Cannot target a role owned by another application.`;
+    case PermissionsExceptionCode.RLS_VALIDATION_FAILED:
+      return msg`Record does not satisfy security constraints.`;
+    case PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND:
+      return msg`Data structure is invalid.`;
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID:
+    case PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED:
+      return STANDARD_ERROR_MESSAGE;
     default:
       assertUnreachable(code);
   }

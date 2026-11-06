@@ -71,6 +71,7 @@ const deriveAllMetadataEventsFromDeleteAction = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule':
     case 'searchFieldMetadata': {

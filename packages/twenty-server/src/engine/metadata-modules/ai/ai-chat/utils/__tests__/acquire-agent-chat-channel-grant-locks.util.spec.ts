@@ -14,7 +14,7 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocks({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelIds: [
         SECOND_CHANNEL_ID,
@@ -42,7 +42,7 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocks({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelIds: [FIRST_CHANNEL_ID],
       mode: 'exclusive',
@@ -60,7 +60,7 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocks({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelIds: [null, undefined],
       mode: 'shared',
