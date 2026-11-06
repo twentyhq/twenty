@@ -15,7 +15,7 @@ type JobMemoryReconcileCommandOptions = {
 @Command({
   name: 'job-memory:reconcile',
   description:
-    'Releases job memory charges whose BullMQ job is gone or finished',
+    'Releases job memory charges and deletes stored job payloads whose BullMQ job is gone or finished',
 })
 export class JobMemoryReconcileCommand extends CommandRunner {
   private readonly logger = new Logger(JobMemoryReconcileCommand.name);
@@ -49,15 +49,22 @@ export class JobMemoryReconcileCommand extends CommandRunner {
     options: JobMemoryReconcileCommandOptions,
   ): Promise<void> {
     const graceSeconds = options.graceSeconds ?? DEFAULT_GRACE_SECONDS;
-    // a charge is only released when two passes miss its job, so a job charged just before BullMQ adds it survives
-    await this.messageQueueService.reconcileJobMemory();
+    // a charge or payload is only released when two passes miss its job, so one added just before BullMQ adds its job survives
+    await this.reconcile();
     await new Promise((resolve) => setTimeout(resolve, graceSeconds * 1000));
 
-    const { releasedCount, releasedBytes } =
-      await this.messageQueueService.reconcileJobMemory();
+    const [{ releasedCount, releasedBytes }, { deletedCount }] =
+      await this.reconcile();
 
     this.logger.log(
-      `Released ${releasedCount} job memory charges (${releasedBytes} bytes)`,
+      `Released ${releasedCount} job memory charges (${releasedBytes} bytes) and deleted ${deletedCount} orphaned job payloads`,
     );
+  }
+
+  private reconcile() {
+    return Promise.all([
+      this.messageQueueService.reconcileJobMemory(),
+      this.messageQueueService.reconcileJobPayloads(),
+    ]);
   }
 }
