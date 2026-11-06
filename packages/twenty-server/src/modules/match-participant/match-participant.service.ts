@@ -275,35 +275,34 @@ export class MatchParticipantService<
   }: MatchParticipantsForWorkspaceMembersArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const participantRepository = this.getParticipantRepository({
-            objectMetadataName,
-            transactionScope,
-          });
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        const participantRepository = this.getParticipantRepository({
+          objectMetadataName,
+          transactionScope,
+        });
 
-          const participants = await participantRepository.find({
-            where: {
-              workspaceMemberId: In(participantMatching.workspaceMemberIds),
-            },
-          });
+        const participants = await participantRepository.find({
+          where: {
+            workspaceMemberId: In(participantMatching.workspaceMemberIds),
+          },
+        });
 
-          const rematchedParticipants = participants.map((participant) => ({
-            ...participant,
-            workspaceMemberId: null,
-          })) as ParticipantWorkspaceEntity[];
+        const rematchedParticipants = participants.map((participant) => ({
+          ...participant,
+          workspaceMemberId: null,
+        })) as ParticipantWorkspaceEntity[];
 
-          await this.matchParticipants({
-            matchWith: 'workspaceMemberOnly',
-            participants: rematchedParticipants,
-            sourceRecordIds: this.getSourceRecordIds(rematchedParticipants),
-            objectMetadataName,
-            transactionScope,
-          });
-        },
-      );
-    }, authContext);
+        await this.matchParticipants({
+          matchWith: 'workspaceMemberOnly',
+          participants: rematchedParticipants,
+          sourceRecordIds: this.getSourceRecordIds(rematchedParticipants),
+          objectMetadataName,
+          transactionScope,
+        });
+      },
+      authContext,
+    );
   }
 
   // participants of channels matching on this person field, whose handle is one of the person's values before or after the change
@@ -320,52 +319,51 @@ export class MatchParticipantService<
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const participantRepository = this.getParticipantRepository({
-            objectMetadataName: 'messageParticipant',
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        const participantRepository = this.getParticipantRepository({
+          objectMetadataName: 'messageParticipant',
+          transactionScope,
+        });
+
+        const participantsWithHandle = await participantRepository
+          .createQueryBuilder('participant')
+          .where('"participant"."handle" = ANY(:handles)', { handles })
+          .getMany<ParticipantWorkspaceEntity>();
+
+        if (!isNonEmptyArray(participantsWithHandle)) {
+          return;
+        }
+
+        // the same handle can sit on a channel that matches another field, which this change does not concern
+        const messageIdsOnMatchingChannels =
+          await this.findMessageIdsOnChannels({
+            participants: participantsWithHandle,
+            messageChannelIds,
             transactionScope,
           });
 
-          const participantsWithHandle = await participantRepository
-            .createQueryBuilder('participant')
-            .where('"participant"."handle" = ANY(:handles)', { handles })
-            .getMany<ParticipantWorkspaceEntity>();
+        // a link the app passed to someone else stands: only unlinked participants and those of the changed people move
+        const participantsToRematch = participantsWithHandle.filter(
+          (participant) =>
+            messageIdsOnMatchingChannels.has(
+              this.getSourceRecordId(participant),
+            ) &&
+            (!isDefined(participant.personId) ||
+              changedPersonIds.includes(participant.personId)),
+        );
 
-          if (!isNonEmptyArray(participantsWithHandle)) {
-            return;
-          }
-
-          // the same handle can sit on a channel that matches another field, which this change does not concern
-          const messageIdsOnMatchingChannels =
-            await this.findMessageIdsOnChannels({
-              participants: participantsWithHandle,
-              messageChannelIds,
-              transactionScope,
-            });
-
-          // a link the app passed to someone else stands: only unlinked participants and those of the changed people move
-          const participantsToRematch = participantsWithHandle.filter(
-            (participant) =>
-              messageIdsOnMatchingChannels.has(
-                this.getSourceRecordId(participant),
-              ) &&
-              (!isDefined(participant.personId) ||
-                changedPersonIds.includes(participant.personId)),
-          );
-
-          await this.matchParticipants({
-            matchWith: 'personOnly',
-            participants: participantsToRematch,
-            sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
-            objectMetadataName: 'messageParticipant',
-            personHandleField,
-            transactionScope,
-          });
-        },
-      );
-    }, authContext);
+        await this.matchParticipants({
+          matchWith: 'personOnly',
+          participants: participantsToRematch,
+          sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
+          objectMetadataName: 'messageParticipant',
+          personHandleField,
+          transactionScope,
+        });
+      },
+      authContext,
+    );
   }
 
   public async matchParticipantsForPeople({
@@ -375,50 +373,48 @@ export class MatchParticipantService<
   }: MatchParticipantsForPeopleArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const participantRepository = this.getParticipantRepository({
-            objectMetadataName,
-            transactionScope,
-          });
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        const participantRepository = this.getParticipantRepository({
+          objectMetadataName,
+          transactionScope,
+        });
 
-          if (!isNonEmptyArray(participantMatching.personEmails)) {
-            return;
-          }
+        if (!isNonEmptyArray(participantMatching.personEmails)) {
+          return;
+        }
 
-          // emails before and after the change pick candidates, so links made any other way are left alone
-          const participantsWithEmailHandle = await participantRepository
-            .createQueryBuilder('participant')
-            .where('LOWER("participant"."handle") = ANY(:emails)', {
-              emails: [
-                ...new Set(
-                  participantMatching.personEmails.map((email) =>
-                    email.toLowerCase(),
-                  ),
+        // emails before and after the change pick candidates, so links made any other way are left alone
+        const participantsWithEmailHandle = await participantRepository
+          .createQueryBuilder('participant')
+          .where('LOWER("participant"."handle") = ANY(:emails)', {
+            emails: [
+              ...new Set(
+                participantMatching.personEmails.map((email) =>
+                  email.toLowerCase(),
                 ),
-              ],
-            })
-            .getMany<ParticipantWorkspaceEntity>();
+              ),
+            ],
+          })
+          .getMany<ParticipantWorkspaceEntity>();
 
-          const participantsToRematch =
-            await this.withoutAppChannelParticipants({
-              participants: participantsWithEmailHandle,
-              objectMetadataName,
-              workspaceId,
-              transactionScope,
-            });
+        const participantsToRematch = await this.withoutAppChannelParticipants({
+          participants: participantsWithEmailHandle,
+          objectMetadataName,
+          workspaceId,
+          transactionScope,
+        });
 
-          await this.matchParticipants({
-            matchWith: 'personOnly',
-            participants: participantsToRematch,
-            sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
-            objectMetadataName,
-            transactionScope,
-          });
-        },
-      );
-    }, authContext);
+        await this.matchParticipants({
+          matchWith: 'personOnly',
+          participants: participantsToRematch,
+          sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
+          objectMetadataName,
+          transactionScope,
+        });
+      },
+      authContext,
+    );
   }
 
   // apps link their own participants, even ones whose handle looks like an email
