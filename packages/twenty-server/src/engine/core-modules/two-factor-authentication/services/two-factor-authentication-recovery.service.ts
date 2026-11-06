@@ -5,6 +5,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import ms from 'ms';
 import {
+  TwoFactorAuthenticationBackupCodeUsedEmail,
   TwoFactorAuthenticationRecoveryCodeIssuedEmail,
   TwoFactorAuthenticationResetEmail,
   renderEmail,
@@ -13,6 +14,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  type EntityManager,
   IsNull,
   MoreThan,
   MoreThanOrEqual,
@@ -34,6 +36,10 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import {
+  TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_COUNT,
+  TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_EXPIRES_AT,
+} from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-backup-code.constant';
 import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
@@ -286,7 +292,10 @@ export class TwoFactorAuthenticationRecoveryService {
       'id' | 'displayName' | 'isTwoFactorAuthenticationEnforced'
     >;
     recoveryCode: string;
-  }): Promise<{ provisioningUri: string | null }> {
+  }): Promise<{
+    provisioningUri: string | null;
+    isTwoFactorAuthenticationReset: boolean;
+  }> {
     const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
       targetUserId: userId,
       targetWorkspaceId: workspace.id,
@@ -310,6 +319,19 @@ export class TwoFactorAuthenticationRecoveryService {
         });
 
         const appTokenRepository = entityManager.getRepository(AppTokenEntity);
+
+        const isBackupCodeConsumed = await this.consumeBackupCode({
+          entityManager,
+          userWorkspace,
+          backupCode: recoveryCode,
+        });
+
+        if (isBackupCodeConsumed) {
+          return {
+            provisioningUri: null,
+            isTwoFactorAuthenticationReset: false,
+          };
+        }
 
         // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued
         const consumeResult = await appTokenRepository.update(
@@ -340,6 +362,12 @@ export class TwoFactorAuthenticationRecoveryService {
           userWorkspaceId: userWorkspace.id,
         });
 
+        await this.revokeBackupCodes({
+          userId,
+          workspaceId: workspace.id,
+          entityManager,
+        });
+
         await appTokenRepository
           .createQueryBuilder()
           .update()
@@ -362,7 +390,10 @@ export class TwoFactorAuthenticationRecoveryService {
           .execute();
 
         if (!workspace.isTwoFactorAuthenticationEnforced) {
-          return { provisioningUri: null };
+          return {
+            provisioningUri: null,
+            isTwoFactorAuthenticationReset: true,
+          };
         }
 
         const { uri, encryptedSecret, status } =
@@ -380,7 +411,7 @@ export class TwoFactorAuthenticationRecoveryService {
           strategy: TwoFactorAuthenticationStrategy.TOTP,
         });
 
-        return { provisioningUri: uri };
+        return { provisioningUri: uri, isTwoFactorAuthenticationReset: true };
       },
     );
 
@@ -389,6 +420,15 @@ export class TwoFactorAuthenticationRecoveryService {
         'Invalid recovery code',
         TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
       );
+    }
+
+    if (!redemption.isTwoFactorAuthenticationReset) {
+      await this.sendBackupCodeUsedEmail({
+        userWorkspace,
+        workspaceDisplayName: workspace.displayName,
+      });
+
+      return redemption;
     }
 
     await this.userSessionService.revokeAllSessionsForUser({
@@ -403,6 +443,111 @@ export class TwoFactorAuthenticationRecoveryService {
     });
 
     return redemption;
+  }
+
+  async issueBackupCodes({
+    userId,
+    workspaceId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): Promise<string[]> {
+    const backupCodes = Array.from(
+      { length: TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_COUNT },
+      () => generateTwoFactorAuthenticationRecoveryCode(),
+    );
+
+    await this.appTokenRepository.manager.transaction(async (entityManager) => {
+      await acquireUserAuthenticationLock({
+        entityManager,
+        userId,
+        mode: 'exclusive',
+      });
+
+      await this.revokeBackupCodes({ userId, workspaceId, entityManager });
+
+      await entityManager.getRepository(AppTokenEntity).insert(
+        backupCodes.map((backupCode) => ({
+          userId,
+          workspaceId,
+          type: AppTokenType.TwoFactorAuthenticationBackupCode,
+          value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
+          expiresAt: TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_EXPIRES_AT,
+        })),
+      );
+    });
+
+    return backupCodes;
+  }
+
+  async regenerateBackupCodes({
+    userId,
+    workspaceId,
+    otp,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    otp?: string;
+  }): Promise<string[]> {
+    await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
+      {
+        userId,
+        workspaceId,
+        otp,
+        otpRequiredMessage: msg`Enter your two-factor authentication code to generate new backup codes.`,
+        twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication before generating backup codes.`,
+      },
+    );
+
+    return this.issueBackupCodes({ userId, workspaceId });
+  }
+
+  async getRemainingBackupCodeCount({
+    userId,
+    workspaceId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): Promise<number> {
+    const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
+      targetUserId: userId,
+      targetWorkspaceId: workspaceId,
+    });
+
+    return this.appTokenRepository.count({
+      where: {
+        userId,
+        workspaceId,
+        type: AppTokenType.TwoFactorAuthenticationBackupCode,
+        deletedAt: IsNull(),
+        revokedAt: IsNull(),
+        createdAt: MoreThanOrEqual(userWorkspace.createdAt),
+      },
+    });
+  }
+
+  async revokeBackupCodes({
+    userId,
+    workspaceId,
+    entityManager,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    entityManager?: EntityManager;
+  }): Promise<void> {
+    const appTokenRepository =
+      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
+
+    await appTokenRepository.update(
+      {
+        userId,
+        workspaceId,
+        type: AppTokenType.TwoFactorAuthenticationBackupCode,
+        deletedAt: IsNull(),
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
   }
 
   async assertEnrollmentNotReservedForRecoveryOrThrow({
@@ -431,6 +576,58 @@ export class TwoFactorAuthenticationRecoveryService {
         TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
       );
     }
+  }
+
+  private async consumeBackupCode({
+    entityManager,
+    userWorkspace,
+    backupCode,
+  }: {
+    entityManager: EntityManager;
+    userWorkspace: Pick<
+      UserWorkspaceEntity,
+      'id' | 'userId' | 'workspaceId' | 'createdAt'
+    >;
+    backupCode: string;
+  }): Promise<boolean> {
+    const verifiedTwoFactorAuthenticationMethod = await entityManager
+      .getRepository(TwoFactorAuthenticationMethodEntity)
+      .findOne({
+        where: {
+          workspaceId: userWorkspace.workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          status: OTPStatus.VERIFIED,
+        },
+      });
+
+    if (!isDefined(verifiedTwoFactorAuthenticationMethod)) {
+      return false;
+    }
+
+    // Codes issued before the current authenticator or membership belong to an earlier enrollment
+    const issuedNoEarlierThan = new Date(
+      Math.max(
+        userWorkspace.createdAt.getTime(),
+        verifiedTwoFactorAuthenticationMethod.createdAt.getTime(),
+      ),
+    );
+
+    const consumeResult = await entityManager
+      .getRepository(AppTokenEntity)
+      .update(
+        {
+          userId: userWorkspace.userId,
+          workspaceId: userWorkspace.workspaceId,
+          type: AppTokenType.TwoFactorAuthenticationBackupCode,
+          value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
+          deletedAt: IsNull(),
+          revokedAt: IsNull(),
+          createdAt: MoreThanOrEqual(issuedNoEarlierThan),
+        },
+        { deletedAt: new Date() },
+      );
+
+    return (consumeResult.affected ?? 0) > 0;
   }
 
   private isAwaitingRecoveryEnrollment(
@@ -577,6 +774,33 @@ export class TwoFactorAuthenticationRecoveryService {
       buildEmailTemplate: () =>
         TwoFactorAuthenticationResetEmail({
           workspaceDisplayName: workspaceDisplayName ?? '',
+          locale,
+        }),
+    });
+  }
+
+  private async sendBackupCodeUsedEmail({
+    userWorkspace,
+    workspaceDisplayName,
+  }: {
+    userWorkspace: UserWorkspaceEntity;
+    workspaceDisplayName: WorkspaceEntity['displayName'];
+  }): Promise<void> {
+    const locale = userWorkspace.locale ?? SOURCE_LOCALE;
+
+    const remainingBackupCodeCount = await this.getRemainingBackupCodeCount({
+      userId: userWorkspace.userId,
+      workspaceId: userWorkspace.workspaceId,
+    });
+
+    await this.sendSecurityEmail({
+      to: userWorkspace.user.email,
+      locale,
+      subject: msg`A backup code was used to sign in to your account`,
+      buildEmailTemplate: () =>
+        TwoFactorAuthenticationBackupCodeUsedEmail({
+          workspaceDisplayName: workspaceDisplayName ?? '',
+          remainingBackupCodeCount,
           locale,
         }),
     });

@@ -13,6 +13,7 @@ export * from './emails/password-update-notify.email';
 export * from './emails/send-email-verification-link.email';
 export * from './emails/send-invite-link.email';
 export * from './emails/server-admin-access-changed.email';
+export * from './emails/two-factor-authentication-backup-code-used.email';
 export * from './emails/two-factor-authentication-recovery-code-issued.email';
 export * from './emails/two-factor-authentication-reset.email';
 export * from './emails/validate-approved-access-domain.email';

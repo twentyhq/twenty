@@ -2,6 +2,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import QRCodeModule from 'react-qr-code';
 
@@ -9,6 +10,7 @@ import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
+import { TwoFactorAuthenticationBackupCodesSection } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection';
 import { TwoFactorAuthenticationSetupForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect';
 import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
@@ -82,7 +84,13 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
     currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
     'VERIFIED';
 
-  const verificationForm = useTwoFactorVerificationForSettings();
+  const [generatedBackupCodes, setGeneratedBackupCodes] = useState<
+    string[] | null
+  >(null);
+
+  const verificationForm = useTwoFactorVerificationForSettings({
+    onBackupCodesIssued: setGeneratedBackupCodes,
+  });
 
   const shouldShowActionButtons = !has2FAMethod;
 
@@ -131,9 +139,15 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
       >
         <SettingsPageContainer>
           {has2FAMethod ? (
-            <Section.Root>
-              <DeleteTwoFactorAuthentication />
-            </Section.Root>
+            <>
+              <TwoFactorAuthenticationBackupCodesSection
+                generatedBackupCodes={generatedBackupCodes}
+                onBackupCodesGenerated={setGeneratedBackupCodes}
+              />
+              <Section.Root>
+                <DeleteTwoFactorAuthentication />
+              </Section.Root>
+            </>
           ) : (
             <Section.Root>
               <TwoFactorAuthenticationSetupForSettingsEffect />

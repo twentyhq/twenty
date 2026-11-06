@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -37,11 +38,15 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningDTO } from './dto/initiate-two-factor-authentication-provisioning.dto';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-authentication-method.dto';
+import { GenerateTwoFactorAuthenticationBackupCodesInput } from './dto/generate-two-factor-authentication-backup-codes.input';
+import { TwoFactorAuthenticationBackupCodeStatusDTO } from './dto/two-factor-authentication-backup-code-status.dto';
+import { TwoFactorAuthenticationBackupCodesDTO } from './dto/two-factor-authentication-backup-codes.dto';
 import { GenerateTwoFactorAuthenticationRecoveryCodeInput } from './dto/generate-two-factor-authentication-recovery-code.input';
 import { TwoFactorAuthenticationRecoveryCodeDTO } from './dto/two-factor-authentication-recovery-code.dto';
 import { TwoFactorAuthenticationRecoveryStatusDTO } from './dto/two-factor-authentication-recovery-status.dto';
 import { TwoFactorAuthenticationRecoveryTargetInput } from './dto/two-factor-authentication-recovery-target.input';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
+import { OTPStatus } from './strategies/otp/otp.constants';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -242,6 +247,11 @@ export class TwoFactorAuthenticationResolver {
       id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
     });
 
+    await this.twoFactorAuthenticationRecoveryService.revokeBackupCodes({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+
     return { success: true };
   }
 
@@ -253,11 +263,65 @@ export class TwoFactorAuthenticationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<VerifyTwoFactorAuthenticationMethodDTO> {
-    return await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+    const twoFactorAuthenticationMethod =
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspace.id, {
+        where: {
+          strategy: TwoFactorAuthenticationStrategy.TOTP,
+          userWorkspace: { userId: user.id },
+        },
+      });
+
+    const isEnrollment =
+      twoFactorAuthenticationMethod?.status === OTPStatus.PENDING;
+
+    await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       user.id,
       verifyTwoFactorAuthenticationMethodInput.otp,
       workspace.id,
     );
+
+    if (!isEnrollment) {
+      return { success: true, backupCodes: null };
+    }
+
+    const backupCodes =
+      await this.twoFactorAuthenticationRecoveryService.issueBackupCodes({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
+
+    return { success: true, backupCodes };
+  }
+
+  @Query(() => TwoFactorAuthenticationBackupCodeStatusDTO)
+  @UseGuards(AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY))
+  async twoFactorAuthenticationBackupCodeStatus(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+  ): Promise<TwoFactorAuthenticationBackupCodeStatusDTO> {
+    const remainingBackupCodeCount =
+      await this.twoFactorAuthenticationRecoveryService.getRemainingBackupCodeCount(
+        { userId: user.id, workspaceId: workspace.id },
+      );
+
+    return { remainingBackupCodeCount };
+  }
+
+  @Mutation(() => TwoFactorAuthenticationBackupCodesDTO)
+  @UseGuards(AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY))
+  async generateTwoFactorAuthenticationBackupCodes(
+    @Args() { otp }: GenerateTwoFactorAuthenticationBackupCodesInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+  ): Promise<TwoFactorAuthenticationBackupCodesDTO> {
+    const backupCodes =
+      await this.twoFactorAuthenticationRecoveryService.regenerateBackupCodes({
+        userId: user.id,
+        workspaceId: workspace.id,
+        otp,
+      });
+
+    return { backupCodes };
   }
 
   @Query(() => TwoFactorAuthenticationRecoveryStatusDTO)

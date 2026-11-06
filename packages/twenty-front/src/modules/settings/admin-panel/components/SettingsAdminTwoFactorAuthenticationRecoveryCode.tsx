@@ -90,7 +90,9 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
       )}
       <TwoFactorAuthenticationRecoveryCodeConfirmationDialog
         dialogId={dialogId}
-        memberName={memberName}
+        title={t`Generate a recovery code`}
+        description={t`The code lets ${memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email.`}
+        confirmButtonText={t`Generate code`}
         onConfirm={handleGenerate}
       />
     </>

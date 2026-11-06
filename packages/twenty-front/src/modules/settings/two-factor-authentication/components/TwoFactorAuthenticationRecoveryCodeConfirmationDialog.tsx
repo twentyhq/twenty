@@ -23,13 +23,17 @@ const StyledOTPContainer = styled.div`
 
 type TwoFactorAuthenticationRecoveryCodeConfirmationDialogProps = {
   dialogId: string;
-  memberName: string;
+  title: string;
+  description: string;
+  confirmButtonText: string;
   onConfirm: (otp: string) => void;
 };
 
 export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
   dialogId,
-  memberName,
+  title,
+  description,
+  confirmButtonText,
   onConfirm,
 }: TwoFactorAuthenticationRecoveryCodeConfirmationDialogProps) => {
   const { t } = useLingui();
@@ -38,9 +42,9 @@ export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
   return (
     <ConfirmationDialog
       dialogId={dialogId}
-      title={t`Generate a recovery code`}
+      title={title}
       confirmButtonColor="accent"
-      confirmButtonText={t`Generate code`}
+      confirmButtonText={confirmButtonText}
       isConfirmButtonDisabled={otp.length !== OTP_LENGTH}
       onConfirmClick={() => {
         onConfirm(otp);
@@ -49,9 +53,7 @@ export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
       onClose={() => setOtp('')}
       subtitle={
         <StyledConfirmationContent>
-          <div>
-            {t`The code lets ${memberName} sign in to this workspace once without their authenticator app. Using it removes their current authenticator and signs them out of their other sessions here. They will be notified by email.`}
-          </div>
+          <div>{description}</div>
           <div>{t`Enter your two-factor authentication code to confirm.`}</div>
           <OTPInput
             maxLength={OTP_LENGTH}
