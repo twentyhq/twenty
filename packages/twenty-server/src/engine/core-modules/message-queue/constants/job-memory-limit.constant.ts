@@ -1,5 +1,3 @@
-export const JOB_MEMORY_CHARGE_TTL_SECONDS = 8 * 24 * 60 * 60;
-
 export const JOB_MEMORY_INFO_CACHE_MS = 1_000;
 
 export const JOB_MEMORY_RECONCILE_BATCH_SIZE = 200;

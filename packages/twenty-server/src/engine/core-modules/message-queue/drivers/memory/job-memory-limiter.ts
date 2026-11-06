@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  JOB_MEMORY_CHARGE_TTL_SECONDS,
   JOB_MEMORY_INFO_CACHE_MS,
   JOB_MEMORY_RECONCILE_BATCH_SIZE,
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
@@ -141,7 +140,6 @@ export class JobMemoryLimiter {
       args: [
         capacityBytes,
         memoryInfo.usedMemoryBytes,
-        JOB_MEMORY_CHARGE_TTL_SECONDS,
         groupKeys.length,
         ...groupKeys.map((groupKey) => this.getShare(groupKey)),
         chargedJobs.length,

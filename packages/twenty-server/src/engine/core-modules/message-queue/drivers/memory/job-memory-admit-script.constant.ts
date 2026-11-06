@@ -9,15 +9,16 @@ export const JOB_MEMORY_ADMIT_SCRIPT = `
 -- ARGV:
 --   1: capacity, bytes of Redis memory given to jobs (maxmemory minus the reserve)
 --   2: used memory, bytes Redis reports as used right now
---   3: ttl, seconds before an idle key's counter and hash expire
---   4: key count K
---   5 .. 4 + K: share of the free memory each key may use (0.1 = 10%)
---   5 + K: job count, then for each job: member, size, number of keys, key indexes
+--   3: key count K
+--   4 .. 3 + K: share of the free memory each key may use (0.1 = 10%)
+--   4 + K: job count, then for each job: member, size, number of keys, key indexes
+--
+-- Charges never expire: they last until the job is released or the reconcile cron
+-- finds its BullMQ job gone.
 
 local capacity = tonumber(ARGV[1])
 local usedMemory = tonumber(ARGV[2])
-local ttl = tonumber(ARGV[3])
-local keyCount = tonumber(ARGV[4])
+local keyCount = tonumber(ARGV[3])
 
 local shares = {}
 local used = {}
@@ -25,14 +26,14 @@ local requested = {}
 
 -- Read what each key already holds
 for keyIndex = 1, keyCount do
-  shares[keyIndex] = tonumber(ARGV[4 + keyIndex])
+  shares[keyIndex] = tonumber(ARGV[3 + keyIndex])
   used[keyIndex] = tonumber(redis.call('GET', KEYS[2 * keyIndex - 1]) or '0')
   requested[keyIndex] = 0
 end
 
-local jobCount = tonumber(ARGV[5 + keyCount])
+local jobCount = tonumber(ARGV[4 + keyCount])
 local jobs = {}
-local cursor = 6 + keyCount
+local cursor = 5 + keyCount
 
 -- Sum, per key, the bytes the batch would add. A job already charged to a key,
 -- or listed earlier in this batch (same id enqueued twice), is not counted again.
@@ -84,20 +85,13 @@ for keyIndex = 1, keyCount do
 end
 
 -- Admitted: record each job in every key's hash (HSETNX skips jobs already
--- charged) and add its size to the key's counter, then refresh the expiry
+-- charged) and add its size to the key's counter
 if refused == 0 then
   for _, job in ipairs(jobs) do
     for _, keyIndex in ipairs(job[3]) do
       if redis.call('HSETNX', KEYS[2 * keyIndex], job[1], job[2]) == 1 then
         usedAfter[keyIndex] = redis.call('INCRBY', KEYS[2 * keyIndex - 1], job[2])
       end
-    end
-  end
-
-  for keyIndex = 1, keyCount do
-    if requested[keyIndex] > 0 then
-      redis.call('EXPIRE', KEYS[2 * keyIndex - 1], ttl)
-      redis.call('EXPIRE', KEYS[2 * keyIndex], ttl)
     end
   end
 end

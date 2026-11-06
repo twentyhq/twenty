@@ -117,7 +117,7 @@ The queued run inherits the acting user of the function that enqueued it, so it 
 
 ## Queue memory
 
-Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 5 MB of serialized payload. These limits only apply on servers that enable them (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+Queued jobs live in memory until the queue drops them, which happens some time after they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 5 MB of serialized payload. These limits only apply on servers that enable them (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
 
 `enqueueJobs` reports what each call used. These fields need Twenty 2.57.0 or later, which is also the minimum server version of the SDK:
 

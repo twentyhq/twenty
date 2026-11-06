@@ -1,7 +1,6 @@
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 
-import { JOB_MEMORY_CHARGE_TTL_SECONDS } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JobMemoryLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -369,7 +368,7 @@ describe('JobMemoryLimiter', () => {
     expect(await redis.keys('*')).toEqual([]);
   });
 
-  it('expires charges after the charge TTL', async () => {
+  it('keeps charges without expiry, so a long-delayed job stays charged', async () => {
     const { redis, limiter } = await createLimiter();
 
     await limiter.admit({
@@ -378,12 +377,8 @@ describe('JobMemoryLimiter', () => {
       jobs: [{ jobId: 'job-1', sizeBytes: 300, groupKeys: [WORKSPACE_1] }],
     });
 
-    expect(await redis.ttl(usedKeyOf(WORKSPACE_1))).toBe(
-      JOB_MEMORY_CHARGE_TTL_SECONDS,
-    );
-    expect(await redis.ttl(jobsKeyOf(WORKSPACE_1))).toBe(
-      JOB_MEMORY_CHARGE_TTL_SECONDS,
-    );
+    expect(await redis.ttl(usedKeyOf(WORKSPACE_1))).toBe(-1);
+    expect(await redis.ttl(jobsKeyOf(WORKSPACE_1))).toBe(-1);
   });
 
   it.each<{ name: string; options: Parameters<typeof createLimiter>[0] }>([
@@ -484,7 +479,7 @@ describe('JobMemoryLimiter', () => {
       expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
     });
 
-    it('releases a job that BullMQ finished but kept, since its release was lost', async () => {
+    it('keeps the charge of a finished job that BullMQ still retains', async () => {
       const { redis, limiter } = await createLimiter();
 
       await chargeJob({ limiter, jobId: 'finished-job' });
@@ -493,7 +488,7 @@ describe('JobMemoryLimiter', () => {
       await limiter.reconcile(QUEUE);
       await limiter.reconcile(QUEUE);
 
-      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(0);
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
     });
 
     it('forgets a suspect once BullMQ adds its job, so a late add is never released', async () => {

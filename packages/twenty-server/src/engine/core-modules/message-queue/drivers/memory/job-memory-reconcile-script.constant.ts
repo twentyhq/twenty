@@ -1,6 +1,6 @@
 export const JOB_MEMORY_RECONCILE_SCRIPT = `
--- Releases charges whose job left BullMQ without a release. A charge is only released when
--- two passes in a row find no live job, so a job charged just before BullMQ adds it survives.
+-- Releases charges whose BullMQ job no longer exists, finished jobs included until retention removes
+-- them. Two passes in a row must miss the job, so a job charged just before BullMQ adds it survives.
 -- KEYS: used counter, jobs hash, previous suspects, next suspects, then one BullMQ job key per member
 -- ARGV: suspects ttl, then the members ("<queue>:<jobId>"). Returns "releasedCount releasedBytes"
 
@@ -14,11 +14,8 @@ for index = 2, #ARGV do
   local size = redis.call('HGET', KEYS[2], member)
 
   if size then
-    -- A job is live while BullMQ holds it and has not finished it
-    local isLive = redis.call('EXISTS', jobKey) == 1
-      and redis.call('HEXISTS', jobKey, 'finishedOn') == 0
-
-    if not isLive then
+    -- A job keeps its charge while BullMQ holds its payload, finished or not
+    if redis.call('EXISTS', jobKey) == 0 then
       if redis.call('SISMEMBER', KEYS[3], member) == 1 then
         -- Already missing on the previous pass: give its size back to the key
         redis.call('HDEL', KEYS[2], member)
