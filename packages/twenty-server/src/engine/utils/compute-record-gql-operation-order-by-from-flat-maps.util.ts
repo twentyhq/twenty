@@ -30,19 +30,20 @@ const POSITION_TIEBREAKER_ORDER_BY = [
 ] satisfies RecordGqlOperationOrderBy;
 
 const findLabelIdentifierFlatFieldMetadata = ({
-  relationFlatFieldMetadata,
+  relationFlatFieldMetadata: { relationTargetObjectMetadataId },
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  relationFlatFieldMetadata: FlatFieldMetadata;
+  relationFlatFieldMetadata: Pick<
+    FlatFieldMetadata,
+    'relationTargetObjectMetadataId'
+  >;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadata | undefined => {
-  const targetFlatObjectMetadata = isDefined(
-    relationFlatFieldMetadata.relationTargetObjectMetadataId,
-  )
+  const targetFlatObjectMetadata = isDefined(relationTargetObjectMetadataId)
     ? findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: relationFlatFieldMetadata.relationTargetObjectMetadataId,
+        flatEntityId: relationTargetObjectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       })
     : undefined;
