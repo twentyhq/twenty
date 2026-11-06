@@ -306,11 +306,14 @@ export const SavingWhileOpen: Story = {
     ).toBeDisabled();
     expect(customize).toBeDisabled();
 
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Finish saving' }),
     );
-    expect(customize).not.toBeDisabled();
-    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(customize).not.toBeDisabled());
     await userEvent.click(customize);
     expect(
       await body.findByRole('textbox', { name: 'Assistant name' }),
