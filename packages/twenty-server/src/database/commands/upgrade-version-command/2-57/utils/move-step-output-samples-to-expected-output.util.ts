@@ -6,7 +6,6 @@ import {
   isBaseOutputSchemaV2,
 } from 'twenty-shared/workflow';
 
-// the step types whose output schema the builder derived from a sample, as of 2.57
 const SAMPLE_STEP_TYPES = new Set(['CODE', 'HTTP_REQUEST', 'LOGIC_FUNCTION']);
 
 const convertOutputSchemaToSample = (

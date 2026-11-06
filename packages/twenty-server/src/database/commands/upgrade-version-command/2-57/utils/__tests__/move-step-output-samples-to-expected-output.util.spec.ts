@@ -9,10 +9,13 @@ const buildStep = (type: string, settings: Record<string, unknown>) => ({
   settings: { input: {}, ...settings },
 });
 
-const moveSamples = (
-  steps: ReturnType<typeof buildStep>[],
+const moveSamples = ({
+  steps,
   declaredOutputSchemaByLogicFunctionId = new Map<string, BaseOutputSchemaV2>(),
-) =>
+}: {
+  steps: ReturnType<typeof buildStep>[];
+  declaredOutputSchemaByLogicFunctionId?: Map<string, BaseOutputSchemaV2>;
+}) =>
   moveStepOutputSamplesToExpectedOutput({
     steps,
     declaredOutputSchemaByLogicFunctionId,
@@ -30,7 +33,7 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
         expectedOutputSchema: { typed: 'by hand' },
       });
 
-      expect(moveSamples([step])).toEqual({
+      expect(moveSamples({ steps: [step] })).toEqual({
         steps: [
           {
             ...step,
@@ -69,7 +72,12 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
     ];
 
     expect(
-      moveSamples(steps, new Map([['function-id', declaredOutputSchema]])),
+      moveSamples({
+        steps,
+        declaredOutputSchemaByLogicFunctionId: new Map([
+          ['function-id', declaredOutputSchema],
+        ]),
+      }),
     ).toEqual({ steps, movedStepIds: [] });
   });
 });

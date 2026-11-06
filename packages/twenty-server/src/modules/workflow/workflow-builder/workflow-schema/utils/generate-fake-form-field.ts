@@ -11,7 +11,7 @@ type GenerateFakeFormFieldArgs = {
   type: FieldMetadataType;
   label: string;
   value?: string;
-  selectedFieldId?: unknown;
+  selectedFieldId?: string;
 };
 
 export const generateFakeFormField = ({

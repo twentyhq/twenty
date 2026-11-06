@@ -16,7 +16,7 @@ import {
 
 type TranslationContext = {
   stepType: string;
-  labels: Record<string, MessageDescriptor>;
+  labelEntries: [string, MessageDescriptor][];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   stepObjectMetadataItem?: EnrichedObjectMetadataItem;
 };
@@ -120,7 +120,7 @@ const translateLabel = ({
   node: BaseOutputSchemaV2[string];
   context: TranslationContext;
 }): string => {
-  const message = Object.entries(context.labels).find(([labelPath]) =>
+  const message = context.labelEntries.find(([labelPath]) =>
     matchesPath({ labelPath, path }),
   )?.[1];
 
@@ -272,7 +272,9 @@ export const translatePersistedOutputSchemaLabels = ({
     path: [],
     context: {
       stepType,
-      labels: WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS[stepType] ?? {},
+      labelEntries: Object.entries(
+        WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS[stepType] ?? {},
+      ),
       objectMetadataItems,
       stepObjectMetadataItem: isDefined(objectMetadataId)
         ? findObjectMetadataItem({ objectMetadataItems, objectMetadataId })

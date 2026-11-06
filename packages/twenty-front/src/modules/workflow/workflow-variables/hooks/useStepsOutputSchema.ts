@@ -35,7 +35,7 @@ export const useStepsOutputSchema = () => {
         stepKey,
         stepOutputSchemaWithoutSchema,
       }: {
-        step: WorkflowStep | WorkflowTrigger;
+        step: Pick<WorkflowStep | WorkflowTrigger, 'type' | 'settings'>;
         stepKey: string;
         stepOutputSchemaWithoutSchema: Omit<StepOutputSchemaV2, 'outputSchema'>;
       }) => {

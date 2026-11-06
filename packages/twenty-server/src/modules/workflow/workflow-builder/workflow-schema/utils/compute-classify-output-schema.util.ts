@@ -20,14 +20,14 @@ const buildProbabilitiesNode = (keys: string[]): Node => ({
 const buildAnswerSchema = (
   question: WorkflowClassifyQuestion,
 ): BaseOutputSchemaV2 => {
-  const type: BaseOutputSchemaV2 = {
+  const answerTypeOutputSchema: BaseOutputSchemaV2 = {
     type: { isLeaf: true, type: 'string', label: 'Type', value: question.type },
   };
 
   switch (question.type) {
     case 'choice':
       return {
-        ...type,
+        ...answerTypeOutputSchema,
         choice: {
           isLeaf: true,
           type: 'string',
@@ -42,16 +42,15 @@ const buildAnswerSchema = (
       };
     case 'score':
       return {
-        ...type,
+        ...answerTypeOutputSchema,
         score: { isLeaf: true, type: 'number', label: 'Score', value: 0 },
-        // native scores carry a distribution over level indices, advertised like a choice's
         probabilities: buildProbabilitiesNode(
           question.criteria.map((_, level) => String(level)),
         ),
       };
     case 'boolean':
       return {
-        ...type,
+        ...answerTypeOutputSchema,
         probability: {
           isLeaf: true,
           type: 'number',
