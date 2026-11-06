@@ -91,7 +91,7 @@ export const cleanPageLayoutWidgetConfiguration = (
   const entries = Object.entries(configuration);
   const keptEntries = entries.filter(
     ([key, value]) =>
-      (value !== null || NULLABLE_CONFIGURATION_KEYS.has(key)) &&
+      (isDefined(value) || NULLABLE_CONFIGURATION_KEYS.has(key)) &&
       (!isDefined(chartKeys) || chartKeys.has(key)),
   );
 

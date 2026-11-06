@@ -573,7 +573,7 @@ export class PageLayoutUpdateService {
             ...widgetInput,
             configuration: sanitizeWidgetConfigurationInputOrThrow({
               configuration: widgetInput.configuration,
-              shouldKeepTypesWithoutDto: true,
+              shouldRefuseInvalidConfiguration: false,
             }),
           }
         : widgetInput,

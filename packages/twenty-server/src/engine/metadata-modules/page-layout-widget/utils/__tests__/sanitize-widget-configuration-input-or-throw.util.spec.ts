@@ -358,7 +358,30 @@ describe('sanitizeWidgetConfigurationInputOrThrow', () => {
       });
     });
 
-    it('should keep a widget type without a DTO as is when asked to', () => {
+    it('should clean a draft without refusing it when asked to', () => {
+      const draft = {
+        ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
+        aggregateFieldMetadataId: undefined,
+        label: null,
+        layout: 'VERTICAL',
+      };
+
+      expect(() =>
+        sanitizeWidgetConfigurationInputOrThrow({ configuration: draft }),
+      ).toThrow();
+      expect(
+        sanitizeWidgetConfigurationInputOrThrow({
+          configuration: draft,
+          shouldRefuseInvalidConfiguration: false,
+        }),
+      ).toEqual({
+        configurationType: TEST_NUMBER_CHART_CONFIG_MINIMAL.configurationType,
+        aggregateOperation: TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateOperation,
+        displayDataLabel: TEST_NUMBER_CHART_CONFIG_MINIMAL.displayDataLabel,
+      });
+    });
+
+    it('should keep a widget type without a DTO as is when asked not to refuse it', () => {
       const configuration = {
         configurationType: WidgetConfigurationType.FIELDS,
         viewId: null,
@@ -368,7 +391,7 @@ describe('sanitizeWidgetConfigurationInputOrThrow', () => {
       expect(
         sanitizeWidgetConfigurationInputOrThrow({
           configuration,
-          shouldKeepTypesWithoutDto: true,
+          shouldRefuseInvalidConfiguration: false,
         }),
       ).toBe(configuration);
       expect(() =>

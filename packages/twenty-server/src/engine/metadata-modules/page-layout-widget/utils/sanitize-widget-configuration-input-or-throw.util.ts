@@ -79,19 +79,19 @@ const formatValidationErrors = (
   parentProperty?: string,
 ): string => {
   return errors
-    .map((err) => {
+    .map((error) => {
       const propertyPath = parentProperty
-        ? `${parentProperty}.${err.property}`
-        : err.property;
+        ? `${parentProperty}.${error.property}`
+        : error.property;
 
-      if (err.constraints) {
-        const constraints = Object.values(err.constraints).join(', ');
+      if (error.constraints) {
+        const constraints = Object.values(error.constraints).join(', ');
 
         return `${propertyPath}: ${constraints}`;
       }
 
-      if (err.children && err.children.length > 0) {
-        return formatValidationErrors(err.children, propertyPath);
+      if (error.children && error.children.length > 0) {
+        return formatValidationErrors(error.children, propertyPath);
       }
 
       return `${propertyPath}: Unknown error`;
@@ -99,15 +99,19 @@ const formatValidationErrors = (
     .join('; ');
 };
 
-// A layout saved in bulk can carry widget types the widget API cannot create, which have no DTO to validate against
+// A layout saved in bulk carries drafts and widget types the widget API cannot create, so it is only cleaned, never refused
 export const sanitizeWidgetConfigurationInputOrThrow = <TConfiguration>({
   configuration,
-  shouldKeepTypesWithoutDto = false,
+  shouldRefuseInvalidConfiguration = true,
 }: {
   configuration: TConfiguration;
-  shouldKeepTypesWithoutDto?: boolean;
+  shouldRefuseInvalidConfiguration?: boolean;
 }): TConfiguration => {
   if (!isNotEmptyObject(configuration)) {
+    if (!shouldRefuseInvalidConfiguration) {
+      return configuration;
+    }
+
     throw new PageLayoutWidgetException(
       'Invalid configuration: not an object',
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -122,6 +126,10 @@ export const sanitizeWidgetConfigurationInputOrThrow = <TConfiguration>({
       'configurationType',
     )
   ) {
+    if (!shouldRefuseInvalidConfiguration) {
+      return configuration;
+    }
+
     throw new PageLayoutWidgetException(
       'Invalid configuration: missing configuration type',
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -138,7 +146,7 @@ export const sanitizeWidgetConfigurationInputOrThrow = <TConfiguration>({
     const unsupportedTypeLabel =
       UNSUPPORTED_WIDGET_CONFIGURATION_LABEL_BY_TYPE[configurationType];
 
-    if (isDefined(unsupportedTypeLabel) && shouldKeepTypesWithoutDto) {
+    if (!shouldRefuseInvalidConfiguration) {
       return configuration;
     }
 
@@ -150,12 +158,12 @@ export const sanitizeWidgetConfigurationInputOrThrow = <TConfiguration>({
     );
   }
 
-  const result = validateWidgetConfigurationByDto(
-    WidgetConfigurationDto,
-    configurationRecord,
-  );
+  const result = validateWidgetConfigurationByDto({
+    DtoClass: WidgetConfigurationDto,
+    configuration: configurationRecord,
+  });
 
-  if (result.errors.length > 0) {
+  if (shouldRefuseInvalidConfiguration && result.errors.length > 0) {
     throw new PageLayoutWidgetException(
       formatValidationErrors(result.errors),
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,

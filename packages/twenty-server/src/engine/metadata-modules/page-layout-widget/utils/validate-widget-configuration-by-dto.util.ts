@@ -20,14 +20,16 @@ const NULLABLE_CONFIGURATION_KEYS: Record<string, true> = {
   nestedRelationFieldMetadataId: true,
 } satisfies Record<NullableKeysOf<PageLayoutWidgetConfiguration>, true>;
 
-// Keeps only what the DTO declares: a setting left from another chart type is dropped,
-// and a cleared optional setting is stored absent, as the configuration types describe it
+// Keeps only DTO keys, so settings from another chart type go and a cleared setting is absent, as the types describe
 export const validateWidgetConfigurationByDto = <
-  T extends AllPageLayoutWidgetConfiguration,
->(
-  DtoClass: ClassConstructor<T>,
-  configuration: Record<string, unknown>,
-): {
+  TConfiguration extends AllPageLayoutWidgetConfiguration,
+>({
+  DtoClass,
+  configuration,
+}: {
+  DtoClass: ClassConstructor<TConfiguration>;
+  configuration: Record<string, unknown>;
+}): {
   errors: ValidationError[];
   sanitizedConfiguration: Record<string, unknown>;
 } => {
@@ -43,7 +45,7 @@ export const validateWidgetConfigurationByDto = <
     Object.entries(configuration).filter(
       ([key, value]) =>
         Object.prototype.hasOwnProperty.call(instance, key) &&
-        (value !== null || isDefined(NULLABLE_CONFIGURATION_KEYS[key])),
+        (isDefined(value) || isDefined(NULLABLE_CONFIGURATION_KEYS[key])),
     ),
   );
 
