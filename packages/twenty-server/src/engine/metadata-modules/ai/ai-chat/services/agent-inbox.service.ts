@@ -8,9 +8,9 @@ import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
+import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { type AgentChatMentionDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-mention-delivery.type';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
@@ -57,6 +57,7 @@ export class AgentInboxService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
+    private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -105,16 +106,18 @@ export class AgentInboxService {
 
     // opened on every send, so members a later send lists join the
     // conversation, even when the message it repeats was already written
-    const threadArgs = {
-      workspaceId,
-      sender,
-      workspaceMemberIds: input.workspaceMemberIds,
-      threadKey: input.threadKey,
-      title: input.title,
-    };
+    const openThread = (mentionedWorkspaceMemberIds?: string[]) =>
+      this.openThread({
+        workspaceId,
+        sender,
+        workspaceMemberIds: input.workspaceMemberIds,
+        mentionedWorkspaceMemberIds,
+        threadKey: input.threadKey,
+        title: input.title,
+      });
 
     if (await this.messageExists({ workspaceId, id: messageId })) {
-      await this.openThread(threadArgs);
+      await openThread();
 
       return {
         threadId,
@@ -149,12 +152,9 @@ export class AgentInboxService {
           })
         : undefined;
 
-    // read from a new message only, so sending it again mentions no one
-    const { thread, mentionDelivery } = await this.openThread({
-      ...threadArgs,
-      mentionedWorkspaceMemberIds:
-        extractInboxMessageMentionedWorkspaceMemberIds(input.text),
-    });
+    const mentionedWorkspaceMemberIds =
+      extractInboxMessageMentionedWorkspaceMemberIds(input.text);
+    const { thread } = await openThread(mentionedWorkspaceMemberIds);
 
     await this.ensureOpener({
       workspaceId,
@@ -170,19 +170,35 @@ export class AgentInboxService {
       parts.push(toolCallPart.part);
     }
 
-    const isWritten = await this.writeMessage({
-      workspaceId,
-      thread,
-      text: input.text,
-      mentionDelivery,
-      message: {
+    const isWritten = await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
         id: messageId,
+        threadId,
         turnId,
+        role: AgentMessageRole.ASSISTANT,
+        agentId: null,
+        senderUserWorkspaceId: null,
         senderApplicationId: senderDetails.applicationId,
         isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
         parts,
-      },
-    });
+      }),
+    );
+
+    if (isWritten) {
+      await this.threadService.recordThreadActivity({
+        workspaceId,
+        threadId,
+        text: input.text,
+        threadBefore: thread,
+      });
+      // only once written, so a refused or repeated send mentions no one
+      await this.mentionParticipants({
+        workspaceId,
+        thread,
+        workspaceMemberIds: mentionedWorkspaceMemberIds,
+      });
+    }
 
     if (!isDefined(awaitingToolCall)) {
       return { threadId, toolCallId, isDismissed: false };
@@ -219,7 +235,6 @@ export class AgentInboxService {
   }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isCreated: boolean;
-    mentionDelivery?: AgentChatMentionDelivery;
   }> {
     const threadId = buildInboxThreadId({
       senderKey: getAgentInboxSenderDetails(sender).key,
@@ -230,17 +245,6 @@ export class AgentInboxService {
     // checked before any write, so a member who cannot use chats fails the open
     // before it creates the conversation or shares it with anyone
     if (!isDefined(existingThread?.deletedAt)) {
-      const ownerWorkspaceMemberId = isDefined(existingThread)
-        ? existingThread.workspaceMemberId
-        : workspaceMemberIds[0];
-
-      if (
-        isNonEmptyArray(mentionedWorkspaceMemberIds) &&
-        !isDefined(ownerWorkspaceMemberId)
-      ) {
-        throwAgentChatThreadNotFound();
-      }
-
       await Promise.all(
         findNewWorkspaceMemberIds(existingThread, [
           ...workspaceMemberIds,
@@ -264,27 +268,20 @@ export class AgentInboxService {
           isArchived: isArchivedOnCreate,
         });
 
-    if (isDefined(openedThread.thread.deletedAt)) {
-      return openedThread;
-    }
-
-    const mentionDelivery =
-      await this.inboxDeliveryService.prepareMentionDeliveryOrThrow({
+    if (!isDefined(openedThread.thread.deletedAt)) {
+      await this.addParticipants({
         workspaceId,
         thread: openedThread.thread,
-        mentionedWorkspaceMemberIds,
+        workspaceMemberIds,
       });
+      await this.assertCanMentionOrThrow({
+        workspaceId,
+        thread: openedThread.thread,
+        workspaceMemberIds: mentionedWorkspaceMemberIds,
+      });
+    }
 
-    await this.addParticipants({
-      workspaceId,
-      thread: openedThread.thread,
-      workspaceMemberIds: workspaceMemberIds.filter(
-        (workspaceMemberId) =>
-          !mentionedWorkspaceMemberIds.includes(workspaceMemberId),
-      ),
-    });
-
-    return { ...openedThread, mentionDelivery };
+    return openedThread;
   }
 
   private async createThread({
@@ -364,70 +361,73 @@ export class AgentInboxService {
     }
   }
 
-  // One transaction, so a failed send leaves neither the message nor its mentions.
-  // Shares and participants come after the thread row, the order sharing changes and replies lock them in.
-  private async writeMessage({
+  private async assertCanMentionOrThrow({
     workspaceId,
     thread,
-    text,
-    mentionDelivery,
-    message,
+    workspaceMemberIds,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
-    text: string;
-    mentionDelivery: AgentChatMentionDelivery | undefined;
-    message: {
-      id: string;
-      turnId: string;
-      senderApplicationId: string | null;
-      isAwaitingAnswer?: boolean;
-      parts: ExtendedUIMessagePart[];
-    };
-  }): Promise<boolean> {
-    try {
-      await this.conversationWriterService.runInTransaction({
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    if (!isDefined(thread.workspaceMemberId)) {
+      return;
+    }
+
+    const mentionedParticipantWorkspaceMemberIds = workspaceMemberIds.filter(
+      (workspaceMemberId) => workspaceMemberId !== thread.workspaceMemberId,
+    );
+    const eligibleWorkspaceMemberIds =
+      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
         workspaceId,
         threadId: thread.id,
-        work: async (scope) => {
-          await this.conversationWriterService.insertMessage({
-            ...message,
-            workspaceId,
-            threadId: thread.id,
-            role: AgentMessageRole.ASSISTANT,
-            agentId: null,
-            senderUserWorkspaceId: null,
-            scope,
-          });
-          await this.threadService.recordThreadActivityInTransactionOrThrow({
-            scope: scope.workspaceTransactionScope,
-            workspaceId,
-            threadBefore: thread,
-            text,
-            addedWriterWorkspaceMemberIds:
-              mentionDelivery?.addedWorkspaceMemberIds ?? [],
-          });
-
-          if (isDefined(mentionDelivery)) {
-            await this.inboxDeliveryService.deliverMentionsInTransaction({
-              scope: scope.workspaceTransactionScope,
-              mentionDelivery,
-            });
-          }
-        },
+        workspaceMemberId: thread.workspaceMemberId,
+        memberIds: mentionedParticipantWorkspaceMemberIds,
       });
 
-      return true;
-    } catch (error) {
-      // a share can conflict too, so only a message already written is a duplicate
-      if (
-        isUniqueViolationError(error) &&
-        (await this.messageExists({ workspaceId, id: message.id }))
-      ) {
-        return false;
-      }
+    if (
+      eligibleWorkspaceMemberIds.length !==
+      mentionedParticipantWorkspaceMemberIds.length
+    ) {
+      throwAgentChatThreadNotFound();
+    }
+  }
 
-      throw error;
+  // Delivery skips the member whose access it uses, here the owner, so the owner's mention is written apart
+  private async mentionParticipants({
+    workspaceId,
+    thread,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    if (
+      !isNonEmptyArray(workspaceMemberIds) ||
+      !isDefined(thread.workspaceMemberId)
+    ) {
+      return;
+    }
+
+    const access = {
+      workspaceId,
+      threadId: thread.id,
+      workspaceMemberId: thread.workspaceMemberId,
+    };
+
+    await this.inboxDeliveryService.deliverThreadToMemberInboxes({
+      ...access,
+      workspaceMemberIds,
+      reason: AgentChatInboxDeliveryReason.MENTION,
+    });
+
+    if (workspaceMemberIds.includes(thread.workspaceMemberId)) {
+      await this.inboxParticipantWriterService.writeParticipantInboxState({
+        ...access,
+        workspaceMemberIds: [thread.workspaceMemberId],
+        reason: AgentChatInboxDeliveryReason.MENTION,
+      });
     }
   }
 

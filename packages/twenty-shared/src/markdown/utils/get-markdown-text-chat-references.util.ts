@@ -1,6 +1,5 @@
 import { CHAT_REFERENCE_BODY_PATTERN } from '@/ai/constants/chat-reference-body-pattern.const';
 import { isDefined } from '@/utils/validation/isDefined';
-import { isEmptyObject } from '@/utils/validation/isEmptyObject';
 import { Lexer, type Token } from 'marked';
 
 type MarkdownTextChatReference = {
@@ -26,20 +25,6 @@ const PLACEHOLDER_DELIMITER_PATTERN = new RegExp(
   `[${PLACEHOLDER_START}${PLACEHOLDER_END}]`,
   'g',
 );
-
-const LINK_OR_HTML_SYNTAXES = ['<', ']('];
-
-// Code blocks, HTML and links need one of these; a code span needs a backtick on each side of the placeholder.
-const NON_TEXT_BLOCK_SYNTAXES = [
-  '```',
-  '~~~',
-  ']:',
-  '\t',
-  '    ',
-  ...LINK_OR_HTML_SYNTAXES,
-];
-
-const BACKTICK_RUN_OR_LINE_BREAK_PATTERN = /`+|\n/g;
 
 const CARRIAGE_RETURN_PATTERN = /\r\n?/g;
 
@@ -75,71 +60,9 @@ const getInlineTextRaws = (tokens: Token[]): string[] =>
   });
 
 const getPlaceholderIndexes = (text: string): number[] =>
-  text.includes(PLACEHOLDER_START)
-    ? Array.from(text.matchAll(PLACEHOLDER_PATTERN), ([, referenceIndex]) =>
-        Number(referenceIndex),
-      )
-    : [];
-
-const hasPlaceholderBetweenBackticks = (text: string): boolean =>
-  text
-    .slice(text.indexOf('`'), text.lastIndexOf('`'))
-    .includes(PLACEHOLDER_START);
-
-const isEveryBacktickRunClosedOnItsLine = (text: string): boolean => {
-  let openRunLength = 0;
-
-  for (const [match] of text.matchAll(BACKTICK_RUN_OR_LINE_BREAK_PATTERN)) {
-    const isLineBreak = match === '\n';
-
-    if (isLineBreak && openRunLength > 0) {
-      return false;
-    }
-
-    if (isLineBreak) {
-      continue;
-    }
-
-    if (openRunLength === 0) {
-      openRunLength = match.length;
-      continue;
-    }
-
-    if (match.length === openRunLength) {
-      openRunLength = 0;
-    }
-  }
-
-  return openRunLength === 0;
-};
-
-// When every backtick run closes on its own line, no code span crosses lines, so each line is checked alone.
-const mayHidePlaceholders = (textWithPlaceholders: string): boolean => {
-  if (
-    NON_TEXT_BLOCK_SYNTAXES.some((syntax) =>
-      textWithPlaceholders.includes(syntax),
-    )
-  ) {
-    return true;
-  }
-
-  if (!textWithPlaceholders.includes('`')) {
-    return false;
-  }
-
-  if (
-    textWithPlaceholders.includes('\\`') ||
-    !isEveryBacktickRunClosedOnItsLine(textWithPlaceholders)
-  ) {
-    return hasPlaceholderBetweenBackticks(textWithPlaceholders);
-  }
-
-  return textWithPlaceholders.split('\n').some(hasPlaceholderBetweenBackticks);
-};
-
-const mayInlineMarkdownHidePlaceholders = (inlineMarkdown: string): boolean =>
-  LINK_OR_HTML_SYNTAXES.some((syntax) => inlineMarkdown.includes(syntax)) ||
-  hasPlaceholderBetweenBackticks(inlineMarkdown);
+  Array.from(text.matchAll(PLACEHOLDER_PATTERN), ([, referenceIndex]) =>
+    Number(referenceIndex),
+  );
 
 const getTextPlaceholderIndexes = (
   textWithPlaceholders: string,
@@ -148,16 +71,12 @@ const getTextPlaceholderIndexes = (
 
   lexer.blockTokens(textWithPlaceholders, []);
 
-  const hasLinkDefinitions = !isEmptyObject(lexer.tokens.links);
-
   return new Set(
     lexer.inlineQueue
       .map(({ src: inlineMarkdown }) => inlineMarkdown)
       .filter((inlineMarkdown) => inlineMarkdown.includes(PLACEHOLDER_START))
       .flatMap((inlineMarkdown) =>
-        hasLinkDefinitions || mayInlineMarkdownHidePlaceholders(inlineMarkdown)
-          ? getInlineTextRaws(lexer.inlineTokens(inlineMarkdown))
-          : [inlineMarkdown],
+        getInlineTextRaws(lexer.inlineTokens(inlineMarkdown)),
       )
       .flatMap(getPlaceholderIndexes),
   );
@@ -197,17 +116,12 @@ export const getMarkdownTextChatReferences = (
     return [];
   }
 
-  const textWithPlaceholders = replaceReferencesWithPlaceholders({
-    text,
-    references,
-  }).replace(CARRIAGE_RETURN_PATTERN, '\n');
-
-  if (!mayHidePlaceholders(textWithPlaceholders)) {
-    return references;
-  }
-
-  const textPlaceholderIndexes =
-    getTextPlaceholderIndexes(textWithPlaceholders);
+  const textPlaceholderIndexes = getTextPlaceholderIndexes(
+    replaceReferencesWithPlaceholders({ text, references }).replace(
+      CARRIAGE_RETURN_PATTERN,
+      '\n',
+    ),
+  );
 
   return references.filter((_, referenceIndex) =>
     textPlaceholderIndexes.has(referenceIndex),

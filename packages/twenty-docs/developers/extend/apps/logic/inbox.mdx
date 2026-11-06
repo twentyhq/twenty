@@ -61,7 +61,7 @@ To post from a front component, import the same helpers from `twenty-sdk/front-c
 
 ## Mentions and record references
 
-The inbox renders reference tokens in `text` as chips, and notifies the members a message mentions. Write the tokens with these helpers rather than by hand:
+The inbox renders reference tokens in `text` as chips. Write them with these helpers rather than by hand:
 
 ```ts src/logic-functions/flag-idle-deal.ts
 import {
@@ -87,14 +87,11 @@ await sendInboxMessage({
 });
 ```
 
-The owner and the manager are mentioned, so each has a mention to resolve; the sales ops member only receives the conversation.
-
 - `inboxMention({ workspaceMemberId })` writes a mention of a workspace member, and `inboxReferenceRecord({ objectNameSingular, recordId })` a chip that links to any record.
 - Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
-- A mentioned member gets the conversation in their inbox, unread, with a mention to resolve, as when a teammate mentions them. They don't need to be in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A member who is both listed and mentioned gets the mention.
-- A mentioned member must be able to have the conversation, like a listed one: otherwise the call fails with `THREAD_NOT_FOUND` and writes neither the message nor any mention.
-- Mentions are read when the message is written. Once it is, sending it again with the same keys notifies no one, even with a different `text`, while a retry after a failed send delivers them; a new `idempotencyKey` mentions again.
+- A mentioned member gets the conversation in their inbox, unread, with a mention to resolve, as when a teammate mentions them. They don't need to be in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too.
+- Mentions notify once, when the message is first written: sending it again with the same keys notifies no one, even with a different `text`, and a new `idempotencyKey` mentions again.
 - Only a complete mention notifies. One in inline code or a code block, one whose brackets are escaped (`\[\[`), and a typed `@name` notify no one. A record reference never notifies, and never shares the record.
 - `INBOX_ASSISTANT_MENTION` writes the composer's canonical assistant reference. The inbox displays it as `@Ada`; its stable identity is separate from its label. This reference alone does not request an assistant reply from an application message.
 

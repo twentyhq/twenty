@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Equal, In, IsNull, Not, Or } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -22,8 +22,6 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
-import { buildAgentChatThreadLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-last-message-text.util';
-import { buildNextAgentChatThreadActivityAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-activity-at.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -41,7 +39,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatThreadService {
@@ -707,94 +704,6 @@ export class AgentChatThreadService {
     }
 
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
-  }
-
-  async recordThreadActivityInTransactionOrThrow({
-    scope,
-    workspaceId,
-    threadBefore,
-    text,
-    addedWriterWorkspaceMemberIds,
-  }: {
-    scope: WorkspaceTransactionScope;
-    workspaceId: string;
-    threadBefore: AgentChatThreadWorkspaceEntity;
-    text: string;
-    addedWriterWorkspaceMemberIds: string[];
-  }): Promise<void> {
-    const threadRepository =
-      scope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
-        { shouldSkipEventEmission: true },
-      );
-    const lastMessageText = buildAgentChatThreadLastMessageText(text);
-
-    while (true) {
-      const thread = await threadRepository.findOne({
-        select: [
-          'lastActivityAt',
-          'updatedAt',
-          'writerWorkspaceMemberIds',
-          'pendingQuestionMessageId',
-        ],
-        where: { id: threadBefore.id },
-      });
-
-      if (!isDefined(thread)) {
-        return throwAgentChatThreadNotFound();
-      }
-
-      const newWriterWorkspaceMemberIds = addedWriterWorkspaceMemberIds.filter(
-        (workspaceMemberId) =>
-          !thread.writerWorkspaceMemberIds?.includes(workspaceMemberId),
-      );
-      const writerWorkspaceMemberIds = isNonEmptyArray(
-        newWriterWorkspaceMemberIds,
-      )
-        ? [
-            ...(thread.writerWorkspaceMemberIds ?? []),
-            ...newWriterWorkspaceMemberIds,
-          ]
-        : thread.writerWorkspaceMemberIds;
-      const recordedAt = buildNextAgentChatThreadActivityAt(thread);
-
-      const { generatedMaps: updatedThreads } = await threadRepository.update(
-        {
-          id: threadBefore.id,
-          writerWorkspaceMemberIds: isNonEmptyArray(
-            thread.writerWorkspaceMemberIds,
-          )
-            ? Equal(thread.writerWorkspaceMemberIds)
-            : Or(IsNull(), Equal([])),
-        },
-        {
-          lastActivityAt: recordedAt.toISOString(),
-          updatedAt: recordedAt.toISOString(),
-          lastMessageText,
-          lastMessageSenderWorkspaceMemberId: null,
-          writerWorkspaceMemberIds,
-        },
-      );
-
-      if (isNonEmptyArray(updatedThreads)) {
-        scope.afterCommit(() =>
-          this.emitThreadActivityUpdated({
-            workspaceId,
-            thread: threadBefore,
-            activity: {
-              lastActivityAt: recordedAt,
-              updatedAt: recordedAt,
-              lastMessageText,
-              lastMessageSenderWorkspaceMemberId: null,
-              writerWorkspaceMemberIds,
-              pendingQuestionMessageId: thread.pendingQuestionMessageId,
-            },
-          }),
-        );
-
-        return;
-      }
-    }
   }
 
   private async recordAgentActivity({

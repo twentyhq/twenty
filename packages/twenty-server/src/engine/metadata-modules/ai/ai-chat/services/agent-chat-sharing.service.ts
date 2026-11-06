@@ -329,60 +329,6 @@ export class AgentChatSharingService {
     );
   }
 
-  async shareThreadWithMembersInTransactionOrThrow({
-    scope,
-    memberIds,
-    ...access
-  }: AgentChatThreadAccessArgs & {
-    scope: WorkspaceTransactionScope;
-    memberIds: string[];
-  }): Promise<void> {
-    const objectMetadata = await this.getThreadObjectMetadata(
-      access.workspaceId,
-    );
-    const findShareAccessLevel = async (workspaceMemberId: string) => {
-      const { viewerAccessLevel } =
-        await this.recordSharingPermissionsService.findViewerRecordAccess({
-          authContext: await this.getAuthContextOrThrow({
-            workspaceId: access.workspaceId,
-            workspaceMemberId,
-          }),
-          objectMetadataId: objectMetadata.id,
-          recordId: access.threadId,
-          transactionScope: scope,
-        });
-
-      return viewerAccessLevel;
-    };
-
-    if (
-      (await findShareAccessLevel(access.workspaceMemberId)) !==
-      RecordShareAccessLevel.FULL
-    ) {
-      return throwAgentChatThreadNotFound();
-    }
-
-    for (const memberId of memberIds) {
-      if (EDIT_ACCESS_LEVELS.includes(await findShareAccessLevel(memberId))) {
-        continue;
-      }
-
-      await this.recordSharingWriteService.setManualShare({
-        workspaceId: access.workspaceId,
-        transactionScope: scope,
-        enabled: true,
-        share: {
-          objectMetadataId: objectMetadata.id,
-          recordId: access.threadId,
-          sourceId: access.threadId,
-          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-          principalId: memberId,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
-        },
-      });
-    }
-  }
-
   async findEligibleParticipantWorkspaceMemberIds({
     memberIds,
     workspaceId,
@@ -980,23 +926,6 @@ export class AgentChatSharingService {
           : [],
       ),
     );
-  }
-
-  async canManageThreadSharing({
-    workspaceId,
-    threadId,
-    authContext,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    authContext: UserWorkspaceAuthContext;
-  }): Promise<boolean> {
-    const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
-    return this.recordSharingPermissionsService.canManageRecordSharing({
-      objectMetadataId: objectMetadata.id,
-      recordId: threadId,
-      authContext,
-    });
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {

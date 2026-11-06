@@ -171,7 +171,6 @@ export class AgentHistoryTransactionService {
             });
           },
           afterCommit: transactionScope.afterCommit,
-          workspaceTransactionScope: transactionScope,
         });
       },
       buildSystemAuthContext(workspaceId),

@@ -25,5 +25,4 @@ export type AgentHistoryTransactionScope = {
     where: ObjectLiteral;
   }) => Promise<number>;
   afterCommit: WorkspaceTransactionScope['afterCommit'];
-  workspaceTransactionScope: WorkspaceTransactionScope;
 };

@@ -20,7 +20,8 @@ describe('getProtectedChatReferenceSegments', () => {
         fullMatch: MIA_MENTION,
         index: 5,
       },
-      `, not ${MIA_MENTION}`,
+      ', not ',
+      MIA_MENTION,
     ]);
   });
 
@@ -29,6 +30,6 @@ describe('getProtectedChatReferenceSegments', () => {
       getProtectedChatReferenceSegments(
         `Ask ${PROTECTED_CHAT_REFERENCE_MARKER}Mia`,
       ),
-    ).toEqual(['Ask ', 'Mia']);
+    ).toEqual(['Ask Mia']);
   });
 });

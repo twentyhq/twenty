@@ -367,13 +367,24 @@ const ESCAPED_MEMBER_MENTION = MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(
 );
 const ENCODED_PROTECTED_CHAT_REFERENCE_MARKER = `&#x${PROTECTED_CHAT_REFERENCE_MARKER.charCodeAt(0).toString(16)};`;
 
-const mockMentionMessage: ExtendedUIMessage = {
-  id: 'msg-mentions',
+const ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Ada]]';
+const RENAMED_ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Scout Bot: [support] 100%]]';
+
+const mockAssistantMentionMessage: ExtendedUIMessage = {
+  id: 'msg-assistant-mentions',
   role: 'assistant',
   parts: [
     {
       type: 'text',
-      text: `Can you review the pipeline, ${MEMBER_MENTION}?
+      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review ${MEMBER_MENTION}.
+
+Legacy text: @Ada wrote this.
+
+\`\`\`text
+${ASSISTANT_MENTION}
+\`\`\`
 
 Write \`${MEMBER_MENTION}\` to mention a member:
 
@@ -393,35 +404,9 @@ ${ENCODED_PROTECTED_CHAT_REFERENCE_MARKER}${ESCAPED_MEMBER_MENTION}`,
   },
 };
 
-const ASSISTANT_MENTION =
-  '[[record:agentChatAssistant:agentChatAssistant:Ada]]';
-const RENAMED_ASSISTANT_MENTION =
-  '[[record:agentChatAssistant:agentChatAssistant:Scout Bot: [support] 100%]]';
-
-const mockAssistantMentionMessage: ExtendedUIMessage = {
-  id: 'msg-assistant-mentions',
-  role: 'assistant',
-  parts: [
-    {
-      type: 'text',
-      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review [[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]].
-
-Legacy text: @Ada wrote this.
-
-\`\`\`text
-${ASSISTANT_MENTION}
-\`\`\``,
-    },
-  ],
-  metadata: {
-    createdAt: MOCKED_DATE,
-  },
-};
-
 const allMockMessages = [
   mockUserMessage,
   mockLongUserMessage,
-  mockMentionMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -587,17 +572,6 @@ export const AssistantTextResponse: Story = {
   render: () => <AiChatMessage messageId={mockSimpleTextResponse.id} />,
 };
 
-export const MessageWithMentions: Story = {
-  decorators: [MemoryRouterDecorator],
-  render: () => <AiChatMessage messageId={mockMentionMessage.id} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(await canvas.findAllByText('Charles Test')).toHaveLength(1);
-    await expect(canvas.getAllByText(MEMBER_MENTION)).toHaveLength(3);
-  },
-};
-
 export const AssistantMentions: Story = {
   decorators: [MemoryRouterDecorator],
   parameters: { messages: [mockAssistantMentionMessage] },
@@ -608,6 +582,7 @@ export const AssistantMentions: Story = {
     await expect(await canvas.findByText('@Ada')).toBeVisible();
     await expect(canvas.getByText('@Scout Bot: [support] 100%')).toBeVisible();
     await expect(canvas.getByText('Charles Test')).toBeVisible();
+    await expect(canvas.getAllByText(MEMBER_MENTION)).toHaveLength(3);
     await expect(
       canvas.getByText('Legacy text: @Ada wrote this.'),
     ).toBeVisible();

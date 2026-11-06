@@ -183,19 +183,6 @@ describe('protectChatReferencesForMarkdown', () => {
     );
   });
 
-  it('should leave a reference in inline code unchanged', () => {
-    const text =
-      'Write `[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme (EMEA)]]` to link it';
-
-    expect(protectChatReferencesForMarkdown(text)).toBe(text);
-  });
-
-  it('should leave a reference with an escaped opening bracket unchanged', () => {
-    const text = `Type \\${MIA_MENTION} to mention`;
-
-    expect(protectChatReferencesForMarkdown(text)).toBe(text);
-  });
-
   it('should mark a reference whose closing bracket is escaped', () => {
     expect(
       protectChatReferencesForMarkdown(

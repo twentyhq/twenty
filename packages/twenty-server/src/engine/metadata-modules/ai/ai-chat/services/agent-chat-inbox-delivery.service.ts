@@ -9,14 +9,11 @@ import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modu
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
-import { type AgentChatMentionDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-mention-delivery.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatInboxDeliveryService {
@@ -153,99 +150,6 @@ export class AgentChatInboxDeliveryService {
     });
 
     return deliveredWorkspaceMemberIds;
-  }
-
-  async prepareMentionDeliveryOrThrow({
-    workspaceId,
-    thread,
-    mentionedWorkspaceMemberIds,
-  }: {
-    workspaceId: string;
-    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
-    mentionedWorkspaceMemberIds: string[];
-  }): Promise<AgentChatMentionDelivery | undefined> {
-    if (!isNonEmptyArray(mentionedWorkspaceMemberIds)) {
-      return undefined;
-    }
-
-    const access = {
-      workspaceId,
-      workspaceMemberId:
-        thread.workspaceMemberId ?? throwAgentChatThreadNotFound(),
-      threadId: thread.id,
-    };
-    const participantObjectMetadata =
-      await this.inboxParticipantWriterService.getParticipantObjectMetadata(
-        workspaceId,
-      );
-
-    await this.sharingService.getThreadWithAccess({
-      ...access,
-      operationType: 'update',
-    });
-
-    const uniqueMentionedWorkspaceMemberIds = [
-      ...new Set(mentionedWorkspaceMemberIds),
-    ];
-    const addedWorkspaceMemberIds = uniqueMentionedWorkspaceMemberIds.filter(
-      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
-    );
-    const eligibleWorkspaceMemberIds =
-      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
-        ...access,
-        memberIds: addedWorkspaceMemberIds,
-      });
-
-    if (eligibleWorkspaceMemberIds.length !== addedWorkspaceMemberIds.length) {
-      return throwAgentChatThreadNotFound();
-    }
-
-    return {
-      ...access,
-      mentionedWorkspaceMemberIds: uniqueMentionedWorkspaceMemberIds,
-      addedWorkspaceMemberIds,
-      canManageSharing:
-        isNonEmptyArray(addedWorkspaceMemberIds) &&
-        (await this.sharingService.canManageThreadSharing({
-          workspaceId,
-          threadId: thread.id,
-          authContext: await this.sharingService.getAuthContextOrThrow(access),
-        })),
-      participantObjectMetadata,
-    };
-  }
-
-  async deliverMentionsInTransaction({
-    scope,
-    mentionDelivery: {
-      mentionedWorkspaceMemberIds,
-      addedWorkspaceMemberIds,
-      canManageSharing,
-      participantObjectMetadata,
-      ...access
-    },
-  }: {
-    scope: WorkspaceTransactionScope;
-    mentionDelivery: AgentChatMentionDelivery;
-  }): Promise<void> {
-    if (canManageSharing) {
-      await this.sharingService.shareThreadWithMembersInTransactionOrThrow({
-        ...access,
-        scope,
-        memberIds: addedWorkspaceMemberIds,
-      });
-    }
-
-    await this.inboxParticipantWriterService.writeParticipantInboxStateInTransaction(
-      {
-        scope,
-        workspaceId: access.workspaceId,
-        threadId: access.threadId,
-        workspaceMemberIds: mentionedWorkspaceMemberIds,
-        reason: AgentChatInboxDeliveryReason.MENTION,
-        participantObjectMetadata,
-      },
-    );
   }
 
   private async appendDeliveredWriterWorkspaceMemberIds({

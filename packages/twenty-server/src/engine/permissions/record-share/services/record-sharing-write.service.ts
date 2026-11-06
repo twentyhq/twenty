@@ -324,12 +324,6 @@ export class RecordSharingWriteService {
     return this.recordShareStorageService.insertMany(args);
   }
 
-  setManualShare(
-    args: Parameters<RecordShareStorageService['setManualShare']>[0],
-  ): Promise<void> {
-    return this.recordShareStorageService.setManualShare(args);
-  }
-
   deleteRecordSharesByRecordIds(
     args: Parameters<RecordShareStorageService['deleteByRecordIds']>[0],
   ): Promise<void> {
