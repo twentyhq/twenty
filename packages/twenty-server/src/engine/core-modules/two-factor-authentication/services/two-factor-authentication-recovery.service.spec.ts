@@ -20,6 +20,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { TwoFactorAuthenticationExceptionCode } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
@@ -79,16 +80,11 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     insert: jest.Mock;
     findOne: jest.Mock;
     exists: jest.Mock;
-    count: jest.Mock;
   };
   let methodRepository: { exists: jest.Mock };
   let transactionalRepositories: {
-    method: { delete: jest.Mock; insert: jest.Mock; findOne: jest.Mock };
-    appToken: {
-      update: jest.Mock;
-      insert: jest.Mock;
-      createQueryBuilder: jest.Mock;
-    };
+    method: { delete: jest.Mock; insert: jest.Mock };
+    appToken: { update: jest.Mock; createQueryBuilder: jest.Mock };
   };
   let refreshTokenRevocationQueryBuilder: {
     update: jest.Mock;
@@ -116,14 +112,9 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       execute: jest.fn(),
     };
     transactionalRepositories = {
-      method: {
-        delete: jest.fn(),
-        insert: jest.fn(),
-        findOne: jest.fn().mockResolvedValue(null),
-      },
+      method: { delete: jest.fn(), insert: jest.fn() },
       appToken: {
         update: jest.fn().mockResolvedValue({ affected: 1 }),
-        insert: jest.fn(),
         createQueryBuilder: jest.fn(() => refreshTokenRevocationQueryBuilder),
       },
     };
@@ -156,7 +147,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
             insert: jest.fn(),
             findOne: jest.fn(),
             exists: jest.fn().mockResolvedValue(false),
-            count: jest.fn().mockResolvedValue(9),
             manager: {
               transaction: jest.fn(
                 (callback: (manager: typeof entityManager) => unknown) =>
@@ -175,6 +165,13 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
               encryptedSecret: 'encrypted-replacement-secret',
               status: OTPStatus.PENDING,
             }),
+          },
+        },
+        {
+          provide: TwoFactorAuthenticationBackupCodeService,
+          useValue: {
+            consumeBackupCode: jest.fn().mockResolvedValue(false),
+            revokeBackupCodes: jest.fn(),
           },
         },
         {
@@ -500,177 +497,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         1,
       );
       expect(emailService.send).not.toHaveBeenCalled();
-    });
-    describe('with a backup code', () => {
-      const METHOD_CREATED_AT = new Date('2026-03-01T00:00:00.000Z');
-
-      beforeEach(() => {
-        transactionalRepositories.method.findOne.mockResolvedValue({
-          id: 'method-id',
-          status: OTPStatus.VERIFIED,
-          createdAt: METHOD_CREATED_AT,
-        });
-      });
-
-      it('signs in without resetting two-factor authentication and notifies the member', async () => {
-        await expect(redeem()).resolves.toEqual({
-          provisioningUri: null,
-          isTwoFactorAuthenticationReset: false,
-        });
-
-        expect(transactionalRepositories.method.findOne).toHaveBeenCalledWith({
-          where: {
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: TARGET_USER_WORKSPACE_ID,
-            status: OTPStatus.VERIFIED,
-          },
-        });
-        expect(transactionalRepositories.appToken.update).toHaveBeenCalledTimes(
-          1,
-        );
-        expect(transactionalRepositories.appToken.update).toHaveBeenCalledWith(
-          {
-            ...redeemableCodeWhere,
-            type: AppTokenType.TwoFactorAuthenticationBackupCode,
-            createdAt: MoreThanOrEqual(METHOD_CREATED_AT),
-          },
-          { deletedAt: expect.any(Date) },
-        );
-        expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
-        expect(
-          refreshTokenRevocationQueryBuilder.execute,
-        ).not.toHaveBeenCalled();
-        expect(
-          userSessionService.revokeAllSessionsForUser,
-        ).not.toHaveBeenCalled();
-        expect(emailService.send).toHaveBeenCalledWith(
-          expect.objectContaining({
-            to: 'target@example.com',
-            subject: 'A backup code was used to sign in to your account',
-          }),
-        );
-      });
-
-      it('falls back to the recovery code flow when the code is not an open backup code', async () => {
-        transactionalRepositories.appToken.update.mockResolvedValueOnce({
-          affected: 0,
-        });
-
-        await expect(redeem()).resolves.toEqual({
-          provisioningUri: null,
-          isTwoFactorAuthenticationReset: true,
-        });
-
-        expect(
-          transactionalRepositories.appToken.update,
-        ).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining(redeemableCodeWhere),
-          { deletedAt: expect.any(Date), revokedAt: expect.any(Date) },
-        );
-        expect(transactionalRepositories.method.delete).toHaveBeenCalled();
-        expect(
-          transactionalRepositories.appToken.update,
-        ).toHaveBeenNthCalledWith(
-          3,
-          {
-            userId: TARGET_USER_ID,
-            workspaceId: WORKSPACE_ID,
-            type: AppTokenType.TwoFactorAuthenticationBackupCode,
-            deletedAt: IsNull(),
-            revokedAt: IsNull(),
-          },
-          { revokedAt: expect.any(Date) },
-        );
-      });
-    });
-  });
-
-  describe('issueBackupCodes', () => {
-    it('replaces open backup codes with ten new ones stored as hashes', async () => {
-      const backupCodes = await service.issueBackupCodes({
-        userId: TARGET_USER_ID,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      expect(backupCodes).toHaveLength(10);
-      expect(new Set(backupCodes).size).toBe(10);
-      backupCodes.forEach((backupCode) =>
-        expect(backupCode).toMatch(/^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/),
-      );
-      expect(transactionalRepositories.appToken.update).toHaveBeenCalledWith(
-        {
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
-          deletedAt: IsNull(),
-          revokedAt: IsNull(),
-        },
-        { revokedAt: expect.any(Date) },
-      );
-      expect(transactionalRepositories.appToken.insert).toHaveBeenCalledWith(
-        backupCodes.map((backupCode) => ({
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
-          value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
-          expiresAt: expect.any(Date),
-        })),
-      );
-      expect(
-        transactionalRepositories.appToken.update.mock.invocationCallOrder[0],
-      ).toBeLessThan(
-        transactionalRepositories.appToken.insert.mock.invocationCallOrder[0],
-      );
-    });
-  });
-
-  describe('regenerateBackupCodes', () => {
-    it('requires a fresh two-factor authentication code before replacing the codes', async () => {
-      twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow.mockRejectedValueOnce(
-        new Error('step-up required'),
-      );
-
-      await expect(
-        service.regenerateBackupCodes({
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          otp: '123456',
-        }),
-      ).rejects.toThrow('step-up required');
-
-      expect(
-        twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          otp: '123456',
-        }),
-      );
-      expect(transactionalRepositories.appToken.insert).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('getRemainingBackupCodeCount', () => {
-    it('counts the open backup codes of the current membership', async () => {
-      await expect(
-        service.getRemainingBackupCodeCount({
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-        }),
-      ).resolves.toBe(9);
-
-      expect(appTokenRepository.count).toHaveBeenCalledWith({
-        where: {
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
-          deletedAt: IsNull(),
-          revokedAt: IsNull(),
-          createdAt: MoreThanOrEqual(MEMBERSHIP_CREATED_AT),
-        },
-      });
     });
   });
 

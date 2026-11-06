@@ -14,7 +14,6 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type EntityManager,
   IsNull,
   MoreThan,
   MoreThanOrEqual,
@@ -37,16 +36,13 @@ import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/ut
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-  TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_COUNT,
-  TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_EXPIRES_AT,
-} from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-backup-code.constant';
-import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
   TwoFactorAuthenticationException,
@@ -89,6 +85,7 @@ export class TwoFactorAuthenticationRecoveryService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationBackupCodeService: TwoFactorAuthenticationBackupCodeService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userSessionService: UserSessionService,
     private readonly throttlerService: ThrottlerService,
@@ -320,11 +317,10 @@ export class TwoFactorAuthenticationRecoveryService {
 
         const appTokenRepository = entityManager.getRepository(AppTokenEntity);
 
-        const isBackupCodeConsumed = await this.consumeBackupCode({
-          entityManager,
-          userWorkspace,
-          backupCode: recoveryCode,
-        });
+        const isBackupCodeConsumed =
+          await this.twoFactorAuthenticationBackupCodeService.consumeBackupCode(
+            { entityManager, userWorkspace, backupCode: recoveryCode },
+          );
 
         if (isBackupCodeConsumed) {
           return {
@@ -362,7 +358,7 @@ export class TwoFactorAuthenticationRecoveryService {
           userWorkspaceId: userWorkspace.id,
         });
 
-        await this.revokeBackupCodes({
+        await this.twoFactorAuthenticationBackupCodeService.revokeBackupCodes({
           userId,
           workspaceId: workspace.id,
           entityManager,
@@ -445,111 +441,6 @@ export class TwoFactorAuthenticationRecoveryService {
     return redemption;
   }
 
-  async issueBackupCodes({
-    userId,
-    workspaceId,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-  }): Promise<string[]> {
-    const backupCodes = Array.from(
-      { length: TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_COUNT },
-      () => generateTwoFactorAuthenticationRecoveryCode(),
-    );
-
-    await this.appTokenRepository.manager.transaction(async (entityManager) => {
-      await acquireUserAuthenticationLock({
-        entityManager,
-        userId,
-        mode: 'exclusive',
-      });
-
-      await this.revokeBackupCodes({ userId, workspaceId, entityManager });
-
-      await entityManager.getRepository(AppTokenEntity).insert(
-        backupCodes.map((backupCode) => ({
-          userId,
-          workspaceId,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
-          value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
-          expiresAt: TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_EXPIRES_AT,
-        })),
-      );
-    });
-
-    return backupCodes;
-  }
-
-  async regenerateBackupCodes({
-    userId,
-    workspaceId,
-    otp,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-    otp?: string;
-  }): Promise<string[]> {
-    await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
-      {
-        userId,
-        workspaceId,
-        otp,
-        otpRequiredMessage: msg`Enter your two-factor authentication code to generate new backup codes.`,
-        twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication before generating backup codes.`,
-      },
-    );
-
-    return this.issueBackupCodes({ userId, workspaceId });
-  }
-
-  async getRemainingBackupCodeCount({
-    userId,
-    workspaceId,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-  }): Promise<number> {
-    const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
-      targetUserId: userId,
-      targetWorkspaceId: workspaceId,
-    });
-
-    return this.appTokenRepository.count({
-      where: {
-        userId,
-        workspaceId,
-        type: AppTokenType.TwoFactorAuthenticationBackupCode,
-        deletedAt: IsNull(),
-        revokedAt: IsNull(),
-        createdAt: MoreThanOrEqual(userWorkspace.createdAt),
-      },
-    });
-  }
-
-  async revokeBackupCodes({
-    userId,
-    workspaceId,
-    entityManager,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-    entityManager?: EntityManager;
-  }): Promise<void> {
-    const appTokenRepository =
-      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
-
-    await appTokenRepository.update(
-      {
-        userId,
-        workspaceId,
-        type: AppTokenType.TwoFactorAuthenticationBackupCode,
-        deletedAt: IsNull(),
-        revokedAt: IsNull(),
-      },
-      { revokedAt: new Date() },
-    );
-  }
-
   async assertEnrollmentNotReservedForRecoveryOrThrow({
     userId,
     workspaceId,
@@ -576,58 +467,6 @@ export class TwoFactorAuthenticationRecoveryService {
         TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
       );
     }
-  }
-
-  private async consumeBackupCode({
-    entityManager,
-    userWorkspace,
-    backupCode,
-  }: {
-    entityManager: EntityManager;
-    userWorkspace: Pick<
-      UserWorkspaceEntity,
-      'id' | 'userId' | 'workspaceId' | 'createdAt'
-    >;
-    backupCode: string;
-  }): Promise<boolean> {
-    const verifiedTwoFactorAuthenticationMethod = await entityManager
-      .getRepository(TwoFactorAuthenticationMethodEntity)
-      .findOne({
-        where: {
-          workspaceId: userWorkspace.workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          status: OTPStatus.VERIFIED,
-        },
-      });
-
-    if (!isDefined(verifiedTwoFactorAuthenticationMethod)) {
-      return false;
-    }
-
-    // Codes issued before the current authenticator or membership belong to an earlier enrollment
-    const issuedNoEarlierThan = new Date(
-      Math.max(
-        userWorkspace.createdAt.getTime(),
-        verifiedTwoFactorAuthenticationMethod.createdAt.getTime(),
-      ),
-    );
-
-    const consumeResult = await entityManager
-      .getRepository(AppTokenEntity)
-      .update(
-        {
-          userId: userWorkspace.userId,
-          workspaceId: userWorkspace.workspaceId,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
-          value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
-          deletedAt: IsNull(),
-          revokedAt: IsNull(),
-          createdAt: MoreThanOrEqual(issuedNoEarlierThan),
-        },
-        { deletedAt: new Date() },
-      );
-
-    return (consumeResult.affected ?? 0) > 0;
   }
 
   private isAwaitingRecoveryEnrollment(
@@ -783,24 +622,28 @@ export class TwoFactorAuthenticationRecoveryService {
     userWorkspace,
     workspaceDisplayName,
   }: {
-    userWorkspace: UserWorkspaceEntity;
+    userWorkspace: Pick<
+      UserWorkspaceEntity,
+      'userId' | 'workspaceId' | 'locale' | 'user'
+    >;
     workspaceDisplayName: WorkspaceEntity['displayName'];
   }): Promise<void> {
     const locale = userWorkspace.locale ?? SOURCE_LOCALE;
-
-    const remainingBackupCodeCount = await this.getRemainingBackupCodeCount({
-      userId: userWorkspace.userId,
-      workspaceId: userWorkspace.workspaceId,
-    });
 
     await this.sendSecurityEmail({
       to: userWorkspace.user.email,
       locale,
       subject: msg`A backup code was used to sign in to your account`,
-      buildEmailTemplate: () =>
+      buildEmailTemplate: async () =>
         TwoFactorAuthenticationBackupCodeUsedEmail({
           workspaceDisplayName: workspaceDisplayName ?? '',
-          remainingBackupCodeCount,
+          remainingBackupCodeCount:
+            await this.twoFactorAuthenticationBackupCodeService.getRemainingBackupCodeCount(
+              {
+                userId: userWorkspace.userId,
+                workspaceId: userWorkspace.workspaceId,
+              },
+            ),
           locale,
         }),
     });
@@ -815,10 +658,12 @@ export class TwoFactorAuthenticationRecoveryService {
     to: string;
     locale: UserWorkspaceEntity['locale'];
     subject: MessageDescriptor;
-    buildEmailTemplate: () => Parameters<typeof renderEmail>[0];
+    buildEmailTemplate: () =>
+      | Parameters<typeof renderEmail>[0]
+      | Promise<Parameters<typeof renderEmail>[0]>;
   }): Promise<void> {
     try {
-      const emailTemplate = buildEmailTemplate();
+      const emailTemplate = await buildEmailTemplate();
       const html = await renderEmail(emailTemplate, { pretty: true });
       const text = await renderEmail(emailTemplate, { plainText: true });
       const i18n = this.i18nService.getI18nInstance(locale);

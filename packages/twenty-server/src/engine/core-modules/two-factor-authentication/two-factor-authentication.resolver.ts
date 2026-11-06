@@ -2,7 +2,6 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -30,6 +29,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/uti
 
 import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+import { TwoFactorAuthenticationBackupCodeService } from './services/two-factor-authentication-backup-code.service';
 import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
@@ -46,7 +46,6 @@ import { TwoFactorAuthenticationRecoveryCodeDTO } from './dto/two-factor-authent
 import { TwoFactorAuthenticationRecoveryStatusDTO } from './dto/two-factor-authentication-recovery-status.dto';
 import { TwoFactorAuthenticationRecoveryTargetInput } from './dto/two-factor-authentication-recovery-target.input';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
-import { OTPStatus } from './strategies/otp/otp.constants';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -90,6 +89,7 @@ const TWO_FACTOR_AUTHENTICATION_RECOVERY_ACCESS_POLICY: AccessPolicy = {
 export class TwoFactorAuthenticationResolver {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationBackupCodeService: TwoFactorAuthenticationBackupCodeService,
     private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
@@ -247,7 +247,7 @@ export class TwoFactorAuthenticationResolver {
       id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
     });
 
-    await this.twoFactorAuthenticationRecoveryService.revokeBackupCodes({
+    await this.twoFactorAuthenticationBackupCodeService.revokeBackupCodes({
       userId: user.id,
       workspaceId: workspace.id,
     });
@@ -263,31 +263,22 @@ export class TwoFactorAuthenticationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<VerifyTwoFactorAuthenticationMethodDTO> {
-    const twoFactorAuthenticationMethod =
-      await this.twoFactorAuthenticationMethodRepository.findOne(workspace.id, {
-        where: {
-          strategy: TwoFactorAuthenticationStrategy.TOTP,
-          userWorkspace: { userId: user.id },
-        },
-      });
+    const { twoFactorAuthenticationMethodId, hasCompletedEnrollment } =
+      await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+        user.id,
+        verifyTwoFactorAuthenticationMethodInput.otp,
+        workspace.id,
+      );
 
-    const isEnrollment =
-      twoFactorAuthenticationMethod?.status === OTPStatus.PENDING;
-
-    await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-      user.id,
-      verifyTwoFactorAuthenticationMethodInput.otp,
-      workspace.id,
-    );
-
-    if (!isEnrollment) {
+    if (!hasCompletedEnrollment) {
       return { success: true, backupCodes: null };
     }
 
     const backupCodes =
-      await this.twoFactorAuthenticationRecoveryService.issueBackupCodes({
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
         userId: user.id,
         workspaceId: workspace.id,
+        twoFactorAuthenticationMethodId,
       });
 
     return { success: true, backupCodes };
@@ -300,7 +291,7 @@ export class TwoFactorAuthenticationResolver {
     @AuthUser() user: AuthContextUser,
   ): Promise<TwoFactorAuthenticationBackupCodeStatusDTO> {
     const remainingBackupCodeCount =
-      await this.twoFactorAuthenticationRecoveryService.getRemainingBackupCodeCount(
+      await this.twoFactorAuthenticationBackupCodeService.getRemainingBackupCodeCount(
         { userId: user.id, workspaceId: workspace.id },
       );
 
@@ -315,11 +306,9 @@ export class TwoFactorAuthenticationResolver {
     @AuthUser() user: AuthContextUser,
   ): Promise<TwoFactorAuthenticationBackupCodesDTO> {
     const backupCodes =
-      await this.twoFactorAuthenticationRecoveryService.regenerateBackupCodes({
-        userId: user.id,
-        workspaceId: workspace.id,
-        otp,
-      });
+      await this.twoFactorAuthenticationBackupCodeService.regenerateBackupCodes(
+        { userId: user.id, workspaceId: workspace.id, otp },
+      );
 
     return { backupCodes };
   }

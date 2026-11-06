@@ -50,6 +50,11 @@ import { OTPStatus } from './strategies/otp/otp.constants';
 
 const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 
+type ValidatedTwoFactorAuthenticationMethod = {
+  twoFactorAuthenticationMethodId: TwoFactorAuthenticationMethodEntity['id'];
+  hasCompletedEnrollment: boolean;
+};
+
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class TwoFactorAuthenticationService {
@@ -197,7 +202,7 @@ export class TwoFactorAuthenticationService {
     token: string,
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
-  ) {
+  ): Promise<ValidatedTwoFactorAuthenticationMethod> {
     await this.throttlerService.tokenBucketThrottleOrThrow(
       buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
       1,
@@ -300,6 +305,12 @@ export class TwoFactorAuthenticationService {
         entityManager,
       });
     });
+
+    return {
+      twoFactorAuthenticationMethodId: userTwoFactorAuthenticationMethod.id,
+      hasCompletedEnrollment:
+        userTwoFactorAuthenticationMethod.status === OTPStatus.PENDING,
+    };
   }
 
   async revokeRecoveryCodes({
@@ -342,7 +353,7 @@ export class TwoFactorAuthenticationService {
     otp?: string;
     otpRequiredMessage: MessageDescriptor;
     twoFactorAuthenticationRequiredMessage: MessageDescriptor;
-  }): Promise<void> {
+  }): Promise<ValidatedTwoFactorAuthenticationMethod> {
     if (!isNonEmptyString(otp)) {
       throw new TwoFactorAuthenticationException(
         'A two-factor authentication code is required for this action',
@@ -364,7 +375,7 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+    return this.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       userId,
       otp,
       workspaceId,
@@ -375,14 +386,12 @@ export class TwoFactorAuthenticationService {
     userId: UserEntity['id'],
     token: string,
     workspaceId: WorkspaceEntity['id'],
-  ) {
-    await this.validateStrategy(
+  ): Promise<ValidatedTwoFactorAuthenticationMethod> {
+    return this.validateStrategy(
       userId,
       token,
       workspaceId,
       TwoFactorAuthenticationStrategy.TOTP,
     );
-
-    return { success: true };
   }
 }
