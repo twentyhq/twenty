@@ -12,7 +12,13 @@ export const buildDefaultBarChartConfiguration = ({
   timezone,
   firstDayOfTheWeek,
 }: {
-  fieldSelection: CompleteGraphWidgetFieldSelection;
+  fieldSelection: Pick<
+    CompleteGraphWidgetFieldSelection,
+    | 'groupByFieldMetadataId'
+    | 'aggregateFieldMetadataId'
+    | 'aggregateOperation'
+    | 'groupByOrderBy'
+  >;
   timezone?: string;
   firstDayOfTheWeek?: number;
 }): BarChartConfiguration => ({

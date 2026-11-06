@@ -11,7 +11,6 @@ describe('buildDefaultBarChartConfiguration', () => {
   it('should build a vertical bar chart configuration from the field selection', () => {
     const configuration = buildDefaultBarChartConfiguration({
       fieldSelection: {
-        objectMetadataId: 'object-1',
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
         groupByFieldMetadataId: 'field-2',

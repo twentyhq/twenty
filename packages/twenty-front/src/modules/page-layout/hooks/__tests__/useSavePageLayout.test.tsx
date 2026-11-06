@@ -98,8 +98,8 @@ describe('useSavePageLayout', () => {
     const { result } = renderSaveHook([
       makeChartWidget({
         ...TEST_BAR_CHART_CONFIGURATION,
-        primaryAxisGroupByFieldMetadataId: undefined,
-      } as PageLayoutWidget['configuration']),
+        primaryAxisGroupByFieldMetadataId: '',
+      }),
     ]);
 
     const saveResult = await act(() => result.current.savePageLayout());
@@ -132,8 +132,8 @@ describe('useSavePageLayout', () => {
   it('should send the layout when an incomplete chart is left as it was saved', async () => {
     const savedIncompleteChart = makeChartWidget({
       ...TEST_BAR_CHART_CONFIGURATION,
-      primaryAxisGroupByFieldMetadataId: undefined,
-    } as PageLayoutWidget['configuration']);
+      primaryAxisGroupByFieldMetadataId: '',
+    });
 
     const { result } = renderSaveHook(
       [savedIncompleteChart],
