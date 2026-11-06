@@ -14,9 +14,10 @@ export const SettingsApplicationContentTypeDetail = () => {
   const { t } = useLingui();
   const {
     contentType,
-    name,
+    displayName,
     content,
     error,
+    isLoading,
     applicationPath,
     contentPath,
     location,
@@ -33,13 +34,13 @@ export const SettingsApplicationContentTypeDetail = () => {
 
   return (
     <SettingsApplicationContentPageLayout
-      applicationName={name ?? t`Application`}
+      applicationName={displayName}
       applicationPath={applicationPath}
       contentPath={contentPath}
       contentTypeLabel={contentTypeLabel}
       title={contentTypeLabel}
       icon={<SettingsApplicationContentTypeIcon contentType={contentType} />}
-      isLoading={!isDefined(content) && !isDefined(error)}
+      isLoading={isLoading}
     >
       <ToastOnQueryErrorEffect error={error} />
       {isDefined(content) && (

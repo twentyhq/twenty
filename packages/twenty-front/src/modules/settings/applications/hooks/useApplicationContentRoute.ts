@@ -1,8 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsPath } from 'twenty-shared/types';
-import { CustomError, getSettingsPath } from 'twenty-shared/utils';
+import { CustomError, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { useMarketplaceApplicationContent } from '@/settings/applications/hooks/useMarketplaceApplicationContent';
@@ -10,6 +11,7 @@ import { type ApplicationContentLocation } from '@/settings/applications/types/A
 import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 
 export const useApplicationContentRoute = () => {
+  const { t } = useLingui();
   const { applicationId, availableApplicationId, contentType } = useParams<{
     applicationId: string;
     availableApplicationId: string;
@@ -24,6 +26,7 @@ export const useApplicationContentRoute = () => {
   });
   const marketplace = useMarketplaceApplicationContent(availableApplicationId);
 
+  const getRouteApplication = () => {
   if (isNonEmptyString(availableApplicationId)) {
     const location: ApplicationContentLocation = {
       kind: 'marketplace',
@@ -61,7 +64,6 @@ export const useApplicationContentRoute = () => {
     logoUrl: installed.application?.logoUrl,
     installedApplicationId: installed.application?.id,
     content: installed.content,
-    isLoading: installed.isLoading,
     error: installed.error,
     contentType,
     location,
@@ -69,5 +71,16 @@ export const useApplicationContentRoute = () => {
       applicationId,
     }),
     contentPath: getApplicationContentPath({ location }),
+  };
+  };
+
+  const routeApplication = getRouteApplication();
+
+  return {
+    ...routeApplication,
+    displayName: routeApplication.name ?? t`Application`,
+    isLoading:
+      !isDefined(routeApplication.content) &&
+      !isDefined(routeApplication.error),
   };
 };

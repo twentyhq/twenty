@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
@@ -8,19 +7,17 @@ import { SettingsApplicationContentPageLayout } from '@/settings/applications/co
 import { useApplicationContentRoute } from '@/settings/applications/hooks/useApplicationContentRoute';
 
 export const SettingsApplicationContent = () => {
-  const { t } = useLingui();
   const {
-    name,
+    displayName,
     logoUrl,
     installedApplicationId,
     content,
     error,
+    isLoading,
     applicationPath,
     contentPath,
     location,
   } = useApplicationContentRoute();
-
-  const displayName = name ?? t`Application`;
 
   return (
     <SettingsApplicationContentPageLayout
@@ -37,7 +34,7 @@ export const SettingsApplicationContent = () => {
           chipOnly
         />
       }
-      isLoading={!isDefined(content) && !isDefined(error)}
+      isLoading={isLoading}
     >
       <ToastOnQueryErrorEffect error={error} />
       {isDefined(content) && (
