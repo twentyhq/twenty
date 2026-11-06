@@ -16,12 +16,12 @@ describe('mapAgentMessagesToUIMessages author provenance', () => {
       { ...message, agentId: null, isBuiltInAssistant: true },
     ]);
 
-    expect(mapped.metadata).toMatchObject({
+    expect(mapped?.metadata).toMatchObject({
       turnId: 'turn-id',
       agentId: null,
       isBuiltInAssistant: true,
     });
-    expect(mapped.parts).toEqual([{ type: 'text', text: 'Ada wrote this.' }]);
+    expect(mapped?.parts).toEqual([{ type: 'text', text: 'Ada wrote this.' }]);
   });
 
   it('preserves application, human and named-agent provenance', () => {
@@ -35,7 +35,7 @@ describe('mapAgentMessagesToUIMessages author provenance', () => {
       },
     ]);
 
-    expect(mapped.metadata).toMatchObject({
+    expect(mapped?.metadata).toMatchObject({
       agentId: 'custom-agent-id',
       senderApplicationId: 'application-id',
       senderWorkspaceMemberId: 'member-id',

@@ -61,6 +61,7 @@ export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
+export type { AgentMessageRow } from './types/AgentMessageRow';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -160,7 +161,6 @@ export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-re
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
-export type { AgentMessageRow } from './types/AgentMessageRow';
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
 export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';
