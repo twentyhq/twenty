@@ -11,6 +11,19 @@ type ConfigurationKeys<TConfigurationType> = Record<
   true
 >;
 
+type NullableKeysOf<TConfiguration> = TConfiguration extends unknown
+  ? {
+      [TKey in keyof TConfiguration]-?: null extends TConfiguration[TKey]
+        ? TKey
+        : never;
+    }[keyof TConfiguration]
+  : never;
+
+type NullableConfigurationKey = Exclude<
+  NullableKeysOf<PageLayoutWidgetUniversalConfiguration>,
+  `${string}UniversalIdentifier`
+>;
+
 const BASE_CHART_KEYS = {
   configurationType: true,
   aggregateFieldMetadataUniversalIdentifier: true,
@@ -45,8 +58,7 @@ const AXIS_CHART_KEYS = {
   isCumulative: true,
 } as const;
 
-// A chart keeps the settings of the types it was switched from; only its own
-// type's keys are written. `satisfies` keeps each list equal to its type's keys.
+// A chart keeps the settings of the types it was switched from; write only its own type's keys
 const CHART_CONFIGURATION_KEYS: Record<string, Record<string, true>> = {
   AGGREGATE_CHART: {
     ...BASE_CHART_KEYS,
@@ -80,18 +92,17 @@ const CHART_CONFIGURATION_KEYS: Record<string, Record<string, true>> = {
   } satisfies ConfigurationKeys<'LINE_CHART'>,
 };
 
-// The only keys whose manifest type admits null; references always do, since
-// they may point at entities that no longer exist
-const NULLABLE_CONFIGURATION_KEYS = new Set([
-  'newFieldDefaultVisibility',
-  'nestedRelationFieldMetadataId',
-]);
+const NULLABLE_CONFIGURATION_KEYS: Record<string, true> = {
+  newFieldDefaultVisibility: true,
+  nestedRelationFieldMetadataId: true,
+} satisfies Record<NullableConfigurationKey, true>;
 
+// References are nullable because they may point at entities that no longer exist
 const isNullableConfigurationKey = (key: string) =>
-  key.endsWith('UniversalIdentifier') || NULLABLE_CONFIGURATION_KEYS.has(key);
+  key.endsWith('UniversalIdentifier') ||
+  NULLABLE_CONFIGURATION_KEYS[key] === true;
 
-// The UI stores a cleared optional setting as null, which manifests write as an
-// absent key; applying either back leaves the setting unset
+// A cleared setting is null in the UI and absent in manifests; both leave it unset
 export const normalizePageLayoutWidgetConfigurationForManifest = (
   configuration: PageLayoutWidgetUniversalConfiguration,
 ): PageLayoutWidgetUniversalConfiguration => {
