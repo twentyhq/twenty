@@ -613,6 +613,7 @@ export class BullMQDriver
       preparedJobs: [preparedJob],
     } = await this.prepareJobs({
       queueName,
+      jobName,
       jobs: [{ index: 0, data, options: queueOptions, scope: options }],
       additionalGroupKeys: options.groupKeys,
     });
@@ -641,11 +642,13 @@ export class BullMQDriver
 
   private async prepareJobs({
     queueName,
+    jobName,
     jobs,
     additionalGroupKeys,
     shouldReportSizes = false,
   }: {
     queueName: MessageQueue;
+    jobName: string;
     jobs: {
       index: number;
       data: unknown;
@@ -671,6 +674,7 @@ export class BullMQDriver
 
     this.jobSizeLimiter.checkJobSizesOrThrow({
       queueName,
+      jobName,
       jobs: sizedJobs.map(({ index, groupKeys, sizeBytes }) => ({
         index,
         groupKey: groupKeys[0],
@@ -693,6 +697,7 @@ export class BullMQDriver
 
     const { isCharged, availableBytes } = await this.jobMemoryLimiter.admit({
       queueName,
+      jobName,
       jobs: chargeableJobs.flatMap(({ options, sizeBytes, groupKeys }) =>
         isDefined(options.jobId)
           ? [{ jobId: options.jobId, sizeBytes, groupKeys }]
@@ -896,6 +901,7 @@ export class BullMQDriver
     const queueOptions = this.buildJobsOptions(options);
     const { preparedJobs, availableBytes } = await this.prepareJobs({
       queueName,
+      jobName,
       jobs: jobsToAdd.map((job, index) => ({
         index: job.inputIndex,
         data: job.data,

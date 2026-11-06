@@ -27,9 +27,11 @@ export class JobSizeLimiter {
 
   checkJobSizesOrThrow({
     queueName,
+    jobName,
     jobs,
   }: {
     queueName: MessageQueue;
+    jobName: string;
     jobs: SizedJob[];
   }): void {
     if (!this.isEnabled()) {
@@ -52,6 +54,7 @@ export class JobSizeLimiter {
       metricsService: this.metricsService,
       refusal: {
         queueName,
+        jobName,
         groupKey,
         reason: 'size',
         requestedBytes: sizeBytes,

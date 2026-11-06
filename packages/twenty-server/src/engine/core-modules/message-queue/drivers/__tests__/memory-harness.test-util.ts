@@ -20,7 +20,7 @@ const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${MEMORY_SCENARIO_QUEUE}:`;
 const USED_KEY_PREFIX = `${KEY_PREFIX}:jobmem:used:`;
 const JOBS_KEY_PREFIX = `${KEY_PREFIX}:jobmem:jobs:`;
-const JOB_NAME = 'memory-scenario-job';
+export const MEMORY_SCENARIO_JOB_NAME = 'memory-scenario-job';
 
 export type MemoryScenarioJobData = {
   label: string;
@@ -356,7 +356,13 @@ export const createMemoryHarness = async ({
   const enqueueBulk = (
     jobs: QueueJobToAdd<MemoryScenarioJobData>[],
     settings?: QueueJobSettings,
-  ) => driver.bulkAdd(MEMORY_SCENARIO_QUEUE, JOB_NAME, jobs, settings);
+  ) =>
+    driver.bulkAdd(
+      MEMORY_SCENARIO_QUEUE,
+      MEMORY_SCENARIO_JOB_NAME,
+      jobs,
+      settings,
+    );
 
   const enqueue = ({
     label,
@@ -369,7 +375,7 @@ export const createMemoryHarness = async ({
   }) =>
     driver.add(
       MEMORY_SCENARIO_QUEUE,
-      JOB_NAME,
+      MEMORY_SCENARIO_JOB_NAME,
       {
         label,
         workspaceId: options.workspaceId,

@@ -117,7 +117,7 @@ The queued run inherits the acting user of the function that enqueued it, so it 
 
 ## Queue memory
 
-Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 1 MB of serialized payload.
+Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 5 MB of serialized payload.
 
 `enqueueJobs` reports what each call used:
 

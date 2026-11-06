@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { JOB_MEMORY_CHARGE_TTL_SECONDS } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import {
   createMemoryHarness,
+  MEMORY_SCENARIO_JOB_NAME,
   MEMORY_SCENARIO_QUEUE,
   silenceDriverLogs,
 } from 'src/engine/core-modules/message-queue/drivers/__tests__/memory-harness.test-util';
@@ -94,7 +95,11 @@ describe('BullMQDriver job memory scenarios', () => {
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           key: MetricsKeys.JobMemoryLimitRefused,
-          attributes: { queue: MEMORY_SCENARIO_QUEUE, reason: 'share' },
+          attributes: {
+            queue: MEMORY_SCENARIO_QUEUE,
+            job_name: MEMORY_SCENARIO_JOB_NAME,
+            reason: 'share',
+          },
         }),
       );
     });
@@ -202,7 +207,9 @@ describe('BullMQDriver job memory scenarios', () => {
       );
 
       expect(jest.mocked(Logger.prototype.warn)).toHaveBeenLastCalledWith(
-        expect.stringContaining('key=application:H reason=share'),
+        expect.stringContaining(
+          `for job ${MEMORY_SCENARIO_JOB_NAME} on queue ${MEMORY_SCENARIO_QUEUE} [key=application:H reason=share`,
+        ),
       );
       expect(await harness.readUsedBytes('workspace:W9')).toBe(0);
       expect(await harness.readUsedBytes('application:H')).toBeLessThanOrEqual(

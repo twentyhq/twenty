@@ -20,6 +20,7 @@ export const reportJobMemoryLimitRefusal = ({
     key: MetricsKeys.JobMemoryLimitRefused,
     attributes: {
       queue: refusal.queueName,
+      job_name: refusal.jobName,
       reason: refusal.reason,
     },
     shouldStoreInCache: false,

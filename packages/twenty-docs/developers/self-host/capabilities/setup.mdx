@@ -273,12 +273,12 @@ The queue Redis runs with `noeviction`: once it is full, every enqueue fails for
 | Variable | Default | What it does |
 |----------|---------|--------------|
 | `IS_REDIS_MEMORY_FAIRNESS_ENABLED` | `false` | Refuse jobs over the size cap or over their share. |
-| `JOB_QUEUE_MAX_JOB_SIZE_BYTES` | `1048576` | Largest serialized job accepted. |
-| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID` | `0.1` | Share of the free memory one workspace may hold. |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES` | `5242880` | Largest serialized job accepted. |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID` | `0.3` | Share of the free memory one workspace may hold. |
 | `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4` | Share of the free memory one application may hold, across all workspaces. |
 | `JOB_QUEUE_MEMORY_RESERVE` | `0.1` | Share of `maxmemory` never given to jobs. |
 
-The share limit needs `maxmemory` set on the queue Redis. Refusals are counted in `job_memory_limit_refused_total`, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
+The share limit needs `maxmemory` set on the queue Redis. Refusals are logged and counted in `job_memory_limit_refused_total` by queue, job name and reason, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
 
 ## Outbound Connections to Internal Hosts
 

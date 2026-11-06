@@ -114,6 +114,7 @@ describe('JobMemoryLimiter', () => {
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [
         {
           jobId: 'job-1',
@@ -136,6 +137,7 @@ describe('JobMemoryLimiter', () => {
 
     const applicationAdmission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 3_000, groupKeys: [APPLICATION] }],
     });
 
@@ -147,6 +149,7 @@ describe('JobMemoryLimiter', () => {
     await expect(
       limiter.admit({
         queueName: QUEUE,
+        jobName: 'job',
         jobs: [{ jobId: 'job-2', sizeBytes: 3_000, groupKeys: [WORKSPACE_1] }],
       }),
     ).rejects.toThrow(MessageQueueException);
@@ -157,6 +160,7 @@ describe('JobMemoryLimiter', () => {
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [
         { jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] },
         { jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] },
@@ -172,6 +176,7 @@ describe('JobMemoryLimiter', () => {
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 300, groupKeys: ['system'] }],
     });
 
@@ -183,8 +188,8 @@ describe('JobMemoryLimiter', () => {
     const { redis, limiter } = await createLimiter();
     const job = { jobId: 'job-1', sizeBytes: 300, groupKeys: [WORKSPACE_1] };
 
-    await limiter.admit({ queueName: QUEUE, jobs: [job] });
-    await limiter.admit({ queueName: QUEUE, jobs: [job, job] });
+    await limiter.admit({ queueName: QUEUE, jobName: 'job', jobs: [job] });
+    await limiter.admit({ queueName: QUEUE, jobName: 'job', jobs: [job, job] });
 
     expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
   });
@@ -196,11 +201,13 @@ describe('JobMemoryLimiter', () => {
 
     await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] }],
     });
 
     const refusal = limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [
         { jobId: 'job-2', sizeBytes: 200, groupKeys: [WORKSPACE_1] },
         { jobId: 'job-3', sizeBytes: 300, groupKeys: [WORKSPACE_1] },
@@ -220,7 +227,7 @@ describe('JobMemoryLimiter', () => {
     );
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: QUEUE, reason: 'share' },
+      attributes: { queue: QUEUE, job_name: 'job', reason: 'share' },
       shouldStoreInCache: false,
     });
   });
@@ -230,6 +237,7 @@ describe('JobMemoryLimiter', () => {
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 400, groupKeys: [WORKSPACE_1] }],
     });
 
@@ -258,6 +266,7 @@ describe('JobMemoryLimiter', () => {
     await expect(
       brokenLimiter.admit({
         queueName: QUEUE,
+        jobName: 'job',
         jobs: [{ jobId: 'job-1', sizeBytes: 5_000, groupKeys: [WORKSPACE_1] }],
       }),
     ).resolves.toEqual({ isCharged: false, availableBytes: null });
@@ -270,12 +279,14 @@ describe('JobMemoryLimiter', () => {
 
     await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 900, groupKeys: [WORKSPACE_1] }],
     });
     metricsService.incrementCounterForEvent.mockClear();
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-2', sizeBytes: 500, groupKeys: [WORKSPACE_2] }],
     });
 
@@ -289,6 +300,7 @@ describe('JobMemoryLimiter', () => {
 
     await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [
         { jobId: 'job-1', sizeBytes: 300, groupKeys },
         { jobId: 'job-2', sizeBytes: 200, groupKeys },
@@ -322,6 +334,7 @@ describe('JobMemoryLimiter', () => {
 
     await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 300, groupKeys: [WORKSPACE_1] }],
     });
 
@@ -341,6 +354,7 @@ describe('JobMemoryLimiter', () => {
 
     const admission = await limiter.admit({
       queueName: QUEUE,
+      jobName: 'job',
       jobs: [{ jobId: 'job-1', sizeBytes: 300, groupKeys: [WORKSPACE_1] }],
     });
 

@@ -914,7 +914,11 @@ describe('BullMQDriver job size limit', () => {
     ).rejects.toBeInstanceOf(MessageQueueException);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
+      attributes: {
+        queue: MessageQueue.workspaceQueue,
+        job_name: 'job',
+        reason: 'size',
+      },
       shouldStoreInCache: false,
     });
   });

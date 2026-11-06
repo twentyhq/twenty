@@ -1644,7 +1644,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 1_048_576;
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1655,7 +1655,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.1;
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

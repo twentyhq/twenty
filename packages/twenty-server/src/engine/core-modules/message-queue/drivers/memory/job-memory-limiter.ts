@@ -87,9 +87,11 @@ export class JobMemoryLimiter {
 
   async admit({
     queueName,
+    jobName,
     jobs,
   }: {
     queueName: MessageQueue;
+    jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
     if (!this.isEnabled()) {
@@ -165,6 +167,7 @@ export class JobMemoryLimiter {
           metricsService: this.options.metricsService,
           refusal: {
             queueName,
+            jobName,
             groupKey: admission.groupKey,
             reason: 'share',
             requestedBytes: admission.requestedBytes,
