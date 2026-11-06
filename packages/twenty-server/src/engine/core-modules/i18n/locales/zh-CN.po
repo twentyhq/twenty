@@ -1058,16 +1058,6 @@ msgstr "由工作区成员拥有的 AI 聊天线程"
 msgid "AI component builder is disabled."
 msgstr "AI 组件构建器已禁用。"
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "升级完成后，AI 数据政策才可用。"
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "此工作区未启用 AI 数据政策。"
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "身份验证失败，请重新登录。"
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "此提供者未启用身份验证。"
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "需要验证才能访问此功能。请登录后重试。"
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "未指定有效收件人"
 msgid "No verified sending domain matches this from address."
 msgstr "没有已验证的发信域名与此发件地址匹配。"
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "您选择的人员均无法在此聊天中回复。请添加 {AGENT_CHAT_ASSISTANT_NAME} 或其他可以回复的人员。"
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "主体 ID"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "主体类型"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "升级完成前，隐私设置不可用。"
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "此工作区未启用隐私设置。"
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "短链接"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "以工作区成员身份登录，或使用应用程序令牌来更改此对话。"
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "以工作区成员身份登录，或使用应用程序令牌发出此请求。"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "您选择的某些权限无效。请尝试使用有效的权限设置。"
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "无法找到某些工作区成员资格。这些成员可能无法再访问此工作区。"
 
@@ -13619,11 +13619,6 @@ msgstr "未找到此步骤应运行的智能体。"
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "找不到您要查找的智能体。它可能已被删除，或者您没有访问权限。"
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API 密钥没有分配有效角色。请检查您的 API 密钥配置。"
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "应用程序清单声明了无效的服务器版本要求。"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "应用源通道与预期类型不匹配。"
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "应用程序没有分配有效角色。请检查您的应用程序配置。"
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "您无法为自己生成恢复代码。请改为在个人资料中重置双因素身份验证。"
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "您无法更改自己的角色。请要求另一位管理员更新您的角色。"
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "您无法移除自己的角色的设置访问权限。请让另一位管理员进行此更改。"
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "您无法从最后一位管理员那里移除管理员角色。请先分配另一位管理员。"
 
@@ -18250,7 +18240,7 @@ msgstr "您的角色无法删除其中一些记录，因此无法合并它们。
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "无法找到您在此工作区中的角色。请联系您的工作区管理员。"
 

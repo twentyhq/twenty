@@ -27,6 +27,7 @@ import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
+import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -401,6 +402,8 @@ export const useAuth = () => {
           password,
           captchaToken,
           locale: i18n.locale ?? SOURCE_LOCALE,
+          affiliatePartnerName: store.get(affiliatePartnerNameState.atom)
+            ?.partner,
         },
       });
 
@@ -432,6 +435,7 @@ export const useAuth = () => {
       setSearchParams,
       markSessionActive,
       signUp,
+      store,
       loadCurrentUser,
       setSignInUpStep,
       navigateAfterMultiWorkspaceSignInUp,

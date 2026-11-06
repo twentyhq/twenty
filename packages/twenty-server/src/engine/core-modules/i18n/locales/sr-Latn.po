@@ -1058,16 +1058,6 @@ msgstr "Niti AI ćaskanja u vlasništvu člana radnog prostora"
 msgid "AI component builder is disabled."
 msgstr "Alat za izradu AI komponenti je onemogućen."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Politika podataka za AI nije dostupna dok se nadogradnja ne završi."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Politika podataka za AI nije omogućena za ovaj radni prostor."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "Provera identiteta nije uspela, prijavite se ponovo."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Autentifikacija nije omogućena sa ovim provajderom."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Potrebna je autentifikacija da bi se pristupilo ovoj funkciji. Molimo prijavite se i pokušajte ponovo."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "Nisu navedeni važeći primaoci"
 msgid "No verified sending domain matches this from address."
 msgstr "Nijedan verifikovan domen za slanje ne odgovara ovoj adresi pošiljaoca."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Nijedna osoba koju ste izabrali ne može da odgovori u ovom ćaskanju. Dodajte {AGENT_CHAT_ASSISTANT_NAME} ili nekoga ko može da odgovori."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "ID subjekta"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Vrsta subjekta"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Podešavanja privatnosti nisu dostupna dok se nadogradnja ne završi."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Podešavanja privatnosti nisu omogućena za ovaj radni prostor."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Kratke veze"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Prijavite se kao član radnog prostora ili koristite token aplikacije da biste promenili ovaj razgovor."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Prijavite se kao član radnog prostora ili koristite token aplikacije da biste uputili ovaj zahtev."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Neke od odabranih dozvola nisu validne. Molimo pokušajte ponovo sa važećim postavkama dozvola."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Neka članstva u radnom prostoru nisu pronađena. Možda više nemaju pristup ovom radnom prostoru."
 
@@ -13619,11 +13619,6 @@ msgstr "Agent kojeg ovaj korak treba da pokrene nije pronađen."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Agent kojeg tražite nije pronađen. Moguće je da je izbrisan ili možda nemate pristup njemu."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API ključ nema dodeljenu važeću ulogu. Molimo proverite vašu konfiguraciju API ključa."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "Manifest aplikacije navodi nevažeći zahtev za verziju servera."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Izvorni kanal aplikacije ne odgovara očekivanom tipu."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Aplikacija nema dodeljenu važeću ulogu. Molimo proverite konfiguraciju vaše aplikacije."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Ne možete generisati kôd za oporavak za sebe. Umesto toga, resetujte dvofaktorsku autentifikaciju iz svog profila."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Ne možete promeniti sopstvenu ulogu. Molimo tražite od drugog administratora da ažurira vašu ulogu."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Ne možete ukloniti pristup podešavanjima sa sopstvene uloge. Zamolite drugog administratora da izvrši ovu izmenu."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Ne možete ukloniti administratorsku ulogu od poslednjeg administratora. Molimo najpre dodelite drugu ulogu."
 
@@ -18250,7 +18240,7 @@ msgstr "Vaša uloga ne može da obriše neke od ovih zapisa, pa se ne mogu spoji
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Vaša uloga u ovoj radnoj okolini nije pronađena. Molimo kontaktirajte administratora vaše radne površine."
 

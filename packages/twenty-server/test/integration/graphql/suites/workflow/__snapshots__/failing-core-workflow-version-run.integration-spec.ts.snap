@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Core workflow version runs should fail with a member session without the WORKFLOWS permission should refuse to run a workspace workflow through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as a member without the WORKFLOWS permission should refuse to run a workspace workflow through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a private workflow of another member should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow not found",
+  },
+  "message": "Core workflow '<id>' is private to another member",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a private workflow of another member should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow '<id>' is private to another member",
+  "message": "Failed to run workflow version: Core workflow '<id>' is private to another member",
+  "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a workflow version without a trigger should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a workflow version without a trigger should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow version is missing its execution definition",
+  "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
+  "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running an unknown workflow version should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running an unknown workflow version should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow version is missing its execution definition",
+  "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
+  "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running a private workflow of another member should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "Workflow not found",
+  },
+  "message": "Core workflow '<id>' is private to another member",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running a private workflow of another member should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow '<id>' is private to another member",
+  "message": "Failed to run workflow version: Core workflow '<id>' is private to another member",
+  "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running a workflow version without a trigger should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running a workflow version without a trigger should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow version is missing its execution definition",
+  "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
+  "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running an unknown workflow version should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running an unknown workflow version should refuse through the MCP run_workflow_version tool 1`] = `
+{
+  "error": "Core workflow version is missing its execution definition",
+  "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
+  "success": false,
+}
+`;

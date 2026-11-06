@@ -1058,16 +1058,6 @@ msgstr "שרשורי צ'אט של בינה מלאכותית שבבעלות חב�
 msgid "AI component builder is disabled."
 msgstr "בונה רכיבי AI מושבת."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "מדיניות נתוני AI אינה זמינה עד להשלמת השדרוג."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "מדיניות נתוני AI אינה מופעלת עבור סביבת עבודה זו."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "האימות נכשל, נא להיכנס שוב."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "אימות אינו מופעל עם ספק זה."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "נדרש אימות כדי לגשת לתכונה זו. אנא היכנס ונסה שוב."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "לא צוינו נמענים תקינים"
 msgid "No verified sending domain matches this from address."
 msgstr "אין דומיין שליחה מאומת התואם לכתובת השולח הזו."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "אף אחד מהאנשים שבחרת לא יכול להשיב בצ'אט הזה. הוסף את {AGENT_CHAT_ASSISTANT_NAME} או מישהו שיכול להשיב."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "מזהה ישות"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "סוג ישות"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "הגדרות הפרטיות אינן זמינות עד להשלמת השדרוג."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "הגדרות הפרטיות אינן מופעלות עבור סביבת עבודה זו."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "קישורים מקוצרים"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "היכנסו כחברי סביבת עבודה או השתמשו באסימון יישום כדי לשנות שיחה זו."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "היכנסו כחברי סביבת עבודה או השתמשו באסימון יישום כדי לבצע בקשה זו."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "חלק מהרשאות שבחרת אינן תקפות. אנא נסה שוב עם הגדרות הרשאות חוקיות."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "חלק מהחברויות במרחב העבודה לא נמצאו. ייתכן שלבעליהן אין עוד גישה למרחב עבודה זה."
 
@@ -13619,11 +13619,6 @@ msgstr "הסוכן ששלב זה אמור להפעיל לא נמצא."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "לא ניתן למצוא את הסוכן שאתה מחפש. ייתכן שהוא נמחק או שאין לך גישה אליו."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "למפתח ה-API אין תפקיד תקף שייך. אנא בדוק את הגדרת ה-API שלך."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "מניפסט האפליקציה מציין דרישת גרסת שרת ל
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "ערוץ המקור של היישום אינו תואם לסוג הצפוי."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "לא הוקצה ליישום תפקיד תקף. אנא בדוק את הגדרת היישום שלך."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "אין באפשרותך ליצור קוד שחזור עבור עצמך. במקום זאת, אפס את האימות הדו-שלבי מהפרופיל שלך."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "אינך יכול לשנות תפקיד משלך. אנא בקש מנהל נוסף לעדכן את תפקידך."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "אינך יכול להסיר את הגישה להגדרות מהתפקיד שלך. בקש ממנהל מערכת אחר לבצע את השינוי הזה."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "לא ניתן להסיר את תפקיד המנהל מהאדמיניסטרטור האחרון. אנא הקצה מנהל נוסף תחילה."
 
@@ -18250,7 +18240,7 @@ msgstr "התפקיד שלך אינו יכול למחוק חלק מהרשומות
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "לא נמצא תפקידך במרחב זה. אנא פנה למנהל המרחב שלך."
 
