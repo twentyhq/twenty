@@ -11,7 +11,7 @@ import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/wo
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
 import { type WorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
-import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-trigger.util';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const APPLICATION = { id: 'application-id', name: 'Workspace' };
 

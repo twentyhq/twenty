@@ -6,7 +6,7 @@ import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
-import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-trigger.util';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},

@@ -2,7 +2,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { DelayWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay.workflow-action';
-import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-trigger.util';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const NOW = new Date('2026-10-04T10:00:00.000Z');
 

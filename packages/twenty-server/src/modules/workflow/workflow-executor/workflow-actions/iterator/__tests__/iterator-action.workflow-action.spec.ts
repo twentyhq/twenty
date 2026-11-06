@@ -8,7 +8,7 @@ import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workfl
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-trigger.util';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 describe('IteratorWorkflowAction', () => {
   let service: IteratorWorkflowAction;
