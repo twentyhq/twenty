@@ -2,7 +2,6 @@ import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { normalizePageLayoutWidgetConfigurationForManifest } from 'src/engine/core-modules/application/application-manifest/utils/normalize-page-layout-widget-configuration-for-manifest.util';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 const getPositionProperties = ({
@@ -51,7 +50,5 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetManifest = ({
     position: flatPageLayoutWidget.position,
     isPositionImpliedByOrder,
   }),
-  configuration: normalizePageLayoutWidgetConfigurationForManifest(
-    flatPageLayoutWidget.universalConfiguration,
-  ),
+  configuration: flatPageLayoutWidget.universalConfiguration,
 });

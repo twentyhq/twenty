@@ -153,37 +153,6 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
     ).toEqual(viewlessFieldsWidgetManifest.configuration);
   });
 
-  it('should write a chart widget saved in the UI as a configuration its manifest type accepts', () => {
-    const flatPageLayoutWidget = {
-      ...forward(MINIMAL_WIDGET_MANIFEST, PageLayoutTabLayoutMode.GRID),
-      type: WidgetType.GRAPH,
-      // The UI stores cleared settings as null and keeps the settings of the chart type it switched from
-      universalConfiguration: {
-        configurationType: 'AGGREGATE_CHART',
-        aggregateFieldMetadataUniversalIdentifier: null,
-        aggregateOperation: 'COUNT',
-        label: null,
-        suffix: null,
-        prefix: '$',
-        layout: 'VERTICAL',
-        axisNameDisplay: 'NONE',
-      },
-    } as unknown as Parameters<
-      typeof fromFlatPageLayoutWidgetToPageLayoutWidgetManifest
-    >[0]['flatPageLayoutWidget'];
-
-    expect(
-      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
-        flatPageLayoutWidget,
-      }).configuration,
-    ).toEqual({
-      configurationType: 'AGGREGATE_CHART',
-      aggregateFieldMetadataUniversalIdentifier: null,
-      aggregateOperation: 'COUNT',
-      prefix: '$',
-    });
-  });
-
   it('should reproduce the flat entity after an inverse then a forward conversion', () => {
     const flatPageLayoutWidget = forward(WIDGET_MANIFEST);
 

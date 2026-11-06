@@ -26,6 +26,7 @@ import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { sanitizeWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-input-or-throw.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
@@ -532,7 +533,7 @@ export class PageLayoutUpdateService {
 
   private computeWidgetOperationsForTab({
     tabId,
-    widgets,
+    widgets: rawWidgets,
     widgetIdsAcrossAllTabs,
     flatPageLayoutWidgetMaps,
     flatPageLayoutTabMaps,
@@ -565,6 +566,19 @@ export class PageLayoutUpdateService {
     widgetsToUpdate: FlatPageLayoutWidget[];
     widgetsToDelete: FlatPageLayoutWidget[];
   } {
+    // sanitized before the diff, so settings a client still holds from another chart type are not a change
+    const widgets = rawWidgets.map((widgetInput) =>
+      isDefined(widgetInput.configuration)
+        ? {
+            ...widgetInput,
+            configuration: sanitizeWidgetConfigurationInputOrThrow({
+              configuration: widgetInput.configuration,
+              shouldKeepTypesWithoutDto: true,
+            }),
+          }
+        : widgetInput,
+    );
+
     for (const widgetInput of widgets) {
       this.validateConfigurationFieldReferences({
         widgetInput,
