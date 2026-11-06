@@ -46,6 +46,7 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
     objectMetadataUniversalIdentifier,
     isSystemSideEffect: false,
     isFirstTabPinned: true,
+    filters: null,
     workspaceId,
     createdAt,
     updatedAt: createdAt,

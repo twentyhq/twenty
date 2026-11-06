@@ -1,15 +1,11 @@
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type UniversalChartFilter } from 'twenty-shared/types';
-import {
-  getFilterOperandsForFilterableFieldType,
-  getFilterTypeFromFieldType,
-  getFilterValueValidationIssue,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-effective-filter-field-type.util';
+import { getFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-filter-condition-validation-issue.util';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
@@ -69,17 +65,19 @@ const validateChartRecordFilter = ({
     relationTargetFieldType: relationTargetField?.type,
   });
 
-  const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: getFilterTypeFromFieldType(effectiveFieldType),
+  const issue = getFilterConditionValidationIssue({
+    fieldType: effectiveFieldType,
+    operand: rawOperand,
     subFieldName,
+    value,
   });
 
-  const operand = allowedOperands.find(
-    (allowedOperand) => allowedOperand === rawOperand,
-  );
+  if (!isDefined(issue)) {
+    return [];
+  }
 
-  if (!isDefined(operand)) {
-    const allowedOperandsText = allowedOperands.join(', ');
+  if (issue.kind === 'UNSUPPORTED_OPERAND') {
+    const allowedOperandsText = issue.allowedOperands.join(', ');
 
     return [
       {
@@ -91,18 +89,7 @@ const validateChartRecordFilter = ({
     ];
   }
 
-  const issue = getFilterValueValidationIssue({
-    fieldType: effectiveFieldType,
-    operand,
-    subFieldName,
-    value,
-  });
-
-  if (!isDefined(issue)) {
-    return [];
-  }
-
-  const { stringifiedValue, filterType, hint } = issue;
+  const { stringifiedValue, operand, filterType, hint } = issue;
 
   return [
     {

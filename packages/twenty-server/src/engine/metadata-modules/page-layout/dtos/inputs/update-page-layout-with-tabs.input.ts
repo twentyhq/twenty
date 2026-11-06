@@ -15,6 +15,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
+import { PageLayoutFilterInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/page-layout-filter.input';
 import { PageLayoutType } from 'twenty-shared/types';
 
 @InputType()
@@ -38,6 +39,13 @@ export class UpdatePageLayoutWithTabsInput {
   @IsBoolean()
   @IsOptional()
   isFirstTabPinned?: boolean;
+
+  @Field(() => [PageLayoutFilterInput], { nullable: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PageLayoutFilterInput)
+  @IsOptional()
+  filters?: PageLayoutFilterInput[] | null;
 
   @Field(() => [UpdatePageLayoutTabWithWidgetsInput])
   @IsArray()

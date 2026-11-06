@@ -65,6 +65,7 @@ export const updateOnePageLayoutWithTabsAndWidgetsQueryFactory = ({
       name: input.name,
       type: input.type,
       objectMetadataId: input.objectMetadataId,
+      filters: input.filters,
       tabs: input.tabs,
     },
   },

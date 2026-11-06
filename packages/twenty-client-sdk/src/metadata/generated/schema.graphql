@@ -3954,6 +3954,7 @@ type PageLayout {
   createdAt: DateTime!
   defaultTabToFocusOnMobileAndSidePanelId: UUID
   deletedAt: DateTime
+  filters: [PageLayoutFilter!]
   id: UUID!
   isFirstTabPinned: Boolean!
   isSystemSideEffect: Boolean!
@@ -3963,6 +3964,44 @@ type PageLayout {
   type: PageLayoutType!
   universalIdentifier: UUID!
   updatedAt: DateTime!
+}
+
+type PageLayoutFilter {
+  defaultValue: PageLayoutFilterValue
+  id: UUID!
+  label: String!
+  position: Float!
+  type: PageLayoutFilterType!
+}
+
+type PageLayoutFilterCondition {
+  operand: ViewFilterOperand!
+  value: String!
+}
+
+input PageLayoutFilterConditionInput {
+  operand: ViewFilterOperand!
+  value: String!
+}
+
+input PageLayoutFilterInput {
+  defaultValue: PageLayoutFilterValueInput
+  id: UUID!
+  label: String!
+  position: Float!
+  type: PageLayoutFilterType!
+}
+
+enum PageLayoutFilterType {
+  DATE
+}
+
+type PageLayoutFilterValue {
+  conditions: [PageLayoutFilterCondition!]!
+}
+
+input PageLayoutFilterValueInput {
+  conditions: [PageLayoutFilterConditionInput!]!
 }
 
 type PageLayoutTab {
@@ -5442,6 +5481,7 @@ input UpdatePageLayoutWidgetWithIdInput {
 }
 
 input UpdatePageLayoutWithTabsInput {
+  filters: [PageLayoutFilterInput!]
   isFirstTabPinned: Boolean
   name: String!
   objectMetadataId: UUID

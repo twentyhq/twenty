@@ -25,6 +25,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
     tabUniversalIdentifiers: [],
     isSystemSideEffect: false,
     isFirstTabPinned: pageLayoutManifest.isFirstTabPinned ?? true,
+    filters: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

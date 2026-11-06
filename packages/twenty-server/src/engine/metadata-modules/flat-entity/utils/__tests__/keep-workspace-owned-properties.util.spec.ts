@@ -1,3 +1,6 @@
+import { DASHBOARD_DATE_RANGE_FILTER } from 'twenty-shared/constants';
+import { ViewFilterOperand } from 'twenty-shared/types';
+
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 
 describe('keepWorkspaceOwnedProperties', () => {
@@ -67,6 +70,43 @@ describe('keepWorkspaceOwnedProperties', () => {
     expect(
       result.byUniversalIdentifier['page-layout-universal-identifier'],
     ).toEqual(standardPageLayout);
+  });
+
+  it('should keep the dashboard filters the workspace chose over the none an application ships', () => {
+    const workspaceFilters = [
+      {
+        ...DASHBOARD_DATE_RANGE_FILTER,
+        defaultValue: {
+          conditions: [
+            { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_1_MONTH' },
+          ],
+        },
+      },
+    ];
+
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'pageLayout',
+      fromFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'page-layout-universal-identifier': {
+            ...standardPageLayout,
+            filters: workspaceFilters,
+          },
+        },
+      },
+      toFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'page-layout-universal-identifier': {
+            ...standardPageLayout,
+            filters: null,
+          },
+        },
+      },
+    });
+
+    expect(
+      result.byUniversalIdentifier['page-layout-universal-identifier'],
+    ).toEqual({ ...standardPageLayout, filters: workspaceFilters });
   });
 
   it('should keep the creator of a view the workspace already has', () => {

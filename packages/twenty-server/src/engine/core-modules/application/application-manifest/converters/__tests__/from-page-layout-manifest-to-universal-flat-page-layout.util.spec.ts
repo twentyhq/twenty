@@ -28,6 +28,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     ).toBeNull();
     expect(result.tabUniversalIdentifiers).toEqual([]);
     expect(result.isFirstTabPinned).toBe(true);
+    expect(result.filters).toBeNull();
   });
 
   it('should convert a record page layout manifest', () => {

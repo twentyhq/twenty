@@ -1,0 +1,2 @@
+export const DASHBOARD_DATE_RANGE_FILTER_ID =
+  '20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01';

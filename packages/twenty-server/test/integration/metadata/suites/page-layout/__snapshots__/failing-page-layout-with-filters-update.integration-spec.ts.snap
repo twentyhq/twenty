@@ -1,0 +1,178 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout with filters update should fail when a default value holds the object form of a relative date 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Value "{"direction":"PAST","amount":1,"unit":"MONTH"}" of the default value of dashboard filter "Date range" is not valid for operand "IS_RELATIVE". Expected a stringified relative date such as "NEXT_30_DAY".",
+              "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+              "value": "{"direction":"PAST","amount":1,"unit":"MONTH"}",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a default value uses an operand date fields do not support 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Operand "CONTAINS" of the default value of dashboard filter "Date range" is not supported. Supported operands: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY.",
+              "userFriendlyMessage": "Dashboard filter operand is not supported",
+              "value": "CONTAINS",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter operand is not supported",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a filter is not the built-in Date range filter 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboards only support the built-in Date range filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01"",
+              "userFriendlyMessage": "Dashboards only support the Date range filter",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboards only support the Date range filter",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a second filter comes with the built-in Date range filter 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboards only support the built-in Date range filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01"",
+              "userFriendlyMessage": "Dashboards only support the Date range filter",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboards only support the Date range filter",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when filters are set on a record page layout 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Filters are only supported on dashboard page layouts, not on "RECORD_PAGE"",
+              "userFriendlyMessage": "Only dashboards can have filters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Only dashboards can have filters",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;

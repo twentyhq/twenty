@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { validatePageLayoutFilters } from 'src/engine/metadata-modules/flat-page-layout/validators/utils/validate-page-layout-filters.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -50,6 +51,8 @@ export class FlatPageLayoutValidatorService {
       }
     }
 
+    validationResult.errors.push(...validatePageLayoutFilters(flatPageLayout));
+
     return validationResult;
   }
 
@@ -90,6 +93,7 @@ export class FlatPageLayoutValidatorService {
 
   public validateFlatPageLayoutUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
     },
@@ -118,6 +122,13 @@ export class FlatPageLayoutValidatorService {
 
       return validationResult;
     }
+
+    validationResult.errors.push(
+      ...validatePageLayoutFilters({
+        ...fromFlatPageLayout,
+        ...flatEntityUpdate,
+      }),
+    );
 
     return validationResult;
   }
