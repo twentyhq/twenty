@@ -209,6 +209,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { MarkAppThreadAsReadPayload } from './markAppThreadAsReadType';
 export type { McpServerManifest } from './mcpServerManifestType';
 export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';

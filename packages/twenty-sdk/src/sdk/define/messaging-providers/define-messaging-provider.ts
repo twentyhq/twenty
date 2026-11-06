@@ -51,5 +51,16 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
+  if (
+    isDefined(config.markThreadAsReadLogicFunction) &&
+    !isValidPostgresUuid(
+      config.markThreadAsReadLogicFunction.universalIdentifier,
+    )
+  ) {
+    errors.push(
+      `Messaging provider markThreadAsReadLogicFunction.universalIdentifier "${config.markThreadAsReadLogicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+    );
+  }
+
   return createValidationResult({ config, errors });
 };

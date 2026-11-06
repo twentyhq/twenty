@@ -384,9 +384,11 @@ describe('manifestValidate', () => {
       },
     );
 
-    it('should not flag a messaging provider referencing its connection provider and send logic function as duplicates', () => {
+    it('should not flag a messaging provider referencing its connection provider and logic functions as duplicates', () => {
       const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
       const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';
+      const markThreadAsReadLogicFunctionId =
+        '550e8400-e29b-41d4-a716-446655440051';
 
       const result = manifestValidate({
         ...validManifest,
@@ -396,6 +398,14 @@ describe('manifestValidate', () => {
             name: 'send-message',
             sourceHandlerPath: 'src/logic-functions/send-message.ts',
             builtHandlerPath: 'dist/send-message.js',
+            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+            handlerName: 'handler',
+          },
+          {
+            universalIdentifier: markThreadAsReadLogicFunctionId,
+            name: 'mark-thread-as-read',
+            sourceHandlerPath: 'src/logic-functions/mark-thread-as-read.ts',
+            builtHandlerPath: 'dist/mark-thread-as-read.js',
             builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
             handlerName: 'handler',
           },
@@ -424,6 +434,9 @@ describe('manifestValidate', () => {
             connectionProvider: { universalIdentifier: connectionProviderId },
             sendMessageLogicFunction: {
               universalIdentifier: sendMessageLogicFunctionId,
+            },
+            markThreadAsReadLogicFunction: {
+              universalIdentifier: markThreadAsReadLogicFunctionId,
             },
           },
         ],
