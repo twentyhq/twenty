@@ -511,8 +511,11 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     flatObjectMetadataMaps,
     workspaceId,
   }: {
-    field: FlatFieldMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    field: Pick<FlatFieldMetadata, 'id' | 'objectMetadataUniversalIdentifier'>;
+    flatObjectMetadataMaps: Pick<
+      FlatEntityMaps<FlatObjectMetadata>,
+      'byUniversalIdentifier'
+    >;
     workspaceId: string;
   }): FlatObjectMetadata {
     const flatObjectMetadata =
