@@ -16,7 +16,7 @@ import {
   ObjectOpenRecordIn,
   ObjectSharingReach,
 } from 'twenty-shared/types';
-import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { type DisableableObjectPermissionAction } from 'twenty-shared/application';
 
 import { ADD_OBJECT_METADATA_DISABLED_OBJECT_PERMISSION_ACTIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-object-metadata-disabled-object-permission-actions-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_SHARING_REACH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-object-metadata-sharing-reach-upgrade-command-name.constant';
@@ -195,7 +195,7 @@ export class ObjectMetadataEntity
   })
   @Column({ type: 'jsonb', nullable: true })
   disabledObjectPermissionActions: JsonbProperty<
-    ObjectPermissionAction[]
+    DisableableObjectPermissionAction[]
   > | null;
 
   @Column({ default: true })

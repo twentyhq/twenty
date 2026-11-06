@@ -13,7 +13,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 @Command({
   name: 'upgrade:2-57:backfill-can-create-permissions',
   description:
-    'Grant creating records wherever updating them is granted, since creating was part of updating until now',
+    'Grant or disable creating records wherever updating them is, since creating was part of updating until now',
 })
 export class BackfillCanCreatePermissionsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -62,9 +62,23 @@ export class BackfillCanCreatePermissionsCommand extends ProvisionedWorkspaceCom
            AND "canCreateRecords" = false`,
         [workspaceId],
       );
+      await manager.query(
+        `UPDATE core."objectMetadata"
+         SET "disabledObjectPermissionActions" = (
+           SELECT jsonb_agg(action ORDER BY action)
+           FROM jsonb_array_elements_text(
+             "disabledObjectPermissionActions" || '["canCreateObjectRecords"]'::jsonb
+           ) AS action
+         )
+         WHERE "workspaceId" = $1
+           AND "disabledObjectPermissionActions" ? 'canUpdateObjectRecords'
+           AND NOT "disabledObjectPermissionActions" ? 'canCreateObjectRecords'`,
+        [workspaceId],
+      );
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
       'flatRoleMaps',
       'flatObjectPermissionMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
