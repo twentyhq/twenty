@@ -29,10 +29,22 @@ export const SettingsMcpServerEditForm = ({
     defaultValues: getMcpServerFormValues(mcpServer),
   });
 
-  const handleSave = async (formValues: McpServerFormValues) => {
+  const handleSave = async ({
+    label,
+    url,
+    connectionProviderId,
+  }: McpServerFormValues) => {
+    const savedFormValues = getMcpServerFormValues(mcpServer);
+
     const updatedMcpServer = await updateMcpServer({
       mcpServerId: mcpServer.id,
-      formValues,
+      update: {
+        ...(label !== savedFormValues.label && { label }),
+        ...(url !== savedFormValues.url && { url }),
+        ...(connectionProviderId !== savedFormValues.connectionProviderId && {
+          connectionProviderId,
+        }),
+      },
     });
 
     if (isDefined(updatedMcpServer)) {

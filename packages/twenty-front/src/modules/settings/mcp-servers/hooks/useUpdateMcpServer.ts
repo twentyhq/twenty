@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -14,27 +15,30 @@ export const useUpdateMcpServer = () => {
 
   const updateMcpServer = async ({
     mcpServerId,
-    formValues: { label, url, connectionProviderId },
+    update,
   }: {
     mcpServerId: string;
-    formValues: McpServerFormValues;
+    update: Partial<
+      Pick<McpServerFormValues, 'label' | 'url' | 'connectionProviderId'>
+    >;
   }) => {
     try {
       const { data } = await updateMcpServerMutation({
-        variables: {
-          input: {
-            id: mcpServerId,
-            update: { label, url, connectionProviderId },
-          },
-        },
+        variables: { input: { id: mcpServerId, update } },
       });
+
+      if (!isDefined(data)) {
+        return;
+      }
+
+      const { label } = data.updateMcpServer;
 
       enqueueToast({
         status: 'success',
         children: t`MCP server ${label} updated successfully`,
       });
 
-      return data?.updateMcpServer;
+      return data.updateMcpServer;
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }
