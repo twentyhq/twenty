@@ -77,7 +77,9 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
     const workspaceVersionTable = `"${schemaName}"."workflowVersion"`;
     const workspaceRunTable = `"${schemaName}"."workflowRun"`;
 
-    const convertSteps = ({ value }: StoredJsonbRow<unknown>) => {
+    const convertSteps = ({
+      value,
+    }: Pick<StoredJsonbRow<unknown>, 'value'>) => {
       const converted = moveFindRecordsSortsToRecordSorts({
         steps: value,
         fieldsByObjectName,

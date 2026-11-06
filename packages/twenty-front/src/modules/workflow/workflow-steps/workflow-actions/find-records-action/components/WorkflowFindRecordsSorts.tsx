@@ -82,7 +82,13 @@ export const WorkflowFindRecordsSorts = ({
     onChange(recordSorts.filter((_sort, index) => index !== sortIndex));
   };
 
-  const handleFieldChange = (sortIndex: number, fieldMetadataId: string) => {
+  const handleFieldChange = ({
+    sortIndex,
+    fieldMetadataId,
+  }: {
+    sortIndex: number;
+    fieldMetadataId: string;
+  }) => {
     if (readonly) {
       return;
     }
@@ -94,10 +100,13 @@ export const WorkflowFindRecordsSorts = ({
     );
   };
 
-  const handleDirectionChange = (
-    sortIndex: number,
-    direction: ViewSortDirection,
-  ) => {
+  const handleDirectionChange = ({
+    sortIndex,
+    direction,
+  }: {
+    sortIndex: number;
+    direction: ViewSortDirection;
+  }) => {
     if (readonly) {
       return;
     }
@@ -120,7 +129,9 @@ export const WorkflowFindRecordsSorts = ({
               disabled={readonly}
               value={sort.fieldMetadataId}
               options={sortableFields}
-              onChange={(value) => handleFieldChange(index, value)}
+              onChange={(fieldMetadataId) =>
+                handleFieldChange({ sortIndex: index, fieldMetadataId })
+              }
               withSearchInput
             />
 
@@ -130,7 +141,9 @@ export const WorkflowFindRecordsSorts = ({
               disabled={readonly}
               value={sort.direction}
               options={directionOptions}
-              onChange={(value) => handleDirectionChange(index, value)}
+              onChange={(direction) =>
+                handleDirectionChange({ sortIndex: index, direction })
+              }
             />
 
             {!readonly && (
