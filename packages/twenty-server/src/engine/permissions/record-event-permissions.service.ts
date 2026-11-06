@@ -113,8 +113,7 @@ export class RecordEventPermissionsService {
 
     const { workspaceId, objectMetadata, events } = eventBatch;
 
-    // One lookup per object for the whole batch: operands only ever ask for
-    // records of the batch, so later calls are served from what was fetched
+    // Operands only ask for records of the batch, so later calls reuse what was fetched
     const recordSharesByRecordIdByObject = new Map<
       string,
       Map<string, Promise<RecordShareGrant[]>>
