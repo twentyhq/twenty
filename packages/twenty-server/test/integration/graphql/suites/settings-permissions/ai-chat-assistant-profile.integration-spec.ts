@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
-import gql from 'graphql-tag';
 import { currentUserAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/current-user-assistant-profile-query-factory.util';
+import { invalidWorkspaceAssistantProfileUpdateQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/invalid-workspace-assistant-profile-update-query-factory.util';
 import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
 import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
@@ -255,25 +255,12 @@ describe('workspace assistant profile settings', () => {
 
   it('rejects an invalid mixed update without committing either change', async () => {
     await expectRejectedOperation({
-      operation: {
-        query: gql`
-          mutation {
-            updateWorkspace(
-              data: {
-                displayName: "Rejected workspace edit"
-                aiChatAssistantProfile: { avatarColor: "unsupported" }
-              }
-            ) {
-              id
-            }
-          }
-        `,
-      },
+      operation: invalidWorkspaceAssistantProfileUpdateQueryFactory(),
       errorCode: ErrorCode.BAD_USER_INPUT,
     });
   });
 
-  it('preserves concurrent user and API key partial edits in only the authenticated workspace', async () => {
+  it('preserves concurrent partial edits in only the authenticated workspace', async () => {
     const workspaceRepository =
       getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
     const foreignWorkspace = await workspaceRepository.findOneByOrFail({
