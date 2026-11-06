@@ -58,7 +58,7 @@ export const EmailThreadMessageAttachments = ({
   return (
     <StyledAttachments>
       {files.map((file) => {
-        const isAvailable = file.isDeleted !== true;
+        const isAvailable = !file.isDeleted;
         const fileUrl = file.url;
 
         return (
