@@ -57,6 +57,7 @@ describe('CoreWorkflowVersionRunService', () => {
     const result = await service.runAsWorkspaceMember(RUN_INPUT);
 
     expect(result).toEqual({ workflowRunId: 'workflow-run-id' });
+    expect(coreWorkflowRunnerService.run).toHaveBeenCalledTimes(1);
     expect(coreWorkflowRunnerService.run).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
@@ -85,11 +86,17 @@ describe('CoreWorkflowVersionRunService', () => {
 
     expect(
       coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow,
     ).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_ID,
       coreWorkflowVersionIds: [CORE_WORKFLOW_VERSION_ID],
     });
+    expect(
+      coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow,
+    ).toHaveBeenCalledTimes(1);
     expect(
       coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow,
     ).toHaveBeenCalledWith({

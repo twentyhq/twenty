@@ -48,6 +48,7 @@ describe('run_workflow_version tool', () => {
       payload: { properties: { after: { name: 'Acme' } } },
     });
 
+    expect(runAsWorkspaceMember).toHaveBeenCalledTimes(1);
     expect(runAsWorkspaceMember).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,

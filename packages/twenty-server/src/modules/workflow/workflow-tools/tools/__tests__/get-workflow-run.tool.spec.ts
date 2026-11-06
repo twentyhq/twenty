@@ -92,6 +92,44 @@ describe('get_workflow_run tool', () => {
     });
   });
 
+  it('should return a preview of a step output too large to inline', async () => {
+    const largeOutput = {
+      records: Array.from({ length: 500 }, (_, index) => ({
+        id: `record-${index}`,
+        name: 'x'.repeat(100),
+      })),
+    };
+
+    const tool = createGetWorkflowRunTool(
+      buildDeps({
+        id: WORKFLOW_RUN_ID,
+        state: {
+          flow: {
+            steps: [{ id: 'step-1', name: 'Find', type: 'FIND_RECORDS' }],
+          },
+          stepInfos: {
+            'step-1': { status: StepStatus.SUCCESS, result: largeOutput },
+          },
+        },
+        stepLogs: {},
+      }),
+      buildContext(),
+    );
+
+    const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
+
+    if (!('workflowRun' in result) || result.workflowRun === undefined) {
+      throw new Error('Expected workflowRun to be present in the result');
+    }
+
+    const [step] = result.workflowRun.steps;
+
+    expect(step.isOutputTruncated).toBe(true);
+    expect(JSON.stringify(step.output).length).toBeLessThan(
+      JSON.stringify(largeOutput).length,
+    );
+  });
+
   it('should return error when workflow run is not found', async () => {
     const deps = buildDeps(null);
     const context = buildContext();
