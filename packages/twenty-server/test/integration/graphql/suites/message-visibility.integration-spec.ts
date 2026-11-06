@@ -15,6 +15,7 @@ const UNASSOCIATED_MESSAGE_ATTACHMENT_ID =
   '20202020-ca1e-4000-8000-000000000103';
 const UNASSOCIATED_MESSAGE_PARTICIPANT_ID =
   '20202020-ca1e-4000-8000-000000000102';
+const UNASSOCIATED_MESSAGE_REACTION_ID = '20202020-ca1e-4000-8000-000000000104';
 
 const MASKED_FIELDS = {
   subject: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
@@ -99,9 +100,32 @@ describe('message visibility restrictions (e2e)', () => {
     );
 
     expect(participantResponse.body.errors).toBeUndefined();
+
+    const reactionResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'messageReaction',
+        gqlFields: 'id',
+        data: {
+          id: UNASSOCIATED_MESSAGE_REACTION_ID,
+          messageId: UNASSOCIATED_MESSAGE_ID,
+          handle: 'message-visibility@example.com',
+          emoji: '👍',
+        },
+      }),
+    );
+
+    expect(reactionResponse.body.errors).toBeUndefined();
   });
 
   afterAll(async () => {
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'messageReaction',
+        gqlFields: 'id',
+        recordId: UNASSOCIATED_MESSAGE_REACTION_ID,
+      }),
+    );
+
     await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'attachment',
@@ -181,5 +205,39 @@ describe('message visibility restrictions (e2e)', () => {
     expect(
       response.body.data.messageParticipants.edges[0].node.message,
     ).toMatchObject(MASKED_FIELDS);
+  });
+
+  it('should mask the reaction emoji of a message without channel associations, directly and through the message', async () => {
+    const directResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'messageReaction',
+        objectMetadataPluralName: 'messageReactions',
+        gqlFields: 'id handle emoji',
+        filter: { id: { eq: UNASSOCIATED_MESSAGE_REACTION_ID } },
+      }),
+    );
+
+    expect(directResponse.body.errors).toBeUndefined();
+    expect(directResponse.body.data.messageReactions.edges[0].node).toEqual({
+      id: UNASSOCIATED_MESSAGE_REACTION_ID,
+      handle: 'message-visibility@example.com',
+      emoji: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+    });
+
+    const relationResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'message',
+        objectMetadataPluralName: 'messages',
+        gqlFields: 'id reactions { edges { node { emoji } } }',
+        filter: { id: { eq: UNASSOCIATED_MESSAGE_ID } },
+      }),
+    );
+
+    expect(relationResponse.body.errors).toBeUndefined();
+    expect(
+      relationResponse.body.data.messages.edges[0].node.reactions.edges,
+    ).toEqual([
+      { node: { emoji: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } },
+    ]);
   });
 });

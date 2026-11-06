@@ -12,7 +12,10 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
+import {
+  type AppMessageInput,
+  type AppMessageReactionInput,
+} from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type IngestAppMessagesOutput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.output';
 import {
   MessageChannelException,
@@ -30,6 +33,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { type MessageReactionWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-reaction.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
@@ -90,14 +94,18 @@ export class ApplicationMessageIngestionService {
         messageChannel.participantHandleFieldUniversalIdentifier,
     });
 
-    const messagesToSave = messages.map((message) =>
+    const canonicalMessages = isDefined(personHandleField)
+      ? messages.map((message) =>
+          withCanonicalParticipantHandlesOrThrow({
+            message,
+            personHandleField,
+          }),
+        )
+      : messages;
+
+    const messagesToSave = canonicalMessages.map((message) =>
       this.toMessageWithParticipants({
-        message: isDefined(personHandleField)
-          ? withCanonicalParticipantHandlesOrThrow({
-              message,
-              personHandleField,
-            })
-          : message,
+        message,
         applicationId,
         messageChannel,
       }),
@@ -106,19 +114,31 @@ export class ApplicationMessageIngestionService {
     // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
-      async () =>
-        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
-          messagesToSave: await this.withMessageFolderIdsOrThrow({
+      async () => {
+        const saved =
+          await this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
+            messagesToSave: await this.withMessageFolderIdsOrThrow({
+              workspaceId,
+              messageChannelId,
+              messages: messagesToSave,
+            }),
+            // the save path only reads inert settings and the id off the channel
+            messageChannel,
+            connectedAccount,
             workspaceId,
-            messageChannelId,
-            messages: messagesToSave,
-          }),
-          // the save path only reads inert settings and the id off the channel
-          messageChannel,
-          connectedAccount,
-          workspaceId,
-          personHandleField: personHandleField ?? undefined,
-        }),
+            personHandleField: personHandleField ?? undefined,
+          });
+
+        if (isDefined(saved)) {
+          await this.applyMessageUpdates({
+            workspaceId,
+            messages: canonicalMessages,
+            messageIdByExternalId: saved.messageExternalIdsAndIdsMap,
+          });
+        }
+
+        return saved;
+      },
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       APP_INGESTION_LOCK_OPTIONS,
     );
@@ -134,19 +154,6 @@ export class ApplicationMessageIngestionService {
       messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
-
-    await this.advanceMessageDeliveryStatuses({
-      workspaceId,
-      deliveryStatusByMessageId: new Map(
-        messages.flatMap(({ externalId, deliveryStatus }) => {
-          const messageId = messageExternalIdsAndIdsMap.get(externalId);
-
-          return isDefined(messageId) && isDefined(deliveryStatus)
-            ? [[messageId, deliveryStatus] as const]
-            : [];
-        }),
-      ),
-    });
 
     const messageIdsWithAttachments = await this.findMessageIdsWithAttachments({
       workspaceId,
@@ -176,6 +183,90 @@ export class ApplicationMessageIngestionService {
         };
       }),
     };
+  }
+
+  // status and reactions change after a message is sent, so unlike the rest they apply to messages already stored
+  private async applyMessageUpdates({
+    workspaceId,
+    messages,
+    messageIdByExternalId,
+  }: {
+    workspaceId: string;
+    messages: AppMessageInput[];
+    messageIdByExternalId: Map<string, string>;
+  }): Promise<void> {
+    const deliveryStatusByMessageId = new Map<string, MessageDeliveryStatus>();
+    const reactionsByMessageId = new Map<string, AppMessageReactionInput[]>();
+
+    for (const { externalId, deliveryStatus, reactions } of messages) {
+      const messageId = messageIdByExternalId.get(externalId);
+
+      if (!isDefined(messageId)) {
+        continue;
+      }
+
+      if (isDefined(deliveryStatus)) {
+        deliveryStatusByMessageId.set(messageId, deliveryStatus);
+      }
+
+      if (isDefined(reactions)) {
+        reactionsByMessageId.set(messageId, reactions);
+      }
+    }
+
+    await this.advanceMessageDeliveryStatuses({
+      workspaceId,
+      deliveryStatusByMessageId,
+    });
+    await this.replaceMessageReactions({ workspaceId, reactionsByMessageId });
+  }
+
+  private async replaceMessageReactions({
+    workspaceId,
+    reactionsByMessageId,
+  }: {
+    workspaceId: string;
+    reactionsByMessageId: Map<string, AppMessageReactionInput[]>;
+  }): Promise<void> {
+    if (reactionsByMessageId.size === 0) {
+      return;
+    }
+
+    const reactionsToInsert = [...reactionsByMessageId].flatMap(
+      ([messageId, reactions]) =>
+        [
+          ...new Map(
+            reactions.map((reaction) => [
+              `${reaction.handle}:${reaction.emoji}`,
+              reaction,
+            ]),
+          ).values(),
+        ].map(({ handle, displayName, emoji }) => ({
+          messageId,
+          handle,
+          displayName: displayName ?? null,
+          emoji,
+        })),
+    );
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageReactionRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageReactionWorkspaceEntity>(
+            'messageReaction',
+          );
+
+        await messageReactionRepository.delete({
+          messageId: In([...reactionsByMessageId.keys()]),
+        });
+
+        if (reactionsToInsert.length > 0) {
+          await messageReactionRepository.insert(reactionsToInsert);
+        }
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   // a late redelivery of an older webhook must not move a read message back to sent

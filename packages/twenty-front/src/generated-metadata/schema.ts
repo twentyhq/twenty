@@ -504,6 +504,7 @@ export type AppMessageInput = {
   externalId: Scalars['String']['input'];
   folderExternalIds?: InputMaybe<Array<Scalars['String']['input']>>;
   participants: Array<AppMessageParticipantInput>;
+  reactions?: InputMaybe<Array<AppMessageReactionInput>>;
   receivedAt: Scalars['DateTime']['input'];
   subject?: InputMaybe<Scalars['String']['input']>;
   text: Scalars['String']['input'];
@@ -516,6 +517,12 @@ export type AppMessageParticipantInput = {
   personId?: InputMaybe<Scalars['UUID']['input']>;
   role: MessageParticipantRole;
   workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type AppMessageReactionInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  emoji: Scalars['String']['input'];
+  handle: Scalars['String']['input'];
 };
 
 export type Application = {

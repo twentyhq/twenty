@@ -19,6 +19,7 @@ export const STANDARD_OBJECT_ICONS = {
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
   messageParticipant: 'IconUserCircle',
+  messageReaction: 'IconMoodSmile',
   messageThread: 'IconMessage',
   messageThreadTarget: 'IconMessage',
   messageThreadSubscriber: 'IconPerson',

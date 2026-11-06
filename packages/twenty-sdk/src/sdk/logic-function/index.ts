@@ -75,6 +75,7 @@ export type {
   IngestMessage,
   IngestMessageAttachment,
   IngestMessageParticipant,
+  IngestMessageReaction,
 } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 export { listMessageFolders } from '@/sdk/logic-function/messaging/list-message-folders';

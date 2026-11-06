@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { ChatThreadMessageMeta } from '@/activities/emails/components/ChatThreadMessageMeta';
+import { ChatThreadMessageReactions } from '@/activities/emails/components/ChatThreadMessageReactions';
 import { StyledChatMessageBubble } from '@/activities/emails/components/StyledChatMessageBubble';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
@@ -93,6 +94,7 @@ export const ChatThreadMessageGroup = ({
             {files.map((file) => (
               <ChatThreadMessageAttachment key={file.fileId} file={file} />
             ))}
+            <ChatThreadMessageReactions message={message} />
           </Fragment>
         );
       })}

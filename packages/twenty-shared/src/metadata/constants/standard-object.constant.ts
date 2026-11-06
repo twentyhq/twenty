@@ -628,6 +628,15 @@ export const STANDARD_OBJECTS = {
         }),
     },
   },
+  messageReaction: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageReaction,
+    fields: STANDARD_OBJECT_FIELDS.messageReaction,
+    indexes: {
+      messageHandleEmojiUniqueIndex: {
+        universalIdentifier: 'e403d9ad-f360-4276-ac7d-38174c1e1d2d',
+      },
+    },
+  },
   messageParticipant: {
     universalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,

@@ -569,4 +569,34 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  reactions: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'reactions',
+      label: i18nLabel(
+        msg({ message: `Reactions`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Emoji reactions to the message`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMoodSmile',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'messageReaction',
+      targetFieldName: 'message',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

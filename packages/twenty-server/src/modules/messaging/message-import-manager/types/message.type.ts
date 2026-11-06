@@ -17,6 +17,7 @@ export type Message = Omit<
   | 'messageCampaignId'
   | 'attachments'
   | 'deliveryStatus'
+  | 'reactions'
 > & {
   attachments: {
     filename: string;
