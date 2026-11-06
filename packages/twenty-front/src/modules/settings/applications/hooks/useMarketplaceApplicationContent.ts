@@ -13,7 +13,7 @@ export const useMarketplaceApplicationContent = (
 ) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const { data, loading } = useQuery(FindMarketplaceAppContentDocument, {
+  const { data, loading, error } = useQuery(FindMarketplaceAppContentDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
     skip: !isNonEmptyString(universalIdentifier),
   });
@@ -45,5 +45,6 @@ export const useMarketplaceApplicationContent = (
     installedApplicationId: installed.application?.id,
     content,
     isLoading: loading || installed.isLoading,
+    error: error ?? installed.error,
   };
 };

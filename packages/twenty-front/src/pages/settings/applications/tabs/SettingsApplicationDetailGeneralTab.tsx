@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
@@ -74,7 +75,7 @@ export const SettingsApplicationDetailGeneralTab = ({
     PermissionFlagType.APPLICATIONS,
   );
 
-  const { content } = useInstalledApplicationContent({
+  const { content, error: contentError } = useInstalledApplicationContent({
     applicationId: application.id,
   });
 
@@ -158,6 +159,7 @@ export const SettingsApplicationDetailGeneralTab = ({
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section.Root>
+      <ToastOnQueryErrorEffect error={contentError} />
       {isDefined(content) && (
         <SettingsApplicationContentSummarySection
           applicationName={displayName}

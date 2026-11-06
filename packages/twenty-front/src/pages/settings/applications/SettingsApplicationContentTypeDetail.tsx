@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Navigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { SettingsApplicationContentItemsTable } from '@/settings/applications/components/SettingsApplicationContentItemsTable';
 import { SettingsApplicationContentPageLayout } from '@/settings/applications/components/SettingsApplicationContentPageLayout';
 import { SettingsApplicationContentTypeIcon } from '@/settings/applications/components/SettingsApplicationContentTypeIcon';
@@ -15,6 +16,7 @@ export const SettingsApplicationContentTypeDetail = () => {
     contentType,
     name,
     content,
+    error,
     applicationPath,
     contentPath,
     location,
@@ -37,8 +39,9 @@ export const SettingsApplicationContentTypeDetail = () => {
       contentTypeLabel={contentTypeLabel}
       title={contentTypeLabel}
       icon={<SettingsApplicationContentTypeIcon contentType={contentType} />}
-      isLoading={!isDefined(content)}
+      isLoading={!isDefined(content) && !isDefined(error)}
     >
+      <ToastOnQueryErrorEffect error={error} />
       {isDefined(content) && (
         <SettingsApplicationContentItemsTable
           contentType={contentType}

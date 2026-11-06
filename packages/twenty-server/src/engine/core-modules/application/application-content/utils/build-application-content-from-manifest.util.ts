@@ -8,6 +8,7 @@ import { buildTranslationContentItems } from 'src/engine/core-modules/applicatio
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
 import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
 import { findByUniversalIdentifier } from 'src/engine/core-modules/application/application-content/utils/find-by-universal-identifier.util';
+import { mapByUniversalIdentifier } from 'src/engine/core-modules/application/application-content/utils/map-by-universal-identifier.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 
 export const buildApplicationContentFromManifest = (
@@ -97,33 +98,30 @@ export const buildApplicationContentFromManifest = (
       frontComponentUniversalIdentifier,
   });
 
-  const viewNameByUniversalIdentifier = new Map(
-    views.map((view) => [view.universalIdentifier, view.name]),
-  );
-  const viewObjectByUniversalIdentifier = new Map(
-    views.map((view) => [
-      view.universalIdentifier,
-      view.objectUniversalIdentifier,
-    ]),
-  );
-  const pageLayoutNameByUniversalIdentifier = new Map(
-    pageLayouts.map((pageLayout) => [
-      pageLayout.universalIdentifier,
-      pageLayout.name,
-    ]),
-  );
-  const navigationMenuItemNameByUniversalIdentifier = new Map(
-    navigationMenuItems.map((navigationMenuItem) => [
-      navigationMenuItem.universalIdentifier,
-      navigationMenuItem.name,
-    ]),
-  );
-  const objectLabelByUniversalIdentifier = new Map(
-    objects.map((object) => [object.universalIdentifier, object.labelPlural]),
-  );
-  const fieldLabelByUniversalIdentifier = new Map(
-    fields.map((field) => [field.universalIdentifier, field.label]),
-  );
+  const viewNameByUniversalIdentifier = mapByUniversalIdentifier({
+    items: views,
+    getValue: (view) => view.name,
+  });
+  const viewObjectByUniversalIdentifier = mapByUniversalIdentifier({
+    items: views,
+    getValue: (view) => view.objectUniversalIdentifier,
+  });
+  const pageLayoutNameByUniversalIdentifier = mapByUniversalIdentifier({
+    items: pageLayouts,
+    getValue: (pageLayout) => pageLayout.name,
+  });
+  const navigationMenuItemNameByUniversalIdentifier = mapByUniversalIdentifier({
+    items: navigationMenuItems,
+    getValue: (navigationMenuItem) => navigationMenuItem.name,
+  });
+  const objectLabelByUniversalIdentifier = mapByUniversalIdentifier({
+    items: objects,
+    getValue: (object) => object.labelPlural,
+  });
+  const fieldLabelByUniversalIdentifier = mapByUniversalIdentifier({
+    items: fields,
+    getValue: (field) => field.label,
+  });
 
   const roles = manifest.roles ?? [];
   const roleCountByPermissionFlag = countByKey({

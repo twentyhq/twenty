@@ -12,7 +12,7 @@ export const useInstalledApplicationContent = ({
   universalIdentifier?: string;
   shouldSkip?: boolean;
 }) => {
-  const { data, loading } = useQuery(FindOneApplicationContentDocument, {
+  const { data, loading, error } = useQuery(FindOneApplicationContentDocument, {
     variables: { id: applicationId, universalIdentifier },
     skip:
       shouldSkip ||
@@ -24,5 +24,6 @@ export const useInstalledApplicationContent = ({
     application: data?.findOneApplication,
     content: data?.findOneApplication?.content,
     isLoading: loading,
+    error,
   };
 };

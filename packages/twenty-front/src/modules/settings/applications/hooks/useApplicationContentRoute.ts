@@ -60,6 +60,7 @@ export const useApplicationContentRoute = () => {
     installedApplicationId: installed.application?.id,
     content: installed.content,
     isLoading: installed.isLoading,
+    error: installed.error,
     contentType,
     location,
     applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
