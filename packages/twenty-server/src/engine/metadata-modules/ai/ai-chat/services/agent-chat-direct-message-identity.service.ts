@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PrivateRecordWriteService } from 'src/engine/permissions/private-record/services/private-record-write.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
@@ -31,7 +31,7 @@ export class AgentChatDirectMessageIdentityService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly privateRecordWriteService: PrivateRecordWriteService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
   ) {}
 
   async getOrCreate({
@@ -93,7 +93,7 @@ export class AgentChatDirectMessageIdentityService {
                 );
 
               // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
-              await this.privateRecordWriteService.setPrivate({
+              await this.recordSharingWriteService.setRecordsPrivate({
                 workspaceId,
                 flatObjectMetadata: threadObjectMetadata,
                 recordIds: identifiers.map(({ id }) => id),

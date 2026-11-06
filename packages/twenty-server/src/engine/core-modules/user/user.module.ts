@@ -17,7 +17,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { RecordShareOwnershipTransferModule } from 'src/engine/permissions/record-share/record-share-ownership-transfer.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
@@ -36,7 +36,7 @@ import { UserService } from './services/user.service';
     UserWorkspaceModule,
     UserRoleModule,
     ConnectedAccountMetadataModule,
-    RecordShareOwnershipTransferModule,
+    RecordShareModule,
     AgentHistoryModule,
     PermissionsModule,
     EmailVerificationModule,
