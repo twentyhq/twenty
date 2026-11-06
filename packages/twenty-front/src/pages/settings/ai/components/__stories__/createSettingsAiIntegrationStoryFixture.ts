@@ -44,7 +44,8 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
   let hasLoadedInitialUser = false;
-  let initialAssistantProfile = mockCurrentWorkspace.aiChatAssistantProfile;
+  let initialAssistantProfile: CurrentWorkspace['aiChatAssistantProfile'] =
+    mockCurrentWorkspace.aiChatAssistantProfile;
   let workspace: CurrentWorkspace = {
     ...mockCurrentWorkspace,
     aiAdditionalInstructions: null,
