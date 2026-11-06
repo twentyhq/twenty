@@ -8,7 +8,6 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
-import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
@@ -61,7 +60,9 @@ export const SettingsGeneral = () => {
       ? [
           { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
           ...privacyTabs,
-          { id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory },
+          ...(isLogConsoleAllowed
+            ? []
+            : [{ id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory }]),
         ]
       : []),
   ];
@@ -78,14 +79,6 @@ export const SettingsGeneral = () => {
 
     if (activeTabId === GENERAL_TAB_PRIVACY) {
       return <SettingsPrivacy />;
-    }
-
-    if (activeTabId === GENERAL_TAB_LOGS) {
-      return (
-        <Section.Root>
-          <SettingsOpenLogConsoleCard />
-        </Section.Root>
-      );
     }
 
     return (
@@ -131,7 +124,7 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      {activeTabId === GENERAL_TAB_LOGS && !isLogConsoleAllowed ? (
+      {activeTabId === GENERAL_TAB_LOGS ? (
         <SettingsLogs />
       ) : (
         <SettingsPageContainer>

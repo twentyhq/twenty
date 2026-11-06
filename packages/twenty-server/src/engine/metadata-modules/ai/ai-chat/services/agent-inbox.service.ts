@@ -234,7 +234,7 @@ export class AgentInboxService {
       await Promise.all(
         findNewWorkspaceMemberIds(existingThread, workspaceMemberIds).map(
           (workspaceMemberId) =>
-            this.sharingService.getAuthContext({
+            this.sharingService.getAuthContextOrThrow({
               workspaceId,
               workspaceMemberId,
             }),
