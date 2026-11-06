@@ -43,10 +43,13 @@ const findLeafDirection = (value: unknown): string | undefined => {
     : undefined;
 };
 
-const findSortedField = (
-  fieldName: string,
-  fields: SortableField[],
-): SortableField | undefined =>
+const findSortedField = ({
+  fieldName,
+  fields,
+}: {
+  fieldName: string;
+  fields: SortableField[];
+}): SortableField | undefined =>
   fields.find((field) => field.name === fieldName) ??
   fields.find(
     (field) =>
@@ -81,7 +84,7 @@ const toRecordSorts = ({
     const direction = findLeafDirection(value);
     const field =
       entries.length === 1 && isString(fieldName)
-        ? findSortedField(fieldName, fields)
+        ? findSortedField({ fieldName, fields })
         : undefined;
 
     if (
@@ -98,7 +101,15 @@ const toRecordSorts = ({
       inexactlyConvertedSorts.push({ stepId, orderByEntry });
     }
 
-    if (recordSorts[recordSorts.length - 1]?.fieldMetadataId === field.id) {
+    const recordSortDirection = direction.startsWith('Desc') ? 'DESC' : 'ASC';
+    const previousRecordSort = recordSorts[recordSorts.length - 1];
+
+    if (previousRecordSort?.fieldMetadataId === field.id) {
+      // one record sort orders every entry it spreads over in its own direction
+      if (previousRecordSort.direction !== recordSortDirection) {
+        inexactlyConvertedSorts.push({ stepId, orderByEntry });
+      }
+
       continue;
     }
 
@@ -111,7 +122,7 @@ const toRecordSorts = ({
       // deterministic so the core and workspace copies of a version stay identical
       id: v5(`${stepId}:${recordSorts.length}`, RECORD_SORT_ID_NAMESPACE),
       fieldMetadataId: field.id,
-      direction: direction.startsWith('Desc') ? 'DESC' : 'ASC',
+      direction: recordSortDirection,
       ...(isDefined(subFieldName) ? { subFieldName } : {}),
     });
   }

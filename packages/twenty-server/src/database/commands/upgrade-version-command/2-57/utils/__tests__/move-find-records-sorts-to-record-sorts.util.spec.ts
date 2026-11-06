@@ -102,6 +102,8 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
       gqlOperationOrderBy: [
         { status: 'AscNullsFirst' },
         { companyId: 'DescNullsLast' },
+        { name: { firstName: 'AscNullsLast' } },
+        { name: { lastName: 'DescNullsLast' } },
         { unknownField: 'AscNullsLast' },
       ],
     });
@@ -112,10 +114,19 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         fieldMetadataId: COMPANY.id,
         direction: 'DESC',
       }),
+      expect.objectContaining({
+        fieldMetadataId: NAME.id,
+        direction: 'ASC',
+        subFieldName: 'firstName',
+      }),
     ]);
     expect(inexactlyConvertedSorts).toEqual([
       { stepId: 'step-id', orderByEntry: { status: 'AscNullsFirst' } },
       { stepId: 'step-id', orderByEntry: { companyId: 'DescNullsLast' } },
+      {
+        stepId: 'step-id',
+        orderByEntry: { name: { lastName: 'DescNullsLast' } },
+      },
       { stepId: 'step-id', orderByEntry: { unknownField: 'AscNullsLast' } },
     ]);
   });

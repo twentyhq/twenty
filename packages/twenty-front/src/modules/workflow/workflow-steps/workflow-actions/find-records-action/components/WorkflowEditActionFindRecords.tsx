@@ -84,7 +84,8 @@ export const WorkflowEditActionFindRecords = ({
             (recordSort) => ({ ...recordSort, id: recordSort.id ?? v4() }),
           ) as RecordSort[],
         }
-      : undefined,
+      : // a sort stored in another shape is kept, so saving is refused rather than dropping it
+        (action.settings.input.orderBy as FindRecordsActionOrderBy | undefined),
   }));
 
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
