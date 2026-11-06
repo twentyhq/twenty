@@ -11,7 +11,7 @@ import {
 import { waitForWorkflowCompletion } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type DropStoredWorkflowFilterTypesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954964505-drop-stored-workflow-filter-types.command';
+import { type DropStoredWorkflowFilterTypesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793966964505-drop-stored-workflow-filter-types.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 

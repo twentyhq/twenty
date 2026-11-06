@@ -28,7 +28,7 @@ const HAS_STEP_FILTERS = `::text LIKE '%"stepFilterGroupId"%'`;
 
 const RUN_REWRITE_BATCH_SIZE = 100;
 
-@RegisteredWorkspaceCommand('2.57.0', 1793954964505)
+@RegisteredWorkspaceCommand('2.57.0', 1793966964505)
 @Command({
   name: 'upgrade:2-57:drop-stored-workflow-filter-types',
   description:
