@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 
+import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -13,6 +15,9 @@ export const useHandleResendEmailVerificationToken = () => {
     ResendEmailVerificationTokenDocument,
   );
   const { origin } = useOrigin();
+  const affiliatePartnerName = useAtomStateValue(
+    affiliatePartnerNameState,
+  )?.partner;
 
   const handleResendEmailVerificationToken = useCallback(
     (email: string | null) => {
@@ -27,6 +32,7 @@ export const useHandleResendEmailVerificationToken = () => {
             variables: {
               email,
               origin,
+              affiliatePartnerName,
             },
           });
 
@@ -43,7 +49,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [enqueueToast, resendEmailVerificationToken, origin],
+    [enqueueToast, resendEmailVerificationToken, origin, affiliatePartnerName],
   );
 
   return { handleResendEmailVerificationToken, loading };

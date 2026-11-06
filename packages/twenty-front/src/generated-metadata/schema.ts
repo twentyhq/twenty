@@ -4736,6 +4736,7 @@ export type MutationReportAppConnectionAuthFailureArgs = {
 
 
 export type MutationResendEmailVerificationTokenArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   origin: Scalars['String']['input'];
 };
@@ -4919,6 +4920,7 @@ export type MutationSignOutArgs = {
 
 
 export type MutationSignUpArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
@@ -7220,9 +7222,9 @@ export type SignUp = {
 };
 
 export type SignUpInNewWorkspaceInput = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
