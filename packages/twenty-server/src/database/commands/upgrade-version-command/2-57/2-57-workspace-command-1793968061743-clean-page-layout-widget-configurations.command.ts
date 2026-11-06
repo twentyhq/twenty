@@ -9,7 +9,7 @@ import { cleanPageLayoutWidgetConfiguration } from 'src/database/commands/upgrad
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.57.0', 1793951865102)
+@RegisteredWorkspaceCommand('2.57.0', 1793968061743)
 @Command({
   name: 'upgrade:2-57:clean-page-layout-widget-configurations',
   description:
