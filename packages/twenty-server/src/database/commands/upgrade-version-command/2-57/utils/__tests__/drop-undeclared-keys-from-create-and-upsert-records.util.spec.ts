@@ -1,4 +1,4 @@
-import { dropFieldsToUpdateFromCreateAndUpsertRecords } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-fields-to-update-from-create-and-upsert-records.util';
+import { dropUndeclaredKeysFromCreateAndUpsertRecords } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-undeclared-keys-from-create-and-upsert-records.util';
 
 const recordStep = ({
   type,
@@ -21,9 +21,9 @@ const recordStep = ({
   },
 });
 
-describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
+describe('dropUndeclaredKeysFromCreateAndUpsertRecords', () => {
   it('drops the empty fieldsToUpdate the builder gave upsert record steps', () => {
-    const result = dropFieldsToUpdateFromCreateAndUpsertRecords([
+    const result = dropUndeclaredKeysFromCreateAndUpsertRecords([
       recordStep({
         type: 'UPSERT_RECORD',
         input: {
@@ -35,7 +35,9 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
     ]);
 
     expect(result.hasChanged).toBe(true);
-    expect(result.droppedNonEmptyFieldsToUpdate).toEqual([]);
+    expect(result.droppedInputKeys).toEqual([
+      { stepId: 'UPSERT_RECORD-step', keys: ['fieldsToUpdate'] },
+    ]);
     expect(result.steps).toEqual([
       recordStep({
         type: 'UPSERT_RECORD',
@@ -44,21 +46,22 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
     ]);
   });
 
-  it('drops and reports a non-empty fieldsToUpdate, which runs never applied', () => {
-    const result = dropFieldsToUpdateFromCreateAndUpsertRecords([
+  it('drops and reports every undeclared key, which runs never applied', () => {
+    const result = dropUndeclaredKeysFromCreateAndUpsertRecords([
       recordStep({
         type: 'CREATE_RECORD',
         input: {
           objectName: 'company',
           objectRecord: { name: 'Acme', domainName: 'acme.com' },
           fieldsToUpdate: ['name'],
+          outputSchema: {},
         },
       }),
     ]);
 
     expect(result.hasChanged).toBe(true);
-    expect(result.droppedNonEmptyFieldsToUpdate).toEqual([
-      { stepId: 'CREATE_RECORD-step', fieldsToUpdate: ['name'] },
+    expect(result.droppedInputKeys).toEqual([
+      { stepId: 'CREATE_RECORD-step', keys: ['fieldsToUpdate', 'outputSchema'] },
     ]);
     expect(result.steps).toEqual([
       recordStep({
@@ -69,6 +72,20 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
         },
       }),
     ]);
+  });
+
+  it('leaves a create record step with only its declared keys untouched', () => {
+    const steps = [
+      recordStep({
+        type: 'CREATE_RECORD',
+        input: { objectName: 'company', objectRecord: { name: 'Acme' } },
+      }),
+    ];
+
+    const result = dropUndeclaredKeysFromCreateAndUpsertRecords(steps);
+
+    expect(result.hasChanged).toBe(false);
+    expect(result.steps).toBe(steps);
   });
 
   it('keeps fieldsToUpdate on update record steps', () => {
@@ -84,7 +101,7 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
       }),
     ];
 
-    const result = dropFieldsToUpdateFromCreateAndUpsertRecords(steps);
+    const result = dropUndeclaredKeysFromCreateAndUpsertRecords(steps);
 
     expect(result.hasChanged).toBe(false);
     expect(result.steps).toBe(steps);

@@ -114,9 +114,7 @@ describe('createUpdateWorkflowVersionStepTool', () => {
 
       expect(await output).toMatchObject({
         success: false,
-        error: expect.stringContaining(
-          'remove fieldsToUpdate: only UPDATE_RECORD selects the fields to write',
-        ),
+        error: expect.stringContaining('Unrecognized key: "fieldsToUpdate"'),
       });
       expect(
         coreWorkflowVersionMutationService.updateStep,

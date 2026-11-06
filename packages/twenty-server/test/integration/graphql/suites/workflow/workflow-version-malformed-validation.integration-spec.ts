@@ -209,7 +209,7 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toContain(
-      'remove fieldsToUpdate: only UPDATE_RECORD selects the fields to write',
+      'Unrecognized key: "fieldsToUpdate"',
     );
   });
 

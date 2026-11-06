@@ -8,7 +8,7 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type DropFieldsToUpdateFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-fields-to-update-from-create-and-upsert-records.command';
+import { type DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -31,8 +31,8 @@ const withInput = ({
   settings: { ...step.settings, input },
 });
 
-describe('2-57 workspace command - drop fieldsToUpdate from create and upsert records (integration)', () => {
-  let command: DropFieldsToUpdateFromCreateAndUpsertRecordsCommand;
+describe('2-57 workspace command - drop undeclared keys from create and upsert records (integration)', () => {
+  let command: DropUndeclaredKeysFromCreateAndUpsertRecordsCommand;
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
   let workspaceWorkflowId: string;
@@ -65,8 +65,8 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
 
   beforeAll(async () => {
     command =
-      getAppProviderByClassName<DropFieldsToUpdateFromCreateAndUpsertRecordsCommand>(
-        'DropFieldsToUpdateFromCreateAndUpsertRecordsCommand',
+      getAppProviderByClassName<DropUndeclaredKeysFromCreateAndUpsertRecordsCommand>(
+        'DropUndeclaredKeysFromCreateAndUpsertRecordsCommand',
       );
 
     ({ coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
@@ -116,6 +116,7 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
           objectName: 'company',
           objectRecord: { name: 'Acme', domainName: 'acme.com' },
           fieldsToUpdate: ['name'],
+          outputSchema: {},
         },
       }),
       withInput({
@@ -153,7 +154,7 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
     await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
   });
 
-  it('drops fieldsToUpdate from create and upsert record steps only, the same in core and the workspace', async () => {
+  it('drops undeclared keys from create and upsert record steps only, the same in core and the workspace', async () => {
     await runCommand();
 
     const [upsertRecordStep, createRecordStep, updateRecordStep] = legacySteps;

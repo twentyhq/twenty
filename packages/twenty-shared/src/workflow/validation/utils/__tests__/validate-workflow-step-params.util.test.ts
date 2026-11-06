@@ -128,40 +128,38 @@ describe('validateWorkflowStepParams', () => {
         steps: [recordStepWithInput({ type, input })],
       });
 
-    it('should refuse a non-empty fieldsToUpdate on create and upsert record steps', () => {
+    it('should refuse fieldsToUpdate on create and upsert record steps, empty or not', () => {
+      for (const fieldsToUpdate of [['name'], []]) {
+        for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+          expect(
+            recordStepIssues({
+              type,
+              input: {
+                objectName: 'company',
+                objectRecord: { name: 'Acme' },
+                fieldsToUpdate,
+              },
+            }),
+          ).toEqual([
+            expect.objectContaining({
+              code: 'INVALID_STEP_PARAMS',
+              message: expect.stringContaining(
+                'Step "Record step" configuration is invalid - settings.input: Unrecognized key: "fieldsToUpdate"',
+              ),
+            }),
+          ]);
+        }
+      }
+    });
+
+    it('should accept create and upsert record steps without fieldsToUpdate', () => {
       for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
         expect(
           recordStepIssues({
             type,
-            input: {
-              objectName: 'company',
-              objectRecord: { name: 'Acme' },
-              fieldsToUpdate: ['name'],
-            },
+            input: { objectName: 'company', objectRecord: { name: 'Acme' } },
           }),
-        ).toEqual([
-          expect.objectContaining({
-            code: 'INVALID_STEP_PARAMS',
-            message: expect.stringContaining(
-              'Step "Record step" configuration is invalid - settings.input.fieldsToUpdate: remove fieldsToUpdate',
-            ),
-          }),
-        ]);
-      }
-    });
-
-    it('should accept create and upsert record steps without fieldsToUpdate, or with the empty one builders stored', () => {
-      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
-        for (const input of [
-          { objectName: 'company', objectRecord: { name: 'Acme' } },
-          {
-            objectName: 'company',
-            objectRecord: { name: 'Acme' },
-            fieldsToUpdate: [],
-          },
-        ]) {
-          expect(recordStepIssues({ type, input })).toEqual([]);
-        }
+        ).toEqual([]);
       }
     });
 

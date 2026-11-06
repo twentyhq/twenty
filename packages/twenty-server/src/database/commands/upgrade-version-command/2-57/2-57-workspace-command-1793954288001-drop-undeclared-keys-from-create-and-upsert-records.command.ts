@@ -9,18 +9,18 @@ import {
   rewriteJsonbRowsWithCompareAndSet,
   type StoredJsonbRow,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
-import { dropFieldsToUpdateFromCreateAndUpsertRecords } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-fields-to-update-from-create-and-upsert-records.util';
+import { dropUndeclaredKeysFromCreateAndUpsertRecords } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-undeclared-keys-from-create-and-upsert-records.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.57.0', 1793954288001)
 @Command({
-  name: 'upgrade:2-57:drop-fields-to-update-from-create-and-upsert-records',
+  name: 'upgrade:2-57:drop-undeclared-keys-from-create-and-upsert-records',
   description:
-    'Remove fieldsToUpdate from create and upsert record steps, which write their whole objectRecord and now refuse it',
+    'Remove keys the create and upsert record step inputs do not declare, such as fieldsToUpdate, which those inputs now refuse',
 })
-export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends ProvisionedWorkspaceCommandRunner {
+export class DropUndeclaredKeysFromCreateAndUpsertRecordsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -35,7 +35,7 @@ export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends Provisi
   }: RunOnWorkspaceArgs): Promise<void> {
     if (!isDefined(dataSource)) {
       this.logger.warn(
-        `No data source for workspace ${workspaceId}, skipping fieldsToUpdate cleanup`,
+        `No data source for workspace ${workspaceId}, skipping create and upsert record step cleanup`,
       );
 
       return;
@@ -44,15 +44,12 @@ export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends Provisi
     const isDryRun = options.dryRun ?? false;
     const workspaceVersionTable = `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`;
 
-    const dropFieldsToUpdate = ({ value }: StoredJsonbRow<unknown>) => {
-      const result = dropFieldsToUpdateFromCreateAndUpsertRecords(value);
+    const dropUndeclaredKeys = ({ value }: StoredJsonbRow<unknown>) => {
+      const result = dropUndeclaredKeysFromCreateAndUpsertRecords(value);
 
-      for (const {
-        stepId,
-        fieldsToUpdate,
-      } of result.droppedNonEmptyFieldsToUpdate) {
+      for (const { stepId, keys } of result.droppedInputKeys) {
         this.logger.warn(
-          `Workspace ${workspaceId}: step ${String(stepId)} dropped fieldsToUpdate ${JSON.stringify(fieldsToUpdate)}, which never applied since the step writes its whole objectRecord`,
+          `Workspace ${workspaceId}: step ${String(stepId)} dropped input keys ${keys.join(', ')}, which never applied at run time`,
         );
       }
 
@@ -64,9 +61,9 @@ export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends Provisi
       isDryRun,
       tableName: 'core."workflowVersion"',
       columnName: 'steps',
-      whereClause: `"workspaceId" = $1 AND steps::text LIKE '%fieldsToUpdate%'`,
+      whereClause: `"workspaceId" = $1 AND (steps::text LIKE '%CREATE_RECORD%' OR steps::text LIKE '%UPSERT_RECORD%')`,
       whereParameters: [workspaceId],
-      mapRow: dropFieldsToUpdate,
+      mapRow: dropUndeclaredKeys,
     });
     const workspaceVersionCount = (await this.tableExists({
       dataSource,
@@ -77,9 +74,9 @@ export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends Provisi
           isDryRun,
           tableName: workspaceVersionTable,
           columnName: 'steps',
-          whereClause: `steps::text LIKE '%fieldsToUpdate%'`,
+          whereClause: `steps::text LIKE '%CREATE_RECORD%' OR steps::text LIKE '%UPSERT_RECORD%'`,
           whereParameters: [],
-          mapRow: dropFieldsToUpdate,
+          mapRow: dropUndeclaredKeys,
         })
       : 0;
 
@@ -94,7 +91,7 @@ export class DropFieldsToUpdateFromCreateAndUpsertRecordsCommand extends Provisi
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Dropped fieldsToUpdate from create and upsert record steps in ${coreVersionCount} core version(s) and ${workspaceVersionCount} workspace version(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Dropped undeclared keys from create and upsert record steps in ${coreVersionCount} core version(s) and ${workspaceVersionCount} workspace version(s) for workspace ${workspaceId}`,
     );
   }
 
