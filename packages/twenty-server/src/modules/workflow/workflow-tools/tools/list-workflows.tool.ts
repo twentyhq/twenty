@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
-import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   CoreWorkflowFilterFieldKey,
@@ -18,7 +17,7 @@ import {
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
-import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
+import { buildCoreWorkflowReadCaller } from 'src/modules/workflow/workflow-tools/utils/build-core-workflow-read-caller.util';
 
 const DEFAULT_LIST_WORKFLOWS_LIMIT = 50;
 
@@ -63,16 +62,12 @@ export class ListWorkflowsTool extends BaseTool<typeof listWorkflowsSchema> {
     input: parameters,
     context,
   }: ToolExecuteArgs<typeof listWorkflowsSchema>): Promise<ToolOutput> {
-    if (!canCallerReachEveryApplication(context)) {
-      return buildToolNotAvailableOutput('list_workflows');
-    }
-
     try {
       const { edges, pageInfo, totalCount } =
         await this.coreWorkflowListService.findManyByWorkspaceId({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
-          callerApplication: undefined,
+          ...buildCoreWorkflowReadCaller(context),
           first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
           after: parameters.after,
           orderBy: CoreWorkflowOrderByField.UPDATED_AT,

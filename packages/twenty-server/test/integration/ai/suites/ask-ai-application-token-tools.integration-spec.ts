@@ -180,7 +180,7 @@ describe('Ask AI tools for an installed application acting for a user', () => {
   );
 
   it(
-    'offers the workflow tools to the application, which refuse it on use',
+    'offers the workflow tools to the application, which scope or refuse it on use',
     async () => {
       const offeredToolContexts = mockAnsweringModel();
 

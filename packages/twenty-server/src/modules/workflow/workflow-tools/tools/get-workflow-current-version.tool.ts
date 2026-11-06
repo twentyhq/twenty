@@ -5,13 +5,12 @@ import { z } from 'zod';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
-import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
-import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
+import { buildCoreWorkflowReadCaller } from 'src/modules/workflow/workflow-tools/utils/build-core-workflow-read-caller.util';
 
 const getWorkflowCurrentVersionSchema = z.object({
   coreWorkflowId: z
@@ -48,10 +47,6 @@ export class GetWorkflowCurrentVersionTool extends BaseTool<
   }: ToolExecuteArgs<
     typeof getWorkflowCurrentVersionSchema
   >): Promise<ToolOutput> {
-    if (!canCallerReachEveryApplication(context)) {
-      return buildToolNotAvailableOutput('get_workflow_current_version');
-    }
-
     try {
       const { workspaceId } = context;
       const { coreWorkflowId } = parameters;
@@ -59,7 +54,7 @@ export class GetWorkflowCurrentVersionTool extends BaseTool<
       const coreWorkflow = await this.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
-        callerApplication: undefined,
+        ...buildCoreWorkflowReadCaller(context),
         coreWorkflowId,
       });
 
@@ -75,7 +70,7 @@ export class GetWorkflowCurrentVersionTool extends BaseTool<
         await this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,
-          callerApplication: undefined,
+          ...buildCoreWorkflowReadCaller(context),
           coreWorkflowId,
         });
 
@@ -103,7 +98,7 @@ export class GetWorkflowCurrentVersionTool extends BaseTool<
           {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
-            callerApplication: undefined,
+            ...buildCoreWorkflowReadCaller(context),
             coreWorkflowVersionId: currentVersion.id,
           },
         );

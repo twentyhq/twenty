@@ -479,6 +479,44 @@ describe('core workflow API with application credentials (integration)', () => {
     });
   });
 
+  it('should scope the workflow read tools to the application over MCP', async () => {
+    const coreWorkflowId = await createCoreWorkflowAsMember(
+      `Member workflow hidden from app tools ${crypto.randomUUID()}`,
+    );
+
+    coreWorkflowIdsToDelete.push(coreWorkflowId);
+
+    const listWorkflowIds = async (token: string) => {
+      const output = await executeToolThroughMcp<{
+        workflows: { coreWorkflowId: string }[];
+      }>({ toolName: 'list_workflows', toolArguments: {}, token });
+
+      expect(output.success).toBe(true);
+
+      return output.result?.workflows.map(
+        (workflow) => workflow.coreWorkflowId,
+      );
+    };
+
+    expect(await listWorkflowIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+      coreWorkflowId,
+    );
+    expect(
+      await listWorkflowIds(authorizedApplication.accessToken),
+    ).not.toContain(coreWorkflowId);
+
+    const currentVersionOutput = await executeToolThroughMcp({
+      toolName: 'get_workflow_current_version',
+      toolArguments: { coreWorkflowId },
+      token: authorizedApplication.accessToken,
+    });
+
+    expect(currentVersionOutput).toMatchObject({
+      success: false,
+      error: `Workflow ${coreWorkflowId} not found`,
+    });
+  });
+
   it('should not let the application read a workflow a member created', async () => {
     const coreWorkflowId = await createCoreWorkflowAsMember(
       `Member workflow hidden from app ${crypto.randomUUID()}`,
