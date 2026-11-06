@@ -39,7 +39,7 @@ export class SentMessagePersistenceService {
     });
 
     const attachmentFiles = await this.uploadAttachmentFiles(input);
-    const messageToSave = formatSentMessage(input, attachmentFiles);
+    const messageToSave = formatSentMessage({ input, attachmentFiles });
 
     const savedMessagesResult =
       await this.saveMessagesAndEnqueueContactCreationService
@@ -73,7 +73,9 @@ export class SentMessagePersistenceService {
   private async uploadAttachmentFiles({
     attachments,
     workspaceId,
-  }: PersistSentMessageInput): Promise<MessageAttachmentFile[]> {
+  }: Pick<PersistSentMessageInput, 'attachments' | 'workspaceId'>): Promise<
+    MessageAttachmentFile[]
+  > {
     if (!isNonEmptyArray(attachments)) {
       return [];
     }
@@ -102,13 +104,13 @@ export class SentMessagePersistenceService {
       }),
     );
 
-    return uploadResults.flatMap((uploadResult) => {
+    return uploadResults.flatMap((uploadResult, index) => {
       if (uploadResult.status === 'fulfilled') {
         return [uploadResult.value];
       }
 
       this.logger.warn(
-        `Failed to store sent message attachment: ${uploadResult.reason}`,
+        `Failed to store sent message attachment "${attachments[index].filename}" in workspace ${workspaceId}: ${uploadResult.reason}`,
       );
 
       return [];

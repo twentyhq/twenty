@@ -10,10 +10,13 @@ import {
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
 import { resolveOutboundThreadExternalId } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-thread-external-id.util';
 
-export const formatSentMessage = (
-  input: PersistSentMessageInput,
-  attachmentFiles: MessageAttachmentFile[] = [],
-): MessageWithParticipants => {
+export const formatSentMessage = ({
+  input,
+  attachmentFiles = [],
+}: {
+  input: PersistSentMessageInput;
+  attachmentFiles?: MessageAttachmentFile[];
+}): MessageWithParticipants => {
   const senderHandle = input.connectedAccount.handle ?? '';
 
   const participants: MessageParticipant[] = [
