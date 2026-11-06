@@ -103,11 +103,29 @@ export const WorkflowFieldsMultiSelect = ({
     };
   });
 
+  const fieldOptionValues = new Set(fieldOptions.map(({ value }) => value));
+
+  // The API and AI tools may store a relation by name; its option uses the join column
+  const selectedFields = isDefined(defaultFields)
+    ? [
+        ...new Set(
+          defaultFields.map((fieldReference) =>
+            fieldOptionValues.has(fieldReference)
+              ? fieldReference
+              : (recordKeysByFieldReference
+                  .get(fieldReference)
+                  ?.find((recordKey) => fieldOptionValues.has(recordKey)) ??
+                fieldReference),
+          ),
+        ),
+      ]
+    : defaultFields;
+
   return (
     <FormMultiSelectFieldInput
       testId="workflow-fields-multi-select"
       label={label}
-      defaultValue={defaultFields}
+      defaultValue={selectedFields}
       options={[...fieldOptions, ...missingFieldOptions]}
       onChange={handleFieldsChange}
       placeholder={placeholder}
