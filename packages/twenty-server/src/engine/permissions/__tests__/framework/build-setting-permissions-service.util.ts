@@ -31,7 +31,6 @@ export const FLAG = PermissionFlagType.WORKSPACE;
 
 const ROLE_IDS = [MAIN_ROLE_ID, LIMITING_ROLE_ID, APPLICATION_ROLE_ID];
 
-// A role left out of the settings exists and holds no flag
 export const buildSettingPermissionsService = (
   settingByRoleId: Record<string, RoleSetting>,
 ) => {

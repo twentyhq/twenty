@@ -105,7 +105,6 @@ export const findHeldRoles = <TRole>({
     : []),
 ];
 
-// Every shape an auth context can resolve to, plus the bare role that has no auth context
 export const buildReachablePrincipals = <TRole>({
   roles,
 }: {

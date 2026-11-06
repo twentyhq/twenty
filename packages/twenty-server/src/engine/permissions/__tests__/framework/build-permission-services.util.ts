@@ -10,7 +10,6 @@ import { PrincipalPermissionsService } from 'src/engine/permissions/principal-pe
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Real services over the two doors that do I/O: the workspace cache and the record permission reads
 export const buildPermissionServices = ({
   cacheValues,
   storedRecords = buildStoredRecords([]),
