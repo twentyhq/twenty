@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { pickSelectedFields } from 'src/__tests__/pick-selected-fields';
 import { buildPersonAggregates } from 'src/utils/person-last-contact-aggregation';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
@@ -19,24 +20,28 @@ describe('buildPersonAggregates', () => {
       query: vi.fn((query) => {
         if (query.messageParticipants?.edges.node.personId) {
           return Promise.resolve({
-            messageParticipants: buildPage([
-              {
-                personId: PERSON_ID,
-                message: {
-                  id: SENT_MESSAGE_ID,
-                  receivedAt: SENT_AT,
-                  isDraft: false,
+            messageParticipants: buildPage(
+              [
+                {
+                  personId: PERSON_ID,
+                  message: {
+                    id: SENT_MESSAGE_ID,
+                    receivedAt: SENT_AT,
+                    isDraft: false,
+                  },
                 },
-              },
-              {
-                personId: PERSON_ID,
-                message: {
-                  id: DRAFT_MESSAGE_ID,
-                  receivedAt: DRAFTED_AT,
-                  isDraft: true,
+                {
+                  personId: PERSON_ID,
+                  message: {
+                    id: DRAFT_MESSAGE_ID,
+                    receivedAt: DRAFTED_AT,
+                    isDraft: true,
+                  },
                 },
-              },
-            ]),
+              ].map((node) =>
+                pickSelectedFields(node, query.messageParticipants.edges.node),
+              ),
+            ),
           });
         }
 

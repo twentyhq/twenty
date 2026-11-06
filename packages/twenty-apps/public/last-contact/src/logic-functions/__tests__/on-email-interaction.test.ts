@@ -10,6 +10,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
+import { pickSelectedFields } from 'src/__tests__/pick-selected-fields';
+
 import onEmailInteraction from '../on-email-interaction';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
@@ -48,12 +50,22 @@ const setupQueryMock = (
   queryMock.mockImplementation((query) => {
     if (query.messageParticipants) {
       return Promise.resolve({
-        messageParticipants: buildPage(messageParticipants),
+        messageParticipants: buildPage(
+          messageParticipants.map((node) =>
+            pickSelectedFields(node, query.messageParticipants.edges.node),
+          ),
+        ),
       });
     }
 
     if (query.messages) {
-      return Promise.resolve({ messages: buildPage(messages) });
+      return Promise.resolve({
+        messages: buildPage(
+          messages.map((node) =>
+            pickSelectedFields(node, query.messages.edges.node),
+          ),
+        ),
+      });
     }
 
     if (query.people) {
