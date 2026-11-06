@@ -2,12 +2,12 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/replacement-currency-code.constant';
-import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/withdrawn-currency-code.constant';
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
-import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-record-filters.util';
-import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-step-filters.util';
-import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-56/utils/to-mapped-value.util';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-57/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-57/constants/withdrawn-currency-code.constant';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-57/types/mapped-value.type';
+import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-record-filters.util';
+import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-step-filters.util';
+import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-57/utils/to-mapped-value.util';
 
 const replaceWithdrawnCurrencyCodeInObjectRecord = ({
   objectRecord,

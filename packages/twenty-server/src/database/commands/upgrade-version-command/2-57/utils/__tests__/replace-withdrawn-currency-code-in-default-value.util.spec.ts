@@ -1,4 +1,4 @@
-import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-default-value.util';
+import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-default-value.util';
 
 describe('replaceWithdrawnCurrencyCodeInDefaultValue', () => {
   it('replaces a quoted withdrawn currency code', () => {

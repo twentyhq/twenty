@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-filter-value.util';
+import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-filter-value.util';
 
 export const replaceWithdrawnCurrencyCodeInStepFilters = ({
   stepFilters,

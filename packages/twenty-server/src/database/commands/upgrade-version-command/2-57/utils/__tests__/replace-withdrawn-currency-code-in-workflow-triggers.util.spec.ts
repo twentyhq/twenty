@@ -1,4 +1,4 @@
-import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
 
 const CURRENCY_FIELD_ID = '11111111-1111-4111-8111-111111111111';
 

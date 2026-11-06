@@ -1,8 +1,8 @@
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-56/types/mapped-value.type';
-import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-record-filters.util';
-import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-56/utils/to-mapped-value.util';
+import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-57/types/mapped-value.type';
+import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-record-filters.util';
+import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-57/utils/to-mapped-value.util';
 
 export const replaceWithdrawnCurrencyCodeInChartConfiguration = ({
   configuration,

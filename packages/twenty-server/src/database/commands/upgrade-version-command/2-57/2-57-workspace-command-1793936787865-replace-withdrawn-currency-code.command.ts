@@ -11,15 +11,15 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/replacement-currency-code.constant';
-import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/withdrawn-currency-code.constant';
-import { WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-56/constants/workflow-step-types-with-currency-code.constant';
-import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
-import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-default-value.util';
-import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-filter-value.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
-import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-57/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-57/constants/withdrawn-currency-code.constant';
+import { WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-57/constants/workflow-step-types-with-currency-code.constant';
+import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
+import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-default-value.util';
+import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-filter-value.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
 import {
   rewriteJsonbRowsWithCompareAndSet,
   type StoredJsonbRow,
@@ -42,9 +42,9 @@ type RewriteRowsArgs = Parameters<
   typeof rewriteJsonbRowsWithCompareAndSet<unknown>
 >[0];
 
-@RegisteredWorkspaceCommand('2.56.0', 1793874550273)
+@RegisteredWorkspaceCommand('2.57.0', 1793936787865)
 @Command({
-  name: 'upgrade:2-56:replace-withdrawn-currency-code',
+  name: 'upgrade:2-57:replace-withdrawn-currency-code',
   description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow steps and triggers`,
 })
 export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCommandRunner {

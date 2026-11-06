@@ -1,4 +1,4 @@
-import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-filter-value.util';
+import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-57/utils/replace-withdrawn-currency-code-in-filter-value.util';
 
 describe('replaceWithdrawnCurrencyCodeInFilterValue', () => {
   it.each([
