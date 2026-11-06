@@ -18,7 +18,7 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
   operationType: ObjectRecordsOperationType;
   objectPermissionAction: ObjectPermissionAction;
 }[] = [
-  { operationType: 'select', objectPermissionAction: 'canReadObjectRecords' },
+  { operationType: 'read', objectPermissionAction: 'canReadObjectRecords' },
   { operationType: 'update', objectPermissionAction: 'canUpdateObjectRecords' },
 ];
 

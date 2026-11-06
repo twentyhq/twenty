@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { ImapFlow } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
+
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
@@ -13,6 +16,10 @@ import {
   type CalDavProxy,
   startCalDavResponseRewritingProxy,
 } from 'test/integration/utils/start-caldav-response-rewriting-proxy.util';
+import {
+  type GreenmailServer,
+  startGreenmailContainer,
+} from 'test/integration/utils/start-greenmail-container.util';
 import {
   type RadicaleServer,
   startRadicaleContainer,
@@ -28,6 +35,9 @@ const CALENDAR_USER_ADDRESS_HREF =
 
 const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
+const unfoldICalendarLines = (content: string) =>
+  content.replace(/\r\n[ \t]/g, '');
+
 type CalendarEventWithParticipants = {
   calendarEventParticipants: {
     edges: { node: { handle: string; isOrganizer: boolean } }[];
@@ -36,9 +46,11 @@ type CalendarEventWithParticipants = {
 
 describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => {
   let radicale: RadicaleServer;
+  let greenmail: GreenmailServer;
   let proxy: CalDavProxy;
   let connectedAccountId: string;
   let serverCalendarUserAddress: string | undefined;
+  let isServerScheduling = false;
 
   const collectionUrl = () =>
     `http://${radicale.host}:${radicale.port}/${HANDLE}/${COLLECTION}/`;
@@ -60,7 +72,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       },
     });
 
-  const fetchStoredOrganizer = async (
+  const fetchStoredICalendar = async (
     stepResult: Record<string, unknown> | undefined,
   ) => {
     const response = await fetch(
@@ -70,9 +82,49 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       },
     );
 
-    const unfoldedICalendar = (await response.text()).replace(/\r\n[ \t]/g, '');
+    return unfoldICalendarLines(await response.text());
+  };
 
-    return /^ORGANIZER[^:]*:mailto:(.+)$/m.exec(unfoldedICalendar)?.[1]?.trim();
+  const readOrganizer = (unfoldedICalendar: string) =>
+    /^ORGANIZER[^:]*:mailto:(.+)$/m.exec(unfoldedICalendar)?.[1]?.trim();
+
+  const findAttendeeInvitationSources = async (
+    subject: string,
+  ): Promise<string[]> => {
+    const client = new ImapFlow({
+      host: greenmail.host,
+      port: greenmail.imapPort,
+      secure: false,
+      auth: { user: ATTENDEE, pass: ATTENDEE },
+      logger: false,
+    });
+
+    await client.connect();
+
+    try {
+      const { exists } = await client.mailboxOpen('INBOX');
+
+      if (exists === 0) {
+        return [];
+      }
+
+      const sources: string[] = [];
+
+      for await (const message of client.fetch('1:*', {
+        envelope: true,
+        source: true,
+      })) {
+        if (message.envelope?.subject === subject) {
+          sources.push(
+            unfoldICalendarLines(message.source?.toString('utf-8') ?? ''),
+          );
+        }
+      }
+
+      return sources;
+    } finally {
+      await client.logout();
+    }
   };
 
   beforeAll(async () => {
@@ -81,10 +133,10 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
-    radicale = await startRadicaleContainer({
-      username: HANDLE,
-      password: PASSWORD,
-    });
+    [radicale, greenmail] = await Promise.all([
+      startRadicaleContainer({ username: HANDLE, password: PASSWORD }),
+      startGreenmailContainer({ username: HANDLE, password: PASSWORD }),
+    ]);
 
     await fetch(collectionUrl(), {
       method: 'MKCOL',
@@ -112,6 +164,15 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
               `$1mailto:${serverCalendarUserAddress}$4`,
             )
           : body,
+      rewriteResponseHeaders: (headers) =>
+        isServerScheduling
+          ? {
+              ...headers,
+              dav: [headers.dav, 'calendar-auto-schedule']
+                .filter(isDefined)
+                .join(', '),
+            }
+          : headers,
     });
 
     const { data } = await saveImapSmtpCaldavAccount({
@@ -124,6 +185,13 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
             username: HANDLE,
             password: PASSWORD,
           },
+          SMTP: {
+            host: greenmail.host,
+            port: greenmail.smtpPort,
+            username: HANDLE.split('@')[0],
+            password: PASSWORD,
+            connectionSecurity: EmailConnectionSecurity.NONE,
+          },
         },
       },
       expectToFail: false,
@@ -134,6 +202,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
 
   afterEach(() => {
     serverCalendarUserAddress = undefined;
+    isServerScheduling = false;
   });
 
   afterAll(async () => {
@@ -150,6 +219,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
 
     await proxy?.stop().catch(() => undefined);
     await radicale?.stop().catch(() => undefined);
+    await greenmail?.stop().catch(() => undefined);
   });
 
   it('creates an event in the CalDAV collection with a title resolved from the trigger payload', async () => {
@@ -195,25 +265,43 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
     expect(await response.text()).toContain(`SUMMARY:${title}`);
   }, 300000);
 
-  it('makes the account handle the organizer when the server lists no mailto calendar user address', async () => {
-    const workflowRun = await runCreateCalendarEvent(
-      `CalDAV organizer fallback ${randomUUID()}`,
-    );
+  it('emails an iMIP invitation from the account handle when the server does not schedule', async () => {
+    serverCalendarUserAddress = `scheduling-${randomUUID()}@acme.test`;
+
+    const title = `CalDAV emailed invitation ${randomUUID()}`;
+    const workflowRun = await runCreateCalendarEvent(title);
 
     expect(workflowRun.stepStatus).toBe('SUCCESS');
-    expect(await fetchStoredOrganizer(workflowRun.stepResult)).toBe(HANDLE);
+
+    const storedICalendar = await fetchStoredICalendar(workflowRun.stepResult);
+
+    expect(readOrganizer(storedICalendar)).toBe(HANDLE);
+    expect(storedICalendar).not.toContain('METHOD:');
+
+    const [invitation, ...duplicates] =
+      await findAttendeeInvitationSources(title);
+
+    expect(duplicates).toEqual([]);
+    expect(invitation).toMatch(
+      /Content-Type: text\/calendar;[^\r\n]*method=REQUEST/i,
+    );
+    expect(invitation).toContain('METHOD:REQUEST');
+    expect(invitation).toContain(`UID:${workflowRun.stepResult?.iCalUid}`);
+    expect(readOrganizer(invitation)).toBe(HANDLE);
   }, 300000);
 
-  it('makes the server calendar user address the organizer so the server sends the invitations', async () => {
+  it('leaves the invitations to the server when it advertises calendar-auto-schedule', async () => {
     serverCalendarUserAddress = `scheduling-${randomUUID()}@acme.test`;
+    isServerScheduling = true;
 
     const title = `CalDAV scheduling organizer ${randomUUID()}`;
     const workflowRun = await runCreateCalendarEvent(title);
 
     expect(workflowRun.stepStatus).toBe('SUCCESS');
-    expect(await fetchStoredOrganizer(workflowRun.stepResult)).toBe(
-      serverCalendarUserAddress,
-    );
+    expect(
+      readOrganizer(await fetchStoredICalendar(workflowRun.stepResult)),
+    ).toBe(serverCalendarUserAddress);
+    expect(await findAttendeeInvitationSources(title)).toEqual([]);
 
     const [calendarEvent] =
       await findRecordNodesByFilter<CalendarEventWithParticipants>(
@@ -231,5 +319,17 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
       { handle: ATTENDEE, isOrganizer: false },
       { handle: serverCalendarUserAddress, isOrganizer: true },
     ]);
+  }, 300000);
+
+  it('still creates the event when the invitation email cannot be sent', async () => {
+    await greenmail.stop();
+
+    const title = `CalDAV unsent invitation ${randomUUID()}`;
+    const workflowRun = await runCreateCalendarEvent(title);
+
+    expect(workflowRun.stepStatus).toBe('SUCCESS');
+    expect(await fetchStoredICalendar(workflowRun.stepResult)).toContain(
+      `SUMMARY:${title}`,
+    );
   }, 300000);
 });

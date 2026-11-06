@@ -59,6 +59,18 @@ describe('getGettingStartedStackedSteps', () => {
       ],
     },
     {
+      description:
+        'stacks the steps after the selected one once every step is done',
+      steps: mockGettingStartedStepDefinitions,
+      completedStepActionKeys: mockGettingStartedStepActionKeys,
+      selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+      expected: [
+        GettingStartedStepActionKey.HANDOVER_DEALS,
+        GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+        GettingStartedStepActionKey.CONNECT_MAILBOX,
+      ],
+    },
+    {
       description: 'stacks fewer steps when there are fewer than four',
       steps: mockGettingStartedStepDefinitions.slice(0, 2),
       completedStepActionKeys: [],

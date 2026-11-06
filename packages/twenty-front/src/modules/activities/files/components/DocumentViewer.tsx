@@ -7,6 +7,7 @@ import {
   fetchCsvPreview,
 } from '@/activities/files/utils/fetchCsvPreview';
 import { getFileType } from '@/activities/files/utils/getFileType';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { styled } from '@linaria/react';
@@ -16,6 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const MS_OFFICE_EXTENSIONS = [
@@ -185,6 +187,9 @@ export const DocumentViewer = ({
 }: DocumentViewerProps) => {
   const theme = useTheme();
   const { t } = useLingui();
+  const hasDownloadPermission = useHasPermissionFlag(
+    PermissionFlagType.DOWNLOAD_FILE,
+  );
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | undefined>(
     undefined,
   );
@@ -283,12 +288,14 @@ export const DocumentViewer = ({
               This file cannot be previewed because it is hosted locally.
             </Trans>
           </StyledLightMessage>
-          <Button
-            startIcon={<IconDownload />}
-            onClick={() => downloadFile(documentUrl, documentName)}
-            size="sm"
-            variant="outline"
-          >{t`Download`}</Button>
+          {hasDownloadPermission && (
+            <Button
+              startIcon={<IconDownload />}
+              onClick={() => downloadFile(documentUrl, documentName)}
+              size="sm"
+              variant="outline"
+            >{t`Download`}</Button>
+          )}
         </StyledUnavailablePreviewContainer>
       </StyledDocumentViewerContainer>
     );

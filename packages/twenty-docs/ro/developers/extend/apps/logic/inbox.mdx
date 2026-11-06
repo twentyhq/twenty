@@ -90,7 +90,7 @@ await sendInboxMessage({
 * Amândoi citesc eticheta pe care cipul o arată, după cum face compozitorul: numele complet al membrului, sau adresa lor de e-mail atunci când numele este gol și identificatorul etichetei înregistrării, cum ar fi numele companiei. Parantezele devin paranteze şi rupturile de linie devin spaţii, astfel încât cipul se redă întotdeauna.
 * Au citit cu acelaşi acces ca şi restul apelului, astfel încât accesul trebuie să ajungă la membru sau la înregistrare. O referință de înregistrare face două solicitări, una pentru câmpul de etichetare al obiectului și una pentru înregistrare.
 * O mențiune doar de randare. Acesta nu adaugă membrul la conversație sau îi notifică, așa că listează pe toți cei care ar trebui să primească mesajul în `workspaceMemberIds`.
-* `INBOX_ASSISTANT_MENTION` este textul pe care îl scrie compozitorul atunci când un membru menționează asistentul (`@Ada`), așa că mesajele tale îl numesc în același mod.
+* `INBOX_ASSISTANT_MENTION` scrie referința canonică a asistentului din editor. Căsuța de primire o afișează ca `@Ada`; identitatea sa stabilă este separată de eticheta sa. Această referință singură nu solicită un răspuns al asistentului dintr-un mesaj al aplicației.
 
 ## Atașarea înregistrărilor la o conversație
 

@@ -38,7 +38,8 @@ export class CallRecordingService {
         getWorkspaceContext();
 
       if (
-        !(await this.recordPermissionsService.canRoleReadSomeRecords({
+        !(await this.recordPermissionsService.canRoleAccessSomeRecords({
+          operationType: 'read',
           principals: permissionsPrincipals,
           objectMetadataId: objectIdByNameSingular.callRecording,
         }))

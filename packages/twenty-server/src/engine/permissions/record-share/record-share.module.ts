@@ -1,35 +1,35 @@
 /* @license Enterprise */
 
-import { RecordSharingResolver } from 'src/engine/permissions/internal/record-share/resolvers/record-sharing.resolver';
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { Module } from '@nestjs/common';
 
-import { PrivateRecordModule } from 'src/engine/permissions/private-record/private-record.module';
-import { RecordSharingChangeModule } from 'src/engine/permissions/internal/record-share/record-sharing-change.module';
-import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { RecordSharePrincipalService } from 'src/engine/permissions/internal/record-share/services/record-share-principal.service';
+import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
+import { PrivateRecordModule } from 'src/engine/permissions/internal/private-record/private-record.module';
+import { RecordPermissionOrmModule } from 'src/engine/permissions/internal/record-permission-orm/record-permission-orm.module';
+import { RecordSharingResolver } from 'src/engine/permissions/internal/record-share/resolvers/record-sharing.resolver';
 import { RecordShareStorageModule } from 'src/engine/permissions/internal/record-share/record-share-storage.module';
-import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
+import { RecordSharingChangeModule } from 'src/engine/permissions/internal/record-share/record-sharing-change.module';
+import { RecordSharePrincipalService } from 'src/engine/permissions/internal/record-share/services/record-share-principal.service';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     WorkspaceCacheModule,
+    RecordPermissionOrmModule,
     RecordSharingChangeModule,
     RecordShareStorageModule,
     PrivateRecordModule,
     PermissionsModule,
+    UserWorkspaceSuccessorModule,
   ],
   providers: [
-    ShareWithService,
     RecordSharePrincipalService,
     RecordSharingWriteService,
+    RecordShareSystemWriteService,
     RecordSharingResolver,
   ],
-  exports: [
-    ShareWithService,
-    RecordSharePrincipalService,
-    RecordSharingWriteService,
-  ],
+  exports: [RecordSharingWriteService, RecordShareSystemWriteService],
 })
 export class RecordShareModule {}

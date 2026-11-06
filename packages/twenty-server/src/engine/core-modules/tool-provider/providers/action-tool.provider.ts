@@ -94,7 +94,7 @@ export class ActionToolProvider implements ToolProvider {
     const hasHttpPermission =
       await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.HTTP_REQUEST_TOOL,
+        permissionFlag: PermissionFlagType.HTTP_REQUEST_TOOL,
       });
 
     if (hasHttpPermission) {
@@ -111,7 +111,7 @@ export class ActionToolProvider implements ToolProvider {
     const hasEmailPermission =
       await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.SEND_EMAIL_TOOL,
+        permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
       });
 
     if (hasEmailPermission) {
@@ -146,7 +146,7 @@ export class ActionToolProvider implements ToolProvider {
     const hasCreateCalendarEventPermission =
       await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+        permissionFlag: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
       });
 
     if (hasCreateCalendarEventPermission) {
@@ -163,7 +163,7 @@ export class ActionToolProvider implements ToolProvider {
     const hasUploadFilePermission =
       await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.UPLOAD_FILE,
+        permissionFlag: PermissionFlagType.UPLOAD_FILE,
       });
 
     if (hasUploadFilePermission) {
@@ -234,7 +234,7 @@ export class ActionToolProvider implements ToolProvider {
       this.codeInterpreterService.isEnabled() &&
       (await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.CODE_INTERPRETER_TOOL,
+        permissionFlag: PermissionFlagType.CODE_INTERPRETER_TOOL,
       }));
 
     if (hasCodeInterpreterPermission) {

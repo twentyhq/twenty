@@ -17,7 +17,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
@@ -72,10 +72,9 @@ export const validateOperationIsPermittedOrThrow = ({
   const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
 
   switch (operationType) {
-    case 'select':
-    case 'delete':
-    case 'restore':
-    case 'soft-delete':
+    case 'read':
+    case 'destroy':
+    case 'softDelete':
       validateReadFieldPermissionOrThrow({
         restrictedFields,
         selectedColumns,
@@ -84,7 +83,7 @@ export const validateOperationIsPermittedOrThrow = ({
         flatFieldMetadataMaps,
       });
       break;
-    case 'insert':
+    case 'create':
       validateReadFieldPermissionOrThrow({
         restrictedFields,
         selectedColumns,

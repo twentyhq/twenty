@@ -649,7 +649,7 @@ describe('View tools', () => {
           settingPermissionsService.hasPermissionFlag,
         ).toHaveBeenCalledWith({
           authContext: expect.objectContaining({ type: 'user' }),
-          setting: PermissionFlagType.VIEWS,
+          permissionFlag: PermissionFlagType.VIEWS,
         });
         expect(viewService.createOne).not.toHaveBeenCalled();
       });

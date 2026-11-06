@@ -103,6 +103,18 @@ export class WorkspaceOrmManager {
     return withWorkspaceContext(context, fn);
   }
 
+  async executeTransactionInWorkspaceContext<TResult>(
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<TResult>,
+    authContext?: WorkspaceAuthContext,
+    options?: ExecuteInWorkspaceContextOptions,
+  ): Promise<TResult> {
+    return this.executeInWorkspaceContext(
+      () => this.runInWorkspaceTransaction(work),
+      authContext,
+      options,
+    );
+  }
+
   private async loadWorkspaceContext(
     authContext: WorkspaceAuthContext,
   ): Promise<ORMWorkspaceContext> {
@@ -126,7 +138,7 @@ export class WorkspaceOrmManager {
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const permissionsPrincipals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
     const recordReadRestrictions = isDefined(permissionsPrincipals)

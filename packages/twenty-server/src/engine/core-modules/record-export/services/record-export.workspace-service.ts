@@ -509,16 +509,9 @@ export class RecordExportWorkspaceService {
     }
 
     if (
-      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        workspaceId: authContext.workspace.id,
-        ...(isApiKeyAuthContext(authContext)
-          ? { apiKeyId: authContext.apiKey.id, userWorkspaceId: undefined }
-          : { userWorkspaceId: authContext.userWorkspaceId }),
-        applicationId: isUserAuthContext(authContext)
-          ? authContext.application?.id
-          : undefined,
-        agentId: undefined,
-        setting: PermissionFlagType.EXPORT_CSV,
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
+        permissionFlag: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
       throw new ForbiddenException(

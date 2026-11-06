@@ -16,15 +16,14 @@ const canReachRowLevelRecords = ({
   }
 
   switch (operationType) {
-    case 'select':
+    case 'read':
       return rowLevelRecordsPermissions.canReadRecords;
-    case 'insert':
+    case 'create':
     case 'update':
       return rowLevelRecordsPermissions.canUpdateRecords;
-    case 'delete':
+    case 'destroy':
       return rowLevelRecordsPermissions.canDestroyRecords;
-    case 'restore':
-    case 'soft-delete':
+    case 'softDelete':
       return rowLevelRecordsPermissions.canSoftDeleteRecords;
     default:
       return assertUnreachable(operationType);

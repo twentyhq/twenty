@@ -48,7 +48,7 @@ export const getFirstNavigationMenuItemLink = ({
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,
           ),
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         continue;

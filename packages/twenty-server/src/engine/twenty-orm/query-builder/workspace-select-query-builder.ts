@@ -26,7 +26,7 @@ import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-build
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
-import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import {
   RESERVED_PARAMETER_NAMES,
   buildCountStatement,
@@ -573,7 +573,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildSelectStatement();
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -682,7 +682,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
     );
-    const compiled = compileNamedParameters(sql, this.parameters);
+    const compiled = compileTwentyOrmStatement({
+      sql,
+      parameters: this.parameters,
+    });
     const rows = await this.context.executor.execute(compiled);
 
     return Number(rows[0]?.count ?? 0);
@@ -1212,7 +1215,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return this.context.executor.execute({
       ...compiled,

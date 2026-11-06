@@ -18,7 +18,7 @@ import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/g
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
@@ -86,7 +86,7 @@ export class DatabaseToolProvider implements ToolProvider {
       );
 
     const principals = isDefined(context.authContext)
-      ? await this.principalPermissionsService.buildPermissionsPrincipals({
+      ? await this.principalPermissionsService.resolvePermissionsPrincipals({
           authContext: context.authContext,
         })
       : undefined;
@@ -142,29 +142,34 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canCreateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'create',
+        }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.recordPermissionsService.canReadSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'read',
+        }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canUpdateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'update',
+        }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.recordPermissionsService.canSoftDeleteSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'softDelete',
+        }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.recordPermissionsService.canDestroySomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'destroy',
+        }));
 
       if (
         !canCreateRecords &&
