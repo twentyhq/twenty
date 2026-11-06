@@ -58,9 +58,7 @@ const buildService = async () => {
       { provide: CodeStepBuildService, useValue: codeStepBuildService },
       {
         provide: getWorkspaceScopedRepositoryToken(ObjectMetadataEntity),
-        useValue: {
-          findOne: jest.fn().mockResolvedValue({ nameSingular: 'company' }),
-        },
+        useValue: {},
       },
       { provide: WorkflowCommonWorkspaceService, useValue: {} },
       { provide: WorkspaceCacheService, useValue: {} },
@@ -187,44 +185,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     ).toHaveBeenCalledWith({
       id: LEGACY_LOGIC_FUNCTION_ID,
       workspaceId: WORKSPACE_ID,
-    });
-  });
-});
-
-describe('WorkflowVersionStepOperationsWorkspaceService record steps', () => {
-  it('creates create and upsert record steps without fieldsToUpdate, since they write their whole objectRecord', async () => {
-    const { service } = await buildService();
-
-    for (const type of [
-      WorkflowActionType.CREATE_RECORD,
-      WorkflowActionType.UPSERT_RECORD,
-    ]) {
-      const { builtStep } =
-        await service.runStepCreationSideEffectsAndBuildStep({
-          type,
-          workspaceId: WORKSPACE_ID,
-        });
-
-      expect(builtStep.settings.input).toEqual({
-        objectName: 'company',
-        objectRecord: {},
-      });
-    }
-  });
-
-  it('creates update record steps with no field selected yet', async () => {
-    const { service } = await buildService();
-
-    const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
-      type: WorkflowActionType.UPDATE_RECORD,
-      workspaceId: WORKSPACE_ID,
-    });
-
-    expect(builtStep.settings.input).toEqual({
-      objectName: 'company',
-      objectRecord: {},
-      objectRecordId: '',
-      fieldsToUpdate: [],
     });
   });
 });

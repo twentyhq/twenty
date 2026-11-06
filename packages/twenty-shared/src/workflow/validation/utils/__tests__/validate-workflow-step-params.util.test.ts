@@ -95,7 +95,13 @@ describe('validateWorkflowStepParams', () => {
   });
 
   describe('fieldsToUpdate', () => {
-    const recordStepWithInput = (type: string, input: object) => ({
+    const recordStepWithInput = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: object;
+    }) => ({
       id: '2b7c4e1a-5d3f-4a8b-9c6e-1f0a2d3b4c5e',
       name: 'Record step',
       type,
@@ -110,51 +116,52 @@ describe('validateWorkflowStepParams', () => {
       },
     });
 
-    const recordStepIssues = (type: string, input: object) =>
+    const recordStepIssues = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: object;
+    }) =>
       validateWorkflowStepParams({
         trigger: undefined,
-        steps: [recordStepWithInput(type, input)],
+        steps: [recordStepWithInput({ type, input })],
       });
 
-    it('should reject fieldsToUpdate on create and upsert record steps', () => {
+    it('should refuse a non-empty fieldsToUpdate on create and upsert record steps', () => {
       for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
         expect(
-          recordStepIssues(type, {
-            objectName: 'company',
-            objectRecord: { name: 'Acme' },
-            fieldsToUpdate: ['name'],
+          recordStepIssues({
+            type,
+            input: {
+              objectName: 'company',
+              objectRecord: { name: 'Acme' },
+              fieldsToUpdate: ['name'],
+            },
           }),
         ).toEqual([
           expect.objectContaining({
             code: 'INVALID_STEP_PARAMS',
             message: expect.stringContaining(
-              'only UPDATE_RECORD selects the fields to write',
+              'Step "Record step" configuration is invalid - settings.input.fieldsToUpdate: remove fieldsToUpdate',
             ),
           }),
         ]);
       }
     });
 
-    it('should accept the empty fieldsToUpdate stored steps carry until the 2.57 upgrade', () => {
+    it('should accept create and upsert record steps without fieldsToUpdate, or with the empty one builders stored', () => {
       for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
-        expect(
-          recordStepIssues(type, {
+        for (const input of [
+          { objectName: 'company', objectRecord: { name: 'Acme' } },
+          {
             objectName: 'company',
             objectRecord: { name: 'Acme' },
             fieldsToUpdate: [],
-          }),
-        ).toEqual([]);
-      }
-    });
-
-    it('should accept create and upsert record steps without fieldsToUpdate', () => {
-      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
-        expect(
-          recordStepIssues(type, {
-            objectName: 'company',
-            objectRecord: { name: 'Acme' },
-          }),
-        ).toEqual([]);
+          },
+        ]) {
+          expect(recordStepIssues({ type, input })).toEqual([]);
+        }
       }
     });
 
@@ -166,9 +173,9 @@ describe('validateWorkflowStepParams', () => {
       };
 
       expect(
-        recordStepIssues('UPDATE_RECORD', {
-          ...updateRecordInput,
-          fieldsToUpdate: [],
+        recordStepIssues({
+          type: 'UPDATE_RECORD',
+          input: { ...updateRecordInput, fieldsToUpdate: [] },
         }),
       ).toEqual([
         expect.objectContaining({
@@ -176,9 +183,9 @@ describe('validateWorkflowStepParams', () => {
         }),
       ]);
       expect(
-        recordStepIssues('UPDATE_RECORD', {
-          ...updateRecordInput,
-          fieldsToUpdate: ['name'],
+        recordStepIssues({
+          type: 'UPDATE_RECORD',
+          input: { ...updateRecordInput, fieldsToUpdate: ['name'] },
         }),
       ).toEqual([]);
     });

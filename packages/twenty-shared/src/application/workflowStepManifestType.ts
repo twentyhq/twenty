@@ -126,7 +126,7 @@ const workflowStepManifestOptions = [
   stepSchema(
     'CREATE_RECORD',
     workflowCreateRecordActionSettingsSchema.shape.input
-      .omit({ objectName: true })
+      .omit({ objectName: true, fieldsToUpdate: true })
       .extend(recordObjectShape)
       .strict(),
   ),
@@ -140,7 +140,7 @@ const workflowStepManifestOptions = [
   stepSchema(
     'UPSERT_RECORD',
     workflowUpsertRecordActionSettingsSchema.shape.input
-      .omit({ objectName: true })
+      .omit({ objectName: true, fieldsToUpdate: true })
       .extend(recordObjectShape)
       .strict(),
   ),

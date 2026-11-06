@@ -1,6 +1,12 @@
 import { dropFieldsToUpdateFromCreateAndUpsertRecords } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-fields-to-update-from-create-and-upsert-records.util';
 
-const recordStep = (type: string, input: Record<string, unknown>) => ({
+const recordStep = ({
+  type,
+  input,
+}: {
+  type: string;
+  input: Record<string, unknown>;
+}) => ({
   id: `${type}-step`,
   name: type,
   type,
@@ -18,29 +24,35 @@ const recordStep = (type: string, input: Record<string, unknown>) => ({
 describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
   it('drops the empty fieldsToUpdate the builder gave upsert record steps', () => {
     const result = dropFieldsToUpdateFromCreateAndUpsertRecords([
-      recordStep('UPSERT_RECORD', {
-        objectName: 'company',
-        objectRecord: { name: 'Acme' },
-        fieldsToUpdate: [],
+      recordStep({
+        type: 'UPSERT_RECORD',
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme' },
+          fieldsToUpdate: [],
+        },
       }),
     ]);
 
     expect(result.hasChanged).toBe(true);
     expect(result.droppedNonEmptyFieldsToUpdate).toEqual([]);
     expect(result.steps).toEqual([
-      recordStep('UPSERT_RECORD', {
-        objectName: 'company',
-        objectRecord: { name: 'Acme' },
+      recordStep({
+        type: 'UPSERT_RECORD',
+        input: { objectName: 'company', objectRecord: { name: 'Acme' } },
       }),
     ]);
   });
 
   it('drops and reports a non-empty fieldsToUpdate, which runs never applied', () => {
     const result = dropFieldsToUpdateFromCreateAndUpsertRecords([
-      recordStep('CREATE_RECORD', {
-        objectName: 'company',
-        objectRecord: { name: 'Acme', domainName: 'acme.com' },
-        fieldsToUpdate: ['name'],
+      recordStep({
+        type: 'CREATE_RECORD',
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme', domainName: 'acme.com' },
+          fieldsToUpdate: ['name'],
+        },
       }),
     ]);
 
@@ -49,20 +61,26 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
       { stepId: 'CREATE_RECORD-step', fieldsToUpdate: ['name'] },
     ]);
     expect(result.steps).toEqual([
-      recordStep('CREATE_RECORD', {
-        objectName: 'company',
-        objectRecord: { name: 'Acme', domainName: 'acme.com' },
+      recordStep({
+        type: 'CREATE_RECORD',
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme', domainName: 'acme.com' },
+        },
       }),
     ]);
   });
 
   it('keeps fieldsToUpdate on update record steps', () => {
     const steps = [
-      recordStep('UPDATE_RECORD', {
-        objectName: 'company',
-        objectRecordId: '{{trigger.id}}',
-        objectRecord: { name: 'Acme' },
-        fieldsToUpdate: [],
+      recordStep({
+        type: 'UPDATE_RECORD',
+        input: {
+          objectName: 'company',
+          objectRecordId: '{{trigger.id}}',
+          objectRecord: { name: 'Acme' },
+          fieldsToUpdate: [],
+        },
       }),
     ];
 
@@ -74,7 +92,10 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
 
   it('leaves steps without fieldsToUpdate and non-array content unchanged', () => {
     const steps = [
-      recordStep('UPSERT_RECORD', { objectName: 'company', objectRecord: {} }),
+      recordStep({
+        type: 'UPSERT_RECORD',
+        input: { objectName: 'company', objectRecord: {} },
+      }),
     ];
 
     expect(dropFieldsToUpdateFromCreateAndUpsertRecords(steps)).toEqual({

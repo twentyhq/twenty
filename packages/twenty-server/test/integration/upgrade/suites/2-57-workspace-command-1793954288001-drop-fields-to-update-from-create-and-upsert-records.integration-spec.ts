@@ -20,10 +20,13 @@ type RecordStep = {
   settings: { input: Record<string, unknown> } & Record<string, unknown>;
 } & Record<string, unknown>;
 
-const withInput = (
-  step: RecordStep,
-  input: Record<string, unknown>,
-): RecordStep => ({
+const withInput = ({
+  step,
+  input,
+}: {
+  step: RecordStep;
+  input: Record<string, unknown>;
+}): RecordStep => ({
   ...step,
   settings: { ...step.settings, input },
 });
@@ -99,21 +102,30 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
     ];
 
     legacySteps = [
-      withInput(upsertRecordStep, {
-        objectName: 'company',
-        objectRecord: { name: 'Acme' },
-        fieldsToUpdate: [],
+      withInput({
+        step: upsertRecordStep,
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme' },
+          fieldsToUpdate: [],
+        },
       }),
-      withInput(createRecordStep, {
-        objectName: 'company',
-        objectRecord: { name: 'Acme', domainName: 'acme.com' },
-        fieldsToUpdate: ['name'],
+      withInput({
+        step: createRecordStep,
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme', domainName: 'acme.com' },
+          fieldsToUpdate: ['name'],
+        },
       }),
-      withInput(updateRecordStep, {
-        objectName: 'company',
-        objectRecordId: '{{trigger.id}}',
-        objectRecord: { name: 'Acme' },
-        fieldsToUpdate: ['name'],
+      withInput({
+        step: updateRecordStep,
+        input: {
+          objectName: 'company',
+          objectRecordId: '{{trigger.id}}',
+          objectRecord: { name: 'Acme' },
+          fieldsToUpdate: ['name'],
+        },
       }),
     ];
 
@@ -164,13 +176,16 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
 
     const [upsertRecordStep, createRecordStep, updateRecordStep] = legacySteps;
     const expectedSteps = [
-      withInput(upsertRecordStep, {
-        objectName: 'company',
-        objectRecord: { name: 'Acme' },
+      withInput({
+        step: upsertRecordStep,
+        input: { objectName: 'company', objectRecord: { name: 'Acme' } },
       }),
-      withInput(createRecordStep, {
-        objectName: 'company',
-        objectRecord: { name: 'Acme', domainName: 'acme.com' },
+      withInput({
+        step: createRecordStep,
+        input: {
+          objectName: 'company',
+          objectRecord: { name: 'Acme', domainName: 'acme.com' },
+        },
       }),
       updateRecordStep,
     ];

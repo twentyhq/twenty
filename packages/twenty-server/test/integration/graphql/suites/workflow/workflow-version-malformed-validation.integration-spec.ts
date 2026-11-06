@@ -4,7 +4,6 @@ import {
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
   deleteLegacyWorkspaceWorkflowRecords,
-  findCoreWorkflowVersion,
   linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -210,11 +209,11 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toContain(
-      'only UPDATE_RECORD selects the fields to write',
+      'remove fieldsToUpdate: only UPDATE_RECORD selects the fields to write',
     );
   });
 
-  it('drops the empty fieldsToUpdate the builder used to store on record steps', async () => {
+  it('accepts the empty fieldsToUpdate builders stored before 2.57', async () => {
     const response = await updateStepResponse(
       coreWorkflowVersionId,
       stepWithInput({
@@ -225,16 +224,6 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-
-    const { steps } = await findCoreWorkflowVersion({ coreWorkflowVersionId });
-    const storedCreateRecordStep = steps?.find(
-      (step) => step.id === createRecordStep.id,
-    );
-
-    expect(storedCreateRecordStep?.settings.input).toEqual({
-      objectName: 'note',
-      objectRecord: { title: 'Hello' },
-    });
   });
 
   it('forbids writing steps through the generic updateWorkflowVersion mutation', async () => {

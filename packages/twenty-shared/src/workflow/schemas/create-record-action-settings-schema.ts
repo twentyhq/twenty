@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { objectRecordSchema } from './object-record-schema';
+import { unsupportedFieldsToUpdateSchema } from './unsupported-fields-to-update-schema';
 
 export const workflowCreateRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
@@ -11,5 +12,6 @@ export const workflowCreateRecordActionSettingsSchema =
           'The name of the object to create a record in. Must be lowercase (e.g., "person", "company", "task").',
         ),
       objectRecord: objectRecordSchema.describe('The record data to create.'),
+      fieldsToUpdate: unsupportedFieldsToUpdateSchema,
     }),
   });

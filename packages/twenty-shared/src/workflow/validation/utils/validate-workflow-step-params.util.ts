@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { workflowActionSchema } from '@/workflow/schemas/workflow-action-schema';
 import { workflowTriggerSchema } from '@/workflow/schemas/workflow-trigger-schema';
-import { isDefined, isPlainObject } from '@/utils';
+import { isDefined } from '@/utils';
 import { parseJson } from '@/utils/parseJson';
 import { parseEmailDocument } from '@/utils/tiptap/parse-email-document';
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
@@ -80,28 +80,6 @@ export const validateWorkflowStepParams = ({
         severity: 'error',
         code: 'INVALID_STEP_PARAMS',
         message: `Step "${step.name ?? step.id}" configuration is invalid - settings.input.body: must be a serialized email document ({"type":"doc","content":[...]}), not HTML or plain text`,
-        stepId: step.id,
-      });
-    }
-
-    // the parse drops keys the schema does not declare, so the stored input is checked
-    const rawInput = step.settings?.input;
-
-    if (
-      (parsedStep.type === WorkflowActionType.CREATE_RECORD ||
-        parsedStep.type === WorkflowActionType.UPSERT_RECORD) &&
-      isPlainObject(rawInput) &&
-      isDefined(rawInput.fieldsToUpdate) &&
-      // the builder's former empty default stays activable until 2.57 leaves the cross-upgrade window
-      !(
-        Array.isArray(rawInput.fieldsToUpdate) &&
-        rawInput.fieldsToUpdate.length === 0
-      )
-    ) {
-      issues.push({
-        severity: 'error',
-        code: 'INVALID_STEP_PARAMS',
-        message: `Step "${step.name ?? step.id}" configuration is invalid - settings.input.fieldsToUpdate: only UPDATE_RECORD selects the fields to write; ${parsedStep.type} writes every field in objectRecord`,
         stepId: step.id,
       });
     }
