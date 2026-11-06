@@ -1688,8 +1688,8 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
+  @IsOptionalOrEmptyString()
   @IsUrl({ require_tld: false, require_protocol: true })
-  @IsOptional()
   SERVER_INTERNAL_URL?: string;
 
   @ConfigVariablesMetadata({
