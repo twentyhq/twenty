@@ -29,7 +29,7 @@ export class JobSizeLimiter {
     return this.options.isEnabled();
   }
 
-  checkJobSizes({
+  checkJobSizesOrThrow({
     queueName,
     jobs,
   }: {

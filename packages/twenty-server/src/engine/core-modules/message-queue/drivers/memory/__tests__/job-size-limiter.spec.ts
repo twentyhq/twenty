@@ -30,7 +30,7 @@ describe('JobSizeLimiter', () => {
     const { limiter, metricsService } = buildLimiter(false);
 
     expect(() =>
-      limiter.checkJobSizes({
+      limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
         jobs: JOBS,
       }),
@@ -44,7 +44,7 @@ describe('JobSizeLimiter', () => {
     let thrownError: unknown;
 
     try {
-      limiter.checkJobSizes({
+      limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
         jobs: JOBS,
       });
@@ -70,7 +70,7 @@ describe('JobSizeLimiter', () => {
     const { limiter } = buildLimiter(true);
 
     expect(() =>
-      limiter.checkJobSizes({
+      limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
         jobs: [{ index: 0, groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
       }),

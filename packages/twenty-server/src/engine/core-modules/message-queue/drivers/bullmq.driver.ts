@@ -563,7 +563,7 @@ export class BullMQDriver
 
     const queueOptions = this.buildJobsOptions(options);
 
-    this.checkJobSizes({
+    this.checkJobSizesOrThrow({
       queueName,
       jobs: [{ index: 0, data, options: queueOptions, scope: options }],
       additionalGroupKeys: options.groupKeys,
@@ -585,7 +585,7 @@ export class BullMQDriver
     return job.id;
   }
 
-  private checkJobSizes({
+  private checkJobSizesOrThrow({
     queueName,
     jobs,
     additionalGroupKeys,
@@ -603,7 +603,7 @@ export class BullMQDriver
       return;
     }
 
-    this.jobSizeLimiter.checkJobSizes({
+    this.jobSizeLimiter.checkJobSizesOrThrow({
       queueName,
       jobs: jobs.map(({ index, data, options, scope }) => ({
         index,
@@ -668,7 +668,7 @@ export class BullMQDriver
           : undefined),
     }));
 
-    this.checkJobSizes({
+    this.checkJobSizesOrThrow({
       queueName,
       jobs: jobsToAdd.map((job, index) => ({
         index: job.inputIndex,
