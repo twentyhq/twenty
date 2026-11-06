@@ -50,9 +50,12 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 type AssistantReplyPolicyInput = {
-  actor: AgentChatMemberMessageActor;
-  thread: AgentChatThreadWorkspaceEntity;
-  participation: AgentChatAssistantParticipation;
+  actor: Pick<AgentChatMemberMessageActor, 'workspaceId' | 'userWorkspaceId'>;
+  thread: Pick<
+    AgentChatThreadWorkspaceEntity,
+    'id' | 'pendingQuestionMessageId'
+  >;
+  participation: Pick<AgentChatAssistantParticipation, 'replyDecision'>;
   isInboxEnabled: boolean;
   isDirectMessage: boolean;
   text: string;
@@ -361,7 +364,12 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     ...assistantReplyPolicyInput
   }: AssistantReplyPolicyInput &
-    Pick<AgentChatMemberMessageSendArguments, 'execution' | 'addressing'> & {
+    Pick<
+      AgentChatMemberMessageSendArguments,
+      'actor' | 'execution' | 'addressing'
+    > & {
+      thread: AgentChatThreadWorkspaceEntity;
+      participation: AgentChatAssistantParticipation;
       storedMessage: AgentMessageWorkspaceEntity;
     }): Promise<AgentChatMemberMessageResult> {
     const { actor, thread, participation } = assistantReplyPolicyInput;

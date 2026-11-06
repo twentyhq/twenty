@@ -144,8 +144,7 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
-    // A chat's first message files it in this channel, or in none when null.
-    // Omitted, the chat keeps its channel.
+    // First message only: null files the chat in no channel, omitted keeps its channel
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
     channelId: string | null | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
