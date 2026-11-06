@@ -30,6 +30,8 @@ const RUN_STATUSES_STILL_EXECUTING_STEPS = [
 ];
 
 // rows with record sorts are read too, since sorts written without an id get one
+const RUN_PAGE_SIZE = 500;
+
 const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `(steps::text LIKE '%gqlOperationOrderBy%' OR steps::text LIKE '%recordSorts%')`;
 
 @RegisteredWorkspaceCommand('2.57.0', 1793946633206)
@@ -229,31 +231,40 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
       hasChanged: boolean;
     };
   }): Promise<number> {
-    const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
-      `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%'`,
-      [RUN_STATUSES_STILL_EXECUTING_STEPS],
-    );
-
     let rewrittenRunCount = 0;
+    let lastRunId: string | undefined;
 
-    for (const row of rows) {
-      const { value, hasChanged } = mapRow(row);
-
-      if (!hasChanged) {
-        continue;
-      }
-
-      if (isDryRun) {
-        rewrittenRunCount += 1;
-        continue;
-      }
-
-      const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-        `UPDATE ${tableName} SET state = jsonb_set(state, '{flow,steps}', $1::jsonb) WHERE id = $2 AND state->'flow'->'steps' = $3::jsonb`,
-        [JSON.stringify(value), row.id, JSON.stringify(row.value)],
+    while (true) {
+      const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
+        `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%' AND ($2::uuid IS NULL OR id > $2::uuid) ORDER BY id LIMIT $3`,
+        [RUN_STATUSES_STILL_EXECUTING_STEPS, lastRunId ?? null, RUN_PAGE_SIZE],
       );
 
-      rewrittenRunCount += updatedRowCount;
+      for (const row of rows) {
+        const { value, hasChanged } = mapRow(row);
+
+        if (!hasChanged) {
+          continue;
+        }
+
+        if (isDryRun) {
+          rewrittenRunCount += 1;
+          continue;
+        }
+
+        const [, updatedRowCount]: [unknown, number] = await dataSource.query(
+          `UPDATE ${tableName} SET state = jsonb_set(state, '{flow,steps}', $1::jsonb) WHERE id = $2 AND state->'flow'->'steps' = $3::jsonb`,
+          [JSON.stringify(value), row.id, JSON.stringify(row.value)],
+        );
+
+        rewrittenRunCount += updatedRowCount;
+      }
+
+      if (rows.length < RUN_PAGE_SIZE) {
+        break;
+      }
+
+      lastRunId = String(rows[rows.length - 1].id);
     }
 
     return rewrittenRunCount;
