@@ -85,7 +85,7 @@ Inter everywhere in the product, with a 13px root: `font.size.md` is `1rem` = 13
 
 Everything sits on a 4px grid: `spacing[n]` is `n × 4px`. The usual steps are 2px between siblings (`betweenSiblingsGap`), 4, 8, 12, 16, 24 and 32.
 
-- The app frame is `background.tertiary`, with the sidebar (`NavigationDrawer`) on it to the left (48px when collapsed). The page and the side panel are panes on `background.primary`. The page header puts the breadcrumb on the left and commands on the right, with ⌘K at the far right. The side panel opens on the right, 500px wide.
+- The app frame is `background.tertiary`, with the sidebar (`NavigationDrawer`) on it to the left (48px when collapsed). The page and the side panel are panes on `background.primary`. The page header puts the breadcrumb on the left and commands on the right, with ⌘K at the far right. The side panel opens on the right, defaults to 400px wide and resizes between 320px and 600px (`SIDE_PANEL_CONSTRAINTS`), remembering the user's chosen width.
 - Bars that sit side by side share one height: the sidebar header, the page header and the side panel top bar all use `APP_HEADER_HEIGHT` (48px).
 - Spacing belongs to the container. Slots carry the padding; a component that fills a slot has none of its own.
 - Controls share heights: 32px for inputs, default buttons and menu rows, 24px for small buttons and toolbar icon buttons. Icon-only buttons are square. An edit-in-place input keeps the row at its height.
