@@ -168,6 +168,7 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
@@ -467,19 +468,19 @@ export class WorkspaceService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
-    const assistantProfilePatch =
-      await this.workspaceAssistantProfileService.preparePatch({
-        workspace,
-        profile: aiChatAssistantProfile,
-      });
-
     await this.validateWorkspaceUpdatePermissions({
-      payload: workspaceUpdates,
+      payload,
       userWorkspaceId,
       application,
       workspaceActivationStatus: workspace.activationStatus,
     });
+
+    const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
+    const assistantProfilePatch =
+      await this.workspaceAssistantProfileService.preparePatchOrThrow({
+        workspace,
+        profile: aiChatAssistantProfile,
+      });
 
     const isUpdatingAssistantModes =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
@@ -646,11 +647,13 @@ export class WorkspaceService {
         ...(payload.logo === null ? { logoFileId: null } : {}),
       };
 
-      await this.workspaceAssistantProfileService.updateWorkspace({
-        workspaceId: workspace.id,
-        values: workspaceUpdateValues,
-        patch: assistantProfilePatch,
-      });
+      await (isDefined(assistantProfilePatch)
+        ? this.workspaceAssistantProfileService.updateWorkspaceWithProfile({
+            workspaceId: workspace.id,
+            values: workspaceUpdateValues,
+            patch: assistantProfilePatch,
+          })
+        : this.workspaceRepository.update(workspace.id, workspaceUpdateValues));
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
       });
@@ -1311,8 +1314,7 @@ export class WorkspaceService {
     application,
     workspaceActivationStatus,
   }: {
-    payload: Omit<Partial<WorkspaceEntity>, 'aiDataPolicy'> &
-      Pick<UpdateWorkspaceInput, 'aiDataPolicy'>;
+    payload: UpdateWorkspaceInput;
     userWorkspaceId?: string;
     application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;

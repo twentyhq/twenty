@@ -43,18 +43,19 @@ export class WorkspaceAssistantProfileService {
     private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
-  async preparePatch({
+  async preparePatchOrThrow({
     workspace,
     profile,
   }: {
-    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    workspace: Pick<WorkspaceEntity, 'id'>;
     profile: unknown;
   }) {
     if (isUndefined(profile)) {
       return undefined;
     }
 
-    await this.assertCanChangeProfile(workspace);
+    this.assertProfileSessionOrThrow();
+    await this.assertInboxEnabledOrThrow(workspace.id);
 
     const result = getAiChatAssistantProfileSchema()
       .partial()
@@ -71,19 +72,15 @@ export class WorkspaceAssistantProfileService {
     return result.data;
   }
 
-  async updateWorkspace({
+  async updateWorkspaceWithProfile({
     workspaceId,
     values,
     patch,
   }: {
     workspaceId: string;
     values: QueryDeepPartialEntity<WorkspaceEntity>;
-    patch: Partial<AiChatAssistantProfile> | undefined;
+    patch: Partial<AiChatAssistantProfile>;
   }) {
-    if (isUndefined(patch)) {
-      return this.workspaceRepository.update(workspaceId, values);
-    }
-
     return this.workspaceRepository
       .createQueryBuilder()
       .update()
@@ -106,7 +103,7 @@ export class WorkspaceAssistantProfileService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.assertCanChangeProfile(workspace);
+    await this.assertCanChangeProfileOrThrow(workspace);
     await this.workspaceRepository.update(workspaceId, {
       aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
     });
@@ -138,7 +135,7 @@ export class WorkspaceAssistantProfileService {
     return refreshedWorkspace.aiChatAssistantProfile;
   }
 
-  private async assertCanChangeProfile(
+  private async assertCanChangeProfileOrThrow(
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {
     if (
@@ -153,15 +150,12 @@ export class WorkspaceAssistantProfileService {
       );
     }
 
-    const authContext = workspaceAuthContextStorage.getStore();
+    const authContext = this.assertProfileSessionOrThrow();
     const hasPermission =
-      isDefined(authContext) &&
-      isUserAuthContext(authContext) &&
-      !isDefined(authContext.application) &&
-      (await this.settingPermissionsService.hasPermissionFlag({
+      await this.settingPermissionsService.hasPermissionFlag({
         authContext,
         permissionFlag: PermissionFlagType.AI_SETTINGS,
-      }));
+      });
 
     if (!hasPermission) {
       throw new PermissionsException(
@@ -173,9 +167,33 @@ export class WorkspaceAssistantProfileService {
       );
     }
 
+    await this.assertInboxEnabledOrThrow(workspace.id);
+  }
+
+  private assertProfileSessionOrThrow() {
+    const authContext = workspaceAuthContextStorage.getStore();
+
+    if (
+      !isDefined(authContext) ||
+      !isUserAuthContext(authContext) ||
+      isDefined(authContext.application)
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`You do not have permission to update the assistant profile. Please contact your workspace administrator.`,
+        },
+      );
+    }
+
+    return authContext;
+  }
+
+  private async assertInboxEnabledOrThrow(workspaceId: string) {
     const isInboxEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspace.id,
+      workspaceId,
     );
 
     if (!isInboxEnabled) {
