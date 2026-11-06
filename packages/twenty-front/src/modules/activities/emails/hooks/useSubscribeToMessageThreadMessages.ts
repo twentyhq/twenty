@@ -4,13 +4,16 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const useSubscribeToMessageThreadMessages = ({
   messageThreadId,
+  loadedMessageCount,
   refetchMessages,
 }: {
   messageThreadId: string;
+  loadedMessageCount: number;
   refetchMessages: () => void;
 }) => {
   const { objectMetadataItem: messageMetadataItem } = useObjectMetadataItem({
@@ -40,9 +43,14 @@ export const useSubscribeToMessageThreadMessages = ({
         return;
       }
 
+      // refetch resets to the first page and would drop pages loaded through fetchMore
+      if (loadedMessageCount > QUERY_MAX_RECORDS) {
+        return;
+      }
+
       refetchMessages();
     },
-    [messageThreadId, refetchMessages],
+    [loadedMessageCount, messageThreadId, refetchMessages],
   );
 
   useListenToObjectRecordOperationBrowserEvent({
