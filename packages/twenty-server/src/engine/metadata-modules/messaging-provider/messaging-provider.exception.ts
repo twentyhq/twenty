@@ -10,6 +10,7 @@ export enum MessagingProviderExceptionCode {
   MESSAGING_PROVIDER_NAME_ALREADY_EXISTS = 'MESSAGING_PROVIDER_NAME_ALREADY_EXISTS',
   SEND_MESSAGE_NOT_AVAILABLE = 'SEND_MESSAGE_NOT_AVAILABLE',
   SEND_MESSAGE_FAILED = 'SEND_MESSAGE_FAILED',
+  MARK_THREAD_AS_READ_FAILED = 'MARK_THREAD_AS_READ_FAILED',
 }
 
 const getMessagingProviderExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getMessagingProviderExceptionUserFriendlyMessage = (
       return msg`This message channel cannot send messages.`;
     case MessagingProviderExceptionCode.SEND_MESSAGE_FAILED:
       return msg`We could not send your message. Please try again.`;
+    case MessagingProviderExceptionCode.MARK_THREAD_AS_READ_FAILED:
+      return msg`We could not mark this conversation as read.`;
     default:
       assertUnreachable(code);
   }
