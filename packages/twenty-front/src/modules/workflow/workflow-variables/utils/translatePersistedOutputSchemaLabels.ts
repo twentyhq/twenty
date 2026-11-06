@@ -215,7 +215,7 @@ const translateOutputSchema = ({
   path,
   context,
 }: {
-  outputSchema: unknown;
+  outputSchema: Record<string, unknown>;
   path: string[];
   context: TranslationContext;
 }): OutputSchemaV2 => {

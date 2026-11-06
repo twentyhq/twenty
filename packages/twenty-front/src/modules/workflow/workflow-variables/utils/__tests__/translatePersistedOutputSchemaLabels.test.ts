@@ -2,12 +2,23 @@ import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-var
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getMessageId = (message?: MessageDescriptor) => message?.id ?? '';
+const getMessageId = (message?: MessageDescriptor) => {
+  if (!isDefined(message?.id)) {
+    throw new Error('Persisted output schema label not found');
+  }
+
+  return message.id;
+};
 
 const company = getMockObjectMetadataItemOrThrow('company');
 const companyNameField = company.fields.find(({ name }) => name === 'name');
+
+if (!isDefined(companyNameField)) {
+  throw new Error('Company name field not found');
+}
 const viewerCompany = {
   ...company,
   labelSingular: 'Entreprise',
@@ -29,7 +40,7 @@ const companyRecordOutputSchema = {
       type: 'TEXT',
       label: 'Name',
       value: 'Acme',
-      fieldMetadataId: companyNameField?.id ?? '',
+      fieldMetadataId: companyNameField.id,
     },
   },
   _outputSchemaType: 'RECORD',
