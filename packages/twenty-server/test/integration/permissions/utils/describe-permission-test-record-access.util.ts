@@ -43,23 +43,27 @@ export const describePermissionTestRecordAccess = ({
           principals:
             await getAppProviderByClassName<PrincipalPermissionsService>(
               'PrincipalPermissionsService',
-            ).buildPermissionsPrincipals({ authContext }),
+            ).resolvePermissionsPrincipals({ authContext }),
           objectMetadataId: workspace.objectMetadataId,
           recordIds: [recordId],
         };
 
         expect({
-          findRecordsPermissions: (
-            await recordPermissionsService.findRecordsPermissions({
+          findRecordsActions: (
+            await recordPermissionsService.findRecordsActions({
               authContext,
               objectNameSingular: workspace.objectNameSingular,
               recordIds: [recordId],
             })
           ).get(recordId),
-          canReadRecords:
-            await recordPermissionsService.canReadRecords(recordsQuestion),
-          canUpdateRecords:
-            await recordPermissionsService.canUpdateRecords(recordsQuestion),
+          canReadRecords: await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
+          canUpdateRecords: await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'update',
+          }),
         }).toEqual(expected);
       });
     }

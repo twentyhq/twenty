@@ -28,12 +28,10 @@ import {
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/internal/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import {
   type RecordSharingObject,
   resolveRecordSharingObjectOrThrow,
 } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
-import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/internal/record-share/utils/resolve-required-record-share-access-levels.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/internal/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/internal/role/utils/can-roles-access-all-records.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -53,7 +51,9 @@ export class RecordSharingPermissionsService {
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
-  async findRecordSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
+  async findRecordSharingPanel(
+    args: RecordSharingArgs,
+  ): Promise<RecordSharingDTO> {
     const sharingObject = await this.findSharingObject(args);
     const permissions = await this.findPermissions({ args, sharingObject });
 
@@ -86,7 +86,7 @@ export class RecordSharingPermissionsService {
   }
 
   async canManageRecordSharing(args: RecordSharingArgs): Promise<boolean> {
-    const { canManageSharing } = await this.findRecordSharing(args);
+    const { canManageSharing } = await this.findRecordSharingPanel(args);
 
     return canManageSharing;
   }
@@ -103,31 +103,6 @@ export class RecordSharingPermissionsService {
       });
 
     return { viewerAccessLevel, creatorWorkspaceMemberId };
-  }
-
-  async canRoleUpdateSharedRecord({
-    workspaceId,
-    objectMetadataId,
-    recordId,
-    roleId,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordId: string;
-    roleId: string;
-  }): Promise<boolean> {
-    const recordShares =
-      await this.recordPermissionReadOrmService.findRecordShares({
-        workspaceId,
-        objectMetadataId,
-        recordIds: [recordId],
-      });
-
-    return resolveRecordIdsSharedWithPrincipals({
-      recordShares,
-      principalIds: [roleId],
-      accessLevels: resolveRequiredRecordShareAccessLevels('update'),
-    }).has(recordId);
   }
 
   async isRecordSharedBeyondMember({
@@ -174,9 +149,9 @@ export class RecordSharingPermissionsService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsService.canRoleReachSomeRecords({
+      (await this.recordPermissionsService.canRoleAccessSomeRecords({
         principals:
-          await this.principalPermissionsService.buildPermissionsPrincipals({
+          await this.principalPermissionsService.resolvePermissionsPrincipals({
             authContext: args.authContext,
           }),
         objectMetadataId: flatObjectMetadata.id,
@@ -287,7 +262,7 @@ export class RecordSharingPermissionsService {
           label,
           canRead: canReachSomeRecords({
             objectRecordsPermissions,
-            operationType: 'select',
+            operationType: 'read',
           }),
           canUpdate: canReachSomeRecords({
             objectRecordsPermissions,
@@ -314,7 +289,7 @@ export class RecordSharingPermissionsService {
         'roleIdsWithAllRecordsAccess',
       ]);
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
     const canAccessAllRecords =
@@ -401,7 +376,7 @@ export class RecordSharingPermissionsService {
     sharingObject: RecordSharingObject;
   }): Promise<RecordPermissionsDTO> {
     const permissionsByRecordId =
-      await this.recordPermissionsService.findRecordsPermissions({
+      await this.recordPermissionsService.findRecordsActions({
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],

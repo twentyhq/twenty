@@ -9,7 +9,7 @@ import { type PrincipalPermissionsService } from 'src/engine/permissions/princip
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: true,
     canUpdate: true,
     canSoftDelete: true,
@@ -20,7 +20,7 @@ const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
 };
 
 const REACHES_NOTHING: PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: false,
     canUpdate: false,
     canSoftDelete: false,
@@ -260,7 +260,7 @@ describePermissionTestWorkspace({
           principals:
             await getAppProviderByClassName<PrincipalPermissionsService>(
               'PrincipalPermissionsService',
-            ).buildPermissionsPrincipals({
+            ).resolvePermissionsPrincipals({
               authContext: {
                 type: 'webhook',
                 workspace: { id: workspaceId },
@@ -276,10 +276,16 @@ describePermissionTestWorkspace({
           );
 
         expect(
-          await recordPermissionsService.canReadRecords(recordsQuestion),
+          await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
         ).toBe(true);
         expect(
-          await recordPermissionsService.canUpdateRecords(recordsQuestion),
+          await recordPermissionsService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'update',
+          }),
         ).toBe(true);
       });
     });
@@ -291,7 +297,7 @@ describePermissionTestWorkspace({
         const roleIdsUnableToRead =
           await getAppProviderByClassName<RecordPermissionsService>(
             'RecordPermissionsService',
-          ).findRoleIdsUnableToReadObject({
+          ).filterRoleIdsWithoutReadAccess({
             workspaceId,
             roleIds: [roleIds.none, roleIds.rowLevel, roleIds.allRecords],
             objectMetadataId,
