@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type AiChatAssistantProfile } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -33,12 +34,12 @@ export class SystemPromptBuilderService {
     workspaceId,
     userWorkspaceId,
     workspaceInstructions,
-    assistantDisplayName,
+    assistantProfile,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     workspaceInstructions?: string;
-    assistantDisplayName: string;
+    assistantProfile: Pick<AiChatAssistantProfile, 'displayName'>;
   }): Promise<SystemPromptPreview> {
     const { userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -64,7 +65,7 @@ export class SystemPromptBuilderService {
 
     const sections = buildSystemPromptSections({
       assistantDisplayName: isAiChatInboxEnabled
-        ? assistantDisplayName
+        ? assistantProfile.displayName
         : undefined,
       toolCatalog,
       skillCatalog,

@@ -299,7 +299,7 @@ export class AgentChatResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
-      assistantDisplayName: workspace.aiChatAssistantProfile.displayName,
+      assistantProfile: workspace.aiChatAssistantProfile,
     });
   }
 
