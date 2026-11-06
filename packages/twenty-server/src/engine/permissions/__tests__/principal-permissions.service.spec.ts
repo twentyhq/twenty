@@ -1,8 +1,12 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -285,16 +289,22 @@ describe('PrincipalPermissionsService', () => {
   );
 
   it('carries the AI run scope', async () => {
-    const aiRunScope = { recordsPermissions: {}, permissionFlags: {} };
+    const aiRunScope: AiRunPermissionScope = {
+      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      permissionFlags: { [PermissionFlagType.WORKSPACE]: true },
+    };
 
-    expect(
-      await buildPrincipalPermissionsService().buildPermissionsPrincipals({
-        authContext: {
-          ...USER_AUTH_CONTEXT,
-          aiRunScope,
-        } as unknown as WorkspaceAuthContext,
-      }),
-    ).toMatchObject({ aiRunScope });
+    const principals =
+      await buildPrincipalPermissionsService().buildPermissionsPrincipalsOrThrow(
+        {
+          authContext: {
+            ...USER_AUTH_CONTEXT,
+            aiRunScope,
+          } as unknown as WorkspaceAuthContext,
+        },
+      );
+
+    expect(principals.aiRunScope).toEqual(aiRunScope);
   });
 
   it.each<{ it: string; authContext: object; cacheOverrides?: object }>([
