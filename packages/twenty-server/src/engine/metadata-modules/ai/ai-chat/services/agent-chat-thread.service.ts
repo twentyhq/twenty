@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Equal, In, IsNull, Not, Or } from 'typeorm';
 
@@ -32,7 +33,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -258,6 +258,25 @@ export class AgentChatThreadService {
     return this.restoreDeletedThread({ args, threadBefore });
   }
 
+  async restoreDirectMessageThread({
+    workspaceId,
+    thread,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+  }): Promise<void> {
+    await this.threadRepository.restore(workspaceId, {
+      id: thread.id,
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+    });
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      action: DatabaseEventAction.RESTORED,
+    });
+  }
+
   private async restoreDeletedThread({
     args,
     threadBefore,
@@ -322,18 +341,15 @@ export class AgentChatThreadService {
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
 
     const setUpThreadIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            (transactionScope) =>
-              this.sharingService.setUpCreatedThreadsInboxState({
-                transactionScope,
-                workspaceId,
-                workspaceMemberId,
-                threadIds: assignedThreadIds,
-                participantObjectMetadata,
-              }),
-          ),
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        (transactionScope) =>
+          this.sharingService.setUpCreatedThreadsInboxState({
+            transactionScope,
+            workspaceId,
+            workspaceMemberId,
+            threadIds: assignedThreadIds,
+            participantObjectMetadata,
+          }),
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );
@@ -575,73 +591,69 @@ export class AgentChatThreadService {
 
     // Owner re-checked in the UPDATE: removing a member clears it on their channel chats
     const movedThreadIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            async (transactionScope) => {
-              if (isDefined(channelId)) {
-                await lockAgentChatChannelForThreadWriteOrThrow({
-                  transactionScope,
-                  channelRepository: this.channelRepository,
-                  workspaceId: workspaceId,
-                  channelId,
-                });
-              }
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          if (isDefined(channelId)) {
+            await lockAgentChatChannelForThreadWriteOrThrow({
+              transactionScope,
+              channelRepository: this.channelRepository,
+              workspaceId: workspaceId,
+              channelId,
+            });
+          }
 
-              const threadRepository =
-                transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                  'agentChatThread',
-                  { shouldSkipEventEmission: true },
-                );
-              const currentThread = await threadRepository.findOne({
-                select: ['channelId', 'workspaceMemberId'],
-                where: { id: threadId },
-              });
+          const threadRepository =
+            transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+              'agentChatThread',
+              { shouldSkipEventEmission: true },
+            );
+          const currentThread = await threadRepository.findOne({
+            select: ['channelId', 'workspaceMemberId'],
+            where: { id: threadId },
+          });
 
-              if (!isDefined(currentThread)) {
-                return throwAgentChatThreadNotFound();
-              }
+          if (!isDefined(currentThread)) {
+            return throwAgentChatThreadNotFound();
+          }
 
-              if (
-                !isDefined(channelId) &&
-                !isDefined(currentThread.workspaceMemberId)
-              ) {
-                return [];
-              }
+          if (
+            !isDefined(channelId) &&
+            !isDefined(currentThread.workspaceMemberId)
+          ) {
+            return [];
+          }
 
-              const sourceChannelId = currentThread.channelId ?? null;
-              const { generatedMaps: movedThreads } =
-                await threadRepository.update(
-                  {
-                    id: threadId,
-                    channelId: sourceChannelId ?? IsNull(),
-                    ...(isDefined(channelId)
-                      ? {}
-                      : { workspaceMemberId: Not(IsNull()) }),
-                  },
-                  {
-                    channelId,
-                    channelArchivedAt: null,
-                    channelSnoozedUntil: null,
-                  },
-                );
-
-              if (!isNonEmptyArray(movedThreads)) {
-                return throwAgentChatChannelBusy();
-              }
-
-              const movedThreadIds: string[] = movedThreads.map(({ id }) => id);
-
-              await this.channelGrantService.rewriteThreadGrantsInTransaction({
-                transactionScope,
-                workspaceId: workspaceId,
-                threadIds: movedThreadIds,
-                affectedChannelIds: [sourceChannelId, channelId],
-              });
-
-              return movedThreadIds;
+          const sourceChannelId = currentThread.channelId ?? null;
+          const { generatedMaps: movedThreads } = await threadRepository.update(
+            {
+              id: threadId,
+              channelId: sourceChannelId ?? IsNull(),
+              ...(isDefined(channelId)
+                ? {}
+                : { workspaceMemberId: Not(IsNull()) }),
             },
-          ),
+            {
+              channelId,
+              channelArchivedAt: null,
+              channelSnoozedUntil: null,
+            },
+          );
+
+          if (!isNonEmptyArray(movedThreads)) {
+            return throwAgentChatChannelBusy();
+          }
+
+          const movedThreadIds: string[] = movedThreads.map(({ id }) => id);
+
+          await this.channelGrantService.rewriteThreadGrantsInTransaction({
+            transactionScope,
+            workspaceId: workspaceId,
+            threadIds: movedThreadIds,
+            affectedChannelIds: [sourceChannelId, channelId],
+          });
+
+          return movedThreadIds;
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

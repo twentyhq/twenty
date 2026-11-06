@@ -9466,6 +9466,11 @@ msgstr "유효한 수신자가 지정되지 않았습니다"
 msgid "No verified sending domain matches this from address."
 msgstr "이 발신 주소와 일치하는 검증된 발신 도메인이 없습니다."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr ""
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

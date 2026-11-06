@@ -60,18 +60,16 @@ export class AgentChatInboxParticipantWriterService {
       await this.getParticipantObjectMetadata(workspaceId);
 
     const participantWrites =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
-            this.upsertParticipantInboxState({
-              scope,
-              workspaceId,
-              threadId,
-              memberIds: participantWorkspaceMemberIds,
-              reason,
-              participantObjectMetadata,
-            }),
-          ),
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        (scope) =>
+          this.upsertParticipantInboxState({
+            scope,
+            workspaceId,
+            threadId,
+            memberIds: participantWorkspaceMemberIds,
+            reason,
+            participantObjectMetadata,
+          }),
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

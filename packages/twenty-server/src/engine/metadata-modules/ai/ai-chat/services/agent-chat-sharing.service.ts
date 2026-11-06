@@ -493,96 +493,91 @@ export class AgentChatSharingService {
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            if (isDefined(args.channelId)) {
-              await lockAgentChatChannelForThreadWriteOrThrow({
-                transactionScope,
-                channelRepository: this.channelRepository,
-                workspaceId: args.workspaceId,
-                channelId: args.channelId,
-              });
-            }
-            await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-              transactionScope,
-              workspaceId: args.workspaceId,
-              channelIds: [args.channelId],
-            });
-            const threadRepository =
-              transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                'agentChatThread',
-                { shouldSkipEventEmission: true },
-              );
-            const threadId = args.id ?? randomUUID();
+    return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        if (isDefined(args.channelId)) {
+          await lockAgentChatChannelForThreadWriteOrThrow({
+            transactionScope,
+            channelRepository: this.channelRepository,
+            workspaceId: args.workspaceId,
+            channelId: args.channelId,
+          });
+        }
+        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+          transactionScope,
+          workspaceId: args.workspaceId,
+          channelIds: [args.channelId],
+        });
+        const threadRepository =
+          transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+            'agentChatThread',
+            { shouldSkipEventEmission: true },
+          );
+        const threadId = args.id ?? randomUUID();
 
-            await threadRepository.insert({
-              id: threadId,
-              title: args.title ?? null,
-              workspaceMemberId: authContext.workspaceMemberId,
-              ...(isDefined(args.channelId)
-                ? { channelId: args.channelId }
-                : {}),
-            });
-            await this.recordSharingWriteService.setRecordsPrivate({
-              workspaceId: args.workspaceId,
-              flatObjectMetadata: objectMetadata,
-              recordIds: [threadId],
-              isPrivate: true,
-              transactionScope,
-            });
-            await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
-              workspaceId: args.workspaceId,
+        await threadRepository.insert({
+          id: threadId,
+          title: args.title ?? null,
+          workspaceMemberId: authContext.workspaceMemberId,
+          ...(isDefined(args.channelId) ? { channelId: args.channelId } : {}),
+        });
+        await this.recordSharingWriteService.setRecordsPrivate({
+          workspaceId: args.workspaceId,
+          flatObjectMetadata: objectMetadata,
+          recordIds: [threadId],
+          isPrivate: true,
+          transactionScope,
+        });
+        await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
+          workspaceId: args.workspaceId,
+          objectMetadataId: objectMetadata.id,
+          recordIds: [threadId],
+          transactionScope,
+        });
+        await this.recordSharingWriteService.insertRecordShares({
+          workspaceId: args.workspaceId,
+          recordShares: [
+            {
               objectMetadataId: objectMetadata.id,
-              recordIds: [threadId],
-              transactionScope,
-            });
-            await this.recordSharingWriteService.insertRecordShares({
-              workspaceId: args.workspaceId,
-              recordShares: [
-                {
-                  objectMetadataId: objectMetadata.id,
-                  recordId: threadId,
-                  principalId: authContext.workspaceMemberId,
-                  principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-                  accessLevel: RecordShareAccessLevel.FULL,
-                  rowCause: RecordShareRowCause.OWNER,
-                  sourceId: threadId,
-                },
-              ],
-              transactionScope,
-            });
-            if (isDefined(args.channelId)) {
-              await this.channelGrantService.replaceRuleGrantsInTransaction({
-                transactionScope,
-                workspaceId: args.workspaceId,
-                scope: { threadIds: [threadId] },
-              });
-            }
-            await this.setUpCreatedThreadsInboxState({
-              transactionScope,
-              workspaceId: args.workspaceId,
-              workspaceMemberId: authContext.workspaceMemberId,
-              threadIds: [threadId],
-              participantObjectMetadata,
-              isArchived: args.isArchived,
-              isSubscribed: args.isSubscribed,
-            });
+              recordId: threadId,
+              principalId: authContext.workspaceMemberId,
+              principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+              accessLevel: RecordShareAccessLevel.FULL,
+              rowCause: RecordShareRowCause.OWNER,
+              sourceId: threadId,
+            },
+          ],
+          transactionScope,
+        });
+        if (isDefined(args.channelId)) {
+          await this.channelGrantService.replaceRuleGrantsInTransaction({
+            transactionScope,
+            workspaceId: args.workspaceId,
+            scope: { threadIds: [threadId] },
+          });
+        }
+        await this.setUpCreatedThreadsInboxState({
+          transactionScope,
+          workspaceId: args.workspaceId,
+          workspaceMemberId: authContext.workspaceMemberId,
+          threadIds: [threadId],
+          participantObjectMetadata,
+          isArchived: args.isArchived,
+          isSubscribed: args.isSubscribed,
+        });
 
-            const createdThread =
-              (await threadRepository.findOne({
-                where: { id: threadId },
-              })) ?? throwAgentChatThreadNotFound();
+        const createdThread =
+          (await threadRepository.findOne({
+            where: { id: threadId },
+          })) ?? throwAgentChatThreadNotFound();
 
-            await args.validateThread?.({
-              thread: createdThread,
-              transactionScope,
-            });
+        await args.validateThread?.({
+          thread: createdThread,
+          transactionScope,
+        });
 
-            return createdThread;
-          },
-        ),
+        return createdThread;
+      },
       buildSystemAuthContext(args.workspaceId),
       { lite: true },
     );
