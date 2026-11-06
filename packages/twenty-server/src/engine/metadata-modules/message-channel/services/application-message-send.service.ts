@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { type SendAppMessageAttachment } from 'twenty-shared/application';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -13,6 +15,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type SendAppChannelMessageAttachmentInput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.input';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -20,6 +23,7 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import {
   type AppMessageReplyRecipient,
   buildAppMessageReplyRecipients,
@@ -45,6 +49,7 @@ type SendArgs = {
   messageThreadId: string;
   text: string;
   idempotencyKey: string;
+  attachments: SendAppChannelMessageAttachmentInput[];
 };
 
 type Conversation = {
@@ -66,6 +71,7 @@ export class ApplicationMessageSendService {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly messagingProviderMessageSenderService: MessagingProviderMessageSenderService,
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
+    private readonly applicationMessageSendAttachmentsService: ApplicationMessageSendAttachmentsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
@@ -80,7 +86,15 @@ export class ApplicationMessageSendService {
     messageThreadId,
     text,
     idempotencyKey,
+    attachments,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
+    if (!isNonEmptyString(text) && !isNonEmptyArray(attachments)) {
+      throw new MessageChannelException(
+        'A message needs text or at least one attachment',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
         id: messageChannelId,
@@ -127,6 +141,11 @@ export class ApplicationMessageSendService {
         'flatWorkspaceMemberMaps',
       ]);
 
+    const attachmentsToSend =
+      await this.applicationMessageSendAttachmentsService.buildAttachmentsToSendOrThrow(
+        { attachments, workspaceId },
+      );
+
     const deliveryKey = `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`;
 
     return this.cacheLockService.withLock(
@@ -143,40 +162,53 @@ export class ApplicationMessageSendService {
             messageThreadId,
             idempotencyKey,
             text,
+            attachmentsToSend,
             deliveryKey,
           }));
 
+        const copiedAttachments =
+          await this.applicationMessageSendAttachmentsService.copyIntoAttachmentFileField(
+            { attachments, workspaceId },
+          );
+
         const {
           messages: [ingestedMessage],
-        } = await this.applicationMessageIngestionService.ingest({
-          applicationId,
-          workspaceId,
-          requestUserWorkspaceId: userWorkspaceId,
-          messageChannelId,
-          messages: [
-            {
-              externalId: delivery.externalId,
-              threadExternalId: delivery.threadExternalId,
-              text: delivery.text,
-              receivedAt: new Date(delivery.sentAt),
-              participants: [
-                {
-                  role: MessageParticipantRole.FROM,
-                  handle: messageChannel.handle,
-                  displayName: messageChannel.displayName ?? undefined,
-                  workspaceMemberId:
-                    flatWorkspaceMemberMaps.idByUserWorkspaceId[
-                      userWorkspaceId
-                    ],
-                },
-                ...delivery.recipients.map((recipient) => ({
-                  role: MessageParticipantRole.TO,
-                  ...recipient,
-                })),
-              ],
-            },
-          ],
-        });
+        } = await this.applicationMessageIngestionService
+          .ingest({
+            applicationId,
+            workspaceId,
+            requestUserWorkspaceId: userWorkspaceId,
+            messageChannelId,
+            messages: [
+              {
+                externalId: delivery.externalId,
+                threadExternalId: delivery.threadExternalId,
+                text: delivery.text,
+                receivedAt: new Date(delivery.sentAt),
+                attachments: copiedAttachments,
+                participants: [
+                  {
+                    role: MessageParticipantRole.FROM,
+                    handle: messageChannel.handle,
+                    displayName: messageChannel.displayName ?? undefined,
+                    workspaceMemberId:
+                      flatWorkspaceMemberMaps.idByUserWorkspaceId[
+                        userWorkspaceId
+                      ],
+                  },
+                  ...delivery.recipients.map((recipient) => ({
+                    role: MessageParticipantRole.TO,
+                    ...recipient,
+                  })),
+                ],
+              },
+            ],
+          })
+          .finally(() =>
+            this.applicationMessageSendAttachmentsService.deleteUnclaimedCopies(
+              { copiedAttachments, workspaceId },
+            ),
+          );
 
         return {
           messageId: ingestedMessage.messageId,
@@ -196,6 +228,7 @@ export class ApplicationMessageSendService {
     messageThreadId,
     idempotencyKey,
     text,
+    attachmentsToSend,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -205,6 +238,7 @@ export class ApplicationMessageSendService {
     messageThreadId: string;
     idempotencyKey: string;
     text: string;
+    attachmentsToSend: SendAppMessageAttachment[];
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
     const sender =
@@ -238,6 +272,7 @@ export class ApplicationMessageSendService {
               displayName: displayName ?? null,
             }),
           ),
+          attachments: attachmentsToSend,
         },
       });
 

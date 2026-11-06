@@ -3,6 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 
 import { StyledChatMessageBubble } from '@/activities/emails/components/StyledChatMessageBubble';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { AttachmentChip } from '@/file/components/AttachmentChip';
+import { isNonEmptyString } from '@sniptt/guards';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -12,6 +14,13 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledAttachments = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: flex-end;
 `;
 
 const StyledFailedRow = styled.div`
@@ -37,12 +46,26 @@ export const ChatThreadPendingMessage = ({
 
   return (
     <StyledContainer>
-      <StyledChatMessageBubble
-        isOutgoing
-        isDimmed={pendingMessage.status === 'sending'}
-      >
-        {pendingMessage.text}
-      </StyledChatMessageBubble>
+      {isNonEmptyString(pendingMessage.text) && (
+        <StyledChatMessageBubble
+          isOutgoing
+          isDimmed={pendingMessage.status === 'sending'}
+        >
+          {pendingMessage.text}
+        </StyledChatMessageBubble>
+      )}
+      {pendingMessage.attachments.length > 0 && (
+        <StyledAttachments>
+          {pendingMessage.attachments.map((attachment) => (
+            <AttachmentChip
+              key={attachment.id}
+              file={attachment}
+              onRemove={() => undefined}
+              readonly
+            />
+          ))}
+        </StyledAttachments>
+      )}
       {pendingMessage.status === 'failed' && (
         <StyledFailedRow>
           {t`Sending failed`}

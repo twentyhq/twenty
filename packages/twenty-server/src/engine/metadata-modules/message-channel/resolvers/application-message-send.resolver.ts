@@ -65,6 +65,7 @@ export class ApplicationMessageSendResolver {
       messageThreadId: input.messageThreadId,
       text: input.text,
       idempotencyKey: input.idempotencyKey,
+      attachments: input.attachments ?? [],
     });
   }
 }
