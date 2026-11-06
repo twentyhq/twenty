@@ -14,6 +14,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
@@ -180,7 +181,7 @@ export class AgentChatChannelResolver {
       color: input.color ?? null,
       roleIds: input.roleIds,
       universalIdentifier: input.universalIdentifier,
-      callingApplication,
+      ownerFlatApplication: getScopedCallingApplication(callingApplication),
       workspaceId,
     });
   }

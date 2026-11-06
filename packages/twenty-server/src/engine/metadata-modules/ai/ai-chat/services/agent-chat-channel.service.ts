@@ -4,6 +4,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
@@ -101,7 +102,9 @@ export class AgentChatChannelService {
     const workspaceId = authContext.workspace.id;
     const channel = await this.channelMetadataService.updateChannel({
       workspaceId,
-      callingApplication: authContext.application,
+      ownerFlatApplication: getScopedCallingApplication(
+        authContext.application,
+      ),
       channelId,
       changes,
       roleIds,
@@ -165,15 +168,10 @@ export class AgentChatChannelService {
     const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
       buildAgentChatChannelDeletionLockKey({ workspaceId, channelId }),
       async () => {
-        const movedThreads = await this.moveChannelThreads({
+        await this.moveChannelThreads({
           workspaceId,
           channelId,
           destinationChannelId,
-        });
-
-        await this.threadRecordEventService.emitThreadsUpdated({
-          workspaceId,
-          threads: movedThreads,
         });
 
         await this.channelMetadataService.deleteChannel({
@@ -235,15 +233,10 @@ export class AgentChatChannelService {
     }
 
     for (const channelId of channelIds) {
-      const movedThreads = await this.moveChannelThreads({
+      await this.moveChannelThreads({
         workspaceId,
         channelId,
         destinationChannelId: generalChannel.id,
-      });
-
-      await this.threadRecordEventService.emitThreadsUpdated({
-        workspaceId,
-        threads: movedThreads,
       });
     }
   }
@@ -257,12 +250,7 @@ export class AgentChatChannelService {
     workspaceId: string;
     channelId: string;
     destinationChannelId: string | null;
-  }): Promise<
-    {
-      before: AgentChatThreadWorkspaceEntity;
-      after: AgentChatThreadWorkspaceEntity;
-    }[]
-  > {
+  }): Promise<void> {
     const [doesSourceChannelExist, doesSourceChannelHaveThreads] =
       await Promise.all([
         this.channelRepository.existsBy(workspaceId, { id: channelId }),
@@ -277,7 +265,7 @@ export class AgentChatChannelService {
     }
 
     if (!doesSourceChannelHaveThreads) {
-      return [];
+      return;
     }
 
     if (!isDefined(destinationChannelId)) {
@@ -340,10 +328,13 @@ export class AgentChatChannelService {
       threadsAfter.map((threadAfter) => [threadAfter.id, threadAfter]),
     );
 
-    return threadsBefore.flatMap((before) => {
-      const after = threadAfterById.get(before.id);
+    await this.threadRecordEventService.emitThreadsUpdated({
+      workspaceId,
+      threads: threadsBefore.flatMap((before) => {
+        const after = threadAfterById.get(before.id);
 
-      return isDefined(after) ? [{ before, after }] : [];
+        return isDefined(after) ? [{ before, after }] : [];
+      }),
     });
   }
 }

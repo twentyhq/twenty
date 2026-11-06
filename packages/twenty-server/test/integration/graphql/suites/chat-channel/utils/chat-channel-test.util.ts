@@ -45,7 +45,7 @@ export const CREATE_CHANNEL = parse(
   `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color roleIds applicationId } }`,
 );
 
-const UPDATE_CHANNEL = parse(
+export const UPDATE_CHANNEL = parse(
   `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name roleIds } }`,
 );
 
@@ -240,7 +240,8 @@ export const readChannelGrantRoleIds = async (
     await global.testDataSource.query(
       `SELECT "principalId" FROM ${SCHEMA}."recordShare"
        WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
-         AND "principalType" = 'ROLE'`,
+         AND "principalType" = 'ROLE'
+       ORDER BY "principalId"`,
       [threadId],
     )
   ).map(({ principalId }: { principalId: string }) => principalId);

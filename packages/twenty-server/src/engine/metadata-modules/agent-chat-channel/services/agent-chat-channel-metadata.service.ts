@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
 import { assertAgentChatChannelNameNotTakenOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/assert-agent-chat-channel-name-not-taken-or-throw.util';
 import { assertAgentChatChannelUniversalIdentifierNotTakenOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/assert-agent-chat-channel-universal-identifier-not-taken-or-throw.util';
@@ -125,36 +124,34 @@ export class AgentChatChannelMetadataService {
 
   async createChannel({
     workspaceId,
-    callingApplication,
+    ownerFlatApplication,
     universalIdentifier,
     ...channelToCreate
   }: ChannelToCreate & {
     workspaceId: string;
-    callingApplication: FlatApplication | undefined;
+    ownerFlatApplication?: FlatApplication;
     universalIdentifier?: string | null;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
-    const actingFlatApplication = await this.findActingFlatApplication({
-      workspaceId,
-      callingApplication,
-    });
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (await this.findWorkspaceCustomFlatApplication(workspaceId));
 
     const channel = await this.findOrInsertChannel({
       ...channelToCreate,
       workspaceId,
-      applicationUniversalIdentifier: actingFlatApplication.universalIdentifier,
+      applicationUniversalIdentifier:
+        resolvedOwnerFlatApplication.universalIdentifier,
       universalIdentifier: isDefined(universalIdentifier)
         ? validateAgentChatChannelUniversalIdentifierOrThrow(
             universalIdentifier,
           )
         : v4(),
-      shouldPickAvailableName: isDefined(
-        getScopedCallingApplication(callingApplication),
-      ),
+      shouldPickAvailableName: isDefined(ownerFlatApplication),
     });
 
     assertAgentChatChannelUniversalIdentifierNotTakenOrThrow({
       channel,
-      applicationId: actingFlatApplication.id,
+      applicationId: resolvedOwnerFlatApplication.id,
     });
 
     return channel;
@@ -162,13 +159,13 @@ export class AgentChatChannelMetadataService {
 
   async updateChannel({
     workspaceId,
-    callingApplication,
+    ownerFlatApplication,
     channelId,
     changes,
     roleIds,
   }: {
     workspaceId: string;
-    callingApplication: FlatApplication | undefined;
+    ownerFlatApplication?: FlatApplication;
     channelId: string;
     changes: ChannelChanges;
     roleIds?: string[];
@@ -178,10 +175,9 @@ export class AgentChatChannelMetadataService {
       flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
       channelId,
     });
-    const actingFlatApplication = await this.findActingFlatApplication({
-      workspaceId,
-      callingApplication,
-    });
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (await this.findWorkspaceCustomFlatApplication(workspaceId));
     const now = new Date().toISOString();
 
     const definedChanges = removeUndefinedFields({
@@ -231,7 +227,8 @@ export class AgentChatChannelMetadataService {
               channelRole.roleUniversalIdentifier === roleUniversalIdentifier,
           ),
       ),
-      applicationUniversalIdentifier: actingFlatApplication.universalIdentifier,
+      applicationUniversalIdentifier:
+        resolvedOwnerFlatApplication.universalIdentifier,
       now,
     });
 
@@ -250,7 +247,8 @@ export class AgentChatChannelMetadataService {
 
     await this.runMigration({
       workspaceId,
-      applicationUniversalIdentifier: actingFlatApplication.universalIdentifier,
+      applicationUniversalIdentifier:
+        resolvedOwnerFlatApplication.universalIdentifier,
       channelsToUpdate: isChannelChanged
         ? [{ ...channel, ...definedChanges, updatedAt: now }]
         : [],
@@ -337,55 +335,43 @@ export class AgentChatChannelMetadataService {
         .filter(isDefined)
         .map(({ position }) => position),
     );
-
-    await this.runMigration({
-      workspaceId,
+    const channelRolesToCreate = buildAgentChatChannelRolesToCreate({
+      channelUniversalIdentifier: universalIdentifier,
+      roleUniversalIdentifiers:
+        findAgentChatChannelRoleUniversalIdentifiersOrThrow({
+          flatRoleMaps: channelMaps.flatRoleMaps,
+          roleIds,
+        }),
       applicationUniversalIdentifier,
-      channelsToCreate: [
-        {
-          id: channelId,
-          universalIdentifier,
-          name: channelName,
-          icon,
-          color,
-          position: lastPosition + 1,
-          channelRoleUniversalIdentifiers: [],
-          navigationMenuItemUniversalIdentifiers: [],
-          applicationUniversalIdentifier,
-          createdAt: now,
-          updatedAt: now,
-        },
-      ],
-      channelRolesToCreate: buildAgentChatChannelRolesToCreate({
-        channelUniversalIdentifier: universalIdentifier,
-        roleUniversalIdentifiers:
-          findAgentChatChannelRoleUniversalIdentifiersOrThrow({
-            flatRoleMaps: channelMaps.flatRoleMaps,
-            roleIds,
-          }),
-        applicationUniversalIdentifier,
-        now,
-      }),
+      now,
     });
 
-    return this.findChannelOrThrow({ workspaceId, channelId });
-  }
-
-  private async findOrInsertChannel(
-    channelToInsert: ChannelToInsert,
-  ): Promise<FlatAgentChatChannelWithRoleIds> {
-    const existingChannel =
-      await this.findChannelByUniversalIdentifier(channelToInsert);
-
-    if (isDefined(existingChannel)) {
-      return existingChannel;
-    }
-
     try {
-      return await this.insertChannel(channelToInsert);
+      await this.runMigration({
+        workspaceId,
+        applicationUniversalIdentifier,
+        channelsToCreate: [
+          {
+            id: channelId,
+            universalIdentifier,
+            name: channelName,
+            icon,
+            color,
+            position: lastPosition + 1,
+            channelRoleUniversalIdentifiers: [],
+            navigationMenuItemUniversalIdentifiers: [],
+            applicationUniversalIdentifier,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+        channelRolesToCreate,
+      });
+
+      return await this.findChannelOrThrow({ workspaceId, channelId });
     } catch (error) {
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId: channelToInsert.workspaceId,
+        workspaceId,
         flatMapsKeys: [
           'flatAgentChatChannelMaps',
           'flatAgentChatChannelRoleMaps',
@@ -393,7 +379,10 @@ export class AgentChatChannelMetadataService {
       });
 
       const concurrentlyCreatedChannel =
-        await this.findChannelByUniversalIdentifier(channelToInsert);
+        await this.findChannelByUniversalIdentifier({
+          workspaceId,
+          universalIdentifier,
+        });
 
       if (!isDefined(concurrentlyCreatedChannel)) {
         throw error;
@@ -403,17 +392,19 @@ export class AgentChatChannelMetadataService {
     }
   }
 
-  private async findActingFlatApplication({
-    workspaceId,
-    callingApplication,
-  }: {
-    workspaceId: string;
-    callingApplication: FlatApplication | undefined;
-  }): Promise<FlatApplication> {
-    return (
-      getScopedCallingApplication(callingApplication) ??
-      (await this.findWorkspaceCustomFlatApplication(workspaceId))
-    );
+  private async findOrInsertChannel(
+    channelToInsert: ChannelToInsert,
+  ): Promise<FlatAgentChatChannelWithRoleIds> {
+    const existingChannel = await this.findChannelByUniversalIdentifier({
+      workspaceId: channelToInsert.workspaceId,
+      universalIdentifier: channelToInsert.universalIdentifier,
+    });
+
+    if (isDefined(existingChannel)) {
+      return existingChannel;
+    }
+
+    return this.insertChannel(channelToInsert);
   }
 
   private async findWorkspaceCustomFlatApplication(

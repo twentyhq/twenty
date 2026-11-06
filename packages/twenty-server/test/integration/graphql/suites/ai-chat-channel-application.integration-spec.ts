@@ -4,6 +4,14 @@ import { parse } from 'graphql';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import {
+  CHANNEL_ROLES,
+  UPDATE_CHANNEL,
+  listChannels,
+  readChannelGrantRoleIds,
+  readChannelGrants,
+  watchThreadEvents,
+} from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -16,7 +24,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 
@@ -28,7 +35,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { STANDARD_AGENT_CHAT_CHANNEL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent-chat-channel.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -37,14 +43,6 @@ const CHANNEL_MANAGER_PERMISSION_FLAGS = [
   SystemPermissionFlag.AI_SETTINGS,
 ];
 
-type ListedChannel = {
-  id: string;
-  name: string;
-  applicationId: string;
-  isAccessible: boolean;
-  roleIds: string[];
-};
-
 type ApplicationUnderTest = {
   application: ApplicationWithResources;
   token: string;
@@ -52,20 +50,8 @@ type ApplicationUnderTest = {
   roleId: string;
 };
 
-const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name applicationId isAccessible roleIds } }`,
-);
-
-const CHANNEL_ROLES = parse(
-  `query ChannelRoles { agentChatChannelRoles { id } }`,
-);
-
 const CREATE_CHANNEL = parse(
   `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name roleIds } }`,
-);
-
-const UPDATE_CHANNEL = parse(
-  `mutation UpdateChannel($channelId: UUID!, $input: UpdateAgentChatChannelInput!) { updateAgentChatChannel(channelId: $channelId, input: $input) { id name roleIds } }`,
 );
 
 const DELETE_CHANNEL = parse(
@@ -197,45 +183,6 @@ const readThreadParticipants = (threadId: string) =>
     .where('participant."threadId" = :threadId', { threadId })
     .orderBy('participant.id')
     .getRawMany<Record<string, unknown>>();
-
-const readChannelGrants = async (
-  threadId: string,
-): Promise<{ principalType: string; sourceId: string }[]> =>
-  global.testDataSource
-    .createQueryBuilder()
-    .select('record_share."principalType"', 'principalType')
-    .addSelect('record_share."sourceId"', 'sourceId')
-    .distinct(true)
-    .from(`${SCHEMA}.recordShare`, 'record_share')
-    .where('record_share."recordId" = :threadId', { threadId })
-    .andWhere('record_share."rowCause" = :rowCause', { rowCause: 'RULE' })
-    .andWhere('record_share."deletedAt" IS NULL')
-    .orderBy('record_share."principalType"')
-    .getRawMany<{ principalType: string; sourceId: string }>();
-
-const readChannelGrantRoleIds = async (threadId: string): Promise<string[]> =>
-  (
-    await global.testDataSource
-      .createQueryBuilder()
-      .select('record_share."principalId"', 'principalId')
-      .from(`${SCHEMA}.recordShare`, 'record_share')
-      .where('record_share."recordId" = :threadId', { threadId })
-      .andWhere('record_share."rowCause" = :rowCause', { rowCause: 'RULE' })
-      .andWhere('record_share."deletedAt" IS NULL')
-      .andWhere('record_share."principalType" = :principalType', {
-        principalType: 'ROLE',
-      })
-      .orderBy('record_share."principalId"')
-      .getRawMany<{ principalId: string }>()
-  ).map(({ principalId }) => principalId);
-
-const listChannels = async (token: string): Promise<ListedChannel[]> => {
-  const response = await makeMetadataApiRequest({ query: CHANNELS }, token);
-
-  assertGraphQLSuccessfulResponse(response);
-
-  return response.body.data.agentChatChannels;
-};
 
 const buildChannelName = () => `Application channel ${randomUUID()}`;
 
@@ -814,10 +761,7 @@ describe('Uninstalling an application that created inbox channels', () => {
       uninstalledApplication.roleId,
     );
 
-    const emitDatabaseBatchEventSpy = jest.spyOn(
-      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
-      'emitDatabaseBatchEvent',
-    );
+    const { findEmittedThreadEvent } = watchThreadEvents();
 
     try {
       const { errors } = await uninstallApplication({
@@ -827,17 +771,9 @@ describe('Uninstalling an application that created inbox channels', () => {
 
       expect(errors).toBeUndefined();
       expect(await readChannelApplicationId(channelId)).toBeUndefined();
-      expect(
-        emitDatabaseBatchEventSpy.mock.calls.some(
-          ([batchEvent]) =>
-            batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
-            batchEvent.events.some(
-              (event) => 'recordId' in event && event.recordId === threadId,
-            ),
-        ),
-      ).toBe(true);
+      expect(findEmittedThreadEvent(threadId)).toBeDefined();
     } finally {
-      emitDatabaseBatchEventSpy.mockRestore();
+      jest.restoreAllMocks();
     }
 
     expect(await readThreadChannelState(threadId)).toMatchObject({
