@@ -48,6 +48,18 @@ describe('BullMQDriver job memory accounting (integration)', () => {
   const readUsedBytes = async () =>
     Number((await connection.get(`${prefix}:${usedKey}`)) ?? 0);
 
+  const waitForUsedBytes = async (expectedBytes: number) => {
+    for (let attempt = 0; attempt < 50; attempt++) {
+      if ((await readUsedBytes()) === expectedBytes) {
+        return;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    expect(await readUsedBytes()).toBe(expectedBytes);
+  };
+
   const enqueue = async (data: Partial<MemoryTestJobData>, delay?: number) => {
     const {
       jobs: [job],
@@ -127,30 +139,26 @@ describe('BullMQDriver job memory accounting (integration)', () => {
     await connection.quit();
   });
 
-  it('keeps charging a completed job while BullMQ retains its payload', async () => {
+  it('releases the charge when the job completes', async () => {
     const job = await enqueue({});
 
+    expect(await readUsedBytes()).toBe(job.sizeBytes);
     expect(await waitForFinishedJob(inspectionQueue, job.jobId)).toBe(
       'completed',
     );
-
-    const retainedJob = await inspectionQueue.getJob(job.jobId);
-
-    expect(retainedJob?.data.payload).toHaveLength(PAYLOAD.length);
-    expect(await readUsedBytes()).toBe(job.sizeBytes);
+    await waitForUsedBytes(0);
   });
 
-  it('keeps charging a job that failed for good while BullMQ retains it', async () => {
+  it('releases the charge when the job fails for good', async () => {
     const job = await enqueue({ shouldFail: true });
 
     expect(await waitForFinishedJob(inspectionQueue, job.jobId)).toBe('failed');
-    expect(await readUsedBytes()).toBe(job.sizeBytes);
+    await waitForUsedBytes(0);
   });
 
-  it('releases the charge once the job is deleted and two reconcile passes miss it', async () => {
-    const job = await enqueue({});
+  it('releases the charge of a deleted waiting job once two reconcile passes miss it', async () => {
+    const job = await enqueue({}, 60 * 60 * 1000);
 
-    await waitForFinishedJob(inspectionQueue, job.jobId);
     await driver.reconcileJobMemory(QUEUE);
     await driver.reconcileJobMemory(QUEUE);
 

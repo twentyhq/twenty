@@ -2,7 +2,6 @@ import { Logger } from '@nestjs/common';
 
 import {
   createMemoryHarness,
-  type MemoryHarness,
   MEMORY_SCENARIO_JOB_NAME,
   MEMORY_SCENARIO_QUEUE,
   silenceDriverLogs,
@@ -267,9 +266,13 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S6: A fills its share, then its jobs get processed', () => {
-    const fillShare = (harness: MemoryHarness) =>
-      harness.enqueueBulk([
+  describe('S6: A fills its share, then one of its jobs gets processed', () => {
+    it('a completed job frees its charge, so A can enqueue again', async () => {
+      const harness = await createMemoryHarness();
+
+      const {
+        jobs: [firstJob, secondJob],
+      } = await harness.enqueueBulk([
         harness.buildApplicationJob({
           label: 'A1',
           workspaceId: 'A',
@@ -281,69 +284,90 @@ describe('BullMQDriver job memory scenarios', () => {
           payloadBytes: 2_000,
         }),
       ]);
-    const enqueueThirdJob = (harness: MemoryHarness) =>
-      harness.enqueueBulk([
-        harness.buildApplicationJob({
-          label: 'A3',
-          workspaceId: 'A',
-          payloadBytes: 2_000,
-        }),
-      ]);
 
-    it('a completed job keeps its charge while BullMQ retains its payload', async () => {
-      const harness = await createMemoryHarness();
-      const { jobs } = await fillShare(harness);
+      await harness.processJobOrThrow({ jobId: firstJob.jobId });
 
-      await harness.processJobOrThrow({ jobId: jobs[0].jobId });
-
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(sumSizes(jobs));
-      await expect(enqueueThirdJob(harness)).rejects.toThrow(
-        MessageQueueException,
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        secondJob.sizeBytes,
       );
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(
+        secondJob.sizeBytes,
+      );
+      await expect(
+        harness.enqueueBulk([
+          harness.buildApplicationJob({
+            label: 'A3',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ]),
+      ).resolves.toMatchObject({ jobs: [expect.anything()] });
     });
 
-    it('a job failing for good keeps its charge while BullMQ retains it', async () => {
+    it('a failed job keeps its charge while it has retries left, and frees it on its final failure', async () => {
       const harness = await createMemoryHarness();
 
       const {
         jobs: [job],
-      } = await harness.enqueueBulk([
-        harness.buildApplicationJob({
-          label: 'A1',
-          workspaceId: 'A',
-          payloadBytes: 2_000,
-        }),
-      ]);
+      } = await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ],
+        { retryLimit: 1 },
+      );
+      const failingHandler = async () => {
+        throw new Error('handler failed');
+      };
+
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: failingHandler,
+      });
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(job.sizeBytes);
+
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: failingHandler,
+      });
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readChargedJobs(WORKSPACE_A)).toEqual({});
+    });
+
+    it('a job failing on an unrecoverable error frees its charge right away', async () => {
+      const harness = await createMemoryHarness();
+
+      const {
+        jobs: [job],
+      } = await harness.enqueueBulk(
+        [
+          harness.buildApplicationJob({
+            label: 'A1',
+            workspaceId: 'A',
+            payloadBytes: 2_000,
+          }),
+        ],
+        { retryLimit: 3 },
+      );
 
       await harness.processJobOrThrow({
         jobId: job.jobId,
         handler: async () => {
-          throw new Error('handler failed');
+          throw new MessageQueueException(
+            'payload too large',
+            MessageQueueExceptionCode.JOB_TOO_LARGE,
+            { index: 0, sizeBytes: 2_000_000, maxBytes: 1_048_576 },
+          );
         },
       });
 
       expect(harness.storedJob(job.jobId)?.finishedOn).toBeDefined();
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(job.sizeBytes);
-    });
-
-    it('once retention removes the finished job, the reconcile cron gives its charge back', async () => {
-      const harness = await createMemoryHarness();
-      const { jobs } = await fillShare(harness);
-
-      await harness.processJobOrThrow({ jobId: jobs[0].jobId });
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(sumSizes(jobs));
-
-      await harness.removeFromBullMQ(jobs[0].jobId);
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[1].sizeBytes);
-      await expect(enqueueThirdJob(harness)).resolves.toMatchObject({
-        jobs: [expect.anything()],
-      });
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
     });
   });
 
@@ -364,7 +388,7 @@ describe('BullMQDriver job memory scenarios', () => {
       expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[0].sizeBytes);
     });
 
-    it('an id BullMQ keeps after it finished is not charged twice, as BullMQ starts no new run for it', async () => {
+    it('an id BullMQ keeps after it finished is not charged again, as BullMQ starts no new run for it', async () => {
       const harness = await createMemoryHarness();
       const job = harness.buildApplicationJob({
         label: 'A1',
@@ -387,13 +411,8 @@ describe('BullMQDriver job memory scenarios', () => {
       ]);
 
       expect(jobs.map(({ jobId }) => jobId)).toEqual(['finished-id', 'new-id']);
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
-        jobs[0].sizeBytes + jobs[1].sizeBytes,
-      );
-      expect(
-        Object.keys(await harness.readChargedJobs(WORKSPACE_A)).sort(),
-      ).toEqual([
-        `${MEMORY_SCENARIO_QUEUE}:finished-id`,
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(jobs[1].sizeBytes);
+      expect(Object.keys(await harness.readChargedJobs(WORKSPACE_A))).toEqual([
         `${MEMORY_SCENARIO_QUEUE}:new-id`,
       ]);
     });
@@ -410,10 +429,6 @@ describe('BullMQDriver job memory scenarios', () => {
       await harness.enqueueBulk([job]);
       await harness.processJobOrThrow({ jobId: 'removed-id' });
       await harness.removeFromBullMQ('removed-id');
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
-
-      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
 
       const { jobs } = await harness.enqueueBulk([job]);
 

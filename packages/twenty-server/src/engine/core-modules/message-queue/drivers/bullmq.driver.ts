@@ -476,6 +476,15 @@ export class BullMQDriver
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
+    this.workerMap[queueName].on('completed', (job) =>
+      this.releaseFinishedJobMemory({ queueName, job }),
+    );
+    this.workerMap[queueName].on('failed', (job) => {
+      if (isDefined(job?.finishedOn)) {
+        this.releaseFinishedJobMemory({ queueName, job });
+      }
+    });
+
     this.workerMap[queueName].on('completed', (job) => {
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
@@ -875,6 +884,27 @@ export class BullMQDriver
     await this.jobMemoryLimiter.release({
       queueName,
       jobId,
+      groupKeys: memoryGroupKeys,
+    });
+  }
+
+  private releaseFinishedJobMemory({
+    queueName,
+    job,
+  }: {
+    queueName: MessageQueue;
+    job: Job | undefined;
+  }): void {
+    const memoryGroupKeys = (job?.opts as BullMQJobsOptions | undefined)
+      ?.memoryGroupKeys;
+
+    if (!isDefined(job?.id) || !isNonEmptyArray(memoryGroupKeys)) {
+      return;
+    }
+
+    void this.jobMemoryLimiter.release({
+      queueName,
+      jobId: job.id,
       groupKeys: memoryGroupKeys,
     });
   }

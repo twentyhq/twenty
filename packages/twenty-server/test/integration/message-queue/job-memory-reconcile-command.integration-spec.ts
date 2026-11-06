@@ -4,7 +4,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { v4 as generateUuid } from 'uuid';
 
-import { JobMemoryReconcileCronJob } from 'src/engine/core-modules/message-queue/crons/jobs/job-memory-reconcile.cron.job';
+import { JobMemoryReconcileCommand } from 'src/engine/core-modules/message-queue/commands/job-memory-reconcile.command';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
@@ -23,7 +23,7 @@ jest.mock(
 );
 
 const QUEUE = MessageQueue.logicFunctionQueue;
-const WORKSPACE_ID = 'job-memory-retention-workspace';
+const WORKSPACE_ID = 'job-memory-reconcile-workspace';
 const PAYLOAD = 'x'.repeat(64 * 1024);
 const SHARE_HEADROOM_BYTES = 100_000;
 const TEST_MAX_MEMORY_BYTES = 512 * 1024 * 1024;
@@ -31,7 +31,7 @@ const TEST_MAX_MEMORY_BYTES = 512 * 1024 * 1024;
 const sleep = (milliseconds: number) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-describe('Job memory reconcile cron with expired retention (integration)', () => {
+describe('Job memory reconcile command (integration)', () => {
   let connection: IORedis;
   let previousMaxMemory: string | undefined;
 
@@ -62,8 +62,8 @@ describe('Job memory reconcile cron with expired retention (integration)', () =>
     await connection.quit();
   });
 
-  it('gives a workspace its budget back once retention of its finished jobs expires', async () => {
-    const prefix = `job-memory-retention-${generateUuid()}`;
+  it('deletes expired finished jobs and gives back the budget of a waiting job deleted outside the worker', async () => {
+    const prefix = `job-memory-reconcile-${generateUuid()}`;
     const memoryInfo = String(await connection.info('memory'));
     const readMemoryValue = (name: string) =>
       Number(new RegExp(`${name}:(\\d+)`).exec(memoryInfo)?.[1] ?? 0);
@@ -86,18 +86,23 @@ describe('Job memory reconcile cron with expired retention (integration)', () =>
       { get: (key: string) => configValues[key] } as never,
       new EventEmitter2(),
     );
-    const cronJob = new JobMemoryReconcileCronJob(
+    const command = new JobMemoryReconcileCommand(
       new MessageQueueService(driver, MessageQueue.cronQueue),
     );
     const inspectionQueue = new Queue(QUEUE, { connection, prefix });
-    const enqueue = () =>
-      driver.bulkAdd(QUEUE, 'JobMemoryRetentionTestJob', [
-        {
-          data: { payload: PAYLOAD },
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: 'job-memory-retention-app',
-        },
-      ]);
+    const enqueue = (delay?: number) =>
+      driver.bulkAdd(
+        QUEUE,
+        'JobMemoryReconcileTestJob',
+        [
+          {
+            data: { payload: PAYLOAD },
+            workspaceId: WORKSPACE_ID,
+            applicationUniversalIdentifier: 'job-memory-reconcile-app',
+          },
+        ],
+        { delay },
+      );
 
     driver.register(QUEUE);
     driver.work(QUEUE, async () => undefined);
@@ -117,19 +122,21 @@ describe('Job memory reconcile cron with expired retention (integration)', () =>
         await sleep(100);
       }
 
+      const {
+        jobs: [waitingJob],
+      } = await enqueue(60 * 60 * 1000);
+
       await expect(enqueue()).rejects.toThrow(MessageQueueException);
 
+      await (await inspectionQueue.getJob(waitingJob.jobId))?.remove();
       await sleep(1_500);
 
       expect(await inspectionQueue.getJob(finishedJob.jobId)).toBeDefined();
-
-      await cronJob.handle();
-
-      expect(await inspectionQueue.getJob(finishedJob.jobId)).toBeUndefined();
       await expect(enqueue()).rejects.toThrow(MessageQueueException);
 
-      await cronJob.handle();
+      await command.run([], { graceSeconds: 0 });
 
+      expect(await inspectionQueue.getJob(finishedJob.jobId)).toBeUndefined();
       await expect(enqueue()).resolves.toMatchObject({
         jobs: [expect.anything()],
       });

@@ -479,7 +479,7 @@ describe('JobMemoryLimiter', () => {
       expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
     });
 
-    it('keeps the charge of a finished job that BullMQ still retains', async () => {
+    it('releases a job that BullMQ finished but kept, since its release was lost', async () => {
       const { redis, limiter } = await createLimiter();
 
       await chargeJob({ limiter, jobId: 'finished-job' });
@@ -488,7 +488,7 @@ describe('JobMemoryLimiter', () => {
       await limiter.reconcile(QUEUE);
       await limiter.reconcile(QUEUE);
 
-      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
+      expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(0);
     });
 
     it('forgets a suspect once BullMQ adds its job, so a late add is never released', async () => {
