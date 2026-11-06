@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
 import { type ObjectLiteral } from 'typeorm';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
@@ -65,7 +66,12 @@ export class AgentHistoryTransactionService {
             }) => {
               const recordIds = identifiers.map(({ id }) => {
                 if (!isString(id)) {
-                  return throwAgentChatThreadNotFound();
+                  throw new AgentHistoryStorageException({
+                    code: 'INVALID_RECORD_IDENTIFIER',
+                    message: doNotTranslate(
+                      `Agent history ${name} write returned a non-string record ID`,
+                    ),
+                  });
                 }
 
                 return id;
@@ -116,16 +122,22 @@ export class AgentHistoryTransactionService {
                 return result.generatedMaps.length;
               },
               upsert: async ({ name, values, conflictPaths }) => {
+                const normalizedValues = { ...values };
+
+                if (isString(normalizedValues.id)) {
+                  normalizedValues.id = normalizedValues.id.toLowerCase();
+                }
+
                 validateAgentHistoryConversationRecordsOrThrow({
                   name,
-                  values,
+                  values: normalizedValues,
                   threadId,
                   writtenMessageIds,
                 });
 
                 const identity = [...conflictPaths]
                   .sort()
-                  .map((field) => [field, values[field]]);
+                  .map((field) => [field, normalizedValues[field]]);
 
                 await transactionScope.executeRawQuery(
                   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
@@ -135,7 +147,7 @@ export class AgentHistoryTransactionService {
                 );
 
                 const { identifiers } = await getRepository(name).upsert(
-                  values,
+                  normalizedValues,
                   conflictPaths,
                 );
 
