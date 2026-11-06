@@ -98,6 +98,7 @@ type ChatExecutionResult = Pick<
 };
 
 type ChatExecutionProfile = {
+  assistantDisplayName: string | undefined;
   toolset: Parameters<AgentTurnService['start']>[0]['toolset'] & {
     isWorkspaceSetupThread: boolean;
   };
@@ -190,18 +191,13 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspace.id,
-    );
     const executionProfile = await this.buildExecutionProfile({
       thread,
-      workspaceId: workspace.id,
+      workspace,
       userWorkspaceId,
       messages,
       browsingContext,
       toolContext,
-      isAiChatInboxEnabled,
     });
     const { isWorkspaceSetupThread } = executionProfile.toolset;
     const { isWorkspaceSetupKickoffTurn } = executionProfile;
@@ -256,14 +252,10 @@ export class ChatExecutionService {
         }
 
         const skillContext = await executionProfile.loadSkillContext();
-        const assistantDisplayName = isAiChatInboxEnabled
-          ? (await this.workspaceAssistantProfileService.get(workspace))
-              .displayName
-          : undefined;
 
         return {
           systemPrompt: buildFullSystemPrompt({
-            assistantDisplayName,
+            assistantDisplayName: executionProfile.assistantDisplayName,
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
@@ -322,25 +314,33 @@ export class ChatExecutionService {
 
   private async buildExecutionProfile({
     thread,
-    workspaceId,
+    workspace,
     userWorkspaceId,
     messages,
     browsingContext,
     toolContext,
-    isAiChatInboxEnabled,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
-    workspaceId: string;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
     userWorkspaceId: string;
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
-    isAiChatInboxEnabled: boolean;
   }): Promise<ChatExecutionProfile> {
+    const workspaceId = workspace.id;
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspaceId,
+    );
+    const assistantDisplayName = isAiChatInboxEnabled
+      ? (await this.workspaceAssistantProfileService.get(workspace)).displayName
+      : undefined;
+
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
       return {
+        assistantDisplayName,
         toolset: {
           registryAccess: { type: 'none' },
           nativeToolOptions: { webSearch: false, twitterSearch: false },
@@ -371,6 +371,7 @@ export class ChatExecutionService {
       .find((message) => message.role === AgentMessageRole.USER);
 
     return {
+      assistantDisplayName,
       toolset: {
         registryAccess: {
           type: 'assistant',
