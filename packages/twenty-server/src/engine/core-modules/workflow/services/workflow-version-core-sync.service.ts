@@ -92,7 +92,10 @@ export class WorkflowVersionCoreSyncService {
 
   async upsertToCore(
     workspaceId: string,
-    workflowVersions: (WorkflowVersionWorkspaceEntity & {
+    workflowVersions: (Pick<
+      WorkflowVersionWorkspaceEntity,
+      'id' | 'coreWorkflowVersionId' | 'trigger' | 'steps' | 'status'
+    > & {
       workflowId: string;
     })[],
   ): Promise<void> {
@@ -278,7 +281,10 @@ export class WorkflowVersionCoreSyncService {
   // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
   private async resolveOwnedCoreVersions(
     workspaceId: string,
-    workflowVersions: WorkflowVersionWorkspaceEntity[],
+    workflowVersions: Pick<
+      WorkflowVersionWorkspaceEntity,
+      'coreWorkflowVersionId'
+    >[],
   ): Promise<Map<string, string | null>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)

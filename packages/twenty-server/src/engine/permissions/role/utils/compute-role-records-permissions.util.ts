@@ -15,8 +15,10 @@ import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
+  LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];

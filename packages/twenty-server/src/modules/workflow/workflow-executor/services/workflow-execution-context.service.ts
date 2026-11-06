@@ -69,7 +69,7 @@ export class WorkflowExecutionContextService {
     ]);
 
     if (
-      this.getRunWorkflowOrThrow(workflowRun, flatWorkflowMaps)
+      this.getRunWorkflowOrThrow({ workflowRun, flatWorkflowMaps })
         .applicationId === workspace.workspaceCustomApplicationId
     ) {
       return null;
@@ -118,7 +118,10 @@ export class WorkflowExecutionContextService {
         'flatWorkflowMaps',
       ]);
 
-    const workflow = this.getRunWorkflowOrThrow(workflowRun, flatWorkflowMaps);
+    const workflow = this.getRunWorkflowOrThrow({
+      workflowRun,
+      flatWorkflowMaps,
+    });
 
     const application = resolveWorkflowRunApplicationOrThrow({
       applicationId: workflow.applicationId,
@@ -153,10 +156,13 @@ export class WorkflowExecutionContextService {
     };
   }
 
-  private getRunWorkflowOrThrow(
-    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>,
-    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>,
-  ): FlatWorkflow {
+  private getRunWorkflowOrThrow({
+    workflowRun,
+    flatWorkflowMaps,
+  }: {
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>;
+    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>;
+  }): FlatWorkflow {
     const workflow = isDefined(workflowRun.coreWorkflowId)
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: workflowRun.coreWorkflowId,

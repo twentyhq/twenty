@@ -22,6 +22,29 @@ describe('filterAndSortNavigationMenuItems', () => {
     key: ViewKey.INDEX,
   };
 
+  const mockWorkflowObjectMetadataItem = {
+    id: 'workflow-metadata-id',
+    nameSingular: 'workflow',
+    namePlural: 'workflows',
+    labelPlural: 'Workflows',
+    icon: 'IconSettingsAutomation',
+    isActive: true,
+  } as EnrichedObjectMetadataItem;
+
+  const workflowRecordItem: NavigationMenuItem = {
+    id: 'workflow-favorite-id',
+    type: NavigationMenuItemType.RECORD,
+    position: 0,
+    targetRecordId: 'workflow-record-id',
+    createdAt: '2021-01-01',
+    updatedAt: '2021-01-01',
+    targetObjectMetadataId: 'workflow-metadata-id',
+    targetRecordIdentifier: {
+      id: 'workflow-record-id',
+      labelIdentifier: 'My workflow',
+    },
+  };
+
   it('keeps native page items with a known key only', () => {
     const workflowsNativePageItem = {
       id: 'workflows-native-page-id',
@@ -44,22 +67,29 @@ describe('filterAndSortNavigationMenuItems', () => {
     ).toEqual([workflowsNativePageItem]);
   });
 
+  it('hides workflow record items', () => {
+    expect(
+      filterAndSortNavigationMenuItems(
+        [workflowRecordItem],
+        [],
+        [mockWorkflowObjectMetadataItem],
+      ),
+    ).toEqual([]);
+  });
+
   it('hides chat record items, which the chat menu lists', () => {
     const chatObjectMetadataItem = {
       id: 'chat-metadata-id',
       nameSingular: 'agentChatThread',
       isActive: true,
     } as EnrichedObjectMetadataItem;
-    const chatRecordItem: NavigationMenuItem = {
+    const chatRecordItem = {
+      ...workflowRecordItem,
       id: 'chat-favorite-id',
-      type: NavigationMenuItemType.RECORD,
-      position: 0,
       targetRecordId: 'chat-record-id',
-      createdAt: '2021-01-01',
-      updatedAt: '2021-01-01',
       targetObjectMetadataId: 'chat-metadata-id',
       targetRecordIdentifier: { id: 'chat-record-id', labelIdentifier: 'Chat' },
-    };
+    } as NavigationMenuItem;
 
     expect(
       filterAndSortNavigationMenuItems(

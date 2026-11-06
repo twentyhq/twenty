@@ -10,7 +10,7 @@ jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems', () => ({
   useReadableObjectMetadataItems: () => ({
     readableObjectMetadataItems: [
       { nameSingular: 'company', isSearchable: true },
-      { nameSingular: 'auditLog', isSearchable: false },
+      { nameSingular: 'workflow', isSearchable: true },
       { nameSingular: 'person', isSearchable: true },
     ],
   }),
@@ -33,24 +33,18 @@ describe('useSearchableObjectNameSingulars', () => {
     jotaiStore.set(sidePanelShowHiddenObjectsState.atom, false);
   });
 
-  it('searches the searchable objects', () => {
+  it('excludes workflows', () => {
     expect(renderSearchableObjectNameSingulars()).toEqual([
       'company',
       'person',
     ]);
   });
 
-  it('includes hidden objects when asked to', () => {
-    jotaiStore.set(sidePanelShowHiddenObjectsState.atom, true);
-
-    expect(renderSearchableObjectNameSingulars()).toEqual([
-      'company',
-      'auditLog',
-      'person',
-    ]);
+  it('searches nothing when workflows are explicitly selected', () => {
+    expect(renderSearchableObjectNameSingulars('workflow')).toEqual([]);
   });
 
-  it('keeps an explicitly selected object', () => {
+  it('keeps an explicitly selected object that is not a workflow', () => {
     expect(renderSearchableObjectNameSingulars('company')).toEqual(['company']);
   });
 });

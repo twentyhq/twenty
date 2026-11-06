@@ -18,6 +18,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -245,9 +246,10 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
           .filter(({ name }) => name === 'targetWorkflow')
           .map(
             ({ objectMetadataId }) =>
-              Object.values(flatObjectMetadataMaps.byUniversalIdentifier).find(
-                (flatObjectMetadata) => flatObjectMetadata?.id === objectMetadataId,
-              )?.nameSingular,
+              findFlatEntityByIdInFlatEntityMaps({
+                flatEntityId: objectMetadataId,
+                flatEntityMaps: flatObjectMetadataMaps,
+              })?.nameSingular,
           )
           .filter(isDefined),
       ),

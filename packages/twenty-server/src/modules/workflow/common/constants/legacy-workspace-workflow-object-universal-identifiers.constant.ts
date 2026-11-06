@@ -1,0 +1,6 @@
+// The 2.57 upgrade drops these objects; they stay guarded until it has reached every workspace. Remove in 2.58.
+export const LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-62be-406c-b9ca-8caa50d51392';
+
+export const LEGACY_WORKSPACE_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-3319-4234-a34c-7f3b9d2e4d1f';
