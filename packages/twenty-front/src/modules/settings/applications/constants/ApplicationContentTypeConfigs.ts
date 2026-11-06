@@ -34,7 +34,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
 > = {
   objects: {
     label: msg`Objects`,
-    description: msg`Record schemas and their behavior`,
+    description: msg`Types of records in your workspace`,
     Icon: IconBox,
     columns: [
       { label: msg`Description`, source: 'description' },
@@ -47,7 +47,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   fields: {
     label: msg`Fields`,
-    description: msg`Properties and relations contributed to objects`,
+    description: msg`Properties and relations added to objects`,
     Icon: IconListSearch,
     columns: [
       { label: msg`Object`, source: 'object' },
@@ -61,7 +61,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   indexes: {
     label: msg`Indexes`,
-    description: msg`Declarable constraints and lookup indexes`,
+    description: msg`Speed up search and keep values unique`,
     Icon: IconKey,
     columns: [
       { label: msg`Object`, source: 'object' },
@@ -71,7 +71,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   views: {
     label: msg`Views`,
-    description: msg`Saved table, board and calendar configurations`,
+    description: msg`Saved tables, boards and calendars`,
     Icon: IconTable,
     columns: [
       { label: msg`Object`, source: 'object' },
@@ -85,7 +85,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   viewFields: {
     label: msg`View fields`,
-    description: msg`Field visibility and order inside views`,
+    description: msg`Fields shown in each view, and their order`,
     Icon: IconListDetails,
     columns: [
       { label: msg`View`, source: 'parent' },
@@ -95,7 +95,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   pageLayouts: {
     label: msg`Page layouts`,
-    description: msg`Reusable record and standalone page structures`,
+    description: msg`Layouts for record pages, dashboards and other pages`,
     Icon: IconAppWindow,
     columns: [
       { label: msg`Type`, source: 'tag' },
@@ -119,7 +119,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   pageLayoutTabs: {
     label: msg`Page layout tabs`,
-    description: msg`Declarable tabs within a page layout`,
+    description: msg`Tabs inside a page layout`,
     Icon: IconLayoutNavbar,
     columns: [
       { label: msg`Layout`, source: 'parent' },
@@ -129,7 +129,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   navigationMenuItems: {
     label: msg`Navigation items`,
-    description: msg`Proposed placements in the workspace sidebar`,
+    description: msg`Shortcuts in the workspace sidebar`,
     Icon: IconCompass,
     columns: [
       { label: msg`Folder`, source: 'parent' },
@@ -139,7 +139,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   commandMenuItems: {
     label: msg`Command menu items`,
-    description: msg`Actions exposed through the command menu`,
+    description: msg`Actions in the command menu`,
     Icon: IconCommand,
     columns: [{ label: msg`Scope`, source: 'tag' }],
     filters: ['object'],
@@ -163,8 +163,8 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     },
   },
   frontComponents: {
-    label: msg`Widgets & front components`,
-    description: msg`App-provided widgets, panels and interface components`,
+    label: msg`Widgets`,
+    description: msg`Widgets, panels and other interface components`,
     Icon: IconLayoutGridAdd,
     columns: [
       { label: msg`Type`, source: 'tag' },
@@ -177,7 +177,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   workflows: {
     label: msg`Workflows`,
-    description: msg`User-facing automations with a canonical app editor`,
+    description: msg`Automations that run on triggers`,
     Icon: IconSettingsAutomation,
     columns: [{ label: msg`Status`, source: 'tag' }],
     tags: {
@@ -189,7 +189,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   logicFunctions: {
     label: msg`Logic functions`,
-    description: msg`Executable functions used by apps and automations`,
+    description: msg`Code that apps and workflows run`,
     Icon: IconBrandTypescript,
     columns: [
       { label: msg`Description`, source: 'description' },
@@ -207,25 +207,25 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   agents: {
     label: msg`Agents`,
-    description: msg`Reusable AI actors that can also serve end users`,
+    description: msg`AI assistants that work for your team`,
     Icon: IconLego,
     columns: [{ label: msg`Description`, source: 'description' }],
   },
   skills: {
     label: msg`Skills`,
-    description: msg`Instruction and capability packages for agents`,
+    description: msg`Instructions and tools agents can use`,
     Icon: IconBook,
     columns: [{ label: msg`Description`, source: 'description' }],
   },
   roles: {
     label: msg`Roles`,
-    description: msg`Permission bundles that apps can contribute`,
+    description: msg`Sets of permissions you can assign`,
     Icon: IconLock,
     columns: [{ label: msg`Description`, source: 'description' }],
   },
   permissionFlags: {
     label: msg`Permission flags`,
-    description: msg`Declarable feature-level access controls`,
+    description: msg`Access to specific features`,
     Icon: IconFlag,
     columns: [
       { label: msg`Type`, source: 'tag' },
@@ -238,7 +238,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   connectionProviders: {
     label: msg`Connection providers`,
-    description: msg`External account and credential definitions`,
+    description: msg`Ways to connect external accounts`,
     Icon: IconPlug,
     columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
@@ -248,7 +248,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   publicAssets: {
     label: msg`Public assets`,
-    description: msg`Images and files packaged with applications`,
+    description: msg`Images and files that ship with the app`,
     Icon: IconPhoto,
     columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
@@ -258,7 +258,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
   },
   translations: {
     label: msg`Translations`,
-    description: msg`Localized labels and interface copy`,
+    description: msg`Labels and text in other languages`,
     Icon: IconLanguage,
     columns: [{ label: msg`Keys`, source: 'count' }],
   },
