@@ -362,6 +362,15 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const MOCK_CONFIGURED_ASSISTANT_PROFILE: AiChatAssistantProfile = {
+  ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+  displayName: 'Scout',
+  avatarShape: 'flower',
+  avatarColor: 'green',
+  avatarFace: 'happy',
+  isAvatarAnimated: false,
+};
+
 const ASSISTANT_MENTION =
   '[[record:agentChatAssistant:agentChatAssistant:Ada]]';
 const RENAMED_ASSISTANT_MENTION =
@@ -565,14 +574,7 @@ export const AssistantMentions: Story = {
   decorators: [MemoryRouterDecorator],
   parameters: {
     messages: [mockAssistantMentionMessage],
-    assistantProfile: {
-      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-      displayName: 'Scout',
-      avatarShape: 'flower',
-      avatarColor: 'green',
-      avatarFace: 'happy',
-      isAvatarAnimated: false,
-    },
+    assistantProfile: MOCK_CONFIGURED_ASSISTANT_PROFILE,
   },
   render: () => <AiChatMessage messageId={mockAssistantMentionMessage.id} />,
   play: async ({ canvasElement }) => {
@@ -721,14 +723,7 @@ const mockLegacyAssistantMessage: ExtendedUIMessage = {
 export const ConfiguredAssistantIdentity: Story = {
   parameters: {
     isInboxEnabled: true,
-    assistantProfile: {
-      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-      displayName: 'Scout',
-      avatarShape: 'flower',
-      avatarColor: 'green',
-      avatarFace: 'happy',
-      isAvatarAnimated: false,
-    },
+    assistantProfile: MOCK_CONFIGURED_ASSISTANT_PROFILE,
     messages: [
       mockSimpleTextResponse,
       mockTeammateMessage,
