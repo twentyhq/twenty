@@ -15577,7 +15577,7 @@ msgstr "참석자가 너무 많습니다: {attendeeCount}. 허용되는 최대 �
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "대기 중인 작업이 너무 많습니다. 나중에 다시 시도해 주세요."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

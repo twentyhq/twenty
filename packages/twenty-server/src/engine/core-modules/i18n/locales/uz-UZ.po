@@ -15577,7 +15577,7 @@ msgstr "Qatnashchilar soni juda ko‘p: {attendeeCount}. Ruxsat etilgan eng katt
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Juda ko‘p vazifalar kutilmoqda. Iltimos, keyinroq qayta urinib ko‘ring."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

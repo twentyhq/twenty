@@ -15577,7 +15577,7 @@ msgstr "יותר מדי משתתפים: {attendeeCount}. המספר המרבי �
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "ממתינות יותר מדי משימות. נא לנסות שוב מאוחר יותר."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

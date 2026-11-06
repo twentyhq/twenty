@@ -15577,7 +15577,7 @@ msgstr "Te veel deelnemers: {attendeeCount}. Die maksimum toegelaat is {MAX_EMAI
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Te veel take wag. Probeer asseblief later weer."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

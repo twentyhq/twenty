@@ -15577,7 +15577,7 @@ msgstr "Çok fazla katılımcı: {attendeeCount}. İzin verilen maksimum sayı {
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Çok fazla iş bekliyor. Lütfen daha sonra tekrar deneyin."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

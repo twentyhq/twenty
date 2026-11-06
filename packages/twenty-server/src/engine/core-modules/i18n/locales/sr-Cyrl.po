@@ -15577,7 +15577,7 @@ msgstr "Превише учесника: {attendeeCount}. Највећи доз�
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Превише послова чека. Покушајте поново касније."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

@@ -15577,7 +15577,7 @@ msgstr "For mange deltakere: {attendeeCount}. Maksimalt tillatt antall er {MAX_E
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "For mange jobber venter. Vennligst prøv igjen senere."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

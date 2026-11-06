@@ -15577,7 +15577,7 @@ msgstr "Hi ha massa assistents: {attendeeCount}. El màxim permès és {MAX_EMAI
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Hi ha massa tasques en espera. Torna-ho a provar més tard."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

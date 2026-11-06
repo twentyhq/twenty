@@ -15577,7 +15577,7 @@ msgstr "Túl sok résztvevő: {attendeeCount}. A megengedett maximum: {MAX_EMAIL
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Túl sok feladat várakozik. Kérjük, próbálja meg később."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

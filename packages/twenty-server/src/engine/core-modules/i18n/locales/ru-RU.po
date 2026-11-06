@@ -15577,7 +15577,7 @@ msgstr "Слишком много участников: {attendeeCount}. Мак�
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Слишком много заданий ожидают выполнения. Пожалуйста, попробуйте позже."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts

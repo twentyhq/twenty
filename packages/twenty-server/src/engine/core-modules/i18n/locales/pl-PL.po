@@ -15577,7 +15577,7 @@ msgstr "Zbyt wielu uczestników: {attendeeCount}. Maksymalna dozwolona liczba to
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "Too many jobs are waiting. Please try again later."
-msgstr ""
+msgstr "Zbyt wiele zadań oczekuje. Spróbuj ponownie później."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
