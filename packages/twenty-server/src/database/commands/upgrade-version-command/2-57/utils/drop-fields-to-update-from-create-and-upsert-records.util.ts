@@ -5,7 +5,7 @@ const RECORD_STEP_TYPES_WRITING_THEIR_WHOLE_OBJECT_RECORD = new Set([
   'UPSERT_RECORD',
 ]);
 
-export type DroppedFieldsToUpdate = {
+type DroppedFieldsToUpdate = {
   stepId: unknown;
   fieldsToUpdate: unknown;
 };
