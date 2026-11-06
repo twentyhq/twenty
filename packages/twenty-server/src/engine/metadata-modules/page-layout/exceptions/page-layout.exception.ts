@@ -8,6 +8,7 @@ export enum PageLayoutExceptionCode {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
   INVALID_PAGE_LAYOUT_DATA = 'INVALID_PAGE_LAYOUT_DATA',
   TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION = 'TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION',
+  PAGE_LAYOUT_FILTERS_NOT_EDITABLE = 'PAGE_LAYOUT_FILTERS_NOT_EDITABLE',
 }
 
 export enum PageLayoutExceptionMessageKey {
@@ -26,6 +27,8 @@ const getPageLayoutExceptionUserFriendlyMessage = (
       return msg`Invalid page layout data.`;
     case PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
       return msg`Tab not found for widget duplication.`;
+    case PageLayoutExceptionCode.PAGE_LAYOUT_FILTERS_NOT_EDITABLE:
+      return msg`The filters of this dashboard come from its application and cannot be changed.`;
     default:
       assertUnreachable(code);
   }

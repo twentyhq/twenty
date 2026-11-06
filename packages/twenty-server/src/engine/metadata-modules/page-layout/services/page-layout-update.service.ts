@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isUndefined } from '@sniptt/guards';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -22,6 +23,7 @@ import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/e
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
+import { sanitizePageLayoutFilters } from 'src/engine/metadata-modules/flat-page-layout/utils/sanitize-page-layout-filters.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -36,6 +38,7 @@ import {
   PageLayoutExceptionMessageKey,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
+import { validatePageLayoutFiltersUpdateOrThrow } from 'src/engine/metadata-modules/page-layout/utils/validate-page-layout-filters-update-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
@@ -111,6 +114,17 @@ export class PageLayoutUpdateService {
 
     const { tabs, ...updateData } = input;
 
+    const filters = isUndefined(updateData.filters)
+      ? existingPageLayout.filters
+      : sanitizePageLayoutFilters(updateData.filters);
+
+    validatePageLayoutFiltersUpdateOrThrow({
+      existingPageLayout,
+      filters,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
     const flatPageLayoutToUpdate: FlatPageLayout = {
       ...existingPageLayout,
       name: updateData.name,
@@ -118,6 +132,7 @@ export class PageLayoutUpdateService {
       objectMetadataId: updateData.objectMetadataId,
       isFirstTabPinned:
         updateData.isFirstTabPinned ?? existingPageLayout.isFirstTabPinned,
+      filters,
       updatedAt: new Date().toISOString(),
     };
 

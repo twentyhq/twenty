@@ -153,6 +153,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
     ),
     isSystemSideEffect: true,
     isFirstTabPinned: true,
+    filters: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

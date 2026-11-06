@@ -15,6 +15,7 @@ export const buildUniversalFlatPageLayout = ({
   type: PageLayoutType.RECORD_PAGE,
   isSystemSideEffect: false,
   isFirstTabPinned: false,
+  filters: null,
   objectMetadataUniversalIdentifier: null,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
     defaultTabUniversalIdentifier,

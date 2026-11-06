@@ -217,6 +217,12 @@ export type {
 export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
 export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
 export type { GridPosition } from './page-layout/GridPosition';
+export type {
+  PageLayoutFilterCondition,
+  PageLayoutFilterValue,
+  PageLayoutFilter,
+} from './page-layout/PageLayoutFilter';
+export { PageLayoutFilterType } from './page-layout/PageLayoutFilterType';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export { PageLayoutType } from './page-layout/PageLayoutType';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';

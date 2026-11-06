@@ -26,6 +26,7 @@ import {
   AggregateOperations,
   FieldMetadataType,
   NavigationMenuItemType,
+  PageLayoutFilterType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -221,6 +222,15 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
   isFirstTabPinned: false,
+  filters: [
+    {
+      id: '12121212-1212-4212-8212-121212121212',
+      label: 'Period',
+      type: PageLayoutFilterType.DATE,
+      position: 0,
+      defaultValue: null,
+    },
+  ],
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 

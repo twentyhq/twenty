@@ -33,5 +33,8 @@ export const fromFlatPageLayoutToPageLayoutManifest = ({
   ...(flatPageLayout.isFirstTabPinned === false
     ? { isFirstTabPinned: false }
     : {}),
+  ...(isDefined(flatPageLayout.filters)
+    ? { filters: flatPageLayout.filters }
+    : {}),
   ...(isNonEmptyArray(tabs) ? { tabs } : {}),
 });

@@ -1,5 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
+  type PageLayoutFilter,
   type PageLayoutTabLayoutMode,
   type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
@@ -39,5 +40,6 @@ export type PageLayoutManifest = SyncableEntityOptions & {
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
   isFirstTabPinned?: boolean;
+  filters?: PageLayoutFilter[];
   tabs?: PageLayoutTabManifest[];
 };

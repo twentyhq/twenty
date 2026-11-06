@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application page layout filters update should fail when the workspace changes the filters of a standard dashboard 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "The filters of this dashboard come from its application and cannot be changed.",
+  },
+  "message": "Filters of page layout "<pageLayoutId>" are defined by its application and cannot be changed",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a default value holds the object form of a relative date 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Value "{"direction":"PAST","amount":1,"unit":"MONTH"}" of the default value of dashboard filter "Period" is not valid for operand "IS_RELATIVE". Expected a stringified relative date such as "NEXT_30_DAY".",
+              "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+              "value": "{"direction":"PAST","amount":1,"unit":"MONTH"}",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a default value uses an operand date fields do not support 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Operand "CONTAINS" of the default value of dashboard filter "Period" is not supported. Supported operands: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY.",
+              "userFriendlyMessage": "Dashboard filter operand is not supported",
+              "value": "CONTAINS",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter operand is not supported",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when a filter label is blank 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboard filter "9c1e5b7a-3d2f-4e6a-8b9c-0d1e2f3a4b01" has an empty label",
+              "userFriendlyMessage": "Dashboard filter label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter label cannot be empty",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when filters are set on a record page layout 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Filters are only supported on dashboard page layouts, not on "RECORD_PAGE"",
+              "userFriendlyMessage": "Only dashboards can have filters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Only dashboards can have filters",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout with filters update should fail when two filters share an id 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboard filter id "9c1e5b7a-3d2f-4e6a-8b9c-0d1e2f3a4b01" is used by more than one filter",
+              "userFriendlyMessage": "Each dashboard filter must have its own id",
+              "value": "9c1e5b7a-3d2f-4e6a-8b9c-0d1e2f3a4b01",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Each dashboard filter must have its own id",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;

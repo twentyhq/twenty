@@ -2,7 +2,12 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
 } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutFilterType,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
@@ -13,6 +18,7 @@ const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const PAGE_LAYOUT_UID = '33333333-3333-4333-8333-333333333333';
 const TAB_UID = '44444444-4444-4444-8444-444444444444';
 const NOW = '2026-09-08T10:00:00.000Z';
+const FILTER_ID = '55555555-5555-4555-8555-555555555555';
 
 const TAB_MANIFEST: PageLayoutTabManifest = {
   universalIdentifier: TAB_UID,
@@ -28,6 +34,19 @@ const PAGE_LAYOUT_MANIFEST: Required<Omit<PageLayoutManifest, 'tabs'>> = {
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: TAB_UID,
   isFirstTabPinned: false,
+  filters: [
+    {
+      id: FILTER_ID,
+      label: 'Period',
+      type: PageLayoutFilterType.DATE,
+      position: 0,
+      defaultValue: {
+        conditions: [
+          { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_1_MONTH' },
+        ],
+      },
+    },
+  ],
 };
 
 const MINIMAL_PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {

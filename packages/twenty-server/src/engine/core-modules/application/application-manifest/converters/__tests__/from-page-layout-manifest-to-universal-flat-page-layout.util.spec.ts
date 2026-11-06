@@ -1,4 +1,9 @@
-import { PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutFilterType,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 
 describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
@@ -28,6 +33,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     ).toBeNull();
     expect(result.tabUniversalIdentifiers).toEqual([]);
     expect(result.isFirstTabPinned).toBe(true);
+    expect(result.filters).toBeNull();
   });
 
   it('should convert a record page layout manifest', () => {
@@ -82,5 +88,34 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     });
 
     expect(result.isFirstTabPinned).toBe(false);
+  });
+
+  it('should keep the filters the manifest declares', () => {
+    const filters = [
+      {
+        id: '11111111-1111-4111-8111-111111111111',
+        label: 'Period',
+        type: PageLayoutFilterType.DATE,
+        position: 0,
+        defaultValue: {
+          conditions: [
+            { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_1_MONTH' },
+          ],
+        },
+      },
+    ];
+
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest: {
+        universalIdentifier: 'pl-uuid-5',
+        name: 'Filtered Dashboard',
+        type: PageLayoutType.DASHBOARD,
+        filters,
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.filters).toEqual(filters);
   });
 });

@@ -5698,6 +5698,7 @@ export type PageLayout = {
   createdAt: Scalars['DateTime']['output'];
   defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  filters?: Maybe<Array<PageLayoutFilter>>;
   id: Scalars['UUID']['output'];
   isFirstTabPinned: Scalars['Boolean']['output'];
   isSystemSideEffect: Scalars['Boolean']['output'];
@@ -5707,6 +5708,47 @@ export type PageLayout = {
   type: PageLayoutType;
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PageLayoutFilter = {
+  __typename?: 'PageLayoutFilter';
+  defaultValue?: Maybe<PageLayoutFilterValue>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+  position: Scalars['Float']['output'];
+  type: PageLayoutFilterType;
+};
+
+export type PageLayoutFilterCondition = {
+  __typename?: 'PageLayoutFilterCondition';
+  operand: ViewFilterOperand;
+  value: Scalars['String']['output'];
+};
+
+export type PageLayoutFilterConditionInput = {
+  operand: ViewFilterOperand;
+  value: Scalars['String']['input'];
+};
+
+export type PageLayoutFilterInput = {
+  defaultValue?: InputMaybe<PageLayoutFilterValueInput>;
+  id: Scalars['UUID']['input'];
+  label: Scalars['String']['input'];
+  position: Scalars['Float']['input'];
+  type: PageLayoutFilterType;
+};
+
+export enum PageLayoutFilterType {
+  DATE = 'DATE'
+}
+
+export type PageLayoutFilterValue = {
+  __typename?: 'PageLayoutFilterValue';
+  conditions: Array<PageLayoutFilterCondition>;
+};
+
+export type PageLayoutFilterValueInput = {
+  conditions: Array<PageLayoutFilterConditionInput>;
 };
 
 export type PageLayoutTab = {
@@ -7823,6 +7865,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
 };
 
 export type UpdatePageLayoutWithTabsInput = {
+  filters?: InputMaybe<Array<PageLayoutFilterInput>>;
   isFirstTabPinned?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;

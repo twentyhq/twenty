@@ -121,6 +121,7 @@ export const createStandardPageLayoutFlatMetadata = ({
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
     isSystemSideEffect: type === PageLayoutType.RECORD_PAGE,
     isFirstTabPinned: true,
+    filters: null,
     navigationMenuItemIds: [],
     tabIds: [],
     navigationMenuItemUniversalIdentifiers: [],

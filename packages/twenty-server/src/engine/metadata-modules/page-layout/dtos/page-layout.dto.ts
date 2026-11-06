@@ -3,6 +3,7 @@ import { PageLayoutType, SerializedRelation } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
+import { PageLayoutFilterDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-filter.dto';
 
 registerEnumType(PageLayoutType, { name: 'PageLayoutType' });
 
@@ -40,6 +41,9 @@ export class PageLayoutDTO {
 
   @Field({ nullable: false, defaultValue: true })
   isFirstTabPinned: boolean;
+
+  @Field(() => [PageLayoutFilterDTO], { nullable: true })
+  filters?: PageLayoutFilterDTO[] | null;
 
   @Field()
   createdAt: Date;
