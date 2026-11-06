@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { type Request } from 'express';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -133,13 +134,9 @@ export class AccessPolicyService {
       return true;
     }
 
-    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
-      userWorkspaceId: request.userWorkspaceId,
-      setting: permissionFlag,
-      workspaceId: workspace.id,
-      apiKeyId: request.apiKey?.id,
-      applicationId: request.application?.id,
-      agentId: request.agentId,
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: buildWorkspaceAuthContextFromRequest(request),
+      permissionFlag: permissionFlag,
     });
   }
 

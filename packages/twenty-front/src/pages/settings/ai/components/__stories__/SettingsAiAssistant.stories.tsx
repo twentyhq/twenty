@@ -116,6 +116,14 @@ export const CustomEditsAndReset: Story = {
     await userEvent.clear(name);
     await userEvent.tab();
     expect(name).toHaveAttribute('aria-invalid', 'true');
+    await userEvent.type(name, 'Scout ]');
+    await userEvent.tab();
+    expect(name).toHaveValue('Scout ]');
+    expect(name).toHaveAttribute('aria-invalid', 'true');
+    expect(body.getByRole('alert')).toHaveTextContent(
+      'Square brackets must be paired and cannot be nested.',
+    );
+    await userEvent.clear(name);
     await userEvent.type(name, '  Nimbus  ');
     onChange.mockClear();
     await userEvent.tab();

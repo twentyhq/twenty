@@ -142,29 +142,34 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canCreateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.hasAccessToSomeRecords({
+          ...objectQuestion,
+          operationType: 'insert',
+        }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.recordPermissionsService.canReadSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.hasAccessToSomeRecords({
+          ...objectQuestion,
+          operationType: 'select',
+        }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canUpdateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.hasAccessToSomeRecords({
+          ...objectQuestion,
+          operationType: 'update',
+        }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.recordPermissionsService.canSoftDeleteSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.hasAccessToSomeRecords({
+          ...objectQuestion,
+          operationType: 'soft-delete',
+        }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.recordPermissionsService.canDestroySomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.hasAccessToSomeRecords({
+          ...objectQuestion,
+          operationType: 'delete',
+        }));
 
       if (
         !canCreateRecords &&

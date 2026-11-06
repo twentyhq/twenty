@@ -20,27 +20,18 @@ export class AppConnectionAccessService {
     isWorkspaceShared,
     workspaceId,
     userWorkspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
   }: {
     isWorkspaceShared: boolean;
     workspaceId: string;
-    userWorkspaceId?: string;
-    apiKeyId?: string;
-    applicationId?: string;
-    agentId?: string;
+    userWorkspaceId: string;
   }): Promise<void> {
     const hasPermission =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
+      await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
-        setting: isWorkspaceShared
+        userWorkspaceId,
+        permissionFlag: isWorkspaceShared
           ? PermissionFlagType.APPLICATIONS
           : PermissionFlagType.CONNECTED_ACCOUNTS,
-        apiKeyId,
-        applicationId,
-        agentId,
       });
 
     if (hasPermission) {
