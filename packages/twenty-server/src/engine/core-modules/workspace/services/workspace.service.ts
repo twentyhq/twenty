@@ -647,13 +647,18 @@ export class WorkspaceService {
         ...(payload.logo === null ? { logoFileId: null } : {}),
       };
 
-      await (isDefined(assistantProfilePatch)
-        ? this.workspaceAssistantProfileService.updateWorkspaceWithProfile({
-            workspaceId: workspace.id,
-            values: workspaceUpdateValues,
-            patch: assistantProfilePatch,
-          })
-        : this.workspaceRepository.update(workspace.id, workspaceUpdateValues));
+      if (isDefined(assistantProfilePatch)) {
+        await this.workspaceAssistantProfileService.updateWorkspaceWithProfile({
+          workspaceId: workspace.id,
+          values: workspaceUpdateValues,
+          patch: assistantProfilePatch,
+        });
+      } else {
+        await this.workspaceRepository.update(
+          workspace.id,
+          workspaceUpdateValues,
+        );
+      }
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
       });

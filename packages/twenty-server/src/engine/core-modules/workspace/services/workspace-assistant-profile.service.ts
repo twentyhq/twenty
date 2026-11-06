@@ -26,6 +26,7 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -158,13 +159,7 @@ export class WorkspaceAssistantProfileService {
       });
 
     if (!hasPermission) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to update the assistant profile. Please contact your workspace administrator.`,
-        },
-      );
+      throw this.createProfilePermissionDeniedException();
     }
 
     await this.assertInboxEnabledOrThrow(workspace.id);
@@ -176,18 +171,22 @@ export class WorkspaceAssistantProfileService {
     if (
       !isDefined(authContext) ||
       !isUserAuthContext(authContext) ||
-      isDefined(authContext.application)
+      classifyWorkspaceAuthContext(authContext)?.kind !== 'userSession'
     ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to update the assistant profile. Please contact your workspace administrator.`,
-        },
-      );
+      throw this.createProfilePermissionDeniedException();
     }
 
     return authContext;
+  }
+
+  private createProfilePermissionDeniedException() {
+    return new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+      {
+        userFriendlyMessage: msg`You do not have permission to update the assistant profile. Please contact your workspace administrator.`,
+      },
+    );
   }
 
   private async assertInboxEnabledOrThrow(workspaceId: string) {

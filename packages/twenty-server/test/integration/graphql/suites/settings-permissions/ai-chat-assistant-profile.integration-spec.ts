@@ -111,15 +111,16 @@ describe('workspace assistant profile settings', () => {
   let originalWorkspace: WorkspaceSettings;
   let originalMemberRoleId: string;
   let aiSettingsRoleId: string;
-  let wasInboxEnabled: boolean;
+  let isInboxInitiallyEnabled: boolean;
 
   beforeAll(async () => {
-    wasInboxEnabled = await getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    ).isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      SEED_APPLE_WORKSPACE_ID,
-    );
+    isInboxInitiallyEnabled =
+      await getAppProviderByClassName<FeatureFlagService>(
+        'FeatureFlagService',
+      ).isFeatureEnabled(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        SEED_APPLE_WORKSPACE_ID,
+      );
 
     const response = await readWorkspace();
 
@@ -175,7 +176,7 @@ describe('workspace assistant profile settings', () => {
 
       expect(errors).toBeUndefined();
     } finally {
-      await setInboxEnabled(wasInboxEnabled);
+      await setInboxEnabled(isInboxInitiallyEnabled);
     }
   });
 
