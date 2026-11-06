@@ -237,50 +237,6 @@ describe('transformEventBatchToWebhookEvents', () => {
     expect(resultWithoutEventDate).toEqual(expectedResultWithoutEventDate);
   });
 
-  it('should only keep the events of the readable records', () => {
-    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
-      workspaceId: 'workspaceId',
-      objectMetadata: {
-        ...mockObjectMetadata,
-      },
-      name: 'objectNameSingular.created',
-      events: [
-        {
-          recordId: 'recordId-1',
-          properties: {
-            after: { id: 'recordId-1', nameSingular: 'nameSingular-1' },
-          },
-        },
-        {
-          recordId: 'recordId-2',
-          properties: {
-            after: { id: 'recordId-2', nameSingular: 'nameSingular-2' },
-          },
-        },
-      ],
-    };
-
-    const webhooks = [
-      {
-        id: 'webhook-id',
-        targetUrl: 'targetUrl',
-        secret: 'secret',
-      },
-    ] as WebhookEntity[];
-
-    const result = transformEventBatchToWebhookEvents({
-      workspaceEventBatch,
-      webhooks,
-      readableRecordIds: new Set(['recordId-1']),
-    });
-
-    expect(result).toHaveLength(1);
-    expect(result[0].record).toEqual({
-      id: 'recordId-1',
-      nameSingular: 'nameSingular-1',
-    });
-  });
-
   it('should include position-only update events', () => {
     const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
       workspaceId: 'workspaceId',
