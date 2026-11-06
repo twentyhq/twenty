@@ -1,37 +1,33 @@
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { z } from 'zod';
+import { workflowCreateRecordActionSchema } from './create-record-action-schema';
+import { workflowCreateRecordActionSettingsSchema } from './create-record-action-settings-schema';
+import { workflowUpsertRecordActionSchema } from './upsert-record-action-schema';
+import { workflowUpsertRecordActionSettingsSchema } from './upsert-record-action-settings-schema';
 import { workflowActionSchema } from './workflow-action-schema';
 import { workflowRunStateStepInfosSchema } from './workflow-run-state-step-infos-schema';
 import { workflowTriggerSchema } from './workflow-trigger-schema';
 
-const STEP_TYPES_WITH_STRICT_INPUT = ['CREATE_RECORD', 'UPSERT_RECORD'];
+const pastRunCreateRecordStepSchema = workflowCreateRecordActionSchema.extend({
+  settings: workflowCreateRecordActionSettingsSchema.extend({
+    input: workflowCreateRecordActionSettingsSchema.shape.input.strip(),
+  }),
+});
 
-const DECLARED_INPUT_KEYS = ['objectName', 'objectRecord'];
-
-const dropStoredUndeclaredInputKeys = (step: unknown): unknown => {
-  if (
-    !isPlainObject(step) ||
-    !STEP_TYPES_WITH_STRICT_INPUT.includes(String(step.type)) ||
-    !isPlainObject(step.settings) ||
-    !isPlainObject(step.settings.input)
-  ) {
-    return step;
-  }
-
-  const input = Object.fromEntries(
-    Object.entries(step.settings.input).filter(([key]) =>
-      DECLARED_INPUT_KEYS.includes(key),
-    ),
-  );
-
-  return { ...step, settings: { ...step.settings, input } };
-};
+const pastRunUpsertRecordStepSchema = workflowUpsertRecordActionSchema.extend({
+  settings: workflowUpsertRecordActionSettingsSchema.extend({
+    input: workflowUpsertRecordActionSettingsSchema.shape.input.strip(),
+  }),
+});
 
 export const workflowRunStateSchema = z.object({
   flow: z.object({
     trigger: workflowTriggerSchema,
     steps: z.array(
-      z.preprocess(dropStoredUndeclaredInputKeys, workflowActionSchema),
+      z.union([
+        pastRunCreateRecordStepSchema,
+        pastRunUpsertRecordStepSchema,
+        workflowActionSchema,
+      ]),
     ),
   }),
   stepInfos: workflowRunStateStepInfosSchema,
