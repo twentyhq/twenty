@@ -5,17 +5,19 @@ export const buildEmailVerificationLinkSearchParams = ({
   emailVerificationToken,
   email,
   verifyEmailRedirectPath,
-  partnerName,
+  affiliatePartnerName,
 }: {
   emailVerificationToken: string;
   email: string;
   verifyEmailRedirectPath?: string;
-  partnerName?: string;
+  affiliatePartnerName?: string;
 }): Record<string, string> => ({
   emailVerificationToken,
   email,
   ...(isDefined(verifyEmailRedirectPath)
     ? { nextPath: verifyEmailRedirectPath }
     : {}),
-  ...(isNonEmptyString(partnerName) ? { via: partnerName } : {}),
+  ...(isNonEmptyString(affiliatePartnerName)
+    ? { via: affiliatePartnerName }
+    : {}),
 });

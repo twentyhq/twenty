@@ -20,5 +20,5 @@ export class ResendEmailVerificationTokenInput {
   @IsString()
   @IsOptional()
   @Matches(PARTNER_PATTERN)
-  partnerName?: string;
+  affiliatePartnerName?: string;
 }

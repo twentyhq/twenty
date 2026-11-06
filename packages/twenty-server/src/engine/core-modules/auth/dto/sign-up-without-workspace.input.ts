@@ -11,5 +11,5 @@ export class SignUpWithoutWorkspaceInput extends UserCredentialsInput {
   @IsString()
   @IsOptional()
   @Matches(PARTNER_PATTERN)
-  partnerName?: string;
+  affiliatePartnerName?: string;
 }

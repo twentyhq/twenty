@@ -7,7 +7,7 @@ export const SIGN_UP = gql`
     $captchaToken: String
     $locale: String
     $verifyEmailRedirectPath: String
-    $partnerName: String
+    $affiliatePartnerName: String
   ) {
     signUp(
       email: $email
@@ -15,7 +15,7 @@ export const SIGN_UP = gql`
       captchaToken: $captchaToken
       locale: $locale
       verifyEmailRedirectPath: $verifyEmailRedirectPath
-      partnerName: $partnerName
+      affiliatePartnerName: $affiliatePartnerName
     ) {
       availableWorkspaces {
         ...AvailableWorkspacesFragment

@@ -41,12 +41,12 @@ describe('BillingService.ensureBillingCustomer', () => {
       userEmail: USER_EMAIL,
       workspaceId: WORKSPACE_ID,
       workspaceDisplayName: 'Apple',
-      partnerName: 'northwind',
+      affiliatePartnerName: 'northwind',
     });
 
     expect(createStripeCustomer).toHaveBeenCalledTimes(1);
     expect(createStripeCustomer).toHaveBeenCalledWith(
-      expect.objectContaining({ partnerName: 'northwind' }),
+      expect.objectContaining({ affiliatePartnerName: 'northwind' }),
     );
   });
 
@@ -59,13 +59,13 @@ describe('BillingService.ensureBillingCustomer', () => {
       userEmail: USER_EMAIL,
       workspaceId: WORKSPACE_ID,
       workspaceDisplayName: 'Apple',
-      partnerName: 'northwind',
+      affiliatePartnerName: 'northwind',
     });
 
     expect(isPreviousCustomer).toHaveBeenCalledWith({ email: USER_EMAIL });
     expect(createStripeCustomer).toHaveBeenCalledTimes(1);
     expect(createStripeCustomer).toHaveBeenCalledWith(
-      expect.objectContaining({ partnerName: undefined }),
+      expect.objectContaining({ affiliatePartnerName: undefined }),
     );
   });
 

@@ -642,7 +642,7 @@ export class SignInUpService {
     options?: {
       displayName?: string;
       subdomain?: string;
-      partnerName?: string;
+      affiliatePartnerName?: string;
     },
   ) {
     const email =
@@ -794,7 +794,7 @@ export class SignInUpService {
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
-          partnerName: options?.partnerName,
+          affiliatePartnerName: options?.affiliatePartnerName,
         });
       }
 

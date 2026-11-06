@@ -560,7 +560,7 @@ export class AuthResolver {
       workspace: undefined,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
-      partnerName: signUpInput.partnerName,
+      affiliatePartnerName: signUpInput.affiliatePartnerName,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
@@ -716,7 +716,7 @@ export class AuthResolver {
       {
         displayName: input?.displayName,
         subdomain: input?.subdomain,
-        partnerName: input?.partnerName ?? input?.partner,
+        affiliatePartnerName: input?.affiliatePartnerName,
       },
     );
 

@@ -1,5 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { partnerNameState } from '@/auth/states/partnerNameState';
+import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
@@ -30,8 +30,10 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
-  const partnerName = useAtomStateValue(partnerNameState)?.partner;
-  const setPartnerName = useSetAtomState(partnerNameState);
+  const affiliatePartnerName = useAtomStateValue(
+    affiliatePartnerNameState,
+  )?.partner;
+  const setAffiliatePartnerName = useSetAtomState(affiliatePartnerNameState);
   const { isCaptchaReady } = useCaptcha();
   const { readCaptchaToken } = useReadCaptchaToken();
 
@@ -61,14 +63,14 @@ export const useSignUpInNewWorkspace = () => {
           input: {
             displayName,
             subdomain,
-            partnerName,
+            affiliatePartnerName,
             captchaToken,
           },
         },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
 
-      setPartnerName(null);
+      setAffiliatePartnerName(null);
 
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 

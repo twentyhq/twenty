@@ -8530,6 +8530,9 @@ export default {
             "resendEmailVerificationToken": [
                 464,
                 {
+                    "affiliatePartnerName": [
+                        1
+                    ],
                     "email": [
                         1,
                         "String!"
@@ -8537,9 +8540,6 @@ export default {
                     "origin": [
                         1,
                         "String!"
-                    ],
-                    "partnerName": [
-                        1
                     ]
                 }
             ],
@@ -8903,6 +8903,9 @@ export default {
             "signUp": [
                 95,
                 {
+                    "affiliatePartnerName": [
+                        1
+                    ],
                     "captchaToken": [
                         1
                     ],
@@ -8911,9 +8914,6 @@ export default {
                         "String!"
                     ],
                     "locale": [
-                        1
-                    ],
-                    "partnerName": [
                         1
                     ],
                     "password": [
@@ -13191,16 +13191,13 @@ export default {
             ]
         },
         "SignUpInNewWorkspaceInput": {
+            "affiliatePartnerName": [
+                1
+            ],
             "captchaToken": [
                 1
             ],
             "displayName": [
-                1
-            ],
-            "partner": [
-                1
-            ],
-            "partnerName": [
                 1
             ],
             "subdomain": [
