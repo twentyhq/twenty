@@ -9469,7 +9469,7 @@ msgstr "Для этого адреса отправителя не найден�
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
-msgstr ""
+msgstr "Никто из выбранных вами людей не может отвечать в этом чате. Добавьте {AGENT_CHAT_ASSISTANT_NAME} или кого-то, кто может отвечать."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10988,12 +10988,12 @@ msgstr "Тип субъекта"
 #. js-lingui-id: gSSOI6
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not available until the upgrade has completed."
-msgstr ""
+msgstr "Настройки конфиденциальности недоступны до завершения обновления."
 
 #. js-lingui-id: xIeg8k
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not enabled for this workspace."
-msgstr ""
+msgstr "Настройки конфиденциальности не включены для этого рабочего пространства."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12687,7 +12687,7 @@ msgstr "Короткие ссылки"
 #. js-lingui-id: kIPldv
 #: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
 msgid "Sign in as a workspace member or use an application token to make this request."
-msgstr ""
+msgstr "Войдите как участник рабочего пространства или используйте токен приложения, чтобы выполнить этот запрос."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts

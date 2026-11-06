@@ -9469,7 +9469,7 @@ msgstr "Niciun domeniu de trimitere verificat nu corespunde acestei adrese a exp
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
-msgstr ""
+msgstr "Niciuna dintre persoanele pe care le-ai selectat nu poate răspunde în acest chat. Adaugă {AGENT_CHAT_ASSISTANT_NAME} sau pe cineva care poate răspunde."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10988,12 +10988,12 @@ msgstr "Tipul entității principale"
 #. js-lingui-id: gSSOI6
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not available until the upgrade has completed."
-msgstr ""
+msgstr "Setările de confidențialitate nu sunt disponibile până la finalizarea actualizării."
 
 #. js-lingui-id: xIeg8k
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not enabled for this workspace."
-msgstr ""
+msgstr "Setările de confidențialitate nu sunt activate pentru acest spațiu de lucru."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12687,7 +12687,7 @@ msgstr "Linkuri scurte"
 #. js-lingui-id: kIPldv
 #: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
 msgid "Sign in as a workspace member or use an application token to make this request."
-msgstr ""
+msgstr "Conectați-vă ca membru al spațiului de lucru sau utilizați un token de aplicație pentru a efectua această solicitare."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts

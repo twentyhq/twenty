@@ -15,7 +15,9 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -130,35 +132,60 @@ describe('Chat participation through the authenticated API', () => {
         return;
       }
 
-      const assistantRecords = await global.testDataSource.query<
-        { objectName: string; isPrivate: boolean; principalIds: string[] }[]
-      >(
-        `SELECT content."objectName", content."_isPrivate" AS "isPrivate",
-           ARRAY(SELECT "principalId" FROM "${context.schema}"."recordShare"
-             WHERE "recordId" = content.id ORDER BY "principalId") AS "principalIds"
-         FROM (
-           SELECT id, 'agentMessage' AS "objectName", "_isPrivate"
-             FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'assistant'
-           UNION ALL SELECT part.id, 'agentMessagePart', part."_isPrivate"
-             FROM "${context.schema}"."agentMessagePart" part
-             JOIN "${context.schema}"."agentMessage" message ON message.id = part."messageId"
-             WHERE message."threadId" = $1 AND message.role = 'assistant'
-         ) content`,
-        [threadId],
-      );
+      const assistantRecords = await global.testDataSource
+        .createQueryBuilder()
+        .select('message.id', 'messageId')
+        .addSelect(`message."${IS_PRIVATE_COLUMN_NAME}"`, 'messageIsPrivate')
+        .addSelect('part.id', 'partId')
+        .addSelect(`part."${IS_PRIVATE_COLUMN_NAME}"`, 'partIsPrivate')
+        .from(`${context.schema}.agentMessage`, 'message')
+        .leftJoin(
+          (queryBuilder) =>
+            queryBuilder
+              .select('*')
+              .from(`${context.schema}.agentMessagePart`, 'messagePart'),
+          'part',
+          'part."messageId" = message.id',
+        )
+        .where('message."threadId" = :threadId', { threadId })
+        .andWhere('message.role = :role', { role: AgentMessageRole.ASSISTANT })
+        .getRawMany<{
+          messageId: string;
+          messageIsPrivate: boolean;
+          partId: string | null;
+          partIsPrivate: boolean | null;
+        }>();
 
-      expect(assistantRecords.map(({ objectName }) => objectName)).toEqual(
-        expect.arrayContaining(['agentMessage', 'agentMessagePart']),
-      );
+      expect(assistantRecords).not.toHaveLength(0);
+
+      const recordShares = await global.testDataSource
+        .createQueryBuilder()
+        .select('share."recordId"', 'recordId')
+        .addSelect('share."principalId"', 'principalId')
+        .from(`${context.schema}.recordShare`, 'share')
+        .where('share."recordId" IN (:...recordIds)', {
+          recordIds: assistantRecords
+            .flatMap(({ messageId, partId }) => [messageId, partId])
+            .filter(isDefined),
+        })
+        .orderBy('share."principalId"', 'ASC')
+        .getRawMany<{ recordId: string; principalId: string }>();
 
       for (const record of assistantRecords) {
-        expect(record).toMatchObject({
-          isPrivate: true,
-          principalIds: [
-            context.workspaceMemberId,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          ].sort(),
-        });
+        expect(record.messageIsPrivate).toBe(true);
+        expect(record.partIsPrivate).toBe(true);
+        for (const recordId of [record.messageId, record.partId]) {
+          expect(
+            recordShares
+              .filter((share) => share.recordId === recordId)
+              .map(({ principalId }) => principalId),
+          ).toEqual(
+            [
+              context.workspaceMemberId,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            ].sort(),
+          );
+        }
       }
     },
   );
@@ -175,11 +202,20 @@ describe('Chat participation through the authenticated API', () => {
 
     const { messageId } = sent.body.data.sendChatMessage;
 
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentTurn" SET status = $2
-       WHERE id = (SELECT "turnId" FROM "${context.schema}"."agentMessage" WHERE id = $1)`,
-      [messageId, AgentTurnStatus.FAILED],
-    );
+    const message = await global.testDataSource
+      .createQueryBuilder()
+      .select('message."turnId"', 'turnId')
+      .from(`${context.schema}.agentMessage`, 'message')
+      .where('message.id = :messageId', { messageId })
+      .getRawOne<{ turnId: string }>();
+
+    assertIsDefinedOrThrow(message);
+    await global.testDataSource
+      .createQueryBuilder()
+      .update(`${context.schema}.agentTurn`)
+      .set({ status: AgentTurnStatus.FAILED })
+      .where('id = :turnId', { turnId: message.turnId })
+      .execute();
 
     const retried = await makeMetadataApiRequest(
       retryChatMessageOperationFactory(threadId),
@@ -191,15 +227,14 @@ describe('Chat participation through the authenticated API', () => {
     );
     await waitForAllJobsToFinish();
 
-    const [turn] = await global.testDataSource.query<
-      { status: AgentTurnStatus }[]
-    >(
-      `SELECT status FROM "${context.schema}"."agentTurn"
-       WHERE id = (SELECT "turnId" FROM "${context.schema}"."agentMessage" WHERE id = $1)`,
-      [messageId],
-    );
+    const turn = await global.testDataSource
+      .createQueryBuilder()
+      .select('turn.status', 'status')
+      .from(`${context.schema}.agentTurn`, 'turn')
+      .where('turn.id = :turnId', { turnId: message.turnId })
+      .getRawOne<{ status: AgentTurnStatus }>();
 
-    expect(turn.status).toBe(AgentTurnStatus.COMPLETED);
+    expect(turn).toEqual({ status: AgentTurnStatus.COMPLETED });
   });
 
   it('answers an Ada-only chat despite both Never settings and client opt-outs', async () => {
@@ -378,11 +413,15 @@ describe('Chat participation through the authenticated API', () => {
       mentionedParticipantWorkspaceMemberIds: [workspaceMemberId],
       recipientParticipantWorkspaceMemberIds: [workspaceMemberId],
     });
-    const [participant] = await global.testDataSource.query<{ id: string }[]>(
-      `SELECT id FROM "${context.schema}"."agentChatThreadParticipant"
-       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-      [threadId, workspaceMemberId],
-    );
+    const participant = await global.testDataSource
+      .createQueryBuilder()
+      .select('participant.id', 'id')
+      .from(`${context.schema}.agentChatThreadParticipant`, 'participant')
+      .where('participant."threadId" = :threadId', { threadId })
+      .andWhere('participant."workspaceMemberId" = :workspaceMemberId', {
+        workspaceMemberId,
+      })
+      .getRawOne<{ id: string }>();
 
     assertIsDefinedOrThrow(participant);
     const actions = emit.mock.calls
