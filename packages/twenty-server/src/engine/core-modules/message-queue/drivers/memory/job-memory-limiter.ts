@@ -8,7 +8,6 @@ import {
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
-import { JOB_MEMORY_RESIZE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-resize-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -206,25 +205,6 @@ export class JobMemoryLimiter {
       script: JOB_MEMORY_RELEASE_SCRIPT,
       args: [this.buildMember({ queueName, jobId })],
       action: `release the job memory of job ${jobId}`,
-    });
-  }
-
-  async resize({
-    queueName,
-    jobId,
-    groupKeys,
-    sizeBytes,
-  }: ChargedJob & { sizeBytes: number }): Promise<void> {
-    await this.runChargeScript({
-      queueName,
-      groupKeys,
-      script: JOB_MEMORY_RESIZE_SCRIPT,
-      args: [
-        this.buildMember({ queueName, jobId }),
-        sizeBytes,
-        JOB_MEMORY_CHARGE_TTL_SECONDS,
-      ],
-      action: `resize the job memory of job ${jobId}`,
     });
   }
 

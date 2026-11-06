@@ -366,83 +366,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S7: a running job of A updates its payload', () => {
-    it('the charge follows the payload when it grows, then when it shrinks', async () => {
-      const harness = await createMemoryHarness();
-
-      const {
-        jobs: [job],
-      } = await harness.enqueueBulk([
-        harness.buildApplicationJob({
-          label: 'A1',
-          workspaceId: 'A',
-          payloadBytes: 100,
-        }),
-      ]);
-      const usedBytesDuringRun: number[] = [];
-
-      await harness.processJobOrThrow({
-        jobId: job.jobId,
-        handler: async ({ updateData }) => {
-          await updateData?.({
-            label: 'A1',
-            workspaceId: 'A',
-            payload: 'y'.repeat(5_000),
-          });
-          usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
-
-          await updateData?.({ label: 'A1', workspaceId: 'A', payload: '' });
-          usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
-        },
-      });
-
-      const [grownBytes, shrunkBytes] = usedBytesDuringRun;
-
-      expect(grownBytes).toBeGreaterThan(job.sizeBytes + 4_800);
-      expect(shrunkBytes).toBeLessThan(grownBytes - 4_800);
-    });
-
-    it('a grown payload counts against the share of A for its next enqueues', async () => {
-      const harness = await createMemoryHarness({ maxMemoryBytes: 1_000_000 });
-      const {
-        jobs: [job],
-      } = await harness.enqueueBulk(
-        [
-          harness.buildApplicationJob({
-            label: 'A1',
-            workspaceId: 'A',
-            payloadBytes: 100,
-          }),
-        ],
-        { retryLimit: 1 },
-      );
-
-      await harness.processJobOrThrow({
-        jobId: job.jobId,
-        handler: async ({ updateData }) => {
-          await updateData?.({
-            label: 'A1',
-            workspaceId: 'A',
-            payload: 'y'.repeat(85_000),
-          });
-
-          throw new Error('retry me');
-        },
-      });
-
-      await expect(
-        harness.enqueueBulk([
-          harness.buildApplicationJob({
-            label: 'A2',
-            workspaceId: 'A',
-            payloadBytes: 5_000,
-          }),
-        ]),
-      ).rejects.toThrow(MessageQueueException);
-    });
-  });
-
-  describe('S8: A enqueues job ids that BullMQ already holds', () => {
+  describe('S7: A enqueues job ids that BullMQ already holds', () => {
     it('an id still waiting is skipped, it is neither added nor charged twice', async () => {
       const harness = await createMemoryHarness();
       const job = harness.buildApplicationJob({
@@ -507,7 +431,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S9: A enqueues two jobs with the same deduplication id', () => {
+  describe('S8: A enqueues two jobs with the same deduplication id', () => {
     it('the second job is merged into the first one by BullMQ and its charge is released', async () => {
       const harness = await createMemoryHarness();
       const options = {
@@ -538,7 +462,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S10: the BullMQ add of a batch of A fails', () => {
+  describe('S9: the BullMQ add of a batch of A fails', () => {
     const enqueueBatch = (
       harness: Awaited<ReturnType<typeof createMemoryHarness>>,
     ) =>
@@ -584,7 +508,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S11: jobs that are not owned by a tenant', () => {
+  describe('S10: jobs that are not owned by a tenant', () => {
     it('system jobs are not charged and report no availability', async () => {
       const harness = await createMemoryHarness();
 
@@ -634,7 +558,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S12: A enqueues a job bigger than the job size cap', () => {
+  describe('S11: A enqueues a job bigger than the job size cap', () => {
     it('the batch is refused before any memory is charged', async () => {
       const harness = await createMemoryHarness({
         maxMemoryBytes: 10_000_000,
@@ -662,7 +586,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S13: memory fairness is disabled', () => {
+  describe('S12: memory fairness is disabled', () => {
     it('jobs are added uncapped and uncharged, sizes are still reported with a null availability', async () => {
       const harness = await createMemoryHarness({
         isEnabled: false,
@@ -686,7 +610,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S14: Redis has no maxmemory', () => {
+  describe('S13: Redis has no maxmemory', () => {
     it('jobs are admitted uncharged, as there is no capacity to share', async () => {
       const harness = await createMemoryHarness({ maxMemoryBytes: 0 });
 
@@ -704,7 +628,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S15: the limiter scripts fail on Redis', () => {
+  describe('S14: the limiter scripts fail on Redis', () => {
     it('jobs are still enqueued, uncharged, so the limiter never blocks the queue', async () => {
       const harness = await createMemoryHarness();
 
@@ -724,7 +648,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S16: charged keys of A go idle', () => {
+  describe('S15: charged keys of A go idle', () => {
     it('every admission refreshes the expiry of the keys of A', async () => {
       const harness = await createMemoryHarness();
 
@@ -745,7 +669,7 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S17: the memory used ratio gauge', () => {
+  describe('S16: the memory used ratio gauge', () => {
     it('reports used memory over the capacity given to jobs', async () => {
       const harness = await createMemoryHarness({ otherDataBytes: 45_000 });
 

@@ -302,37 +302,6 @@ describe('JobMemoryLimiter', () => {
     expect(await redis.keys('*')).toEqual([]);
   });
 
-  it('follows the payload size of a charged job', async () => {
-    const { redis, limiter } = await createLimiter();
-    const groupKeys = [WORKSPACE_1];
-
-    await limiter.admit({
-      queueName: QUEUE,
-      jobs: [{ jobId: 'job-1', sizeBytes: 300, groupKeys }],
-    });
-    await limiter.resize({
-      queueName: QUEUE,
-      jobId: 'job-1',
-      groupKeys,
-      sizeBytes: 800,
-    });
-
-    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(800);
-
-    await limiter.resize({
-      queueName: QUEUE,
-      jobId: 'job-1',
-      groupKeys,
-      sizeBytes: 100,
-    });
-
-    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(100);
-
-    await limiter.release({ queueName: QUEUE, jobId: 'job-1', groupKeys });
-
-    expect(await redis.exists(usedKeyOf(WORKSPACE_1))).toBe(0);
-  });
-
   it('expires charges after the charge TTL', async () => {
     const { redis, limiter } = await createLimiter();
 

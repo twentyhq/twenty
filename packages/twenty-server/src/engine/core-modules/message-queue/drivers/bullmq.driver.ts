@@ -379,8 +379,7 @@ export class BullMQDriver
               id: job.id ?? '',
               name: job.name,
               retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-              updateData: (data) =>
-                this.updateJobData({ queueName, job, data }),
+              updateData: (data) => job.updateData(data),
               updateProgress: (progress) => job.updateProgress(progress),
               abortSignal,
             });
@@ -846,31 +845,6 @@ export class BullMQDriver
       queueName,
       jobId: job.id,
       groupKeys: memoryGroupKeys,
-    });
-  }
-
-  private async updateJobData({
-    queueName,
-    job,
-    data,
-  }: {
-    queueName: MessageQueue;
-    job: Job;
-    data: unknown;
-  }): Promise<void> {
-    await job.updateData(data);
-
-    const { memoryGroupKeys }: BullMQJobsOptions = job.opts;
-
-    if (!isDefined(job.id) || !isNonEmptyArray(memoryGroupKeys)) {
-      return;
-    }
-
-    await this.jobMemoryLimiter.resize({
-      queueName,
-      jobId: job.id,
-      groupKeys: memoryGroupKeys,
-      sizeBytes: computeJobSizeBytes({ data, options: job.opts }),
     });
   }
 
