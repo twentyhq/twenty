@@ -34,8 +34,10 @@ local jobCount = tonumber(ARGV[5 + keyCount])
 local jobs = {}
 local cursor = 6 + keyCount
 
--- Sum, per key, the bytes the batch would add. A job already charged to a key
--- (same id enqueued twice) is not counted again for that key.
+-- Sum, per key, the bytes the batch would add. A job already charged to a key,
+-- or listed earlier in this batch (same id enqueued twice), is not counted again.
+local counted = {}
+
 for jobIndex = 1, jobCount do
   local member = ARGV[cursor]
   local size = tonumber(ARGV[cursor + 1])
@@ -47,7 +49,10 @@ for jobIndex = 1, jobCount do
 
     keyIndexes[position] = keyIndex
 
-    if redis.call('HEXISTS', KEYS[2 * keyIndex], member) == 0 then
+    local countedKey = keyIndex .. ':' .. member
+
+    if not counted[countedKey] and redis.call('HEXISTS', KEYS[2 * keyIndex], member) == 0 then
+      counted[countedKey] = true
       requested[keyIndex] = requested[keyIndex] + size
     end
   end

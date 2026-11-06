@@ -152,6 +152,21 @@ describe('JobMemoryLimiter', () => {
     ).rejects.toThrow(MessageQueueException);
   });
 
+  it('counts a job id listed twice in one batch only once against the limit', async () => {
+    const { redis, limiter } = await createLimiter();
+
+    const admission = await limiter.admit({
+      queueName: QUEUE,
+      jobs: [
+        { jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] },
+        { jobId: 'job-1', sizeBytes: 600, groupKeys: [WORKSPACE_1] },
+      ],
+    });
+
+    expect(admission).toEqual({ isCharged: true, availableBytes: 400 });
+    expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(600);
+  });
+
   it('does not charge the system group key', async () => {
     const { redis, limiter } = await createLimiter();
 

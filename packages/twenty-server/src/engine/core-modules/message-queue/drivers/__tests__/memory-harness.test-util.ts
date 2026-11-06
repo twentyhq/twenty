@@ -286,13 +286,19 @@ export const createMemoryHarness = async ({
 
       const [script, numberOfKeys, ...scriptArguments] = args;
 
-      return name === 'evalsha'
-        ? redis.evalsha(
-            String(script),
-            Number(numberOfKeys),
-            ...scriptArguments,
-          )
-        : redis.eval(String(script), Number(numberOfKeys), ...scriptArguments);
+      if (name === 'evalsha') {
+        return redis.evalsha(
+          String(script),
+          Number(numberOfKeys),
+          ...scriptArguments,
+        );
+      }
+
+      return redis.eval(
+        String(script),
+        Number(numberOfKeys),
+        ...scriptArguments,
+      );
     },
   };
 
