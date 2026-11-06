@@ -45,7 +45,10 @@ export const buildApplicationUninstallOperations = ({
   const isKeptChannelRole = ({
     channelUniversalIdentifier,
     roleUniversalIdentifier,
-  }: FlatAgentChatChannelRole) =>
+  }: Pick<
+    FlatAgentChatChannelRole,
+    'channelUniversalIdentifier' | 'roleUniversalIdentifier'
+  >) =>
     shouldKeepAgentChatChannels &&
     isKeptChannel(channelUniversalIdentifier) &&
     !isDefined(flatRoleMaps.byUniversalIdentifier[roleUniversalIdentifier]);
