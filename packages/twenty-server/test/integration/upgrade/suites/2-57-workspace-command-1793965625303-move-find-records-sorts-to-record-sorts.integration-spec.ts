@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto';
-
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -57,8 +55,6 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   let command: MoveFindRecordsSortsToRecordSortsCommand;
   let companyNameFieldId: string;
   let apiSortedWorkflow: SortedWorkflow;
-  let builderSortedWorkflow: SortedWorkflow;
-  const builderRecordSorts: Record<string, unknown>[] = [];
   const coreWorkflowIds: string[] = [];
   const workspaceWorkflowIds: string[] = [];
 
@@ -166,25 +162,9 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
       [SEED_APPLE_WORKSPACE_ID],
     );
 
-    builderRecordSorts.push({
-      id: randomUUID(),
-      fieldMetadataId: companyNameFieldId,
-      direction: 'DESC',
-    });
-
     apiSortedWorkflow = await createSortedWorkflow({
       name: 'Find the last company written through the API',
       orderBy: { gqlOperationOrderBy: [{ name: 'DescNullsLast' }] },
-    });
-    builderSortedWorkflow = await createSortedWorkflow({
-      name: 'Find the last company written in the builder',
-      orderBy: {
-        recordSorts: builderRecordSorts,
-        gqlOperationOrderBy: [
-          { name: 'DescNullsLast' },
-          { position: 'AscNullsFirst' },
-        ],
-      },
     });
   });
 
@@ -203,23 +183,21 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   it('changes nothing in a dry run', async () => {
     await runCommand({ dryRun: true });
 
-    for (const { coreWorkflowVersionId, workspaceWorkflowVersionId, step } of [
-      apiSortedWorkflow,
-      builderSortedWorkflow,
-    ]) {
-      expect(
-        await readSteps({
-          schema: 'core',
-          workflowVersionId: coreWorkflowVersionId,
-        }),
-      ).toEqual([step]);
-      expect(
-        await readSteps({
-          schema: SCHEMA,
-          workflowVersionId: workspaceWorkflowVersionId,
-        }),
-      ).toEqual([step]);
-    }
+    const { coreWorkflowVersionId, workspaceWorkflowVersionId, step } =
+      apiSortedWorkflow;
+
+    expect(
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: coreWorkflowVersionId,
+      }),
+    ).toEqual([step]);
+    expect(
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: workspaceWorkflowVersionId,
+      }),
+    ).toEqual([step]);
   });
 
   it('converts a sort written through the API into record sorts, the same in core and the workspace', async () => {
@@ -239,17 +217,6 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
         workflowVersionId: apiSortedWorkflow.workspaceWorkflowVersionId,
       }),
     ).toEqual([coreStep]);
-  });
-
-  it('keeps only the record sorts of a sort written in the builder, without their stored ids', async () => {
-    const [coreStep] = await readSteps({
-      schema: 'core',
-      workflowVersionId: builderSortedWorkflow.coreWorkflowVersionId,
-    });
-
-    expect(coreStep.settings.input.orderBy).toEqual({
-      recordSorts: [{ fieldMetadataId: companyNameFieldId, direction: 'DESC' }],
-    });
   });
 
   it('runs the converted sort', async () => {

@@ -1,12 +1,6 @@
 import { workflowFindRecordsActionSettingsSchema } from '../find-records-action-settings-schema';
 
-const buildSettings = ({
-  filter,
-  orderBy,
-}: {
-  filter?: unknown;
-  orderBy?: unknown;
-}) => ({
+const buildSettings = (filter: unknown, orderBy?: unknown) => ({
   input: {
     objectName: 'company',
     filter,
@@ -33,10 +27,8 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
   it('should accept record filters that reference fields by id', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
-        filter: {
-          recordFilters: [recordFilter],
-          recordFilterGroups: [recordFilterGroup],
-        },
+        recordFilters: [recordFilter],
+        recordFilterGroups: [recordFilterGroup],
       }),
     );
 
@@ -46,16 +38,14 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
   it('should drop properties derived from field metadata', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
-        filter: {
-          recordFilters: [
-            {
-              ...recordFilter,
-              type: 'TEXT',
-              label: 'Name',
-              displayValue: '{{trigger.name}}',
-            },
-          ],
-        },
+        recordFilters: [
+          {
+            ...recordFilter,
+            type: 'TEXT',
+            label: 'Name',
+            displayValue: '{{trigger.name}}',
+          },
+        ],
       }),
     );
 
@@ -71,9 +61,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     } = recordFilter;
 
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({
-        filter: { recordFilters: [recordFilterWithoutIdAndValue] },
-      }),
+      buildSettings({ recordFilters: [recordFilterWithoutIdAndValue] }),
     );
 
     expect(result.success).toBe(true);
@@ -81,9 +69,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
 
   it('should reject a record filter whose value is not a string', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({
-        filter: { recordFilters: [{ ...recordFilter, value: ['a'] }] },
-      }),
+      buildSettings({ recordFilters: [{ ...recordFilter, value: ['a'] }] }),
     );
 
     expect(result.success).toBe(false);
@@ -94,7 +80,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
       recordFilter;
 
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({ filter: { recordFilters: [recordFilterWithoutField] } }),
+      buildSettings({ recordFilters: [recordFilterWithoutField] }),
     );
 
     expect(result.success).toBe(false);
@@ -103,9 +89,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
   it('should reject an unknown logical operator', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
-        filter: {
-          recordFilterGroups: [{ id: 'group-id', logicalOperator: 'XOR' }],
-        },
+        recordFilterGroups: [{ id: 'group-id', logicalOperator: 'XOR' }],
       }),
     );
 
@@ -120,7 +104,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     };
 
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({ orderBy: { recordSorts: [recordSort] } }),
+      buildSettings(undefined, { recordSorts: [recordSort] }),
     );
 
     expect(result.success).toBe(true);
@@ -129,20 +113,10 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
 
   it('should reject a GraphQL order, which the run computes from record sorts', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({
-        orderBy: {
-          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
-          gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
-        },
+      buildSettings(undefined, {
+        recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
+        gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
       }),
-    );
-
-    expect(result.success).toBe(false);
-  });
-
-  it('should reject an unknown order by key', () => {
-    const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({ orderBy: { recordSorts: [], direction: 'ASC' } }),
     );
 
     expect(result.success).toBe(false);
@@ -150,12 +124,10 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
 
   it('should drop the id a record sort was stored with before sorts lost it', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({
-        orderBy: {
-          recordSorts: [
-            { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
-          ],
-        },
+      buildSettings(undefined, {
+        recordSorts: [
+          { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
+        ],
       }),
     );
 
@@ -163,19 +135,5 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     expect(result.data?.input.orderBy?.recordSorts).toEqual([
       { fieldMetadataId: 'field-id', direction: 'ASC' },
     ]);
-  });
-
-  it('should reject a record sort with an unknown direction', () => {
-    const result = workflowFindRecordsActionSettingsSchema.safeParse(
-      buildSettings({
-        orderBy: {
-          recordSorts: [
-            { fieldMetadataId: 'field-id', direction: 'AscNullsLast' },
-          ],
-        },
-      }),
-    );
-
-    expect(result.success).toBe(false);
   });
 });

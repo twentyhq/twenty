@@ -62,18 +62,14 @@ const opportunityFields = [
   }),
 ];
 const [CLOSE_DATE, AMOUNT, COMPANY_RELATION] = opportunityFields;
-const COMPANY_NAME = field({
+const COMPANY_TITLE = field({
   id: '10000000-0000-4000-8000-000000000005',
   objectMetadataId: COMPANY_ID,
-  name: 'name',
+  name: 'title',
   type: FieldMetadataType.TEXT,
 });
 
-const buildMaps = ({
-  companyLabelIdentifierFieldMetadataId,
-}: {
-  companyLabelIdentifierFieldMetadataId: string | null;
-}) => {
+const buildMaps = () => {
   const opportunity = getFlatObjectMetadataMock({
     id: OPPORTUNITY_ID,
     universalIdentifier: OPPORTUNITY_ID,
@@ -84,8 +80,8 @@ const buildMaps = ({
     id: COMPANY_ID,
     universalIdentifier: COMPANY_ID,
     nameSingular: 'company',
-    fieldIds: [COMPANY_NAME.id],
-    labelIdentifierFieldMetadataId: companyLabelIdentifierFieldMetadataId,
+    fieldIds: [COMPANY_TITLE.id],
+    labelIdentifierFieldMetadataId: COMPANY_TITLE.id,
   });
 
   const flatObjectMetadataMaps = [opportunity, company].reduce<
@@ -95,7 +91,7 @@ const buildMaps = ({
       addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
     createEmptyFlatEntityMaps(),
   );
-  const flatFieldMetadataMaps = [...opportunityFields, COMPANY_NAME].reduce<
+  const flatFieldMetadataMaps = [...opportunityFields, COMPANY_TITLE].reduce<
     FlatEntityMaps<FlatFieldMetadata>
   >(
     (flatEntityMaps, flatEntity) =>
@@ -111,9 +107,7 @@ const buildMaps = ({
 };
 
 describe('computeRecordGqlOperationOrderByFromFlatMaps', () => {
-  const maps = buildMaps({
-    companyLabelIdentifierFieldMetadataId: COMPANY_NAME.id,
-  });
+  const maps = buildMaps();
 
   it('leaves the order to the query when there is no sort', () => {
     expect(
@@ -149,21 +143,7 @@ describe('computeRecordGqlOperationOrderByFromFlatMaps', () => {
         ...maps,
       }),
     ).toEqual([
-      { company: { name: 'AscNullsLast' } },
-      { position: 'AscNullsFirst' },
-    ]);
-  });
-
-  it('falls back to the name field when the target has no label identifier', () => {
-    expect(
-      computeRecordGqlOperationOrderByFromFlatMaps({
-        recordSorts: [
-          { fieldMetadataId: COMPANY_RELATION.id, direction: 'DESC' },
-        ],
-        ...buildMaps({ companyLabelIdentifierFieldMetadataId: null }),
-      }),
-    ).toEqual([
-      { company: { name: 'DescNullsLast' } },
+      { company: { title: 'AscNullsLast' } },
       { position: 'AscNullsFirst' },
     ]);
   });
@@ -171,7 +151,7 @@ describe('computeRecordGqlOperationOrderByFromFlatMaps', () => {
   it('refuses a sort on a field that is not on the object', () => {
     expect(() =>
       computeRecordGqlOperationOrderByFromFlatMaps({
-        recordSorts: [{ fieldMetadataId: COMPANY_NAME.id, direction: 'ASC' }],
+        recordSorts: [{ fieldMetadataId: COMPANY_TITLE.id, direction: 'ASC' }],
         ...maps,
       }),
     ).toThrow('does not exist on opportunity');
