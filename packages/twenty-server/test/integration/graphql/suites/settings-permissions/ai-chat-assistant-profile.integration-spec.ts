@@ -234,10 +234,10 @@ describe('workspace assistant profile settings', () => {
     }
   });
 
-  it('resets every profile field to Ada defaults with an API key and reads them back', async () => {
+  it('resets every profile field to Ada defaults and reads them back', async () => {
     const response = await makeMetadataApiRequest(
       resetWorkspaceAssistantProfileQueryFactory(),
-      API_KEY_ACCESS_TOKEN,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
     expect(response.body.errors).toBeUndefined();
@@ -282,7 +282,7 @@ describe('workspace assistant profile settings', () => {
     const responses = await Promise.all([
       updateWorkspace({
         data: { aiChatAssistantProfile: { displayName: '  Sage  ' } },
-        token: API_KEY_ACCESS_TOKEN,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       }),
       updateWorkspace({
         data: { aiChatAssistantProfile: { avatarColor: 'purple' } },
@@ -318,12 +318,9 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('enforces permissions for every field in a mixed update and for reset', async () => {
-    for (const { token, errorCode } of [
-      {
-        token: API_KEY_ACCESS_TOKEN,
-        errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
-      },
-      { token: APPLE_JONY_MEMBER_ACCESS_TOKEN, errorCode: ErrorCode.FORBIDDEN },
+    for (const token of [
+      API_KEY_ACCESS_TOKEN,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
     ]) {
       await expectRejectedOperation({
         operation: updateWorkspaceAssistantProfileQueryFactory({
@@ -333,7 +330,7 @@ describe('workspace assistant profile settings', () => {
           },
         }),
         token,
-        errorCode,
+        errorCode: ErrorCode.FORBIDDEN,
       });
     }
     await assignMemberRole(originalMemberRoleId);
@@ -351,11 +348,16 @@ describe('workspace assistant profile settings', () => {
       }),
       resetWorkspaceAssistantProfileQueryFactory(),
     ]) {
-      await expectRejectedOperation({
-        operation,
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        errorCode: ErrorCode.FORBIDDEN,
-      });
+      for (const token of [
+        API_KEY_ACCESS_TOKEN,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      ]) {
+        await expectRejectedOperation({
+          operation,
+          token,
+          errorCode: ErrorCode.FORBIDDEN,
+        });
+      }
     }
   });
 

@@ -185,8 +185,7 @@ export class WorkspaceResolver {
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ) {
