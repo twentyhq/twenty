@@ -44,6 +44,7 @@ import {
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -117,7 +118,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -167,6 +168,7 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
@@ -184,6 +186,7 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
@@ -217,7 +220,7 @@ export class WorkspaceService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -472,6 +475,12 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
+    const aiChatAssistantProfile =
+      await this.workspaceAssistantProfileService.validateProfileUpdateOrThrow({
+        workspace,
+        profile: payload.aiChatAssistantProfile,
+      });
+
     const isUpdatingAssistantModes =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode);
@@ -526,7 +535,7 @@ export class WorkspaceService {
       isDefined(payload.defaultRoleId) &&
       workspace.defaultRoleId !== payload.defaultRoleId
     ) {
-      await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+      await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
         roleId: payload.defaultRoleId,
         workspaceId: workspace.id,
       });
@@ -625,6 +634,7 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
@@ -1296,8 +1306,7 @@ export class WorkspaceService {
     application,
     workspaceActivationStatus,
   }: {
-    payload: Omit<Partial<WorkspaceEntity>, 'aiDataPolicy'> &
-      Pick<UpdateWorkspaceInput, 'aiDataPolicy'>;
+    payload: UpdateWorkspaceInput;
     userWorkspaceId?: string;
     application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;

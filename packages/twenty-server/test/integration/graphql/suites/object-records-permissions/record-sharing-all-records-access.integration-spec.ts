@@ -29,7 +29,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { type RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -358,8 +358,8 @@ describe('Access to all records and ownership transfer', () => {
     });
 
     try {
-      await getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+      await getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
@@ -395,8 +395,8 @@ describe('Access to all records and ownership transfer', () => {
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
 
-      await getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+      await getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,

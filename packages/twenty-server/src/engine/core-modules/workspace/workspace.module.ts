@@ -25,10 +25,12 @@ import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/wo
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceEntityCacheProviderService } from 'src/engine/core-modules/workspace/services/workspace-entity-cache-provider.service';
+import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
+import { WorkspaceAssistantProfileResolver } from 'src/engine/core-modules/workspace/workspace-assistant-profile.resolver';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -83,7 +85,9 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
   exports: [WorkspaceService, CheckCustomDomainValidRecordsCronCommand],
   providers: [
     WorkspaceResolver,
+    WorkspaceAssistantProfileResolver,
     WorkspaceService,
+    WorkspaceAssistantProfileService,
     WorkspaceGaugeService,
     WorkspaceEntityCacheProviderService,
     BillingDisabledGuard,

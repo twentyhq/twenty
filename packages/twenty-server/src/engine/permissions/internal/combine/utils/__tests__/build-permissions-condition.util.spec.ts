@@ -166,7 +166,7 @@ const build = ({
     metadataMaps: policyMetadataMaps,
     tableAlias: flatObjectMetadata.nameSingular,
     flatObjectMetadata,
-    operationType: 'select',
+    operationType: 'read',
   });
 
 const gatedSql = ({
@@ -219,7 +219,7 @@ describe('buildPermissionsCondition', () => {
       metadataMaps: sharingMetadataMaps,
       tableAlias: 'company',
       flatObjectMetadata: company,
-      operationType: 'select',
+      operationType: 'read',
     });
 
     expect(policy.kind).toBe('gated');
@@ -248,7 +248,7 @@ describe('buildPermissionsCondition', () => {
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: { ...note, isSystem: true },
-        operationType: 'select',
+        operationType: 'read',
       }).kind,
     ).toBe('gated');
   });
@@ -260,7 +260,7 @@ describe('buildPermissionsCondition', () => {
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: note,
-        operationType: 'insert',
+        operationType: 'create',
       }),
     ).toEqual({ kind: 'open' });
   });
@@ -269,7 +269,7 @@ describe('buildPermissionsCondition', () => {
     const company = buildObject({ id: 'company' });
     const buildForCompany = (
       principals: PermissionsPrincipalsWithRolesContext,
-      operationType: 'select' | 'update' | 'delete' = 'select',
+      operationType: 'read' | 'update' | 'destroy' = 'read',
     ) =>
       buildConditionOutcome({
         principals,
@@ -334,7 +334,7 @@ describe('buildPermissionsCondition', () => {
     });
 
     it('keeps deletion with the role', () => {
-      expect(buildForCompany(withoutCompanyPermission, 'delete')).toEqual({
+      expect(buildForCompany(withoutCompanyPermission, 'destroy')).toEqual({
         kind: 'denied',
       });
     });
@@ -377,7 +377,7 @@ describe('buildPermissionsCondition', () => {
       principals: readEverything,
       metadataMaps,
       flatObjectMetadata: person,
-      operationType: 'select',
+      operationType: 'read',
     });
 
     if (typeof condition === 'boolean') {
@@ -412,7 +412,7 @@ describe('buildPermissionsCondition', () => {
       metadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
-      operationType: 'select',
+      operationType: 'read',
     });
     expect(policy.kind).toBe('gated');
     if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
@@ -498,7 +498,7 @@ describe('buildPermissionsCondition', () => {
       expect(
         buildConditionOutcome({
           ...prospectiveShareArguments,
-          operationType: 'select',
+          operationType: 'read',
           flatObjectMetadata: {
             ...person,
             disabledObjectPermissionActions: ['canReadObjectRecords' as const],
@@ -552,7 +552,7 @@ describe('buildPermissionsCondition', () => {
         metadataMaps: creatorMetadataMaps,
         tableAlias: 'company',
         flatObjectMetadata: company,
-        operationType: 'select',
+        operationType: 'read',
       });
 
     it('grants a private record to its creator next to its shares and the role', () => {

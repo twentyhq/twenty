@@ -61,7 +61,7 @@ export const useSingleRecordPickerPerformSearch = ({
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       });
     },
   );

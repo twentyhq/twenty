@@ -69,7 +69,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     ),
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { getIcon } = useIcons();
