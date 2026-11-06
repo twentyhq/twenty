@@ -44,6 +44,7 @@ export const SettingsApplicationContentTypeDetail = () => {
       <ToastOnQueryErrorEffect error={error} />
       {isDefined(content) && (
         <SettingsApplicationContentItemsTable
+          key={contentType}
           contentType={contentType}
           content={content}
           location={location}

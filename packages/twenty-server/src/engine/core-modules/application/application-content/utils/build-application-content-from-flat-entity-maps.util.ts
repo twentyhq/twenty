@@ -120,7 +120,9 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
   const permissionFlags = findOwned(flatEntityMaps.flatPermissionFlagMaps);
 
-  const pageLayoutWidgets = findOwned(flatEntityMaps.flatPageLayoutWidgetMaps);
+  const pageLayoutWidgets = findOwned(
+    flatEntityMaps.flatPageLayoutWidgetMaps,
+  ).filter((widget) => !widget.isSystemSideEffect);
 
   const fieldCountByObject = countByKey({
     items: fields,
