@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { readPartnerFromCookie } from '@/auth/utils/readPartnerFromCookie';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
@@ -27,6 +28,7 @@ export const useHandleResendEmailVerificationToken = () => {
             variables: {
               email,
               origin,
+              partner: readPartnerFromCookie(),
             },
           });
 

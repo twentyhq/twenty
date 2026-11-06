@@ -4709,6 +4709,7 @@ export type MutationReportAppConnectionAuthFailureArgs = {
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String']['input'];
   origin: Scalars['String']['input'];
+  partner?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4893,6 +4894,7 @@ export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
+  partner?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
 };

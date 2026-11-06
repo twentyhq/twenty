@@ -27,6 +27,7 @@ import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
+import { readPartnerFromCookie } from '@/auth/utils/readPartnerFromCookie';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -401,6 +402,7 @@ export const useAuth = () => {
           password,
           captchaToken,
           locale: i18n.locale ?? SOURCE_LOCALE,
+          partner: readPartnerFromCookie(),
         },
       });
 

@@ -23,6 +23,7 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
+import { buildEmailVerificationLinkSearchParams } from 'src/engine/core-modules/email-verification/utils/build-email-verification-link-search-params.util';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -49,6 +50,7 @@ export class EmailVerificationService {
     workspace,
     locale,
     verifyEmailRedirectPath,
+    partner,
     verificationTrigger = EmailVerificationTrigger.SIGN_UP,
   }: {
     userId: string;
@@ -56,6 +58,7 @@ export class EmailVerificationService {
     workspace: WorkspaceDomainConfig | undefined;
     locale: keyof typeof APP_LOCALES;
     verifyEmailRedirectPath?: string;
+    partner?: string;
     verificationTrigger?: EmailVerificationTrigger;
   }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
@@ -67,13 +70,12 @@ export class EmailVerificationService {
 
     const linkPathnameAndSearchParams = {
       pathname: AppPath.VerifyEmail,
-      searchParams: {
+      searchParams: buildEmailVerificationLinkSearchParams({
         emailVerificationToken,
         email,
-        ...(isDefined(verifyEmailRedirectPath)
-          ? { nextPath: verifyEmailRedirectPath }
-          : {}),
-      },
+        verifyEmailRedirectPath,
+        partner,
+      }),
     };
     const verificationLink = workspace
       ? this.workspaceDomainsService.buildWorkspaceURL({
@@ -123,6 +125,7 @@ export class EmailVerificationService {
     email: string,
     workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
+    partner?: string,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -154,6 +157,7 @@ export class EmailVerificationService {
       email,
       workspace,
       locale,
+      partner,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 

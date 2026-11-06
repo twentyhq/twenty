@@ -4,10 +4,11 @@ import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewW
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { readPartnerFromCookie } from '@/auth/utils/readPartnerFromCookie';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -30,7 +31,7 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
-  const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
+  const setPartnerCookie = useSetAtomState(partnerCookieState);
   const { isCaptchaReady } = useCaptcha();
   const { readCaptchaToken } = useReadCaptchaToken();
 
@@ -60,7 +61,7 @@ export const useSignUpInNewWorkspace = () => {
           input: {
             displayName,
             subdomain,
-            partner: partnerCookie?.partner,
+            partner: readPartnerFromCookie(),
             captchaToken,
           },
         },

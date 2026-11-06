@@ -8,9 +8,11 @@ import {
   email,
   mocks,
   password,
+  queries,
   results,
   token,
 } from '@/auth/hooks/__mocks__/useAuth';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import {
   type CurrentUser,
   currentUserState,
@@ -22,6 +24,7 @@ import {
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
+import Cookies from 'js-cookie';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
@@ -93,6 +96,8 @@ describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getDefaultStore().set(returnToPathState.atom, '');
+    getDefaultStore().set(isEmailVerificationRequiredState.atom, false);
+    Cookies.remove('partner');
   });
 
   it('should return login token object', async () => {
@@ -219,5 +224,62 @@ describe('useAuth', () => {
     });
 
     expect(mocks.signUpInWorkspace.result).toHaveBeenCalled();
+  });
+
+  it('should send a partner stored by another tab with a credential sign-up', async () => {
+    getDefaultStore().set(isEmailVerificationRequiredState.atom, true);
+
+    const signUpResult = jest.fn(() => ({
+      data: {
+        signUp: {
+          __typename: 'AvailableWorkspacesAndAccessTokens',
+          availableWorkspaces: {
+            __typename: 'AvailableWorkspaces',
+            availableWorkspacesForSignIn: [],
+            availableWorkspacesForSignUp: [],
+          },
+          tokens: {
+            __typename: 'AuthTokenPair',
+            accessOrWorkspaceAgnosticToken: {
+              __typename: 'AuthToken',
+              token,
+              expiresAt: 'expiresAt',
+            },
+            refreshToken: {
+              __typename: 'AuthToken',
+              token,
+              expiresAt: 'expiresAt',
+            },
+          },
+        },
+      },
+    }));
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <MockedProvider
+          mocks={[
+            {
+              request: { query: queries.signup, variables: () => true },
+              result: signUpResult,
+            },
+          ]}
+        >
+          <MemoryRouter>
+            <ToastProvider>{children}</ToastProvider>
+          </MemoryRouter>
+        </MockedProvider>
+      ),
+    });
+
+    Cookies.set('partner', JSON.stringify({ partner: 'northwind' }));
+
+    await act(async () => {
+      await result.current.signUpWithCredentials(email, password);
+    });
+
+    expect(signUpResult).toHaveBeenCalledWith(
+      expect.objectContaining({ email, partner: 'northwind' }),
+    );
   });
 });

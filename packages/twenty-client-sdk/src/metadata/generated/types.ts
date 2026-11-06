@@ -8537,6 +8537,9 @@ export default {
                     "origin": [
                         1,
                         "String!"
+                    ],
+                    "partner": [
+                        1
                     ]
                 }
             ],
@@ -8908,6 +8911,9 @@ export default {
                         "String!"
                     ],
                     "locale": [
+                        1
+                    ],
+                    "partner": [
                         1
                     ],
                     "password": [
