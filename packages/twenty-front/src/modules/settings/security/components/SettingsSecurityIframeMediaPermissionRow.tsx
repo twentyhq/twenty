@@ -6,28 +6,13 @@ import { type SelectOption } from 'twenty-ui/primitives/input';
 
 import { SettingsSecurityOriginTableCell } from '@/settings/security/components/SettingsSecurityOriginTableCell';
 import { IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS } from '@/settings/security/constants/IframeMediaPermissionsTableGridAutoColumns';
+import { type IframeMediaAccess } from '@/settings/security/types/IframeMediaAccess';
+import { getIframeMediaAccess } from '@/settings/security/utils/getIframeMediaAccess';
 import { useSettingsSecurityIframeMediaPermissionsOrThrow } from '@/settings/security/contexts/SettingsSecurityIframeMediaPermissionsContext';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-
-type IframeMediaAccess = 'microphoneAndCamera' | 'microphone' | 'camera';
-
-const getIframeMediaAccess = ({
-  microphone,
-  camera,
-}: Pick<IframeMediaPermission, 'microphone' | 'camera'>): IframeMediaAccess => {
-  if (!camera) {
-    return 'microphone';
-  }
-
-  if (!microphone) {
-    return 'camera';
-  }
-
-  return 'microphoneAndCamera';
-};
 
 type SettingsSecurityIframeMediaPermissionRowProps = {
   permission: IframeMediaPermission;
