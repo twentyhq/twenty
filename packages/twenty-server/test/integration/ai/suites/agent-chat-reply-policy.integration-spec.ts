@@ -2,6 +2,7 @@ import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-
 import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
@@ -339,6 +340,10 @@ describe('Assistant reply selection with stored conversation participants', () =
 
   it('uses the current configured name for selection and queued rechecks without rewriting history', async () => {
     models.enableEvaluation();
+    const coreEntityCacheService =
+      getAppProviderByClassName<CoreEntityCacheService>(
+        'CoreEntityCacheService',
+      );
     const workspaceRepository =
       getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
     const workspace = await workspaceRepository.findOneByOrFail({
@@ -361,6 +366,10 @@ describe('Assistant reply selection with stored conversation participants', () =
           displayName: 'Scout "CRM"',
         },
       });
+      await coreEntityCacheService.invalidate(
+        'workspaceEntity',
+        context.workspaceId,
+      );
       await expect(
         shouldReply({ threadId, text: 'Scout, can you help?' }),
       ).resolves.toBe(true);
@@ -379,6 +388,10 @@ describe('Assistant reply selection with stored conversation participants', () =
       await workspaceRepository.update(context.workspaceId, {
         aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
       });
+      await coreEntityCacheService.invalidate(
+        'workspaceEntity',
+        context.workspaceId,
+      );
       await expect(shouldExecute({ threadId, messageId })).resolves.toBe(true);
       expect(models.evaluate).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -398,6 +411,10 @@ describe('Assistant reply selection with stored conversation participants', () =
       await workspaceRepository.update(context.workspaceId, {
         aiChatAssistantProfile: workspace.aiChatAssistantProfile,
       });
+      await coreEntityCacheService.invalidate(
+        'workspaceEntity',
+        context.workspaceId,
+      );
     }
   });
 

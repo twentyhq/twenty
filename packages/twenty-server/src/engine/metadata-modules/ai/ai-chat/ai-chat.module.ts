@@ -24,6 +24,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceAssistantProfileModule } from 'src/engine/core-modules/workspace/workspace-assistant-profile.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
@@ -62,6 +63,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
 @Module({
   imports: [
     CoreEntityCacheModule,
+    WorkspaceAssistantProfileModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
     AgentChatThreadModule,

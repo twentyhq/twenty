@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -22,8 +21,8 @@ export class AgentChatReplyPolicyService {
   private readonly logger = new Logger(AgentChatReplyPolicyService.name);
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly aiEvaluationService: AiEvaluationService,
     private readonly conversationReaderService: AgentConversationReaderService,
   ) {}
@@ -64,16 +63,18 @@ export class AgentChatReplyPolicyService {
 
     try {
       const [workspace, conversation] = await Promise.all([
-        this.workspaceRepository.findOneOrFail({
-          where: { id: workspaceId },
-          select: { aiChatAssistantProfile: true },
-        }),
+        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
         this.conversationReaderService.loadRecentMessageTexts({
           workspaceId,
           threadId,
           limit: ASSISTANT_REPLY_HISTORY_MESSAGE_LIMIT,
         }),
       ]);
+
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+      const assistantProfile =
+        await this.workspaceAssistantProfileService.get(workspace);
       const { answers } = await this.aiEvaluationService.evaluate({
         workspaceId,
         userWorkspaceId,
@@ -81,7 +82,7 @@ export class AgentChatReplyPolicyService {
         abortSignal: AbortSignal.timeout(ASSISTANT_REPLY_EVALUATION_TIMEOUT_MS),
         state: {
           assistant: {
-            displayName: workspace.aiChatAssistantProfile.displayName,
+            displayName: assistantProfile.displayName,
           },
           conversation,
           message: { text, isAssistantMentioned: false },

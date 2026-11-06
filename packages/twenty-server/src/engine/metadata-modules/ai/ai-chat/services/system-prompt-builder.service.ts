@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -27,8 +23,6 @@ const estimateTokenCount = (text: string): number => Math.ceil(text.length / 4);
 @Injectable()
 export class SystemPromptBuilderService {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly toolRegistry: ToolRegistryService,
     private readonly skillService: SkillService,
     private readonly agentActorContextService: AgentActorContextService,
@@ -39,10 +33,12 @@ export class SystemPromptBuilderService {
     workspaceId,
     userWorkspaceId,
     workspaceInstructions,
+    assistantDisplayName,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     workspaceInstructions?: string;
+    assistantDisplayName: string;
   }): Promise<SystemPromptPreview> {
     const { userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -50,8 +46,8 @@ export class SystemPromptBuilderService {
         workspaceId,
       );
 
-    const [toolCatalog, skillCatalog, isAiChatInboxEnabled, workspace] =
-      await Promise.all([
+    const [toolCatalog, skillCatalog, isAiChatInboxEnabled] = await Promise.all(
+      [
         this.toolRegistry.buildToolIndex(workspaceId, {
           authContext: getWorkspaceAuthContext(),
           userId,
@@ -63,15 +59,12 @@ export class SystemPromptBuilderService {
           FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
           workspaceId,
         ),
-        this.workspaceRepository.findOneOrFail({
-          where: { id: workspaceId },
-          select: { aiChatAssistantProfile: true },
-        }),
-      ]);
+      ],
+    );
 
     const sections = buildSystemPromptSections({
       assistantDisplayName: isAiChatInboxEnabled
-        ? workspace.aiChatAssistantProfile.displayName
+        ? assistantDisplayName
         : undefined,
       toolCatalog,
       skillCatalog,

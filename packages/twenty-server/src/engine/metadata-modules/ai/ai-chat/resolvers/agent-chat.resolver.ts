@@ -22,6 +22,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -77,6 +78,7 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
+    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly memberMessageSenderService: AgentChatMemberMessageSenderService,
@@ -299,6 +301,9 @@ export class AgentChatResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
+      assistantDisplayName: (
+        await this.workspaceAssistantProfileService.get(workspace)
+      ).displayName,
     });
   }
 
