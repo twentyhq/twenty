@@ -327,13 +327,11 @@ export class AgentChatService {
       const turn = isDefined(message.turnId)
         ? turnsById.get(message.turnId)
         : undefined;
+      const assistantTurnAgentId =
+        message.role === AgentMessageRole.ASSISTANT ? turn?.agentId : null;
       const messageWithAuthor = {
         ...message,
-        agentId:
-          message.agentId ??
-          (message.role === AgentMessageRole.ASSISTANT
-            ? (turn?.agentId ?? null)
-            : null),
+        agentId: message.agentId ?? assistantTurnAgentId ?? null,
         isBuiltInAssistant: isBuiltInAssistantMessage({ message, turn }),
       };
 
