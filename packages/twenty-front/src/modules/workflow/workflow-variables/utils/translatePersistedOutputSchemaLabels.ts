@@ -124,8 +124,18 @@ const translateLabel = ({
     matchesPath({ labelPath, path }),
   )?.[1];
 
-  if (isDefined(message)) {
+  // a key the user named carries itself as label, as an agent's own `response` field does
+  if (isDefined(message) && node.label !== path[path.length - 1]) {
     return t(message);
+  }
+
+  const bulkRecordsObjectMetadataItem = findBulkRecordsObjectMetadataItem({
+    path,
+    context,
+  });
+
+  if (isDefined(bulkRecordsObjectMetadataItem)) {
+    return bulkRecordsObjectMetadataItem.labelPlural;
   }
 
   if (path.length !== 1) {
@@ -142,6 +152,55 @@ const translateLabel = ({
   );
 };
 
+const findBulkRecordsObjectMetadataItem = ({
+  path,
+  context,
+}: {
+  path: string[];
+  context: TranslationContext;
+}) =>
+  context.stepType === 'MANUAL' && path.length === 2 && path[0] === 'payload'
+    ? context.objectMetadataItems.find(
+        ({ namePlural }) => namePlural === path[1],
+      )
+    : undefined;
+
+// the example values the server writes in English for a step's own keys
+const translateLeafValue = ({
+  path,
+  value,
+  context,
+}: {
+  path: string[];
+  value: unknown;
+  context: TranslationContext;
+}): unknown => {
+  const bulkRecordsObjectMetadataItem = findBulkRecordsObjectMetadataItem({
+    path,
+    context,
+  });
+
+  if (isDefined(bulkRecordsObjectMetadataItem)) {
+    const objectLabelPlural = bulkRecordsObjectMetadataItem.labelPlural;
+
+    return t`Array of ${objectLabelPlural}`;
+  }
+
+  if (context.stepType !== 'FIND_RECORDS' || path.length !== 1) {
+    return value;
+  }
+
+  if (path[0] === 'all') {
+    return t`Returns an array of records`;
+  }
+
+  if (path[0] === 'totalCount') {
+    return t`Count of matching records`;
+  }
+
+  return value;
+};
+
 const translateRecordField = ({
   key,
   field,
@@ -150,7 +209,7 @@ const translateRecordField = ({
 }: {
   key: string;
   field: FieldOutputSchemaV2;
-  objectMetadataItem?: EnrichedObjectMetadataItem;
+  objectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'fields'>;
   context: TranslationContext;
 }): FieldOutputSchemaV2 => {
   const fieldMetadataItem = objectMetadataItem?.fields.find(
@@ -236,7 +295,18 @@ const translateOutputSchema = ({
       const label = translateLabel({ path: nodePath, node, context });
 
       if (node.isLeaf) {
-        return [key, { ...node, label }];
+        return [
+          key,
+          {
+            ...node,
+            label,
+            value: translateLeafValue({
+              path: nodePath,
+              value: node.value,
+              context,
+            }),
+          },
+        ];
       }
 
       return [

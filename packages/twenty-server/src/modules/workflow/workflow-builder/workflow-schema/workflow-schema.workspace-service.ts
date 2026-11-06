@@ -446,7 +446,7 @@ export class WorkflowSchemaWorkspaceService {
     const record: Node = {
       isLeaf: false,
       label: recordLabel,
-      icon: 'IconAlpha',
+      icon: objectMetadataInfo.flatObjectMetadata.icon ?? 'IconAlpha',
       type: 'object',
       value: generateFakeObjectRecord({ objectMetadataInfo }),
     };
@@ -573,9 +573,16 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       });
 
+      const objectMetadataInfo =
+        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+          availability.objectNameSingular,
+          workspaceId,
+        );
+
       const payload: Node = {
         isLeaf: false,
         type: 'object',
+        icon: objectMetadataInfo.flatObjectMetadata.icon ?? undefined,
         label: WORKFLOW_TRIGGER_RECORD_LABEL,
         value: recordOutputSchema,
       };

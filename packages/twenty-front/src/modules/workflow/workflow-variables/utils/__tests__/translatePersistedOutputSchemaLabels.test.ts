@@ -181,4 +181,55 @@ describe('translatePersistedOutputSchemaLabels', () => {
       },
     });
   });
+
+  it("should keep an agent's own response field as the user named it", () => {
+    const outputSchema = {
+      response: {
+        isLeaf: true,
+        type: 'string',
+        label: 'response',
+        value: '',
+      },
+    };
+
+    expect(
+      translatePersistedOutputSchemaLabels({
+        stepType: 'AI_AGENT',
+        outputSchema,
+      }),
+    ).toEqual(outputSchema);
+  });
+
+  it('should translate the example values a step type writes', () => {
+    expect(
+      translatePersistedOutputSchemaLabels({
+        stepType: 'MANUAL',
+        outputSchema: {
+          payload: {
+            isLeaf: false,
+            type: 'object',
+            label: 'Records',
+            value: {
+              [company.namePlural]: {
+                isLeaf: true,
+                type: 'array',
+                label: 'Companies',
+                value: 'Array of Companies',
+              },
+            },
+          },
+        },
+        objectMetadataItems: [viewerCompany],
+      }),
+    ).toMatchObject({
+      payload: {
+        value: {
+          [company.namePlural]: {
+            label: 'Entreprises',
+            value: 'Array of Entreprises',
+          },
+        },
+      },
+    });
+  });
 });
