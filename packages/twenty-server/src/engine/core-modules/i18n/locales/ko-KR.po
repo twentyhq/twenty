@@ -5081,7 +5081,7 @@ msgstr "보강"
 #. js-lingui-id: XAfsPq
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
-msgstr ""
+msgstr "1자에서 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}자 사이의 이름과 지원되는 어시스턴트 외관 옵션을 입력하세요."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -13661,7 +13661,7 @@ msgstr "애플리케이션이 요청한 권한이 변경되었습니다. 승인�
 #. js-lingui-id: ptZop4
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
-msgstr ""
+msgstr "워크스페이스가 활성화되기 전에 어시스턴트 프로필을 업데이트할 수 없습니다."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -18129,7 +18129,7 @@ msgstr "이 워크플로우 작업을 수행할 권한이 없습니다."
 #. js-lingui-id: 3qp2VE
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
-msgstr ""
+msgstr "어시스턴트 프로필을 업데이트할 권한이 없습니다. 작업 공간 관리자에게 문의하십시오."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts

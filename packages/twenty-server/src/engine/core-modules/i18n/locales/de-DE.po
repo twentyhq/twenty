@@ -5081,7 +5081,7 @@ msgstr "Anreichern"
 #. js-lingui-id: XAfsPq
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
-msgstr ""
+msgstr "Geben Sie einen Namen mit 1 bis {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} Zeichen und unterstützte Optionen für das Erscheinungsbild des Assistenten ein."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -13661,7 +13661,7 @@ msgstr "Die von der Anwendung angeforderten Berechtigungen haben sich geändert.
 #. js-lingui-id: ptZop4
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
-msgstr ""
+msgstr "Das Assistentenprofil kann nicht aktualisiert werden, bevor der Arbeitsbereich aktiviert ist."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -18129,7 +18129,7 @@ msgstr "Sie haben keine Berechtigung, diese Workflow-Aktion auszuführen."
 #. js-lingui-id: 3qp2VE
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
-msgstr ""
+msgstr "Sie haben keine Berechtigung, das Assistentenprofil zu aktualisieren. Bitte kontaktieren Sie Ihren Arbeitsbereichsadministrator."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts

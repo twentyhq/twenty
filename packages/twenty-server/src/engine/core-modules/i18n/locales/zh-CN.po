@@ -5081,7 +5081,7 @@ msgstr "数据充实"
 #. js-lingui-id: XAfsPq
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
-msgstr ""
+msgstr "请输入一个长度介于 1 到 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} 个字符之间的名称，以及支持的助手外观选项。"
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -13661,7 +13661,7 @@ msgstr "该应用程序请求的权限已更改。请在批准前再次审核。
 #. js-lingui-id: ptZop4
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
-msgstr ""
+msgstr "工作区激活之前无法更新助手资料。"
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -18129,7 +18129,7 @@ msgstr "您没有执行此工作流操作的权限。"
 #. js-lingui-id: 3qp2VE
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
-msgstr ""
+msgstr "您无权更新助手配置文件。请联系您的工作区管理员。"
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts

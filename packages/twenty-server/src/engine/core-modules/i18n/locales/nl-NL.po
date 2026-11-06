@@ -5081,7 +5081,7 @@ msgstr "Verrijken"
 #. js-lingui-id: XAfsPq
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
-msgstr ""
+msgstr "Voer een naam in van 1 tot {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tekens en ondersteunde weergaveopties voor de assistent."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -13661,7 +13661,7 @@ msgstr "De aangevraagde machtigingen van de applicatie zijn gewijzigd. Controlee
 #. js-lingui-id: ptZop4
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
-msgstr ""
+msgstr "Het assistentprofiel kan niet worden bijgewerkt voordat de werkruimte is geactiveerd."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -18129,7 +18129,7 @@ msgstr "Je hebt geen toestemming om deze workflowactie uit te voeren."
 #. js-lingui-id: 3qp2VE
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
-msgstr ""
+msgstr "U heeft geen toestemming om het assistentprofiel bij te werken. Neem contact op met uw werkruimtebeheerder."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts

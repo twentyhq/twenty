@@ -14330,7 +14330,7 @@ msgstr "Χαρούμενο"
 #. js-lingui-id: WsF7cD
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
 msgid "Has attachments"
-msgstr ""
+msgstr "Έχει συνημμένα"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts

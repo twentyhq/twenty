@@ -5081,7 +5081,7 @@ msgstr "Arricchisci"
 #. js-lingui-id: XAfsPq
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
-msgstr ""
+msgstr "Inserisci un nome compreso tra 1 e {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caratteri e le opzioni di aspetto dell'assistente supportate."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -13661,7 +13661,7 @@ msgstr "Le autorizzazioni richieste dall'applicazione sono cambiate. Riesaminale
 #. js-lingui-id: ptZop4
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
-msgstr ""
+msgstr "Il profilo dell'assistente non può essere aggiornato prima che lo spazio di lavoro sia attivato."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -18129,7 +18129,7 @@ msgstr "Non hai il permesso di eseguire questa azione del flusso di lavoro."
 #. js-lingui-id: 3qp2VE
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
-msgstr ""
+msgstr "Non hai l'autorizzazione ad aggiornare il profilo dell'assistente. Contatta l'amministratore del tuo workspace."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
