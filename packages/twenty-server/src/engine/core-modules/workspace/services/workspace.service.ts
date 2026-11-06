@@ -82,8 +82,8 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type AiDataPolicyInput } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.input';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { buildAiDataPolicy } from 'src/engine/core-modules/workspace/utils/build-ai-data-policy.util';
 import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
@@ -105,7 +105,6 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { NO_AI_DATA_POLICY } from 'src/engine/metadata-modules/ai/ai-models/constants/no-ai-data-policy.constant';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -243,24 +242,6 @@ export class WorkspaceService {
         { userFriendlyMessage },
       );
     }
-  }
-
-  private buildAiDataPolicy({
-    aiDataPolicyInput,
-    storedAiDataPolicy,
-  }: {
-    aiDataPolicyInput: AiDataPolicyInput;
-    storedAiDataPolicy: AiDataPolicy;
-  }): AiDataPolicy {
-    return {
-      ...NO_AI_DATA_POLICY,
-      ...storedAiDataPolicy,
-      ...aiDataPolicyInput,
-      isProductImprovementDataSharingEnabled:
-        aiDataPolicyInput.isProductImprovementDataSharingEnabled ??
-        storedAiDataPolicy.isProductImprovementDataSharingEnabled ??
-        NO_AI_DATA_POLICY.isProductImprovementDataSharingEnabled,
-    };
   }
 
   private validateAiModelIdByTier({
@@ -651,7 +632,7 @@ export class WorkspaceService {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
         ...(isDefined(payload.aiDataPolicy) && {
-          aiDataPolicy: this.buildAiDataPolicy({
+          aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
             storedAiDataPolicy: workspace.aiDataPolicy,
           }),
