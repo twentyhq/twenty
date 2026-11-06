@@ -1,6 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
-import { SettingsAiWorkspaceAssistantSection } from '@/settings/ai/components/SettingsAiWorkspaceAssistantSection';
+import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

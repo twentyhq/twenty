@@ -1,4 +1,3 @@
-import { SettingsAiAssistantProfileSyncEffect } from '@/settings/ai/components/SettingsAiAssistantProfileSyncEffect';
 import { useSettingsAiAssistantProfile } from '@/settings/ai/hooks/useSettingsAiAssistantProfile';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +11,6 @@ export const SettingsAiWorkspaceAssistantSection = () => {
   const { t } = useLingui();
   const {
     profile,
-    workspace,
     workspaceId,
     isVisible,
     isLoading,
@@ -37,7 +35,7 @@ export const SettingsAiWorkspaceAssistantSection = () => {
     );
   }
 
-  if (hasLoadError || !isDefined(profile) || !isDefined(workspace)) {
+  if (hasLoadError || !isDefined(profile)) {
     return (
       <Section.Root>
         <Section.Header title={t`Avatar`} />
@@ -59,17 +57,14 @@ export const SettingsAiWorkspaceAssistantSection = () => {
   }
 
   return (
-    <>
-      <SettingsAiAssistantProfileSyncEffect workspace={workspace} />
-      <SettingsAiAssistantSection
-        key={workspaceId}
-        value={profile}
-        onChange={saveProfile}
-        onReset={reset}
-        onRetry={retry}
-        isSaving={isSaving}
-        errorMessage={errorMessage}
-      />
-    </>
+    <SettingsAiAssistantSection
+      key={workspaceId}
+      value={profile}
+      onChange={saveProfile}
+      onReset={reset}
+      onRetry={retry}
+      isSaving={isSaving}
+      errorMessage={errorMessage}
+    />
   );
 };

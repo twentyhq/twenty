@@ -120,37 +120,27 @@ export const createSettingsAiAssistantStoryFixture = ({
     });
   };
 
-  const handlers = [
-    graphql.query('GetWorkspaceAiChatAssistantProfile', async () => {
-      const requestGeneration = generation;
-      const shouldRejectLoad = shouldFailNextLoad;
-      shouldFailNextLoad = false;
-      loadProfile();
-      await pendingLoad;
+  const load = async () => {
+    const requestGeneration = generation;
+    const shouldRejectLoad = shouldFailNextLoad;
+    shouldFailNextLoad = false;
+    loadProfile();
+    await pendingLoad;
 
-      if (requestGeneration !== generation) {
-        return HttpResponse.error();
-      }
+    if (requestGeneration !== generation) {
+      return HttpResponse.error();
+    }
 
-      if (shouldRejectLoad) {
-        return HttpResponse.json({
-          errors: [{ message: 'Assistant settings could not be loaded' }],
-        });
-      }
-
+    if (shouldRejectLoad) {
       return HttpResponse.json({
-        data: {
-          currentWorkspace: {
-            __typename: 'Workspace',
-            id: getWorkspace().id,
-            aiChatAssistantProfile: {
-              ...profile,
-              __typename: 'AiChatAssistantProfile',
-            },
-          },
-        },
+        errors: [{ message: 'Assistant settings could not be loaded' }],
       });
-    }),
+    }
+
+    return undefined;
+  };
+
+  const handlers = [
     graphql.mutation('ResetAiChatAssistantProfile', async () => {
       const requestGeneration = generation;
       const shouldRejectSave = shouldFailNextSave;
@@ -188,6 +178,7 @@ export const createSettingsAiAssistantStoryFixture = ({
     saveProfile,
     resetProfile,
     save,
+    load,
     resumeLoad,
     resumeSave,
     setProfile,

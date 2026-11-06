@@ -18,6 +18,7 @@ type SettingsAiAssistantIntegrationStoryArgs = PageDecoratorArgs & {
   isInboxEnabled: boolean;
   shouldFailAssistantLoad: boolean;
   shouldPauseAssistantLoad: boolean;
+  hasInvalidAssistantProfile: boolean;
 };
 
 const meta = {
@@ -36,6 +37,7 @@ const meta = {
     isInboxEnabled: true,
     shouldFailAssistantLoad: false,
     shouldPauseAssistantLoad: false,
+    hasInvalidAssistantProfile: false,
   },
   beforeEach: async ({ args }) => {
     await fixture.reset({
@@ -43,6 +45,7 @@ const meta = {
       isInboxEnabled: args.isInboxEnabled,
       shouldFailAssistantLoad: args.shouldFailAssistantLoad,
       shouldPauseAssistantLoad: args.shouldPauseAssistantLoad,
+      hasInvalidAssistantProfile: args.hasInvalidAssistantProfile,
     });
   },
   parameters: { mockingDate: null, msw: { handlers: fixture.handlers } },
@@ -59,25 +62,13 @@ export default meta;
 type Story = StoryObj<SettingsAiAssistantIntegrationStoryArgs>;
 
 export const PresetPersistenceAndReload: Story = {
-  args: { shouldPauseAssistantLoad: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    await waitFor(() =>
-      expect(fixture.assistant.loadProfile).toHaveBeenCalledOnce(),
-    );
-    expect(
-      canvas.getAllByText('Loading assistant settings...').length,
-    ).toBeGreaterThan(0);
-    expect(
-      canvas.queryByRole('radio', { name: 'Ada' }),
-    ).not.toBeInTheDocument();
-
-    fixture.assistant.resumeLoad();
     const ada = await canvas.findByRole('radio', { name: 'Ada' });
     const scout = canvas.getByRole('radio', { name: 'Scout' });
 
     expect(ada).toBeChecked();
+    expect(fixture.assistant.loadProfile).not.toHaveBeenCalled();
     fixture.assistant.pauseSave();
     await userEvent.click(scout);
     await waitFor(() =>
@@ -217,7 +208,11 @@ export const CustomPatchRetryAndReset: Story = {
 };
 
 export const LoadFailureAndRetry: Story = {
-  args: { shouldFailAssistantLoad: true },
+  args: {
+    shouldFailAssistantLoad: true,
+    shouldPauseAssistantLoad: true,
+    hasInvalidAssistantProfile: true,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -227,6 +222,18 @@ export const LoadFailureAndRetry: Story = {
     expect(
       canvas.queryByRole('radio', { name: 'Ada' }),
     ).not.toBeInTheDocument();
+    expect(fixture.assistant.loadProfile).not.toHaveBeenCalled();
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+    await waitFor(() =>
+      expect(fixture.assistant.loadProfile).toHaveBeenCalledOnce(),
+    );
+    expect(
+      await canvas.findByText('Loading assistant settings...'),
+    ).toBeVisible();
+    fixture.assistant.resumeLoad();
+    expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Failed to load assistant settings. Try again.',
+    );
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
     expect(await canvas.findByRole('radio', { name: 'Ada' })).toBeChecked();
     expect(fixture.assistant.loadProfile).toHaveBeenCalledTimes(2);

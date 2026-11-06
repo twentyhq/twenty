@@ -1,11 +1,12 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { type SettingsAiAssistantProfileOperation } from '@/settings/ai/types/SettingsAiAssistantProfileOperation';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useState } from 'react';
@@ -16,7 +17,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
-  GetWorkspaceAiChatAssistantProfileDocument,
+  GetCurrentUserDocument,
   PermissionFlagType,
   ResetAiChatAssistantProfileDocument,
   UpdateWorkspaceDocument,
@@ -28,16 +29,14 @@ const ASSISTANT_PROFILE_SCHEMA = getAiChatAssistantProfileSchema();
 export const useSettingsAiAssistantProfile = () => {
   const { t } = useLingui();
   const store = useStore();
+  const client = useApolloClient();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const canEditProfile = useHasPermissionFlag(PermissionFlagType.AI_SETTINGS);
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const isVisible = canEditProfile && isInboxEnabled;
-  const profileQuery = useQuery(GetWorkspaceAiChatAssistantProfileDocument, {
-    fetchPolicy: 'network-only',
-    skip: !isVisible || !isDefined(currentWorkspace),
-  });
   const [updateWorkspace, { loading: isUpdating }] = useMutation(
     UpdateWorkspaceDocument,
     { fetchPolicy: 'no-cache' },
@@ -49,17 +48,14 @@ export const useSettingsAiAssistantProfile = () => {
   const [failedOperation, setFailedOperation] =
     useState<SettingsAiAssistantProfileOperation>();
   const [errorMessage, setErrorMessage] = useState<string>();
-  const workspace = profileQuery.data?.currentWorkspace;
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hasRefreshError, setHasRefreshError] = useState(false);
   const parsedProfile = ASSISTANT_PROFILE_SCHEMA.safeParse(
-    workspace?.aiChatAssistantProfile,
+    currentWorkspace?.aiChatAssistantProfile,
   );
-  const isCurrentWorkspace =
-    isDefined(workspace) && workspace.id === currentWorkspace?.id;
-  const profile =
-    parsedProfile.success && isCurrentWorkspace
-      ? parsedProfile.data
-      : undefined;
+  const profile = parsedProfile.success ? parsedProfile.data : undefined;
   const isSaving = isUpdating || isResetting;
+  const isLoading = !isCurrentUserLoaded || isRefreshing;
   const defaultSaveErrorMessage = t`Failed to save assistant settings. Try again.`;
 
   const performOperation = async ({
@@ -98,9 +94,9 @@ export const useSettingsAiAssistantProfile = () => {
       !hasPermission ||
       !hasInbox ||
       !isDefined(requestedWorkspace) ||
-      requestedWorkspace.id !== workspace?.id ||
+      requestedWorkspace.id !== currentWorkspace?.id ||
       !isDefined(profile) ||
-      profileQuery.loading ||
+      isLoading ||
       isSaving
     ) {
       return;
@@ -127,16 +123,11 @@ export const useSettingsAiAssistantProfile = () => {
         return;
       }
 
-      profileQuery.updateQuery(() => ({
-        currentWorkspace: {
-          __typename: 'Workspace',
-          id: requestedWorkspace.id,
-          aiChatAssistantProfile: {
-            __typename: 'AiChatAssistantProfile',
-            ...savedProfile.data,
-          },
-        },
-      }));
+      store.set(currentWorkspaceState.atom, (previousWorkspace) =>
+        previousWorkspace?.id === requestedWorkspace.id
+          ? { ...previousWorkspace, aiChatAssistantProfile: savedProfile.data }
+          : previousWorkspace,
+      );
     } catch (error) {
       const hasUserFriendlyMessage =
         CombinedGraphQLErrors.is(error) &&
@@ -156,21 +147,67 @@ export const useSettingsAiAssistantProfile = () => {
 
   const reset = () => save({ type: 'reset' });
 
+  const refreshProfile = async () => {
+    const requestedWorkspace = store.get(currentWorkspaceState.atom);
+
+    if (!isDefined(requestedWorkspace) || !isVisible || isLoading || isSaving) {
+      return;
+    }
+
+    setIsRefreshing(true);
+    setHasRefreshError(false);
+
+    try {
+      const { data } = await client.query({
+        query: GetCurrentUserDocument,
+        fetchPolicy: 'no-cache',
+      });
+      const workspace = data?.currentUser.currentWorkspace;
+      const refreshedProfile = ASSISTANT_PROFILE_SCHEMA.safeParse(
+        workspace?.aiChatAssistantProfile,
+      );
+
+      if (store.get(currentWorkspaceState.atom)?.id !== requestedWorkspace.id) {
+        return;
+      }
+
+      if (
+        !refreshedProfile.success ||
+        workspace?.id !== requestedWorkspace.id
+      ) {
+        setHasRefreshError(true);
+        return;
+      }
+
+      store.set(currentWorkspaceState.atom, (previousWorkspace) =>
+        previousWorkspace?.id === requestedWorkspace.id
+          ? {
+              ...previousWorkspace,
+              aiChatAssistantProfile: refreshedProfile.data,
+            }
+          : previousWorkspace,
+      );
+    } catch {
+      setHasRefreshError(true);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const retry = () => {
     if (isDefined(failedOperation)) {
       return save(failedOperation);
     }
 
-    return profileQuery.refetch().catch(() => undefined);
+    return refreshProfile();
   };
 
   return {
     profile,
-    workspace,
     workspaceId: currentWorkspace?.id,
     isVisible,
-    isLoading: profileQuery.loading,
-    hasLoadError: isDefined(profileQuery.error) || !isDefined(profile),
+    isLoading,
+    hasLoadError: hasRefreshError || !isDefined(profile),
     isSaving,
     errorMessage,
     saveProfile,

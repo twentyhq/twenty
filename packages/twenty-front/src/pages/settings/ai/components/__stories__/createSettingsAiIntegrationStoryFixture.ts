@@ -1,4 +1,5 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   currentWorkspaceState,
   type CurrentWorkspace,
@@ -30,6 +31,7 @@ type SettingsAiIntegrationStoryOptions = {
   isInboxEnabled: boolean;
   shouldFailAssistantLoad?: boolean;
   shouldPauseAssistantLoad?: boolean;
+  hasInvalidAssistantProfile?: boolean;
 };
 
 export const createSettingsAiIntegrationStoryFixture = () => {
@@ -71,7 +73,16 @@ export const createSettingsAiIntegrationStoryFixture = () => {
       ],
     };
     jotaiStore.set(isCookieAuthActiveState.atom, true);
-    jotaiStore.set(currentWorkspaceState.atom, workspace);
+    jotaiStore.set(isCurrentUserLoadedState.atom, true);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...workspace,
+      aiChatAssistantProfile: {
+        ...assistant.getProfile(),
+        displayName: options.hasInvalidAssistantProfile
+          ? ''
+          : assistant.getProfile().displayName,
+      },
+    });
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags,
@@ -147,8 +158,14 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     graphql.query('MyConnectedAccounts', () =>
       HttpResponse.json({ data: { myConnectedAccounts: [] } }),
     ),
-    graphql.query('GetCurrentUser', () =>
-      HttpResponse.json({
+    graphql.query('GetCurrentUser', async () => {
+      const loadErrorResponse = await assistant.load();
+
+      if (isDefined(loadErrorResponse)) {
+        return loadErrorResponse;
+      }
+
+      return HttpResponse.json({
         data: {
           currentUser: {
             ...mockedUserData,
@@ -166,8 +183,8 @@ export const createSettingsAiIntegrationStoryFixture = () => {
             },
           },
         },
-      }),
-    ),
+      });
+    }),
     graphql.mutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(
       'UpdateWorkspace',
       async ({ variables }) => {
