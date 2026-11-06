@@ -1,4 +1,4 @@
-import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { WorkspaceQueryExecutorException } from 'src/engine/workspace-query-executor/exceptions/workspace-query-executor.exception';
 import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 describe('compileNamedParameters', () => {
@@ -69,7 +69,7 @@ describe('compileNamedParameters', () => {
 
   it('should throw when a referenced parameter was not provided', () => {
     expect(() => compileNamedParameters('"id" = :missing', {})).toThrow(
-      TwentyOrmException,
+      WorkspaceQueryExecutorException,
     );
   });
 
@@ -93,12 +93,12 @@ describe('compileNamedParameters', () => {
   it('should throw when a spread parameter is not an array', () => {
     expect(() =>
       compileNamedParameters('"id" IN (:...ids)', { ids: 'a' }),
-    ).toThrow(TwentyOrmException);
+    ).toThrow(WorkspaceQueryExecutorException);
   });
 
   it('should throw on an unterminated string literal', () => {
     expect(() => compileNamedParameters(`"a" = 'unterminated`, {})).toThrow(
-      TwentyOrmException,
+      WorkspaceQueryExecutorException,
     );
   });
 

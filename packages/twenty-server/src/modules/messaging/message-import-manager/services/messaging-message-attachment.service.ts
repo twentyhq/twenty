@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import {
@@ -24,6 +26,7 @@ export class MessagingMessageAttachmentService {
   constructor(
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async saveMessageAttachments({
@@ -40,6 +43,20 @@ export class MessagingMessageAttachmentService {
   }): Promise<void> {
     if (messageAttachmentFiles.length === 0) {
       return;
+    }
+
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    // rejecting lets the app retry instead of losing the files
+    if (!isMessageAttachmentEnabled) {
+      throw new MessageChannelException(
+        'Message attachments are unavailable until this workspace finishes upgrading',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
     }
 
     const attachmentRepository =

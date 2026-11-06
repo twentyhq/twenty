@@ -48,6 +48,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
+import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { AiChatAssistantProfileDTO } from 'src/engine/core-modules/workspace/dtos/ai-chat-assistant-profile.dto';
 import {
@@ -111,6 +113,7 @@ export class WorkspaceResolver {
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingService: BillingService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly roleService: RoleService,
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
@@ -311,6 +314,13 @@ export class WorkspaceResolver {
     return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
+  }
+
+  @ResolveField(() => AiDataPolicyDTO, { nullable: true })
+  async aiDataPolicy(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<AiDataPolicyDTO | null> {
+    return this.workspaceAiDataPolicyService.findStoredAiDataPolicy(workspace);
   }
 
   @Mutation(() => WorkspaceEntity)

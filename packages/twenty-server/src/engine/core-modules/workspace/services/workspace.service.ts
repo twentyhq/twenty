@@ -6,6 +6,7 @@ import assert from 'assert';
 
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
@@ -13,8 +14,10 @@ import {
   AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   getAiChatAssistantProfileSchema,
+  isAiModelCompliantWithDataPolicy,
   isAiModelTier,
   type AiChatAssistantProfile,
+  type AiDataPolicy,
   type AiModelTier,
 } from 'twenty-shared/ai';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -52,6 +55,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -87,6 +91,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { buildAiDataPolicy } from 'src/engine/core-modules/workspace/utils/build-ai-data-policy.util';
 import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
@@ -110,6 +115,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -119,8 +125,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -172,6 +178,7 @@ export class WorkspaceService {
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
+    aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -187,12 +194,13 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -219,16 +227,44 @@ export class WorkspaceService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
+    private readonly roleAssignmentService: RoleAssignmentService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
+  private async assertFeatureIsEnabledOrThrow({
+    featureFlagKey,
+    workspaceId,
+    userFriendlyMessage,
+  }: {
+    featureFlagKey: FeatureFlagKey;
+    workspaceId: string;
+    userFriendlyMessage: MessageDescriptor;
+  }): Promise<void> {
+    const isFeatureEnabled = await this.featureFlagService.isFeatureEnabled(
+      featureFlagKey,
+      workspaceId,
+    );
+
+    if (!isFeatureEnabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        { userFriendlyMessage },
+      );
+    }
+  }
+
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
+    aiDataPolicy,
   }: {
     aiModelIdByTier: Partial<Record<AiModelTier, string>>;
     storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
+    aiDataPolicy: Pick<
+      AiDataPolicy,
+      'requiredDataResidencyRegion' | 'isZeroDataRetentionRequired'
+    >;
   }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
       if (!isAiModelTier(tier)) {
@@ -263,9 +299,20 @@ export class WorkspaceService {
         );
       }
 
-      if (!isDefined(this.aiModelRegistryService.getModelConfig(modelId))) {
+      const modelConfig = this.aiModelRegistryService.getModelConfig(modelId);
+
+      if (!isDefined(modelConfig)) {
         throw new WorkspaceException(
           `Model "${modelId}" is not in this instance's catalog`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (
+        !isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
+      ) {
+        throw new WorkspaceException(
+          `Model "${modelId}" does not meet the workspace's AI data policy`,
           WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
         );
       }
@@ -447,21 +494,32 @@ export class WorkspaceService {
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode) ||
       !isUndefined(payload.aiChatAssistantProfile);
-    const isInboxRequiredButDisabled =
-      isUpdatingAssistantSettings &&
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-        workspace.id,
-      ));
+    if (isUpdatingAssistantSettings) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+      });
+    }
 
-    if (isInboxRequiredButDisabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
-        },
-      );
+    if (isDefined(payload.aiDataPolicy)) {
+      await this.assertFeatureIsEnabledOrThrow({
+        featureFlagKey: FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
+        workspaceId: workspace.id,
+        userFriendlyMessage: msg`Privacy settings are not enabled for this workspace.`,
+      });
+
+      const isAiDataPolicyColumnHidden = !isDefined(workspace.aiDataPolicy);
+
+      if (isAiDataPolicyColumnHidden) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`Privacy settings are not available until the upgrade has completed.`,
+          },
+        );
+      }
     }
 
     const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
@@ -505,9 +563,10 @@ export class WorkspaceService {
       isDefined(payload.defaultRoleId) &&
       workspace.defaultRoleId !== payload.defaultRoleId
     ) {
-      await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        { roleId: payload.defaultRoleId, workspaceId: workspace.id },
-      );
+      await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+        roleId: payload.defaultRoleId,
+        workspaceId: workspace.id,
+      });
     }
 
     let customDomainRegistered = false;
@@ -583,6 +642,11 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
+        aiDataPolicy:
+          payload.aiDataPolicy ??
+          (await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          )),
       });
     }
 
@@ -598,6 +662,12 @@ export class WorkspaceService {
         workspaceId: workspace.id,
         values: {
           ...workspaceUpdates,
+          ...(isDefined(payload.aiDataPolicy) && {
+            aiDataPolicy: buildAiDataPolicy({
+              aiDataPolicyInput: payload.aiDataPolicy,
+              storedAiDataPolicy: workspace.aiDataPolicy,
+            }),
+          }),
           ...(isResettingAssistantProfile
             ? { aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE }
             : {}),
@@ -1272,7 +1342,7 @@ export class WorkspaceService {
     authContext: RawAuthContext;
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
   }) {
-    const { userWorkspaceId, apiKey, application, agentId } = authContext;
+    const { application } = authContext;
 
     if (!isNonEmptyArray(fieldsBeingUpdated)) {
       return;
@@ -1341,13 +1411,9 @@ export class WorkspaceService {
 
     for (const [permission, fields] of fieldsByPermission.entries()) {
       const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          setting: permission,
-          apiKeyId: apiKey?.id,
-          applicationId: application?.id,
-          agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: permission,
         });
 
       if (!hasPermission) {

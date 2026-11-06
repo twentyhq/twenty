@@ -12,7 +12,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { getModelIcon } from '@/ai/utils/getModelIcon';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -31,7 +31,7 @@ export const AiModelPicker = ({
   const dropdownId = useId();
   const tiers = useAiModelTiers();
   const { agentTier } = useWorkspaceAiModelTiers();
-  const aiModels = useAtomStateValue(aiModelsState);
+  const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
   const workspaceTierLabel = getAiModelTierLabel(agentTier);
 
   return (
@@ -44,7 +44,7 @@ export const AiModelPicker = ({
           selectedModelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
         )
       }
-      aiModels={aiModels}
+      aiModels={workspaceAiModels}
       automaticOptions={[
         {
           value: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,

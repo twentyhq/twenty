@@ -63,6 +63,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
               shape={value.avatarShape}
               color={value.avatarColor}
               face={value.avatarFace}
+              isAnimated={value.isAvatarAnimated}
               size={20}
             />
             <Input
@@ -89,7 +90,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
           {isNameInvalid && (
             <StyledNameError id={nameErrorId} role="alert">
               <Text size="sm">
-                {t`Enter a name between 1 and ${AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters.`}
+                {t`Enter a name between 1 and ${AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested.`}
               </Text>
             </StyledNameError>
           )}

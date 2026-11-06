@@ -38,7 +38,7 @@ import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-val
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -60,7 +60,7 @@ export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly keyValuePairService: KeyValuePairService<WorkspaceEnrichmentKeyValueTypeMap>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -82,7 +82,7 @@ export class GettingStartedService {
       featuredApps,
     ] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
-      this.permissionsService.getUserWorkspacePermissions({
+      this.settingPermissionsService.getUserWorkspacePermissions({
         userWorkspaceId,
         workspaceId,
       }),
