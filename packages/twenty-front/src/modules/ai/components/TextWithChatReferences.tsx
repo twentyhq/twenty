@@ -17,10 +17,7 @@ export const TextWithChatReferences = ({
           return segment;
         }
 
-        if (
-          segment.kind === 'record' &&
-          isAgentChatAssistantReference(segment)
-        ) {
+        if (isAgentChatAssistantReference(segment)) {
           return <span key={segment.index}>@{segment.displayName}</span>;
         }
 

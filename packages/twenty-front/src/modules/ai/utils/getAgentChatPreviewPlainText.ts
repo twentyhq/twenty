@@ -14,10 +14,7 @@ export const getAgentChatPreviewPlainText = (markdown: string): string =>
           return segment;
         }
 
-        if (
-          segment.kind === 'record' &&
-          isAgentChatAssistantReference(segment)
-        ) {
+        if (isAgentChatAssistantReference(segment)) {
           return escapeMarkdownForChatReference(`@${segment.displayName}`);
         }
 
