@@ -1,4 +1,4 @@
-import { isEmptyObject } from 'twenty-shared/utils';
+import isEqual from 'lodash.isequal';
 import { isBaseOutputSchemaV2 } from 'twenty-shared/workflow';
 
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -15,7 +15,10 @@ export const computeOutputSchemaFromExpectedOutput = ({
     computeOutputSchemaFromSample(expectedOutputSchema);
 
   // Fence for test runs stored before the 2.57 sample move, remove in 2.59 (twentyhq/core-team-issues#3183)
-  if (isEmptyObject(sampleOutputSchema) && isBaseOutputSchemaV2(outputSchema)) {
+  if (
+    isBaseOutputSchemaV2(outputSchema) &&
+    !isEqual(outputSchema, sampleOutputSchema)
+  ) {
     return outputSchema;
   }
 

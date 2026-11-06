@@ -5,13 +5,11 @@ const TOTAL_OUTPUT_SCHEMA = {
 } as const;
 
 describe('computeOutputSchemaFromExpectedOutput', () => {
-  it('derives the schema from the sample over the one sent', () => {
+  it('derives the schema from the sample', () => {
     expect(
       computeOutputSchemaFromExpectedOutput({
         expectedOutputSchema: { total: 3 },
-        outputSchema: {
-          stale: { isLeaf: true, type: 'string', label: 'stale', value: '' },
-        },
+        outputSchema: {},
       }),
     ).toEqual(TOTAL_OUTPUT_SCHEMA);
   });
@@ -32,14 +30,23 @@ describe('computeOutputSchemaFromExpectedOutput', () => {
     });
   });
 
-  it('keeps a legacy test result schema stored without a sample', () => {
-    expect(
-      computeOutputSchemaFromExpectedOutput({
-        expectedOutputSchema: {},
-        outputSchema: TOTAL_OUTPUT_SCHEMA,
-      }),
-    ).toEqual(TOTAL_OUTPUT_SCHEMA);
-  });
+  it.each([
+    { description: 'without a sample', expectedOutputSchema: {} },
+    {
+      description: 'next to a different hand-typed sample',
+      expectedOutputSchema: { typed: 'by hand' },
+    },
+  ])(
+    'keeps a legacy test result schema stored $description',
+    ({ expectedOutputSchema }) => {
+      expect(
+        computeOutputSchemaFromExpectedOutput({
+          expectedOutputSchema,
+          outputSchema: TOTAL_OUTPUT_SCHEMA,
+        }),
+      ).toEqual(TOTAL_OUTPUT_SCHEMA);
+    },
+  );
 
   it('returns no schema for a sample the editor cleared', () => {
     expect(
