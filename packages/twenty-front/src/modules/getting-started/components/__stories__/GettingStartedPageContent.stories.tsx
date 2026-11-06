@@ -11,7 +11,6 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
@@ -31,7 +30,6 @@ import {
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
-  GetWorkspaceInvitationsDocument,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
   type UpdateGettingStartedMutationVariables,
@@ -45,7 +43,6 @@ import {
   mockGettingStartedStepDefinitions,
   mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
-import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -283,40 +280,16 @@ export const AllDone: Story = {
   },
 };
 
-const TWO_HOURS_BEFORE_MOCKED_DATE = new Date(
-  new Date(MOCKED_DATE).getTime() - 2 * 60 * 60 * 1000,
-).toISOString();
-
 const DONE_STEP_CHAT_THREADS = [
   {
     actionKey: GettingStartedStepActionKey.IMPORT_DATA,
     chatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
-    title: 'Import HubSpot contacts',
   },
   {
     actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
     chatThreadId: '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47',
-    title: 'Weekly deal follow-ups',
   },
 ];
-
-const WORKSPACE_INVITATIONS_MOCK: MockedResponse = {
-  request: { query: GetWorkspaceInvitationsDocument },
-  maxUsageCount: Infinity,
-  result: {
-    data: {
-      findWorkspaceInvitations: ['marc@acme.com', 'sam@acme.com'].map(
-        (email, index) => ({
-          __typename: 'WorkspaceInvitation',
-          id: `20202020-0000-4000-8000-00000000010${index}`,
-          email,
-          roleId: null,
-          expiresAt: '2024-03-20T12:00:00.000Z',
-        }),
-      ),
-    },
-  },
-};
 
 let doneStepsProgress: GettingStartedProgressQuery['gettingStartedProgress'] =
   TRIAL_PROGRESS;
@@ -373,14 +346,6 @@ const FEATURED_MARKETPLACE_APPS_MOCK: MockedResponse = {
 export const DoneSteps: Story = {
   beforeEach: () => {
     doneStepsProgress = createDoneStepsProgress();
-    DONE_STEP_CHAT_THREADS.forEach(({ chatThreadId, title }) =>
-      jotaiStore.set(recordStoreFamilyState.atomFamily(chatThreadId), {
-        __typename: 'AgentChatThread',
-        id: chatThreadId,
-        title,
-        lastActivityAt: TWO_HOURS_BEFORE_MOCKED_DATE,
-      }),
-    );
     jotaiStore.set(currentWorkspaceState.atom, {
       ...TRIALING_WORKSPACE,
       installedApplications: [
@@ -396,7 +361,6 @@ export const DoneSteps: Story = {
     apolloMocks: [
       WORKFLOW_PREVIEWS_MOCK,
       FEATURED_MARKETPLACE_APPS_MOCK,
-      WORKSPACE_INVITATIONS_MOCK,
       {
         request: { query: GettingStartedProgressDocument },
         maxUsageCount: Infinity,
@@ -424,7 +388,7 @@ export const DoneSteps: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('button', { name: '2 invitations sent' }),
+      await canvas.findByRole('button', { name: 'Invite more' }),
     ).toBeVisible();
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
@@ -434,11 +398,11 @@ export const DoneSteps: Story = {
       canvas.getByRole('button', { name: 'Deal follow-ups on track' }),
     );
 
-    const openThreadButton = await canvas.findByRole('button', {
-      name: /Weekly deal follow-ups/,
+    const continueThreadButton = await canvas.findByRole('button', {
+      name: 'Continue thread',
     });
 
-    await waitFor(() => expect(openThreadButton).toBeVisible());
+    await waitFor(() => expect(continueThreadButton).toBeVisible());
   },
 };
 
