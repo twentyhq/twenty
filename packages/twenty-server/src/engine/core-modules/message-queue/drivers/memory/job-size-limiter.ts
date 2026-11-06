@@ -11,22 +11,20 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type SizedJob = { index: number; groupKey: string; sizeBytes: number };
-
-type JobSizeLimiterOptions = {
-  metricsService: MetricsService;
-  isEnabled: () => boolean;
-  getMaxJobSizeBytes: () => number;
-};
 
 export class JobSizeLimiter {
   private readonly logger = new Logger(JobSizeLimiter.name);
 
-  constructor(private readonly options: JobSizeLimiterOptions) {}
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
 
   isEnabled(): boolean {
-    return this.options.isEnabled();
+    return this.twentyConfigService.get('IS_REDIS_MEMORY_FAIRNESS_ENABLED');
   }
 
   checkJobSizesOrThrow({
@@ -40,7 +38,9 @@ export class JobSizeLimiter {
       return;
     }
 
-    const maxBytes = this.options.getMaxJobSizeBytes();
+    const maxBytes = this.twentyConfigService.get(
+      'JOB_QUEUE_MAX_JOB_SIZE_BYTES',
+    );
     const oversizedJob = jobs.find(({ sizeBytes }) => sizeBytes > maxBytes);
 
     if (!isDefined(oversizedJob)) {
@@ -67,7 +67,7 @@ export class JobSizeLimiter {
   private reportRefusal(refusal: JobMemoryLimitRefusal): void {
     this.logger.warn(buildJobMemoryLimitRefusalLogMessage(refusal));
 
-    void this.options.metricsService.incrementCounterForEvent({
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.JobMemoryLimitRefused,
       attributes: { queue: refusal.queueName, reason: refusal.reason },
       shouldStoreInCache: false,

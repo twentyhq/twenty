@@ -102,13 +102,10 @@ export class BullMQDriver
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
     });
-    this.jobSizeLimiter = new JobSizeLimiter({
+    this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
-      isEnabled: () =>
-        this.twentyConfigService.get('IS_REDIS_MEMORY_FAIRNESS_ENABLED'),
-      getMaxJobSizeBytes: () =>
-        this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES'),
-    });
+      twentyConfigService,
+    );
   }
 
   onModuleInit() {

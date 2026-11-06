@@ -10,11 +10,14 @@ const MAX_JOB_SIZE_BYTES = 100;
 
 const buildLimiter = (isEnabled: boolean) => {
   const metricsService = { incrementCounterForEvent: jest.fn() };
-  const limiter = new JobSizeLimiter({
-    metricsService: metricsService as never,
-    isEnabled: () => isEnabled,
-    getMaxJobSizeBytes: () => MAX_JOB_SIZE_BYTES,
-  });
+  const configValues: Record<string, unknown> = {
+    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
+    JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
+  };
+  const limiter = new JobSizeLimiter(
+    metricsService as never,
+    { get: (key: string) => configValues[key] } as never,
+  );
 
   return { limiter, metricsService };
 };
