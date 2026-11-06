@@ -37,11 +37,12 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
 
   const isModelExcluded = (modelVariantId: string) => {
     const { modelId } = parseAiModelVariantId(modelVariantId);
+    const model = aiModels.find((aiModel) => aiModel.modelId === modelId);
 
-    return !isAiModelCompliantWithDataPolicy({
-      model: aiModels.find((model) => model.modelId === modelId) ?? {},
-      aiDataPolicy,
-    });
+    return (
+      !isDefined(model) ||
+      !isAiModelCompliantWithDataPolicy({ model, aiDataPolicy })
+    );
   };
 
   const agentLabels = (data?.findManyAgents ?? [])
