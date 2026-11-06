@@ -118,22 +118,32 @@ describe('validateWorkflowStepParams', () => {
 
     it('should reject fieldsToUpdate on create and upsert record steps', () => {
       for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
-        for (const fieldsToUpdate of [[], ['name']]) {
-          expect(
-            recordStepIssues(type, {
-              objectName: 'company',
-              objectRecord: { name: 'Acme' },
-              fieldsToUpdate,
-            }),
-          ).toEqual([
-            expect.objectContaining({
-              code: 'INVALID_STEP_PARAMS',
-              message: expect.stringContaining(
-                'only UPDATE_RECORD selects the fields to write',
-              ),
-            }),
-          ]);
-        }
+        expect(
+          recordStepIssues(type, {
+            objectName: 'company',
+            objectRecord: { name: 'Acme' },
+            fieldsToUpdate: ['name'],
+          }),
+        ).toEqual([
+          expect.objectContaining({
+            code: 'INVALID_STEP_PARAMS',
+            message: expect.stringContaining(
+              'only UPDATE_RECORD selects the fields to write',
+            ),
+          }),
+        ]);
+      }
+    });
+
+    it('should accept the empty fieldsToUpdate stored steps carry until the 2.57 upgrade', () => {
+      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+        expect(
+          recordStepIssues(type, {
+            objectName: 'company',
+            objectRecord: { name: 'Acme' },
+            fieldsToUpdate: [],
+          }),
+        ).toEqual([]);
       }
     });
 

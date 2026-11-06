@@ -91,7 +91,12 @@ export const validateWorkflowStepParams = ({
       (parsedStep.type === WorkflowActionType.CREATE_RECORD ||
         parsedStep.type === WorkflowActionType.UPSERT_RECORD) &&
       isPlainObject(rawInput) &&
-      'fieldsToUpdate' in rawInput
+      isDefined(rawInput.fieldsToUpdate) &&
+      // the builder's former empty default stays activable until 2.57 leaves the cross-upgrade window
+      !(
+        Array.isArray(rawInput.fieldsToUpdate) &&
+        rawInput.fieldsToUpdate.length === 0
+      )
     ) {
       issues.push({
         severity: 'error',
