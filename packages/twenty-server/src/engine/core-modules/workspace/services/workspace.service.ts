@@ -1367,11 +1367,7 @@ export class WorkspaceService {
       return;
     }
 
-    const hasWorkspaceAuthContext = isDefined(
-      workspaceAuthContextStorage.getStore(),
-    );
-
-    if (!userWorkspaceId && !hasWorkspaceAuthContext) {
+    if (!userWorkspaceId) {
       throw new Error('Missing userWorkspaceId in authContext');
     }
 

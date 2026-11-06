@@ -309,16 +309,24 @@ describe('workspace assistant profile settings', () => {
   });
 
   it('enforces permissions for every field in a mixed update and for reset', async () => {
-    await expectRejectedOperation({
-      operation: updateWorkspaceAssistantProfileQueryFactory({
-        data: {
-          displayName: 'Rejected workspace edit',
-          aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
-        },
-      }),
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      errorCode: ErrorCode.FORBIDDEN,
-    });
+    for (const { token, errorCode } of [
+      {
+        token: API_KEY_ACCESS_TOKEN,
+        errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
+      },
+      { token: APPLE_JONY_MEMBER_ACCESS_TOKEN, errorCode: ErrorCode.FORBIDDEN },
+    ]) {
+      await expectRejectedOperation({
+        operation: updateWorkspaceAssistantProfileQueryFactory({
+          data: {
+            displayName: 'Rejected workspace edit',
+            aiChatAssistantProfile: { displayName: 'Rejected assistant edit' },
+          },
+        }),
+        token,
+        errorCode,
+      });
+    }
     await assignMemberRole(originalMemberRoleId);
 
     const response = await readWorkspace(APPLE_JONY_MEMBER_ACCESS_TOKEN);
