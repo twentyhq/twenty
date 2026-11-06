@@ -86,7 +86,7 @@ export class DatabaseToolProvider implements ToolProvider {
       );
 
     const principals = isDefined(context.authContext)
-      ? await this.principalPermissionsService.buildPermissionsPrincipals({
+      ? await this.principalPermissionsService.resolvePermissionsPrincipals({
           authContext: context.authContext,
         })
       : undefined;
@@ -142,31 +142,31 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'insert',
         }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'select',
         }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'update',
         }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'soft-delete',
         }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'delete',
         }));
