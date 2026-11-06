@@ -36,7 +36,7 @@ const fromRecordSort = ({
   resolvers,
 }: {
   recordSort: unknown;
-  resolvers: WorkflowManifestInverseReferenceResolvers;
+  resolvers: Pick<WorkflowManifestInverseReferenceResolvers, 'fieldReference'>;
 }) => {
   const reference = resolvers.fieldReference(recordSort);
 
