@@ -1,8 +1,8 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { isDefined, normalizePartner } from 'twenty-shared/utils';
 
-export const partnerCookieState = createAtomState<{ partner: string } | null>({
-  key: 'partnerCookie',
+export const partnerNameState = createAtomState<{ partner: string } | null>({
+  key: 'partnerName',
   defaultValue: null,
   useCookieStorage: {
     cookieKey: 'partner',

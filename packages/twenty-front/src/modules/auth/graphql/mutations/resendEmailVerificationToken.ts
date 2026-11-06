@@ -4,12 +4,12 @@ export const RESEND_EMAIL_VERIFICATION_TOKEN = gql`
   mutation ResendEmailVerificationToken(
     $email: String!
     $origin: String!
-    $partner: String
+    $partnerName: String
   ) {
     resendEmailVerificationToken(
       email: $email
       origin: $origin
-      partner: $partner
+      partnerName: $partnerName
     ) {
       success
     }

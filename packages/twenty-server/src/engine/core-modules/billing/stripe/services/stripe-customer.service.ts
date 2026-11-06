@@ -143,19 +143,19 @@ export class StripeCustomerService {
     userEmail,
     workspaceId,
     customerName,
-    partner,
+    partnerName,
   }: {
     userEmail: string;
     workspaceId: string;
     customerName: string | undefined;
-    partner?: string;
+    partnerName?: string;
   }) {
     const customer = await this.stripe.customers.create({
       name: customerName,
       email: userEmail,
       metadata: {
         workspaceId,
-        ...(isNonEmptyString(partner) ? { partner } : {}),
+        ...(isNonEmptyString(partnerName) ? { partner: partnerName } : {}),
       },
     });
 

@@ -46,12 +46,12 @@ export class BillingService {
     userEmail,
     workspaceId,
     workspaceDisplayName,
-    partner,
+    partnerName,
   }: {
     userEmail: string;
     workspaceId: string;
     workspaceDisplayName: string | undefined;
-    partner?: string;
+    partnerName?: string;
   }): Promise<void> {
     const existingBillingCustomer =
       await this.billingCustomerRepository.findOne(workspaceId, { where: {} });
@@ -61,14 +61,14 @@ export class BillingService {
     }
 
     const isPartnerEligible =
-      isNonEmptyString(partner) &&
+      isNonEmptyString(partnerName) &&
       !(await this.stripeCustomerService.isPreviousCustomer({
         email: userEmail,
       }));
 
-    if (isNonEmptyString(partner) && !isPartnerEligible) {
+    if (isNonEmptyString(partnerName) && !isPartnerEligible) {
       this.logger.log(
-        `Partner code ${partner} dropped for workspace ${workspaceId}: previous customer`,
+        `Partner code ${partnerName} dropped for workspace ${workspaceId}: previous customer`,
       );
     }
 
@@ -76,7 +76,7 @@ export class BillingService {
       userEmail,
       workspaceId,
       customerName: workspaceDisplayName,
-      partner: isPartnerEligible ? partner : undefined,
+      partnerName: isPartnerEligible ? partnerName : undefined,
     });
   }
 

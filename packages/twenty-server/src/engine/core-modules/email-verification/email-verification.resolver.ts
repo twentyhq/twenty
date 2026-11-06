@@ -45,7 +45,7 @@ export class EmailVerificationResolver {
       email: resendEmailVerificationTokenInput.email,
       workspace,
       locale: context.req.locale,
-      partner: resendEmailVerificationTokenInput.partner,
+      partnerName: resendEmailVerificationTokenInput.partnerName,
     });
   }
 }

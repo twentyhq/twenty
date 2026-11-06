@@ -1,13 +1,13 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { partnerCookieState } from '@/auth/states/partnerCookieState';
+import { partnerNameState } from '@/auth/states/partnerNameState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -30,7 +30,8 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
-  const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
+  const partnerName = useAtomStateValue(partnerNameState)?.partner;
+  const setPartnerName = useSetAtomState(partnerNameState);
   const { isCaptchaReady } = useCaptcha();
   const { readCaptchaToken } = useReadCaptchaToken();
 
@@ -60,14 +61,14 @@ export const useSignUpInNewWorkspace = () => {
           input: {
             displayName,
             subdomain,
-            partner: partnerCookie?.partner,
+            partnerName,
             captchaToken,
           },
         },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
 
-      setPartnerCookie(null);
+      setPartnerName(null);
 
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 

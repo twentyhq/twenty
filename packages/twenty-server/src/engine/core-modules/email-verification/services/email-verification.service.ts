@@ -50,7 +50,7 @@ export class EmailVerificationService {
     workspace,
     locale,
     verifyEmailRedirectPath,
-    partner,
+    partnerName,
     verificationTrigger = EmailVerificationTrigger.SIGN_UP,
   }: {
     userId: string;
@@ -58,7 +58,7 @@ export class EmailVerificationService {
     workspace: WorkspaceDomainConfig | undefined;
     locale: keyof typeof APP_LOCALES;
     verifyEmailRedirectPath?: string;
-    partner?: string;
+    partnerName?: string;
     verificationTrigger?: EmailVerificationTrigger;
   }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
@@ -74,7 +74,7 @@ export class EmailVerificationService {
         emailVerificationToken,
         email,
         verifyEmailRedirectPath,
-        partner,
+        partnerName,
       }),
     };
     const verificationLink = workspace
@@ -125,12 +125,12 @@ export class EmailVerificationService {
     email,
     workspace,
     locale,
-    partner,
+    partnerName,
   }: {
     email: string;
     workspace: WorkspaceDomainConfig | undefined;
     locale: keyof typeof APP_LOCALES;
-    partner?: string;
+    partnerName?: string;
   }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -162,7 +162,7 @@ export class EmailVerificationService {
       email,
       workspace,
       locale,
-      partner,
+      partnerName,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 

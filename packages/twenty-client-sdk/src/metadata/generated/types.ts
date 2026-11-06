@@ -8538,7 +8538,7 @@ export default {
                         1,
                         "String!"
                     ],
-                    "partner": [
+                    "partnerName": [
                         1
                     ]
                 }
@@ -8913,7 +8913,7 @@ export default {
                     "locale": [
                         1
                     ],
-                    "partner": [
+                    "partnerName": [
                         1
                     ],
                     "password": [
@@ -13198,6 +13198,9 @@ export default {
                 1
             ],
             "partner": [
+                1
+            ],
+            "partnerName": [
                 1
             ],
             "subdomain": [

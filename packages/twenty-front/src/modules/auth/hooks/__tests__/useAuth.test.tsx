@@ -12,7 +12,7 @@ import {
   results,
   token,
 } from '@/auth/hooks/__mocks__/useAuth';
-import { partnerCookieState } from '@/auth/states/partnerCookieState';
+import { partnerNameState } from '@/auth/states/partnerNameState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import {
   type CurrentUser,
@@ -96,7 +96,7 @@ describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getDefaultStore().set(returnToPathState.atom, '');
-    getDefaultStore().set(partnerCookieState.atom, null);
+    getDefaultStore().set(partnerNameState.atom, null);
     getDefaultStore().set(isEmailVerificationRequiredState.atom, false);
   });
 
@@ -227,7 +227,7 @@ describe('useAuth', () => {
   });
 
   it('should send the stored partner with a credential sign-up', async () => {
-    getDefaultStore().set(partnerCookieState.atom, { partner: 'northwind' });
+    getDefaultStore().set(partnerNameState.atom, { partner: 'northwind' });
     getDefaultStore().set(isEmailVerificationRequiredState.atom, true);
 
     const signUpResult = jest.fn(() => ({
@@ -279,7 +279,7 @@ describe('useAuth', () => {
 
     expect(signUpResult).toHaveBeenCalledTimes(1);
     expect(signUpResult).toHaveBeenCalledWith(
-      expect.objectContaining({ email, partner: 'northwind' }),
+      expect.objectContaining({ email, partnerName: 'northwind' }),
     );
   });
 });

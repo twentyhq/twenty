@@ -20,6 +20,15 @@ export class SignUpInNewWorkspaceInput {
   @IsString()
   @IsOptional()
   @Matches(PARTNER_PATTERN)
+  partnerName?: string;
+
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Use partnerName instead.',
+  })
+  @IsString()
+  @IsOptional()
+  @Matches(PARTNER_PATTERN)
   partner?: string;
 
   @Field(() => String, { nullable: true })

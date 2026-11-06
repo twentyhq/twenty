@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { partnerCookieState } from '@/auth/states/partnerCookieState';
+import { partnerNameState } from '@/auth/states/partnerNameState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
@@ -52,10 +52,10 @@ export const useInitializeQueryParamState = () => {
         }
       },
       via: (value: string) => {
-        const partner = normalizePartner(value);
+        const partnerName = normalizePartner(value);
 
-        if (isDefined(partner)) {
-          store.set(partnerCookieState.atom, { partner });
+        if (isDefined(partnerName)) {
+          store.set(partnerNameState.atom, { partner: partnerName });
         }
       },
     };

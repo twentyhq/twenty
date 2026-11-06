@@ -6,7 +6,7 @@ describe('buildEmailVerificationLinkSearchParams', () => {
       buildEmailVerificationLinkSearchParams({
         emailVerificationToken: 'token',
         email: 'tim@apple.dev',
-        partner: 'northwind',
+        partnerName: 'northwind',
       }),
     ).toEqual({
       emailVerificationToken: 'token',
@@ -34,7 +34,7 @@ describe('buildEmailVerificationLinkSearchParams', () => {
       buildEmailVerificationLinkSearchParams({
         emailVerificationToken: 'token',
         email: 'tim@apple.dev',
-        partner: '',
+        partnerName: '',
       }),
     ).toEqual({ emailVerificationToken: 'token', email: 'tim@apple.dev' });
   });
