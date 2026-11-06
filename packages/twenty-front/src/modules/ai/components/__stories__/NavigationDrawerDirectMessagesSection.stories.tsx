@@ -21,6 +21,7 @@ import {
   FeatureFlagKey,
   type GetRecordPermissionsQuery,
   type GetRecordPermissionsQueryVariables,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -211,10 +212,13 @@ export const OpenMemberConversation: Story = {
       },
     ]);
     jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
-    jotaiStore.set(
-      currentUserWorkspaceState.atom,
-      mockedUserData.currentUserWorkspace,
-    );
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [
+        ...(mockedUserData.currentUserWorkspace.permissionFlags ?? []),
+        PermissionFlagType.AI,
+      ],
+    });
     jotaiStore.set(currentAiChatThreadState.atom, null);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,

@@ -25,6 +25,7 @@ import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThread
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -35,11 +36,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   FeatureFlagKey,
+  PermissionFlagType,
   SendChatMessageDocument,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -137,6 +140,10 @@ const renderAgentChat = ({
         hasAiModels ? [{ modelId: 'model', label: 'Model' }] : [],
       );
       store.set(newAiChatThreadIdState.atom, THREAD_ID);
+      store.set(currentUserWorkspaceState.atom, {
+        ...mockedUserData.currentUserWorkspace,
+        permissionFlags: [PermissionFlagType.AI],
+      });
       store.set(currentAiChatThreadState.atom, currentThreadId);
       store.set(
         agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
