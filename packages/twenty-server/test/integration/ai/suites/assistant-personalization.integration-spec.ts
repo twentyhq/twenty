@@ -1,12 +1,10 @@
-import { randomUUID } from 'node:crypto';
-
 import { agentConversationHistoryQueryFactory } from 'test/integration/ai/utils/agent-conversation-history-query-factory.util';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
-import { sendChatMessageQueryFactory } from 'test/integration/ai/utils/send-chat-message-query-factory.util';
 import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
 import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
+import { sendChatParticipationMessageOperationFactory } from 'test/integration/graphql/utils/send-chat-participation-message-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -72,9 +70,10 @@ describe('Assistant personalization across settings and conversation execution',
       ).toEqual(profile);
 
       const sent = await makeMetadataApiRequest(
-        sendChatMessageQueryFactory({
+        sendChatParticipationMessageOperationFactory({
           threadId,
-          messageId: randomUUID(),
+          text: 'Please reply.',
+          isAssistantMentioned: true,
           recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
         }),
       );
