@@ -10,7 +10,6 @@ const [DEFAULT_SYSTEM_RULE] =
 
 const buildRule = (overrides: Partial<StepFilter>): StepFilter => ({
   id: 'rule',
-  type: 'TEXT',
   stepOutputKey: 'NAME',
   operand: ViewFilterOperand.CONTAINS,
   value: 'lead',
@@ -35,7 +34,7 @@ describe('hasAppliedCoreObjectFilters', () => {
       hasAppliedFilters({
         stepFilters: [
           DEFAULT_SYSTEM_RULE,
-          buildRule({ id: 'blank', type: 'unknown', stepOutputKey: '' }),
+          buildRule({ id: 'blank', stepOutputKey: '' }),
         ],
       }),
     ).toBe(false);

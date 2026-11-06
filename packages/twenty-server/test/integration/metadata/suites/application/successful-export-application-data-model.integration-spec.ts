@@ -1541,7 +1541,6 @@ const SEVERITY_STEP_FILTERS = {
   stepFilters: [
     {
       id: 'severity',
-      type: 'TEXT',
       stepOutputKey: '{{trigger.properties.after.severity}}',
       operand: ViewFilterOperand.IS,
       value: 'high',

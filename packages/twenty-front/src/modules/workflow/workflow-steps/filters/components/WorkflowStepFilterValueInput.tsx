@@ -35,6 +35,7 @@ import { type JsonValue } from 'type-fest';
 
 type WorkflowStepFilterValueInputProps = {
   stepFilter: StepFilter;
+  filterType: string;
 };
 
 const COMPOSITE_FIELD_METADATA_TYPES = [
@@ -72,6 +73,7 @@ const isFilterableFieldType = (
 
 export const WorkflowStepFilterValueInput = ({
   stepFilter,
+  filterType: variableType,
 }: WorkflowStepFilterValueInputProps) => {
   const { t } = useLingui();
   const { readonly } = useContext(WorkflowStepFilterContext);
@@ -120,11 +122,7 @@ export const WorkflowStepFilterValueInput = ({
       !configurableViewFilterOperands.has(stepFilter.operand)) ??
     true;
 
-  const {
-    fieldMetadataId,
-    type: variableType,
-    compositeFieldSubFieldName,
-  } = stepFilter;
+  const { fieldMetadataId, compositeFieldSubFieldName } = stepFilter;
 
   const { fieldMetadataItem: selectedFieldMetadataItem, objectMetadataItem } =
     useFieldMetadataItemById(fieldMetadataId ?? '');
@@ -191,6 +189,7 @@ export const WorkflowStepFilterValueInput = ({
     return (
       <WorkflowStepFilterValueCompositeInput
         stepFilter={stepFilter}
+        filterType={variableType}
         onChange={handleValueChange}
         onClear={handleClearValue}
       />

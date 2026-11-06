@@ -39,7 +39,6 @@ export const CoreObjectFilterFieldSelect = ({
       stepFilterToUpsert: {
         ...stepFilter,
         stepOutputKey: selectedField.key,
-        type: selectedField.filterType,
         operand: defaultOperand ?? ViewFilterOperand.IS,
         value: '',
       },

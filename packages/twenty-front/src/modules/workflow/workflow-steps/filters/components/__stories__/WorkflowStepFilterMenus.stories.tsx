@@ -25,7 +25,6 @@ const FILTER_GROUP: StepFilterGroup = {
 };
 const FILTER: StepFilter = {
   id: 'filter',
-  type: 'unknown',
   value: '',
   operand: ViewFilterOperand.IS,
   stepOutputKey: '',

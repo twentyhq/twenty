@@ -5,10 +5,8 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import {
-  findMatchingBranch,
-  type ResolvedFilter,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
+import { type ResolvedStepFilter } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
+import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
 
 describe('findMatchingBranch', () => {
   const realGroup: StepFilterGroup = {
@@ -19,7 +17,7 @@ describe('findMatchingBranch', () => {
   const matchingFilter = (
     stepFilterGroupId: string,
     matches: boolean,
-  ): ResolvedFilter =>
+  ): ResolvedStepFilter =>
     ({
       id: 'filter-1',
       type: 'TEXT',
@@ -27,7 +25,7 @@ describe('findMatchingBranch', () => {
       stepFilterGroupId,
       rightOperand: 'expected-value',
       leftOperand: matches ? 'expected-value' : 'something-else',
-    }) as ResolvedFilter;
+    }) as ResolvedStepFilter;
 
   it('should return the branch whose filter condition evaluates to true', () => {
     const branches: StepIfElseBranch[] = [

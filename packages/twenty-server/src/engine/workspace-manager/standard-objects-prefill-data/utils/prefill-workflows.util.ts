@@ -433,7 +433,6 @@ export const prefillWorkflows = async (
           stepFilters: [
             {
               id: '0e595385-9e18-4869-abfd-cf72952b124c',
-              type: 'boolean',
               value: 'false',
               operand: 'IS',
               isFullRecord: false,
@@ -620,7 +619,6 @@ export const prefillWorkflows = async (
           stepFilters: [
             {
               id: '290cc6a3-08fd-4be5-b42e-966d0bb90ff7',
-              type: 'boolean',
               value: 'true',
               operand: 'IS',
               isFullRecord: false,

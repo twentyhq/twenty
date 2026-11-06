@@ -31,7 +31,6 @@ const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
 
 const buildNameStepFilter = (overrides: Partial<StepFilter>): StepFilter => ({
   id: 'name-filter',
-  type: 'TEXT',
   stepOutputKey: 'NAME',
   operand: ViewFilterOperand.CONTAINS,
   value: 'lead',

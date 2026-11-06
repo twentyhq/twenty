@@ -4,7 +4,6 @@ import { ViewFilterOperand } from '../../types/ViewFilterOperand';
 
 export const stepFilterSchema = z.object({
   id: z.string(),
-  type: z.string(),
   stepOutputKey: z.string(),
   operand: z.enum(ViewFilterOperand).or(z.enum(ViewFilterOperandDeprecated)),
   value: z.string(),

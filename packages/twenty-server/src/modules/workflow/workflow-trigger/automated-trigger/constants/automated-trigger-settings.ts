@@ -1,5 +1,7 @@
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+
 export type DatabaseEventTriggerFilterSettings = {
   stepFilters: StepFilter[];
   stepFilterGroups: StepFilterGroup[];
@@ -8,6 +10,7 @@ export type DatabaseEventTriggerFilterSettings = {
 export type BaseDatabaseEventTriggerSettings = {
   eventName: string;
   filter?: DatabaseEventTriggerFilterSettings;
+  outputSchema?: OutputSchema;
 };
 
 export type DatabaseEventTriggerSettings =

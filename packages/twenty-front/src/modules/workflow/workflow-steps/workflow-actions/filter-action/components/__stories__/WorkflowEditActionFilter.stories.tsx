@@ -54,7 +54,6 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
           stepOutputKey: '{{company.name}}',
           operand: ViewFilterOperand.CONTAINS,
           value: 'Acme',
-          type: 'string',
         },
       ],
     },

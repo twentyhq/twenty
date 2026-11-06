@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type DatabaseEventTriggerFilterSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
@@ -32,6 +33,7 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: WorkflowTriggerType.DATABASE_EVENT;
   settings: BaseWorkflowTriggerSettings & {
     eventName: string;
+    filter?: DatabaseEventTriggerFilterSettings;
   };
 };
 

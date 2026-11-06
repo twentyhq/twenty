@@ -13,7 +13,6 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '{{company.name}}',
-  type: 'text',
   operand: ViewFilterOperand.CONTAINS,
   value: '',
   positionInStepFilterGroup: 0,
@@ -23,7 +22,6 @@ const GREATER_THAN_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '{{company.employees}}',
-  type: 'number',
   operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   value: '100',
   positionInStepFilterGroup: 0,
@@ -37,6 +35,7 @@ const meta: Meta<typeof WorkflowStepFilterOperandSelect> = {
   },
   args: {
     stepFilter: DEFAULT_STEP_FILTER,
+    filterType: 'text',
   },
   decorators: [
     WorkflowStepActionDrawerDecorator,
@@ -61,6 +60,7 @@ export const Default: Story = {
 export const WithGreaterThanOperand: Story = {
   args: {
     stepFilter: GREATER_THAN_FILTER,
+    filterType: 'number',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

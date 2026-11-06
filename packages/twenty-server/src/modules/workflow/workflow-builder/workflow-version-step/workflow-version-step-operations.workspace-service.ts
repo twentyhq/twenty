@@ -642,7 +642,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 stepFilters: [
                   {
                     id: initialFilterId,
-                    type: 'unknown',
                     stepOutputKey: '',
                     operand: ViewFilterOperand.IS,
                     value: '',

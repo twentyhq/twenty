@@ -1,17 +1,14 @@
 import {
-  type StepFilter,
   type StepFilterGroup,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { type ResolvedStepFilter } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 describe('evaluateFilterConditions', () => {
-  type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
-    rightOperand: unknown;
-    leftOperand: unknown;
-  };
+  type ResolvedFilter = ResolvedStepFilter;
 
   const createFilter = (
     operand: ViewFilterOperand,

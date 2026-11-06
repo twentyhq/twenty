@@ -122,7 +122,6 @@ describe('If/Else Workflow (e2e)', () => {
             stepFilters: [
               {
                 id: ifElseStep.settings.input.stepFilters[0].id,
-                type: 'NUMBER',
                 stepOutputKey: '{{trigger.number}}',
                 operand: ViewFilterOperand.IS,
                 value: '10',
@@ -199,7 +198,6 @@ describe('If/Else Workflow (e2e)', () => {
       ...currentIfElseStep.settings.input.stepFilters,
       {
         id: elseIfFilterId,
-        type: 'NUMBER',
         stepOutputKey: '{{trigger.number}}',
         operand: ViewFilterOperand.IS,
         value: '20',

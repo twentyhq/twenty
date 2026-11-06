@@ -65,16 +65,17 @@ export const useUpdateStepFilterFromVariable = ({
     )
       ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
       : { fieldMetadataItem: undefined };
-    const variableSelectionSettings = getStepFilterVariableSelectionSettings({
-      rawVariableName,
-      isFullRecord,
-      variableType,
-      fieldMetadataId,
-      fieldMetadataType: filterFieldMetadataItem?.type,
-      compositeFieldSubFieldName,
-    });
+    const { variableSelectionSettings, filterType } =
+      getStepFilterVariableSelectionSettings({
+        rawVariableName,
+        isFullRecord,
+        variableType,
+        fieldMetadataId,
+        fieldMetadataType: filterFieldMetadataItem?.type,
+        compositeFieldSubFieldName,
+      });
     const { value } = getInitialFilterValue(
-      variableSelectionSettings.type as FilterableAndTSVectorFieldType,
+      filterType as FilterableAndTSVectorFieldType,
       variableSelectionSettings.operand,
     );
 

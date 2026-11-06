@@ -24,7 +24,6 @@ export const createElseIfBranch = (): {
     },
     filter: {
       id: newFilterId,
-      type: 'unknown',
       stepOutputKey: '',
       operand: ViewFilterOperand.IS,
       value: '',

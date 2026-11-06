@@ -347,7 +347,6 @@ describe('application workflow definitions', () => {
                 stepFilters: [
                   {
                     id: 'filter',
-                    type: 'TEXT',
                     stepOutputKey: '{{trigger.properties.after.status}}',
                     operand: ViewFilterOperand.IS,
                     value: 'open',
@@ -513,7 +512,6 @@ describe('application workflow definitions', () => {
                   stepFilters: [
                     {
                       id: 'filter',
-                      type: 'TEXT',
                       stepOutputKey: '{{trigger.properties.after.name}}',
                       operand: ViewFilterOperand.IS,
                       value: 'Acme',

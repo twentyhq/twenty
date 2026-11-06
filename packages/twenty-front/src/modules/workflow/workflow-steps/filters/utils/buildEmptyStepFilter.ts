@@ -9,7 +9,6 @@ export const buildEmptyStepFilter = ({
   positionInStepFilterGroup: number;
 }): StepFilter => ({
   id: v4(),
-  type: 'unknown',
   value: '',
   operand: ViewFilterOperand.IS,
   stepOutputKey: '',

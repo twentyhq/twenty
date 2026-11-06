@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 
+import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
 
 @Module({
+  imports: [WorkflowMetadataReadModule],
   providers: [IfElseWorkflowAction],
   exports: [IfElseWorkflowAction],
 })

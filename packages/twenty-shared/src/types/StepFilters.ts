@@ -15,7 +15,6 @@ export type StepFilterGroup = {
 
 export type StepFilter = {
   id: string;
-  type: string;
   stepOutputKey: string;
   operand: ViewFilterOperand;
   value: string;
@@ -28,7 +27,6 @@ export type StepFilter = {
 
 export type StepFilterWithPotentiallyDeprecatedOperand = {
   id: string;
-  type: string;
   stepOutputKey: string;
   operand: ViewFilterOperand | ViewFilterOperandDeprecated;
   value: string;

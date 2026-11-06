@@ -1,4 +1,4 @@
-import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
@@ -6,12 +6,8 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { type ResolvedStepFilter } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
-
-export type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
-  rightOperand: unknown;
-  leftOperand: unknown;
-};
 
 const collectAllDescendantGroups = (
   rootGroupId: string,
@@ -44,7 +40,7 @@ export const findMatchingBranch = ({
 }: {
   branches: StepIfElseBranch[];
   stepFilterGroups: StepFilterGroup[];
-  resolvedFilters: ResolvedFilter[];
+  resolvedFilters: ResolvedStepFilter[];
 }): StepIfElseBranch => {
   for (const branch of branches) {
     if (

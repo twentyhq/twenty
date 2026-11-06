@@ -38,6 +38,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { buildStepFilterVariableSources } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
   type AutomatedTriggerSettings,
@@ -61,6 +63,7 @@ type TriggerEvaluationArgs = {
   eventPayload: ObjectRecordEvent;
   eventListener: DatabaseEventTriggerListener;
   action: DatabaseEventAction;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 
 @Injectable()
@@ -382,6 +385,9 @@ export class WorkflowDatabaseEventTriggerListener {
       workspaceCustomFlatApplication.id,
     ]);
 
+    const { flatFieldMetadataMaps } =
+      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+
     const enrichedPayload = eventListeners.some(({ applicationId }) =>
       standardAndCustomApplicationIds.has(applicationId),
     )
@@ -417,6 +423,7 @@ export class WorkflowDatabaseEventTriggerListener {
           eventPayload,
           eventListener,
           action,
+          flatFieldMetadataMaps,
         });
 
         if (shouldTriggerJob) {
@@ -527,10 +534,15 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload,
     eventListener,
     action,
+    flatFieldMetadataMaps,
   }: TriggerEvaluationArgs) {
     return (
       this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
-      this.eventMatchesRecordFilter({ eventPayload, eventListener })
+      this.eventMatchesRecordFilter({
+        eventPayload,
+        eventListener,
+        flatFieldMetadataMaps,
+      })
     );
   }
 
@@ -538,7 +550,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload,
     eventListener,
     action,
-  }: TriggerEvaluationArgs) {
+  }: Omit<TriggerEvaluationArgs, 'flatFieldMetadataMaps'>) {
     if (
       action === DatabaseEventAction.UPDATED ||
       action === DatabaseEventAction.UPSERTED
@@ -561,9 +573,10 @@ export class WorkflowDatabaseEventTriggerListener {
   private eventMatchesRecordFilter({
     eventPayload,
     eventListener,
-  }: Pick<TriggerEvaluationArgs, 'eventPayload' | 'eventListener'>) {
-    const { filter } =
-      eventListener.settings as BaseDatabaseEventTriggerSettings;
+    flatFieldMetadataMaps,
+  }: Omit<TriggerEvaluationArgs, 'action'>) {
+    const settings = eventListener.settings as BaseDatabaseEventTriggerSettings;
+    const { filter } = settings;
 
     if (!isDefined(filter) || !isNonEmptyArray(filter.stepFilters)) {
       return true;
@@ -574,6 +587,11 @@ export class WorkflowDatabaseEventTriggerListener {
         stepFilters: filter.stepFilters,
         stepFilterGroups: filter.stepFilterGroups,
         context: { [TRIGGER_STEP_ID]: eventPayload },
+        flatFieldMetadataMaps,
+        variableSources: buildStepFilterVariableSources({
+          trigger: { type: WorkflowTriggerType.DATABASE_EVENT, settings },
+          steps: [],
+        }),
       });
     } catch (error) {
       this.logger.error(

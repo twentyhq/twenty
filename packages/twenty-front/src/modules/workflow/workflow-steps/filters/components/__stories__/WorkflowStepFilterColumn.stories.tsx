@@ -25,7 +25,6 @@ const TEXT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '{{company.name}}',
-  type: 'text',
   value: 'Acme',
   operand: ViewFilterOperand.CONTAINS,
 };

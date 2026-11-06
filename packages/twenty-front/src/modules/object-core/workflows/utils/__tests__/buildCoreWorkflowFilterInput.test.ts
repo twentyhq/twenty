@@ -15,7 +15,6 @@ import {
 
 const buildStepFilter = (overrides: Partial<StepFilter> = {}): StepFilter => ({
   id: 'filter-1',
-  type: 'TEXT',
   stepOutputKey: CoreWorkflowFilterFieldKey.NAME,
   operand: ViewFilterOperand.CONTAINS,
   value: 'sync',

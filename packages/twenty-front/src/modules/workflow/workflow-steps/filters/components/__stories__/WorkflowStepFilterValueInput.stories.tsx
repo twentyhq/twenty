@@ -14,7 +14,6 @@ const TEXT_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '{{company.name}}',
-  type: 'text',
   operand: ViewFilterOperand.CONTAINS,
   value: 'Acme',
   positionInStepFilterGroup: 0,
@@ -24,7 +23,6 @@ const NUMBER_FILTER: StepFilter = {
   id: 'filter-2',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '{{company.employees}}',
-  type: 'number',
   operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   value: '100',
   positionInStepFilterGroup: 0,
@@ -38,6 +36,7 @@ const meta: Meta<typeof WorkflowStepFilterValueInput> = {
   },
   args: {
     stepFilter: TEXT_FILTER,
+    filterType: 'text',
   },
   decorators: [
     MemoryRouterDecorator,
@@ -63,6 +62,7 @@ export const Default: Story = {
 export const NumberInput: Story = {
   args: {
     stepFilter: NUMBER_FILTER,
+    filterType: 'number',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

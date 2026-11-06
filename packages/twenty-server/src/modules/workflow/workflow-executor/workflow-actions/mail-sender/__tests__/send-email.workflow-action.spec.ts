@@ -13,6 +13,7 @@ import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-trigger.util';
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
@@ -104,6 +105,7 @@ describe('SendEmailWorkflowAction', () => {
   const executeWithBody = (body: string | undefined) =>
     action.execute({
       currentStepId: 'step-1',
+      trigger: createMockManualTrigger(),
       steps: [buildSendEmailStep({ ...emailInput, body })],
       context: {
         trigger: {
@@ -231,6 +233,7 @@ describe('SendEmailWorkflowAction', () => {
 
       await action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [buildSendEmailStep({ ...emailInput, body: rawHtmlBody })],
         context: { trigger: { name: '<b>John</b>' } },
         runInfo: {
@@ -254,6 +257,7 @@ describe('SendEmailWorkflowAction', () => {
     it('should keep placeholders from resolved values inert', async () => {
       await action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           buildSendEmailStep({
             ...emailInput,
@@ -352,6 +356,7 @@ describe('SendEmailWorkflowAction', () => {
     const executeWithSender = (connectedAccountId: string) =>
       action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           buildSendEmailStep({
             connectedAccountId,
@@ -452,6 +457,7 @@ describe('SendEmailWorkflowAction', () => {
     it('forwards the configured from handle to the email tool', async () => {
       await action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           buildSendEmailStep({
             ...emailInput,
@@ -472,6 +478,7 @@ describe('SendEmailWorkflowAction', () => {
     it('resolves workflow variables inside the from handle', async () => {
       await action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           buildSendEmailStep({
             ...emailInput,
@@ -508,6 +515,7 @@ describe('SendEmailWorkflowAction', () => {
       await expect(
         action.execute({
           currentStepId: 'step-1',
+          trigger: createMockManualTrigger(),
           steps: [
             {
               ...buildSendEmailStep({ ...emailInput, body: 'hi' }),

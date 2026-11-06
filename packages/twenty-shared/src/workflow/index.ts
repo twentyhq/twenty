@@ -168,6 +168,10 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
+export {
+  UNKNOWN_STEP_FILTER_TYPE,
+  computeStepFilterType,
+} from './utils/computeStepFilterType';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';

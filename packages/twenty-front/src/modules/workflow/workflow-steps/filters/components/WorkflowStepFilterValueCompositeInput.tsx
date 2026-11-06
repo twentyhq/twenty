@@ -28,17 +28,18 @@ const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
 
 export const WorkflowStepFilterValueCompositeInput = ({
   stepFilter,
+  filterType,
   onChange,
   onClear,
 }: {
   stepFilter: StepFilter;
+  filterType: string;
   onChange: (newValue: JsonValue) => void;
   onClear: () => void;
 }) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
   const currencies = useCurrencies();
-  const { type: filterType, compositeFieldSubFieldName: subFieldName } =
-    stepFilter;
+  const { compositeFieldSubFieldName: subFieldName } = stepFilter;
 
   return (
     <>
