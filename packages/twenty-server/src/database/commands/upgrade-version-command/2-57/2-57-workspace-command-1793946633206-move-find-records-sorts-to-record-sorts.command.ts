@@ -1,23 +1,22 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  type InexactlyConvertedSort,
   moveFindRecordsSortsToRecordSorts,
   type SortableField,
 } from 'src/database/commands/upgrade-version-command/2-57/utils/move-find-records-sorts-to-record-sorts.util';
+import {
+  rewriteJsonbRowsWithCompareAndSet,
+  type StoredJsonbRow,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-type StepsRow = { id: string; steps: unknown };
-
-type ConvertedSteps = { id: string; steps: unknown };
 
 // Runs that ended never execute their steps again, so their snapshot is left as it ran
 const RUN_STATUSES_STILL_EXECUTING_STEPS = [
@@ -53,119 +52,74 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
       return;
     }
 
+    const isDryRun = options.dryRun ?? false;
     const fieldsByObjectName = await this.getFieldsByObjectName(workspaceId);
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const workspaceVersionTable = `"${schemaName}"."workflowVersion"`;
     const workspaceRunTable = `"${schemaName}"."workflowRun"`;
-    const inexactlyConvertedSorts: InexactlyConvertedSort[] = [];
 
-    const convertSteps = (rows: StepsRow[]): ConvertedSteps[] =>
-      rows.flatMap(({ id, steps }) => {
-        const converted = moveFindRecordsSortsToRecordSorts({
-          steps,
-          fieldsByObjectName,
-        });
-
-        inexactlyConvertedSorts.push(...converted.inexactlyConvertedSorts);
-
-        return converted.hasChanged ? [{ id, steps: converted.steps }] : [];
+    const convertSteps = ({ value }: StoredJsonbRow<unknown>) => {
+      const converted = moveFindRecordsSortsToRecordSorts({
+        steps: value,
+        fieldsByObjectName,
       });
 
-    const queryRunner = dataSource.createQueryRunner();
-
-    try {
-      await queryRunner.connect();
-
-      const convertedCoreVersions = convertSteps(
-        await queryRunner.query(
-          `SELECT id, steps FROM core."workflowVersion" WHERE "workspaceId" = $1 AND steps::text LIKE '%gqlOperationOrderBy%'`,
-          [workspaceId],
-        ),
-      );
-      const convertedWorkspaceVersions = (await this.tableExists(
-        queryRunner,
-        workspaceVersionTable,
-      ))
-        ? convertSteps(
-            await queryRunner.query(
-              `SELECT id, steps FROM ${workspaceVersionTable} WHERE steps::text LIKE '%gqlOperationOrderBy%'`,
-            ),
-          )
-        : [];
-      const convertedRuns = (await this.tableExists(
-        queryRunner,
-        workspaceRunTable,
-      ))
-        ? convertSteps(
-            await queryRunner.query(
-              `SELECT id, state->'flow'->'steps' AS steps FROM ${workspaceRunTable} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%'`,
-              [RUN_STATUSES_STILL_EXECUTING_STEPS],
-            ),
-          )
-        : [];
-
-      for (const { stepId, orderByEntry } of inexactlyConvertedSorts) {
+      for (const {
+        stepId,
+        orderByEntry,
+      } of converted.inexactlyConvertedSorts) {
         this.logger.warn(
           `Workspace ${workspaceId}: find records step ${stepId} sort ${JSON.stringify(orderByEntry)} has no exact record sort; nested or unknown entries are dropped and nulls first becomes nulls last`,
         );
       }
 
-      const convertedRowCount =
-        convertedCoreVersions.length +
-        convertedWorkspaceVersions.length +
-        convertedRuns.length;
+      return { value: converted.steps, hasChanged: converted.hasChanged };
+    };
 
-      if (convertedRowCount === 0) {
-        return;
-      }
+    const coreVersionCount = await rewriteJsonbRowsWithCompareAndSet({
+      dataSource,
+      isDryRun,
+      tableName: 'core."workflowVersion"',
+      columnName: 'steps',
+      whereClause: `"workspaceId" = $1 AND steps::text LIKE '%gqlOperationOrderBy%'`,
+      whereParameters: [workspaceId],
+      mapRow: convertSteps,
+    });
+    const workspaceVersionCount = (await this.tableExists(
+      dataSource,
+      workspaceVersionTable,
+    ))
+      ? await rewriteJsonbRowsWithCompareAndSet({
+          dataSource,
+          isDryRun,
+          tableName: workspaceVersionTable,
+          columnName: 'steps',
+          whereClause: `steps::text LIKE '%gqlOperationOrderBy%'`,
+          whereParameters: [],
+          mapRow: convertSteps,
+        })
+      : 0;
+    const runCount = (await this.tableExists(dataSource, workspaceRunTable))
+      ? await this.rewriteRunFlowSteps({
+          dataSource,
+          isDryRun,
+          tableName: workspaceRunTable,
+          mapRow: convertSteps,
+        })
+      : 0;
 
-      if (options.dryRun) {
-        this.logger.log(
-          `[DRY RUN] Would move find records sorts to record sorts in ${convertedCoreVersions.length} core version(s), ${convertedWorkspaceVersions.length} workspace version(s) and ${convertedRuns.length} pending run(s) for workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      await queryRunner.startTransaction();
-
-      await this.updateRows({
-        queryRunner,
-        tableName: 'core."workflowVersion"',
-        assignment: `"steps" = $1::jsonb`,
-        convertedRows: convertedCoreVersions,
-      });
-      await this.updateRows({
-        queryRunner,
-        tableName: workspaceVersionTable,
-        assignment: `"steps" = $1::jsonb`,
-        convertedRows: convertedWorkspaceVersions,
-      });
-      // only the flow snapshot is set, so state the worker writes meanwhile is kept
-      await this.updateRows({
-        queryRunner,
-        tableName: workspaceRunTable,
-        assignment: `"state" = jsonb_set("state", '{flow,steps}', $1::jsonb)`,
-        convertedRows: convertedRuns,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
+    if (coreVersionCount + workspaceVersionCount + runCount === 0) {
+      return;
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatWorkflowVersionMaps',
-    ]);
+    if (!isDryRun) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatWorkflowVersionMaps',
+      ]);
+    }
 
     this.logger.log(
-      `Moved find records sorts to record sorts for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Moved find records sorts to record sorts in ${coreVersionCount} core version(s), ${workspaceVersionCount} workspace version(s) and ${runCount} pending run(s) for workspace ${workspaceId}`,
     );
   }
 
@@ -200,10 +154,10 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
   }
 
   private async tableExists(
-    queryRunner: QueryRunner,
+    dataSource: DataSource,
     tableName: string,
   ): Promise<boolean> {
-    const [{ exists }] = await queryRunner.query(
+    const [{ exists }] = await dataSource.query(
       `SELECT to_regclass($1) IS NOT NULL AS "exists"`,
       [tableName],
     );
@@ -211,22 +165,48 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
     return exists;
   }
 
-  private async updateRows({
-    queryRunner,
+  // Sets only the flow snapshot, and only if it is still the one read, so state the worker writes meanwhile is kept
+  private async rewriteRunFlowSteps({
+    dataSource,
+    isDryRun,
     tableName,
-    assignment,
-    convertedRows,
+    mapRow,
   }: {
-    queryRunner: QueryRunner;
+    dataSource: DataSource;
+    isDryRun: boolean;
     tableName: string;
-    assignment: string;
-    convertedRows: ConvertedSteps[];
-  }): Promise<void> {
-    for (const { id, steps } of convertedRows) {
-      await queryRunner.query(
-        `UPDATE ${tableName} SET ${assignment} WHERE id = $2`,
-        [JSON.stringify(steps), id],
+    mapRow: (row: StoredJsonbRow<unknown>) => {
+      value: unknown;
+      hasChanged: boolean;
+    };
+  }): Promise<number> {
+    const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
+      `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%'`,
+      [RUN_STATUSES_STILL_EXECUTING_STEPS],
+    );
+
+    let rewrittenRunCount = 0;
+
+    for (const row of rows) {
+      const { value, hasChanged } = mapRow(row);
+
+      if (!hasChanged) {
+        continue;
+      }
+
+      if (isDryRun) {
+        rewrittenRunCount += 1;
+        continue;
+      }
+
+      const [, updatedRowCount]: [unknown, number] = await dataSource.query(
+        `UPDATE ${tableName} SET state = jsonb_set(state, '{flow,steps}', $1::jsonb) WHERE id = $2 AND state->'flow'->'steps' = $3::jsonb`,
+        [JSON.stringify(value), row.id, JSON.stringify(row.value)],
       );
+
+      rewrittenRunCount += updatedRowCount;
     }
+
+    return rewrittenRunCount;
   }
 }
