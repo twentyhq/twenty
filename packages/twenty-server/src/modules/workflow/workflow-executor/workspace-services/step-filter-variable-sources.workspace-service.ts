@@ -9,6 +9,7 @@ import {
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { type StepFilterVariableSource } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -87,7 +88,7 @@ export class StepFilterVariableSourcesWorkspaceService {
     workspaceId: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-  }): Promise<unknown> {
+  }): Promise<OutputSchema> {
     const computedOutputSchema =
       await this.workflowSchemaWorkspaceService.computeStepOutputSchema({
         step: node,
