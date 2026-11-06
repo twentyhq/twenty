@@ -67,7 +67,7 @@ const collectEmailInteractions = async (
           isDefined(personId) &&
           isDefined(message?.id) &&
           isDefined(message.receivedAt) &&
-          message.isDraft !== true
+          !message.isDraft
         ) {
           interactions.push({
             personId,
