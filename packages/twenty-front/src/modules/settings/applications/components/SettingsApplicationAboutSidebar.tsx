@@ -1,5 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { type ApplicationContentLink } from '@/settings/applications/types/ApplicationContentLink';
 import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -48,7 +49,7 @@ type SettingsApplicationAboutSidebarProps = {
   pricingDescription?: string;
   billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
-  contentPath?: string;
+  contentLink?: ApplicationContentLink;
 };
 
 type AboutRow = {
@@ -168,7 +169,7 @@ export const SettingsApplicationAboutSidebar = ({
   pricingDescription,
   billsCredits = false,
   developerLinks,
-  contentPath,
+  contentLink,
 }: SettingsApplicationAboutSidebarProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -293,7 +294,7 @@ export const SettingsApplicationAboutSidebar = ({
         )}
       </StyledHeader>
 
-      {(aboutRows.length > 0 || isDefined(contentPath)) && (
+      {(aboutRows.length > 0 || isDefined(contentLink)) && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
           {aboutRows.map(({ Icon, label, tooltip }) => (
@@ -308,12 +309,15 @@ export const SettingsApplicationAboutSidebar = ({
               />
             </StyledRow>
           ))}
-          {isDefined(contentPath) && (
-            <Link className={sidebarLinkClassName} to={contentPath}>
+          {isDefined(contentLink) && (
+            <Link className={sidebarLinkClassName} to={contentLink.path}>
               <StyledRowIcon>
                 <IconListDetails size={theme.icon.size.sm} />
               </StyledRowIcon>
-              {t`See content`}
+              {plural(contentLink.itemCount, {
+                one: `${formatNumber(contentLink.itemCount)} resource`,
+                other: `${formatNumber(contentLink.itemCount)} resources`,
+              })}
             </Link>
           )}
         </StyledSection>
