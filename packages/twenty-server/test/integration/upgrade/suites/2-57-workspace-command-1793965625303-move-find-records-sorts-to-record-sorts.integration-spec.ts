@@ -9,7 +9,11 @@ import {
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { waitForWorkflowCompletion } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { v4 } from 'uuid';
 
 import { type MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -57,6 +61,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   let apiSortedWorkflow: SortedWorkflow;
   const coreWorkflowIds: string[] = [];
   const workspaceWorkflowIds: string[] = [];
+  const companyIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
     command.runOnWorkspace({
@@ -178,6 +183,16 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     for (const workspaceWorkflowId of workspaceWorkflowIds) {
       await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
     }
+
+    for (const companyId of companyIds) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'company',
+          recordId: companyId,
+          gqlFields: 'id',
+        }),
+      );
+    }
   });
 
   it('changes nothing in a dry run', async () => {
@@ -220,10 +235,15 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   });
 
   it('runs the converted sort', async () => {
-    const [{ name: lastCompanyName }] = await global.testDataSource.query(
-      `SELECT name FROM ${SCHEMA}.company WHERE "deletedAt" IS NULL
-       ORDER BY name DESC NULLS LAST, position ASC NULLS FIRST, id ASC LIMIT 1`,
-    );
+    // Earlier suites in the shard can leave any company names, so the test brings the one that sorts first
+    const lastCompanyId = v4();
+    const lastCompanyName = 'zzzzzzzzzzzz 2-57 sort';
+
+    await createOneOperation({
+      objectMetadataSingularName: 'company',
+      input: { id: lastCompanyId, name: lastCompanyName },
+    });
+    companyIds.push(lastCompanyId);
 
     await activateCoreWorkflowVersion({
       coreWorkflowVersionId: apiSortedWorkflow.coreWorkflowVersionId,
@@ -238,7 +258,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     expect(workflowRun?.status).toBe('COMPLETED');
     expect(
       workflowRun?.state?.stepInfos?.[apiSortedWorkflow.step.id]?.result,
-    ).toMatchObject({ first: { name: lastCompanyName } });
+    ).toMatchObject({ first: { id: lastCompanyId, name: lastCompanyName } });
   });
 
   it('converts the steps of runs that can still execute and leaves ended runs as they ran', async () => {
