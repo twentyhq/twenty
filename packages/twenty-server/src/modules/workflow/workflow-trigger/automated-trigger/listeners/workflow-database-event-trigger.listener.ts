@@ -389,6 +389,11 @@ export class WorkflowDatabaseEventTriggerListener {
 
     const { flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+    const variableSources = await this.buildTriggerFilterVariableSources({
+      eventListeners,
+      databaseEventName,
+      workspaceId,
+    });
 
     const enrichedPayload = eventListeners.some(({ applicationId }) =>
       standardAndCustomApplicationIds.has(applicationId),
@@ -403,11 +408,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     for (const eventListener of eventListeners) {
       const { applicationId } = eventListener;
-      const variableSources = await this.buildTriggerFilterVariableSources({
-        eventListener,
-        workspaceId,
-      });
-
       if (!readableEventsByApplicationId.has(applicationId)) {
         readableEventsByApplicationId.set(
           applicationId,
@@ -555,21 +555,24 @@ export class WorkflowDatabaseEventTriggerListener {
     );
   }
 
+  // Every listener of a batch watches the same event, so they share one trigger schema
   private async buildTriggerFilterVariableSources({
-    eventListener,
+    eventListeners,
+    databaseEventName,
     workspaceId,
   }: {
-    eventListener: DatabaseEventTriggerListener;
+    eventListeners: DatabaseEventTriggerListener[];
+    databaseEventName: string;
     workspaceId: string;
   }): Promise<StepFilterVariableSource[]> {
-    const { eventName, filter } = eventListener.settings;
-
     return this.stepFilterVariableSourcesWorkspaceService.buildVariableSources({
-      stepFilters: filter?.stepFilters ?? [],
+      stepFilters: eventListeners.flatMap(
+        ({ settings }) => settings.filter?.stepFilters ?? [],
+      ),
       trigger: {
         name: '',
         type: WorkflowTriggerType.DATABASE_EVENT,
-        settings: { eventName, outputSchema: {} },
+        settings: { eventName: databaseEventName, outputSchema: {} },
       },
       steps: [],
       workspaceId,

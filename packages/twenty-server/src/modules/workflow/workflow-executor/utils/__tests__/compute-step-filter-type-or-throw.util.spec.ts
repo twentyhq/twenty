@@ -66,10 +66,16 @@ describe('computeStepFilterTypeOrThrow', () => {
     ).toBe('number');
   });
 
-  it('should be unknown when no step declares the variable', () => {
+  it('should be unknown when the step declares no such variable or none is chosen yet', () => {
     expect(
       computeType(buildStepFilter({ stepOutputKey: '{{http-step.missing}}' })),
     ).toBe('unknown');
     expect(computeType(buildStepFilter({ stepOutputKey: '' }))).toBe('unknown');
+  });
+
+  it('should throw when the variable reads a step that does not exist', () => {
+    expect(() =>
+      computeType(buildStepFilter({ stepOutputKey: '{{deleted-step.total}}' })),
+    ).toThrow(WorkflowStepExecutorException);
   });
 });

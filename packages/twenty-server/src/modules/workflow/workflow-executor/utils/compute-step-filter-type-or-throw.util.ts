@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -24,9 +25,13 @@ const findVariableType = ({
   stepFilter,
   variableSources,
 }: {
-  stepFilter: StepFilter;
+  stepFilter: Pick<StepFilter, 'id' | 'stepOutputKey' | 'isFullRecord'>;
   variableSources: StepFilterVariableSource[];
 }): string | undefined => {
+  if (!isNonEmptyString(stepFilter.stepOutputKey)) {
+    return undefined;
+  }
+
   const stepId = extractRawVariableNamePart({
     rawVariableName: stepFilter.stepOutputKey,
     part: 'stepId',
@@ -35,7 +40,10 @@ const findVariableType = ({
   const variableSource = variableSources.find(({ id }) => id === stepId);
 
   if (!isDefined(variableSource)) {
-    return undefined;
+    throw new WorkflowStepExecutorException(
+      `Filter ${stepFilter.id} reads ${stepFilter.stepOutputKey}, but step ${stepId} does not exist`,
+      WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+    );
   }
 
   return searchVariableInOutputSchema({
@@ -52,7 +60,10 @@ export const computeStepFilterTypeOrThrow = ({
   flatFieldMetadataMaps,
   variableSources,
 }: {
-  stepFilter: StepFilter;
+  stepFilter: Pick<
+    StepFilter,
+    'id' | 'stepOutputKey' | 'isFullRecord' | 'fieldMetadataId'
+  >;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   variableSources: StepFilterVariableSource[];
 }): string => {

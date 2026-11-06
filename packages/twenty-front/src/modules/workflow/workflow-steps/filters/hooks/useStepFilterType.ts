@@ -9,7 +9,12 @@ import {
   UNKNOWN_STEP_FILTER_TYPE,
 } from 'twenty-shared/workflow';
 
-export const useStepFilterType = (stepFilter: StepFilter): string => {
+export const useStepFilterType = (
+  stepFilter: Pick<
+    StepFilter,
+    'fieldMetadataId' | 'stepOutputKey' | 'isFullRecord'
+  >,
+): string => {
   const { fieldMetadataItem } = useFieldMetadataItemById(
     stepFilter.fieldMetadataId ?? '',
   );

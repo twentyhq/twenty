@@ -40,7 +40,7 @@ export const resolveStepFilters = ({
     return {
       ...stepFilter,
       type: computeStepFilterTypeOrThrow({
-        stepFilter: { ...stepFilter, value, stepOutputKey },
+        stepFilter: { ...stepFilter, stepOutputKey },
         flatFieldMetadataMaps,
         variableSources,
       }),

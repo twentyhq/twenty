@@ -23,10 +23,13 @@ export const UNCHANGED_STEP_FILTER_TYPES = {
 };
 
 // Only a field filter's type is known here: a variable's comes from output schemas the run computes
-const computeFieldFilterTypeAsOf257 = (
-  fieldMetadataId: string,
-  fieldTypeById: Map<string, string>,
-): string => {
+const computeFieldFilterTypeAsOf257 = ({
+  fieldMetadataId,
+  fieldTypeById,
+}: {
+  fieldMetadataId: string;
+  fieldTypeById: Map<string, string>;
+}): string => {
   const fieldType = fieldTypeById.get(fieldMetadataId);
 
   if (!isDefined(fieldType)) {
@@ -71,10 +74,10 @@ export const dropStoredStepFilterTypes = ({
       return storedStepFilter;
     }
 
-    const computedType = computeFieldFilterTypeAsOf257(
+    const computedType = computeFieldFilterTypeAsOf257({
       fieldMetadataId,
       fieldTypeById,
-    );
+    });
 
     if (computedType !== storedType) {
       typeChanges.push({

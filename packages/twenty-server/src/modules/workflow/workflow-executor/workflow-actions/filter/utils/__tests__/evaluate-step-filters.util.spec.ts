@@ -29,7 +29,9 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
   });
 
 const evaluateStepFilters = ({
-  variableSources = [],
+  variableSources = [
+    { id: 'trigger', type: 'DATABASE_EVENT', outputSchema: {} },
+  ],
   ...args
 }: Omit<
   Parameters<typeof evaluateStepFiltersWithMetadata>[0],
