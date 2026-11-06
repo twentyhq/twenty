@@ -95,6 +95,10 @@ const renderSettingsPrivacy = ({
                     label: 'Allowed agent',
                     modelId: EU_ZERO_DATA_RETENTION_MODEL.modelId,
                   }),
+                  buildAgent({
+                    label: 'Allowed effort agent',
+                    modelId: `${EU_ZERO_DATA_RETENTION_MODEL.modelId}@high`,
+                  }),
                 ],
               },
             },

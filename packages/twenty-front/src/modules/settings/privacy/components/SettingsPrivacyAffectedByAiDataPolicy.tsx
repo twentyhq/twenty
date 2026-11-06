@@ -4,6 +4,7 @@ import {
   AI_MODEL_TIERS,
   isAiDataPolicyActive,
   isAiModelCompliantWithDataPolicy,
+  parseAiModelVariantId,
 } from 'twenty-shared/ai';
 import {
   isAutoSelectModelId,
@@ -34,11 +35,14 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
     return null;
   }
 
-  const isModelExcluded = (modelId: string) =>
-    !isAiModelCompliantWithDataPolicy({
+  const isModelExcluded = (modelVariantId: string) => {
+    const { modelId } = parseAiModelVariantId(modelVariantId);
+
+    return !isAiModelCompliantWithDataPolicy({
       model: aiModels.find((model) => model.modelId === modelId) ?? {},
       aiDataPolicy,
     });
+  };
 
   const agentLabels = (data?.findManyAgents ?? [])
     .filter(
