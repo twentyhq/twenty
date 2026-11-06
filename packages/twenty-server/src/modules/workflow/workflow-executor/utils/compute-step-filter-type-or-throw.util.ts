@@ -1,12 +1,9 @@
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { type StepFilter } from 'twenty-shared/types';
-import { isDefined, isEmptyObject, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   computeStepFilterType,
   extractRawVariableNamePart,
-  isBaseOutputSchemaV2,
   searchVariableInOutputSchema,
-  TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -16,38 +13,11 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// The trigger or a step a filter variable can point to, with the output schema that declares its variables
 export type StepFilterVariableSource = {
   id: string;
   type: string;
-  settings: { outputSchema?: unknown; expectedOutputSchema?: unknown };
-};
-
-export const buildStepFilterVariableSources = ({
-  trigger,
-  steps,
-}: {
-  trigger: Pick<StepFilterVariableSource, 'type' | 'settings'>;
-  steps: WorkflowAction[];
-}): StepFilterVariableSource[] => [
-  { id: TRIGGER_STEP_ID, type: trigger.type, settings: trigger.settings },
-  ...steps,
-];
-
-const getDeclaredOutputSchema = ({
-  outputSchema,
-  expectedOutputSchema,
-}: StepFilterVariableSource['settings']): unknown => {
-  if (isBaseOutputSchemaV2(outputSchema)) {
-    return outputSchema;
-  }
-
-  return isPlainObject(expectedOutputSchema) &&
-    !isEmptyObject(expectedOutputSchema)
-    ? getOutputSchemaFromValue(expectedOutputSchema)
-    : outputSchema;
+  outputSchema: unknown;
 };
 
 const findVariableType = ({
@@ -69,7 +39,7 @@ const findVariableType = ({
   }
 
   return searchVariableInOutputSchema({
-    schema: getDeclaredOutputSchema(variableSource.settings),
+    schema: variableSource.outputSchema,
     stepType: variableSource.type,
     stepName: '',
     rawVariableName: stepFilter.stepOutputKey,

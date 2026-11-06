@@ -9,7 +9,6 @@ import {
   UNKNOWN_STEP_FILTER_TYPE,
 } from 'twenty-shared/workflow';
 
-// Mirrors how the server compares the filter when it runs
 export const useStepFilterType = (stepFilter: StepFilter): string => {
   const { fieldMetadataItem } = useFieldMetadataItemById(
     stepFilter.fieldMetadataId ?? '',

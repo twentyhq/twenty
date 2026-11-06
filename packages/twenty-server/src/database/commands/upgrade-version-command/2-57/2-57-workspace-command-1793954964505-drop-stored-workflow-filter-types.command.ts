@@ -13,7 +13,7 @@ import {
   dropStoredStepFilterTypesFromSteps,
   dropStoredStepFilterTypesFromTrigger,
   dropStoredStepFilterTypesFromTriggers,
-  type StepFilterTypeChange,
+  type DroppedStepFilterTypes,
 } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -28,11 +28,7 @@ const RUN_STATUSES_STILL_EXECUTING_STEPS = [
 
 const HAS_STEP_FILTERS = `::text LIKE '%"stepFilterGroupId"%'`;
 
-type DroppedJsonbValue = {
-  value: unknown;
-  hasChanged: boolean;
-  typeChanges: StepFilterTypeChange[];
-};
+const RUN_REWRITE_BATCH_SIZE = 100;
 
 @RegisteredWorkspaceCommand('2.57.0', 1793954964505)
 @Command({
@@ -67,11 +63,16 @@ export class DropStoredWorkflowFilterTypesCommand extends ProvisionedWorkspaceCo
     const workspaceVersionTable = `"${schemaName}"."workflowVersion"`;
     const workspaceRunTable = `"${schemaName}"."workflowRun"`;
 
+    let variableFilterCount = 0;
+
     const logTypeChanges = ({
       value,
       hasChanged,
       typeChanges,
-    }: DroppedJsonbValue) => {
+      variableFilterCount: rowVariableFilterCount,
+    }: DroppedStepFilterTypes<unknown>) => {
+      variableFilterCount += rowVariableFilterCount;
+
       for (const {
         stepId,
         stepFilterId,
@@ -171,6 +172,12 @@ export class DropStoredWorkflowFilterTypesCommand extends ProvisionedWorkspaceCo
       return;
     }
 
+    if (variableFilterCount > 0) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: ${variableFilterCount} filter(s) on a step or trigger variable now compare as the output schema the run computes for that step declares; this command cannot compute those schemas, so it does not report which of them change`,
+      );
+    }
+
     if (!isDryRun && coreStepsCount + coreTriggersCount > 0) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatWorkflowVersionMaps',
@@ -228,33 +235,41 @@ export class DropStoredWorkflowFilterTypesCommand extends ProvisionedWorkspaceCo
       hasChanged: boolean;
     };
   }): Promise<number> {
-    const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
-      `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')${HAS_STEP_FILTERS}`,
-      [RUN_STATUSES_STILL_EXECUTING_STEPS],
-    );
-
     let rewrittenRunCount = 0;
+    let afterRunId: string | undefined;
 
-    for (const row of rows) {
-      const { value, hasChanged } = mapRow(row);
+    while (true) {
+      const parameters = isDefined(afterRunId)
+        ? [RUN_STATUSES_STILL_EXECUTING_STEPS, afterRunId]
+        : [RUN_STATUSES_STILL_EXECUTING_STEPS];
 
-      if (!hasChanged) {
-        continue;
-      }
-
-      if (isDryRun) {
-        rewrittenRunCount += 1;
-        continue;
-      }
-
-      const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-        `UPDATE ${tableName} SET state = jsonb_set(state, '{flow,steps}', $1::jsonb) WHERE id = $2 AND state->'flow'->'steps' = $3::jsonb`,
-        [JSON.stringify(value), row.id, JSON.stringify(row.value)],
+      const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
+        `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')${HAS_STEP_FILTERS}${isDefined(afterRunId) ? ' AND id > $2' : ''} ORDER BY id LIMIT ${RUN_REWRITE_BATCH_SIZE}`,
+        parameters,
       );
 
-      rewrittenRunCount += updatedRowCount;
-    }
+      const rewrites = rows.flatMap((row) => {
+        const { value, hasChanged } = mapRow(row);
 
-    return rewrittenRunCount;
+        return hasChanged ? [{ id: row.id, from: row.value, to: value }] : [];
+      });
+
+      if (isDryRun) {
+        rewrittenRunCount += rewrites.length;
+      } else if (rewrites.length > 0) {
+        const [, updatedRowCount]: [unknown, number] = await dataSource.query(
+          `UPDATE ${tableName} AS target SET state = jsonb_set(target.state, '{flow,steps}', rewrite."to") FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.state->'flow'->'steps' = rewrite."from"`,
+          [JSON.stringify(rewrites)],
+        );
+
+        rewrittenRunCount += updatedRowCount;
+      }
+
+      if (rows.length < RUN_REWRITE_BATCH_SIZE) {
+        return rewrittenRunCount;
+      }
+
+      afterRunId = rows[rows.length - 1].id;
+    }
   }
 }

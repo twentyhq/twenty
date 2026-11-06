@@ -39,10 +39,10 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { buildStepFilterVariableSources } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
+import { type StepFilterVariableSource } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
+import { StepFilterVariableSourcesWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/step-filter-variable-sources.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
-  type AutomatedTriggerSettings,
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
@@ -56,7 +56,7 @@ type DatabaseEventTriggerListener = {
   workflowId: string;
   legacyWorkflowId?: string;
   applicationId: string;
-  settings: AutomatedTriggerSettings;
+  settings: BaseDatabaseEventTriggerSettings;
 } & CoreDispatchIds;
 
 type TriggerEvaluationArgs = {
@@ -64,6 +64,7 @@ type TriggerEvaluationArgs = {
   eventListener: DatabaseEventTriggerListener;
   action: DatabaseEventAction;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  variableSources: StepFilterVariableSource[];
 };
 
 @Injectable()
@@ -81,6 +82,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly applicationService: ApplicationService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly stepFilterVariableSourcesWorkspaceService: StepFilterVariableSourcesWorkspaceService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -401,6 +403,10 @@ export class WorkflowDatabaseEventTriggerListener {
 
     for (const eventListener of eventListeners) {
       const { applicationId } = eventListener;
+      const variableSources = await this.buildTriggerFilterVariableSources({
+        eventListener,
+        workspaceId,
+      });
 
       if (!readableEventsByApplicationId.has(applicationId)) {
         readableEventsByApplicationId.set(
@@ -424,6 +430,7 @@ export class WorkflowDatabaseEventTriggerListener {
           eventListener,
           action,
           flatFieldMetadataMaps,
+          variableSources,
         });
 
         if (shouldTriggerJob) {
@@ -535,6 +542,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener,
     action,
     flatFieldMetadataMaps,
+    variableSources,
   }: TriggerEvaluationArgs) {
     return (
       this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
@@ -542,15 +550,37 @@ export class WorkflowDatabaseEventTriggerListener {
         eventPayload,
         eventListener,
         flatFieldMetadataMaps,
+        variableSources,
       })
     );
+  }
+
+  private async buildTriggerFilterVariableSources({
+    eventListener,
+    workspaceId,
+  }: {
+    eventListener: DatabaseEventTriggerListener;
+    workspaceId: string;
+  }): Promise<StepFilterVariableSource[]> {
+    const { eventName, filter } = eventListener.settings;
+
+    return this.stepFilterVariableSourcesWorkspaceService.buildVariableSources({
+      stepFilters: filter?.stepFilters ?? [],
+      trigger: {
+        name: '',
+        type: WorkflowTriggerType.DATABASE_EVENT,
+        settings: { eventName, outputSchema: {} },
+      },
+      steps: [],
+      workspaceId,
+    });
   }
 
   private eventMatchesWatchedFields({
     eventPayload,
     eventListener,
     action,
-  }: Omit<TriggerEvaluationArgs, 'flatFieldMetadataMaps'>) {
+  }: Pick<TriggerEvaluationArgs, 'eventPayload' | 'eventListener' | 'action'>) {
     if (
       action === DatabaseEventAction.UPDATED ||
       action === DatabaseEventAction.UPSERTED
@@ -574,9 +604,9 @@ export class WorkflowDatabaseEventTriggerListener {
     eventPayload,
     eventListener,
     flatFieldMetadataMaps,
+    variableSources,
   }: Omit<TriggerEvaluationArgs, 'action'>) {
-    const settings = eventListener.settings as BaseDatabaseEventTriggerSettings;
-    const { filter } = settings;
+    const { filter } = eventListener.settings;
 
     if (!isDefined(filter) || !isNonEmptyArray(filter.stepFilters)) {
       return true;
@@ -588,10 +618,7 @@ export class WorkflowDatabaseEventTriggerListener {
         stepFilterGroups: filter.stepFilterGroups,
         context: { [TRIGGER_STEP_ID]: eventPayload },
         flatFieldMetadataMaps,
-        variableSources: buildStepFilterVariableSources({
-          trigger: { type: WorkflowTriggerType.DATABASE_EVENT, settings },
-          steps: [],
-        }),
+        variableSources,
       });
     } catch (error) {
       this.logger.error(

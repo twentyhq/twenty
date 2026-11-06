@@ -1,4 +1,8 @@
-import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
+import {
+  StepLogicalOperator,
+  type StepFilterGroup,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 import {
@@ -17,15 +21,14 @@ describe('findMatchingBranch', () => {
   const matchingFilter = (
     stepFilterGroupId: string,
     matches: boolean,
-  ): ResolvedStepFilter =>
-    ({
-      id: 'filter-1',
-      type: 'TEXT',
-      operand: 'IS',
-      stepFilterGroupId,
-      rightOperand: 'expected-value',
-      leftOperand: matches ? 'expected-value' : 'something-else',
-    }) as ResolvedStepFilter;
+  ): ResolvedStepFilter => ({
+    id: 'filter-1',
+    type: 'TEXT',
+    operand: ViewFilterOperand.IS,
+    stepFilterGroupId,
+    rightOperand: 'expected-value',
+    leftOperand: matches ? 'expected-value' : 'something-else',
+  });
 
   it('should return the branch whose filter condition evaluates to true', () => {
     const branches: StepIfElseBranch[] = [

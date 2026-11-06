@@ -7,10 +7,7 @@ import { getStepFilterVariableSelectionSettings } from '@/workflow/workflow-step
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { useStore } from 'jotai';
-import {
-  type FilterableAndTSVectorFieldType,
-  type StepFilter,
-} from 'twenty-shared/types';
+import { isFilterableFieldType, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
@@ -74,10 +71,10 @@ export const useUpdateStepFilterFromVariable = ({
         fieldMetadataType: filterFieldMetadataItem?.type,
         compositeFieldSubFieldName,
       });
-    const { value } = getInitialFilterValue(
-      filterType as FilterableAndTSVectorFieldType,
-      variableSelectionSettings.operand,
-    );
+    const value = isFilterableFieldType(filterType)
+      ? getInitialFilterValue(filterType, variableSelectionSettings.operand)
+          .value
+      : '';
 
     upsertStepFilterSettings({
       stepFilterToUpsert: {

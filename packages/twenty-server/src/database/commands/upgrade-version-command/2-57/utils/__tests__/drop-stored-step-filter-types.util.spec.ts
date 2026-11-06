@@ -1,7 +1,6 @@
 import {
   DELETED_FIELD_TYPE,
   dropStoredStepFilterTypesFromSteps,
-  dropStoredStepFilterTypesFromTrigger,
   dropStoredStepFilterTypesFromTriggers,
 } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
 
@@ -19,153 +18,91 @@ const storedFilter = (overrides: Record<string, unknown>) => ({
   ...overrides,
 });
 
-const filterStep = (stepFilters: unknown[], type = 'FILTER') => ({
-  id: `${type}-step`,
-  type,
+const filterStep = (stepFilters: unknown[]) => ({
+  id: 'filter-step',
+  type: 'FILTER',
   settings: { input: { stepFilterGroups: [], stepFilters } },
 });
 
-const CODE_STEP = {
-  id: 'code-step',
-  type: 'CODE',
+const databaseEventTrigger = (stepFilters: unknown[]) => ({
+  type: 'DATABASE_EVENT',
   settings: {
-    outputSchema: {
-      isPersonal: {
-        isLeaf: true,
-        type: 'boolean',
-        label: 'isPersonal',
-        value: true,
-      },
-    },
+    eventName: 'opportunity.updated',
+    outputSchema: {},
+    filter: { stepFilterGroups: [], stepFilters },
   },
-};
+});
 
 describe('dropStoredStepFilterTypesFromSteps', () => {
-  it('should drop the stored type and report nothing when it matches what runs compute', () => {
+  it('should drop the stored type and report the field filters that compare differently', () => {
     const result = dropStoredStepFilterTypesFromSteps({
       steps: [
-        CODE_STEP,
         filterStep([
           storedFilter({ type: 'SELECT', fieldMetadataId: 'stage-field' }),
-          storedFilter({
-            id: 'is-personal',
-            type: 'boolean',
-            stepOutputKey: '{{code-step.isPersonal}}',
-          }),
           storedFilter({
             id: 'target',
             type: 'RELATION',
             fieldMetadataId: 'target-field',
           }),
+          storedFilter({
+            id: 'stale',
+            type: 'TEXT',
+            fieldMetadataId: 'stage-field',
+          }),
+          storedFilter({
+            id: 'deleted',
+            type: 'TEXT',
+            fieldMetadataId: 'deleted-field',
+          }),
+          storedFilter({
+            id: 'variable',
+            type: 'number',
+            stepOutputKey: '{{code-step.total}}',
+          }),
         ]),
       ],
       fieldTypeById,
     });
 
-    expect(result.hasChanged).toBe(true);
-    expect(result.typeChanges).toEqual([]);
     expect(result.value).toEqual([
-      CODE_STEP,
       filterStep([
         storedFilter({ fieldMetadataId: 'stage-field' }),
-        storedFilter({
-          id: 'is-personal',
-          stepOutputKey: '{{code-step.isPersonal}}',
-        }),
         storedFilter({ id: 'target', fieldMetadataId: 'target-field' }),
+        storedFilter({ id: 'stale', fieldMetadataId: 'stage-field' }),
+        storedFilter({ id: 'deleted', fieldMetadataId: 'deleted-field' }),
+        storedFilter({ id: 'variable', stepOutputKey: '{{code-step.total}}' }),
       ]),
     ]);
-  });
-
-  it('should report filters that compare differently from now on', () => {
-    const { typeChanges } = dropStoredStepFilterTypesFromSteps({
-      steps: [
-        CODE_STEP,
-        filterStep(
-          [
-            storedFilter({ type: 'TEXT', fieldMetadataId: 'stage-field' }),
-            storedFilter({
-              id: 'is-personal',
-              type: 'string',
-              stepOutputKey: '{{code-step.isPersonal}}',
-            }),
-            storedFilter({
-              id: 'deleted',
-              type: 'TEXT',
-              fieldMetadataId: 'deleted-field',
-            }),
-          ],
-          'IF_ELSE',
-        ),
-      ],
-      fieldTypeById,
-    });
-
-    expect(typeChanges).toEqual([
+    expect(result.typeChanges).toEqual([
       {
-        stepId: 'IF_ELSE-step',
-        stepFilterId: 'filter',
+        stepId: 'filter-step',
+        stepFilterId: 'stale',
         storedType: 'TEXT',
         computedType: 'SELECT',
       },
       {
-        stepId: 'IF_ELSE-step',
-        stepFilterId: 'is-personal',
-        storedType: 'string',
-        computedType: 'boolean',
-      },
-      {
-        stepId: 'IF_ELSE-step',
+        stepId: 'filter-step',
         stepFilterId: 'deleted',
         storedType: 'TEXT',
         computedType: DELETED_FIELD_TYPE,
       },
     ]);
+    expect(result.variableFilterCount).toBe(1);
   });
 
   it('should leave steps without a stored type unchanged', () => {
     const steps = [
       filterStep([storedFilter({ fieldMetadataId: 'stage-field' })]),
-      { id: 'code', type: 'CODE', settings: { input: { type: 'kept' } } },
     ];
 
     expect(
       dropStoredStepFilterTypesFromSteps({ steps, fieldTypeById }),
-    ).toEqual({ value: steps, hasChanged: false, typeChanges: [] });
-    expect(
-      dropStoredStepFilterTypesFromSteps({ steps: null, fieldTypeById }),
-    ).toEqual({ value: null, hasChanged: false, typeChanges: [] });
+    ).toMatchObject({ value: steps, hasChanged: false });
   });
 });
 
-describe('dropStoredStepFilterTypesFromTrigger', () => {
-  const databaseEventTrigger = (stepFilters: unknown[]) => ({
-    type: 'DATABASE_EVENT',
-    settings: {
-      eventName: 'opportunity.updated',
-      outputSchema: {},
-      filter: { stepFilterGroups: [], stepFilters },
-    },
-  });
-
+describe('dropStoredStepFilterTypesFromTriggers', () => {
   it('should drop the stored type of database event trigger filters', () => {
-    expect(
-      dropStoredStepFilterTypesFromTrigger({
-        trigger: databaseEventTrigger([
-          storedFilter({ type: 'SELECT', fieldMetadataId: 'stage-field' }),
-        ]),
-        fieldTypeById,
-      }),
-    ).toEqual({
-      value: databaseEventTrigger([
-        storedFilter({ fieldMetadataId: 'stage-field' }),
-      ]),
-      hasChanged: true,
-      typeChanges: [],
-    });
-  });
-
-  it('should rewrite each trigger of a core version', () => {
     const manualTrigger = { type: 'MANUAL', settings: { outputSchema: {} } };
 
     expect(
@@ -194,6 +131,7 @@ describe('dropStoredStepFilterTypesFromTrigger', () => {
           computedType: 'SELECT',
         },
       ],
+      variableFilterCount: 0,
     });
   });
 });

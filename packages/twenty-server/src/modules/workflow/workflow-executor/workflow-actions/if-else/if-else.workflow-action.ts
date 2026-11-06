@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { StepFilterVariableSourcesWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/step-filter-variable-sources.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { buildStepFilterVariableSources } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { resolveStepFilters } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
@@ -19,6 +19,7 @@ import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workf
 export class IfElseWorkflowAction implements WorkflowAction {
   constructor(
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly stepFilterVariableSourcesWorkspaceService: StepFilterVariableSourcesWorkspaceService,
   ) {}
 
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
@@ -61,7 +62,10 @@ export class IfElseWorkflowAction implements WorkflowAction {
       stepFilters,
       context,
       flatFieldMetadataMaps,
-      variableSources: buildStepFilterVariableSources({ trigger, steps }),
+      variableSources:
+        await this.stepFilterVariableSourcesWorkspaceService.buildVariableSources(
+          { stepFilters, trigger, steps, workspaceId: runInfo.workspaceId },
+        ),
     });
 
     const matchingBranch = findMatchingBranch({

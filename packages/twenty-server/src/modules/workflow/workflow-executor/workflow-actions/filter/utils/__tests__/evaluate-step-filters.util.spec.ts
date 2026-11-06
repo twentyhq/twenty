@@ -247,21 +247,6 @@ describe('evaluateStepFilters', () => {
     ).toBe(false);
   });
 
-  it('compares by the field type, whatever type the caller stored', () => {
-    const filterWithStaleType = {
-      ...sourceFilter(ViewFilterOperand.IS),
-      type: 'TEXT',
-    } as StepFilter;
-
-    expect(
-      evaluateStepFilters({
-        stepFilterGroups: [group],
-        stepFilters: [filterWithStaleType],
-        context,
-      }),
-    ).toBe(true);
-  });
-
   it('compares a variable as the output schema of its step declares it', () => {
     const isPersonalFilter: StepFilter = {
       id: 'filter-is-personal',
@@ -280,14 +265,12 @@ describe('evaluateStepFilters', () => {
           {
             id: 'code-step',
             type: 'CODE',
-            settings: {
-              outputSchema: {
-                isPersonal: {
-                  isLeaf: true,
-                  type: 'boolean',
-                  label: 'isPersonal',
-                  value: true,
-                },
+            outputSchema: {
+              isPersonal: {
+                isLeaf: true,
+                type: 'boolean',
+                label: 'isPersonal',
+                value: true,
               },
             },
           },

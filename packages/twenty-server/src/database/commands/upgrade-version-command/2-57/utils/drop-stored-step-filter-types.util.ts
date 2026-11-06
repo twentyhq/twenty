@@ -1,9 +1,7 @@
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { searchVariableInOutputSchema } from 'twenty-shared/workflow';
 
 const STEP_TYPES_WITH_FILTERS = ['FILTER', 'IF_ELSE'];
 
-// Runs fail on a filter whose field was deleted
 export const DELETED_FIELD_TYPE = 'none, the field was deleted';
 
 export type StepFilterTypeChange = {
@@ -13,69 +11,41 @@ export type StepFilterTypeChange = {
   computedType: string;
 };
 
-type VariableSource = { id: string; type: string; outputSchema: unknown };
-
-type DroppedStepFilterTypes<TValue> = {
+export type DroppedStepFilterTypes<TValue> = {
   value: TValue;
   hasChanged: boolean;
   typeChanges: StepFilterTypeChange[];
+  variableFilterCount: number;
 };
 
-// As runs compute it from 2.57: the field's type, else the type the referenced output schema declares
-const computeTypeAsOf257 = ({
-  stepFilter,
-  fieldTypeById,
-  variableSources,
-}: {
-  stepFilter: Record<string, unknown>;
-  fieldTypeById: Map<string, string>;
-  variableSources: VariableSource[];
-}): string | undefined => {
-  if (typeof stepFilter.fieldMetadataId === 'string') {
-    const fieldType = fieldTypeById.get(stepFilter.fieldMetadataId);
+const UNCHANGED = {
+  hasChanged: false,
+  typeChanges: [],
+  variableFilterCount: 0,
+};
 
-    if (!isDefined(fieldType)) {
-      return DELETED_FIELD_TYPE;
-    }
+// Only a field filter's type is known here: a variable's comes from output schemas the run computes
+const computeFieldFilterTypeAsOf257 = (
+  fieldMetadataId: string,
+  fieldTypeById: Map<string, string>,
+): string => {
+  const fieldType = fieldTypeById.get(fieldMetadataId);
 
-    return fieldType === 'MORPH_RELATION' ? 'RELATION' : fieldType;
+  if (!isDefined(fieldType)) {
+    return DELETED_FIELD_TYPE;
   }
 
-  if (typeof stepFilter.stepOutputKey !== 'string') {
-    return 'unknown';
-  }
-
-  const variableSource = variableSources.find(({ id }) =>
-    (stepFilter.stepOutputKey as string)
-      .replace(/^\{\{/, '')
-      .startsWith(`${id}.`),
-  );
-
-  if (!isDefined(variableSource)) {
-    return undefined;
-  }
-
-  return (
-    searchVariableInOutputSchema({
-      schema: variableSource.outputSchema,
-      stepType: variableSource.type,
-      stepName: '',
-      rawVariableName: stepFilter.stepOutputKey,
-      isFullRecord: stepFilter.isFullRecord === true,
-    }).variableType ?? 'unknown'
-  );
+  return fieldType === 'MORPH_RELATION' ? 'RELATION' : fieldType;
 };
 
 const dropStepFilterTypes = ({
   stepId,
   stepFilters,
   fieldTypeById,
-  variableSources,
 }: {
   stepId: string;
   stepFilters: unknown;
   fieldTypeById: Map<string, string>;
-  variableSources: VariableSource[];
 }): DroppedStepFilterTypes<unknown> => {
   if (
     !Array.isArray(stepFilters) ||
@@ -83,10 +53,11 @@ const dropStepFilterTypes = ({
       (stepFilter) => isPlainObject(stepFilter) && 'type' in stepFilter,
     )
   ) {
-    return { value: stepFilters, hasChanged: false, typeChanges: [] };
+    return { value: stepFilters, ...UNCHANGED };
   }
 
   const typeChanges: StepFilterTypeChange[] = [];
+  let variableFilterCount = 0;
 
   const value = stepFilters.map((stepFilter) => {
     if (!isPlainObject(stepFilter) || !('type' in stepFilter)) {
@@ -94,13 +65,20 @@ const dropStepFilterTypes = ({
     }
 
     const { type: storedType, ...storedStepFilter } = stepFilter;
-    const computedType = computeTypeAsOf257({
-      stepFilter,
-      fieldTypeById,
-      variableSources,
-    });
+    const { fieldMetadataId } = stepFilter;
 
-    if (isDefined(computedType) && computedType !== storedType) {
+    if (typeof fieldMetadataId !== 'string') {
+      variableFilterCount += 1;
+
+      return storedStepFilter;
+    }
+
+    const computedType = computeFieldFilterTypeAsOf257(
+      fieldMetadataId,
+      fieldTypeById,
+    );
+
+    if (computedType !== storedType) {
       typeChanges.push({
         stepId,
         stepFilterId: stepFilter.id,
@@ -112,7 +90,7 @@ const dropStepFilterTypes = ({
     return storedStepFilter;
   });
 
-  return { value, hasChanged: true, typeChanges };
+  return { value, hasChanged: true, typeChanges, variableFilterCount };
 };
 
 export const dropStoredStepFilterTypesFromSteps = ({
@@ -123,18 +101,11 @@ export const dropStoredStepFilterTypesFromSteps = ({
   fieldTypeById: Map<string, string>;
 }): DroppedStepFilterTypes<unknown> => {
   if (!Array.isArray(steps)) {
-    return { value: steps, hasChanged: false, typeChanges: [] };
+    return { value: steps, ...UNCHANGED };
   }
 
-  const variableSources = steps.filter(isPlainObject).map((step) => ({
-    id: String(step.id),
-    type: String(step.type),
-    outputSchema: isPlainObject(step.settings)
-      ? step.settings.outputSchema
-      : undefined,
-  }));
-
   let hasChanged = false;
+  let variableFilterCount = 0;
   const typeChanges: StepFilterTypeChange[] = [];
 
   const value = steps.map((step) => {
@@ -147,33 +118,35 @@ export const dropStoredStepFilterTypesFromSteps = ({
       return step;
     }
 
-    const droppedStepFilterTypes = dropStepFilterTypes({
+    const dropped = dropStepFilterTypes({
       stepId: String(step.id),
       stepFilters: step.settings.input.stepFilters,
       fieldTypeById,
-      variableSources,
     });
 
-    if (!droppedStepFilterTypes.hasChanged) {
+    if (!dropped.hasChanged) {
       return step;
     }
 
     hasChanged = true;
-    typeChanges.push(...droppedStepFilterTypes.typeChanges);
+    typeChanges.push(...dropped.typeChanges);
+    variableFilterCount += dropped.variableFilterCount;
 
     return {
       ...step,
       settings: {
         ...step.settings,
-        input: {
-          ...step.settings.input,
-          stepFilters: droppedStepFilterTypes.value,
-        },
+        input: { ...step.settings.input, stepFilters: dropped.value },
       },
     };
   });
 
-  return { value: hasChanged ? value : steps, hasChanged, typeChanges };
+  return {
+    value: hasChanged ? value : steps,
+    hasChanged,
+    typeChanges,
+    variableFilterCount,
+  };
 };
 
 export const dropStoredStepFilterTypesFromTrigger = ({
@@ -189,39 +162,28 @@ export const dropStoredStepFilterTypesFromTrigger = ({
     !isPlainObject(trigger.settings) ||
     !isPlainObject(trigger.settings.filter)
   ) {
-    return { value: trigger, hasChanged: false, typeChanges: [] };
+    return { value: trigger, ...UNCHANGED };
   }
 
-  const droppedStepFilterTypes = dropStepFilterTypes({
+  const dropped = dropStepFilterTypes({
     stepId: 'trigger',
     stepFilters: trigger.settings.filter.stepFilters,
     fieldTypeById,
-    variableSources: [
-      {
-        id: 'trigger',
-        type: 'DATABASE_EVENT',
-        outputSchema: trigger.settings.outputSchema,
-      },
-    ],
   });
 
-  if (!droppedStepFilterTypes.hasChanged) {
-    return { value: trigger, hasChanged: false, typeChanges: [] };
+  if (!dropped.hasChanged) {
+    return { value: trigger, ...UNCHANGED };
   }
 
   return {
+    ...dropped,
     value: {
       ...trigger,
       settings: {
         ...trigger.settings,
-        filter: {
-          ...trigger.settings.filter,
-          stepFilters: droppedStepFilterTypes.value,
-        },
+        filter: { ...trigger.settings.filter, stepFilters: dropped.value },
       },
     },
-    hasChanged: true,
-    typeChanges: droppedStepFilterTypes.typeChanges,
   };
 };
 
@@ -233,7 +195,7 @@ export const dropStoredStepFilterTypesFromTriggers = ({
   fieldTypeById: Map<string, string>;
 }): DroppedStepFilterTypes<unknown> => {
   if (!Array.isArray(triggers)) {
-    return { value: triggers, hasChanged: false, typeChanges: [] };
+    return { value: triggers, ...UNCHANGED };
   }
 
   const droppedPerTrigger = triggers.map((trigger) =>
@@ -246,5 +208,9 @@ export const dropStoredStepFilterTypesFromTriggers = ({
     value: hasChanged ? droppedPerTrigger.map(({ value }) => value) : triggers,
     hasChanged,
     typeChanges: droppedPerTrigger.flatMap(({ typeChanges }) => typeChanges),
+    variableFilterCount: droppedPerTrigger.reduce(
+      (count, dropped) => count + dropped.variableFilterCount,
+      0,
+    ),
   };
 };
