@@ -4,6 +4,7 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
@@ -20,6 +21,10 @@ export const useSubscribeToMessageThreadMessages = ({
     objectNameSingular: StandardObjectNameSingular.Message,
   });
 
+  const queryId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `message-thread-messages-${messageThreadId}`,
+  );
+
   const operationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.Message,
@@ -29,7 +34,7 @@ export const useSubscribeToMessageThreadMessages = ({
   );
 
   useListenToEventsForQuery({
-    queryId: `message-thread-messages-${messageThreadId}`,
+    queryId,
     operationSignature,
     onSseReconnected: refetchMessages,
   });
