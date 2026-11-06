@@ -1,37 +1,37 @@
-import { buildRecordAccessAuthContext } from 'test/integration/permissions/utils/build-record-access-auth-context.util';
+import { buildPermissionTestAuthContext } from 'test/integration/permissions/utils/build-permission-test-auth-context.util';
 import {
-  type ExpectedRecordAccess,
-  type RecordAccessPrincipals,
-  type RecordAccessRecordName,
-  type RecordAccessWorkspace,
-} from 'test/integration/permissions/utils/record-access-workspace.type';
+  type PermissionTestExpectedAnswers,
+  type PermissionTestPrincipals,
+  type PermissionTestRecordName,
+  type PermissionTestWorkspace,
+} from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
-type RecordAccessCase = Partial<RecordAccessPrincipals> & {
+type PermissionTestRecordAccessCase = Partial<PermissionTestPrincipals> & {
   it: string;
-  record: RecordAccessRecordName;
-  expected: ExpectedRecordAccess;
+  record: PermissionTestRecordName;
+  expected: PermissionTestExpectedAnswers;
 };
 
-export const describeRecordAccess = ({
+export const describePermissionTestRecordAccess = ({
   name,
   findWorkspace,
   cases,
   ...sharedPrincipals
-}: RecordAccessPrincipals & {
+}: PermissionTestPrincipals & {
   name: string;
-  findWorkspace: () => RecordAccessWorkspace;
-  cases: RecordAccessCase[];
+  findWorkspace: () => PermissionTestWorkspace;
+  cases: PermissionTestRecordAccessCase[];
 }) =>
   describe(name, () => {
     for (const { it: title, record, expected, ...casePrincipals } of cases) {
       it(title, async () => {
         const workspace = findWorkspace();
         const recordId = workspace.recordIds[record];
-        const authContext = await buildRecordAccessAuthContext({
+        const authContext = await buildPermissionTestAuthContext({
           principals: { ...sharedPrincipals, ...casePrincipals },
           workspace,
         });

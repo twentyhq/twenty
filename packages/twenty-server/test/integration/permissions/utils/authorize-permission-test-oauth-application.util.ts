@@ -2,7 +2,7 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { isDefined } from 'twenty-shared/utils';
 
-export const authorizeOauthOnlyApplicationOrThrow = async ({
+export const authorizePermissionTestOauthApplicationOrThrow = async ({
   accessToken,
 }: {
   accessToken: string;

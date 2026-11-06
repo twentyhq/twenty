@@ -1,11 +1,10 @@
-import { upsertRowLevelPermissionPredicatesQueryFactory } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates-query-factory.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
-import { type RoleGrant } from 'test/integration/permissions/utils/record-access-workspace.type';
+import { type PermissionTestRoleGrant } from 'test/integration/permissions/utils/permission-test-workspace.type';
 
-export const createRecordAccessRole = async ({
+export const createPermissionTestRole = async ({
   label,
   grant,
   rowLevelFilter,
@@ -13,7 +12,7 @@ export const createRecordAccessRole = async ({
   accessToken,
 }: {
   label: string;
-  grant: RoleGrant;
+  grant: PermissionTestRoleGrant;
   rowLevelFilter: { fieldMetadataId: string; value: string };
   objectMetadataId: string;
   accessToken: string;
@@ -39,25 +38,22 @@ export const createRecordAccessRole = async ({
   const roleId: string = data.createOneRole.id;
 
   if (grant === 'rowLevel') {
-    const response = await makeMetadataApiRequest(
-      upsertRowLevelPermissionPredicatesQueryFactory({
-        input: {
-          roleId,
-          objectMetadataId,
-          predicates: [
-            {
-              fieldMetadataId: rowLevelFilter.fieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.IS,
-              value: rowLevelFilter.value,
-            },
-          ],
-          predicateGroups: [],
-        },
-      }),
-      accessToken,
-    );
-
-    expect(response.body.errors).toBeUndefined();
+    await upsertRowLevelPermissionPredicates({
+      input: {
+        roleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId: rowLevelFilter.fieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.IS,
+            value: rowLevelFilter.value,
+          },
+        ],
+        predicateGroups: [],
+      },
+      expectToFail: false,
+      token: accessToken,
+    });
   }
 
   return roleId;

@@ -1,7 +1,7 @@
 import {
-  type RecordAccessPrincipals,
-  type RecordAccessWorkspace,
-} from 'test/integration/permissions/utils/record-access-workspace.type';
+  type PermissionTestPrincipals,
+  type PermissionTestWorkspace,
+} from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 
@@ -19,9 +19,9 @@ const findApplicationOrThrow = async ({
   applicationPrincipal,
   workspace,
 }: {
-  applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
+  applicationPrincipal: PermissionTestPrincipals['applicationPrincipal'];
   workspace: Pick<
-    RecordAccessWorkspace,
+    PermissionTestWorkspace,
     'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
   >;
 }) => {
@@ -50,9 +50,9 @@ const buildApplicationNarrowing = async ({
   applicationPrincipal,
   workspace,
 }: {
-  applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
+  applicationPrincipal: PermissionTestPrincipals['applicationPrincipal'];
   workspace: Pick<
-    RecordAccessWorkspace,
+    PermissionTestWorkspace,
     'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
   >;
 }) =>
@@ -69,9 +69,9 @@ const buildLimitingNarrowing = ({
   limitingPrincipal,
   workspace,
 }: {
-  limitingPrincipal: RecordAccessPrincipals['limitingPrincipal'];
+  limitingPrincipal: PermissionTestPrincipals['limitingPrincipal'];
   workspace: Pick<
-    RecordAccessWorkspace,
+    PermissionTestWorkspace,
     'limitingAgentIds' | 'limitingAgentWithoutRoleId'
   >;
 }) => {
@@ -85,12 +85,12 @@ const buildLimitingNarrowing = ({
   }
 };
 
-export const buildRecordAccessAuthContext = async ({
+export const buildPermissionTestAuthContext = async ({
   principals: { mainPrincipal, limitingPrincipal, applicationPrincipal },
   workspace,
 }: {
-  principals: RecordAccessPrincipals;
-  workspace: RecordAccessWorkspace;
+  principals: PermissionTestPrincipals;
+  workspace: PermissionTestWorkspace;
 }): Promise<WorkspaceAuthContext> => {
   const flatWorkspace = fromWorkspaceEntityToFlat(
     await getCoreRepository<WorkspaceEntity>(WorkspaceEntity).findOneByOrFail({

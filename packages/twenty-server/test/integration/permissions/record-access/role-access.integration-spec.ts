@@ -1,17 +1,17 @@
-import { createRecordAccessWorkspace } from 'test/integration/permissions/utils/create-record-access-workspace.util';
-import { describeRecordAccess } from 'test/integration/permissions/utils/describe-record-access.util';
+import { createPermissionTestWorkspace } from 'test/integration/permissions/utils/create-permission-test-workspace.util';
+import { describePermissionTestRecordAccess } from 'test/integration/permissions/utils/describe-permission-test-record-access.util';
 import {
-  type ExpectedRecordAccess,
-  type RecordAccessPrincipals,
-  type RecordAccessWorkspace,
-} from 'test/integration/permissions/utils/record-access-workspace.type';
+  type PermissionTestExpectedAnswers,
+  type PermissionTestPrincipals,
+  type PermissionTestWorkspace,
+} from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
-const REACHES_EVERY_OPERATION: ExpectedRecordAccess = {
+const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
   findRecordsPermissions: {
     canRead: true,
     canUpdate: true,
@@ -22,7 +22,7 @@ const REACHES_EVERY_OPERATION: ExpectedRecordAccess = {
   canUpdateRecords: true,
 };
 
-const REACHES_NOTHING: ExpectedRecordAccess = {
+const REACHES_NOTHING: PermissionTestExpectedAnswers = {
   findRecordsPermissions: {
     canRead: false,
     canUpdate: false,
@@ -33,21 +33,21 @@ const REACHES_NOTHING: ExpectedRecordAccess = {
   canUpdateRecords: false,
 };
 
-const NO_LIMITING_PRINCIPAL: RecordAccessPrincipals['limitingPrincipal'] = {
+const NO_LIMITING_PRINCIPAL: PermissionTestPrincipals['limitingPrincipal'] = {
   type: 'none',
 };
-const CUSTOM_APPLICATION: RecordAccessPrincipals['applicationPrincipal'] = {
+const CUSTOM_APPLICATION: PermissionTestPrincipals['applicationPrincipal'] = {
   type: 'customApplication',
 };
 
-let workspace: RecordAccessWorkspace;
+let workspace: PermissionTestWorkspace;
 
 const findWorkspace = () => workspace;
 
 beforeAll(async () => {
   jest.useRealTimers();
 
-  workspace = await createRecordAccessWorkspace();
+  workspace = await createPermissionTestWorkspace();
 }, 120000);
 
 afterAll(async () => {
@@ -56,7 +56,7 @@ afterAll(async () => {
   ).deleteWorkspace(workspace.workspaceId);
 }, 120000);
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'a main role',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'allRecords' },
@@ -89,7 +89,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'a limiting principal',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'allRecords' },
@@ -128,7 +128,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'two row level filters',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'rowLevel' },
@@ -153,7 +153,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'an application principal',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'allRecords' },
@@ -180,7 +180,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'an OAuth application has no role of its own',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'allRecords' },
@@ -207,7 +207,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'all three principals with a role',
   findWorkspace,
   mainPrincipal: { type: 'workspaceMember', role: 'allRecords' },
@@ -240,7 +240,7 @@ describeRecordAccess({
   ],
 });
 
-describeRecordAccess({
+describePermissionTestRecordAccess({
   name: 'every kind of main principal holds its role',
   findWorkspace,
   mainPrincipal: { type: 'apiKey', role: 'allRecords' },

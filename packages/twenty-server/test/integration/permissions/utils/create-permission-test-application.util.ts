@@ -6,9 +6,9 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
-import { type RoleGrant } from 'test/integration/permissions/utils/record-access-workspace.type';
+import { type PermissionTestRoleGrant } from 'test/integration/permissions/utils/permission-test-workspace.type';
 
-export const createApplicationWithDefaultRole = async ({
+export const createPermissionTestApplication = async ({
   name,
   grant,
   rowLevelFilter,
@@ -16,7 +16,7 @@ export const createApplicationWithDefaultRole = async ({
   accessToken,
 }: {
   name: string;
-  grant: RoleGrant;
+  grant: PermissionTestRoleGrant;
   rowLevelFilter: { fieldUniversalIdentifier: string; value: string };
   objectUniversalIdentifier: string;
   accessToken: string;

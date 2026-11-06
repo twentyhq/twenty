@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
-import gql from 'graphql-tag';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
+import { findPermissionTestWorkspaceMemberOperationFactory } from 'test/integration/permissions/utils/find-permission-test-workspace-member-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-export const addWorkspaceMemberWithRole = async ({
+export const addPermissionTestWorkspaceMember = async ({
   workspaceId,
   workspaceOrigin,
   inviteHash,
@@ -39,17 +39,7 @@ export const addWorkspaceMemberWithRole = async ({
   });
   const accessToken = authTokens.tokens.accessOrWorkspaceAgnosticToken.token;
   const currentUserResponse = await makeMetadataApiRequest(
-    {
-      query: gql`
-        query CurrentWorkspaceMember {
-          currentUser {
-            workspaceMember {
-              id
-            }
-          }
-        }
-      `,
-    },
+    findPermissionTestWorkspaceMemberOperationFactory(),
     accessToken,
   );
 

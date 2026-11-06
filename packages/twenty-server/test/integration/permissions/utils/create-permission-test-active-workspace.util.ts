@@ -7,7 +7,7 @@ import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createActiveWorkspaceWithAdmin = async (): Promise<{
+export const createPermissionTestActiveWorkspace = async (): Promise<{
   workspaceId: string;
   workspaceOrigin: string;
   inviteHash: string;

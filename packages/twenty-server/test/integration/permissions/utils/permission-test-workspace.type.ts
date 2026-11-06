@@ -1,44 +1,44 @@
-export type RoleGrant = 'none' | 'rowLevel' | 'allRecords';
+export type PermissionTestRoleGrant = 'none' | 'rowLevel' | 'allRecords';
 
-export type RecordAccessPrincipals = {
+export type PermissionTestPrincipals = {
   mainPrincipal:
-    | { type: 'workspaceMember' | 'apiKey'; role: RoleGrant }
+    | { type: 'workspaceMember' | 'apiKey'; role: PermissionTestRoleGrant }
     | { type: 'application' | 'agent'; role: 'allRecords' };
   limitingPrincipal:
     | { type: 'none' }
-    | { type: 'agent'; role: RoleGrant }
+    | { type: 'agent'; role: PermissionTestRoleGrant }
     | { type: 'agentWithoutRole' };
   applicationPrincipal:
     | { type: 'customApplication' }
     | { type: 'oauthApplication' }
     | { type: 'sameApplicationAsMain' }
-    | { type: 'application'; role: RoleGrant };
+    | { type: 'application'; role: PermissionTestRoleGrant };
 };
 
-export type RecordAccessRecordName =
+export type PermissionTestRecordName =
   | 'insideEveryFilter'
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
   | 'outsideRegionFilter';
 
-export type RecordAccessWorkspace = {
+export type PermissionTestWorkspace = {
   workspaceId: string;
   objectMetadataId: string;
   objectNameSingular: string;
-  roleIds: Record<RoleGrant, string>;
-  workspaceMemberIds: Record<RoleGrant, string>;
-  apiKeyIds: Record<RoleGrant, string>;
+  roleIds: Record<PermissionTestRoleGrant, string>;
+  workspaceMemberIds: Record<PermissionTestRoleGrant, string>;
+  apiKeyIds: Record<PermissionTestRoleGrant, string>;
   webhookId: string;
-  limitingAgentIds: Record<RoleGrant, string>;
+  limitingAgentIds: Record<PermissionTestRoleGrant, string>;
   limitingAgentWithoutRoleId: string;
   mainAgentId: string;
-  applicationIds: Record<RoleGrant, string>;
+  applicationIds: Record<PermissionTestRoleGrant, string>;
   mainApplicationId: string;
   oauthApplicationId: string;
-  recordIds: Record<RecordAccessRecordName, string>;
+  recordIds: Record<PermissionTestRecordName, string>;
 };
 
-export type ExpectedRecordAccess = {
+export type PermissionTestExpectedAnswers = {
   findRecordsPermissions: {
     canRead: boolean;
     canUpdate: boolean;

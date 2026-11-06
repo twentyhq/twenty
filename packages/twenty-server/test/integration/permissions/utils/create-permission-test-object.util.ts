@@ -1,7 +1,5 @@
-import { createOneFieldMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const createFilterField = async ({
@@ -12,28 +10,23 @@ const createFilterField = async ({
   name: string;
   objectMetadataId: string;
   accessToken: string;
-}): Promise<{ id: string; universalIdentifier: string }> => {
-  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+}) => {
+  const { data } = await createOneFieldMetadata({
+    input: {
+      name,
+      label: name,
+      type: FieldMetadataType.TEXT,
+      objectMetadataId,
+    },
+    gqlFields: 'id universalIdentifier',
+    expectToFail: false,
+    token: accessToken,
+  });
 
-  const response = await makeMetadataApiRequest(
-    createOneFieldMetadataQueryFactory({
-      input: {
-        name,
-        label: name,
-        type: FieldMetadataType.TEXT,
-        objectMetadataId,
-      },
-      gqlFields: 'id universalIdentifier',
-    }),
-    accessToken,
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.createOneField;
+  return data.createOneField;
 };
 
-export const createRecordAccessObject = async ({
+export const createPermissionTestObject = async ({
   nameSingular,
   namePlural,
   accessToken,
