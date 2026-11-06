@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type DataResidencyRegion } from 'twenty-shared/ai';
 import { Callout } from 'twenty-ui/components/feedback';
@@ -21,10 +20,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const WORLDWIDE_OPTION_VALUE = 'worldwide';
 
-const StyledCalloutContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
-
 type DataResidencyRegionOptionValue =
   | DataResidencyRegion
   | typeof WORLDWIDE_OPTION_VALUE;
@@ -34,7 +29,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
-  const { updateWorkspaceAiDataPolicyField } =
+  const { updateWorkspaceAiDataPolicyField, isAiDataPolicySaving } =
     useUpdateWorkspaceAiDataPolicyField();
 
   const aiDataPolicy = getWorkspaceAiDataPolicy(currentWorkspace);
@@ -60,68 +55,70 @@ export const SettingsPrivacyAiDataProcessing = () => {
     aiModels.length > 0 && workspaceAiModels.length === 0;
 
   return (
-    <Section.Root>
-      <Section.Header
-        title={t`AI data processing`}
-        description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
-      />
-      <Card.Root>
-        {dataResidencyRegions.length > 0 && (
-          <SettingsOptionCardContentSelect
-            Icon={IconWorld}
-            title={t`Processing region`}
-            description={t`Where AI providers process your requests`}
-            divider={isZeroDataRetentionAvailable}
-          >
-            <Select<DataResidencyRegionOptionValue>
-              dropdownId="settings-privacy-ai-data-residency"
-              value={
-                aiDataPolicy.requiredDataResidencyRegion ??
-                WORLDWIDE_OPTION_VALUE
-              }
-              onChange={(value) =>
+    <>
+      <Section.Root>
+        <Section.Header
+          title={t`AI data processing`}
+          description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
+        />
+        <Card.Root>
+          {dataResidencyRegions.length > 0 && (
+            <SettingsOptionCardContentSelect
+              Icon={IconWorld}
+              title={t`Processing region`}
+              description={t`Where AI providers process your requests`}
+              divider={isZeroDataRetentionAvailable}
+            >
+              <Select<DataResidencyRegionOptionValue>
+                dropdownId="settings-privacy-ai-data-residency"
+                value={
+                  aiDataPolicy.requiredDataResidencyRegion ??
+                  WORLDWIDE_OPTION_VALUE
+                }
+                onChange={(value) =>
+                  updateWorkspaceAiDataPolicyField({
+                    field: 'requiredDataResidencyRegion',
+                    value: value === WORLDWIDE_OPTION_VALUE ? null : value,
+                  })
+                }
+                options={dataResidencyRegionOptions}
+                selectSizeVariant="small"
+                disabled={isAiDataPolicySaving}
+              />
+            </SettingsOptionCardContentSelect>
+          )}
+          {isZeroDataRetentionAvailable && (
+            <SettingsOptionCardContentSwitch
+              Icon={IconEyeOff}
+              title={t`Zero data retention`}
+              description={t`Only use providers that keep no copy of your prompts and responses`}
+              checked={aiDataPolicy.isZeroDataRetentionRequired}
+              disabled={isAiDataPolicySaving}
+              onChange={(checked) =>
                 updateWorkspaceAiDataPolicyField({
-                  field: 'requiredDataResidencyRegion',
-                  value: value === WORLDWIDE_OPTION_VALUE ? null : value,
+                  field: 'isZeroDataRetentionRequired',
+                  value: checked,
                 })
               }
-              options={dataResidencyRegionOptions}
-              selectSizeVariant="small"
             />
-          </SettingsOptionCardContentSelect>
-        )}
-        {isZeroDataRetentionAvailable && (
-          <SettingsOptionCardContentSwitch
-            Icon={IconEyeOff}
-            title={t`Zero data retention`}
-            description={t`Only use providers that keep no copy of your prompts and responses`}
-            checked={aiDataPolicy.isZeroDataRetentionRequired}
-            onChange={(checked) =>
-              updateWorkspaceAiDataPolicyField({
-                field: 'isZeroDataRetentionRequired',
-                value: checked,
-              })
-            }
-          />
-        )}
-      </Card.Root>
+          )}
+        </Card.Root>
+      </Section.Root>
       <SettingsPrivacyAffectedByAiDataPolicy />
       {hasNoCompliantModel && (
-        <StyledCalloutContainer>
-          <Callout
-            status="warning"
-            icon={
-              <IconAlertTriangle
-                size={themeCssVariables.icon.size.md}
-                aria-hidden="true"
-              />
-            }
-            fullWidth
-            title={t`AI is paused`}
-            description={t`No AI model on this workspace meets these settings.`}
-          />
-        </StyledCalloutContainer>
+        <Callout
+          status="warning"
+          icon={
+            <IconAlertTriangle
+              size={themeCssVariables.icon.size.md}
+              aria-hidden="true"
+            />
+          }
+          fullWidth
+          title={t`AI is paused`}
+          description={t`No AI model on this workspace meets these settings.`}
+        />
       )}
-    </Section.Root>
+    </>
   );
 };

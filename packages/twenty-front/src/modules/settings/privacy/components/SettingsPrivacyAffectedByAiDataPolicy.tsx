@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
   AI_MODEL_TIERS,
@@ -21,10 +20,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
-
-const StyledCalloutContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
 
 export const SettingsPrivacyAffectedByAiDataPolicy = () => {
   const { t } = useLingui();
@@ -76,26 +71,22 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
   return (
     <>
       {isNonEmptyString(agentLabels) && (
-        <StyledCalloutContainer>
-          <Callout
-            fullWidth
-            status="warning"
-            icon={warningIcon}
-            title={t`Agents that will fail`}
-            description={t`These agents use a model your settings exclude, so they fail when they run: ${agentLabels}`}
-          />
-        </StyledCalloutContainer>
+        <Callout
+          fullWidth
+          status="warning"
+          icon={warningIcon}
+          title={t`Agents that will fail`}
+          description={t`These agents use a model your settings exclude, so they fail when they run: ${agentLabels}`}
+        />
       )}
       {isNonEmptyString(pinnedTierLabels) && (
-        <StyledCalloutContainer>
-          <Callout
-            fullWidth
-            status="warning"
-            icon={warningIcon}
-            title={t`Pinned models not in use`}
-            description={t`These tiers fall back to an allowed model: ${pinnedTierLabels}`}
-          />
-        </StyledCalloutContainer>
+        <Callout
+          fullWidth
+          status="warning"
+          icon={warningIcon}
+          title={t`Pinned models not in use`}
+          description={t`These tiers fall back to an allowed model: ${pinnedTierLabels}`}
+        />
       )}
     </>
   );

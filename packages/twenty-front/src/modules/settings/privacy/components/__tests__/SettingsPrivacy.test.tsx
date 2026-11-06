@@ -1,7 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { ToastProvider } from 'twenty-ui/components/feedback';
@@ -14,6 +15,7 @@ import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
 import {
   type ClientAiModelConfig,
   FindManyAgentsDocument,
+  UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -55,6 +57,7 @@ const renderSettingsPrivacy = ({
   isMultiWorkspaceEnabled,
   aiModels,
   aiDataPolicy = null,
+  updateWorkspaceError,
 }: {
   isMultiWorkspaceEnabled: boolean;
   aiModels: ClientAiModelConfig[];
@@ -63,6 +66,7 @@ const renderSettingsPrivacy = ({
     isZeroDataRetentionRequired: boolean;
     isProductImprovementDataSharingEnabled: boolean;
   } | null;
+  updateWorkspaceError?: Error;
 }) => {
   const store = createStore();
 
@@ -95,6 +99,11 @@ const renderSettingsPrivacy = ({
               },
             },
           },
+          {
+            request: { query: UpdateWorkspaceDocument, variables: () => true },
+            error: updateWorkspaceError,
+            delay: 50,
+          },
         ]}
       >
         <MemoryRouter>
@@ -110,6 +119,11 @@ const renderSettingsPrivacy = ({
 };
 
 describe('SettingsPrivacy', () => {
+  beforeAll(() => {
+    // jsdom has no PointerEvent, which the switch dispatches on click
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   it('presents compliance, AI controls and sharing on Twenty Cloud', () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
@@ -176,5 +190,34 @@ describe('SettingsPrivacy', () => {
     expect(
       await screen.findByText(/they fail when they run: Sales agent$/),
     ).toBeInTheDocument();
+  });
+
+  it('disables the controls during a save and restores the value when it fails', async () => {
+    renderSettingsPrivacy({
+      isMultiWorkspaceEnabled: true,
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
+      aiDataPolicy: {
+        requiredDataResidencyRegion: null,
+        isZeroDataRetentionRequired: false,
+        isProductImprovementDataSharingEnabled: true,
+      },
+      updateWorkspaceError: new Error('Save failed'),
+    });
+
+    const zeroDataRetentionSwitch = screen.getByRole('switch', {
+      name: 'Zero data retention',
+    });
+
+    await userEvent.click(zeroDataRetentionSwitch);
+
+    expect(zeroDataRetentionSwitch).toBeChecked();
+    expect(zeroDataRetentionSwitch).toHaveAttribute('aria-disabled', 'true');
+
+    await waitFor(() => expect(zeroDataRetentionSwitch).not.toBeChecked());
+
+    expect(zeroDataRetentionSwitch).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 });
