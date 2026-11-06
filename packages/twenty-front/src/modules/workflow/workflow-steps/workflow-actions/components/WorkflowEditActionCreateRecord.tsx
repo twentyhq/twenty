@@ -17,7 +17,6 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
@@ -25,6 +24,7 @@ import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { useLingui } from '@lingui/react/macro';
 
 type CreateRecordFormData = RecordActionFormData;
 
@@ -63,6 +63,7 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
+  const { t } = useLingui();
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =

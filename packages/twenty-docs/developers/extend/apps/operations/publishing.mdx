@@ -61,10 +61,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Build and upload your app to the server in one step:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+The explicit `--remote production` selects the connection saved above, even if another remote is your default. Saving a named remote does not switch an existing default.
 
 ### Sharing a deployed app
 
@@ -83,7 +83,7 @@ When updating an already deployed tarball app, the server requires the `version`
 To release an update:
 
 1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
+2. Run `twenty app publish --private --remote production`
 3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
 
 <Note>
@@ -389,11 +389,13 @@ Go to the **Settings > Applications** page in Twenty, where both marketplace and
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+From the app directory, install its published version into the target workspace:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Use the name of the remote for the workspace where you want the app installed. To install without a local project, pass `--universal-identifier <id>`.
 
 <Note>
 The server enforces semver versioning on install, mirroring the rules on deploy:
@@ -401,7 +403,7 @@ The server enforces semver versioning on install, mirroring the rules on deploy:
 - Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
 - Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
 
-To install a newer version, deploy or publish it first, then re-run `twenty app install`.
+To install a newer version, deploy or publish it first, then re-run `twenty app install --remote production`.
 
 </Note>
 

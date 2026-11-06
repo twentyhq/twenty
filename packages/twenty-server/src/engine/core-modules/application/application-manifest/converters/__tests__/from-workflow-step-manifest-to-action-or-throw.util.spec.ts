@@ -145,6 +145,10 @@ const inputs = {
     agentUniversalIdentifier: REFERENCE_ID,
     prompt: 'Summarize {{trigger.text}}',
   },
+  CODE: {
+    code: 'export const main = async (params: { text: string }) => ({ length: params.text.length });',
+    logicFunctionInput: { text: '{{trigger.text}}' },
+  },
   SEND_CHAT_MESSAGE: {
     workspaceMemberId: '{{trigger.assigneeId}}',
     title: 'Approve',
@@ -231,6 +235,90 @@ describe('application workflow actions', () => {
     ),
   )('converts %s to its runtime action', (type) => {
     expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });
+  });
+
+  it('keeps an agent step that carries its own config as is, with no agent to resolve', () => {
+    const input = {
+      instructions: 'Qualify the lead.',
+      modelId: 'auto-select-workspace-default-model',
+      scope: {
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            canReadObjectRecords: true,
+          },
+        ],
+      },
+      prompt: 'Qualify {{trigger.name}}',
+    };
+    const result = fromWorkflowStepManifestToActionOrThrow({
+      step: workflowStepManifestSchema.parse({
+        universalIdentifier: STEP_ID,
+        name: 'Qualify',
+        type: 'AI_AGENT',
+        input,
+        nextStepIds: [],
+      }),
+      index: 0,
+      references: { ...references, agentIdByUniversalIdentifier: new Map() },
+    });
+
+    expect(result.settings.input).toEqual(input);
+    expect(result.settings.outputSchema).toMatchObject({
+      response: { type: 'string' },
+    });
+  });
+
+  it.each([
+    {
+      case: 'an object that is not available',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: LOCAL_ID, canReadObjectRecords: true },
+        ],
+      },
+      error: 'missing object',
+    },
+    {
+      case: 'a field that is not available',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            fieldUniversalIdentifier: LOCAL_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'missing field',
+    },
+    {
+      case: 'a field of another object',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: LOCAL_ID,
+            fieldUniversalIdentifier: FIELD_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'does not belong',
+    },
+  ])('rejects a step scope naming $case', ({ scope, error }) => {
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: workflowStepManifestSchema.parse({
+          universalIdentifier: STEP_ID,
+          name: 'Qualify',
+          type: 'AI_AGENT',
+          input: { prompt: 'Qualify {{trigger.name}}', scope },
+          nextStepIds: [],
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow(error);
   });
 
   it('resolves functions, agents, objects and filter fields', () => {
@@ -534,6 +622,12 @@ describe('application workflow actions', () => {
         }),
       ).toMatchObject({ connectedAccountId: 'shared-id' });
     });
+  });
+
+  it('keeps the source of a code step as written, with no logic function', () => {
+    expect(convert(WorkflowActionType.CODE).settings.input).toEqual(
+      inputs.CODE,
+    );
   });
 
   it('preserves branches, loop entries, outputs and error handling', () => {

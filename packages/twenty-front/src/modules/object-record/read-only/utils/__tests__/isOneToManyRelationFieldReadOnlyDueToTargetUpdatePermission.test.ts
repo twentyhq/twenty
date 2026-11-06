@@ -14,13 +14,12 @@ const buildObjectPermissions = (opts: {
   restrictedFields?: RestrictedFields;
 }) => ({
   objectMetadataId: opts.objectMetadataId,
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: opts.canUpdate ?? true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+  canReadAllRecords: true,
+  canUpdateAllRecords: opts.canUpdate ?? true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
   restrictedFields: opts.restrictedFields ?? {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+  rowLevelRecordsPermissions: null,
 });
 
 const buildObjectPermissionsMap = (opts: {

@@ -4,6 +4,8 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
   agents: [],
   applicationVariables: [],
+  grantedIframeMediaPermissions: [],
+  requestedIframeMediaPermissions: [],
   frontComponents: [],
   commandMenuItems: [],
   settingsMenuItems: [],

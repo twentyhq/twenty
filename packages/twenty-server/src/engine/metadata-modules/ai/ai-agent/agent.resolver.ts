@@ -1,7 +1,6 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -12,11 +11,10 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 
 import { AgentService } from './agent.service';
@@ -28,21 +26,10 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { AGENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-read-access-policy.constant';
+import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
@@ -53,6 +40,7 @@ export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -66,6 +54,7 @@ export class AgentResolver {
   }
 
   @Query(() => [AgentDTO])
+  @UseGuards(AccessPolicyGuard(AGENT_READ_ACCESS_POLICY))
   async findManyAgents(
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
@@ -88,7 +77,10 @@ export class AgentResolver {
   }
 
   @Query(() => AgentDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard(AGENT_READ_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async findOneAgent(
     @ApplicationTargetArg<AgentIdInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -108,13 +100,19 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(AccessPolicyGuard(AGENT_WRITE_ACCESS_POLICY))
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(input.modelId);
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+        modelId: input.modelId,
+        aiDataPolicy:
+          await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          ),
+      });
     }
 
     const createdAgent = await this.agentService.createOneAgent(
@@ -127,7 +125,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    AccessPolicyGuard(AGENT_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async updateOneAgent(
@@ -141,7 +139,13 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(input.modelId);
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+        modelId: input.modelId,
+        aiDataPolicy:
+          await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+            workspace,
+          ),
+      });
     }
 
     const updatedAgent = await this.agentService.updateOneAgent({
@@ -154,7 +158,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    AccessPolicyGuard(AGENT_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async deleteOneAgent(

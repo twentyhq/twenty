@@ -17,6 +17,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "rolePermissionFlag",
   "validationRule",
   "viewSort",
+  "fieldMetadataOption",
   "index",
   "mcpServer",
   "rowLevelPermissionPredicateGroup",

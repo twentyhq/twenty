@@ -11,7 +11,6 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type FairJobOptions = { priority?: number; fairBase?: number };
 
@@ -20,7 +19,6 @@ type FairQueueSchedulerOptions = {
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
-  twentyConfigService: TwentyConfigService;
 };
 
 export class FairQueueScheduler {
@@ -51,7 +49,7 @@ export class FairQueueScheduler {
       priority: staticPriority,
     }));
 
-    if (!this.isFairnessEnabled() || (delay ?? 0) > 0) {
+    if ((delay ?? 0) > 0) {
       return staticJobOptions;
     }
 
@@ -123,14 +121,6 @@ export class FairQueueScheduler {
     queueName: MessageQueue;
     jobId: string;
   }): void {
-    if (!this.isFairnessEnabled()) {
-      return;
-    }
-
     void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
-  }
-
-  private isFairnessEnabled(): boolean {
-    return this.options.twentyConfigService.get('IS_WORKER_FAIRNESS_ENABLED');
   }
 }

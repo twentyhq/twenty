@@ -23,8 +23,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -38,7 +37,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -77,15 +76,6 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate(
-        workspaceEventBatch,
-      );
-    const metadataMaps =
-      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
-        workspaceEventBatch.workspaceId,
-      );
-
     for (const [
       applicationId,
       logicFunctions,
@@ -100,17 +90,20 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const admittedEvents = await resolveEventsReadableByRole({
-        roleId: application.defaultRoleId,
-        workspaceEventBatch,
-        eventRecordAccessGate,
-        metadataMaps,
-      });
+      const readableEvents =
+        await this.recordPermissionsService.findReadableEvents({
+          authContext: {
+            type: 'application',
+            workspace: { id: workspaceEventBatch.workspaceId },
+            application,
+          },
+          eventBatch: workspaceEventBatch,
+        });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
         workspaceEventBatch: {
           ...workspaceEventBatch,
-          events: admittedEvents,
+          events: readableEvents,
         },
       });
 

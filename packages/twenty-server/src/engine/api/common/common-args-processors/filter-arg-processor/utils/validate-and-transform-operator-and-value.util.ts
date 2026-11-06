@@ -12,7 +12,7 @@ import { validateOperatorForFieldTypeOrThrow } from './validate-operator-for-fie
 
 export const validateAndTransformOperatorAndValue = (
   fieldName: string,
-  filterValue: Record<string, unknown>,
+  filterValue: Record<string, unknown> | null,
   fieldMetadata: OrmFlatFieldMetadata,
 ): Record<string, unknown> => {
   if (filterValue === null || typeof filterValue !== 'object') {

@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findCompanyId } from 'src/logic-functions/utils/find-company-id';
@@ -26,7 +25,7 @@ describe('findCompanyId', () => {
           : { companies: { edges: [] } },
       ),
     );
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     const result = await findCompanyId({ client, matchKeys: ALL_KEYS });
 
@@ -46,7 +45,7 @@ describe('findCompanyId', () => {
           : { companies: { edges: [] } },
       );
     });
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     const result = await findCompanyId({ client, matchKeys: ALL_KEYS });
 
@@ -66,7 +65,7 @@ describe('findCompanyId', () => {
 
       return Promise.resolve({ companies: { edges: [] } });
     });
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     await findCompanyId({ client, matchKeys: { name: 'Acme' } });
 
@@ -75,7 +74,7 @@ describe('findCompanyId', () => {
 
   it('returns undefined when no key matches', async () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(
       await findCompanyId({ client, matchKeys: ALL_KEYS }),
@@ -84,7 +83,7 @@ describe('findCompanyId', () => {
 
   it('returns undefined and issues no query when no keys are provided', async () => {
     const query = vi.fn();
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(await findCompanyId({ client, matchKeys: {} })).toBeUndefined();
     expect(query).not.toHaveBeenCalled();
@@ -98,7 +97,7 @@ describe('findCompanyId', () => {
         },
       }),
     );
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(
       await findCompanyId({ client, matchKeys: { name: 'Acme' } }),
@@ -109,7 +108,7 @@ describe('findCompanyId', () => {
     const query = vi.fn(() =>
       Promise.resolve({ companies: { edges: [{ node: { id: 'co-1' } }] } }),
     );
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(await findCompanyId({ client, matchKeys: { name: 'Acme' } })).toBe(
       'co-1',

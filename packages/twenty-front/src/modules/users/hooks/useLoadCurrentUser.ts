@@ -1,6 +1,9 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import {
+  type CurrentUserWorkspace,
+  currentUserWorkspaceState,
+} from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -14,7 +17,6 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { useCallback } from 'react';
 import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
-import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { useApolloClient } from '@apollo/client/react';
@@ -80,9 +82,9 @@ export const useLoadCurrentUser = () => {
         permissionFlags: user.currentUserWorkspace.permissionFlags ?? [],
         twoFactorAuthenticationMethodSummary:
           user.currentUserWorkspace.twoFactorAuthenticationMethodSummary ?? [],
-        objectsPermissions:
+        objectRecordsPermissions:
           (user.currentUserWorkspace
-            .objectsPermissions as CurrentUserWorkspaceObjectPermissions[]) ??
+            .objectRecordsPermissions as CurrentUserWorkspace['objectRecordsPermissions']) ??
           [],
         isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
       });

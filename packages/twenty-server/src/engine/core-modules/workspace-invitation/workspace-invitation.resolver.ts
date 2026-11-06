@@ -20,35 +20,36 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const WORKSPACE_INVITATION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
       playground: true,
       workspaceAgnostic: false,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
-)
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
@@ -60,21 +61,24 @@ export class WorkspaceInvitationResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Mutation(() => String)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
     }),
   )
   async deleteWorkspaceInvitation(
@@ -88,19 +92,7 @@ export class WorkspaceInvitationResolver {
   }
 
   @Mutation(() => SendInvitationsDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
   async resendWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -111,9 +103,8 @@ export class WorkspaceInvitationResolver {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOneOrFail({
@@ -131,24 +122,28 @@ export class WorkspaceInvitationResolver {
   }
 
   @Query(() => [WorkspaceInvitation])
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+    }),
+  )
   async findWorkspaceInvitations(@AuthWorkspace() workspace: WorkspaceEntity) {
     return this.workspaceInvitationService.loadWorkspaceInvitations(workspace);
   }
 
   @Mutation(() => SendInvitationsDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async sendInvitations(
     @Args() sendInviteLinkInput: SendInvitationsInput,
@@ -160,7 +155,7 @@ export class WorkspaceInvitationResolver {
   ): Promise<SendInvitationsDTO> {
     if (isDefined(sendInviteLinkInput.roleId)) {
       const canAssignRoles =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
+        await this.settingPermissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId: workspace.id,
           setting: PermissionFlagType.ROLES,
@@ -184,9 +179,8 @@ export class WorkspaceInvitationResolver {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOneOrFail({

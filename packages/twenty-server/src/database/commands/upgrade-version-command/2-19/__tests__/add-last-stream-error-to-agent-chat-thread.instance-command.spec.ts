@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782996657000-add-last-stream-error-to-agent-chat-thread';
 
@@ -12,7 +12,11 @@ describe('AddLastStreamErrorToAgentChatThreadFastInstanceCommand', () => {
   describe('up', () => {
     it('adds the lastStreamError column without mutating data', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.up(queryRunner);
 
@@ -25,7 +29,11 @@ describe('AddLastStreamErrorToAgentChatThreadFastInstanceCommand', () => {
   describe('down', () => {
     it('drops the lastStreamError column', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
-      const queryRunner = { query } as unknown as QueryRunner;
+      const queryRunner = new DataSource({
+        type: 'postgres',
+      }).createQueryRunner();
+
+      queryRunner.query = query;
 
       await command.down(queryRunner);
 

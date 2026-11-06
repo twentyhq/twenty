@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -20,6 +23,7 @@ export class MessagingMessageCleanerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -32,25 +36,28 @@ export class MessagingMessageCleanerService {
     messageChannelId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
-                { shouldBypassPermissionChecks: true },
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
               );
             const messageThreadRepository =
-              transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
-                { shouldBypassPermissionChecks: true },
+              );
+            const attachmentRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+                'attachment',
               );
 
             for (const messageExternalIdsChunk of chunk(
@@ -100,6 +107,11 @@ export class MessagingMessageCleanerService {
                 where: { id: In(orphanMessageIds) },
               });
 
+              if (hasMessageAttachmentTarget) {
+                await attachmentRepository.delete({
+                  targetMessageId: In(orphanMessageIds),
+                });
+              }
               await messageRepository.delete(orphanMessageIds);
 
               const candidateThreadIds = [
@@ -151,9 +163,8 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             for (;;) {
@@ -186,25 +197,28 @@ export class MessagingMessageCleanerService {
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const hasMessageAttachmentTarget =
+      await this.hasMessageAttachmentTarget(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageThreadRepository =
-              transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
-                { shouldBypassPermissionChecks: true },
               );
             const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
-                { shouldBypassPermissionChecks: true },
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
+              );
+            const attachmentRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+                'attachment',
               );
 
             await this.deleteOrphansByKeyset(
@@ -231,6 +245,11 @@ export class MessagingMessageCleanerService {
                   ),
                 ];
 
+                if (hasMessageAttachmentTarget) {
+                  await attachmentRepository.delete({
+                    targetMessageId: In(ids),
+                  });
+                }
                 await messageRepository.delete(ids);
 
                 const survivingThreadIds = await this.findReferencedThreadIds(
@@ -276,6 +295,22 @@ export class MessagingMessageCleanerService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  // targetMessageId only exists once the workspace upgrade has run
+  private async hasMessageAttachmentTarget(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.attachment.fields.targetMessage.universalIdentifier
+      ],
     );
   }
 

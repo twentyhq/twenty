@@ -15,6 +15,7 @@ export enum AppPath {
 
   AiChat = '/chat/:threadId?',
   AiChatInbox = '/inbox/:threadId?',
+  GettingStarted = '/getting-started',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',
@@ -24,6 +25,7 @@ export enum AppPath {
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
+  WorkflowIndexPage = '/workflows',
   WorkflowCoreShowPage = '/workflow/:coreWorkflowId',
   AgentIndexPage = '/agents',
   AgentShowPage = '/agent/:agentId',

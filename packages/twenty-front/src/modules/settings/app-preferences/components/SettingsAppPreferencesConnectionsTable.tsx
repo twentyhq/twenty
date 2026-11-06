@@ -19,6 +19,7 @@ type SettingsAppPreferencesConnectionsTableProps = {
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;
   isLoading: boolean;
+  reconnectRedirectLocation: string;
 };
 
 export const SettingsAppPreferencesConnectionsTable = ({
@@ -27,6 +28,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
   connections,
   canStartAuthorization,
   isLoading,
+  reconnectRedirectLocation,
 }: SettingsAppPreferencesConnectionsTableProps) => {
   const { t } = useLingui();
 
@@ -67,6 +69,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
                 providerName={providerName}
                 connection={connection}
                 canStartAuthorization={canStartAuthorization}
+                reconnectRedirectLocation={reconnectRedirectLocation}
               />
             </TableCell>
           </TableRow>

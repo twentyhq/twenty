@@ -14,7 +14,7 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -32,7 +32,6 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -54,7 +53,6 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   limit: number;
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
-  rolePermissionConfig?: RolePermissionConfig;
   repository?: WorkspaceRepository;
   // oxlint-disable-next-line typescript/no-explicit-any
   selectedFields: Record<string, any>;
@@ -87,7 +85,6 @@ export class ProcessNestedRelationsHelper {
       limit,
       authContext,
       useReplica = false,
-      rolePermissionConfig,
       repository,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
@@ -107,7 +104,6 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           useReplica,
-          rolePermissionConfig,
           repository,
           relationQueryLimiter,
           selectedFields:
@@ -132,7 +128,6 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     useReplica,
-    rolePermissionConfig,
     repository,
     relationQueryLimiter,
     selectedFields,
@@ -149,7 +144,6 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
-    rolePermissionConfig?: RolePermissionConfig;
     repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
@@ -203,14 +197,13 @@ export class ProcessNestedRelationsHelper {
       ? repository.getRepositoryForObjectMetadataId(targetObjectMetadata.id)
       : this.workspaceOrmManager.getRepository(
           targetObjectMetadata.nameSingular,
-          rolePermissionConfig,
           { useReplica },
         );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
     // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
-    if (targetObjectRepository.isReadDisabled()) {
+    if (await targetObjectRepository.isReadDisabled()) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
         parentObjectRecordsAggregatedValues,
@@ -332,7 +325,6 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           useReplica,
-          rolePermissionConfig,
           repository,
           selectedFields,
         },
@@ -519,7 +511,7 @@ export class ProcessNestedRelationsHelper {
       .select(`"${targetObjectNameSingular}"."id"`, 'id')
       .where(`${column} = "lateralParents"."parentId"`);
 
-    perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
+    await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
 
     const perParentRecordIdsSql = `${perParentRecordIdsQueryBuilder.getQuery()} LIMIT ${Number(perParentLimit)}`;
 

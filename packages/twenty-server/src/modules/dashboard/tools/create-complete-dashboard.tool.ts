@@ -7,7 +7,6 @@ import {
   type PageLayoutWidgetGridPosition,
   type WidgetType,
 } from 'twenty-shared/types';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   widgetPositionSchema,
   widgetConfigurationSchema,
@@ -54,8 +53,35 @@ const createCompleteDashboardSchema = z.object({
     .describe('Widgets to add'),
 });
 
+type CreateCompleteDashboardToolDeps = {
+  pageLayoutService: Pick<
+    DashboardToolDependencies['pageLayoutService'],
+    'create' | 'destroy'
+  >;
+  pageLayoutTabService: Pick<
+    DashboardToolDependencies['pageLayoutTabService'],
+    'create'
+  >;
+  pageLayoutWidgetService: Pick<
+    DashboardToolDependencies['pageLayoutWidgetService'],
+    'create'
+  >;
+  flatEntityMapsCacheService: Pick<
+    DashboardToolDependencies['flatEntityMapsCacheService'],
+    'getOrRecomputeManyOrAllFlatEntityMaps'
+  >;
+  workspaceOrmManager: Pick<
+    DashboardToolDependencies['workspaceOrmManager'],
+    'executeInWorkspaceContext' | 'getRepository'
+  >;
+  recordPositionService: Pick<
+    DashboardToolDependencies['recordPositionService'],
+    'buildRecordPosition'
+  >;
+};
+
 export const createCreateCompleteDashboardTool = (
-  deps: DashboardToolDependencies,
+  deps: CreateCompleteDashboardToolDeps,
   context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
@@ -231,7 +257,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 });
 
 type CreateDashboardRecordParams = {
-  deps: DashboardToolDependencies;
+  deps: CreateCompleteDashboardToolDeps;
   context: DashboardToolContextWithPermissions;
   title: string;
   pageLayoutId: string;
@@ -261,13 +287,9 @@ const createDashboardRecord = async ({
   title,
   pageLayoutId,
 }: CreateDashboardRecordParams): Promise<string> => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
-
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository = deps.workspaceOrmManager.getRepository(
-      'dashboard',
-      context.rolePermissionConfig,
-    );
+    const dashboardRepository =
+      deps.workspaceOrmManager.getRepository('dashboard');
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',
@@ -280,5 +302,5 @@ const createDashboardRecord = async ({
     await dashboardRepository.insert(dashboard);
 
     return dashboard.id;
-  }, authContext);
+  }, context.authContext);
 };

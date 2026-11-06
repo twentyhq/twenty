@@ -1,4 +1,7 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { buildUniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout.test-util';
+import { buildUniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout-tab.test-util';
 import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import { type UniversalCreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
@@ -12,16 +15,14 @@ const buildCreatePageLayoutAction = ({
 }: {
   pageLayoutUniversalIdentifier: string;
   defaultTabUniversalIdentifier?: string;
-}): UniversalCreatePageLayoutAction =>
-  ({
-    type: 'create',
-    metadataName: 'pageLayout',
-    flatEntity: {
-      universalIdentifier: pageLayoutUniversalIdentifier,
-      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
-        defaultTabUniversalIdentifier ?? null,
-    },
-  }) as unknown as UniversalCreatePageLayoutAction;
+}): UniversalCreatePageLayoutAction => ({
+  type: 'create',
+  metadataName: 'pageLayout',
+  flatEntity: buildUniversalFlatPageLayout({
+    universalIdentifier: pageLayoutUniversalIdentifier,
+    defaultTabUniversalIdentifier,
+  }),
+});
 
 const buildCreatePageLayoutTabAction = ({
   tabUniversalIdentifier,
@@ -29,30 +30,27 @@ const buildCreatePageLayoutTabAction = ({
 }: {
   tabUniversalIdentifier: string;
   pageLayoutUniversalIdentifier: string;
-}): UniversalCreatePageLayoutTabAction =>
-  ({
-    type: 'create',
-    metadataName: 'pageLayoutTab',
-    flatEntity: {
-      universalIdentifier: tabUniversalIdentifier,
-      pageLayoutUniversalIdentifier,
-    },
-  }) as unknown as UniversalCreatePageLayoutTabAction;
+}): UniversalCreatePageLayoutTabAction => ({
+  type: 'create',
+  metadataName: 'pageLayoutTab',
+  flatEntity: buildUniversalFlatPageLayoutTab({
+    universalIdentifier: tabUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
+  }),
+});
 
 const buildWorkspaceMigration = (
   actions: (
     | UniversalCreatePageLayoutAction
     | UniversalCreatePageLayoutTabAction
   )[],
-): WorkspaceMigration =>
-  ({
-    applicationUniversalIdentifier: 'app',
-    actions,
-  }) as unknown as WorkspaceMigration;
+): WorkspaceMigration => ({
+  applicationUniversalIdentifier: 'app',
+  actions,
+});
 
-const EMPTY_FLAT_PAGE_LAYOUT_TAB_MAPS = {
-  byUniversalIdentifier: {},
-} as unknown as AllFlatEntityMaps['flatPageLayoutTabMaps'];
+const EMPTY_FLAT_PAGE_LAYOUT_TAB_MAPS: AllFlatEntityMaps['flatPageLayoutTabMaps'] =
+  createEmptyFlatEntityMaps();
 
 describe('buildPreallocatedIdByUniversalIdentifierFromActions', () => {
   it('should preallocate the id of every enriched create action', () => {

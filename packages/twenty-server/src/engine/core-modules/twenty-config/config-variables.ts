@@ -841,7 +841,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description: 'S3 bucket for uploading Lambda layer zip files',
+    description:
+      'S3 bucket for uploading Lambda layer zip files. Required with the Lambda driver unless STORAGE_S3_NAME is set.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
@@ -899,6 +900,15 @@ export class ConfigVariables {
     (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E_2_B,
   )
   E2B_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'E2B template for code interpreter sandboxes; build one with the libraries the PDF and Office skills need using scripts/build-code-interpreter-e2b-template.ts (default: code-interpreter-v1)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  E2B_TEMPLATE: string = 'code-interpreter-v1';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -1616,15 +1626,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   WORKER_EXCLUDED_QUEUES: string[] = [];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Order the jobs of each queue by tenant virtual clocks (workspace and application group keys) so that a burst from one tenant does not delay the others. Off: jobs of a queue are processed in FIFO order.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKER_FAIRNESS_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

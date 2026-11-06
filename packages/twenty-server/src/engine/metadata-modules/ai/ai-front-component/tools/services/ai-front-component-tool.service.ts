@@ -9,12 +9,13 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
+import { createGetFrontComponentUiDocsTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/get-front-component-ui-docs.tool';
 import { createInspectFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/inspect-front-component.tool';
 import { createListFrontComponentsTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/list-front-components.tool';
 import { createPreviewFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/preview-front-component.tool';
 import { createPublishFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/publish-front-component.tool';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class AiFrontComponentToolService {
@@ -22,7 +23,7 @@ export class AiFrontComponentToolService {
     private readonly aiFrontComponentService: AiFrontComponentService,
     private readonly frontComponentService: FrontComponentService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
@@ -34,16 +35,16 @@ export class AiFrontComponentToolService {
         FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
         context.workspaceId,
       )) ||
-      !(await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.APPLICATIONS,
-      ))
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
+      }))
     ) {
       return {};
     }
 
     return {
+      get_front_component_ui_docs: createGetFrontComponentUiDocsTool(),
       list_front_components: createListFrontComponentsTool({
         frontComponentService: this.frontComponentService,
         workspaceId: context.workspaceId,

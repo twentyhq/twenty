@@ -37,4 +37,19 @@ export const validateFrontComponentSampleRecordsOrThrow = ({
       },
     );
   }
+  if (
+    sampleRecords.some((record) =>
+      selectedFields.some(
+        (field) => !Object.prototype.hasOwnProperty.call(record, field),
+      ),
+    )
+  ) {
+    throw new ApplicationException(
+      doNotTranslate('Sample records must include every selected field.'),
+      ApplicationExceptionCode.INVALID_INPUT,
+      {
+        userFriendlyMessage: msg`Sample records must include every selected field.`,
+      },
+    );
+  }
 };

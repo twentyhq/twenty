@@ -1,4 +1,5 @@
 import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutWidgetDndType';
+import { PageLayoutWidgetViewportContext } from '@/page-layout/contexts/PageLayoutWidgetViewportContext';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -103,7 +104,9 @@ export const PageLayoutVerticalListWidgetSlot = ({
         orientation="horizontal"
         fill={fillsViewport}
       >
-        <WidgetRenderer widget={widget} />
+        <PageLayoutWidgetViewportContext.Provider value={fillsViewport}>
+          <WidgetRenderer widget={widget} />
+        </PageLayoutWidgetViewportContext.Provider>
       </DragDropItemSortableCell>
     </StyledWidgetSlot>
   );

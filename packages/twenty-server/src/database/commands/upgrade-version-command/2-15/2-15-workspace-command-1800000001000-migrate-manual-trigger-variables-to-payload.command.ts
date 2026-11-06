@@ -57,9 +57,7 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
     }
 
     const workflowVersionRepository =
-      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>('workflowVersion');
 
     const allVersions = await workflowVersionRepository.find();
 

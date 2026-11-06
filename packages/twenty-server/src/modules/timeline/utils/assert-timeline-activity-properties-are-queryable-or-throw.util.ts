@@ -1,36 +1,31 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 // properties holds other objects' field values, so querying it reveals restricted fields
 export const assertTimelineActivityPropertiesAreQueryableOrThrow = ({
   objectNameSingular,
   fieldName,
-  objectsPermissions,
+  recordReadRestrictions,
 }: {
   objectNameSingular: string;
   fieldName: string;
-  objectsPermissions: ObjectsPermissions | undefined;
+  recordReadRestrictions: RecordReadRestrictions | undefined;
 }): void => {
   if (objectNameSingular !== 'timelineActivity' || fieldName !== 'properties') {
     return;
   }
 
-  const hasReadDeniedObjectOrField = Object.values(
-    objectsPermissions ?? {},
-  ).some(
-    (objectPermissions) =>
-      !objectPermissions.canReadObjectRecords ||
-      Object.values(objectPermissions.restrictedFields).some(
-        (fieldPermissions) => fieldPermissions.canRead === false,
-      ),
-  );
-
-  if (hasReadDeniedObjectOrField) {
+  if (
+    isDefined(recordReadRestrictions) &&
+    (recordReadRestrictions.unreadableObjectMetadataIds.size > 0 ||
+      recordReadRestrictions.unreadableFieldMetadataIds.size > 0)
+  ) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,

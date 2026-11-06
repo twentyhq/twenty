@@ -185,6 +185,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     webhook: {
       foreignKey: 'webhookId',
     },
+    targetApplication: null,
     workspace: null,
     application: null,
   },
@@ -356,6 +357,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
     },
   },
   relatedRecordPath: {

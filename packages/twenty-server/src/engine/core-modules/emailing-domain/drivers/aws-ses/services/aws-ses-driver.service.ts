@@ -12,6 +12,7 @@ import {
   GetEmailIdentityCommand,
   NotFoundException,
   PutEmailIdentityDkimAttributesCommand,
+  PutEmailIdentityDkimSigningAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
@@ -153,6 +154,28 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
   async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
     await this.awsSesRegisterDomainService.registerDomain(input.domain);
+  }
+
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    try {
+      await this.awsSesClientProvider.getSESClient().send(
+        new PutEmailIdentityDkimSigningAttributesCommand({
+          EmailIdentity: input.domain,
+          SigningAttributesOrigin: 'AWS_SES',
+        }),
+      );
+
+      this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return;
+      }
+
+      this.awsSesHandleErrorService.handleAwsSesError(
+        error,
+        'retryVerification',
+      );
+    }
   }
 
   async sendEmail(

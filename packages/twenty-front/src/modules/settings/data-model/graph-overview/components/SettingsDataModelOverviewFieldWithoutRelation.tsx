@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type ObjectFieldRowWithoutRelationProps = {

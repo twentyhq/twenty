@@ -5,7 +5,7 @@ import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/ge
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   type SearchTimelineThreadsQuery,
@@ -27,7 +27,7 @@ export const LinkEmailThreadsDropdown = ({
 
   return (
     <LinkActivitiesDropdown<TimelineThread, SearchTimelineThreadsQuery>
-      activityObjectNameSingular={CoreObjectNameSingular.MessageThread}
+      activityObjectNameSingular={StandardObjectNameSingular.MessageThread}
       dropdownIdPrefix={dropdownIdPrefix}
       ariaLabel={t`Link email threads`}
       trigger={trigger}

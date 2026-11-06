@@ -1,10 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  canReachSomeRecords,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
@@ -72,7 +76,7 @@ export const useChatThreadsForRecord = ({
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   });
 
   const filter = useMemo(
@@ -90,7 +94,7 @@ export const useChatThreadsForRecord = ({
   const isRecordLinkable = isNonEmptyArray(filter?.or);
   const chatObjectMetadataItem = objectMetadataItems.find(
     ({ nameSingular }) =>
-      nameSingular === CoreObjectNameSingular.AgentChatThread,
+      nameSingular === StandardObjectNameSingular.AgentChatThread,
   );
 
   const {
@@ -102,7 +106,7 @@ export const useChatThreadsForRecord = ({
     hasNextPage,
     queryIdentifier,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
     orderBy: [
@@ -116,12 +120,16 @@ export const useChatThreadsForRecord = ({
 
   const { findManyRecordsQuery: findThreadLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
-  const { canReadObjectRecords } = useObjectPermissionsForObject(
+  const junctionObjectPermissions = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
+  const canReadSomeRecords = canReachSomeRecords({
+    objectRecordsPermissions: junctionObjectPermissions,
+    operationType: 'select',
+  });
 
   const { threads, refetchLimit } = getChatThreadsForRecordPage({
     links,
@@ -149,7 +157,7 @@ export const useChatThreadsForRecord = ({
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       variables: { filter },
     }),
     [filter],
@@ -184,7 +192,7 @@ export const useChatThreadsForRecord = ({
   const getAllLinkIdsToThread = async (threadId: string) => {
     if (
       !isRecordLinkable ||
-      !canReadObjectRecords ||
+      !canReadSomeRecords ||
       !isDefined(junctionConfig) ||
       !isDefined(filter)
     ) {

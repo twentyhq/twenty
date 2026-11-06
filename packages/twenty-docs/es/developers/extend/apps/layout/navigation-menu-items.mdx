@@ -38,8 +38,11 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.FOLDER`      | Agrupa elementos anidados bajo una etiqueta          | `name` (y los elementos secundarios hacen referencia a la carpeta mediante `folderUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Abre la página de índice predeterminada de un objeto | `targetObjectUniversalIdentifier`                                                                       |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Abre un diseño de página independiente               | `pageLayoutUniversalIdentifier`                                                                         |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Abre una página integrada                            | `nativePageKey`: `'workflows'` o `'agents'`                                                             |
 
 * `position` controla el orden en la barra lateral.
+
+* Un elemento `NATIVE_PAGE` se oculta para los miembros que no tienen el permiso de la página (Flujos de trabajo para `'workflows'`, IA para `'agents'`).
 
 * El enum también contiene `NavigationMenuItemType.RECORD`, que se usa internamente para los favoritos de registros creados por el usuario, y `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, que se usa para los canales de chat fijados a favoritos. Ninguno de los dos se puede usar desde un manifiesto de aplicación (no hay ningún campo para hacer referencia a un registro o a un canal).
 

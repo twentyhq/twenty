@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
@@ -5,9 +6,12 @@ import {
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const AGG_FIELD_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const OWNER_FIELD_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
@@ -134,18 +138,10 @@ describe('get_dashboard tool', () => {
       },
     };
 
-    const tool = createGetDashboardTool(
-      deps as unknown as Pick<
-        DashboardToolDependencies,
-        | 'pageLayoutService'
-        | 'workspaceOrmManager'
-        | 'flatEntityMapsCacheService'
-      >,
-      {
-        workspaceId: WORKSPACE_ID,
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
-      },
-    );
+    const tool = createGetDashboardTool(deps, {
+      workspaceId: WORKSPACE_ID,
+      authContext: AUTH_CONTEXT,
+    });
 
     const result = await tool.execute({ dashboardId: dashboard.id });
 

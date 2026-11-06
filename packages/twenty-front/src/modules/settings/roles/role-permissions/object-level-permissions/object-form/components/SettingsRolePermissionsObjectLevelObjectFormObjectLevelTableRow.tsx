@@ -10,10 +10,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type ObjectPermission, type Role } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledPermissionContent = styled.div`
   align-items: center;
@@ -52,6 +52,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     settingsDraftRoleObjectPermissions,
     roleId,
   }: SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRowProps) => {
+    const { t } = useLingui();
     const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
       roleId,

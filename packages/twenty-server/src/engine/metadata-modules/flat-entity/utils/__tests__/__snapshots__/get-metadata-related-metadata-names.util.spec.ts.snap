@@ -41,6 +41,12 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadataOption 1`] = `
+[
+  "fieldMetadata",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldPermission 1`] = `
 [
   "role",

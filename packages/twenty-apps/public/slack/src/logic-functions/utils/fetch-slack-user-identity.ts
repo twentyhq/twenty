@@ -23,7 +23,7 @@ export const fetchSlackUserIdentity = async ({
   client,
   slackUserId,
 }: {
-  client: WebClient;
+  client: { users: Pick<WebClient['users'], 'info'> };
   slackUserId: string | undefined;
 }): Promise<SlackUserIdentity | undefined> => {
   if (!isNonEmptyString(slackUserId)) {

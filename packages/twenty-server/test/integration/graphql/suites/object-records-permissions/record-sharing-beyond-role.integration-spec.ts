@@ -25,13 +25,15 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -236,6 +238,82 @@ describe('Records shared beyond the role that can access their object', () => {
     expect((await renameAsJony('Not allowed')).body.errors).toBeDefined();
   });
 
+  it('should answer access questions for the member from their shares', async () => {
+    const principalPermissionsService =
+      getAppProviderByClassName<PrincipalPermissionsService>(
+        'PrincipalPermissionsService',
+      );
+    const recordPermissionsService =
+      getAppProviderByClassName<RecordPermissionsService>(
+        'RecordPermissionsService',
+      );
+    const { flatObjectMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(workspaceId, ['flatObjectMetadataMaps']);
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new Error('The object under test is not cached');
+    }
+
+    const buildJonyPrincipals = async () =>
+      principalPermissionsService.buildPermissionsPrincipals({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      });
+
+    expect(
+      await recordPermissionsService.canReadSomeRecords({
+        principals: await buildJonyPrincipals(),
+        objectMetadataId: flatObjectMetadata.id,
+      }),
+    ).toBe(false);
+
+    await setShare({ principal: JONY });
+
+    const principals = await buildJonyPrincipals();
+
+    expect(
+      await recordPermissionsService.canReadSomeRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      }),
+    ).toBe(true);
+    expect(
+      await recordPermissionsService.canUpdateSomeRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      }),
+    ).toBe(false);
+    expect(
+      await recordPermissionsService.canReadRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: [OTHER_RECORD_ID],
+      }),
+    ).toBe(false);
+    expect(
+      await recordPermissionsService.canReadRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: [SHARED_RECORD_ID],
+      }),
+    ).toBe(true);
+    expect(
+      await recordPermissionsService.canReadRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+      }),
+    ).toBe(false);
+  });
+
   it('should let an edit grant edit, but never delete or manage access', async () => {
     await setShare({
       principal: JONY,
@@ -424,7 +502,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should deliver events of the records named for the member only', async () => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
-    const resolveAdmittedRecordIds = async () => {
+    const resolveReadableRecordIds = async () => {
       const { flatObjectMetadataMaps } =
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
@@ -438,10 +516,14 @@ describe('Records shared beyond the role that can access their object', () => {
         throw new Error('Test object metadata is missing');
       }
 
-      return getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      )
-        .buildEventRecordAccessGate({
+      return getAppProviderByClassName<RecordPermissionsService>(
+        'RecordPermissionsService',
+      ).findReadableEventRecordIds({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+        eventBatch: {
           name: `${OBJECT_NAME}.updated`,
           workspaceId,
           objectMetadata,
@@ -449,23 +531,17 @@ describe('Records shared beyond the role that can access their object', () => {
             recordId,
             properties: { after: { id: recordId } },
           })) as ObjectRecordEvent[],
-        })
-        .resolveAdmittedRecordIds({
-          workspaceId: workspaceId,
-          intersectionOf: { userWorkspaceRoleId: memberRoleId },
-          workspaceMember: {
-            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
-        });
+        },
+      });
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect([...(await resolveReadableRecordIds())]).toEqual([SHARED_RECORD_ID]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {

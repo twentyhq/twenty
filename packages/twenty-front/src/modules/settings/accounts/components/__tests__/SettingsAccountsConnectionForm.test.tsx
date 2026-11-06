@@ -17,7 +17,12 @@ type ConnectionFormWrapperProps = {
 const ConnectionFormWrapper = ({
   existingProtocols,
 }: ConnectionFormWrapperProps) => {
-  const { control } = useForm<ConnectionFormData>();
+  const { control } = useForm<ConnectionFormData>({
+    defaultValues: {
+      IMAP: { host: '', port: 993 },
+      SMTP: { host: '', port: 587 },
+    },
+  });
 
   return (
     <SettingsAccountsConnectionForm
@@ -68,6 +73,28 @@ it('opts every credential field out of third-party password managers', () => {
     'CalDAV Password',
   ]) {
     expectPasswordManagersIgnored(screen.getByLabelText(label));
+  }
+});
+
+it('lets a custom port replace the default once every digit is deleted', async () => {
+  renderConnectionForm();
+
+  for (const [label, defaultPort] of [
+    ['IMAP Port', 993],
+    ['SMTP Port', 587],
+  ] as const) {
+    const portInput = screen.getByLabelText(label);
+
+    expect(portInput).toHaveValue(defaultPort);
+
+    await userEvent.clear(portInput);
+
+    expect(portInput).toHaveValue(null);
+    expect(portInput).toHaveAttribute('placeholder', String(defaultPort));
+
+    await userEvent.type(portInput, '465');
+
+    expect(portInput).toHaveValue(465);
   }
 });
 

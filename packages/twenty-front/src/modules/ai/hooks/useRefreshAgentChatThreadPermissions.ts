@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -13,7 +13,7 @@ export const useRefreshAgentChatThreadPermissions = () => {
     async (threadIds: string[]) => {
       const objectMetadata = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
-          objectName: CoreObjectNameSingular.AgentChatThread,
+          objectName: StandardObjectNameSingular.AgentChatThread,
           objectNameType: 'singular',
         }),
       );

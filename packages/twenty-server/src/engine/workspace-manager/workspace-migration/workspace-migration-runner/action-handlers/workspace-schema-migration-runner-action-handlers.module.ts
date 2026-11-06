@@ -116,6 +116,9 @@ import { DeleteAgentChatChannelRoleActionHandlerService } from 'src/engine/works
 import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
 import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
 import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
+import { CreateFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/create-field-metadata-option-action-handler.service';
+import { DeleteFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/delete-field-metadata-option-action-handler.service';
+import { UpdateFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/update-field-metadata-option-action-handler.service';
 import { CreateRelatedRecordPathActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/related-record-path/services/create-related-record-path-action-handler.service';
 import { CreateValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/create-validation-rule-action-handler.service';
 import { DeleteRelatedRecordPathActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/related-record-path/services/delete-related-record-path-action-handler.service';
@@ -132,6 +135,7 @@ import { DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/eng
 import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/validate-foreign-key-deferred-action-handler.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -139,6 +143,7 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     MetricsModule,
     SecretEncryptionModule,
     WorkflowDeletionModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     CreateWorkflowActionHandlerService,
@@ -286,6 +291,9 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     CreateAgentChatChannelRoleActionHandlerService,
     UpdateAgentChatChannelRoleActionHandlerService,
     DeleteAgentChatChannelRoleActionHandlerService,
+    CreateFieldMetadataOptionActionHandlerService,
+    UpdateFieldMetadataOptionActionHandlerService,
+    DeleteFieldMetadataOptionActionHandlerService,
     CreateRelatedRecordPathActionHandlerService,
     CreateValidationRuleActionHandlerService,
     UpdateRelatedRecordPathActionHandlerService,

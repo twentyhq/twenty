@@ -4,6 +4,8 @@ import { chargeCredits } from 'twenty-sdk/billing';
 
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-company-required-field-options';
+import { PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-company-required-fields-env-var-name';
 import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
@@ -92,8 +94,13 @@ const buildHarness = (configs: RecordConfig[]) => {
   const updateManyStatus = vi.fn(async () => undefined);
 
   const extractParams = vi.fn(
-    ({ node }: { node: FakeNode; minLikelihoods: MinLikelihoods }) =>
-      node.hasIdentifier ? { id: node.id } : undefined,
+    ({
+      node,
+    }: {
+      node: FakeNode;
+      minLikelihoods: MinLikelihoods;
+      required?: string;
+    }) => (node.hasIdentifier ? { id: node.id } : undefined),
   );
 
   const buildMatchedData = vi.fn(
@@ -115,6 +122,8 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     pricePerMatchDollars: FAKE_PRICE_PER_MATCH_DOLLARS,
+    requiredFieldsEnvVarName: PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME,
+    requiredFieldOptions: PDL_COMPANY_REQUIRED_FIELD_OPTIONS,
     minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
     weakIdentifierMinLikelihoodEnvVarName:
       PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
@@ -159,6 +168,45 @@ describe('runBatchEnrichment', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+  });
+
+  it('resolves the required fields once and passes them to every chunk', async () => {
+    vi.stubEnv(
+      PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME,
+      '["industry","employee_count"]',
+    );
+    const ids = buildRecordIds(101);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.readRecords).toHaveBeenCalledTimes(2);
+    expect(harness.extractParams).toHaveBeenCalledTimes(101);
+    for (const [extractParamsArgs] of harness.extractParams.mock.calls) {
+      expect(extractParamsArgs.required).toBe('industry AND employee_count');
+    }
+  });
+
+  it('rejects invalid required fields before reading or billing records', async () => {
+    const harness = buildHarness([{ id: 'a' }]);
+
+    await expect(
+      runBatchEnrichment({
+        client: CLIENT,
+        input: { records: ['a'], requiredFields: ['work_email'] },
+        adapter: harness.adapter,
+      }),
+    ).rejects.toThrow(
+      'Required fields must be a selection of supported output fields.',
+    );
+
+    expect(harness.readRecords).not.toHaveBeenCalled();
+    expect(harness.enrichBatch).not.toHaveBeenCalled();
+    expect(chargeCredits).not.toHaveBeenCalled();
   });
 
   it('resolves the likelihoods once and passes them to every chunk', async () => {

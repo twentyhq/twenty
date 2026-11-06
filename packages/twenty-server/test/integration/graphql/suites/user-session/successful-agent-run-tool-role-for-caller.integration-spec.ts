@@ -13,13 +13,11 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;
-  applicationRoleId: string;
   applicationToken: string;
   janeApplicationToken: string;
 };
@@ -27,8 +25,9 @@ type GlobalTestContext = {
 type TestContext = {
   token: (globalContext: GlobalTestContext) => string;
   runAsWorkspaceMemberId?: string;
-  roleTargetId: string;
-  callerRoleSource: 'userWorkspaceRoleId' | 'apiKeyRoleId';
+  expectedCaller:
+    | { type: 'user'; workspaceMemberId: string }
+    | { type: 'apiKey'; apiKey: { id: string } };
 };
 
 const callerRunTestCases: EachTestingContext<TestContext>[] = [
@@ -36,16 +35,20 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     title: 'a member session runs another application agent',
     context: {
       token: () => APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      callerRoleSource: 'userWorkspaceRoleId',
+      expectedCaller: {
+        type: 'user',
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
     },
   },
   {
     title: 'an application token issued for a member runs its own agent',
     context: {
       token: (globalContext) => globalContext.janeApplicationToken,
-      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      callerRoleSource: 'userWorkspaceRoleId',
+      expectedCaller: {
+        type: 'user',
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      },
     },
   },
   {
@@ -53,29 +56,23 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: (globalContext) => globalContext.applicationToken,
       runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      callerRoleSource: 'userWorkspaceRoleId',
+      expectedCaller: {
+        type: 'user',
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
     },
   },
   {
     title: 'an API key runs an application agent',
     context: {
       token: () => API_KEY_ACCESS_TOKEN,
-      roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
-      callerRoleSource: 'apiKeyRoleId',
+      expectedCaller: {
+        type: 'apiKey',
+        apiKey: { id: API_KEY_DATA_SEED_IDS.ID_1 },
+      },
     },
   },
 ];
-
-const findCallerRoleId = async (roleTargetId: string): Promise<string> => {
-  const [{ roleId }] = await globalThis.testDataSource.query(
-    `SELECT "roleId" FROM core."roleTarget"
-     WHERE $1 IN ("userWorkspaceId", "apiKeyId") AND "workspaceId" = $2`,
-    [roleTargetId, SEED_APPLE_WORKSPACE_ID],
-  );
-
-  return roleId;
-};
 
 describe('Agent run tools should be limited to the caller role', () => {
   let application: ApplicationWithResources;
@@ -92,12 +89,6 @@ describe('Agent run tools should be limited to the caller role', () => {
         [application.agentId],
       );
 
-    const [{ defaultRoleId: applicationRoleId }] =
-      await globalThis.testDataSource.query(
-        `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
-        [application.id],
-      );
-
     const [applicationTokenPair, janeApplicationTokenPair] = await Promise.all([
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -110,7 +101,6 @@ describe('Agent run tools should be limited to the caller role', () => {
 
     globalTestContext = {
       agentUniversalIdentifier,
-      applicationRoleId,
       applicationToken: applicationTokenPair.applicationAccessToken.token,
       janeApplicationToken:
         janeApplicationTokenPair.applicationAccessToken.token,
@@ -128,7 +118,7 @@ describe('Agent run tools should be limited to the caller role', () => {
   });
 
   it.each(eachTestingContextFilter(callerRunTestCases))(
-    'should restrict the agent role to the caller and application roles when $title',
+    'should restrict the agent role to the caller and the agent application when $title',
     async ({ context }) => {
       const { executionContext } = await captureAgentRunExecution({
         agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
@@ -136,11 +126,11 @@ describe('Agent run tools should be limited to the caller role', () => {
         runAsWorkspaceMemberId: context.runAsWorkspaceMemberId,
       });
 
-      expect(executionContext.agentRunRoleIds).toEqual({
-        [context.callerRoleSource]: await findCallerRoleId(
-          context.roleTargetId,
-        ),
-        applicationRoleId: globalTestContext.applicationRoleId,
+      expect(executionContext.authContext).toMatchObject({
+        ...context.expectedCaller,
+        workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
+        agentId: application.agentId,
+        application: expect.objectContaining({ id: application.id }),
       });
     },
   );
@@ -151,8 +141,11 @@ describe('Agent run tools should be limited to the caller role', () => {
       token: globalTestContext.applicationToken,
     });
 
-    expect(executionContext.agentRunRoleIds).toEqual({
-      applicationRoleId: globalTestContext.applicationRoleId,
+    expect(executionContext.authContext).toMatchObject({
+      type: 'application',
+      workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
+      agentId: application.agentId,
+      application: expect.objectContaining({ id: application.id }),
     });
   });
 });

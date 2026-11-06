@@ -5,15 +5,14 @@ import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 import { installElementClickMethodPolyfill } from '../installElementClickMethodPolyfill';
 
-const createPolyfillDocument = (): Document => {
+const createPolyfillDocument = () => {
   const polyfillWindow = new Window();
 
   installEventConstructorPolyfills({
     globalScope: toGlobalScopeRecord(polyfillWindow),
   });
   installElementClickMethodPolyfill(polyfillWindow.Element.prototype);
-
-  return polyfillWindow.document as unknown as Document;
+  return polyfillWindow.document;
 };
 
 describe('installElementClickMethodPolyfill', () => {

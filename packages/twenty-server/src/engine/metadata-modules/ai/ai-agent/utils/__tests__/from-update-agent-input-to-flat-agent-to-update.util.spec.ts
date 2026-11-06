@@ -140,7 +140,7 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     const { flatAgentToUpdate } = updateAsWorkspace({
       id: appAgent.id,
       label: 'Market researcher',
-      isActive: null as unknown as boolean,
+      isActive: null,
     });
 
     expect(flatAgentToUpdate.isActive).toBe(true);

@@ -30,9 +30,8 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarChannelEventAssociationRepository =
-              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             for (;;) {
@@ -81,14 +80,12 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
-                { shouldBypassPermissionChecks: true },
               );
             const calendarChannelEventAssociationRepository =
-              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             for (
@@ -135,14 +132,12 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
-                { shouldBypassPermissionChecks: true },
               );
             const calendarChannelEventAssociationRepository =
-              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             let cursor: string | undefined;

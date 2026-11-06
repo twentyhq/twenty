@@ -4,12 +4,23 @@ const IDENTIFIER_PATTERN = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 const PROTOTYPE_KEY = '__proto__';
 
+const TYPESCRIPT_EXPRESSION = Symbol('typescriptExpression');
+
+export type TypescriptExpression = { [TYPESCRIPT_EXPRESSION]: string };
+
+export const typescriptExpression = (source: string): TypescriptExpression => ({
+  [TYPESCRIPT_EXPRESSION]: source,
+});
+
+const isTypescriptExpression = (value: object): value is TypescriptExpression =>
+  TYPESCRIPT_EXPRESSION in value;
+
 export type EnumSymbolResolver = (params: {
   path: string[];
   value: string;
 }) => string | undefined;
 
-const printString = (value: string): string =>
+export const printString = (value: string): string =>
   `'${value
     .replace(/\\/g, '\\\\')
     .replace(/'/g, "\\'")
@@ -74,6 +85,10 @@ export const printTypescriptValue = ({
     );
 
     return `[\n${items.join('\n')}\n${indentOf(depth)}]`;
+  }
+
+  if (typeof value === 'object' && isTypescriptExpression(value)) {
+    return value[TYPESCRIPT_EXPRESSION];
   }
 
   if (typeof value === 'object') {

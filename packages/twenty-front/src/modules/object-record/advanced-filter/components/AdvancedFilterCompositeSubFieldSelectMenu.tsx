@@ -8,11 +8,11 @@ import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/recor
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterCompositeSubFieldSelectMenuProps = {
   recordFilterId: string;
@@ -23,6 +23,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   recordFilterId,
   fieldMetadataItem,
 }: AdvancedFilterCompositeSubFieldSelectMenuProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { applyAdvancedFilterCompositeSubField } =
     useApplyAdvancedFilterCompositeSubField();

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -9,7 +10,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 
 import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
 import { ToolCategory } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -17,7 +18,7 @@ import { resolveObjectIcon } from 'src/engine/core-modules/tool-provider/utils/r
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import type { DashboardToolWorkspaceService } from 'src/modules/dashboard/tools/services/dashboard-tool.workspace-service';
 
 @Injectable()
@@ -28,7 +29,7 @@ export class DashboardToolProvider implements ToolProvider {
     @Optional()
     @Inject(DASHBOARD_TOOL_SERVICE_TOKEN)
     private readonly dashboardToolService: DashboardToolWorkspaceService | null,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -37,11 +38,10 @@ export class DashboardToolProvider implements ToolProvider {
       return false;
     }
 
-    return this.permissionsService.checkRolesPermissions(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.LAYOUTS,
-    );
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      permissionFlag: PermissionFlagType.LAYOUTS,
+    });
   }
 
   async generateDescriptors(
@@ -57,7 +57,7 @@ export class DashboardToolProvider implements ToolProvider {
     const icon = await resolveObjectIcon(
       this.flatEntityMapsCacheService,
       context.workspaceId,
-      CoreObjectNameSingular.Dashboard,
+      StandardObjectNameSingular.Dashboard,
     );
 
     return toolSetToDescriptors(toolSet, ToolCategory.DASHBOARD, {
@@ -90,13 +90,13 @@ export class DashboardToolProvider implements ToolProvider {
   private async buildToolSet(
     context: ToolProviderContext,
   ): Promise<ToolSet | null> {
-    if (!this.dashboardToolService) {
+    if (!this.dashboardToolService || !isDefined(context.authContext)) {
       return null;
     }
 
     return this.dashboardToolService.generateDashboardTools(
       context.workspaceId,
-      context.rolePermissionConfig,
+      context.authContext,
     );
   }
 }

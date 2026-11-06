@@ -3,7 +3,7 @@ import { isBoolean, isEnum, isObject, isString } from 'class-validator';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import {
   GraphqlDirectExecutionException,

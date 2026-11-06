@@ -1,15 +1,15 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { AddTimelineActivityTypeSnapshotCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-workspace-command-1787471608319-add-timeline-activity-type-snapshot.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
-const APPLICATION_UNIVERSAL_IDENTIFIER =
-  '00000000-0000-4000-8000-000000000003';
+const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000003';
 describe('AddTimelineActivityTypeSnapshotCommand', () => {
   it('repairs rolling-upgrade rows while compatibility fields stay nullable', async () => {
     const validateBuildAndRunWorkspaceMigration = jest
@@ -38,8 +38,7 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
             linked: {
               id: '00000000-0000-4000-8000-000000000008',
               applicationId: APPLICATION_ID,
-              universalIdentifier:
-                '00000000-0000-4000-8000-000000000009',
+              universalIdentifier: '00000000-0000-4000-8000-000000000009',
               name: 'recordLinked',
               label: 'was linked by',
               action: 'linked',
@@ -50,23 +49,33 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
           },
         },
       });
-    const command = new AddTimelineActivityTypeSnapshotCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              id: APPLICATION_ID,
-              universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      { getOrRecompute } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunWorkspaceMigration,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        AddTimelineActivityTypeSnapshotCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  id: APPLICATION_ID,
+                  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+              }),
+          },
+        },
+        { provide: WorkspaceCacheService, useValue: { getOrRecompute } },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunWorkspaceMigration,
+          },
+        },
+      ],
+    }).compile();
+    const command = module.get(AddTimelineActivityTypeSnapshotCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -97,8 +106,7 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
   });
 
   it('uses the last updated identifier to keyset large snapshot backfills', async () => {
-    const lastTimelineActivityId =
-      'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const lastTimelineActivityId = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
     const query = jest
       .fn()
       .mockResolvedValueOnce([[], 0])
@@ -107,53 +115,63 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
         5000,
       ])
       .mockResolvedValueOnce([[], 0]);
-    const command = new AddTimelineActivityTypeSnapshotCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              id: APPLICATION_ID,
-              universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: jest
-          .fn()
-          .mockResolvedValueOnce({
-            flatObjectMetadataMaps: {
-              byUniversalIdentifier: {
-                [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {
-                  universalIdentifier:
-                    STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+    const module = await Test.createTestingModule({
+      providers: [
+        AddTimelineActivityTypeSnapshotCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  id: APPLICATION_ID,
+                  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
                 },
-              },
-            },
-          })
-          .mockResolvedValueOnce({
-            flatFieldMetadataMaps: {
-              byUniversalIdentifier: {
-                [STANDARD_OBJECTS.timelineActivity.fields
-                  .timelineActivityTypeSnapshot.universalIdentifier]: {},
-              },
-            },
-          })
-          .mockResolvedValueOnce({
-            flatTimelineActivityTypeMaps: {
-              byUniversalIdentifier: {
-                linked: {
-                  id: '00000000-0000-4000-8000-000000000008',
-                  action: 'linked',
-                  objectUniversalIdentifier: null,
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest
+              .fn()
+              .mockResolvedValueOnce({
+                flatObjectMetadataMaps: {
+                  byUniversalIdentifier: {
+                    [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {
+                      universalIdentifier:
+                        STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+                    },
+                  },
                 },
-              },
-            },
-          }),
-      } as unknown as WorkspaceCacheService,
-      {} as WorkspaceMigrationValidateBuildAndRunService,
-    );
+              })
+              .mockResolvedValueOnce({
+                flatFieldMetadataMaps: {
+                  byUniversalIdentifier: {
+                    [STANDARD_OBJECTS.timelineActivity.fields
+                      .timelineActivityTypeSnapshot.universalIdentifier]: {},
+                  },
+                },
+              })
+              .mockResolvedValueOnce({
+                flatTimelineActivityTypeMaps: {
+                  byUniversalIdentifier: {
+                    linked: {
+                      id: '00000000-0000-4000-8000-000000000008',
+                      action: 'linked',
+                      objectUniversalIdentifier: null,
+                    },
+                  },
+                },
+              }),
+          },
+        },
+        { provide: WorkspaceMigrationValidateBuildAndRunService, useValue: {} },
+      ],
+    }).compile();
+    const command = module.get(AddTimelineActivityTypeSnapshotCommand);
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,

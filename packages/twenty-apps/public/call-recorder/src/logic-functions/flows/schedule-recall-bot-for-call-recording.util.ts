@@ -30,7 +30,7 @@ export type ScheduleRecallBotForCallRecordingResult =
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<ScheduleRecallBotForCallRecordingResult> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;

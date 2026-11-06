@@ -1,15 +1,14 @@
 /* @license Enterprise */
 
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { IconUserCircle } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Field } from 'twenty-ui/primitives/input';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
@@ -30,6 +29,7 @@ import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelectProps =
   {
@@ -42,12 +42,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
     onSelect,
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelectProps) => {
+    const { t } = useLingui();
     const { getIcon } = useIcons();
     const [searchInput, setSearchInput] = useState('');
 
     const { objectMetadataItem: workspaceMemberMetadataItem } =
       useObjectMetadataItem({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       });
 
     const selectedFieldMetadataItem = useAtomComponentSelectorValue(
@@ -85,7 +86,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
     const isRelationToWorkspaceMember =
       selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
       selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.WorkspaceMember;
+        StandardObjectNameSingular.WorkspaceMember;
 
     const getCompatibleWorkspaceMemberFields = () => {
       if (!isDefined(workspaceMemberMetadataItem)) {

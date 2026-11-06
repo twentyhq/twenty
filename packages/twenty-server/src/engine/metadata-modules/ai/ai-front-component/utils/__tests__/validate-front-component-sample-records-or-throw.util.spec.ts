@@ -9,13 +9,24 @@ it('allows selected fields and record IDs', () => {
   ).not.toThrow();
 });
 
-it('allows an empty mock dataset', () => {
+it('allows null and falsy values for selected fields', () => {
   expect(() =>
     validateFrontComponentSampleRecordsOrThrow({
-      sampleRecords: [],
-      selectedFields: ['name'],
+      sampleRecords: [
+        { employees: 0, idealCustomerProfile: false, city: null },
+      ],
+      selectedFields: ['employees', 'idealCustomerProfile', 'city'],
     }),
   ).not.toThrow();
+});
+
+it('rejects samples missing a selected field', () => {
+  expect(() =>
+    validateFrontComponentSampleRecordsOrThrow({
+      sampleRecords: [{ name: 'Acme', employees: 50 }, { name: 'Nova' }],
+      selectedFields: ['name', 'employees'],
+    }),
+  ).toThrow('Sample records must include every selected field.');
 });
 
 it('rejects a field outside the query selection', () => {

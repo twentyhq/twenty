@@ -7,13 +7,15 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEye, useIcons } from 'twenty-ui/icon';
+import { IconEye } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 export const ViewFieldsHiddenDropdownSection = () => {
+  const { t } = useLingui();
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
     ObjectOptionsDropdownContext,
   );

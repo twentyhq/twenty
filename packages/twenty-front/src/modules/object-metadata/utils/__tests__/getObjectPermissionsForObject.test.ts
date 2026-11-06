@@ -1,37 +1,29 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
-
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 const OBJECT_METADATA_ID = 'object-metadata-id';
 
 describe('getObjectPermissionsForObject', () => {
-  it('should allow everything with the ObjectPermissions shape when the object has no permissions entry', () => {
+  it('should allow everything when the object has no permissions entry', () => {
     expect(getObjectPermissionsForObject({}, OBJECT_METADATA_ID)).toEqual({
-      objectMetadataId: OBJECT_METADATA_ID,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
+      canReadAllRecords: true,
+      canUpdateAllRecords: true,
+      canSoftDeleteAllRecords: true,
+      canDestroyAllRecords: true,
       restrictedFields: {},
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
     });
   });
 
   it('should return the permissions of the requested object', () => {
-    const restrictedObjectPermissions: ObjectPermissions & {
-      objectMetadataId: string;
-    } = {
-      objectMetadataId: OBJECT_METADATA_ID,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
+    const restrictedObjectPermissions: ObjectRecordsPermissions = {
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
       restrictedFields: {
         'field-metadata-id': { canRead: false, canUpdate: false },
       },
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
+      rowLevelRecordsPermissions: null,
     };
 
     expect(
@@ -40,8 +32,7 @@ describe('getObjectPermissionsForObject', () => {
           [OBJECT_METADATA_ID]: restrictedObjectPermissions,
           'other-object-metadata-id': {
             ...restrictedObjectPermissions,
-            objectMetadataId: 'other-object-metadata-id',
-            canReadObjectRecords: false,
+            canReadAllRecords: false,
           },
         },
         OBJECT_METADATA_ID,

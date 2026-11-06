@@ -38,6 +38,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
+import { isNonEmptyBlob } from '@/front-components/utils/isNonEmptyBlob';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -56,7 +57,7 @@ import { useStore } from 'jotai';
 import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -529,8 +530,7 @@ export const useFrontComponentExecutionContext = ({
     async (file, params) => {
       // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
-        !(file instanceof Blob) ||
-        file.size === 0 ||
+        !isNonEmptyBlob(file) ||
         !isDefined(params) ||
         !isNonEmptyString(params.fieldMetadataId)
       ) {

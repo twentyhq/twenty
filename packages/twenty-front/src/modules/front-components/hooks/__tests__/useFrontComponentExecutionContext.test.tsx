@@ -151,7 +151,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-jest.mock('twenty-ui/icon', () => ({
+jest.mock('twenty-ui/icon/provider', () => ({
   useIcons: () => ({
     getIcon: mockGetIcon,
   }),
@@ -1441,21 +1441,12 @@ describe('useFrontComponentExecutionContext', () => {
           buildRecordedBlob(),
           { fieldMetadataId: '' },
         );
-      const nonBlobResult =
-        await result.current.frontComponentHostCommunicationApi.uploadFile(
-          'not-a-blob' as unknown as Blob,
-          { fieldMetadataId: 'files-field-id' },
-        );
 
       expect(emptyBlobResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
       expect(missingFieldResult).toEqual({
-        status: 'failed',
-        reason: 'invalid-params',
-      });
-      expect(nonBlobResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });

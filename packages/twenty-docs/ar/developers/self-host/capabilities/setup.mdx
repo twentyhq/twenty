@@ -475,7 +475,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+يحمّل برنامج تشغيل Lambda طبقة تبعيات كل تطبيق إلى `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`، وهي حاوية تملكها في المنطقة نفسها التي توجد فيها وظائفك. عند عدم تعيينه، يستخدم برنامج التشغيل حاوية التخزين لديك (`STORAGE_S3_NAME`). إذا لم يتم تعيين أي منهما، تفشل الدوال المنطقية بسبب خطأ في التهيئة.
 
 **لتعطيل الوظائف المنطقية:**
 

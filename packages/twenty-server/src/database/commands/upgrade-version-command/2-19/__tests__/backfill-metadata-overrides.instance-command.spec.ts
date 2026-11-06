@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1782986476000-backfill-metadata-overrides';
 
@@ -12,7 +12,9 @@ describe('BackfillMetadataOverridesSlowInstanceCommand', () => {
   describe('runDataMigration', () => {
     it('copies standardOverrides into overrides for both tables', async () => {
       const query = jest.fn().mockResolvedValue([{ count: 3 }]);
-      const dataSource = { query } as unknown as DataSource;
+      const dataSource = new DataSource({ type: 'postgres' });
+
+      dataSource.query = query;
 
       await command.runDataMigration(dataSource);
 
@@ -35,7 +37,9 @@ describe('BackfillMetadataOverridesSlowInstanceCommand', () => {
         .mockResolvedValueOnce([{ count: 5 }]) // objectMetadata before
         .mockResolvedValueOnce(undefined) // UPDATE backfill
         .mockResolvedValueOnce([{ count: 4 }]); // objectMetadata after
-      const dataSource = { query } as unknown as DataSource;
+      const dataSource = new DataSource({ type: 'postgres' });
+
+      dataSource.query = query;
 
       await expect(command.runDataMigration(dataSource)).rejects.toThrow(
         /"isActive" changed on "core"\."objectMetadata"/,

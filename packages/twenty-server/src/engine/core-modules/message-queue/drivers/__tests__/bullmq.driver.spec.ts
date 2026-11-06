@@ -1,4 +1,4 @@
-import { type Job, Worker } from 'bullmq';
+import { type Job } from 'bullmq';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -22,9 +22,12 @@ const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
-const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
+const mockTwentyConfigService = { get: jest.fn() };
 const mockAllocateTickets = jest.fn();
 const mockRecordDispatch = jest.fn();
+const mockWorkerConstructor = jest
+  .fn()
+  .mockImplementation(() => ({ on: jest.fn() }));
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -37,7 +40,9 @@ jest.mock('bullmq', () => ({
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
     getJobCountByTypes: mockGetJobCountByTypes,
   })),
-  Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
+  Worker: jest
+    .fn()
+    .mockImplementation((...args: unknown[]) => mockWorkerConstructor(...args)),
   MetricsTime: { ONE_WEEK: 1 },
   PRIORITY_LIMIT: jest.requireActual('bullmq').PRIORITY_LIMIT,
 }));
@@ -68,7 +73,7 @@ const buildWorkspaceJobScope = (
 describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
-    {} as never,
+    { incrementCounterForEvent: jest.fn() } as never,
     mockTwentyConfigService as never,
     {} as never,
   );
@@ -89,7 +94,7 @@ describe('BullMQDriver deduplication', () => {
   });
 
   describe.each([undefined, 0, 2])('job priority %s', (priority) => {
-    it('uses the caller priority or the shared default to add', async () => {
+    it('without a fair ticket, uses the caller priority or the shared default to add', async () => {
       await driver.add(
         MessageQueue.workspaceQueue,
         'job',
@@ -104,7 +109,7 @@ describe('BullMQDriver deduplication', () => {
       );
     });
 
-    it('uses the caller priority or the shared default to bulkAdd', async () => {
+    it('without a fair ticket, uses the caller priority or the shared default to bulkAdd', async () => {
       await driver.bulkAdd(
         MessageQueue.workspaceQueue,
         'job',
@@ -251,8 +256,7 @@ describe('BullMQDriver progress', () => {
       driver.work(MessageQueue.workspaceQueue, async (queueJob) => {
         await queueJob.updateProgress(progress);
       });
-
-      const processor = jest.mocked(Worker).mock.calls[0][1];
+      const processor = mockWorkerConstructor.mock.calls[0][1];
 
       if (typeof processor !== 'function') {
         throw new Error('Worker processor was not registered');
@@ -283,10 +287,8 @@ describe('BullMQDriver job change events', () => {
 
   const getWorkerListener = (eventName: string) => {
     driver.work(MessageQueue.workspaceQueue, async () => {});
-
-    const workerInstances = jest.mocked(Worker).mock.results;
-    const worker = workerInstances[workerInstances.length - 1]
-      .value as unknown as { on: jest.Mock };
+    const workerInstances = mockWorkerConstructor.mock.results;
+    const worker = workerInstances[workerInstances.length - 1].value;
     const listener = worker.on.mock.calls.find(
       ([name]: [string, unknown]) => name === eventName,
     )?.[1];
@@ -313,7 +315,7 @@ describe('BullMQDriver job change events', () => {
         attemptsMade: 0,
         progress: 40,
         timestamp: 1,
-      } as unknown as Job,
+      },
       40,
     );
 
@@ -339,7 +341,7 @@ describe('BullMQDriver job change events', () => {
         attemptsMade: 0,
         progress: 40,
         timestamp: 1,
-      } as unknown as Job,
+      },
       40,
     );
 
@@ -363,8 +365,7 @@ describe('BullMQDriver queue wait metric', () => {
   ) => {
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
-
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = mockWorkerConstructor.mock.calls[0][1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');
@@ -377,7 +378,7 @@ describe('BullMQDriver queue wait metric', () => {
       updateData: jest.fn(),
       updateProgress: jest.fn(),
       ...job,
-    } as unknown as Job);
+    });
   };
 
   beforeAll(() => {
@@ -540,9 +541,7 @@ describe('BullMQDriver fair tickets', () => {
   const driver = new BullMQDriver(
     {} as never,
     { incrementCounterForEvent } as never,
-    {
-      get: jest.fn((key: string) => key === 'IS_WORKER_FAIRNESS_ENABLED'),
-    } as never,
+    { get: jest.fn() } as never,
     {} as never,
   );
 
@@ -767,28 +766,18 @@ describe('BullMQDriver fair tickets', () => {
 });
 
 describe('BullMQDriver fair dispatch', () => {
-  const processJob = async ({
-    isFairnessEnabled,
-  }: {
-    isFairnessEnabled: boolean;
-  }) => {
+  const processJob = async () => {
     const driver = new BullMQDriver(
       {} as never,
       { recordHistogram: jest.fn() } as never,
-      {
-        get: jest.fn(
-          (key: string) =>
-            key === 'IS_WORKER_FAIRNESS_ENABLED' && isFairnessEnabled,
-        ),
-      } as never,
+      { get: jest.fn() } as never,
       {} as never,
     );
 
     driver.register(MessageQueue.workflowQueue);
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
-
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = mockWorkerConstructor.mock.calls[0][1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');
@@ -803,21 +792,15 @@ describe('BullMQDriver fair dispatch', () => {
       attemptsStarted: 1,
       updateData: jest.fn(),
       updateProgress: jest.fn(),
-    } as unknown as Job);
+    });
   };
 
-  it('records the dispatch of a job when fairness is on', async () => {
-    await processJob({ isFairnessEnabled: true });
+  it('records the dispatch of a job', async () => {
+    await processJob();
 
     expect(mockRecordDispatch).toHaveBeenCalledWith({
       queueName: MessageQueue.workflowQueue,
       jobId: 'job-id',
     });
-  });
-
-  it('records nothing when fairness is off', async () => {
-    await processJob({ isFairnessEnabled: false });
-
-    expect(mockRecordDispatch).not.toHaveBeenCalled();
   });
 });

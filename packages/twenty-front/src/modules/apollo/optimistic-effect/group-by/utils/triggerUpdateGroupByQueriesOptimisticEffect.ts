@@ -15,7 +15,7 @@ import { getGroupByConnectionTypename, isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 type TriggerUpdateGroupByQueriesOptimisticEffectArgs = {
-  cache: ApolloCache;
+  cache: Pick<ApolloCache, 'modify'>;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   operation: 'create' | 'update' | 'delete';

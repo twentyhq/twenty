@@ -34,6 +34,7 @@ export default defineCommandMenuItem({
 | `isPinned` | No | When `true`, shows the command as a quick-action button in the top-right corner of the page |
 | `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'GLOBAL_OBJECT_CONTEXT'` (only on pages with an object context — index and record pages), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
 | `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records) |
+| `availabilityCoreObjectName` | No | Restrict the command to the pages of a built-in core object instead of a workspace object. Only `'workflow'` is supported (the Workflows list and a workflow's page). Cannot be combined with `availabilityObjectUniversalIdentifier` |
 | `conditionalAvailabilityExpression` | No | A boolean expression that dynamically controls visibility (see below) |
 | `conditionalPinnedExpression` | No | A boolean expression that narrows `isPinned`: the command shows as a quick-action button only while it holds, and stays in the command menu otherwise. Same syntax and variables as `conditionalAvailabilityExpression` |
 
@@ -98,6 +99,8 @@ These represent the current state of the page:
 | `targetObjectWritePermissions` | `object` | Write permissions for the target object |
 | `featureFlags` | `object` | Active feature flags |
 | `objectMetadataItem` | `object` | Metadata of the current object type |
+| `coreObjectName` | `string \| null` | Core object of the current page (`'workflow'` on the Workflows pages), otherwise `null` |
+| `currentView` | `object \| null` | The view shown on an index page, as `{ id, universalIdentifier }`, otherwise `null` |
 | `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter |
 
 ### Operators

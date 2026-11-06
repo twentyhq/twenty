@@ -10,7 +10,7 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
   children: ReactNode;
@@ -42,7 +42,10 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectMetadataItem.id,
   );
 
-  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  const hasObjectReadPermissions = canReachSomeRecords({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'select',
+  });
 
   const updateRecord = useContext(RecordTableUpdateContext);
 

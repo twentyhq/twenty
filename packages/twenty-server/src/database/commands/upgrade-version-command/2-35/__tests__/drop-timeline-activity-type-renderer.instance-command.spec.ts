@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787648000001-drop-timeline-activity-type-renderer';
 import { DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/drop-timeline-activity-type-renderer-upgrade-command-name.constant';
@@ -24,7 +24,11 @@ describe('DropTimelineActivityTypeRendererFastInstanceCommand', () => {
 
   it('drops and restores the renderer column', async () => {
     const query = jest.fn().mockResolvedValue(undefined);
-    const queryRunner = { query } as unknown as QueryRunner;
+    const queryRunner = new DataSource({
+      type: 'postgres',
+    }).createQueryRunner();
+
+    queryRunner.query = query;
 
     await command.up(queryRunner);
     await command.down(queryRunner);

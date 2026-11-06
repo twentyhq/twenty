@@ -11,17 +11,12 @@ import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/
 import { isEmailToolName } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-email-tool-name.util';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // An app proposes only calls it could run itself, checked with its own role; once
 // approved, the call runs with the member's access. An email needs none of the app's tools.
 @Injectable()
 export class AgentInboxProposalService {
-  constructor(
-    private readonly toolRegistryService: ToolRegistryService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  constructor(private readonly toolRegistryService: ToolRegistryService) {}
 
   async resolveApplicationProposal({
     workspaceId,
@@ -37,23 +32,7 @@ export class AgentInboxProposalService {
     }
 
     const authContext = workspaceAuthContextStorage.getStore();
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
-    const rolePermissionConfig = isDefined(authContext)
-      ? resolveRolePermissionConfig({
-          authContext,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap: {},
-          flatRoleTargetByAgentIdMaps: {},
-        })
-      : null;
-
-    if (
-      !isDefined(rolePermissionConfig) ||
-      !isDefined(application.defaultRoleId)
-    ) {
+    if (!isDefined(authContext) || !isDefined(application.defaultRoleId)) {
       return {
         error: `The application needs a default role to propose "${input.toolName}".`,
       };
@@ -61,7 +40,6 @@ export class AgentInboxProposalService {
 
     const toolContext: ToolContext = {
       workspaceId,
-      rolePermissionConfig,
       authContext,
       application,
     };

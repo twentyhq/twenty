@@ -18,6 +18,7 @@ import {
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import {
+  type LogicFunctionDeleteApplicationResourcesParams,
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
@@ -32,6 +33,7 @@ import {
   type TranspileParams,
   type TranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
+import { getWorkflowCodeStepLogicFunctionId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-workflow-code-step-logic-function-id.util';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -110,10 +112,14 @@ export class LambdaDriver implements LogicFunctionDriver {
   async deleteApplicationResources({
     workspaceId,
     applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
+  }: LogicFunctionDeleteApplicationResourcesParams): Promise<void> {
+    await this.executorManager.delete({
+      id: getWorkflowCodeStepLogicFunctionId({
+        workspaceId,
+        applicationUniversalIdentifier,
+      }),
+    });
+
     await this.layerManager.deleteSdkLayer({
       workspaceId,
       applicationUniversalIdentifier,

@@ -2,7 +2,6 @@ import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 import { type ToolCategory } from 'twenty-shared/ai';
-import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -20,7 +19,7 @@ import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provid
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -28,7 +27,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
   constructor(
     private readonly discoveryService: DiscoveryService,
-    private readonly permissionsService: PermissionsService,
+    private readonly accessPolicyService: AccessPolicyService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -69,10 +68,6 @@ export class DefinedToolRegistryService implements OnModuleInit {
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(
         context.workspaceId,
       );
-    const grantedByPermissionFlag = new Map<
-      PermissionFlagType,
-      Promise<boolean>
-    >();
 
     const isAvailableByTool = await Promise.all(
       requestedTools.map((definedTool) =>
@@ -80,7 +75,6 @@ export class DefinedToolRegistryService implements OnModuleInit {
           definedTool,
           context,
           featureFlagsMap,
-          grantedByPermissionFlag,
         }),
       ),
     );
@@ -148,46 +142,20 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
   private async isToolAvailableToCaller({
     definedTool: {
-      options: { requiredPermissionFlags, requiredFeatureFlags = [] },
+      options: { accessPolicy },
     },
     context,
     featureFlagsMap,
-    grantedByPermissionFlag = new Map(),
   }: {
     definedTool: DefinedTool;
     context: ToolProviderContext;
     featureFlagsMap: FeatureFlagMap;
-    grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
-    if (
-      !requiredFeatureFlags.every(
-        (featureFlag) => featureFlagsMap[featureFlag] === true,
-      )
-    ) {
-      return false;
-    }
-
-    const grants = await Promise.all(
-      requiredPermissionFlags.map((permissionFlag) => {
-        const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
-
-        if (isDefined(cachedGrant)) {
-          return cachedGrant;
-        }
-
-        const grant = this.permissionsService.checkRolesPermissions(
-          context.rolePermissionConfig,
-          context.workspaceId,
-          permissionFlag,
-        );
-
-        grantedByPermissionFlag.set(permissionFlag, grant);
-
-        return grant;
-      }),
-    );
-
-    return grants.every((isGranted) => isGranted);
+    return this.accessPolicyService.isToolAccessPolicySatisfied({
+      accessPolicy,
+      authContext: context.authContext,
+      featureFlagsMap,
+    });
   }
 
   private register(options: DefineToolOptions, instance: unknown): void {
