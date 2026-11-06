@@ -1,3 +1,4 @@
+import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
 import { useActiveRecordGroupTabId } from '@/object-record/record-group/hooks/useActiveRecordGroupTabId';
 import { useIsRecordGroupTabsDisplayed } from '@/object-record/record-group/hooks/useIsRecordGroupTabsDisplayed';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
@@ -5,6 +6,7 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
+import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
@@ -48,6 +50,10 @@ export const RecordTableRecordGroupsBody = () => {
   return (
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
+        <RecordGroupTabs
+          viewType={ViewType.TABLE}
+          dndType={RECORD_TABLE_ROW_DND_TYPE}
+        />
         {displayedRecordGroupIds.map((recordGroupId, index) => (
           <RecordTableBodyContextProvider key={recordGroupId}>
             <RecordGroupContext.Provider value={{ recordGroupId }}>
