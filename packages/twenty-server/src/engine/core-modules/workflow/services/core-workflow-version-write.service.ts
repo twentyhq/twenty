@@ -22,6 +22,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { dropLegacyEmptyFieldsToUpdate } from 'src/engine/core-modules/workflow/utils/drop-legacy-empty-fields-to-update.util';
 import { ensureWorkflowStepsTipTapSchemaVersion } from 'src/engine/core-modules/workflow/utils/ensure-workflow-steps-tiptap-schema-version.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import {
@@ -178,7 +179,9 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<CoreWorkflowVersionContent> {
-    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(
+      dropLegacyEmptyFieldsToUpdate(callerSteps),
+    );
 
     await this.assertContentIsNotMalformed({
       workspaceId,
@@ -309,7 +312,9 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
-    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(
+      dropLegacyEmptyFieldsToUpdate(callerSteps),
+    );
 
     await this.assertContentIsNotMalformed({
       workspaceId,

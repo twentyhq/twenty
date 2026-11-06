@@ -93,4 +93,84 @@ describe('validateWorkflowStepParams', () => {
       }
     });
   });
+
+  describe('fieldsToUpdate', () => {
+    const recordStepWithInput = (type: string, input: object) => ({
+      id: '2b7c4e1a-5d3f-4a8b-9c6e-1f0a2d3b4c5e',
+      name: 'Record step',
+      type,
+      valid: true,
+      settings: {
+        input,
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
+        },
+      },
+    });
+
+    const recordStepIssues = (type: string, input: object) =>
+      validateWorkflowStepParams({
+        trigger: undefined,
+        steps: [recordStepWithInput(type, input)],
+      });
+
+    it('should reject fieldsToUpdate on create and upsert record steps', () => {
+      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+        for (const fieldsToUpdate of [[], ['name']]) {
+          expect(
+            recordStepIssues(type, {
+              objectName: 'company',
+              objectRecord: { name: 'Acme' },
+              fieldsToUpdate,
+            }),
+          ).toEqual([
+            expect.objectContaining({
+              code: 'INVALID_STEP_PARAMS',
+              message: expect.stringContaining(
+                'only UPDATE_RECORD selects the fields to write',
+              ),
+            }),
+          ]);
+        }
+      }
+    });
+
+    it('should accept create and upsert record steps without fieldsToUpdate', () => {
+      for (const type of ['CREATE_RECORD', 'UPSERT_RECORD']) {
+        expect(
+          recordStepIssues(type, {
+            objectName: 'company',
+            objectRecord: { name: 'Acme' },
+          }),
+        ).toEqual([]);
+      }
+    });
+
+    it('should block activating an update record step with no field to update', () => {
+      const updateRecordInput = {
+        objectName: 'company',
+        objectRecordId: '{{trigger.id}}',
+        objectRecord: { name: 'Acme' },
+      };
+
+      expect(
+        recordStepIssues('UPDATE_RECORD', {
+          ...updateRecordInput,
+          fieldsToUpdate: [],
+        }),
+      ).toEqual([
+        expect.objectContaining({
+          code: 'UPDATE_RECORD_MISSING_FIELDS_TO_UPDATE',
+        }),
+      ]);
+      expect(
+        recordStepIssues('UPDATE_RECORD', {
+          ...updateRecordInput,
+          fieldsToUpdate: ['name'],
+        }),
+      ).toEqual([]);
+    });
+  });
 });

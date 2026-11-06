@@ -4,6 +4,7 @@ import {
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
   deleteLegacyWorkspaceWorkflowRecords,
+  findCoreWorkflowVersion,
   linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -182,6 +183,58 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
+  });
+
+  it('creates upsert record steps without fieldsToUpdate', async () => {
+    const upsertRecordStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'UPSERT_RECORD',
+      position: { x: 800, y: 0 },
+    });
+
+    expect(upsertRecordStep.settings.input).not.toHaveProperty(
+      'fieldsToUpdate',
+    );
+  });
+
+  it('rejects fieldsToUpdate on a create record step, which writes its whole objectRecord', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      stepWithInput({
+        objectName: 'note',
+        objectRecord: { title: 'Hello' },
+        fieldsToUpdate: ['title'],
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toContain(
+      'only UPDATE_RECORD selects the fields to write',
+    );
+  });
+
+  it('drops the empty fieldsToUpdate the builder used to store on record steps', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      stepWithInput({
+        objectName: 'note',
+        objectRecord: { title: 'Hello' },
+        fieldsToUpdate: [],
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { steps } = await findCoreWorkflowVersion({ coreWorkflowVersionId });
+    const storedCreateRecordStep = steps?.find(
+      (step) => step.id === createRecordStep.id,
+    );
+
+    expect(storedCreateRecordStep?.settings.input).toEqual({
+      objectName: 'note',
+      objectRecord: { title: 'Hello' },
+    });
   });
 
   it('forbids writing steps through the generic updateWorkflowVersion mutation', async () => {
