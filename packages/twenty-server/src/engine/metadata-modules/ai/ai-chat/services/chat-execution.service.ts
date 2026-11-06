@@ -97,6 +97,7 @@ type ChatExecutionResult = Pick<
 };
 
 type ChatExecutionProfile = {
+  assistantDisplayName: string | undefined;
   toolset: Parameters<AgentTurnService['start']>[0]['toolset'] & {
     isWorkspaceSetupThread: boolean;
   };
@@ -190,7 +191,7 @@ export class ChatExecutionService {
 
     const executionProfile = await this.buildExecutionProfile({
       thread,
-      workspaceId: workspace.id,
+      workspace,
       userWorkspaceId,
       messages,
       browsingContext,
@@ -252,6 +253,7 @@ export class ChatExecutionService {
 
         return {
           systemPrompt: buildFullSystemPrompt({
+            assistantDisplayName: executionProfile.assistantDisplayName,
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
@@ -310,23 +312,33 @@ export class ChatExecutionService {
 
   private async buildExecutionProfile({
     thread,
-    workspaceId,
+    workspace,
     userWorkspaceId,
     messages,
     browsingContext,
     toolContext,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
-    workspaceId: string;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
     userWorkspaceId: string;
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
   }): Promise<ChatExecutionProfile> {
+    const workspaceId = workspace.id;
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspaceId,
+    );
+    const assistantDisplayName = isAiChatInboxEnabled
+      ? workspace.aiChatAssistantProfile.displayName
+      : undefined;
+
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
       return {
+        assistantDisplayName,
         toolset: {
           registryAccess: { type: 'none' },
           nativeToolOptions: { webSearch: false, twitterSearch: false },
@@ -350,10 +362,6 @@ export class ChatExecutionService {
       !hasSucceededWorkspaceSetupCompletion(messages);
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspaceId,
-    );
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation && isAiChatInboxEnabled;
     const latestUserMessage = [...messages]
@@ -361,6 +369,7 @@ export class ChatExecutionService {
       .find((message) => message.role === AgentMessageRole.USER);
 
     return {
+      assistantDisplayName,
       toolset: {
         registryAccess: {
           type: 'assistant',

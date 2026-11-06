@@ -9469,7 +9469,7 @@ msgstr "Չկա հաստատված ուղարկման դոմեն, որը համա
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
-msgstr ""
+msgstr "Ձեր ընտրած մարդկանցից ոչ ոք չի կարող պատասխանել այս չատում։ Ավելացրեք {AGENT_CHAT_ASSISTANT_NAME}-ին կամ մեկին, ով կարող է պատասխանել։"
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10988,12 +10988,12 @@ msgstr "Սուբյեկտի տեսակ"
 #. js-lingui-id: gSSOI6
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not available until the upgrade has completed."
-msgstr ""
+msgstr "Գաղտնիության կարգավորումները հասանելի չեն, քանի դեռ թարմացումն ավարտված չէ։"
 
 #. js-lingui-id: xIeg8k
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Privacy settings are not enabled for this workspace."
-msgstr ""
+msgstr "Գաղտնիության կարգավորումները միացված չեն այս աշխատանքային տարածքի համար։"
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12687,7 +12687,7 @@ msgstr "Կարճ հղումներ"
 #. js-lingui-id: kIPldv
 #: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
 msgid "Sign in as a workspace member or use an application token to make this request."
-msgstr ""
+msgstr "Մուտք գործեք որպես աշխատանքային տարածքի անդամ կամ օգտագործեք հավելվածի տոկեն՝ այս հարցումը կատարելու համար։"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts

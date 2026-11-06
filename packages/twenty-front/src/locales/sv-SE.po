@@ -2921,7 +2921,7 @@ msgstr "Agent"
 #. js-lingui-id: D2ijkj
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Agents that will fail"
-msgstr ""
+msgstr "Agenter som kommer att misslyckas"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3014,17 +3014,17 @@ msgstr "AI-krediter förnyas om {0, plural, one {# dag} other {# dagar}}."
 #. js-lingui-id: MuT/nD
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy and Privacy tab"
-msgstr ""
+msgstr "Fliken för AI-datapolicy och integritet"
 
 #. js-lingui-id: WQyHss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI data processing"
-msgstr ""
+msgstr "AI-databehandling"
 
 #. js-lingui-id: zNuqPE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
-msgstr ""
+msgstr "AI är pausad"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -4262,7 +4262,7 @@ msgstr "Be en administratör att höja gränsen."
 #. js-lingui-id: fy+eXl
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Ask an admin with security access to change this"
-msgstr ""
+msgstr "Be en administratör med säkerhetsbehörighet att ändra detta"
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
@@ -4532,7 +4532,7 @@ msgstr "Revisionsloggar"
 #. js-lingui-id: 7tMFh/
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Audited controls and the agreements that cover your data."
-msgstr ""
+msgstr "Granskade kontroller och avtalen som omfattar dina data."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5073,7 +5073,7 @@ msgstr "Hakparentesåtkomst stöds inte, använd punktåtkomst i stället"
 #. js-lingui-id: Mh79rW
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Breach notification"
-msgstr ""
+msgstr "Meddelande om dataintrång"
 
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
@@ -5152,7 +5152,7 @@ msgstr "Skapa många-till-många-relationer"
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Built to meet EU data protection rules"
-msgstr ""
+msgstr "Utformad för att uppfylla EU:s dataskyddsregler"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5829,7 +5829,7 @@ msgstr "Ändra tema till system"
 #. js-lingui-id: 3Hphdi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Change where AI providers process requests and what they keep"
-msgstr ""
+msgstr "Ändra var AI-leverantörer behandlar förfrågningar och vad de behåller"
 
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -6205,7 +6205,7 @@ msgstr "Välj vad som händer när du klickar på en e-postadress"
 #. js-lingui-id: XDg9PA
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Choose what Twenty can access to support you and improve the product."
-msgstr ""
+msgstr "Välj vad Twenty kan få åtkomst till för att hjälpa dig och förbättra produkten."
 
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -6878,7 +6878,7 @@ msgstr "Komplexitet"
 #. js-lingui-id: psC+XF
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Compliance"
-msgstr ""
+msgstr "Efterlevnad"
 
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
@@ -8883,7 +8883,7 @@ msgstr "Daglig AI-användning"
 #. js-lingui-id: /dr6KQ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Daily backups"
-msgstr ""
+msgstr "Dagliga säkerhetskopior"
 
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -8952,7 +8952,7 @@ msgstr "Dataexport"
 #. js-lingui-id: a4sORy
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
-msgstr ""
+msgstr "Data krypteras under överföring och lagring, med nycklar som roteras regelbundet"
 
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8994,7 +8994,7 @@ msgstr "Data som visas"
 #. js-lingui-id: oBChYi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Data processing"
-msgstr ""
+msgstr "Databehandling"
 
 #. js-lingui-id: /qrjU8
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -10504,7 +10504,7 @@ msgstr "Varje skiva representerar"
 #. js-lingui-id: Iz+rDD
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Each workspace has its own database schema"
-msgstr ""
+msgstr "Varje arbetsyta har ett eget databasschema"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -11151,12 +11151,12 @@ msgstr "Aktivera modellens specifika funktioner"
 #. js-lingui-id: sqO0Ni
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted daily snapshots, kept 30 days"
-msgstr ""
+msgstr "Krypterade dagliga ögonblicksbilder, sparas i 30 dagar"
 
 #. js-lingui-id: qILKh1
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted everywhere"
-msgstr ""
+msgstr "Krypterat överallt"
 
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11278,7 +11278,7 @@ msgstr "Ange ett JSON-värde"
 #. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
-msgstr ""
+msgstr "Ange ett namn med mellan 1 och {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tecken på en rad. Hakparenteser måste vara parvisa och får inte kapslas."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11826,17 +11826,17 @@ msgstr "Uppskatta en sannolikhet"
 #. js-lingui-id: MzEfu4
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "EU only"
-msgstr ""
+msgstr "Endast EU"
 
 #. js-lingui-id: 84VCrZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, standard retention"
-msgstr ""
+msgstr "Endast EU, standardlagringstid"
 
 #. js-lingui-id: e8+f0R
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, zero data retention"
-msgstr ""
+msgstr "Endast EU, ingen datalagring"
 
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -11949,7 +11949,7 @@ msgstr "varje timme"
 #. js-lingui-id: loBt0P
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Every line of code is public, so you can audit it yourself"
-msgstr ""
+msgstr "Varje rad kod är offentlig, så att du kan granska den själv"
 
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
@@ -11966,7 +11966,7 @@ msgstr "Alla objekt i den här arbetsytan som CSV-filer i en zip-fil, sparas i 1
 #. js-lingui-id: h3QLIe
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Every provider that handles your data"
-msgstr ""
+msgstr "Varje leverantör som hanterar dina data"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -13610,6 +13610,7 @@ msgid "Formats"
 msgstr "Formateringar"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Tidigare medlem"
@@ -13855,7 +13856,7 @@ msgstr "Funktioner - Inställningar"
 #. js-lingui-id: arkG3W
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "GDPR"
-msgstr ""
+msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -13917,7 +13918,7 @@ msgstr "Generera en återställningskod"
 #. js-lingui-id: h9wFH2
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Generate a signed copy in one click"
-msgstr ""
+msgstr "Generera en signerad kopia med ett klick"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14015,7 +14016,7 @@ msgstr "GIN (fulltextsökning och JSONB)"
 #. js-lingui-id: RkXlPZ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -14485,7 +14486,7 @@ msgstr "Hjälpcenter"
 #. js-lingui-id: GY8MUv
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Help improve Twenty"
-msgstr ""
+msgstr "Hjälp till att förbättra Twenty"
 
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -14647,7 +14648,7 @@ msgstr "Innehåller din arbetsytas anpassningar och åsidosättningar."
 #. js-lingui-id: fFtUGj
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Hosting"
-msgstr ""
+msgstr "Drifthantering"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -14688,7 +14689,7 @@ msgstr "Hur du kommer att visas för teammedlemmar och agenter."
 #. js-lingui-id: iGMucd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "How your data is protected"
-msgstr ""
+msgstr "Så skyddas dina data"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -15221,7 +15222,7 @@ msgstr "Öka värde"
 #. js-lingui-id: dW+3Q4
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Independently audited security controls"
-msgstr ""
+msgstr "Oberoende granskade säkerhetskontroller"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15859,7 +15860,7 @@ msgstr "Är i dag{timeZoneAbbreviationSuffix}"
 #. js-lingui-id: YbqWR4
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Isolated workspace"
-msgstr ""
+msgstr "Isolerad arbetsyta"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -18147,7 +18148,7 @@ msgstr "Modeller"
 #. js-lingui-id: o4Xn+q
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Models above are limited to the providers your privacy settings allow."
-msgstr ""
+msgstr "Modellerna ovan är begränsade till de leverantörer som dina integritetsinställningar tillåter."
 
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -18747,7 +18748,7 @@ msgstr "Ny kanal"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Ny chatt"
 
@@ -19137,7 +19138,7 @@ msgstr "Ingen AI-förbrukning har registrerats för den här användaren."
 #. js-lingui-id: m/JoOZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "No AI model on this workspace meets these settings."
-msgstr ""
+msgstr "Ingen AI-modell i denna arbetsyta uppfyller dessa inställningar."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
@@ -19149,7 +19150,7 @@ msgstr "Ingen AI-leverantör är konfigurerad på denna instans."
 #. js-lingui-id: lBnUyA
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No AI provider trains on your data, and neither does Twenty"
-msgstr ""
+msgstr "Ingen AI-leverantör tränar på dina data, och det gör inte heller Twenty"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19902,7 +19903,7 @@ msgstr "Inget ämne"
 #. js-lingui-id: lNEINd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No training on your data"
-msgstr ""
+msgstr "Ingen träning på dina data"
 
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
@@ -20743,7 +20744,7 @@ msgstr "Endast ämnet delas"
 #. js-lingui-id: 41eae/
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Only use providers that keep no copy of your prompts and responses"
-msgstr ""
+msgstr "Använd endast leverantörer som inte behåller någon kopia av dina promptar och svar"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20949,7 +20950,7 @@ msgstr "Öppna sidopanelen"
 #. js-lingui-id: v+Wp++
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Open source"
-msgstr ""
+msgstr "Öppen källkod"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21917,7 +21918,7 @@ msgstr "Fäst"
 #. js-lingui-id: ylGwx6
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Pinned models not in use"
-msgstr ""
+msgstr "Fästa modeller används inte"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -22314,7 +22315,7 @@ msgstr "Prioritet: {0}"
 #. js-lingui-id: rjGI/Q
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Privacy"
-msgstr ""
+msgstr "Integritet"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22358,7 +22359,7 @@ msgstr "Bearbetar inspelning"
 #. js-lingui-id: kLAZG6
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Processing region"
-msgstr ""
+msgstr "Bearbetningsregion"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -25105,7 +25106,7 @@ msgstr "Säkerhet"
 #. js-lingui-id: OpFwR0
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Security you can verify"
-msgstr ""
+msgstr "Säkerhet du kan verifiera"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -26048,7 +26049,7 @@ msgstr "Dela kalenderhändelser mellan kanaler"
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Share session replays and AI conversations to help us improve Twenty"
-msgstr ""
+msgstr "Dela sessionsuppspelningar och AI-konversationer för att hjälpa oss att förbättra Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -26109,7 +26110,7 @@ msgstr "Delningsinställningarna kunde inte läsas in."
 #. js-lingui-id: K8Q+iX
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Sharing with Twenty"
-msgstr ""
+msgstr "Delning med Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26251,7 +26252,7 @@ msgstr "Visa sidan Kom igång och sidofältskortet, och öppna den vid landning 
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Visa fliken Integritet och tillämpa dess policy för AI-data och inställningar för datadelning. Om du stänger av detta tas alla lagrade policyer bort. Aktivera efter att instansuppgraderingen har slutförts."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26613,12 +26614,12 @@ msgstr "Snoozad till {eventTime}"
 #. js-lingui-id: 01L/Si
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "SOC 2"
-msgstr ""
+msgstr "SOC 2"
 
 #. js-lingui-id: LBv08V
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
-msgstr ""
+msgstr "SOC 2-granskade kontroller, kryptering under överföring och lagring samt kod som alla kan granska."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -27281,7 +27282,7 @@ msgstr "Skicka in"
 #. js-lingui-id: amVqRj
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Subprocessors"
-msgstr ""
+msgstr "Underbiträden"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -28158,7 +28159,7 @@ msgstr "Rollen som är kopplad till denna webhook."
 #. js-lingui-id: OBY7M0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "The safeguards behind every Twenty Cloud workspace."
-msgstr ""
+msgstr "Säkerhetsåtgärderna bakom varje Twenty Cloud-arbetsyta."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -28281,12 +28282,12 @@ msgstr "Det uppstod ett fel vid uppdatering av lösenordet."
 #. js-lingui-id: hOYgrt
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
-msgstr ""
+msgstr "Dessa agenter använder en modell som dina inställningar utesluter, så de misslyckas när de körs: {agentLabels}"
 
 #. js-lingui-id: ZSRi5U
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
-msgstr ""
+msgstr "Dessa nivåer faller tillbaka till en tillåten modell: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -29480,7 +29481,7 @@ msgstr "Sant/falskt"
 #. js-lingui-id: tdZpCd
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Trust Center"
-msgstr ""
+msgstr "Trust Center"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -29568,7 +29569,7 @@ msgstr "Twenty fyller varje nivå med den bästa modellen som uppfyller dina kra
 #. js-lingui-id: 0mWZoP
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
-msgstr ""
+msgstr "Twenty har ingen egen AI-modell. Välj vilka leverantörer som får behandla dina förfrågningar. Striktare inställningar ger färre modeller, och vissa kostar mer."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -31558,7 +31559,7 @@ msgstr "Vi matchar på dessa fält. Om en {0} redan finns, uppdaterar vi den. An
 #. js-lingui-id: AXVG2Y
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "We notify you within 72 hours, as set out in the DPA"
-msgstr ""
+msgstr "Vi meddelar dig inom 72 timmar, enligt vad som anges i DPA"
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -31863,7 +31864,7 @@ msgstr "Där"
 #. js-lingui-id: I7dUhW
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Where AI providers process your requests"
-msgstr ""
+msgstr "Var AI-leverantörer behandlar dina förfrågningar"
 
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -32280,7 +32281,7 @@ msgstr "Arbetsytor"
 #. js-lingui-id: yehD4Z
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Workspaces run on AWS in Frankfurt, Germany"
-msgstr ""
+msgstr "Arbetsytor körs på AWS i Frankfurt, Tyskland"
 
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -32292,17 +32293,17 @@ msgstr "Status för arbetsytor"
 #. js-lingui-id: C+gilE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Worldwide"
-msgstr ""
+msgstr "Globalt"
 
 #. js-lingui-id: oR3/ss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, standard retention"
-msgstr ""
+msgstr "Globalt, standardlagringstid"
 
 #. js-lingui-id: iTAMb7
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, zero data retention"
-msgstr ""
+msgstr "Globalt, ingen datalagring"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32349,6 +32350,11 @@ msgstr "Skriv en beskrivning för denna agent"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Skriv ett meddelande"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Skriv ett meddelande..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32856,7 +32862,7 @@ msgstr "Zed"
 #. js-lingui-id: 2sLNC3
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Zero data retention"
-msgstr ""
+msgstr "Ingen datalagring"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

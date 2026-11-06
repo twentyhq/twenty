@@ -6,6 +6,7 @@ import {
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
+  type BulkAddResult,
   type InFlightQueueJob,
   MessageQueueDriver,
   type QueueJobDetails,
@@ -45,7 +46,7 @@ export class MessageQueueService {
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]> {
+  ): Promise<BulkAddResult> {
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
   }
 
