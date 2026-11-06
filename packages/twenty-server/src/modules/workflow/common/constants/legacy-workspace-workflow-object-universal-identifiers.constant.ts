@@ -1,4 +1,4 @@
-// The 2.57 upgrade drops these objects; they stay guarded until it has reached every workspace. Remove in 2.58.
+// TODO(@FelixMalfait): remove in 2.58, once the 2.57 upgrade has dropped these objects from every workspace.
 export const LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
 

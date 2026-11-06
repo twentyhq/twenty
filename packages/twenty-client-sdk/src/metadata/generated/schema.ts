@@ -2500,6 +2500,7 @@ export interface Mutation {
     installMarketplaceApp: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
+    openDirectMessage: Scalars['UUID']
     prepareGettingStartedWorkflow: GettingStartedWorkflow
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
@@ -7190,6 +7191,7 @@ export interface MutationGenqlSelection{
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
+    openDirectMessage?: { __args: {workspaceMemberId: Scalars['UUID']} }
     prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection

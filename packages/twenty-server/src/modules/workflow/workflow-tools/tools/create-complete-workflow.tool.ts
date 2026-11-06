@@ -87,6 +87,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
+- Only UPDATE_RECORD takes settings.input.fieldsToUpdate: the fields to write, each with its value in objectRecord. CREATE_RECORD and UPSERT_RECORD write every field in objectRecord and refuse fieldsToUpdate
 - RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
@@ -101,7 +102,6 @@ Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
 - Missing the "name" and "valid" fields in steps
 - Missing the "objectRecord" field in CREATE_RECORD actions
-- Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Omitting settings.input.code on CODE steps: write the TypeScript source there (exporting \`main\` as an async arrow function, \`export const main = async (params: { ... }) => { ... }\`, whose params receive settings.input.logicFunctionInput); do not set settings.input.logicFunctionId.
 - Setting an AI_AGENT step's agentId without being asked to run that agent: a step without agentId carries its own settings.input.instructions (system prompt), prompt (the message sent on each run), modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers; no data access when unset). A step with agentId runs that existing agent: the agent supplies the instructions, model and permissions, and its response format unless the step sets settings.input.responseFormat.
 

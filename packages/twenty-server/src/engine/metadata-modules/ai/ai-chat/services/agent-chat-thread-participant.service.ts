@@ -513,7 +513,7 @@ export class AgentChatThreadParticipantService {
   >): Promise<AgentChatOpenThreadsSummaryDTO> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
-    const authContext = await this.sharingService.getAuthContext({
+    const authContext = await this.sharingService.getAuthContextOrThrow({
       workspaceId,
       workspaceMemberId,
     });

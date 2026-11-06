@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
-import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793929596621-drop-workspace-workflow-object.command';
+import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
+import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793971872390-drop-workspace-workflow-object.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -18,6 +19,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddMessageAttachmentTargetCommand,
+    DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
     DropWorkspaceWorkflowObjectCommand,
   ],
 })
