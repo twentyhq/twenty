@@ -2,10 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
 import { SettingsMcpServerToolsSection } from '@/settings/mcp-servers/components/SettingsMcpServerToolsSection';
+import { useNavigateToMcpServersList } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersList';
 import { useUpdateMcpServer } from '@/settings/mcp-servers/hooks/useUpdateMcpServer';
 import { getMcpServerFormValues } from '@/settings/mcp-servers/utils/getMcpServerFormValues';
 import {
@@ -22,12 +24,15 @@ export const SettingsMcpServerEditForm = ({
   mcpServer,
 }: SettingsMcpServerEditFormProps) => {
   const { updateMcpServer } = useUpdateMcpServer();
+  const { navigateToMcpServersList } = useNavigateToMcpServersList();
 
   const formConfig = useForm<McpServerFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(getMcpServerFormSchema()),
     defaultValues: getMcpServerFormValues(mcpServer),
   });
+
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
   const handleSave = async ({
     label,
@@ -58,7 +63,14 @@ export const SettingsMcpServerEditForm = ({
       <SettingsMcpServerFormLayout
         title={mcpServer.label}
         breadcrumbTitle={mcpServer.label}
-        onSave={handleSave}
+        actionButton={
+          <SaveAndCancelButtons
+            isSaveDisabled={!isDirty || !isValid || isSubmitting}
+            isCancelDisabled={isSubmitting}
+            onCancel={navigateToMcpServersList}
+            onSave={formConfig.handleSubmit(handleSave)}
+          />
+        }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
