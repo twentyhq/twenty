@@ -4,4 +4,4 @@ import {
 } from '../constants/data-residency.const';
 
 export const isDataResidency = (value: string): value is DataResidency =>
-  (DATA_RESIDENCIES as readonly string[]).includes(value);
+  DATA_RESIDENCIES.some((dataResidency) => dataResidency === value);
