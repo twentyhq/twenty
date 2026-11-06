@@ -28,7 +28,7 @@ export const workflowFindRecordsActionSettingsSchema =
           recordSorts: z.array(recordSortSchema).optional(),
           // Computed from recordSorts when the step runs; accepted next to them until 2.57 leaves the cross-upgrade window
           gqlOperationOrderBy: z
-            .array(z.record(z.string(), z.unknown()))
+            .array(z.record(z.string(), z.any()))
             .optional(),
         })
         .refine(
