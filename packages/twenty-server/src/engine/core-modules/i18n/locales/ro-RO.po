@@ -14825,6 +14825,11 @@ msgstr "Acest index nu există sau a fost deja șters."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Această instanță nu a raportat un identificator de server. Setați SERVER_ID pe această instanță și apoi încercați din nou."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr ""
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."

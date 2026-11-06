@@ -14825,6 +14825,11 @@ msgstr "이 인덱스는 존재하지 않거나 이미 삭제되었습니다."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "이 인스턴스는 서버 식별자를 보고하지 않았습니다. 이 인스턴스에서 SERVER_ID를 설정한 후 다시 시도하세요."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr ""
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."

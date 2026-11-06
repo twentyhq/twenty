@@ -14825,6 +14825,11 @@ msgstr "هذا الفهرس غير موجود أو تم حذفه بالفعل."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "لم يبلّغ هذا المثيل عن معرّف للخادم. عيّن SERVER_ID على هذا المثيل ثم حاول مرة أخرى."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr ""
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."

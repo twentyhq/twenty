@@ -14825,6 +14825,11 @@ msgstr "Denne indeksen finnes ikke eller er allerede slettet."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Denne instansen rapporterte ikke en serveridentifikator. Sett SERVER_ID på denne instansen, og prøv deretter igjen."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr ""
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."

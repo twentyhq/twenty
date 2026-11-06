@@ -14825,6 +14825,11 @@ msgstr "Ez az index nem létezik, vagy már törölve lett."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Ez a példány nem jelentett kiszolgálóazonosítót. Állítsa be a SERVER_ID értékét ezen a példányon, majd próbálja újra."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr ""
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
