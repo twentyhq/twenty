@@ -3,10 +3,10 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
-import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
 import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { findDefaultChartFieldSelection } from '@/page-layout/utils/findDefaultChartFieldSelection';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -21,6 +21,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   StandardObjectNameSingular,
   SidePanelPages,
@@ -50,7 +51,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { buildBarChartFieldSelection } = useOpportunityDefaultChartConfig();
+  const { enqueueToast } = useToast();
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
@@ -127,11 +128,23 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
         WidgetType.GRAPH,
       )
     ) {
+      const fieldSelection = findDefaultChartFieldSelection(
+        readableObjectMetadataItems,
+      );
+
+      if (!isDefined(fieldSelection)) {
+        enqueueToast({
+          status: 'error',
+          children: t`No object you can read has fields a chart can use.`,
+        });
+
+        return;
+      }
+
       if (isDefined(pageLayoutEditingWidgetId)) {
         removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
-      const fieldSelection = buildBarChartFieldSelection();
       const newWidget = createPageLayoutGraphWidget({ fieldSelection });
       setPageLayoutEditingWidgetId(newWidget.id);
     }

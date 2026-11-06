@@ -14,6 +14,7 @@ export { APPLICATION_MONITORING_RETENTION_IN_DAYS } from './ApplicationMonitorin
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
 export { CalendarStartDay } from './CalendarStartDay';
 export { CHART_CONFIGURATION_KEYS_BY_CONFIGURATION_TYPE } from './ChartConfigurationKeysByConfigurationType';
+export { CHART_CONFIGURATION_REQUIRED_KEYS_BY_CONFIGURATION_TYPE } from './ChartConfigurationRequiredKeysByConfigurationType';
 export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapElementId';
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';

@@ -1,17 +1,73 @@
 import { WIDGET_CONFIGURATION_TYPENAME_BY_CONFIGURATION_TYPE } from '@/page-layout/constants/WidgetConfigurationTypenameByConfigurationType';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getChartDefaultFieldSelection } from '@/page-layout/utils/getChartDefaultFieldSelection';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
-import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
+import { buildChartGroupByFieldConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { convertAggregateOperationForDateField } from '@/side-panel/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/side-panel/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/side-panel/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
 import { getConfigurationTypeFromGraphType } from '@/side-panel/pages/page-layout/utils/getConfigurationTypeFromGraphType';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { CHART_CONFIGURATION_KEYS_BY_CONFIGURATION_TYPE } from 'twenty-shared/constants';
-import { type GraphWidgetConfigurationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+
+const BAR_CHART_LAYOUT_BY_GRAPH_TYPE: Partial<
+  Record<GraphType, BarChartLayout>
+> = {
+  [GraphType.VERTICAL_BAR]: BarChartLayout.VERTICAL,
+  [GraphType.HORIZONTAL_BAR]: BarChartLayout.HORIZONTAL,
+};
+
+const fillMissingGroupByWithDefaultField = (
+  configuration: ChartConfiguration,
+  objectMetadataItem: EnrichedObjectMetadataItem | undefined,
+): ChartConfiguration => {
+  if (!isDefined(objectMetadataItem)) {
+    return configuration;
+  }
+
+  const { groupByFieldMetadataId } =
+    getChartDefaultFieldSelection(objectMetadataItem);
+
+  if (
+    isWidgetConfigurationOfType(configuration, 'PieChartConfiguration') &&
+    !isDefined(configuration.groupByFieldMetadataId)
+  ) {
+    return {
+      ...configuration,
+      ...buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey: 'groupByFieldMetadataId',
+        subFieldNameKey: 'groupBySubFieldName',
+        fieldId: groupByFieldMetadataId ?? null,
+        subFieldName: null,
+        objectMetadataItem,
+      }),
+    };
+  }
+
+  if (
+    (isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+      isWidgetConfigurationOfType(configuration, 'LineChartConfiguration')) &&
+    !isDefined(configuration.primaryAxisGroupByFieldMetadataId)
+  ) {
+    return {
+      ...configuration,
+      ...buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey: 'primaryAxisGroupByFieldMetadataId',
+        subFieldNameKey: 'primaryAxisGroupBySubFieldName',
+        fieldId: groupByFieldMetadataId ?? null,
+        subFieldName: null,
+        objectMetadataItem,
+      }),
+    };
+  }
+
+  return configuration;
+};
 
 export const buildChartConfigurationForGraphType = ({
   configuration,
@@ -25,9 +81,7 @@ export const buildChartConfigurationForGraphType = ({
   const newConfigurationType = getConfigurationTypeFromGraphType(graphType);
 
   const allowedKeys =
-    CHART_CONFIGURATION_KEYS_BY_CONFIGURATION_TYPE[
-      newConfigurationType as GraphWidgetConfigurationType
-    ];
+    CHART_CONFIGURATION_KEYS_BY_CONFIGURATION_TYPE[newConfigurationType];
 
   let newConfiguration = {
     ...Object.fromEntries(
@@ -38,36 +92,36 @@ export const buildChartConfigurationForGraphType = ({
     configurationType: newConfigurationType,
   } as ChartConfiguration;
 
-  if (graphType !== GraphType.AGGREGATE) {
-    const convertedAggregateOperation = convertAggregateOperationForDateField(
-      configuration,
-      objectMetadataItem,
-    );
+  const convertedAggregateOperation = convertAggregateOperationForDateField(
+    configuration,
+    objectMetadataItem,
+  );
 
-    if (isDefined(convertedAggregateOperation)) {
-      newConfiguration = {
-        ...newConfiguration,
-        aggregateOperation: convertedAggregateOperation,
-      };
-    }
+  if (
+    graphType !== GraphType.AGGREGATE &&
+    isDefined(convertedAggregateOperation)
+  ) {
+    newConfiguration = {
+      ...newConfiguration,
+      aggregateOperation: convertedAggregateOperation,
+    };
   }
-
-  const isPieChart = graphType === GraphType.PIE;
-  const isBarOrLineChart =
-    graphType === GraphType.VERTICAL_BAR ||
-    graphType === GraphType.HORIZONTAL_BAR ||
-    graphType === GraphType.LINE;
 
   const wasBarOrLineChart =
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
-  if (isPieChart && wasBarOrLineChart) {
+  if (graphType === GraphType.PIE && wasBarOrLineChart) {
     newConfiguration = {
       ...newConfiguration,
       ...convertBarOrLineChartConfigToPieChart(configuration),
     };
   }
+
+  const isBarOrLineChart =
+    graphType === GraphType.VERTICAL_BAR ||
+    graphType === GraphType.HORIZONTAL_BAR ||
+    graphType === GraphType.LINE;
 
   if (
     isBarOrLineChart &&
@@ -79,19 +133,17 @@ export const buildChartConfigurationForGraphType = ({
     };
   }
 
-  if (graphType === GraphType.HORIZONTAL_BAR) {
-    newConfiguration = {
-      ...(newConfiguration as TypedBarChartConfiguration),
-      layout: BarChartLayout.HORIZONTAL,
-    };
+  const barChartLayout = BAR_CHART_LAYOUT_BY_GRAPH_TYPE[graphType];
+
+  if (
+    isDefined(barChartLayout) &&
+    isWidgetConfigurationOfType(newConfiguration, 'BarChartConfiguration')
+  ) {
+    newConfiguration = { ...newConfiguration, layout: barChartLayout };
   }
 
-  if (graphType === GraphType.VERTICAL_BAR) {
-    newConfiguration = {
-      ...(newConfiguration as TypedBarChartConfiguration),
-      layout: BarChartLayout.VERTICAL,
-    };
-  }
-
-  return newConfiguration;
+  return fillMissingGroupByWithDefaultField(
+    newConfiguration,
+    objectMetadataItem,
+  );
 };

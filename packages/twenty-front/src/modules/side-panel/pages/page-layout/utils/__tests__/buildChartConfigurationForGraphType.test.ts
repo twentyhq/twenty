@@ -2,8 +2,10 @@ import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { buildChartConfigurationForGraphType } from '@/side-panel/pages/page-layout/utils/buildChartConfigurationForGraphType';
 import {
   BarChartLayout,
+  GraphOrderBy,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
@@ -77,6 +79,28 @@ describe('buildChartConfigurationForGraphType', () => {
       displayDataLabel: TEST_AGGREGATE_CHART_CONFIGURATION.displayDataLabel,
       description: 'Total revenue',
       layout: BarChartLayout.HORIZONTAL,
+    });
+  });
+
+  it('fills the group by field a bar chart requires with a default field of the object', () => {
+    const opportunity = getMockObjectMetadataItemOrThrow('opportunity');
+    const stageField = opportunity.fields.find(
+      (field) => field.name === 'stage',
+    );
+
+    const result = buildChartConfigurationForGraphType({
+      configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
+      graphType: GraphType.VERTICAL_BAR,
+      objectMetadataItem: opportunity,
+    });
+
+    expect(result).toMatchObject({
+      __typename: 'BarChartConfiguration',
+      layout: BarChartLayout.VERTICAL,
+      aggregateFieldMetadataId:
+        TEST_AGGREGATE_CHART_CONFIGURATION.aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: stageField?.id,
+      primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
     });
   });
 });

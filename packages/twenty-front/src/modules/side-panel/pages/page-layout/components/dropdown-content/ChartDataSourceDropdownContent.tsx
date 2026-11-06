@@ -7,6 +7,8 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { buildChartDataSourceConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartDataSourceConfigUpdate';
+import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -56,27 +58,30 @@ export const ChartDataSourceDropdownContent = () => {
     useResetChartDraftFiltersSettings();
 
   const handleSelectSource = (newObjectMetadataItemId: string) => {
-    if (currentObjectMetadataItemId !== newObjectMetadataItemId) {
-      updateCurrentWidgetConfig({
-        objectMetadataId: newObjectMetadataItemId,
-        configToUpdate: {
-          aggregateFieldMetadataId: undefined,
-          primaryAxisGroupByFieldMetadataId: undefined,
-          primaryAxisGroupBySubFieldName: undefined,
-          secondaryAxisGroupByFieldMetadataId: undefined,
-          secondaryAxisGroupBySubFieldName: undefined,
-          primaryAxisOrderBy: undefined,
-          secondaryAxisOrderBy: undefined,
-          groupByFieldMetadataId: undefined,
-          groupBySubFieldName: undefined,
-          filter: {},
-          ratioAggregateConfig: undefined,
-        },
-      });
+    const configuration = widgetInEditMode?.configuration;
+    const newObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.id === newObjectMetadataItemId,
+    );
 
-      if (isDefined(currentObjectMetadataItemId)) {
-        resetChartDraftFiltersSettings(currentObjectMetadataItemId);
-      }
+    if (
+      currentObjectMetadataItemId === newObjectMetadataItemId ||
+      !isWidgetConfigurationOfTypeGraph(configuration) ||
+      !isDefined(newObjectMetadataItem)
+    ) {
+      return;
+    }
+
+    updateCurrentWidgetConfig({
+      objectMetadataId: newObjectMetadataItemId,
+      configToUpdate: buildChartDataSourceConfigUpdate({
+        configuration,
+        objectMetadataItem: newObjectMetadataItem,
+        objectMetadataItems,
+      }),
+    });
+
+    if (isDefined(currentObjectMetadataItemId)) {
+      resetChartDraftFiltersSettings(currentObjectMetadataItemId);
     }
   };
 

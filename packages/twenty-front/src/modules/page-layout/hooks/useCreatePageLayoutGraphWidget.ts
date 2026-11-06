@@ -2,7 +2,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { type CompleteGraphWidgetFieldSelection } from '@/page-layout/types/CompleteGraphWidgetFieldSelection';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { buildDefaultBarChartConfiguration } from '@/page-layout/utils/buildDefaultBarChartConfiguration';
 import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
@@ -46,7 +46,7 @@ export const useCreatePageLayoutGraphWidget = ({
     ({
       fieldSelection,
     }: {
-      fieldSelection?: GraphWidgetFieldSelection;
+      fieldSelection: CompleteGraphWidgetFieldSelection;
     }): PageLayoutWidget => {
       const existingVerticalBarChartCount = store
         .get(pageLayoutDraftState)
@@ -75,7 +75,7 @@ export const useCreatePageLayoutGraphWidget = ({
           timezone: timeZone,
           firstDayOfTheWeek: calendarStartDay,
         }),
-        objectMetadataId: fieldSelection?.objectMetadataId,
+        objectMetadataId: fieldSelection.objectMetadataId,
       });
     },
     [

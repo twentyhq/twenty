@@ -1,11 +1,9 @@
-import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { type CompleteGraphWidgetFieldSelection } from '@/page-layout/types/CompleteGraphWidgetFieldSelection';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import {
-  AggregateOperations,
   AxisNameDisplay,
   type BarChartConfiguration,
   BarChartLayout,
-  GraphOrderBy,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 
@@ -14,7 +12,7 @@ export const buildDefaultBarChartConfiguration = ({
   timezone,
   firstDayOfTheWeek,
 }: {
-  fieldSelection?: GraphWidgetFieldSelection;
+  fieldSelection: CompleteGraphWidgetFieldSelection;
   timezone?: string;
   firstDayOfTheWeek?: number;
 }): BarChartConfiguration => ({
@@ -24,11 +22,10 @@ export const buildDefaultBarChartConfiguration = ({
   displayDataLabel: true,
   displayLegend: true,
   color: 'auto' satisfies GraphColor,
-  primaryAxisGroupByFieldMetadataId:
-    fieldSelection?.groupByFieldMetadataIdX ?? '',
-  aggregateFieldMetadataId: fieldSelection?.aggregateFieldMetadataId ?? '',
-  aggregateOperation: AggregateOperations.SUM,
-  primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
+  primaryAxisGroupByFieldMetadataId: fieldSelection.groupByFieldMetadataId,
+  aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+  aggregateOperation: fieldSelection.aggregateOperation,
+  primaryAxisOrderBy: fieldSelection.groupByOrderBy,
   axisNameDisplay: AxisNameDisplay.NONE,
   timezone,
   firstDayOfTheWeek,
