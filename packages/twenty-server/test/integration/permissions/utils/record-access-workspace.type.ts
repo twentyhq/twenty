@@ -3,7 +3,7 @@ export type RoleGrant = 'none' | 'rowLevel' | 'allRecords';
 export type RecordAccessPrincipals = {
   mainPrincipal:
     | { type: 'workspaceMember' | 'apiKey'; role: RoleGrant }
-    | { type: 'application' | 'agent' | 'webhook'; role: 'allRecords' };
+    | { type: 'application' | 'agent'; role: 'allRecords' };
   limitingPrincipal:
     | { type: 'none' }
     | { type: 'agent'; role: RoleGrant }

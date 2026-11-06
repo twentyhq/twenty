@@ -6,7 +6,7 @@ export const createWebhookForRole = async ({
 }: {
   roleId: string;
   accessToken: string;
-}) => {
+}): Promise<string> => {
   const response = await createWebhook({
     input: {
       targetUrl: 'https://example.com/webhook',
@@ -18,5 +18,5 @@ export const createWebhookForRole = async ({
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.createWebhook.id as string;
+  return response.body.data.createWebhook.id;
 };

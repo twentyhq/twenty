@@ -3,6 +3,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { addWorkspaceMemberWithRole } from 'test/integration/permissions/utils/add-workspace-member-with-role.util';
 import { createActiveWorkspaceWithAdmin } from 'test/integration/permissions/utils/create-active-workspace-with-admin.util';
 import { createAgentForRole } from 'test/integration/permissions/utils/create-agent-for-role.util';
+import { createAgentWithoutRole } from 'test/integration/permissions/utils/create-agent-without-role.util';
 import { createApiKeyForRole } from 'test/integration/permissions/utils/create-api-key-for-role.util';
 import { createApplicationWithDefaultRole } from 'test/integration/permissions/utils/create-application-with-default-role.util';
 import { createOauthOnlyApplication } from 'test/integration/permissions/utils/create-oauth-only-application.util';
@@ -10,20 +11,12 @@ import { createRecordAccessObject } from 'test/integration/permissions/utils/cre
 import { createRecordAccessRole } from 'test/integration/permissions/utils/create-record-access-role.util';
 import { createWebhookForRole } from 'test/integration/permissions/utils/create-webhook-for-role.util';
 import {
-  type RecordAccessRecordName,
   type RecordAccessWorkspace,
   type RoleGrant,
 } from 'test/integration/permissions/utils/record-access-workspace.type';
 import { capitalize } from 'twenty-shared/utils';
 
 const OBJECT_NAME_SINGULAR = 'accessRecord';
-
-const RECORD_VALUES: Record<RecordAccessRecordName, object> = {
-  insideEveryFilter: {},
-  outsideStatusFilter: { status: 'archived' },
-  outsideCategoryFilter: { category: 'other' },
-  outsideRegionFilter: { region: 'americas' },
-};
 
 const buildForEachRoleGrant = async <TValue>(
   build: (grant: RoleGrant) => Promise<TValue>,
@@ -35,9 +28,12 @@ const buildForEachRoleGrant = async <TValue>(
 
 export const createRecordAccessWorkspace =
   async (): Promise<RecordAccessWorkspace> => {
-    const { workspaceId, workspaceOrigin, inviteHash, adminAccessToken } =
-      await createActiveWorkspaceWithAdmin();
-    const accessToken = adminAccessToken;
+    const {
+      workspaceId,
+      workspaceOrigin,
+      inviteHash,
+      adminAccessToken: accessToken,
+    } = await createActiveWorkspaceWithAdmin();
     const { objectMetadataId, objectUniversalIdentifier, fields } =
       await createRecordAccessObject({
         nameSingular: OBJECT_NAME_SINGULAR,
@@ -64,32 +60,25 @@ export const createRecordAccessWorkspace =
       }),
     );
 
-    const recordIds = Object.fromEntries(
-      await Promise.all(
-        Object.entries(RECORD_VALUES).map(async ([name, values]) => {
-          const response = await makeGraphqlApiRequest(
-            createOneOperationFactory({
-              objectMetadataSingularName: OBJECT_NAME_SINGULAR,
-              gqlFields: 'id',
-              data: {
-                status: 'active',
-                category: 'core',
-                region: 'europe',
-                ...values,
-              },
-            }),
-            accessToken,
-          );
-
-          expect(response.body.errors).toBeUndefined();
-
-          return [
-            name,
-            response.body.data[`create${capitalize(OBJECT_NAME_SINGULAR)}`].id,
-          ];
+    const createRecord = async (values: object): Promise<string> => {
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: OBJECT_NAME_SINGULAR,
+          gqlFields: 'id',
+          data: {
+            status: 'active',
+            category: 'core',
+            region: 'europe',
+            ...values,
+          },
         }),
-      ),
-    ) as Record<RecordAccessRecordName, string>;
+        accessToken,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data[`create${capitalize(OBJECT_NAME_SINGULAR)}`].id;
+    };
 
     return {
       workspaceId,
@@ -102,7 +91,7 @@ export const createRecordAccessWorkspace =
           workspaceOrigin,
           inviteHash,
           roleId: roleIds[grant],
-          adminAccessToken,
+          adminAccessToken: accessToken,
         }),
       ),
       apiKeyIds: await buildForEachRoleGrant((grant) =>
@@ -119,7 +108,7 @@ export const createRecordAccessWorkspace =
           accessToken,
         }),
       ),
-      limitingAgentWithoutRoleId: await createAgentForRole({
+      limitingAgentWithoutRoleId: await createAgentWithoutRole({
         name: 'limitingAgentWithoutRole',
         accessToken,
       }),
@@ -143,10 +132,19 @@ export const createRecordAccessWorkspace =
       mainApplicationId: await createApplicationWithDefaultRole({
         name: 'Main application',
         grant: 'allRecords',
+        rowLevelFilter: {
+          fieldUniversalIdentifier: fields.region.universalIdentifier,
+          value: 'europe',
+        },
         objectUniversalIdentifier,
         accessToken,
       }),
       oauthApplicationId: await createOauthOnlyApplication({ accessToken }),
-      recordIds,
+      recordIds: {
+        insideEveryFilter: await createRecord({}),
+        outsideStatusFilter: await createRecord({ status: 'archived' }),
+        outsideCategoryFilter: await createRecord({ category: 'other' }),
+        outsideRegionFilter: await createRecord({ region: 'americas' }),
+      },
     };
   };

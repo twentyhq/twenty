@@ -8,7 +8,7 @@ export const createApiKeyForRole = async ({
 }: {
   roleId: string;
   accessToken: string;
-}) => {
+}): Promise<string> => {
   const response = await createApiKey({
     name: `Record access ${randomUUID()}`,
     expiresAt: '2099-01-01T00:00:00Z',
@@ -18,5 +18,5 @@ export const createApiKeyForRole = async ({
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.createApiKey.id as string;
+  return response.body.data.createApiKey.id;
 };

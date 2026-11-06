@@ -2,7 +2,6 @@ import { upsertRowLevelPermissionPredicatesQueryFactory } from 'test/integration
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type RoleGrant } from 'test/integration/permissions/utils/record-access-workspace.type';
 
@@ -15,7 +14,7 @@ export const createRecordAccessRole = async ({
 }: {
   label: string;
   grant: RoleGrant;
-  rowLevelFilter?: { fieldMetadataId: string; value: string };
+  rowLevelFilter: { fieldMetadataId: string; value: string };
   objectMetadataId: string;
   accessToken: string;
 }) => {
@@ -39,7 +38,7 @@ export const createRecordAccessRole = async ({
   });
   const roleId: string = data.createOneRole.id;
 
-  if (grant === 'rowLevel' && isDefined(rowLevelFilter)) {
+  if (grant === 'rowLevel') {
     const response = await makeMetadataApiRequest(
       upsertRowLevelPermissionPredicatesQueryFactory({
         input: {

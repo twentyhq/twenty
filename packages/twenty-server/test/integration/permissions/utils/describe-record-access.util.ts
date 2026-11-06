@@ -7,7 +7,6 @@ import {
 } from 'test/integration/permissions/utils/record-access-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
@@ -52,7 +51,7 @@ export const describeRecordAccess = ({
         expect({
           findRecordsPermissions: (
             await recordPermissionsService.findRecordsPermissions({
-              authContext: authContext as WorkspaceAuthContext,
+              authContext,
               objectNameSingular: workspace.objectNameSingular,
               recordIds: [recordId],
             })

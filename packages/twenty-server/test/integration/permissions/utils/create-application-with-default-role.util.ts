@@ -5,7 +5,6 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type RoleGrant } from 'test/integration/permissions/utils/record-access-workspace.type';
 
@@ -18,7 +17,7 @@ export const createApplicationWithDefaultRole = async ({
 }: {
   name: string;
   grant: RoleGrant;
-  rowLevelFilter?: { fieldUniversalIdentifier: string; value: string };
+  rowLevelFilter: { fieldUniversalIdentifier: string; value: string };
   objectUniversalIdentifier: string;
   accessToken: string;
 }) => {
@@ -50,19 +49,18 @@ export const createApplicationWithDefaultRole = async ({
             canUpdateAllObjectRecords: isGranted,
             canSoftDeleteAllObjectRecords: isGranted,
             canDestroyAllObjectRecords: isGranted,
-            ...(grant === 'rowLevel' &&
-              isDefined(rowLevelFilter) && {
-                rowLevelPermissionPredicates: [
-                  {
-                    universalIdentifier: randomUUID(),
-                    objectUniversalIdentifier,
-                    fieldUniversalIdentifier:
-                      rowLevelFilter.fieldUniversalIdentifier,
-                    operand: RowLevelPermissionPredicateOperand.IS,
-                    value: rowLevelFilter.value,
-                  },
-                ],
-              }),
+            ...(grant === 'rowLevel' && {
+              rowLevelPermissionPredicates: [
+                {
+                  universalIdentifier: randomUUID(),
+                  objectUniversalIdentifier,
+                  fieldUniversalIdentifier:
+                    rowLevelFilter.fieldUniversalIdentifier,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  value: rowLevelFilter.value,
+                },
+              ],
+            }),
           },
         ],
       },
@@ -78,5 +76,5 @@ export const createApplicationWithDefaultRole = async ({
     token: accessToken,
   });
 
-  return data.findOneApplication.id as string;
+  return data.findOneApplication.id;
 };

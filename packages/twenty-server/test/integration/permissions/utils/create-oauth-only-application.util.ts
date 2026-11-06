@@ -15,7 +15,13 @@ export const createOauthOnlyApplication = async ({
     accessToken,
   });
 
-  return data.findManyApplications.find(
+  const oauthOnlyApplication = data.findManyApplications.find(
     ({ defaultRoleId }) => !isDefined(defaultRoleId),
-  )?.id as string;
+  );
+
+  if (!isDefined(oauthOnlyApplication)) {
+    throw new Error('Signing in as the CLI should install its application');
+  }
+
+  return oauthOnlyApplication.id;
 };

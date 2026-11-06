@@ -7,7 +7,7 @@ export const createAgentForRole = async ({
   accessToken,
 }: {
   name: string;
-  roleId?: string;
+  roleId: string;
   accessToken: string;
 }) => {
   const { data } = await createOneAgent({
@@ -23,5 +23,5 @@ export const createAgentForRole = async ({
     token: accessToken,
   });
 
-  return data.createOneAgent.id as string;
+  return data.createOneAgent.id;
 };

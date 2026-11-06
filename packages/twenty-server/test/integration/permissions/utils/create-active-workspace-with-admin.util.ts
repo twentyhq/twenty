@@ -5,8 +5,14 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
+import { isDefined } from 'twenty-shared/utils';
 
-export const createActiveWorkspaceWithAdmin = async () => {
+export const createActiveWorkspaceWithAdmin = async (): Promise<{
+  workspaceId: string;
+  workspaceOrigin: string;
+  inviteHash: string;
+  adminAccessToken: string;
+}> => {
   const { data: signUpData } = await signUp({
     input: {
       email: `permission-admin-${randomUUID()}@example.com`,
@@ -45,11 +51,18 @@ export const createActiveWorkspaceWithAdmin = async () => {
 
   expect(renewTokenResponse.body.errors).toBeUndefined();
 
+  const { inviteHash } = activatedWorkspace;
+
+  if (!isDefined(inviteHash)) {
+    throw new Error('An activated workspace should have an invite hash');
+  }
+
   return {
     workspaceId: newWorkspace.workspace.id,
     workspaceOrigin,
-    inviteHash: activatedWorkspace.inviteHash as string,
-    adminAccessToken: renewTokenResponse.body.data.renewToken.tokens
-      .accessOrWorkspaceAgnosticToken.token as string,
+    inviteHash,
+    adminAccessToken:
+      renewTokenResponse.body.data.renewToken.tokens
+        .accessOrWorkspaceAgnosticToken.token,
   };
 };

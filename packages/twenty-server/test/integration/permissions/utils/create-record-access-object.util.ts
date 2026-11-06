@@ -12,7 +12,7 @@ const createFilterField = async ({
   name: string;
   objectMetadataId: string;
   accessToken: string;
-}) => {
+}): Promise<{ id: string; universalIdentifier: string }> => {
   await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
   const response = await makeMetadataApiRequest(
@@ -30,10 +30,7 @@ const createFilterField = async ({
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.createOneField as {
-    id: string;
-    universalIdentifier: string;
-  };
+  return response.body.data.createOneField;
 };
 
 export const createRecordAccessObject = async ({
@@ -76,8 +73,7 @@ export const createRecordAccessObject = async ({
 
   return {
     objectMetadataId,
-    objectUniversalIdentifier: data.createOneObject
-      .universalIdentifier as string,
+    objectUniversalIdentifier: data.createOneObject.universalIdentifier,
     fields: { status, category, region },
   };
 };

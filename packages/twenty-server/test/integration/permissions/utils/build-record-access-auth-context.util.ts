@@ -2,43 +2,77 @@ import {
   type RecordAccessPrincipals,
   type RecordAccessWorkspace,
 } from 'test/integration/permissions/utils/record-access-workspace.type';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 
-import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
+import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const findApplicationPrincipalId = ({
+const findApplicationOrThrow = async ({
   applicationPrincipal,
   workspace,
 }: {
   applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
   workspace: RecordAccessWorkspace;
-}): string | undefined => {
+}) => {
+  const findApplicationById = async (id: string) =>
+    fromApplicationEntityToFlatApplication(
+      await getCoreRepository<ApplicationEntity>(
+        ApplicationEntity,
+      ).findOneByOrFail({ id }),
+    );
+
   switch (applicationPrincipal.type) {
     case 'application':
-      return workspace.applicationIds[applicationPrincipal.role];
+      return findApplicationById(
+        workspace.applicationIds[applicationPrincipal.role],
+      );
     case 'sameApplicationAsMain':
-      return workspace.mainApplicationId;
+      return findApplicationById(workspace.mainApplicationId);
     case 'oauthApplication':
-      return workspace.oauthApplicationId;
+      return findApplicationById(workspace.oauthApplicationId);
     case 'customApplication':
-      return undefined;
+      throw new Error('A custom application has no application principal');
   }
 };
 
-const findLimitingAgentId = ({
+const buildApplicationNarrowing = async ({
+  applicationPrincipal,
+  workspace,
+}: {
+  applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
+  workspace: RecordAccessWorkspace;
+}) =>
+  applicationPrincipal.type === 'customApplication'
+    ? {}
+    : {
+        application: await findApplicationOrThrow({
+          applicationPrincipal,
+          workspace,
+        }),
+      };
+
+const buildLimitingNarrowing = ({
   limitingPrincipal,
   workspace,
 }: {
   limitingPrincipal: RecordAccessPrincipals['limitingPrincipal'];
   workspace: RecordAccessWorkspace;
-}): string | undefined => {
+}) => {
   switch (limitingPrincipal.type) {
     case 'agent':
-      return workspace.limitingAgentIds[limitingPrincipal.role];
+      return { agentId: workspace.limitingAgentIds[limitingPrincipal.role] };
     case 'agentWithoutRole':
-      return workspace.limitingAgentWithoutRoleId;
+      return { agentId: workspace.limitingAgentWithoutRoleId };
     case 'none':
-      return undefined;
+      return {};
   }
 };
 
@@ -48,18 +82,16 @@ export const buildRecordAccessAuthContext = async ({
 }: {
   principals: RecordAccessPrincipals;
   workspace: RecordAccessWorkspace;
-}): Promise<PermissionsAuthContext> => {
-  const applicationId = findApplicationPrincipalId({
-    applicationPrincipal,
+}): Promise<WorkspaceAuthContext> => {
+  const flatWorkspace = fromWorkspaceEntityToFlat(
+    await getCoreRepository<WorkspaceEntity>(WorkspaceEntity).findOneByOrFail({
+      id: workspace.workspaceId,
+    }),
+  );
+  const limitingNarrowing = buildLimitingNarrowing({
+    limitingPrincipal,
     workspace,
   });
-  const workspaceReference = { id: workspace.workspaceId };
-  const narrowing = {
-    workspace: workspaceReference,
-    agentId: findLimitingAgentId({ limitingPrincipal, workspace }),
-    application:
-      applicationId === undefined ? undefined : { id: applicationId },
-  };
 
   switch (mainPrincipal.type) {
     case 'workspaceMember':
@@ -68,32 +100,44 @@ export const buildRecordAccessAuthContext = async ({
           workspaceId: workspace.workspaceId,
           workspaceMemberId: workspace.workspaceMemberIds[mainPrincipal.role],
         })),
-        ...narrowing,
+        ...limitingNarrowing,
+        ...(await buildApplicationNarrowing({
+          applicationPrincipal,
+          workspace,
+        })),
       };
     case 'apiKey':
       return {
-        ...narrowing,
-        type: 'apiKey',
-        apiKey: { id: workspace.apiKeyIds[mainPrincipal.role] },
+        ...buildApiKeyAuthContext({
+          workspace: flatWorkspace,
+          apiKey: fromApiKeyEntityToFlat(
+            await getCoreRepository<ApiKeyEntity>(ApiKeyEntity).findOneByOrFail(
+              { id: workspace.apiKeyIds[mainPrincipal.role] },
+            ),
+          ),
+        }),
+        ...limitingNarrowing,
+        ...(await buildApplicationNarrowing({
+          applicationPrincipal,
+          workspace,
+        })),
       };
     case 'application':
-      return {
-        type: 'application',
-        workspace: workspaceReference,
-        application: { id: workspace.mainApplicationId },
-      };
+      return buildApplicationAuthContext({
+        workspace: flatWorkspace,
+        application: await findApplicationOrThrow({
+          applicationPrincipal,
+          workspace,
+        }),
+      });
     case 'agent':
-      return {
-        type: 'application',
-        workspace: workspaceReference,
-        application: { id: applicationId as string },
+      return buildApplicationAuthContext({
+        workspace: flatWorkspace,
+        application: await findApplicationOrThrow({
+          applicationPrincipal,
+          workspace,
+        }),
         agentId: workspace.mainAgentId,
-      };
-    case 'webhook':
-      return {
-        type: 'webhook',
-        workspace: workspaceReference,
-        webhook: { id: workspace.webhookId },
-      };
+      });
   }
 };

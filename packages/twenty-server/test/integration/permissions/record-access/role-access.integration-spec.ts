@@ -2,12 +2,13 @@ import { createRecordAccessWorkspace } from 'test/integration/permissions/utils/
 import { describeRecordAccess } from 'test/integration/permissions/utils/describe-record-access.util';
 import {
   type ExpectedRecordAccess,
+  type RecordAccessPrincipals,
   type RecordAccessWorkspace,
 } from 'test/integration/permissions/utils/record-access-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 const REACHES_EVERY_OPERATION: ExpectedRecordAccess = {
@@ -32,12 +33,16 @@ const REACHES_NOTHING: ExpectedRecordAccess = {
   canUpdateRecords: false,
 };
 
-const NO_LIMITING_PRINCIPAL = { type: 'none' } as const;
-const CUSTOM_APPLICATION = { type: 'customApplication' } as const;
+const NO_LIMITING_PRINCIPAL: RecordAccessPrincipals['limitingPrincipal'] = {
+  type: 'none',
+};
+const CUSTOM_APPLICATION: RecordAccessPrincipals['applicationPrincipal'] = {
+  type: 'customApplication',
+};
 
-let workspace: RecordAccessWorkspace | undefined;
+let workspace: RecordAccessWorkspace;
 
-const findWorkspace = () => workspace as RecordAccessWorkspace;
+const findWorkspace = () => workspace;
 
 beforeAll(async () => {
   jest.useRealTimers();
@@ -46,11 +51,9 @@ beforeAll(async () => {
 }, 120000);
 
 afterAll(async () => {
-  if (isDefined(workspace)) {
-    await getAppProviderByClassName<WorkspaceService>(
-      'WorkspaceService',
-    ).deleteWorkspace(workspace.workspaceId);
-  }
+  await getAppProviderByClassName<WorkspaceService>(
+    'WorkspaceService',
+  ).deleteWorkspace(workspace.workspaceId);
 }, 120000);
 
 describeRecordAccess({
@@ -269,13 +272,38 @@ describeRecordAccess({
       record: 'insideEveryFilter',
       expected: REACHES_EVERY_OPERATION,
     },
-    {
-      it: 'a webhook',
-      mainPrincipal: { type: 'webhook', role: 'allRecords' },
-      record: 'insideEveryFilter',
-      expected: REACHES_EVERY_OPERATION,
-    },
   ],
+});
+
+describe('a webhook', () => {
+  it('holds its role', async () => {
+    const { workspaceId, webhookId, objectMetadataId, recordIds } =
+      findWorkspace();
+    const recordsQuestion = {
+      principals: await getAppProviderByClassName<PrincipalPermissionsService>(
+        'PrincipalPermissionsService',
+      ).buildPermissionsPrincipals({
+        authContext: {
+          type: 'webhook',
+          workspace: { id: workspaceId },
+          webhook: { id: webhookId },
+        },
+      }),
+      objectMetadataId,
+      recordIds: [recordIds.insideEveryFilter],
+    };
+    const recordPermissionsService =
+      getAppProviderByClassName<RecordPermissionsService>(
+        'RecordPermissionsService',
+      );
+
+    expect(await recordPermissionsService.canReadRecords(recordsQuestion)).toBe(
+      true,
+    );
+    expect(
+      await recordPermissionsService.canUpdateRecords(recordsQuestion),
+    ).toBe(true);
+  });
 });
 
 describe('a bare role', () => {
