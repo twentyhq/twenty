@@ -76,7 +76,7 @@ export class MessageQueueService {
       return Promise.resolve({ releasedCount: 0, releasedBytes: 0 });
     }
 
-    return this.driver.reconcileJobMemory(this.queueName);
+    return this.driver.reconcileJobMemory();
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

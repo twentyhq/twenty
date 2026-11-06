@@ -164,9 +164,14 @@ export class BullMQDriver
     });
   }
 
-  async reconcileJobMemory(
-    queueName: MessageQueue,
-  ): Promise<JobMemoryReconciliation> {
+  // charges of every queue share one Redis, so any registered queue's client can reconcile them all
+  async reconcileJobMemory(): Promise<JobMemoryReconciliation> {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return { releasedCount: 0, releasedBytes: 0 };
+    }
+
     return this.jobMemoryLimiter.reconcile(queueName);
   }
 

@@ -28,7 +28,7 @@ export class JobMemoryReconcileCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '--grace-seconds [grace_seconds]',
+    flags: '--grace-seconds <grace_seconds>',
     description: `Wait between the two reconcile passes (default ${DEFAULT_GRACE_SECONDS})`,
     required: false,
   })

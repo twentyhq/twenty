@@ -160,17 +160,17 @@ describe('BullMQDriver job memory accounting (integration)', () => {
   it('releases the charge of a deleted waiting job once two reconcile passes miss it', async () => {
     const job = await enqueue({}, 60 * 60 * 1000);
 
-    await driver.reconcileJobMemory(QUEUE);
-    await driver.reconcileJobMemory(QUEUE);
+    await driver.reconcileJobMemory();
+    await driver.reconcileJobMemory();
 
     expect(await readUsedBytes()).toBe(job.sizeBytes);
 
     await (await inspectionQueue.getJob(job.jobId))?.remove();
-    await driver.reconcileJobMemory(QUEUE);
+    await driver.reconcileJobMemory();
 
     expect(await readUsedBytes()).toBe(job.sizeBytes);
 
-    await driver.reconcileJobMemory(QUEUE);
+    await driver.reconcileJobMemory();
 
     expect(await readUsedBytes()).toBe(0);
   });

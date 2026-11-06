@@ -708,12 +708,13 @@ describe('BullMQDriver job memory scenarios', () => {
       await harness.removeFromBullMQ(deletedJob.jobId);
       await expect(enqueueThirdJob()).rejects.toThrow(MessageQueueException);
 
-      await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE);
+      await harness.driver.reconcileJobMemory();
       await expect(enqueueThirdJob()).rejects.toThrow(MessageQueueException);
 
-      expect(
-        await harness.driver.reconcileJobMemory(MEMORY_SCENARIO_QUEUE),
-      ).toEqual({ releasedCount: 2, releasedBytes: 2 * deletedJob.sizeBytes });
+      expect(await harness.driver.reconcileJobMemory()).toEqual({
+        releasedCount: 2,
+        releasedBytes: 2 * deletedJob.sizeBytes,
+      });
       await expect(enqueueThirdJob()).resolves.toMatchObject({
         jobs: [expect.anything()],
       });
