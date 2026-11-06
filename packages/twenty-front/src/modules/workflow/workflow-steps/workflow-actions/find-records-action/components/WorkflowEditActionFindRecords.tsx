@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Separator } from 'twenty-ui/primitives/layout';
-import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { v4 } from 'uuid';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -52,7 +51,6 @@ type FindRecordsFormData = {
 
 type FindRecordsActionOrderBy = {
   recordSorts?: RecordSort[];
-  gqlOperationOrderBy?: JsonValue;
 };
 
 export const WorkflowEditActionFindRecords = ({
@@ -79,7 +77,14 @@ export const WorkflowEditActionFindRecords = ({
         ? action.settings.input.offset
         : 0,
     filter: action.settings.input.filter as FindRecordsActionFilter,
-    orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
+    orderBy: isDefined(action.settings.input.orderBy?.recordSorts)
+      ? {
+          // sorts written through the API or a manifest carry no id, which the sort list keys on
+          recordSorts: action.settings.input.orderBy.recordSorts.map(
+            (recordSort) => ({ ...recordSort, id: recordSort.id ?? v4() }),
+          ) as RecordSort[],
+        }
+      : undefined,
   }));
 
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
@@ -242,21 +247,9 @@ export const WorkflowEditActionFindRecords = ({
                     return;
                   }
 
-                  const gqlOperationOrderBy =
-                    sorts.length > 0
-                      ? turnSortsIntoOrderBy(
-                          selectedObjectMetadataItem,
-                          sorts,
-                          objectMetadataItems,
-                        )
-                      : undefined;
-
                   const newFormData: FindRecordsFormData = {
                     ...formData,
-                    orderBy: {
-                      recordSorts: sorts,
-                      gqlOperationOrderBy,
-                    },
+                    orderBy: { recordSorts: sorts },
                   };
 
                   setFormData(newFormData);

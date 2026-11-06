@@ -1,0 +1,171 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
+
+const OPPORTUNITY_ID = '20000000-0000-4000-8000-000000000000';
+const COMPANY_ID = '20000000-0000-4000-8000-000000000001';
+
+const field = (
+  id: string,
+  objectMetadataId: string,
+  name: string,
+  type: FieldMetadataType,
+  overrides: Partial<FlatFieldMetadata> = {},
+) =>
+  getFlatFieldMetadataMock({
+    id,
+    universalIdentifier: id,
+    objectMetadataId,
+    name,
+    type,
+    ...overrides,
+  });
+
+const opportunityFields = [
+  field(
+    '10000000-0000-4000-8000-000000000001',
+    OPPORTUNITY_ID,
+    'closeDate',
+    FieldMetadataType.DATE_TIME,
+  ),
+  field(
+    '10000000-0000-4000-8000-000000000002',
+    OPPORTUNITY_ID,
+    'amount',
+    FieldMetadataType.CURRENCY,
+  ),
+  field(
+    '10000000-0000-4000-8000-000000000003',
+    OPPORTUNITY_ID,
+    'company',
+    FieldMetadataType.RELATION,
+    {
+      relationTargetObjectMetadataId: COMPANY_ID,
+    },
+  ),
+  field(
+    '10000000-0000-4000-8000-000000000004',
+    OPPORTUNITY_ID,
+    'position',
+    FieldMetadataType.POSITION,
+  ),
+];
+const [CLOSE_DATE, AMOUNT, COMPANY_RELATION] = opportunityFields;
+const COMPANY_NAME = field(
+  '10000000-0000-4000-8000-000000000005',
+  COMPANY_ID,
+  'name',
+  FieldMetadataType.TEXT,
+);
+
+const buildMaps = ({
+  companyLabelIdentifierFieldMetadataId,
+}: {
+  companyLabelIdentifierFieldMetadataId: string | null;
+}) => {
+  const opportunity = getFlatObjectMetadataMock({
+    id: OPPORTUNITY_ID,
+    universalIdentifier: OPPORTUNITY_ID,
+    nameSingular: 'opportunity',
+    fieldIds: opportunityFields.map(({ id }) => id),
+  });
+  const company = getFlatObjectMetadataMock({
+    id: COMPANY_ID,
+    universalIdentifier: COMPANY_ID,
+    nameSingular: 'company',
+    fieldIds: [COMPANY_NAME.id],
+    labelIdentifierFieldMetadataId: companyLabelIdentifierFieldMetadataId,
+  });
+
+  const flatObjectMetadataMaps = [opportunity, company].reduce(
+    (flatEntityMaps, flatEntity) =>
+      addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
+  );
+  const flatFieldMetadataMaps = [...opportunityFields, COMPANY_NAME].reduce(
+    (flatEntityMaps, flatEntity) =>
+      addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+  );
+
+  return {
+    flatObjectMetadata: opportunity,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  };
+};
+
+describe('computeRecordGqlOperationOrderByFromFlatMaps', () => {
+  const maps = buildMaps({
+    companyLabelIdentifierFieldMetadataId: COMPANY_NAME.id,
+  });
+
+  it('leaves the order to the query when there is no sort', () => {
+    expect(
+      computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: [],
+        ...maps,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('orders by each sort with nulls last, then by position', () => {
+    expect(
+      computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: [
+          { fieldMetadataId: CLOSE_DATE.id, direction: 'DESC' },
+          { fieldMetadataId: AMOUNT.id, direction: 'ASC' },
+        ],
+        ...maps,
+      }),
+    ).toEqual([
+      { closeDate: 'DescNullsLast' },
+      { amount: { amountMicros: 'AscNullsLast' } },
+      { position: 'AscNullsFirst' },
+    ]);
+  });
+
+  it('orders a relation by the label identifier of its target', () => {
+    expect(
+      computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: [
+          { fieldMetadataId: COMPANY_RELATION.id, direction: 'ASC' },
+        ],
+        ...maps,
+      }),
+    ).toEqual([
+      { company: { name: 'AscNullsLast' } },
+      { position: 'AscNullsFirst' },
+    ]);
+  });
+
+  it('falls back to the name field when the target has no label identifier', () => {
+    expect(
+      computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: [
+          { fieldMetadataId: COMPANY_RELATION.id, direction: 'DESC' },
+        ],
+        ...buildMaps({ companyLabelIdentifierFieldMetadataId: null }),
+      }),
+    ).toEqual([
+      { company: { name: 'DescNullsLast' } },
+      { position: 'AscNullsFirst' },
+    ]);
+  });
+
+  it('refuses a sort on a field that is not on the object', () => {
+    expect(() =>
+      computeRecordGqlOperationOrderByFromFlatMaps({
+        recordSorts: [{ fieldMetadataId: COMPANY_NAME.id, direction: 'ASC' }],
+        ...maps,
+      }),
+    ).toThrow('does not exist on opportunity');
+  });
+});

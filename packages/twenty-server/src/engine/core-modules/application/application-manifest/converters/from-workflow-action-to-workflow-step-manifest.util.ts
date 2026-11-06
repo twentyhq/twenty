@@ -36,16 +36,13 @@ const fromFindRecordsOrderBy = ({
 }: {
   orderBy: Record<string, unknown>;
   resolvers: WorkflowManifestInverseReferenceResolvers;
-}) => {
-  const { gqlOperationOrderBy: _gqlOperationOrderBy, ...rest } = orderBy;
-
-  return isDefined(rest.recordSorts)
+}) =>
+  isDefined(orderBy.recordSorts)
     ? {
-        ...rest,
-        recordSorts: toArray(rest.recordSorts).map(resolvers.fieldReference),
+        ...orderBy,
+        recordSorts: toArray(orderBy.recordSorts).map(resolvers.fieldReference),
       }
-    : rest;
-};
+    : orderBy;
 
 const fromFindRecordsFilter = ({
   filter,

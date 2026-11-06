@@ -1,9 +1,10 @@
 import { workflowFindRecordsActionSettingsSchema } from '../find-records-action-settings-schema';
 
-const buildSettings = (filter: unknown) => ({
+const buildSettings = (filter: unknown, orderBy?: unknown) => ({
   input: {
     objectName: 'company',
     filter,
+    orderBy,
   },
   outputSchema: {},
   errorHandlingOptions: {
@@ -89,6 +90,44 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         recordFilterGroups: [{ id: 'group-id', logicalOperator: 'XOR' }],
+      }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept record sorts that reference fields by id', () => {
+    const recordSort = {
+      id: 'sort-id',
+      fieldMetadataId: 'field-id',
+      direction: 'DESC',
+      subFieldName: 'lastName',
+    };
+
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, { recordSorts: [recordSort] }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.data?.input.orderBy?.recordSorts).toEqual([recordSort]);
+  });
+
+  it('should reject a GraphQL order by, which the run computes from record sorts', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, {
+        gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
+      }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject a record sort with an unknown direction', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings(undefined, {
+        recordSorts: [
+          { fieldMetadataId: 'field-id', direction: 'AscNullsLast' },
+        ],
       }),
     );
 

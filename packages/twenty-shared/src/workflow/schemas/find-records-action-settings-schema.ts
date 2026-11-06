@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { recordFilterGroupSchema } from './record-filter-group-schema';
 import { recordFilterSchema } from './record-filter-schema';
+import { recordSortSchema } from './record-sort-schema';
 import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
 
 export const workflowFindRecordsActionSettingsSchema =
@@ -21,12 +22,10 @@ export const workflowFindRecordsActionSettingsSchema =
           recordFilters: z.array(recordFilterSchema).optional(),
         })
         .optional(),
+      // strict so a GraphQL orderBy is refused rather than silently dropped; the run computes it from recordSorts
       orderBy: z
-        .object({
-          recordSorts: z.array(z.any()).optional(),
-          gqlOperationOrderBy: z
-            .array(z.record(z.string(), z.any()))
-            .optional(),
+        .strictObject({
+          recordSorts: z.array(recordSortSchema).optional(),
         })
         .optional(),
     }),

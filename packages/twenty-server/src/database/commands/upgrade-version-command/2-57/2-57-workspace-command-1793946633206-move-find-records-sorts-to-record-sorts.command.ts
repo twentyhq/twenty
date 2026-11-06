@@ -1,0 +1,232 @@
+import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
+import { type QueryRunner } from 'typeorm';
+
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import {
+  type InexactlyConvertedSort,
+  moveFindRecordsSortsToRecordSorts,
+  type SortableField,
+} from 'src/database/commands/upgrade-version-command/2-57/utils/move-find-records-sorts-to-record-sorts.util';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+type StepsRow = { id: string; steps: unknown };
+
+type ConvertedSteps = { id: string; steps: unknown };
+
+// Runs that ended never execute their steps again, so their snapshot is left as it ran
+const RUN_STATUSES_STILL_EXECUTING_STEPS = [
+  'NOT_STARTED',
+  'ENQUEUED',
+  'RUNNING',
+];
+
+@RegisteredWorkspaceCommand('2.57.0', 1793946633206)
+@Command({
+  name: 'upgrade:2-57:move-find-records-sorts-to-record-sorts',
+  description:
+    'Store find records sorts only as record sorts, converting sorts written through the API as a GraphQL order, since runs now compute the order from them',
+})
+export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+    dataSource,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    if (!isDefined(dataSource)) {
+      this.logger.warn(
+        `No data source for workspace ${workspaceId}, skipping find records sort conversion`,
+      );
+
+      return;
+    }
+
+    const fieldsByObjectName = await this.getFieldsByObjectName(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const workspaceVersionTable = `"${schemaName}"."workflowVersion"`;
+    const workspaceRunTable = `"${schemaName}"."workflowRun"`;
+    const inexactlyConvertedSorts: InexactlyConvertedSort[] = [];
+
+    const convertSteps = (rows: StepsRow[]): ConvertedSteps[] =>
+      rows.flatMap(({ id, steps }) => {
+        const converted = moveFindRecordsSortsToRecordSorts({
+          steps,
+          fieldsByObjectName,
+        });
+
+        inexactlyConvertedSorts.push(...converted.inexactlyConvertedSorts);
+
+        return converted.hasChanged ? [{ id, steps: converted.steps }] : [];
+      });
+
+    const queryRunner = dataSource.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+
+      const convertedCoreVersions = convertSteps(
+        await queryRunner.query(
+          `SELECT id, steps FROM core."workflowVersion" WHERE "workspaceId" = $1 AND steps::text LIKE '%gqlOperationOrderBy%'`,
+          [workspaceId],
+        ),
+      );
+      const convertedWorkspaceVersions = (await this.tableExists(
+        queryRunner,
+        workspaceVersionTable,
+      ))
+        ? convertSteps(
+            await queryRunner.query(
+              `SELECT id, steps FROM ${workspaceVersionTable} WHERE steps::text LIKE '%gqlOperationOrderBy%'`,
+            ),
+          )
+        : [];
+      const convertedRuns = (await this.tableExists(
+        queryRunner,
+        workspaceRunTable,
+      ))
+        ? convertSteps(
+            await queryRunner.query(
+              `SELECT id, state->'flow'->'steps' AS steps FROM ${workspaceRunTable} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%'`,
+              [RUN_STATUSES_STILL_EXECUTING_STEPS],
+            ),
+          )
+        : [];
+
+      for (const { stepId, orderByEntry } of inexactlyConvertedSorts) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: find records step ${stepId} sort ${JSON.stringify(orderByEntry)} has no exact record sort; nested or unknown entries are dropped and nulls first becomes nulls last`,
+        );
+      }
+
+      const convertedRowCount =
+        convertedCoreVersions.length +
+        convertedWorkspaceVersions.length +
+        convertedRuns.length;
+
+      if (convertedRowCount === 0) {
+        return;
+      }
+
+      if (options.dryRun) {
+        this.logger.log(
+          `[DRY RUN] Would move find records sorts to record sorts in ${convertedCoreVersions.length} core version(s), ${convertedWorkspaceVersions.length} workspace version(s) and ${convertedRuns.length} pending run(s) for workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      await queryRunner.startTransaction();
+
+      await this.updateRows({
+        queryRunner,
+        tableName: 'core."workflowVersion"',
+        assignment: `"steps" = $1::jsonb`,
+        convertedRows: convertedCoreVersions,
+      });
+      await this.updateRows({
+        queryRunner,
+        tableName: workspaceVersionTable,
+        assignment: `"steps" = $1::jsonb`,
+        convertedRows: convertedWorkspaceVersions,
+      });
+      // only the flow snapshot is set, so state the worker writes meanwhile is kept
+      await this.updateRows({
+        queryRunner,
+        tableName: workspaceRunTable,
+        assignment: `"state" = jsonb_set("state", '{flow,steps}', $1::jsonb)`,
+        convertedRows: convertedRuns,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatWorkflowVersionMaps',
+    ]);
+
+    this.logger.log(
+      `Moved find records sorts to record sorts for workspace ${workspaceId}`,
+    );
+  }
+
+  private async getFieldsByObjectName(
+    workspaceId: string,
+  ): Promise<Map<string, SortableField[]>> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+
+    const fieldsByObjectName = new Map<string, SortableField[]>();
+
+    for (const flatObjectMetadata of Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(flatObjectMetadata)) {
+        continue;
+      }
+
+      fieldsByObjectName.set(
+        flatObjectMetadata.nameSingular,
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }).map(({ id, name, type }) => ({ id, name, type })),
+      );
+    }
+
+    return fieldsByObjectName;
+  }
+
+  private async tableExists(
+    queryRunner: QueryRunner,
+    tableName: string,
+  ): Promise<boolean> {
+    const [{ exists }] = await queryRunner.query(
+      `SELECT to_regclass($1) IS NOT NULL AS "exists"`,
+      [tableName],
+    );
+
+    return exists;
+  }
+
+  private async updateRows({
+    queryRunner,
+    tableName,
+    assignment,
+    convertedRows,
+  }: {
+    queryRunner: QueryRunner;
+    tableName: string;
+    assignment: string;
+    convertedRows: ConvertedSteps[];
+  }): Promise<void> {
+    for (const { id, steps } of convertedRows) {
+      await queryRunner.query(
+        `UPDATE ${tableName} SET ${assignment} WHERE id = $2`,
+        [JSON.stringify(steps), id],
+      );
+    }
+  }
+}
