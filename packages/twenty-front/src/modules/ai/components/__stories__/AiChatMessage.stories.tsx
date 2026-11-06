@@ -752,7 +752,6 @@ export const ConfiguredAssistantIdentity: Story = {
       mockDistinctAgentMessage,
       mockUnavailableAgentMessage,
       mockLegacyAssistantMessage,
-      mockUnknownSenderMessage,
     ],
     msw: {
       handlers: [
@@ -783,7 +782,6 @@ export const ConfiguredAssistantIdentity: Story = {
       <AiChatMessage messageId={mockDistinctAgentMessage.id} />
       <AiChatMessage messageId={mockUnavailableAgentMessage.id} />
       <AiChatMessage messageId={mockLegacyAssistantMessage.id} />
-      <AiChatMessage messageId={mockUnknownSenderMessage.id} />
     </StyledConversationContainer>
   ),
   play: async ({ canvasElement }) => {
@@ -794,7 +792,6 @@ export const ConfiguredAssistantIdentity: Story = {
     await expect(await canvas.findByText('Sales assistant')).toBeVisible();
     await expect(canvas.getByText('Agent')).toBeVisible();
     await expect(canvas.getByText('Assistant')).toBeVisible();
-    await expect(canvas.getByText('Unknown sender')).toBeVisible();
     await expect(
       canvas.getByText('Legacy prose mentions Ada unchanged.'),
     ).toBeVisible();

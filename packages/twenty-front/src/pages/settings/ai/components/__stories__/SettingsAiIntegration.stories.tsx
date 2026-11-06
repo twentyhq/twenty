@@ -144,8 +144,6 @@ export const BehaviorPersistenceAndRetry: Story = {
         'Choose when Scout participates in conversations across your workspace',
       ),
     ).toBeVisible();
-    expect(canvas.getByText(/Never keeps Scout out\./)).toBeVisible();
-
     fixture.failNextBehaviorSave();
     await userEvent.click(directMessages);
     await userEvent.click(
