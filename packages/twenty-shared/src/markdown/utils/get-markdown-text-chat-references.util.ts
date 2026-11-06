@@ -137,6 +137,10 @@ const mayHidePlaceholders = (textWithPlaceholders: string): boolean => {
   return textWithPlaceholders.split('\n').some(hasPlaceholderBetweenBackticks);
 };
 
+const mayInlineMarkdownHidePlaceholders = (inlineMarkdown: string): boolean =>
+  LINK_OR_HTML_SYNTAXES.some((syntax) => inlineMarkdown.includes(syntax)) ||
+  hasPlaceholderBetweenBackticks(inlineMarkdown);
+
 const getTextPlaceholderIndexes = (
   textWithPlaceholders: string,
 ): Set<number> => {
@@ -151,11 +155,7 @@ const getTextPlaceholderIndexes = (
       .map(({ src: inlineMarkdown }) => inlineMarkdown)
       .filter((inlineMarkdown) => inlineMarkdown.includes(PLACEHOLDER_START))
       .flatMap((inlineMarkdown) =>
-        hasLinkDefinitions ||
-        LINK_OR_HTML_SYNTAXES.some((syntax) =>
-          inlineMarkdown.includes(syntax),
-        ) ||
-        hasPlaceholderBetweenBackticks(inlineMarkdown)
+        hasLinkDefinitions || mayInlineMarkdownHidePlaceholders(inlineMarkdown)
           ? getInlineTextRaws(lexer.inlineTokens(inlineMarkdown))
           : [inlineMarkdown],
       )
