@@ -1,0 +1,114 @@
+---
+title: Validation Rules
+description: Set conditions that records must meet before they can be saved.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+## What Are Validation Rules?
+
+A validation rule is a condition that must be true before a record can be created or updated. If the condition is false, Twenty blocks the save and shows a message explaining what needs to change.
+
+Use rules to require information at the right time, such as an amount before an opportunity becomes a customer, or to prevent inconsistent values, such as an end date before a start date.
+
+<Note>
+  Validation rules are available on the Organization plan. You need permission
+  to edit the data model to manage them.
+</Note>
+
+## Create a Validation Rule
+
+1. Go to **Settings → Data Model** and select the object you want to configure.
+2. Open the **Settings** tab, find **Validation rules**, and click **Add rule**.
+3. Give the rule a name and, optionally, a description to explain its purpose.
+4. Write a **Condition**. Start typing a field name or function and select suggestions from the helper panel.
+5. Under **Error**, enter a **Message** that tells people how to fix the record. Use **Show on** to attach it to a specific field or select **Whole record**.
+6. Check the **Preview** to see how the condition behaves on existing records.
+7. Click **Activate** to start enforcing the rule.
+
+New rules stay inactive until you activate them. A rule needs a name, a valid condition, and an error message before it can be activated.
+
+### Preview Your Rule
+
+The preview uses up to three recent records from the selected object. Use the arrows to move between them and inspect the values used by the condition.
+
+| Status      | Meaning                                                                                  |
+| ----------- | ---------------------------------------------------------------------------------------- |
+| **Valid**   | The record meets the condition.                                                          |
+| **Blocked** | The record fails the condition. The preview also shows your error message.               |
+| **Error**   | The condition could not be evaluated. Check the error details and adjust the expression. |
+
+Previewing a rule does not change any records. If the object has no records yet, create a few to try the preview.
+
+## Write a Condition
+
+Write the condition that allows a save. For example, `employees > 0` allows a company to be saved only when its employee count is greater than zero.
+
+Use field names such as `employees`, rather than display labels such as **Employees**. Selecting a field from the helper inserts the correct reference.
+
+| Syntax                           | Use                                 |
+| -------------------------------- | ----------------------------------- |
+| `==`, `!=`, `<`, `<=`, `>`, `>=` | Compare values.                     |
+| `and`, `or`, `not`               | Combine or negate conditions.       |
+| `+`, `-`, `*`, `/`               | Calculate values.                   |
+| `stage in ['NEW', 'CUSTOMER']`   | Check whether a value is in a list. |
+| `true`, `false`                  | Compare boolean fields.             |
+| `now`                            | Use the date and time of the save.  |
+
+Put text in single or double quotes and use parentheses to group conditions. Use `and` and `or` rather than `&&` and `||`.
+
+### Check for Missing Values
+
+| Function                      | Use                                                                                                  |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `isEmpty(value)`              | Check for a missing value, empty text, an empty list, or an empty composite field.                   |
+| `isDefined(value)`            | Check whether a value is set. Empty text still counts as defined.                                    |
+| `isNonEmptyString(value)`     | Check that a value is text with at least one character.                                              |
+| `includes(listOrText, value)` | Check whether a list contains a value or text contains a substring. Text matching is case-sensitive. |
+| `arrayLength(list)`           | Get the number of items in a list.                                                                   |
+
+To make a field required, use `not isEmpty(fieldName)`. This also works for composite fields such as emails and addresses.
+
+### Reference Composite and Related Fields
+
+Use a dot to read part of a composite field, such as `name.firstName` or `amount.amountMicros`. You can also read a field through a many-to-one relation, such as `company.name` on a person. Select fields from the helper to find the available paths.
+
+Currency amounts are stored in micros: one currency unit equals `1000000` micros. For example, `amount.amountMicros >= 100000000` requires an amount of at least 100 in the record's currency.
+
+For select fields, compare the stored option value, such as `'CUSTOMER'`, rather than its display label. Check the helper examples for the values available on your field.
+
+## Example Rules
+
+Adapt the field names and option values to your data model. The `startDate`, `endDate`, and `tags` fields below are examples of custom fields.
+
+| Goal                                                           | Condition                                                              | Suggested error message                                                       |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Require a company name                                         | `not isEmpty(name)`                                                    | Enter a company name.                                                         |
+| Require a positive amount when an opportunity reaches Customer | `stage != 'CUSTOMER' or amount.amountMicros > 0`                       | Enter an amount greater than zero before moving this opportunity to Customer. |
+| Require a person to be linked to a company                     | `isDefined(company)`                                                   | Select a company for this person.                                             |
+| Require an end date to be on or after the start date           | `isDefined(startDate) and isDefined(endDate) and endDate >= startDate` | Enter a start date and an end date on or after it.                            |
+| Require at least one tag                                       | `arrayLength(tags) > 0`                                                | Add at least one tag.                                                         |
+
+The opportunity example uses `or` to make the amount requirement conditional: other stages can be saved without an amount.
+
+## When Rules Are Checked
+
+Active rules are checked when records are created or updated, including changes made through the API, imports, and workflows. A record must pass all active rules for its object to be saved.
+
+Activating a rule does not change existing records. A record that fails the new condition must be corrected the next time it is saved.
+
+A condition that reads a related record is evaluated when the record the rule belongs to is saved. Editing the related record alone does not recheck it.
+
+## Edit, Disable, or Delete a Rule
+
+Return to **Settings → Data Model → your object → Settings → Validation rules**, then click the rule.
+
+- **Edit:** Update the condition or message, check the preview, and click **Save**. For an inactive rule, this button is **Activate**.
+- **Disable:** In **Danger zone**, click **Disable** to stop enforcing the rule while keeping its configuration. Click **Enable** to enforce it again.
+- **Delete:** In **Danger zone**, click **Delete** and confirm to permanently remove the rule. Existing records are not changed.
+
+Deactivating or deleting a field used in a condition also deactivates the rules that read it. Review those rules before enabling them again.
+
+To define validation rules in an app, see the [developer guide](/developers/extend/apps/data/validation-rules).
+
+<PageBanner illustration="card-page-validation-rules" />
