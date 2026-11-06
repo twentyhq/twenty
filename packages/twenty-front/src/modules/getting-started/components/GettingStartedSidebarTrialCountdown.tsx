@@ -10,7 +10,7 @@ const StyledTrial = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-  padding: 0 ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledTrialRow = styled.div`
@@ -18,22 +18,26 @@ const StyledTrialRow = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  height: 17px;
 `;
 
 const StyledDaysLeft = styled.span`
   color: ${themeCssVariables.font.color.primary};
   flex: 1;
   font-weight: ${themeCssVariables.font.weight.medium};
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
 `;
 
 const StyledTrialLabel = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
 `;
 
 const StyledTrialDays = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledTrialDay = styled.span`
