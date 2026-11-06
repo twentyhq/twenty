@@ -55,9 +55,7 @@ const recordSortsOf = (steps: unknown) =>
 
 describe('moveFindRecordsSortsToRecordSorts', () => {
   it('drops the GraphQL order the builder computed next to its record sorts', () => {
-    const recordSorts = [
-      { id: 'sort-id', fieldMetadataId: STATUS.id, direction: 'DESC' },
-    ];
+    const recordSorts = [{ fieldMetadataId: STATUS.id, direction: 'DESC' }];
 
     const { steps, hasChanged, inexactlyConvertedSorts } = convert({
       recordSorts,
@@ -156,7 +154,20 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
     ]);
   });
 
-  it('leaves steps without a GraphQL order untouched', () => {
+  it('drops the list key the builder stored on each record sort', () => {
+    const { steps, hasChanged } = convert({
+      recordSorts: [
+        { id: 'sort-id', fieldMetadataId: STATUS.id, direction: 'DESC' },
+      ],
+    });
+
+    expect(hasChanged).toBe(true);
+    expect(recordSortsOf(steps)).toEqual([
+      { fieldMetadataId: STATUS.id, direction: 'DESC' },
+    ]);
+  });
+
+  it('leaves steps without a GraphQL order or stored sort ids untouched', () => {
     const steps = [
       findRecordsStep({
         recordSorts: [{ fieldMetadataId: STATUS.id, direction: 'ASC' }],

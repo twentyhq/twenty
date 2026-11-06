@@ -31,7 +31,7 @@ const RUN_STATUSES_STILL_EXECUTING_STEPS = [
 
 const RUN_PAGE_SIZE = 500;
 
-const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `steps::text LIKE '%gqlOperationOrderBy%'`;
+const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `(steps::text LIKE '%gqlOperationOrderBy%' OR steps::text LIKE '%recordSorts%')`;
 
 @RegisteredWorkspaceCommand('2.57.0', 1793965625303)
 @Command({

@@ -203,16 +203,39 @@ export const moveFindRecordsSortsToRecordSorts = ({
       step.type !== 'FIND_RECORDS' ||
       !isPlainObject(step.settings) ||
       !isPlainObject(step.settings.input) ||
-      !isPlainObject(step.settings.input.orderBy) ||
-      !('gqlOperationOrderBy' in step.settings.input.orderBy)
+      !isPlainObject(step.settings.input.orderBy)
     ) {
+      return step;
+    }
+
+    const storedOrderBy = step.settings.input.orderBy;
+    const hasStoredSortIds =
+      Array.isArray(storedOrderBy.recordSorts) &&
+      storedOrderBy.recordSorts.some(
+        (recordSort) => isPlainObject(recordSort) && 'id' in recordSort,
+      );
+
+    if (!('gqlOperationOrderBy' in storedOrderBy) && !hasStoredSortIds) {
       return step;
     }
 
     hasChanged = true;
 
     const { input } = step.settings;
-    const { gqlOperationOrderBy, ...orderBy } = step.settings.input.orderBy;
+    const { gqlOperationOrderBy, ...orderBy } = storedOrderBy;
+
+    // the builder used to store a list key on each sort, which the sort schema no longer has
+    if (Array.isArray(orderBy.recordSorts)) {
+      orderBy.recordSorts = orderBy.recordSorts.map((recordSort) => {
+        if (!isPlainObject(recordSort)) {
+          return recordSort;
+        }
+
+        const { id: _id, ...recordSortWithoutId } = recordSort;
+
+        return recordSortWithoutId;
+      });
+    }
 
     if (!isDefined(orderBy.recordSorts)) {
       const converted = toRecordSorts({
