@@ -445,6 +445,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    shouldDisplayGroupsAsTabs: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     kanbanColumnWidth: {
       toCompare: true,
       toStringify: false,

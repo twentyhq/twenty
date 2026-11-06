@@ -1,4 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { useIsRecordGroupTabsDisplayed } from '@/object-record/record-group/hooks/useIsRecordGroupTabsDisplayed';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { RecordTableRecordGroupEndDropZone } from '@/object-record/record-table/components/RecordTableRecordGroupEndDropZone';
 import { RecordTableRecordGroupRowList } from '@/object-record/record-table/components/RecordTableRecordGroupRowList';
@@ -18,11 +19,13 @@ export const RecordTableRecordGroupRows = () => {
     currentRecordGroupId,
   );
 
+  const isRecordGroupTabsDisplayed = useIsRecordGroupTabsDisplayed();
+
   if (shouldHide) {
     return null;
   }
 
-  if (!isRecordGroupTableSectionToggled) {
+  if (!isRecordGroupTableSectionToggled && !isRecordGroupTabsDisplayed) {
     return null;
   }
 

@@ -1,3 +1,4 @@
+import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
@@ -11,6 +12,7 @@ import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-select
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -42,6 +44,7 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListSSESubscribeEffect />
       <RecordIndexRemoveSortingModal />
+      <RecordGroupTabs viewType={ViewType.LIST} />
       <RecordListFieldTooltip>
         <ScrollWrapper
           componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
