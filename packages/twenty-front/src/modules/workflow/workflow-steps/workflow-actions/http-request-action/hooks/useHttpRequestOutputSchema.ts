@@ -1,11 +1,8 @@
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
-import { convertOutputSchemaToJson } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/convertOutputSchemaToJson';
-import { getHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 type UseHttpRequestOutputSchemaProps = {
   action: WorkflowHttpRequestAction;
@@ -13,36 +10,15 @@ type UseHttpRequestOutputSchemaProps = {
   readonly?: boolean;
 };
 
-const getInitialExpectedBody = (
-  action: WorkflowHttpRequestAction,
-): object | undefined => {
-  const expectedOutputSchema = action.settings.expectedOutputSchema;
-
-  if (
-    isDefined(expectedOutputSchema) &&
-    Object.keys(expectedOutputSchema).length
-  ) {
-    return expectedOutputSchema;
-  }
-
-  if (Object.keys(action.settings.outputSchema).length) {
-    return convertOutputSchemaToJson(
-      action.settings.outputSchema as BaseOutputSchemaV2,
-    );
-  }
-
-  return undefined;
-};
-
 export const useHttpRequestOutputSchema = ({
   action,
   onActionUpdate,
   readonly,
 }: UseHttpRequestOutputSchemaProps) => {
-  const initialExpectedBody = getInitialExpectedBody(action);
+  const initialExpectedBody = action.settings.expectedOutputSchema;
 
   const [outputSchema, setOutputSchema] = useState<string | null>(
-    isDefined(initialExpectedBody)
+    isDefined(initialExpectedBody) && !isEmptyObject(initialExpectedBody)
       ? JSON.stringify(initialExpectedBody, null, 2)
       : null,
   );
@@ -71,7 +47,6 @@ export const useHttpRequestOutputSchema = ({
       settings: {
         ...action.settings,
         expectedOutputSchema: parsingResult.data,
-        outputSchema: getHttpRequestOutputSchema(parsingResult.data),
       },
     });
   };

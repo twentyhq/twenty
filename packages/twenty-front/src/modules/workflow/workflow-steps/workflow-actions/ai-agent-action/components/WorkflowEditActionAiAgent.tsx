@@ -1,4 +1,3 @@
-import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -89,17 +88,7 @@ export const WorkflowEditActionAiAgent = ({
 
     actionOptions.onActionUpdate({
       ...action,
-      settings: {
-        ...action.settings,
-        input,
-        ...(input.responseFormat?.type === 'json'
-          ? {
-              outputSchema: agentResponseSchemaToOutputSchema(
-                input.responseFormat.schema,
-              ),
-            }
-          : {}),
-      },
+      settings: { ...action.settings, input },
     });
   }, 500);
 

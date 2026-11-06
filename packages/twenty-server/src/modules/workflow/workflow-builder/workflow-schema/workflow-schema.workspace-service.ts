@@ -1,13 +1,20 @@
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
+import { computeClassifyOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-classify-output-schema.util';
+import {
+  computeCreateCalendarEventOutputSchema,
+  computeDraftEmailOutputSchema,
+  computeSendChatMessageOutputSchema,
+  computeSendEmailOutputSchema,
+} from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-messaging-action-output-schemas.util';
 import { WAIT_FOR_EVENT_NAME_PATTERN } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/constants/wait-for-event-name-pattern.constant';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import {
   getOutputSchemaFromValue,
   inputSchemaToOutputSchema,
 } from 'twenty-shared/logic-function';
-import { isDefined, isValidVariable } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
   buildManualTriggerMetadataNode,
@@ -100,9 +107,18 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowTriggerType.CRON: {
         return {};
       }
-      case WorkflowActionType.SEND_EMAIL: {
-        return this.computeSendEmailActionOutputSchema();
-      }
+      case WorkflowActionType.SEND_EMAIL:
+        return computeSendEmailOutputSchema();
+      case WorkflowActionType.DRAFT_EMAIL:
+        return computeDraftEmailOutputSchema();
+      case WorkflowActionType.CREATE_CALENDAR_EVENT:
+        return computeCreateCalendarEventOutputSchema();
+      case WorkflowActionType.SEND_CHAT_MESSAGE:
+        return computeSendChatMessageOutputSchema({
+          hasToolCall: isDefined(step.settings.input.toolCall),
+        });
+      case WorkflowActionType.CLASSIFY:
+        return computeClassifyOutputSchema(step.settings.input.questions);
       case WorkflowActionType.CREATE_RECORD:
       case WorkflowActionType.UPDATE_RECORD:
       case WorkflowActionType.DELETE_RECORD:
@@ -161,61 +177,30 @@ export class WorkflowSchemaWorkspaceService {
         });
       }
       case WorkflowTriggerType.WEBHOOK:
+        return step.settings.httpMethod === 'POST'
+          ? this.computeOutputSchemaFromSample(step.settings.expectedBody)
+          : {};
       case WorkflowActionType.CODE:
-      case WorkflowActionType.HTTP_REQUEST: {
-        const expectedOutputSchema =
-          'expectedOutputSchema' in step.settings
-            ? step.settings.expectedOutputSchema
-            : undefined;
-
-        return this.computeOutputSchemaFromExpectedSample(expectedOutputSchema);
-      }
+      case WorkflowActionType.HTTP_REQUEST:
+        return this.computeOutputSchemaFromExpectedOutput(step.settings);
       case WorkflowActionType.LOGIC_FUNCTION: {
-        return this.computeLogicFunctionOutputSchema({
-          logicFunctionId: step.settings.input.logicFunctionId,
-          expectedOutputSchema: step.settings.expectedOutputSchema,
-          workspaceId,
-        });
+        const declaredOutputSchema =
+          await this.getLogicFunctionDeclaredOutputSchema({
+            logicFunctionId: step.settings.input.logicFunctionId,
+            workspaceId,
+          });
+
+        return (
+          declaredOutputSchema ??
+          this.computeOutputSchemaFromExpectedOutput(step.settings)
+        );
       }
       default:
         return {};
     }
   }
 
-  async enrichOutputSchema({
-    step,
-    workspaceId,
-    workflowVersionContent,
-  }: {
-    step: WorkflowAction;
-    workspaceId: string;
-    workflowVersionContent?: WorkflowVersionContent;
-  }): Promise<WorkflowAction> {
-    const BACKEND_ENRICHED_TYPES = [
-      WorkflowActionType.ITERATOR,
-      WorkflowActionType.AI_AGENT,
-    ];
-
-    if (!BACKEND_ENRICHED_TYPES.includes(step.type)) {
-      return step;
-    }
-
-    const result = { ...step };
-    const outputSchema = await this.computeStepOutputSchema({
-      step,
-      workspaceId,
-      workflowVersionContent,
-    });
-
-    result.settings = {
-      ...result.settings,
-      outputSchema: outputSchema || {},
-    };
-
-    return result;
-  }
-
-  async enrichStepsOutputSchema({
+  async enrichWorkflowVersionContentOutputSchemas({
     trigger,
     steps,
     workspaceId,
@@ -223,74 +208,89 @@ export class WorkflowSchemaWorkspaceService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
     workspaceId: string;
-  }): Promise<WorkflowAction[] | null> {
-    if (!isDefined(steps)) {
-      return null;
-    }
+  }): Promise<WorkflowVersionContent> {
+    const workflowVersionContent = { trigger, steps };
 
-    return Promise.all(
-      steps.map((step) =>
-        this.enrichOutputSchema({
-          step,
-          workspaceId,
-          workflowVersionContent: { trigger, steps },
-        }),
-      ),
-    );
+    const [enrichedTrigger, enrichedSteps] = await Promise.all([
+      isDefined(trigger)
+        ? this.withComputedOutputSchema({
+            step: trigger,
+            workspaceId,
+            workflowVersionContent,
+          })
+        : null,
+      isDefined(steps)
+        ? Promise.all(
+            steps.map((step) =>
+              this.withComputedOutputSchema({
+                step,
+                workspaceId,
+                workflowVersionContent,
+              }),
+            ),
+          )
+        : null,
+    ]);
+
+    return { trigger: enrichedTrigger, steps: enrichedSteps };
   }
 
-  private computeOutputSchemaFromExpectedSample(
-    expectedOutputSchema: object | undefined,
-  ): OutputSchema {
-    if (
-      isDefined(expectedOutputSchema) &&
-      Object.keys(expectedOutputSchema).length > 0
-    ) {
-      return getOutputSchemaFromValue(expectedOutputSchema);
+  private async withComputedOutputSchema<
+    TStep extends WorkflowTrigger | WorkflowAction,
+  >({
+    step,
+    workspaceId,
+    workflowVersionContent,
+  }: {
+    step: TStep;
+    workspaceId: string;
+    workflowVersionContent: WorkflowVersionContent;
+  }): Promise<TStep> {
+    let outputSchema: OutputSchema;
+
+    try {
+      outputSchema = await this.computeStepOutputSchema({
+        step,
+        workspaceId,
+        workflowVersionContent,
+      });
+    } catch (error) {
+      // a step whose source no longer resolves (e.g. a deleted object) must still save; validation reports it
+      this.logger.warn(
+        `Could not compute the output schema of step ${step.id}: ${error}`,
+      );
+      outputSchema = {};
     }
 
-    return {};
+    return { ...step, settings: { ...step.settings, outputSchema } } as TStep;
   }
 
-  private getOutputSchemaWithExpectedFallback(settings: {
-    outputSchema?: OutputSchema;
+  private computeOutputSchemaFromSample(sample: unknown): OutputSchema {
+    if (!isObject(sample) || isEmptyObject(sample)) {
+      return {};
+    }
+
+    return getOutputSchemaFromValue(sample);
+  }
+
+  private computeOutputSchemaFromExpectedOutput(settings: {
+    outputSchema: OutputSchema;
     expectedOutputSchema?: object;
-  }): BaseOutputSchemaV2 {
-    const outputSchema = settings.outputSchema;
-
-    if (isBaseOutputSchemaV2(outputSchema)) {
-      return outputSchema;
-    }
-
-    const expectedOutputSchema = this.computeOutputSchemaFromExpectedSample(
+  }): OutputSchema {
+    const outputSchema = this.computeOutputSchemaFromSample(
       settings.expectedOutputSchema,
     );
 
-    return isBaseOutputSchemaV2(expectedOutputSchema)
-      ? expectedOutputSchema
-      : {};
-  }
-
-  private async computeLogicFunctionOutputSchema({
-    logicFunctionId,
-    expectedOutputSchema,
-    workspaceId,
-  }: {
-    logicFunctionId: string;
-    expectedOutputSchema: object | undefined;
-    workspaceId: string;
-  }): Promise<OutputSchema> {
-    const declaredOutputSchema =
-      await this.getLogicFunctionDeclaredOutputSchema({
-        logicFunctionId,
-        workspaceId,
-      });
-
-    if (isDefined(declaredOutputSchema)) {
-      return declaredOutputSchema;
+    // Fence for test results stored as a schema before upgrade:2-57:move-step-output-samples-to-expected-output
+    // reached the workspace; remove once 2.57 leaves the cross-upgrade window
+    if (
+      isEmptyObject(outputSchema) &&
+      isBaseOutputSchemaV2(settings.outputSchema)
+    ) {
+      return settings.outputSchema;
     }
 
-    return this.computeOutputSchemaFromExpectedSample(expectedOutputSchema);
+    return outputSchema;
   }
 
   private async getLogicFunctionDeclaredOutputSchema({
@@ -493,30 +493,6 @@ export class WorkflowSchemaWorkspaceService {
       updatedFields,
       hasTimedOut,
     } satisfies OutputSchema;
-  }
-
-  private computeSendEmailActionOutputSchema(): OutputSchema {
-    return {
-      success: { isLeaf: true, type: 'boolean', value: true },
-      headerMessageId: {
-        isLeaf: true,
-        type: 'string',
-        label: 'Message-ID header',
-        value: '<message-id@mail.example.com>',
-      },
-      messageId: {
-        isLeaf: true,
-        type: 'string',
-        label: 'Message record ID',
-        value: '',
-      },
-      messageThreadId: {
-        isLeaf: true,
-        type: 'string',
-        label: 'Message thread ID',
-        value: '',
-      },
-    };
   }
 
   private async computeAiAgentActionOutputSchema({
@@ -724,7 +700,10 @@ export class WorkflowSchemaWorkspaceService {
         case WorkflowTriggerType.WEBHOOK: {
           const propertyPath = extractPropertyPathFromVariable(items);
           const schemaNode = navigateOutputSchemaProperty({
-            schema: trigger.settings.outputSchema as BaseOutputSchemaV2,
+            schema: (await this.computeStepOutputSchema({
+              step: trigger,
+              workspaceId,
+            })) as BaseOutputSchemaV2,
             propertyPath,
           });
 
@@ -771,9 +750,13 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.HTTP_REQUEST:
       case WorkflowActionType.LOGIC_FUNCTION: {
         const propertyPath = extractPropertyPathFromVariable(items);
-        const outputSchema = this.getOutputSchemaWithExpectedFallback(
-          step.settings,
-        );
+        const computedOutputSchema = await this.computeStepOutputSchema({
+          step,
+          workspaceId,
+        });
+        const outputSchema = isBaseOutputSchemaV2(computedOutputSchema)
+          ? computedOutputSchema
+          : {};
 
         const variableTargetsWholeStepOutput = propertyPath.length === 0;
 

@@ -16,7 +16,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopy } from 'twenty-ui/icon';
@@ -35,10 +34,7 @@ type WorkflowEditTriggerWebhookFormProps = {
       }
     | {
         readonly?: false;
-        onTriggerUpdate: (
-          trigger: WorkflowWebhookTrigger,
-          options?: { computeOutputSchema: boolean },
-        ) => void;
+        onTriggerUpdate: (trigger: WorkflowWebhookTrigger) => void;
       };
 };
 
@@ -103,13 +99,10 @@ export const WorkflowEditTriggerWebhookForm = ({
               return;
             }
 
-            triggerOptions.onTriggerUpdate(
-              {
-                ...trigger,
-                settings: getWebhookTriggerDefaultSettings(newTriggerType),
-              },
-              { computeOutputSchema: false },
-            );
+            triggerOptions.onTriggerUpdate({
+              ...trigger,
+              settings: getWebhookTriggerDefaultSettings(newTriggerType),
+            });
           }}
           dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
@@ -152,21 +145,14 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = getOutputSchemaFromValue(parsingResult.data);
-
-              triggerOptions.onTriggerUpdate(
-                {
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    httpMethod: 'POST',
-                    expectedBody: parsingResult.data,
-                    expectedOutputSchema: parsingResult.data,
-                    outputSchema,
-                  } satisfies WorkflowWebhookTrigger['settings'],
-                },
-                { computeOutputSchema: false },
-              );
+              triggerOptions.onTriggerUpdate({
+                ...trigger,
+                settings: {
+                  ...trigger.settings,
+                  httpMethod: 'POST',
+                  expectedBody: parsingResult.data,
+                } satisfies WorkflowWebhookTrigger['settings'],
+              });
             }}
           />
         )}

@@ -12,7 +12,6 @@ import {
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
-import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type WorkflowManifestInverseReferenceResolvers = ReturnType<
@@ -299,7 +298,6 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     return { reason: unsupportedReason };
   }
 
-  const { outputSchema } = action.settings;
   const errorHandlingOptions = isDefined(action.settings.errorHandlingOptions)
     ? normalizeStoredWorkflowErrorHandlingOptions(
         action.settings.errorHandlingOptions,
@@ -312,47 +310,29 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     'expectedOutputSchema' in action.settings
       ? action.settings.expectedOutputSchema
       : undefined;
-  const stepWithoutOutputSchema = {
-    universalIdentifier: action.id,
-    name: action.name,
-    type: action.type,
-    ...(isDefined(logicFunctionUniversalIdentifier)
-      ? { logicFunctionUniversalIdentifier }
-      : {}),
-    nextStepIds: action.nextStepIds ?? [],
-    ...(isEqual(position, { x: 0, y: (index + 1) * 180 }) ? {} : { position }),
-    input,
-  } as WorkflowStepManifest;
-  const isDefaultOutputSchema = isEqual(
-    outputSchema,
-    computeWorkflowManifestOutputSchema({
-      step: {
-        ...stepWithoutOutputSchema,
-        ...(isDefined(expectedOutputSchema)
-          ? { expectedOutputSchema: toRecord(expectedOutputSchema) }
-          : {}),
-      },
-      references,
-    }),
-  );
 
+  // the server computes the output schema from the step, so a manifest carries only its sample
   return {
     manifest: {
-      ...stepWithoutOutputSchema,
-      ...(isDefaultOutputSchema
+      universalIdentifier: action.id,
+      name: action.name,
+      type: action.type,
+      ...(isDefined(logicFunctionUniversalIdentifier)
+        ? { logicFunctionUniversalIdentifier }
+        : {}),
+      nextStepIds: action.nextStepIds ?? [],
+      ...(isEqual(position, { x: 0, y: (index + 1) * 180 })
         ? {}
-        : { outputSchema: sortKeysDeeply(toRecord(outputSchema)) }),
-      ...(isDefined(expectedOutputSchema)
-        ? {
-            expectedOutputSchema: sortKeysDeeply(
-              toRecord(expectedOutputSchema),
-            ),
-          }
+        : { position }),
+      input,
+      ...(isPlainObject(expectedOutputSchema) ||
+      Array.isArray(expectedOutputSchema)
+        ? { expectedOutputSchema: sortKeysDeeply(expectedOutputSchema) }
         : {}),
       ...(!isDefined(errorHandlingOptions) ||
       isEqual(errorHandlingOptions, DEFAULT_ERROR_HANDLING_OPTIONS)
         ? {}
         : { errorHandlingOptions }),
-    },
+    } as WorkflowStepManifest,
   };
 };

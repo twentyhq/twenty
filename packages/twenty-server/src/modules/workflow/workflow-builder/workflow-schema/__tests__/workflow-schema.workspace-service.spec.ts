@@ -55,4 +55,151 @@ describe('WorkflowSchemaWorkspaceService', () => {
       summary: expect.objectContaining({ isLeaf: true, type: 'string' }),
     });
   });
+
+  describe('enrichWorkflowVersionContentOutputSchemas', () => {
+    const service = new WorkflowSchemaWorkspaceService(
+      {} as never,
+      {} as never,
+    );
+
+    const buildStep = (type: WorkflowActionType, settings: object) =>
+      ({
+        id: `${type}-step`,
+        type,
+        settings: { outputSchema: {}, ...settings },
+      }) as never;
+
+    it('stores the output schema of every step and of the trigger', async () => {
+      const { trigger, steps } =
+        await service.enrichWorkflowVersionContentOutputSchemas({
+          workspaceId: WORKSPACE_ID,
+          trigger: {
+            type: 'WEBHOOK',
+            settings: {
+              outputSchema: {},
+              httpMethod: 'POST',
+              authentication: null,
+              expectedBody: { message: 'hello' },
+            },
+          } as never,
+          steps: [
+            buildStep(WorkflowActionType.CLASSIFY, {
+              input: {
+                questions: [
+                  {
+                    name: 'sentiment',
+                    type: 'choice',
+                    criteria: [{ name: 'positive' }, { name: 'negative' }],
+                  },
+                ],
+              },
+            }),
+            buildStep(WorkflowActionType.DRAFT_EMAIL, { input: {} }),
+            buildStep(WorkflowActionType.CODE, {
+              input: {},
+              expectedOutputSchema: { total: 3 },
+            }),
+          ],
+        });
+
+      expect(trigger?.settings.outputSchema).toEqual({
+        message: {
+          isLeaf: true,
+          type: 'string',
+          label: 'message',
+          value: 'hello',
+        },
+      });
+      expect(steps?.map((step) => step.settings.outputSchema)).toEqual([
+        {
+          answers: expect.objectContaining({
+            value: {
+              sentiment: expect.objectContaining({
+                value: expect.objectContaining({
+                  choice: expect.objectContaining({ value: 'positive' }),
+                }),
+              }),
+            },
+          }),
+          modelId: expect.objectContaining({ label: 'Model' }),
+        },
+        { success: expect.objectContaining({ label: 'Success' }) },
+        {
+          total: { isLeaf: true, type: 'number', label: 'total', value: 3 },
+        },
+      ]);
+    });
+
+    it('replaces a schema the caller sent with the one its sample derives', async () => {
+      const { steps } = await service.enrichWorkflowVersionContentOutputSchemas(
+        {
+          workspaceId: WORKSPACE_ID,
+          trigger: null,
+          steps: [
+            buildStep(WorkflowActionType.HTTP_REQUEST, {
+              input: {},
+              outputSchema: {
+                stale: {
+                  isLeaf: true,
+                  type: 'string',
+                  label: 'stale',
+                  value: '',
+                },
+              },
+              expectedOutputSchema: { status: 200 },
+            }),
+          ],
+        },
+      );
+
+      expect(steps?.[0].settings.outputSchema).toEqual({
+        status: { isLeaf: true, type: 'number', label: 'status', value: 200 },
+      });
+    });
+
+    it('keeps a test result schema not yet moved to the expected output', async () => {
+      const testResultSchema = {
+        total: { isLeaf: true, type: 'number', label: 'total', value: 3 },
+      };
+
+      const { steps } = await service.enrichWorkflowVersionContentOutputSchemas(
+        {
+          workspaceId: WORKSPACE_ID,
+          trigger: null,
+          steps: [
+            buildStep(WorkflowActionType.CODE, {
+              input: {},
+              outputSchema: testResultSchema,
+            }),
+          ],
+        },
+      );
+
+      expect(steps?.[0].settings.outputSchema).toEqual(testResultSchema);
+    });
+
+    it('saves a step whose output schema cannot be computed with an empty one', async () => {
+      const failingService = new WorkflowSchemaWorkspaceService(
+        {
+          getObjectMetadataInfo: jest
+            .fn()
+            .mockRejectedValue(new Error('Object not found')),
+        } as never,
+        {} as never,
+      );
+
+      const { steps } =
+        await failingService.enrichWorkflowVersionContentOutputSchemas({
+          workspaceId: WORKSPACE_ID,
+          trigger: null,
+          steps: [
+            buildStep(WorkflowActionType.CREATE_RECORD, {
+              input: { objectName: 'deletedObject' },
+            }),
+          ],
+        });
+
+      expect(steps?.[0].settings.outputSchema).toEqual({});
+    });
+  });
 });

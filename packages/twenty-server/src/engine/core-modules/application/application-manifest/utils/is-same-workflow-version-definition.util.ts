@@ -22,7 +22,12 @@ const normalizeCodeStepInput = (input: unknown): unknown => {
 // Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
   type,
-  settings: { objectType, errorHandlingOptions, ...rest },
+  settings: {
+    objectType,
+    errorHandlingOptions,
+    outputSchema: _outputSchema,
+    ...rest
+  },
 }: Pick<StoredWorkflowNode, 'type'> &
   Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
   ...rest,

@@ -3,7 +3,6 @@ import isEqual from 'lodash.isequal';
 import {
   isDefined,
   isNonEmptyArray,
-  isPlainObject,
   sortKeysDeeply,
 } from 'twenty-shared/utils';
 
@@ -205,7 +204,6 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
   const defaults = computeWorkflowTriggerManifestDefaults(
     manifestWithoutBuilderState,
   );
-  const { outputSchema } = trigger.settings;
   const position = isDefined(trigger.position)
     ? { x: trigger.position.x, y: trigger.position.y }
     : null;
@@ -217,10 +215,6 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
       ...(isEqual(position, DEFAULT_WORKFLOW_TRIGGER_POSITION)
         ? {}
         : { position }),
-      ...(isPlainObject(outputSchema) &&
-      !isEqual(outputSchema, defaults.outputSchema)
-        ? { outputSchema: sortKeysDeeply(outputSchema) }
-        : {}),
     },
   };
 };

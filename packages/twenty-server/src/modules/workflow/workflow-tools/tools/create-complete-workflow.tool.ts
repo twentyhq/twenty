@@ -90,7 +90,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
-- settings.outputSchema can be {}: Twenty computes it for ITERATOR steps and derives it for record, form and trigger steps. For HTTP_REQUEST steps, set settings.expectedOutputSchema to an example response so later steps can reference its fields
+- settings.outputSchema can be {}: Twenty computes it for every step and trigger when the workflow is saved. For CODE, HTTP_REQUEST and LOGIC_FUNCTION steps, set settings.expectedOutputSchema to an example output (and expectedBody for a POST WEBHOOK trigger) so later steps can reference its fields
 
 ITERATOR steps (loops):
 - An edge leaving an ITERATOR only enters the loop body when it carries sourceConnectionOptions: { connectedStepType: "ITERATOR", settings: { isConnectedToLoop: true } }. Without it the target is placed after the loop instead.

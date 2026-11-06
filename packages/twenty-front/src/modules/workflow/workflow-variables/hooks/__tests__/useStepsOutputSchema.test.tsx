@@ -64,7 +64,7 @@ const renderSchemas = () => {
   return { ...hook, store, schemaState };
 };
 
-describe('core iterator output schema', () => {
+describe('useStepsOutputSchema', () => {
   beforeEach(() => jest.clearAllMocks());
 
   afterEach(() => {
@@ -131,6 +131,59 @@ describe('core iterator output schema', () => {
     await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(2));
     await waitFor(() =>
       expect(store.get(schemaState)?.outputSchema).toEqual(outputSchema),
+    );
+  });
+
+  it('shows the stored schema of any step until the server recomputes it', async () => {
+    const storedOutputSchema = {
+      success: { isLeaf: true, type: 'boolean', label: 'Success', value: true },
+    };
+    const recomputedOutputSchema = {
+      ...storedOutputSchema,
+      iCalUid: { isLeaf: true, type: 'string', label: 'iCal UID', value: '' },
+    };
+    let resolveRequest: (value: unknown) => void = () => {};
+    mockMutate.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
+    const calendarVersion: WorkflowVersion = {
+      ...version,
+      steps: [
+        {
+          id: 'calendar',
+          name: 'Create event',
+          valid: true,
+          type: 'CREATE_CALENDAR_EVENT',
+          settings: {
+            input: {},
+            outputSchema: storedOutputSchema,
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: false },
+            },
+          },
+        } as unknown as NonNullable<WorkflowVersion['steps']>[number],
+      ],
+    };
+    const { result, store } = renderSchemas();
+    const calendarSchemaState = stepsOutputSchemaFamilyState.atomFamily(
+      getStepOutputSchemaFamilyStateKey(version.id, 'calendar'),
+    );
+
+    act(() => result.current.populateStepsOutputSchema(calendarVersion));
+    expect(store.get(calendarSchemaState)?.outputSchema).toEqual(
+      storedOutputSchema,
+    );
+
+    await act(async () => {
+      resolveRequest({
+        data: { computeStepOutputSchema: recomputedOutputSchema },
+      });
+    });
+    expect(store.get(calendarSchemaState)?.outputSchema).toEqual(
+      recomputedOutputSchema,
     );
   });
 });

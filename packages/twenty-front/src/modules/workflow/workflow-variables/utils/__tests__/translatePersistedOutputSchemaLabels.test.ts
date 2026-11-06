@@ -1,3 +1,4 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { i18n } from '@lingui/core';
@@ -120,5 +121,158 @@ describe('translatePersistedOutputSchemaLabels', () => {
       Object.getOwnPropertyDescriptor(translatedOutputSchema, '__proto__')
         ?.value,
     ).toEqual({ isLeaf: true, type: 'string', label: 'Proto', value: '' });
+  });
+
+  it('should show record object and field labels in the viewer language', () => {
+    const objectMetadataItems = [
+      {
+        id: 'company-object-id',
+        labelSingular: 'Entreprise',
+        labelPlural: 'Entreprises',
+        fields: [
+          { id: 'name-field-id', name: 'name', label: 'Nom' },
+          { id: 'owner-field-id', name: 'owner', label: 'Propriétaire' },
+        ],
+      },
+    ] as unknown as EnrichedObjectMetadataItem[];
+
+    const recordOutputSchema = {
+      object: {
+        label: 'Company',
+        objectMetadataId: 'company-object-id',
+        fieldIdName: 'id',
+      },
+      fields: {
+        name: {
+          isLeaf: true,
+          type: 'TEXT',
+          label: 'Name',
+          value: 'Acme',
+          fieldMetadataId: 'name-field-id',
+        },
+        ownerId: {
+          isLeaf: true,
+          type: 'UUID',
+          label: 'Owner Id',
+          value: '',
+          fieldMetadataId: 'owner-field-id',
+        },
+      },
+      _outputSchemaType: 'RECORD',
+    };
+
+    expect(
+      translatePersistedOutputSchemaLabels({
+        stepType: 'FIND_RECORDS',
+        outputSchema: {
+          first: {
+            isLeaf: false,
+            type: 'object',
+            label: 'First Company',
+            value: recordOutputSchema,
+          },
+          all: {
+            isLeaf: true,
+            type: 'array',
+            label: 'All Companies',
+            value: '',
+          },
+        },
+        objectMetadataItems,
+      }),
+    ).toEqual({
+      first: {
+        isLeaf: false,
+        type: 'object',
+        label: 'First Entreprise',
+        value: {
+          ...recordOutputSchema,
+          object: { ...recordOutputSchema.object, label: 'Entreprise' },
+          fields: {
+            name: { ...recordOutputSchema.fields.name, label: 'Nom' },
+            ownerId: recordOutputSchema.fields.ownerId,
+          },
+        },
+      },
+      all: {
+        isLeaf: true,
+        type: 'array',
+        label: 'All Entreprises',
+        value: '',
+      },
+    });
+  });
+
+  it('should translate labels nested under a user-defined key', () => {
+    i18n.load('fr-FR', {
+      [WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.find(
+        (persistedLabel) => persistedLabel.key === 'choice',
+      )?.message.id ?? '']: 'Choix',
+    });
+
+    expect(
+      translatePersistedOutputSchemaLabels({
+        stepType: 'CLASSIFY',
+        outputSchema: {
+          answers: {
+            isLeaf: false,
+            type: 'object',
+            label: 'Answers',
+            value: {
+              sentiment: {
+                isLeaf: false,
+                type: 'object',
+                label: 'sentiment',
+                value: {
+                  choice: {
+                    isLeaf: true,
+                    type: 'string',
+                    label: 'Choice',
+                    value: 'positive',
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+    ).toEqual({
+      answers: {
+        isLeaf: false,
+        type: 'object',
+        label: 'Answers',
+        value: {
+          sentiment: {
+            isLeaf: false,
+            type: 'object',
+            label: 'sentiment',
+            value: {
+              choice: {
+                isLeaf: true,
+                type: 'string',
+                label: 'Choix',
+                value: 'positive',
+              },
+            },
+          },
+        },
+      },
+    });
+  });
+
+  it('should treat a schema of another shape as no output schema', () => {
+    expect(
+      translatePersistedOutputSchemaLabels({
+        stepType: 'CODE',
+        outputSchema: {
+          link: {
+            isLeaf: true,
+            tab: 'test',
+            label: 'Generate Function Output',
+          },
+          _outputSchemaType: 'LINK',
+        },
+      }),
+    ).toEqual({});
   });
 });

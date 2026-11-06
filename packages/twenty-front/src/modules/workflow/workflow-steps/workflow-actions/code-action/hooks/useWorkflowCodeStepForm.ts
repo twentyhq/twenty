@@ -16,7 +16,7 @@ type LogicFunctionInputFormData = {
 
 type WorkflowCodeStepSettingsUpdate = Pick<
   WorkflowCodeAction['settings'],
-  'expectedOutputSchema' | 'outputSchema'
+  'expectedOutputSchema'
 >;
 
 type UseWorkflowCodeStepFormProps = {
