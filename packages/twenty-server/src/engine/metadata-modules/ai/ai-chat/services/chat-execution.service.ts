@@ -188,6 +188,10 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspace.id,
+    );
     const executionProfile = await this.buildExecutionProfile({
       thread,
       workspaceId: workspace.id,
@@ -195,6 +199,7 @@ export class ChatExecutionService {
       messages,
       browsingContext,
       toolContext,
+      isAiChatInboxEnabled,
     });
     const { isWorkspaceSetupThread } = executionProfile.toolset;
     const { isWorkspaceSetupKickoffTurn } = executionProfile;
@@ -318,6 +323,7 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     toolContext,
+    isAiChatInboxEnabled,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
     workspaceId: string;
@@ -325,6 +331,7 @@ export class ChatExecutionService {
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
+    isAiChatInboxEnabled: boolean;
   }): Promise<ChatExecutionProfile> {
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
@@ -353,10 +360,6 @@ export class ChatExecutionService {
       !hasSucceededWorkspaceSetupCompletion(messages);
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspaceId,
-    );
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation && isAiChatInboxEnabled;
     const latestUserMessage = [...messages]
