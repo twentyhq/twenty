@@ -3,7 +3,10 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import {
+  CalendarStartDay,
+  FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+} from 'twenty-shared/constants';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -13,7 +16,6 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CalendarStartDay } from 'twenty-shared/constants';
 
 const asAttachments = (
   files: FieldFilesValue[],
