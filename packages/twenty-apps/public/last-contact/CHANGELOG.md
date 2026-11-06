@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.1
+
+- Ignore draft emails. A draft linked to a person was counted as a contact, both when its participant was linked and in the backfill, so writing an email without sending it moved the person's last contact.
+
 ## 1.10.0
 
 - Log logic function executions and backfill progress, including batch counts, resume cursors, pauses, and completion.

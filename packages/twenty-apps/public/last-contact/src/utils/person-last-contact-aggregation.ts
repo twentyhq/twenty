@@ -52,7 +52,7 @@ const collectEmailInteractions = async (
               node: {
                 id: true,
                 personId: true,
-                message: { id: true, receivedAt: true },
+                message: { id: true, receivedAt: true, isDraft: true },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -62,7 +62,12 @@ const collectEmailInteractions = async (
 
       for (const edge of messageParticipants?.edges ?? []) {
         const { personId, message } = edge.node;
-        if (personId && message?.id && message?.receivedAt) {
+        if (
+          personId &&
+          message?.id &&
+          message?.receivedAt &&
+          !message.isDraft
+        ) {
           interactions.push({
             personId,
             messageId: message.id,

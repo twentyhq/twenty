@@ -220,6 +220,36 @@ describe('on-email-interaction handler', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
+  it('ignores a draft email', async () => {
+    setupQueryMock([
+      {
+        messageId: MESSAGE_ID,
+        role: 'FROM',
+        workspaceMemberId: MEMBER_ID,
+        message: { receivedAt: RECEIVED_AT, isDraft: true },
+      },
+    ]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('ignores a draft email without a sender or team member participant', async () => {
+    setupQueryMock(
+      [],
+      [{ id: MESSAGE_ID, receivedAt: RECEIVED_AT, isDraft: true }],
+    );
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
   it('counts a message without a sender or team member participant as an inbound email', async () => {
     setupQueryMock([], [{ id: MESSAGE_ID, receivedAt: RECEIVED_AT }]);
 
