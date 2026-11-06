@@ -5,24 +5,42 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
-import { SettingsObjectSearchAddFieldDropdown } from '@/settings/data-model/object-details/components/SettingsObjectSearchAddFieldDropdown';
-import { SettingsObjectSearchFieldsTable } from '@/settings/data-model/object-details/components/SettingsObjectSearchFieldsTable';
-import { type SettingsObjectSearchFieldsTableItem } from '@/settings/data-model/types/SettingsObjectSearchFieldsTableItem';
+import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
-import { IconEye, IconSearch } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconEye, IconPlus, IconSearch, IconTrash } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
+import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsObjectSearchSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   isReadOnly: boolean;
+};
+
+type SearchFieldEntry = {
+  id: string;
+  label: string;
+  icon?: string | null;
+  fieldType: string;
+  isLabelIdentifier: boolean;
 };
 
 const StyledSearchSectionContent = styled.div`
@@ -31,14 +49,24 @@ const StyledSearchSectionContent = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledNameLabel = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
+const SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
+
+const ADD_SEARCH_FIELD_DROPDOWN_ID = 'settings-object-add-search-field';
+
 const extractSearchFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
-): SettingsObjectSearchFieldsTableItem[] => {
+): SearchFieldEntry[] => {
   const positionByFieldMetadataId = new Map(
     objectMetadataItem.searchFieldMetadatas.map((searchFieldMetadata) => [
       searchFieldMetadata.fieldMetadataId,
@@ -65,7 +93,7 @@ const extractSearchFields = (
           fieldType: field.type,
           isLabelIdentifier:
             objectMetadataItem.labelIdentifierFieldMetadataId === field.id,
-        }) satisfies SettingsObjectSearchFieldsTableItem,
+        }) satisfies SearchFieldEntry,
     );
 };
 
@@ -74,6 +102,8 @@ export const SettingsObjectSearchSection = ({
   isReadOnly,
 }: SettingsObjectSearchSectionProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
+  const theme = useTheme();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { enqueueToast } = useToast();
@@ -174,22 +204,91 @@ export const SettingsObjectSearchSection = ({
       {(hasSearchFields || isEditable) && (
         <StyledTableContainer>
           {hasSearchFields && (
-            <SettingsObjectSearchFieldsTable
-              items={filteredSearchFields}
-              isEditable={isEditable}
-              onRemoveField={(fieldMetadataId) =>
-                handleSetFieldSearchable(fieldMetadataId, false)
-              }
-            />
+            <Table>
+              <TableRow
+                gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
+              >
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader>{t`Data type`}</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              {filteredSearchFields.map((entry) => {
+                const FieldIcon = getIcon(entry.icon);
+                return (
+                  <TableRow
+                    key={entry.id}
+                    gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
+                  >
+                    <TableCell
+                      color={theme.font.color.primary}
+                      gap={theme.spacing[2]}
+                    >
+                      <FieldIcon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                      <StyledNameLabel>{entry.label}</StyledNameLabel>
+                    </TableCell>
+                    <TableCell>
+                      <SettingsObjectFieldDataType
+                        value={entry.fieldType as SettingsFieldType}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {isEditable && !entry.isLabelIdentifier && (
+                        <LightIconButton
+                          emphasis="subtle"
+                          onClick={() =>
+                            handleSetFieldSearchable(entry.id, false)
+                          }
+                          aria-label={t`Remove searchable field`}
+                        >
+                          <IconTrash />
+                        </LightIconButton>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </Table>
           )}
           {isEditable && (
             <TableFooter>
-              <SettingsObjectSearchAddFieldDropdown
-                addableFields={addableFields}
-                onAddField={(fieldMetadataId) =>
-                  handleSetFieldSearchable(fieldMetadataId, true)
-                }
-              />
+              <DropdownRoot
+                dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID}
+                type="menu"
+              >
+                <Dropdown.Trigger
+                  disabled={addableFields.length === 0}
+                  render={
+                    <Button
+                      startIcon={<IconPlus />}
+                      size="sm"
+                      disabled={addableFields.length === 0}
+                      variant="outline"
+                    >{t`Add field`}</Button>
+                  }
+                />
+                <DropdownContent align="end" sideOffset={8}>
+                  <Dropdown.Section scrollable>
+                    {addableFields.map((field) => {
+                      const FieldIcon = getIcon(field.icon);
+
+                      return (
+                        <Dropdown.ActionItem
+                          key={field.id}
+                          startIcon={<SelectOptionIcon Icon={FieldIcon} />}
+                          onClick={() =>
+                            handleSetFieldSearchable(field.id, true)
+                          }
+                        >
+                          {field.label}
+                        </Dropdown.ActionItem>
+                      );
+                    })}
+                  </Dropdown.Section>
+                </DropdownContent>
+              </DropdownRoot>
             </TableFooter>
           )}
         </StyledTableContainer>
