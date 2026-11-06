@@ -294,7 +294,16 @@ export class AgentTurnRecorderService {
   > | null> {
     return this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
-      select: ['id', 'status', 'threadId', 'agentId', 'createdBy'],
+      select: [
+        'id',
+        'status',
+        'threadId',
+        'agentId',
+        'createdBySource',
+        'createdByWorkspaceMemberId',
+        'createdByName',
+        'createdByContext',
+      ],
     });
   }
 
