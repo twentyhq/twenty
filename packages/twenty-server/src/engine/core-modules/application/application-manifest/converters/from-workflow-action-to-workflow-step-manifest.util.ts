@@ -30,30 +30,43 @@ const toRecord = (value: unknown): Record<string, unknown> =>
 const toArray = (value: unknown): unknown[] =>
   Array.isArray(value) ? value : [];
 
+// the sort id only keys the builder's sort list; importing gives it back
+const fromRecordSort = ({
+  recordSort,
+  resolvers,
+}: {
+  recordSort: unknown;
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}) => {
+  const reference = resolvers.fieldReference(recordSort);
+
+  if (!isDefined(reference)) {
+    return reference;
+  }
+
+  const { id: _id, ...referenceWithoutId } = reference;
+
+  return referenceWithoutId;
+};
+
 const fromFindRecordsOrderBy = ({
   orderBy,
   resolvers,
 }: {
   orderBy: Record<string, unknown>;
   resolvers: WorkflowManifestInverseReferenceResolvers;
-}) =>
-  isDefined(orderBy.recordSorts)
-    ? {
-        ...orderBy,
-        // the sort id only keys the builder's sort list; importing gives it back
-        recordSorts: toArray(orderBy.recordSorts).map((recordSort) => {
-          const reference = resolvers.fieldReference(recordSort);
+}) => {
+  if (!isDefined(orderBy.recordSorts)) {
+    return orderBy;
+  }
 
-          if (!isDefined(reference)) {
-            return reference;
-          }
-
-          const { id: _id, ...referenceWithoutId } = reference;
-
-          return referenceWithoutId;
-        }),
-      }
-    : orderBy;
+  return {
+    ...orderBy,
+    recordSorts: toArray(orderBy.recordSorts).map((recordSort) =>
+      fromRecordSort({ recordSort, resolvers }),
+    ),
+  };
+};
 
 const fromFindRecordsFilter = ({
   filter,
