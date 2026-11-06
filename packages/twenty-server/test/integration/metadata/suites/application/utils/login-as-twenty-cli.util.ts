@@ -6,10 +6,10 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 const CLI_CALLBACK_URL = 'http://127.0.0.1:53682/callback';
 
 // Same browser flow as `twenty remote add`: authorize the CLI client with PKCE
-// as the session owner, then exchange the code for the CLI access token.
-export const loginAsTwentyCli = async ({
-  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-}: { token?: string } = {}): Promise<string> => {
+// as the workspace admin, then exchange the code for the CLI access token.
+export const loginAsTwentyCli = async (
+  accessToken?: string,
+): Promise<string> => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
   const discovery = await request(baseUrl)
@@ -42,7 +42,7 @@ export const loginAsTwentyCli = async ({
       `,
       variables: { clientId, codeChallenge, redirectUrl: CLI_CALLBACK_URL },
     },
-    token,
+    accessToken,
   );
 
   expect(authorizeResponse.body.errors).toBeUndefined();

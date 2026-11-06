@@ -151,9 +151,9 @@ describe('Core workflow version runs should fail', () => {
 
     globalTestContext = {
       adminOAuthClientToken: await loginAsTwentyCli(),
-      memberOAuthClientToken: await loginAsTwentyCli({
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      }),
+      memberOAuthClientToken: await loginAsTwentyCli(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      ),
       workspaceWorkflow: await createManualCoreWorkflowDraft({
         name: `${RUN_PREFIX} workspace workflow`,
       }),

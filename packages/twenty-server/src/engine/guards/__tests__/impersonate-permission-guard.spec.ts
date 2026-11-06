@@ -10,7 +10,7 @@ describe('ImpersonateGuard', () => {
 
   beforeEach(() => {
     mockSettingPermissionsService = {
-      userHasWorkspaceSettingPermission: jest.fn(),
+      hasPermissionFlag: jest.fn(),
     } as any;
 
     guard = new ImpersonatePermissionGuard(mockSettingPermissionsService);
@@ -41,7 +41,7 @@ describe('ImpersonateGuard', () => {
 
     expect(result).toBe(true);
     expect(
-      mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+      mockSettingPermissionsService.hasPermissionFlag,
     ).not.toHaveBeenCalled();
   });
 
@@ -60,9 +60,7 @@ describe('ImpersonateGuard', () => {
       })),
     };
 
-    mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-      true,
-    );
+    mockSettingPermissionsService.hasPermissionFlag.mockResolvedValue(true);
 
     jest
       .spyOn(GqlExecutionContext, 'create')
@@ -74,11 +72,16 @@ describe('ImpersonateGuard', () => {
 
     expect(result).toBe(true);
     expect(
-      mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+      mockSettingPermissionsService.hasPermissionFlag,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      mockSettingPermissionsService.hasPermissionFlag,
     ).toHaveBeenCalledWith({
-      userWorkspaceId: 'user-workspace-id',
-      setting: 'IMPERSONATE',
-      workspaceId: 'workspace-id',
+      authContext: expect.objectContaining({
+        type: 'pendingActivationUser',
+        userWorkspaceId: 'user-workspace-id',
+      }),
+      permissionFlag: 'IMPERSONATE',
     });
   });
 
@@ -97,9 +100,7 @@ describe('ImpersonateGuard', () => {
       })),
     };
 
-    mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-      false,
-    );
+    mockSettingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
     jest
       .spyOn(GqlExecutionContext, 'create')

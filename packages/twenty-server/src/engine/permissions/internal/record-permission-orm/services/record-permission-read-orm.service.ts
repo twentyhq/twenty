@@ -156,11 +156,13 @@ export class RecordPermissionReadOrmService {
     flatObjectMetadata,
     recordIds,
     conditions,
+    transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
     conditions: (SqlCondition | boolean)[];
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Set<string>[]> {
     if (conditions.every((condition) => condition === false)) {
       return conditions.map(() => new Set());
@@ -183,6 +185,7 @@ export class RecordPermissionReadOrmService {
       { id: string } & Record<string, unknown>
     >({
       workspaceId,
+      transactionScope,
       query: {
         sql: `SELECT ${[`${tableAlias}."id" AS "id"`, ...conditionColumns].join(', ')} FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)`,
         parameters: {
