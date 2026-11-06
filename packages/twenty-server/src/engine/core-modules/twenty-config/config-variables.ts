@@ -1647,6 +1647,28 @@ export class ConfigVariables {
   JOB_QUEUE_MAX_JOB_SIZE_BYTES = 1_048_576;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Share of the free job queue memory a single workspace or application may use. Any value below 1 keeps Redis below capacity',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @Max(1)
+  JOB_QUEUE_MEMORY_SHARE = 0.1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Share of Redis maxmemory never given to job queue tenants (allocator error, non-job keys, Redis reserved memory)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @Max(1)
+  JOB_QUEUE_MEMORY_RESERVE = 0.2;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
