@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DetailsRow } from 'twenty-ui/components/data-display';
@@ -130,7 +131,10 @@ export const AiChatThreadDetailsDropdown = ({
     });
   };
 
-  if (!isAiChatInboxEnabled) {
+  if (
+    !isAiChatInboxEnabled ||
+    thread?.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+  ) {
     return null;
   }
 
