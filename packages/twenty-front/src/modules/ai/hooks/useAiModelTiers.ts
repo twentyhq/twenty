@@ -9,6 +9,7 @@ import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryMo
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
+import { findAiModelTierForDataPolicy } from '@/ai/utils/findAiModelTierForDataPolicy';
 import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { getAiModelBlendedCostPerMillionTokens } from '@/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -67,13 +68,11 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
       return {
         tier,
         model: findModel(
-          aiModelTiers.find(
-            (instanceTier) =>
-              instanceTier.tier === tier &&
-              (instanceTier.dataResidency ?? null) === dataResidency &&
-              instanceTier.isZeroDataRetentionRequired ===
-                isZeroDataRetentionRequired,
-          )?.modelId,
+          findAiModelTierForDataPolicy({
+            aiModelTiers,
+            tier,
+            aiDataPolicy: { dataResidency, isZeroDataRetentionRequired },
+          })?.modelId,
         ),
         isPinned: false,
       };

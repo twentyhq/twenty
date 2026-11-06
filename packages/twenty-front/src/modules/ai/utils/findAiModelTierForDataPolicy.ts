@@ -1,0 +1,23 @@
+import { type AiDataPolicy, type AiModelTier } from 'twenty-shared/ai';
+
+import { type ClientAiModelTierConfig } from '~/generated-metadata/graphql';
+
+export const findAiModelTierForDataPolicy = ({
+  aiModelTiers,
+  tier,
+  aiDataPolicy,
+}: {
+  aiModelTiers: ClientAiModelTierConfig[];
+  tier: AiModelTier;
+  aiDataPolicy: Pick<
+    AiDataPolicy,
+    'dataResidency' | 'isZeroDataRetentionRequired'
+  >;
+}): ClientAiModelTierConfig | undefined =>
+  aiModelTiers.find(
+    (aiModelTier) =>
+      aiModelTier.tier === tier &&
+      (aiModelTier.dataResidency ?? null) === aiDataPolicy.dataResidency &&
+      aiModelTier.isZeroDataRetentionRequired ===
+        aiDataPolicy.isZeroDataRetentionRequired,
+  );
