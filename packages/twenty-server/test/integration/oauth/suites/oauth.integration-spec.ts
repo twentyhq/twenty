@@ -2,13 +2,26 @@ import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
+import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
+import { authorizeApp } from 'test/integration/graphql/suites/user-session/utils/authorize-app.util';
+import { pingMcp } from 'test/integration/graphql/suites/user-session/utils/ping-mcp.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  assertIsDefinedOrThrow,
+  base64UrlEncode,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
@@ -120,6 +133,15 @@ const insertAppToken = async (
   );
 
   return rows[0].id;
+};
+
+const generatePkcePair = () => {
+  const codeVerifier = crypto.randomBytes(32).toString('hex');
+  const codeChallenge = base64UrlEncode(
+    crypto.createHash('sha256').update(codeVerifier).digest(),
+  );
+
+  return { codeVerifier, codeChallenge };
 };
 
 describe('OAuth (integration)', () => {
@@ -237,6 +259,35 @@ describe('OAuth (integration)', () => {
 
   const postToken = (body: Record<string, string>) =>
     request(baseUrl).post('/oauth/token').send(body);
+
+  const createAuthCodeWithPkce = async (
+    clientId: string,
+  ): Promise<{
+    code: string;
+    codeVerifier: string;
+  }> => {
+    const { codeVerifier, codeChallenge } = generatePkcePair();
+
+    const code = crypto.randomBytes(42).toString('hex');
+    const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+
+    const codeTokenId = await insertAppToken(ds, {
+      value: hashedCode,
+      type: AppTokenType.AuthorizationCode,
+      userId: TEST_USER_ID,
+      workspaceId: TEST_WORKSPACE_ID,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      context: {
+        redirectUri: 'https://example.com/callback',
+        clientId,
+        codeChallenge,
+      },
+    });
+
+    createdEntityIds.tokens.push(codeTokenId);
+
+    return { code, codeVerifier };
+  };
 
   describe('Discovery endpoint', () => {
     it('should return OAuth authorization server metadata', async () => {
@@ -534,38 +585,6 @@ describe('OAuth (integration)', () => {
   });
 
   describe('Authorization code grant with PKCE', () => {
-    const createAuthCodeWithPkce = async (
-      clientId: string,
-    ): Promise<{
-      code: string;
-      codeVerifier: string;
-    }> => {
-      const codeVerifier = crypto.randomBytes(32).toString('hex');
-      const codeChallenge = base64UrlEncode(
-        crypto.createHash('sha256').update(codeVerifier).digest(),
-      );
-
-      const code = crypto.randomBytes(42).toString('hex');
-      const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
-
-      const codeTokenId = await insertAppToken(ds, {
-        value: hashedCode,
-        type: AppTokenType.AuthorizationCode,
-        userId: TEST_USER_ID,
-        workspaceId: TEST_WORKSPACE_ID,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        context: {
-          redirectUri: 'https://example.com/callback',
-          clientId,
-          codeChallenge,
-        },
-      });
-
-      createdEntityIds.tokens.push(codeTokenId);
-
-      return { code, codeVerifier };
-    };
-
     it('should exchange code with valid PKCE verifier', async () => {
       const { code, codeVerifier } = await createAuthCodeWithPkce(
         publicRegistration.oAuthClientId,
@@ -1242,6 +1261,209 @@ describe('OAuth (integration)', () => {
         false,
       );
       expect((await findAuthorization()).revokedAt).toBeNull();
+    });
+  });
+
+  describe('Resource indicators (RFC 8707)', () => {
+    const mcpResource = `${baseUrl}/mcp`;
+    const foreignResource = 'https://attacker.example.com/mcp';
+
+    const authorizePublicClient = ({
+      resource,
+      codeChallenge,
+      expectToFail = false,
+    }: {
+      resource: string;
+      codeChallenge: string;
+      expectToFail?: boolean;
+    }) =>
+      authorizeApp({
+        input: {
+          clientId: publicRegistration.oAuthClientId,
+          redirectUrl: publicRegistration.oAuthRedirectUris[0],
+          codeChallenge,
+          resource,
+        },
+        expectToFail,
+      });
+
+    const authorizeAndGetCode = async (resource: string) => {
+      const { codeVerifier, codeChallenge } = generatePkcePair();
+      const { data, errors } = await authorizePublicClient({
+        resource,
+        codeChallenge,
+      });
+
+      expect(errors).toBeUndefined();
+
+      const code = new URL(data.authorizeApp.redirectUrl).searchParams.get(
+        'code',
+      );
+
+      assertIsDefinedOrThrow(code);
+
+      const [issuedCode] = await ds.query(
+        `SELECT id FROM core."appToken" WHERE value = $1`,
+        [crypto.createHash('sha256').update(code).digest('hex')],
+      );
+
+      createdEntityIds.tokens.push(issuedCode.id);
+
+      return { code, codeVerifier };
+    };
+
+    const exchangeCode = ({
+      code,
+      codeVerifier,
+      resource,
+    }: {
+      code: string;
+      codeVerifier: string;
+      resource?: string;
+    }) =>
+      postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: publicRegistration.oAuthClientId,
+        code_verifier: codeVerifier,
+        redirect_uri: publicRegistration.oAuthRedirectUris[0],
+        ...(isDefined(resource) ? { resource } : {}),
+      });
+
+    const getAudience = (token: string) =>
+      (jwt.decode(token) as Pick<ApplicationAccessTokenJwtPayload, 'aud'>).aud;
+
+    beforeAll(async () => {
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(TEST_WORKSPACE_ID, ['flatApplicationMaps']);
+    });
+
+    const generateAccessTokenFor = async (audience: string) => {
+      const { applicationAccessToken } = await generateApplicationTokenPair({
+        workspaceId: TEST_WORKSPACE_ID,
+        applicationId: testApplication.id,
+        userId: TEST_USER_ID,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        audience,
+      });
+
+      return applicationAccessToken.token;
+    };
+
+    it('should refuse to authorize a resource this server does not serve', async () => {
+      const { errors } = await authorizePublicClient({
+        resource: foreignResource,
+        codeChallenge: generatePkcePair().codeChallenge,
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toBe(
+        `Unknown resource '${foreignResource}'`,
+      );
+    });
+
+    it('should bind the authorized resource as the audience of the issued tokens', async () => {
+      const { code, codeVerifier } = await authorizeAndGetCode(mcpResource);
+
+      const res = await exchangeCode({ code, codeVerifier }).expect(200);
+
+      expect(getAudience(res.body.access_token)).toBe(mcpResource);
+      expect(getAudience(res.body.refresh_token)).toBe(mcpResource);
+      expect(await pingMcp({ token: res.body.access_token })).toMatchObject({
+        status: 200,
+        body: { result: {} },
+      });
+    });
+
+    it('should refuse a foreign resource at the token endpoint', async () => {
+      const { code, codeVerifier } = await createAuthCodeWithPkce(
+        publicRegistration.oAuthClientId,
+      );
+
+      const res = await exchangeCode({
+        code,
+        codeVerifier,
+        resource: foreignResource,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_target');
+    });
+
+    it('should refuse a token request for another resource than the one authorized', async () => {
+      const { code, codeVerifier } = await authorizeAndGetCode(mcpResource);
+
+      const res = await exchangeCode({
+        code,
+        codeVerifier,
+        resource: baseUrl,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_target');
+    });
+
+    it('should keep the audience on refresh and refuse a foreign resource', async () => {
+      const { code, codeVerifier } = await authorizeAndGetCode(mcpResource);
+
+      const tokens = await exchangeCode({ code, codeVerifier }).expect(200);
+
+      const refresh = (resource?: string) =>
+        postToken({
+          grant_type: 'refresh_token',
+          refresh_token: tokens.body.refresh_token,
+          client_id: publicRegistration.oAuthClientId,
+          ...(isDefined(resource) ? { resource } : {}),
+        });
+
+      const foreignRefresh = await refresh(foreignResource).expect(400);
+
+      expect(foreignRefresh.body.error).toBe('invalid_target');
+
+      const refreshed = await refresh().expect(200);
+
+      expect(getAudience(refreshed.body.access_token)).toBe(mcpResource);
+    });
+
+    it('should refuse a token bound to another resource at the MCP endpoint', async () => {
+      const mcpToken = await generateAccessTokenFor(mcpResource);
+      const serverToken = await generateAccessTokenFor(baseUrl);
+      const foreignToken = await generateAccessTokenFor(foreignResource);
+
+      expect(await pingMcp({ token: mcpToken })).toMatchObject({
+        status: 200,
+        body: { result: {} },
+      });
+      expect(await pingMcp({ token: serverToken })).toMatchObject({
+        status: 200,
+        body: { result: {} },
+      });
+      expect((await pingMcp({ token: foreignToken })).status).toBe(401);
+    });
+
+    it('should refuse an MCP-bound token on the GraphQL API', async () => {
+      const queryTypename = (token: string) =>
+        makeGraphqlApiRequest(
+          {
+            query: gql`
+              {
+                __typename
+              }
+            `,
+          },
+          token,
+        );
+
+      const serverResponse = await queryTypename(
+        await generateAccessTokenFor(baseUrl),
+      );
+      const mcpResponse = await queryTypename(
+        await generateAccessTokenFor(mcpResource),
+      );
+
+      expect(serverResponse.body.data?.__typename).toBe('Query');
+      expect(mcpResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'UNAUTHENTICATED',
+      );
     });
   });
 });

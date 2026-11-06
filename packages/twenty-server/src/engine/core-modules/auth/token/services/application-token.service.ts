@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
 import { addMilliseconds } from 'date-fns';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -49,6 +49,7 @@ export class ApplicationTokenService {
     userId,
     agentId,
     expiresIn,
+    audience,
   }: {
     workspaceId: string;
     applicationId: string;
@@ -56,6 +57,7 @@ export class ApplicationTokenService {
     userId?: string;
     agentId?: string;
     expiresIn?: string;
+    audience?: string;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
@@ -65,6 +67,7 @@ export class ApplicationTokenService {
       userWorkspaceId,
       userId,
       agentId,
+      audience,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       expiresIn:
         expiresIn ??
@@ -128,11 +131,13 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    audience,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    audience?: string;
   }): Promise<{
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
@@ -153,6 +158,7 @@ export class ApplicationTokenService {
           applicationId,
           userWorkspaceId,
           userId,
+          audience,
           tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
           expiresIn: accessTokenExpiresIn,
         }),
@@ -161,6 +167,7 @@ export class ApplicationTokenService {
           applicationId,
           userWorkspaceId,
           userId,
+          audience,
           tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
           expiresIn: refreshTokenExpiresIn,
         }),
@@ -287,6 +294,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    aud?: string;
   }): Promise<{
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
@@ -296,6 +304,7 @@ export class ApplicationTokenService {
       applicationId: payload.applicationId,
       userWorkspaceId: payload.userWorkspaceId,
       userId: payload.userId,
+      audience: payload.aud,
     });
   }
 
@@ -328,6 +337,7 @@ export class ApplicationTokenService {
     userWorkspaceId,
     userId,
     agentId,
+    audience,
     tokenType,
     expiresIn,
     workspaceDeletionRequestTimestamp,
@@ -337,6 +347,7 @@ export class ApplicationTokenService {
     userWorkspaceId?: string;
     userId?: string;
     agentId?: string;
+    audience?: string;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -358,6 +369,7 @@ export class ApplicationTokenService {
       ...(userWorkspaceId ? { userWorkspaceId } : {}),
       ...(userId ? { userId } : {}),
       ...(agentId ? { agentId } : {}),
+      ...(isDefined(audience) ? { aud: audience } : {}),
     };
 
     return {

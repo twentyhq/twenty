@@ -53,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { resolveOAuthResource } from 'src/engine/core-modules/auth/utils/resolve-oauth-resource.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -649,6 +650,11 @@ export class AuthService {
       );
     }
 
+    const resource = this.resolveAuthorizationResourceOrThrow({
+      resource: authorizeAppInput.resource,
+      requestBaseUrl,
+    });
+
     const authorizationCode = crypto.randomBytes(42).toString('hex');
     const hashedAuthorizationCode = crypto
       .createHash('sha256')
@@ -662,6 +668,7 @@ export class AuthService {
       clientId: applicationRegistration.oAuthClientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
+      ...(isDefined(resource) ? { resource } : {}),
     };
 
     const token = this.appTokenRepository.create({
@@ -695,6 +702,33 @@ export class AuthService {
     }
 
     return { redirectUrl: redirectUriValidation.parsed.toString() };
+  }
+
+  private resolveAuthorizationResourceOrThrow({
+    resource,
+    requestBaseUrl,
+  }: {
+    resource?: string;
+    requestBaseUrl: string;
+  }): string | undefined {
+    if (!isDefined(resource)) {
+      return undefined;
+    }
+
+    const resolvedResource = resolveOAuthResource({
+      resource,
+      requestBaseUrl,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    if (!isDefined(resolvedResource)) {
+      throw new AuthException(
+        `Unknown resource '${resource}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return resolvedResource;
   }
 
   async updatePassword(

@@ -5,7 +5,7 @@ import { msg } from '@lingui/core/macro';
 import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -17,8 +17,10 @@ import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto'
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
+import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
+import { isRequestInOAuthAudience } from 'src/engine/core-modules/auth/utils/is-request-in-oauth-audience.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -33,6 +35,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
 @Injectable()
 export class AccessTokenService {
@@ -203,7 +206,11 @@ export class AccessTokenService {
         );
       }
 
-      return this.validateToken(token);
+      const context = await this.validateToken(token);
+
+      this.assertTokenAudienceCoversRequest(token, request);
+
+      return context;
     }
 
     const sessionToken =
@@ -217,6 +224,31 @@ export class AccessTokenService {
       'Missing authentication token',
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
     );
+  }
+
+  private assertTokenAudienceCoversRequest(token: string, request: Request) {
+    const { aud: audience } =
+      this.jwtWrapperService.decode<
+        Pick<ApplicationAccessTokenJwtPayload, 'aud'>
+      >(token);
+
+    if (!isDefined(audience)) {
+      return;
+    }
+
+    const isCovered = isRequestInOAuthAudience({
+      audience,
+      requestPath: request.originalUrl.split('?')[0],
+      requestBaseUrl: getRequestBaseUrl(request),
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    if (!isCovered) {
+      throw new AuthException(
+        'Token was not issued for this resource',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
   }
 
   private async validateSessionToken(
