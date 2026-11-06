@@ -27,18 +27,25 @@ const CLOSE_DATE_FILTER: PageLayoutFilter = {
   defaultValue: null,
 };
 
-const validateDashboardFilters = (filters: PageLayoutFilter[]) =>
+const validateDashboardFilters = (filters: unknown) =>
   validatePageLayoutFilters({ filters, type: PageLayoutType.DASHBOARD });
 
+const withCondition = (condition: unknown) => [
+  { ...PERIOD_FILTER, defaultValue: { conditions: [condition] } },
+];
+
 describe('validatePageLayoutFilters', () => {
-  it('should accept a layout without filters whatever its type', () => {
-    expect(
-      validatePageLayoutFilters({
-        filters: null,
-        type: PageLayoutType.RECORD_PAGE,
-      }),
-    ).toEqual([]);
-  });
+  it.each([null, []])(
+    'should accept %p as no filters on a record page layout',
+    (filters) => {
+      expect(
+        validatePageLayoutFilters({
+          filters,
+          type: PageLayoutType.RECORD_PAGE,
+        }),
+      ).toEqual([]);
+    },
+  );
 
   it('should accept valid filters on a dashboard', () => {
     expect(
@@ -61,13 +68,42 @@ describe('validatePageLayoutFilters', () => {
     expect(errors[0].message).toContain('only supported on dashboard');
   });
 
-  it('should accept an empty filter list on a dashboard', () => {
-    expect(
-      validatePageLayoutFilters({
-        filters: [],
-        type: PageLayoutType.DASHBOARD,
+  it.each([
+    ['filters that are not an array', { 0: PERIOD_FILTER }],
+    ['filters that are a string', 'Period'],
+    ['a null filter', [null]],
+    ['a filter that is an array', [[PERIOD_FILTER]]],
+    ['a numeric id', [{ ...PERIOD_FILTER, id: 1 }]],
+    ['a null label', [{ ...PERIOD_FILTER, label: null }]],
+    ['a missing position', [{ ...CLOSE_DATE_FILTER, position: undefined }]],
+    ['a string position', [{ ...PERIOD_FILTER, position: 'first' }]],
+    ['an infinite position', [{ ...PERIOD_FILTER, position: Infinity }]],
+    ['an unsupported type', [{ ...PERIOD_FILTER, type: 'SELECT' }]],
+    ['a constructor type', [{ ...PERIOD_FILTER, type: 'constructor' }]],
+    ['a toString type', [{ ...PERIOD_FILTER, type: 'toString' }]],
+    ['a __proto__ type', [{ ...PERIOD_FILTER, type: '__proto__' }]],
+    [
+      'a missing default value',
+      [{ ...PERIOD_FILTER, defaultValue: undefined }],
+    ],
+    [
+      'conditions that are not an array',
+      [{ ...PERIOD_FILTER, defaultValue: { conditions: 'PAST_1_MONTH' } }],
+    ],
+    ['a null condition', withCondition(null)],
+    ['an unknown operand', withCondition({ operand: 'BETWEEN', value: '' })],
+    [
+      'a condition value that is an array',
+      withCondition({
+        operand: ViewFilterOperand.IS_AFTER,
+        value: ['2026-01-01'],
       }),
-    ).toEqual([]);
+    ],
+  ])('should report %s as malformed without throwing', (_case, filters) => {
+    const errors = validateDashboardFilters(filters);
+
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].message).toContain('Dashboard filters are malformed');
   });
 
   it('should reject an id that is not a UUID', () => {
@@ -97,16 +133,12 @@ describe('validatePageLayoutFilters', () => {
   });
 
   it('should reject an invalid default value', () => {
-    const errors = validateDashboardFilters([
-      {
-        ...PERIOD_FILTER,
-        defaultValue: {
-          conditions: [
-            { operand: ViewFilterOperand.IS_RELATIVE, value: 'last month' },
-          ],
-        },
-      },
-    ]);
+    const errors = validateDashboardFilters(
+      withCondition({
+        operand: ViewFilterOperand.IS_RELATIVE,
+        value: 'last month',
+      }),
+    );
 
     expect(errors).toHaveLength(1);
     expect(errors[0].message).toContain('"Period"');

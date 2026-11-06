@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application page layout filters update should fail when the workspace changes the filters of a standard dashboard 1`] = `
+exports[`Installed application dashboard filters update should fail when the workspace changes the filters of an installed dashboard 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "The filters of this dashboard come from its application and cannot be changed.",
+    "userFriendlyMessage": "This dashboard was installed by an application, so its filters cannot be changed.",
   },
-  "message": "Filters of page layout "<pageLayoutId>" are defined by its application and cannot be changed",
+  "message": "Filters of dashboard page layout "<pageLayoutId>" are defined by the application that installed it and cannot be changed",
   "name": "UserInputError",
 }
 `;

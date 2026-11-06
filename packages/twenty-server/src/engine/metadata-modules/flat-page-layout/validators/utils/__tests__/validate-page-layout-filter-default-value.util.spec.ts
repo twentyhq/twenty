@@ -7,7 +7,7 @@ const validateConditions = (
 ) =>
   validatePageLayoutFilterDefaultValue({
     defaultValue: { conditions },
-    fieldType: FieldMetadataType.DATE,
+    valueFormatFieldType: FieldMetadataType.DATE,
     filterLabel: 'Period',
   });
 
@@ -66,6 +66,30 @@ describe('validatePageLayoutFilterDefaultValue', () => {
 
     expect(errors).toHaveLength(1);
     expect(errors[0].value).toBe('last tuesday');
+  });
+
+  it('should reject a default value without conditions', () => {
+    const errors = validateConditions([]);
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('has no condition');
+  });
+
+  it('should reject an empty value for an operand that expects one', () => {
+    const errors = validateConditions([
+      { operand: ViewFilterOperand.IS_RELATIVE, value: '' },
+    ]);
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('has no value');
+  });
+
+  it('should reject a date time value since plain dates are the canonical format', () => {
+    expect(
+      validateConditions([
+        { operand: ViewFilterOperand.IS_BEFORE, value: '2026-03-31T00:00:00Z' },
+      ]),
+    ).toHaveLength(1);
   });
 
   it('should report every invalid condition', () => {

@@ -8,8 +8,10 @@ import { PAGE_LAYOUT_WITH_FILTERS_GQL_FIELDS } from 'test/integration/metadata/s
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
+import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
   type PageLayoutFilter,
   PageLayoutFilterType,
@@ -189,6 +191,82 @@ describe('Dashboard duplication should copy the page layout filters', () => {
     jestExpectToBeDefined(duplicatedPageLayoutId);
     expect(duplicatedPageLayoutId).not.toBe(pageLayoutId);
     expect(await findPageLayoutFilters(duplicatedPageLayoutId)).toEqual([
+      PERIOD_FILTER,
+    ]);
+  });
+});
+
+describe('Standard dashboard filters update should succeed', () => {
+  let standardDashboardId: string;
+  let standardDashboardTabs: UpdatePageLayoutWithTabsInput['tabs'];
+
+  const saveStandardDashboard = (
+    filters: UpdatePageLayoutWithTabsInput['filters'],
+  ) =>
+    updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      gqlFields: PAGE_LAYOUT_WITH_FILTERS_GQL_FIELDS,
+      input: {
+        id: standardDashboardId,
+        name: 'My First Dashboard',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        filters,
+        tabs: standardDashboardTabs,
+      },
+    });
+
+  beforeAll(async () => {
+    const { data } = await findPageLayouts({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id universalIdentifier',
+    });
+
+    const standardDashboard = data.getPageLayouts.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier ===
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.myFirstDashboard
+          .universalIdentifier,
+    );
+
+    jestExpectToBeDefined(standardDashboard);
+    standardDashboardId = standardDashboard.id;
+
+    const tabs = await globalThis.testDataSource.query(
+      `SELECT id, title, position, icon, "layoutMode" FROM core."pageLayoutTab"
+       WHERE "pageLayoutId" = $1 AND "deletedAt" IS NULL AND "isActive"`,
+      [standardDashboardId],
+    );
+
+    const widgets = await globalThis.testDataSource.query(
+      `SELECT id, "pageLayoutTabId", title, type, "objectMetadataId", position,
+       configuration, "conditionalDisplay", "conditionalAvailabilityExpression"
+       FROM core."pageLayoutWidget"
+       WHERE "pageLayoutTabId" = ANY($1) AND "deletedAt" IS NULL AND "isActive"`,
+      [tabs.map(({ id }: { id: string }) => id)],
+    );
+
+    standardDashboardTabs = tabs.map((tab: { id: string }) => ({
+      ...tab,
+      widgets: widgets.filter(
+        ({ pageLayoutTabId }: { pageLayoutTabId: string }) =>
+          pageLayoutTabId === tab.id,
+      ),
+    }));
+  });
+
+  afterAll(async () => {
+    await saveStandardDashboard(null);
+  });
+
+  it('should let the workspace set filters on the standard dashboard', async () => {
+    const { data } = await saveStandardDashboard([PERIOD_FILTER]);
+
+    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toEqual([
+      PERIOD_FILTER,
+    ]);
+    expect(await findPageLayoutFilters(standardDashboardId)).toEqual([
       PERIOD_FILTER,
     ]);
   });

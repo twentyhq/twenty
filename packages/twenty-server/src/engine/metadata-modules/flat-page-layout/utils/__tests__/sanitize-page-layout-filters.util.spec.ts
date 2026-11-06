@@ -23,8 +23,8 @@ const withNullPrototype = <TValue extends object>(value: TValue): TValue =>
   Object.assign(Object.create(null), value);
 
 describe('sanitizePageLayoutFilters', () => {
-  it('should keep null as null', () => {
-    expect(sanitizePageLayoutFilters(null)).toBeNull();
+  it.each([null, []])('should turn %p into null', (filters) => {
+    expect(sanitizePageLayoutFilters(filters)).toBeNull();
   });
 
   it('should rebuild null-prototype GraphQL input objects as plain objects', () => {

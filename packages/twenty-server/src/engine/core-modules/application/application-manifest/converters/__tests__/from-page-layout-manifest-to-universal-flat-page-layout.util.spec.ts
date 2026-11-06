@@ -118,4 +118,19 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
 
     expect(result.filters).toEqual(filters);
   });
+
+  it('should treat an empty filter list as no filters', () => {
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest: {
+        universalIdentifier: 'pl-uuid-6',
+        name: 'Unfiltered Dashboard',
+        type: PageLayoutType.DASHBOARD,
+        filters: [],
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.filters).toBeNull();
+  });
 });

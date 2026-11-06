@@ -1,12 +1,12 @@
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type PageLayoutFilter, PageLayoutType } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
-import { FIELD_TYPE_BY_PAGE_LAYOUT_FILTER_TYPE } from 'src/engine/metadata-modules/flat-page-layout/constants/field-type-by-page-layout-filter-type.constant';
+import { PAGE_LAYOUT_FILTERS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout/constants/page-layout-filters-schema.constant';
+import { VALUE_FORMAT_FIELD_TYPE_BY_PAGE_LAYOUT_FILTER_TYPE } from 'src/engine/metadata-modules/flat-page-layout/constants/value-format-field-type-by-page-layout-filter-type.constant';
 import { validatePageLayoutFilterDefaultValue } from 'src/engine/metadata-modules/flat-page-layout/validators/utils/validate-page-layout-filter-default-value.util';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 type PageLayoutFilterValidationError =
@@ -16,7 +16,7 @@ const validatePageLayoutFilter = ({
   filter: { id, label, type, defaultValue },
   isIdAlreadyUsed,
 }: {
-  filter: PageLayoutFilter;
+  filter: Omit<PageLayoutFilter, 'position'>;
   isIdAlreadyUsed: boolean;
 }): PageLayoutFilterValidationError[] => {
   const errors: PageLayoutFilterValidationError[] = [];
@@ -47,19 +47,6 @@ const validatePageLayoutFilter = ({
     });
   }
 
-  const fieldType = FIELD_TYPE_BY_PAGE_LAYOUT_FILTER_TYPE[type];
-
-  if (!isDefined(fieldType)) {
-    errors.push({
-      code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-      message: t`Dashboard filter type "${type}" is not supported`,
-      userFriendlyMessage: msg`Dashboard filter type is not supported`,
-      value: type,
-    });
-
-    return errors;
-  }
-
   if (!isDefined(defaultValue)) {
     return errors;
   }
@@ -68,20 +55,41 @@ const validatePageLayoutFilter = ({
     ...errors,
     ...validatePageLayoutFilterDefaultValue({
       defaultValue,
-      fieldType,
+      valueFormatFieldType:
+        VALUE_FORMAT_FIELD_TYPE_BY_PAGE_LAYOUT_FILTER_TYPE[type],
       filterLabel: label,
     }),
   ];
 };
 
 export const validatePageLayoutFilters = ({
-  filters,
+  filters: rawFilters,
   type,
-}: Pick<
-  UniversalFlatPageLayout,
-  'filters' | 'type'
->): PageLayoutFilterValidationError[] => {
-  if (!isDefined(filters)) {
+}: {
+  filters: unknown;
+  type: PageLayoutType;
+}): PageLayoutFilterValidationError[] => {
+  if (!isDefined(rawFilters)) {
+    return [];
+  }
+
+  const parsedFilters = PAGE_LAYOUT_FILTERS_SCHEMA.safeParse(rawFilters);
+
+  if (!parsedFilters.success) {
+    return parsedFilters.error.issues.map(({ path, message: issue }) => {
+      const issuePath = path.map(String).join('.');
+
+      return {
+        code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+        message: t`Dashboard filters are malformed at "${issuePath}": ${issue}`,
+        userFriendlyMessage: msg`Dashboard filters are malformed`,
+      };
+    });
+  }
+
+  const filters = parsedFilters.data;
+
+  if (!isNonEmptyArray(filters)) {
     return [];
   }
 

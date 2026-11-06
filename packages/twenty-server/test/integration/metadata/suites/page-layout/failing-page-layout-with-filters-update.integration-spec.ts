@@ -1,4 +1,8 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { PAGE_LAYOUT_WITH_FILTERS_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout/constants/page-layout-with-filters-gql-fields.constant';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
@@ -6,7 +10,6 @@ import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layo
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -17,6 +20,7 @@ import {
   PageLayoutType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 const PERIOD_FILTER: PageLayoutFilter = {
   id: '9c1e5b7a-3d2f-4e6a-8b9c-0d1e2f3a4b01',
@@ -148,45 +152,79 @@ describe('Page layout with filters update should fail', () => {
   );
 });
 
-describe('Application page layout filters update should fail', () => {
-  it('when the workspace changes the filters of a standard dashboard', async () => {
+describe('Installed application dashboard filters update should fail', () => {
+  const applicationUniversalIdentifier = v4();
+  const dashboardUniversalIdentifier = v4();
+
+  beforeAll(async () => {
+    await setupApplicationForSync({
+      applicationUniversalIdentifier,
+      name: 'Dashboard Filters Application',
+      description: 'App shipping a dashboard with filters',
+      sourcePath: 'test-dashboard-filters',
+    });
+
+    await syncApplication({
+      expectToFail: false,
+      manifest: buildBaseManifest({
+        appId: applicationUniversalIdentifier,
+        roleId: v4(),
+        overrides: {
+          pageLayouts: [
+            {
+              universalIdentifier: dashboardUniversalIdentifier,
+              name: 'Installed Dashboard',
+              type: PageLayoutType.DASHBOARD,
+              filters: [PERIOD_FILTER],
+              tabs: [
+                { universalIdentifier: v4(), title: 'Tab 1', position: 0 },
+              ],
+            },
+          ],
+        },
+      }),
+    });
+  }, 60000);
+
+  afterAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier,
+    });
+  });
+
+  it('when the workspace changes the filters of an installed dashboard', async () => {
     const { data } = await findPageLayouts({
       expectToFail: false,
       input: undefined,
       gqlFields: 'id universalIdentifier tabs { id title position }',
     });
 
-    const standardDashboard = data.getPageLayouts.find(
+    const installedDashboard = data.getPageLayouts.find(
       ({ universalIdentifier }) =>
-        universalIdentifier ===
-        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.myFirstDashboard
-          .universalIdentifier,
+        universalIdentifier === dashboardUniversalIdentifier,
     );
 
-    jestExpectToBeDefined(standardDashboard);
+    jestExpectToBeDefined(installedDashboard);
 
     const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
       expectToFail: true,
       gqlFields: PAGE_LAYOUT_WITH_FILTERS_GQL_FIELDS,
       input: {
-        id: standardDashboard.id,
-        name: 'My First Dashboard',
+        id: installedDashboard.id,
+        name: 'Installed Dashboard',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
-        filters: [PERIOD_FILTER],
-        tabs: (standardDashboard.tabs ?? []).map(({ id, title, position }) => ({
-          id,
-          title,
-          position,
-          widgets: [],
-        })),
+        filters: [{ ...PERIOD_FILTER, label: 'Quarter' }],
+        tabs: (installedDashboard.tabs ?? []).map(
+          ({ id, title, position }) => ({ id, title, position, widgets: [] }),
+        ),
       },
     });
 
     expectOneNotInternalServerErrorSnapshot({
       errors,
       normalizeMessage: (message) =>
-        message.replace(standardDashboard.id, '<pageLayoutId>'),
+        message.replace(installedDashboard.id, '<pageLayoutId>'),
     });
   });
 });

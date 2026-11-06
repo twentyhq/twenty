@@ -28,7 +28,7 @@ const getPageLayoutExceptionUserFriendlyMessage = (
     case PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
       return msg`Tab not found for widget duplication.`;
     case PageLayoutExceptionCode.PAGE_LAYOUT_FILTERS_NOT_EDITABLE:
-      return msg`The filters of this dashboard come from its application and cannot be changed.`;
+      return msg`This dashboard was installed by an application, so its filters cannot be changed.`;
     default:
       assertUnreachable(code);
   }

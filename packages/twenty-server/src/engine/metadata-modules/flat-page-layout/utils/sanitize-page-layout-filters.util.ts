@@ -1,5 +1,5 @@
 import { type PageLayoutFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const sanitizePageLayoutFilters = (
   filters:
@@ -7,7 +7,7 @@ export const sanitizePageLayoutFilters = (
         Partial<Pick<PageLayoutFilter, 'defaultValue'>>)[]
     | null,
 ): PageLayoutFilter[] | null => {
-  if (!isDefined(filters)) {
+  if (!isNonEmptyArray(filters)) {
     return null;
   }
 
