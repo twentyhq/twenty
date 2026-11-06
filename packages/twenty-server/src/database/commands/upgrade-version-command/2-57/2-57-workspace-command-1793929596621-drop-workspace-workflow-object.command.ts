@@ -18,7 +18,6 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -27,7 +26,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.57.0', 1793905234000)
+@RegisteredWorkspaceCommand('2.57.0', 1793929596621)
 @Command({
   name: 'upgrade:2-57:drop-workspace-workflow-object',
   description:
@@ -241,7 +240,17 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
           universalIdentifier ===
           LEGACY_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER,
       ),
-      fieldsToDelete,
+      targetWorkflowLinkObjectNames: new Set(
+        fieldsToDelete
+          .filter(({ name }) => name === 'targetWorkflow')
+          .map(
+            ({ objectMetadataId }) =>
+              Object.values(flatObjectMetadataMaps.byUniversalIdentifier).find(
+                (flatObjectMetadata) => flatObjectMetadata?.id === objectMetadataId,
+              )?.nameSingular,
+          )
+          .filter(isDefined),
+      ),
     });
 
     const plan = `${objectsToDelete.length} object(s), ${fieldsToDelete.length} field(s), ${indexesToDelete.length} index(es), ${pageLayoutWidgetsToDelete.length} widget(s) holding ${legacyDataSummary}`;
@@ -343,22 +352,19 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     dataSource,
     workflowObject,
     hasWorkflowAutomatedTriggerObject,
-    fieldsToDelete,
+    targetWorkflowLinkObjectNames,
   }: {
     workspaceId: string;
     dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
     workflowObject: Pick<FlatObjectMetadata, 'id'> | undefined;
     hasWorkflowAutomatedTriggerObject: boolean;
-    fieldsToDelete: Pick<FlatFieldMetadata, 'name' | 'objectMetadataId'>[];
+    targetWorkflowLinkObjectNames: Set<string>;
   }): Promise<string> {
     if (!isDefined(workflowObject)) {
       return 'no legacy records';
     }
 
     const schema = getWorkspaceSchemaName(workspaceId);
-    const objectIdsWithTargetWorkflowField = fieldsToDelete
-      .filter(({ name }) => name === 'targetWorkflow')
-      .map(({ objectMetadataId }) => objectMetadataId);
     const countRows = async ({
       query,
       parameters = [],
@@ -383,12 +389,14 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
             query: `SELECT COUNT(*) AS count FROM "${schema}"."workflowAutomatedTrigger"`,
           })
         : 0;
-    const attachmentCount = objectIdsWithTargetWorkflowField.length
+    const attachmentCount = targetWorkflowLinkObjectNames.has('attachment')
       ? await countRows({
           query: `SELECT COUNT(*) AS count FROM "${schema}"."attachment" WHERE "targetWorkflowId" IS NOT NULL`,
         })
       : 0;
-    const timelineActivityCount = objectIdsWithTargetWorkflowField.length
+    const timelineActivityCount = targetWorkflowLinkObjectNames.has(
+      'timelineActivity',
+    )
       ? await countRows({
           query: `SELECT COUNT(*) AS count FROM "${schema}"."timelineActivity" WHERE "targetWorkflowId" IS NOT NULL`,
         })
