@@ -10,7 +10,6 @@ import {
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
-
 const client = request(`http://localhost:${APP_PORT}`);
 
 const updateStepResponse = (
