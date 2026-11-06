@@ -315,7 +315,7 @@ export class ChatExecutionService {
     browsingContext,
     toolContext,
   }: {
-    thread: AgentChatThreadWorkspaceEntity;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
     workspaceId: string;
     userWorkspaceId: string;
     messages: ExtendedUIMessage[];

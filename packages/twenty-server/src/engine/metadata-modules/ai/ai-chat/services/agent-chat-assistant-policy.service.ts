@@ -153,7 +153,7 @@ export class AgentChatAssistantPolicyService {
       return AiChatAssistantMode.NEVER;
     }
 
-    return configuredMode ?? AiChatAssistantMode.MENTION_ONLY;
+    return configuredMode;
   }
 
   private async resolveChatAudience({
