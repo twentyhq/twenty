@@ -80,6 +80,7 @@ describe('useOpenFilePreview', () => {
 
     await userEvent.click(screen.getByText('report.pdf'));
 
+    expect(downloadFile).toHaveBeenCalledTimes(1);
     expect(downloadFile).toHaveBeenCalledWith(FILE.url, FILE.label);
   });
 
