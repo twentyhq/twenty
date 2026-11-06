@@ -420,7 +420,7 @@ describe('Workflow version update step listing a deleted field (e2e)', () => {
     for (const step of [
       updateStepOnPerson({
         step: draftStep(secondUpdateStepId),
-        fieldsToUpdate: ['jobTitle', 'city'],
+        fieldsToUpdate: ['jobTitle', 'emails'],
       }),
       updateStepOnPerson({
         step: draftStep(firstUpdateStepId),
