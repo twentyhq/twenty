@@ -376,7 +376,7 @@ export class AgentChatChannelService {
             .enqueueChannelGrantsRewrite({ workspaceId, channelId })
             .catch((enqueueError: unknown) =>
               this.logger.warn(
-                `Failed to queue a grant rewrite for channel ${channelId}: ${
+                `Failed to queue a grant rewrite for channel ${channelId} in workspace ${workspaceId}: ${
                   enqueueError instanceof Error
                     ? enqueueError.message
                     : String(enqueueError)
