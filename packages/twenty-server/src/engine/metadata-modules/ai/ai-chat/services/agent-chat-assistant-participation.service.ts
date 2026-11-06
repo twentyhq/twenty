@@ -15,6 +15,7 @@ import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatAssistantParticipationService {
@@ -33,6 +34,7 @@ export class AgentChatAssistantParticipationService {
     thread,
     isInitialMessage: providedIsInitialMessage,
     isUncommittedThread = false,
+    transactionScope,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     isReplyRequested = true,
@@ -45,6 +47,7 @@ export class AgentChatAssistantParticipationService {
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
     isUncommittedThread?: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<AgentChatAssistantParticipation> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
@@ -59,7 +62,7 @@ export class AgentChatAssistantParticipationService {
         workspaceId,
         workspaceMemberId,
         threadId: thread.id,
-        uncommittedThread: isUncommittedThread ? thread : undefined,
+        transactionScope,
         memberIds: [
           ...mentionedWorkspaceMemberIds,
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),

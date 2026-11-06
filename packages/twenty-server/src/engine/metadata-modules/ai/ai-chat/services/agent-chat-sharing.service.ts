@@ -58,7 +58,6 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { buildAgentChatUncommittedThreadAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-uncommitted-thread-access.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -295,11 +294,11 @@ export class AgentChatSharingService {
     workspaceMemberId,
     threadId,
     shouldConsiderNewShares = true,
-    uncommittedThread,
+    transactionScope,
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
     shouldConsiderNewShares?: boolean;
-    uncommittedThread?: AgentChatThreadWorkspaceEntity;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<string[]> {
     const candidateMemberIds = [...new Set(memberIds)].filter(
       (memberId) => memberId !== workspaceMemberId,
@@ -328,7 +327,7 @@ export class AgentChatSharingService {
       workspaceId,
       threadId,
       authContext,
-      uncommittedThread,
+      transactionScope,
     });
 
     const hypotheticalRecordShareAccessLevel =
@@ -347,23 +346,16 @@ export class AgentChatSharingService {
                   workspaceMemberId: memberId,
                 },
               });
-            const objectQuestion = {
+            const question = {
               principals,
               objectMetadataId: threadFlatObjectMetadata.id,
+              recordIds: [threadId],
               hypotheticalRecordShareAccessLevel,
+              transactionScope,
             };
-            const recordQuestion = isDefined(uncommittedThread)
-              ? buildAgentChatUncommittedThreadAccess(uncommittedThread)
-              : { recordIds: [threadId] };
             const [canReadThread, canUpdateThread] = await Promise.all([
-              this.permissionsService.canReadRecords({
-                ...objectQuestion,
-                ...recordQuestion,
-              }),
-              this.permissionsService.canUpdateRecords({
-                ...objectQuestion,
-                ...recordQuestion,
-              }),
+              this.permissionsService.canReadRecords(question),
+              this.permissionsService.canUpdateRecords(question),
             ]);
 
             return canReadThread && canUpdateThread ? memberId : undefined;
@@ -387,7 +379,10 @@ export class AgentChatSharingService {
     isSubscribed?: boolean;
     // checked by the caller, as the member must be able to reach it
     channelId?: string;
-    validateThread?: (thread: AgentChatThreadWorkspaceEntity) => Promise<void>;
+    validateThread?: (args: {
+      thread: AgentChatThreadWorkspaceEntity;
+      transactionScope: WorkspaceTransactionScope;
+    }) => Promise<void>;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -482,7 +477,10 @@ export class AgentChatSharingService {
                 where: { id: threadId },
               })) ?? throwAgentChatThreadNotFound();
 
-            await args.validateThread?.(createdThread);
+            await args.validateThread?.({
+              thread: createdThread,
+              transactionScope,
+            });
 
             return createdThread;
           },
@@ -873,25 +871,23 @@ export class AgentChatSharingService {
     workspaceId,
     threadId,
     authContext,
-    uncommittedThread,
+    transactionScope,
   }: {
     workspaceId: string;
     threadId: string;
     authContext: UserWorkspaceAuthContext;
-    uncommittedThread?: AgentChatThreadWorkspaceEntity;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<boolean> {
     const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
 
-    if (isDefined(uncommittedThread)) {
-      const { featureFlagsMap } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'featureFlagsMap',
-        ]);
-
-      return resolveObjectSharing({
-        flatObjectMetadata: objectMetadata,
-        featureFlagsMap,
-      }).isShareable;
+    if (isDefined(transactionScope)) {
+      return this.canManageThreadSharingInTransaction({
+        workspaceId,
+        threadId,
+        authContext,
+        transactionScope,
+        objectMetadata,
+      });
     }
 
     const { canManageSharing } = await this.recordSharingService.getSharing({
@@ -901,6 +897,62 @@ export class AgentChatSharingService {
     });
 
     return canManageSharing;
+  }
+
+  private async canManageThreadSharingInTransaction({
+    workspaceId,
+    threadId,
+    authContext,
+    transactionScope,
+    objectMetadata,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    authContext: UserWorkspaceAuthContext;
+    transactionScope: WorkspaceTransactionScope;
+    objectMetadata: FlatObjectMetadata;
+  }): Promise<boolean> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    const { isShareable } = resolveObjectSharing({
+      flatObjectMetadata: objectMetadata,
+      featureFlagsMap,
+    });
+
+    if (!isShareable) {
+      return false;
+    }
+
+    const isUpdatePermittedByRole =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepository('agentChatThread')
+            .isObjectOperationPermittedByRole('update'),
+        authContext,
+      );
+
+    if (!isUpdatePermittedByRole) {
+      return false;
+    }
+
+    const question = {
+      principals: await this.permissionsService.buildPermissionsPrincipals({
+        authContext,
+      }),
+      objectMetadataId: objectMetadata.id,
+      recordIds: [threadId],
+      transactionScope,
+    };
+    const [canReadThread, canUpdateThread] = await Promise.all([
+      this.permissionsService.canReadRecords(question),
+      this.permissionsService.canUpdateRecords(question),
+    ]);
+
+    return canReadThread && canUpdateThread;
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {

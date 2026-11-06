@@ -4,7 +4,11 @@ import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -85,23 +89,31 @@ export class AgentChatMemberMessageSenderService {
         addressing.initialRecipientWorkspaceMemberIds,
     };
 
-    await this.chatThreadService.createThreadIfMissing({
+    const shouldValidateRecipients =
+      !assistant.isInitiallyIncluded &&
+      !assistant.isMentioned &&
+      !isDefined(target.channelId) &&
+      (isNonEmptyArray(addressing.initialRecipientWorkspaceMemberIds) ||
+        isNonEmptyArray(addressing.mentionedWorkspaceMemberIds));
+    const createdThread = await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
       ...assistantParticipationInput,
       channelId: target.channelId,
       shouldApplyAssistantParticipation: false,
-      shouldValidateRecipients: true,
+      shouldValidateRecipients,
+      isReplyRequested: assistant.isReplyRequested,
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
     const participation =
-      await this.assistantParticipationService.resolveAssistantParticipation({
+      createdThread?.participation ??
+      (await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,
         workspaceMemberId: actor.workspaceMemberId,
         thread,
         ...assistantParticipationInput,
         isReplyRequested: assistant.isReplyRequested,
-      });
+      }));
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =

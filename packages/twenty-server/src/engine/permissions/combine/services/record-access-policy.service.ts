@@ -22,9 +22,9 @@ import { type RecordShareGrant } from 'src/engine/permissions/record-share/types
 import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
-  type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
@@ -42,7 +42,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/combine/services/permissions-metadata-maps.service';
 import { findGrantedRecordIds } from 'src/engine/permissions/combine/utils/find-granted-record-ids.util';
-import { arePermissionsPrincipalsRolesCached } from 'src/engine/permissions/combine/utils/are-permissions-principals-roles-cached.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -117,52 +116,6 @@ export class RecordAccessPolicyService {
     }
 
     return { principals, metadataMaps, flatObjectMetadata, operationType };
-  }
-
-  async hasAccessToUncommittedRecord({
-    principals,
-    objectMetadataId,
-    operationType,
-    record,
-    privateRecordState,
-    hypotheticalRecordShareAccessLevel,
-  }: PrincipalsObjectAccessRequest & {
-    record: RowAccessRecord;
-    privateRecordState: PrivateRecordState;
-    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): Promise<boolean> {
-    const request = await this.findObjectAccessRequest({
-      principals,
-      objectMetadataId,
-      operationType,
-    });
-
-    if (!isDefined(request)) {
-      return false;
-    }
-
-    if (
-      !arePermissionsPrincipalsRolesCached({
-        principals: request.principals,
-        rolesPermissions: request.metadataMaps.rolesPermissions,
-      })
-    ) {
-      return false;
-    }
-
-    const grantedRecordIds = await findGrantedRecordIds({
-      ...request,
-      hypotheticalRecordShareAccessLevel,
-      records: [record],
-      context: {
-        shouldIgnoreSoftDeleteDefaultFilter: true,
-        fetchRecordShares: () => Promise.resolve([]),
-        findPrivateRecordStates: () =>
-          Promise.resolve(new Map([[record.id, privateRecordState]])),
-      },
-    });
-
-    return grantedRecordIds.has(record.id);
   }
 
   async hasAccessToAllRecords({
@@ -389,10 +342,9 @@ export class RecordAccessPolicyService {
     const metadataMaps = await loadMetadataMaps();
 
     if (
-      !arePermissionsPrincipalsRolesCached({
-        principals,
-        rolesPermissions: metadataMaps.rolesPermissions,
-      })
+      getPermissionsPrincipalsRoleIds(principals).some(
+        (roleId) => !isDefined(metadataMaps.rolesPermissions[roleId]),
+      )
     ) {
       return [];
     }
