@@ -2921,7 +2921,7 @@ msgstr "Agenti"
 #. js-lingui-id: D2ijkj
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Agents that will fail"
-msgstr ""
+msgstr "Agenti, kteří selžou"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3014,17 +3014,17 @@ msgstr "Kredity AI se obnoví za {0, plural, one {# den} few {# dny} many {# dn�
 #. js-lingui-id: MuT/nD
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI data policy and Privacy tab"
-msgstr ""
+msgstr "Zásady pro data AI a karta Soukromí"
 
 #. js-lingui-id: WQyHss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI data processing"
-msgstr ""
+msgstr "Zpracování dat AI"
 
 #. js-lingui-id: zNuqPE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
-msgstr ""
+msgstr "AI je pozastavena"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -4262,7 +4262,7 @@ msgstr "Požádejte správce o zvýšení limitu."
 #. js-lingui-id: fy+eXl
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Ask an admin with security access to change this"
-msgstr ""
+msgstr "Požádejte správce s přístupem k zabezpečení, aby toto změnil"
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
@@ -4532,7 +4532,7 @@ msgstr "Záznamy auditu"
 #. js-lingui-id: 7tMFh/
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Audited controls and the agreements that cover your data."
-msgstr ""
+msgstr "Auditované kontroly a smlouvy, které se vztahují na vaše data."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5073,7 +5073,7 @@ msgstr "Přístup pomocí hranatých závorek není podporován, použijte míst
 #. js-lingui-id: Mh79rW
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Breach notification"
-msgstr ""
+msgstr "Oznámení o narušení zabezpečení"
 
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
@@ -5152,7 +5152,7 @@ msgstr "Vytváření vztahů mnoho-na-mnoho"
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Built to meet EU data protection rules"
-msgstr ""
+msgstr "Navrženo tak, aby splňovalo pravidla EU pro ochranu dat"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5829,7 +5829,7 @@ msgstr "Změnit motiv na systémový"
 #. js-lingui-id: 3Hphdi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Change where AI providers process requests and what they keep"
-msgstr ""
+msgstr "Změňte, kde poskytovatelé AI zpracovávají požadavky a co uchovávají"
 
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -6205,7 +6205,7 @@ msgstr "Vyberte, co se stane při kliknutí na e-mailovou adresu"
 #. js-lingui-id: XDg9PA
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Choose what Twenty can access to support you and improve the product."
-msgstr ""
+msgstr "Zvolte, k čemu může Twenty přistupovat, aby vás podpořil a zlepšoval produkt."
 
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
@@ -6878,7 +6878,7 @@ msgstr "Složitost"
 #. js-lingui-id: psC+XF
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Compliance"
-msgstr ""
+msgstr "Dodržování předpisů"
 
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
@@ -8883,7 +8883,7 @@ msgstr "Denní využití AI"
 #. js-lingui-id: /dr6KQ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Daily backups"
-msgstr ""
+msgstr "Denní zálohy"
 
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -8952,7 +8952,7 @@ msgstr "Export dat"
 #. js-lingui-id: a4sORy
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
-msgstr ""
+msgstr "Data jsou šifrována při přenosu i uložení a klíče se pravidelně obměňují"
 
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8994,7 +8994,7 @@ msgstr "Data na displeji"
 #. js-lingui-id: oBChYi
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Data processing"
-msgstr ""
+msgstr "Zpracování dat"
 
 #. js-lingui-id: /qrjU8
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -10504,7 +10504,7 @@ msgstr "Každý kus představuje"
 #. js-lingui-id: Iz+rDD
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Each workspace has its own database schema"
-msgstr ""
+msgstr "Každý pracovní prostor má vlastní schéma databáze"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -11151,12 +11151,12 @@ msgstr "Povolit funkce specifické pro model"
 #. js-lingui-id: sqO0Ni
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted daily snapshots, kept 30 days"
-msgstr ""
+msgstr "Šifrované denní snímky uchovávané 30 dní"
 
 #. js-lingui-id: qILKh1
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encrypted everywhere"
-msgstr ""
+msgstr "Šifrováno všude"
 
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11278,7 +11278,7 @@ msgstr "Zadejte hodnotu JSON"
 #. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
-msgstr ""
+msgstr "Zadejte název o délce 1 až {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znaků na jednom řádku. Hranaté závorky musí být párové a nesmějí být vnořené."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11826,17 +11826,17 @@ msgstr "Odhadnout pravděpodobnost"
 #. js-lingui-id: MzEfu4
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "EU only"
-msgstr ""
+msgstr "Pouze EU"
 
 #. js-lingui-id: 84VCrZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, standard retention"
-msgstr ""
+msgstr "Pouze EU, standardní uchovávání"
 
 #. js-lingui-id: e8+f0R
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "EU only, zero data retention"
-msgstr ""
+msgstr "Pouze EU, nulové uchovávání dat"
 
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -11949,7 +11949,7 @@ msgstr "každou hodinu"
 #. js-lingui-id: loBt0P
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Every line of code is public, so you can audit it yourself"
-msgstr ""
+msgstr "Každý řádek kódu je veřejný, takže jej můžete sami zkontrolovat"
 
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
@@ -11966,7 +11966,7 @@ msgstr "Všechny objekty tohoto pracovního prostoru jako soubory CSV v jednom a
 #. js-lingui-id: h3QLIe
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Every provider that handles your data"
-msgstr ""
+msgstr "Každý poskytovatel, který zpracovává vaše data"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -13856,7 +13856,7 @@ msgstr "Funkce - Nastavení"
 #. js-lingui-id: arkG3W
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "GDPR"
-msgstr ""
+msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -13918,7 +13918,7 @@ msgstr "Vygenerovat obnovovací kód"
 #. js-lingui-id: h9wFH2
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Generate a signed copy in one click"
-msgstr ""
+msgstr "Vygenerujte podepsanou kopii jedním kliknutím"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14016,7 +14016,7 @@ msgstr "GIN (fulltextové vyhledávání a JSONB)"
 #. js-lingui-id: RkXlPZ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -14486,7 +14486,7 @@ msgstr "Centrum nápovědy"
 #. js-lingui-id: GY8MUv
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Help improve Twenty"
-msgstr ""
+msgstr "Pomozte zlepšit Twenty"
 
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -14648,7 +14648,7 @@ msgstr "Obsahuje přizpůsobení a přepsání vašeho pracovního prostoru."
 #. js-lingui-id: fFtUGj
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Hosting"
-msgstr ""
+msgstr "Hosting"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -14689,7 +14689,7 @@ msgstr "Jak se budete zobrazovat členům týmu a agentům."
 #. js-lingui-id: iGMucd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "How your data is protected"
-msgstr ""
+msgstr "Jak jsou vaše data chráněna"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -15222,7 +15222,7 @@ msgstr "Zvýšit hodnotu"
 #. js-lingui-id: dW+3Q4
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Independently audited security controls"
-msgstr ""
+msgstr "Nezávisle auditované bezpečnostní kontroly"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15860,7 +15860,7 @@ msgstr "Je dnes{timeZoneAbbreviationSuffix}"
 #. js-lingui-id: YbqWR4
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Isolated workspace"
-msgstr ""
+msgstr "Izolovaný pracovní prostor"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -18148,7 +18148,7 @@ msgstr "Modely"
 #. js-lingui-id: o4Xn+q
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Models above are limited to the providers your privacy settings allow."
-msgstr ""
+msgstr "Výše uvedené modely jsou omezeny na poskytovatele, které povoluje vaše nastavení soukromí."
 
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -19136,7 +19136,7 @@ msgstr "U tohoto uživatele nebyla zaznamenána žádná spotřeba AI."
 #. js-lingui-id: m/JoOZ
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "No AI model on this workspace meets these settings."
-msgstr ""
+msgstr "Žádný model AI v tomto pracovním prostoru nesplňuje toto nastavení."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
@@ -19148,7 +19148,7 @@ msgstr "V této instanci není nakonfigurován žádný poskytovatel AI."
 #. js-lingui-id: lBnUyA
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No AI provider trains on your data, and neither does Twenty"
-msgstr ""
+msgstr "Žádný poskytovatel AI netrénuje na vašich datech ani Twenty"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19901,7 +19901,7 @@ msgstr "Žádné téma"
 #. js-lingui-id: lNEINd
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "No training on your data"
-msgstr ""
+msgstr "Žádné trénování na vašich datech"
 
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
@@ -20742,7 +20742,7 @@ msgstr "Sdílen je pouze předmět"
 #. js-lingui-id: 41eae/
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Only use providers that keep no copy of your prompts and responses"
-msgstr ""
+msgstr "Používejte pouze poskytovatele, kteří neuchovávají žádnou kopii vašich výzev a odpovědí"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20948,7 +20948,7 @@ msgstr "Otevřít postranní panel"
 #. js-lingui-id: v+Wp++
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Open source"
-msgstr ""
+msgstr "Open source"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21916,7 +21916,7 @@ msgstr "Připnuto"
 #. js-lingui-id: ylGwx6
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Pinned models not in use"
-msgstr ""
+msgstr "Připnuté modely se nepoužívají"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -22313,7 +22313,7 @@ msgstr "Priorita: {0}"
 #. js-lingui-id: rjGI/Q
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Privacy"
-msgstr ""
+msgstr "Soukromí"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22357,7 +22357,7 @@ msgstr "Zpracovává se záznam hovoru"
 #. js-lingui-id: kLAZG6
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Processing region"
-msgstr ""
+msgstr "Oblast zpracování"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -25102,7 +25102,7 @@ msgstr "Bezpečnost"
 #. js-lingui-id: OpFwR0
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Security you can verify"
-msgstr ""
+msgstr "Zabezpečení, které můžete ověřit"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -26045,7 +26045,7 @@ msgstr "Sdílet události kalendáře mezi kanály"
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Share session replays and AI conversations to help us improve Twenty"
-msgstr ""
+msgstr "Sdílejte záznamy relací a konverzace AI, abyste nám pomohli zlepšit Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -26106,7 +26106,7 @@ msgstr "Nastavení sdílení se nepodařilo načíst."
 #. js-lingui-id: K8Q+iX
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
 msgid "Sharing with Twenty"
-msgstr ""
+msgstr "Sdílení s Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26248,7 +26248,7 @@ msgstr "Zobrazit stránku Začínáme a kartu postranního panelu a otevřít ji
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Zobrazte kartu Soukromí a vynucujte její zásady dat AI a nastavení sdílení dat. Vypnutím této funkce zrušíte všechny uložené zásady. Povolte ji po dokončení aktualizace instance."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26610,12 +26610,12 @@ msgstr "Odloženo do {eventTime}"
 #. js-lingui-id: 01L/Si
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "SOC 2"
-msgstr ""
+msgstr "SOC 2"
 
 #. js-lingui-id: LBv08V
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
-msgstr ""
+msgstr "Kontroly auditované podle SOC 2, šifrování při přenosu i uložení a kód, který může kdokoli zkontrolovat."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -27278,7 +27278,7 @@ msgstr "Odeslat"
 #. js-lingui-id: amVqRj
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 msgid "Subprocessors"
-msgstr ""
+msgstr "Dílčí zpracovatelé"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -28153,7 +28153,7 @@ msgstr "Role přiřazená k tomuto webhooku."
 #. js-lingui-id: OBY7M0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "The safeguards behind every Twenty Cloud workspace."
-msgstr ""
+msgstr "Ochranná opatření pro každý pracovní prostor Twenty Cloud."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -28276,12 +28276,12 @@ msgstr "Během aktualizace hesla došlo k chybě."
 #. js-lingui-id: hOYgrt
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
-msgstr ""
+msgstr "Tito agenti používají model, který vaše nastavení vylučuje, takže při spuštění selžou: {agentLabels}"
 
 #. js-lingui-id: ZSRi5U
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
-msgstr ""
+msgstr "Tyto úrovně se vrátí k povolenému modelu: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -29473,7 +29473,7 @@ msgstr "Pravda/nepravda"
 #. js-lingui-id: tdZpCd
 #: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
 msgid "Trust Center"
-msgstr ""
+msgstr "Centrum důvěry"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -29561,7 +29561,7 @@ msgstr "Twenty zaplní každou úroveň nejlepším modelem, který splňuje va�
 #. js-lingui-id: 0mWZoP
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
-msgstr ""
+msgstr "Twenty nemá vlastní model AI. Zvolte, kteří poskytovatelé mohou zpracovávat vaše požadavky. Přísnější nastavení ponechají méně modelů a některé stojí více."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -31551,7 +31551,7 @@ msgstr "Odpovídáme podle těchto polí. Pokud již existuje {0}, aktualizujeme
 #. js-lingui-id: AXVG2Y
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "We notify you within 72 hours, as set out in the DPA"
-msgstr ""
+msgstr "Oznámíme vám to do 72 hodin, jak stanoví DPA"
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -31856,7 +31856,7 @@ msgstr "Kde"
 #. js-lingui-id: I7dUhW
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Where AI providers process your requests"
-msgstr ""
+msgstr "Kde poskytovatelé AI zpracovávají vaše požadavky"
 
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -32273,7 +32273,7 @@ msgstr "Pracovní prostory"
 #. js-lingui-id: yehD4Z
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Workspaces run on AWS in Frankfurt, Germany"
-msgstr ""
+msgstr "Pracovní prostory běží na AWS ve Frankfurtu v Německu"
 
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -32285,17 +32285,17 @@ msgstr "Stav pracovních prostorů"
 #. js-lingui-id: C+gilE
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Worldwide"
-msgstr ""
+msgstr "Celosvětově"
 
 #. js-lingui-id: oR3/ss
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, standard retention"
-msgstr ""
+msgstr "Celosvětově, standardní uchovávání"
 
 #. js-lingui-id: iTAMb7
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
 msgid "Worldwide, zero data retention"
-msgstr ""
+msgstr "Celosvětově, nulové uchovávání dat"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32346,7 +32346,7 @@ msgstr "Napište zprávu"
 #. js-lingui-id: PxYBOj
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Write a message..."
-msgstr ""
+msgstr "Napsat zprávu..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32854,7 +32854,7 @@ msgstr "Zed"
 #. js-lingui-id: 2sLNC3
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Zero data retention"
-msgstr ""
+msgstr "Nulové uchovávání dat"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
