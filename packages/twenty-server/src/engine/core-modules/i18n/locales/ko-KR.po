@@ -15574,6 +15574,11 @@ msgstr "관리자 후보가 너무 많이 발견되었습니다."
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "참석자가 너무 많습니다: {attendeeCount}. 허용되는 최대 수는 {MAX_EMAIL_RECIPIENTS}명입니다."
 
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr ""
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."

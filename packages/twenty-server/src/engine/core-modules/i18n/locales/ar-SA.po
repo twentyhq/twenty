@@ -15574,6 +15574,11 @@ msgstr "تم العثور على عدد كبير جداً من المرشحين 
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "عدد الحاضرين كبير جدًا: {attendeeCount}. الحد الأقصى المسموح به هو {MAX_EMAIL_RECIPIENTS}."
 
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr ""
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
