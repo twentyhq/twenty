@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -9,11 +10,7 @@ import { type ApplicationContentLocation } from '@/settings/applications/types/A
 import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 
 export const useApplicationContentRoute = () => {
-  const {
-    applicationId = '',
-    availableApplicationId = '',
-    contentType,
-  } = useParams<{
+  const { applicationId, availableApplicationId, contentType } = useParams<{
     applicationId: string;
     availableApplicationId: string;
     contentType: string;
@@ -25,11 +22,9 @@ export const useApplicationContentRoute = () => {
     applicationId,
     shouldSkip: isMarketplaceRoute,
   });
-  const marketplace = useMarketplaceApplicationContent(
-    isMarketplaceRoute ? availableApplicationId : undefined,
-  );
+  const marketplace = useMarketplaceApplicationContent(availableApplicationId);
 
-  if (isMarketplaceRoute) {
+  if (isNonEmptyString(availableApplicationId)) {
     const location: ApplicationContentLocation = {
       kind: 'marketplace',
       availableApplicationId,
@@ -47,6 +42,10 @@ export const useApplicationContentRoute = () => {
       ),
       contentPath: getApplicationContentPath({ location }),
     };
+  }
+
+  if (!isNonEmptyString(applicationId)) {
+    throw new Error(doNotTranslate('Application id is not defined'));
   }
 
   const location: ApplicationContentLocation = {
