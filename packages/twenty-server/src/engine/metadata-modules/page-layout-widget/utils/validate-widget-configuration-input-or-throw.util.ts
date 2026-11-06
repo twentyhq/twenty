@@ -26,10 +26,13 @@ const UNSUPPORTED_WIDGET_CONFIGURATION_LABEL_BY_TYPE: Partial<
   [WidgetConfigurationType.WORKFLOW_RUN]: 'Workflow run',
 };
 
-const formatValidationErrors = (
-  errors: ValidationError[],
-  parentProperty?: string,
-): string => {
+const formatValidationErrors = ({
+  errors,
+  parentProperty,
+}: {
+  errors: ValidationError[];
+  parentProperty?: string;
+}): string => {
   return errors
     .map((error) => {
       const propertyPath = isDefined(parentProperty)
@@ -43,7 +46,10 @@ const formatValidationErrors = (
       }
 
       if (isNonEmptyArray(error.children)) {
-        return formatValidationErrors(error.children, propertyPath);
+        return formatValidationErrors({
+          errors: error.children,
+          parentProperty: propertyPath,
+        });
       }
 
       return `${propertyPath}: Unknown error`;
@@ -103,7 +109,7 @@ export const validateWidgetConfigurationInputOrThrow = ({
 
   if (errors.length > 0) {
     throw new PageLayoutWidgetException(
-      formatValidationErrors(errors),
+      formatValidationErrors({ errors }),
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
   }

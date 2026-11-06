@@ -160,7 +160,7 @@ describe('transformPageLayout', () => {
             nestedRelationFieldMetadataId: null,
           },
         ]),
-      ] as any,
+      ] as unknown as PageLayout['tabs'],
     });
 
     const result = transformPageLayout(layout);

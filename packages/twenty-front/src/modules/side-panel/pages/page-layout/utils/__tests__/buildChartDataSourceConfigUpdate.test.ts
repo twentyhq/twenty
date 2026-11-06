@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { buildChartDataSourceConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartDataSourceConfigUpdate';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
@@ -19,7 +20,7 @@ const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const getOpportunityFieldIdOrThrow = (fieldName: string) => {
   const field = opportunity.fields.find((field) => field.name === fieldName);
 
-  if (field === undefined) {
+  if (!isDefined(field)) {
     throw new Error(`Field ${fieldName} not found`);
   }
 

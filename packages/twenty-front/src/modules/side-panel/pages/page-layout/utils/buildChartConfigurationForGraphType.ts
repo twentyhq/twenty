@@ -20,10 +20,13 @@ const BAR_CHART_LAYOUT_BY_GRAPH_TYPE: Partial<
   [GraphType.HORIZONTAL_BAR]: BarChartLayout.HORIZONTAL,
 };
 
-const fillMissingGroupByWithDefaultField = (
-  configuration: ChartConfiguration,
-  objectMetadataItem: EnrichedObjectMetadataItem | undefined,
-): ChartConfiguration => {
+const fillMissingGroupByWithDefaultField = ({
+  configuration,
+  objectMetadataItem,
+}: {
+  configuration: ChartConfiguration;
+  objectMetadataItem: EnrichedObjectMetadataItem | undefined;
+}): ChartConfiguration => {
   if (!isDefined(objectMetadataItem)) {
     return configuration;
   }
@@ -107,11 +110,11 @@ export const buildChartConfigurationForGraphType = ({
     };
   }
 
-  const wasBarOrLineChart =
+  const isSwitchingFromBarOrLineChart =
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
-  if (graphType === GraphType.PIE && wasBarOrLineChart) {
+  if (graphType === GraphType.PIE && isSwitchingFromBarOrLineChart) {
     newConfiguration = {
       ...newConfiguration,
       ...convertBarOrLineChartConfigToPieChart(configuration),
@@ -142,8 +145,8 @@ export const buildChartConfigurationForGraphType = ({
     newConfiguration = { ...newConfiguration, layout: barChartLayout };
   }
 
-  return fillMissingGroupByWithDefaultField(
-    newConfiguration,
+  return fillMissingGroupByWithDefaultField({
+    configuration: newConfiguration,
     objectMetadataItem,
-  );
+  });
 };

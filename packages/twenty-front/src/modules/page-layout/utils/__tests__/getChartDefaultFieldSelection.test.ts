@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { getChartDefaultFieldSelection } from '@/page-layout/utils/getChartDefaultFieldSelection';
 import {
   AggregateOperations,
@@ -10,7 +11,7 @@ const getFieldIdOrThrow = (objectNameSingular: string, fieldName: string) => {
     objectNameSingular,
   ).fields.find((field) => field.name === fieldName);
 
-  if (field === undefined) {
+  if (!isDefined(field)) {
     throw new Error(`Field ${fieldName} not found`);
   }
 
