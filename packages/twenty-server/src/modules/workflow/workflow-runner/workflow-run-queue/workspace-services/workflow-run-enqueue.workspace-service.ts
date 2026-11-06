@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
@@ -126,30 +127,11 @@ export class WorkflowRunEnqueueWorkspaceService {
           });
 
           for (const { id: workflowRunId, coreWorkflowId } of admittedRuns) {
-            try {
-              await this.messageQueueService.add<RunWorkflowJobData>(
-                RunWorkflowJob.name,
-                {
-                  workflowRunId,
-                  workspaceId,
-                },
-                buildRunWorkflowJobOptions({
-                  workflowRunId,
-                  scope: resolveJobScope(coreWorkflowId),
-                }),
-              );
-            } catch (error) {
-              if (!(error instanceof MessageQueueException)) {
-                throw error;
-              }
-
-              await this.workflowRunWorkspaceService.endWorkflowRun({
-                workflowRunId,
-                workspaceId,
-                status: WorkflowRunStatus.FAILED,
-                error: error.message,
-              });
-            }
+            await this.enqueueRunOrFailIt({
+              workspaceId,
+              workflowRunId,
+              scope: resolveJobScope(coreWorkflowId),
+            });
           }
 
           totalEnqueuedCount += batchIds.length;
@@ -204,6 +186,35 @@ export class WorkflowRunEnqueueWorkspaceService {
           releaseError,
         );
       }
+    }
+  }
+
+  async enqueueRunOrFailIt({
+    workspaceId,
+    workflowRunId,
+    scope,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    scope: QueueJobScope;
+  }): Promise<void> {
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        { workflowRunId, workspaceId },
+        buildRunWorkflowJobOptions({ workflowRunId, scope }),
+      );
+    } catch (error) {
+      if (!(error instanceof MessageQueueException)) {
+        throw error;
+      }
+
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
     }
   }
 }
