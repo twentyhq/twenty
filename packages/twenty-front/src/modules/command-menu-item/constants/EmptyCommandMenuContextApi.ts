@@ -32,4 +32,5 @@ export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
   objectMetadataItem: {},
   objectMetadataLabel: '',
   coreObjectName: null,
+  currentView: null,
 };

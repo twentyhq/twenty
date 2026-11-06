@@ -96,7 +96,7 @@ The owner and the manager are mentioned, so each has a mention to resolve; the s
 - A mentioned member must be able to have the conversation, like a listed one: otherwise the call fails with `THREAD_NOT_FOUND` and writes neither the message nor any mention.
 - Mentions are read when the message is written. Once it is, sending it again with the same keys notifies no one, even with a different `text`, while a retry after a failed send delivers them; a new `idempotencyKey` mentions again.
 - Only a complete mention notifies. One in inline code or a code block, one whose brackets are escaped (`\[\[`), and a typed `@name` notify no one. A record reference never notifies, and never shares the record.
-- `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
+- `INBOX_ASSISTANT_MENTION` writes the composer's canonical assistant reference. The inbox displays it as `@Ada`; its stable identity is separate from its label. This reference alone does not request an assistant reply from an application message.
 
 ## Attaching records to a conversation
 

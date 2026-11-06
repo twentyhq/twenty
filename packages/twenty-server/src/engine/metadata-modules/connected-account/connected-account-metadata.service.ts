@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { In, IsNull, Repository } from 'typeorm';
 
 import {
@@ -35,7 +36,7 @@ import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/co
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -53,7 +54,7 @@ export class ConnectedAccountMetadataService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
@@ -225,18 +226,12 @@ export class ConnectedAccountMetadataService {
   async isAdministrableByCaller({
     connectedAccount,
     userWorkspaceId,
-    workspaceId,
-    applicationId,
-    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
       'scope' | 'userWorkspaceId' | 'provider'
     >;
     userWorkspaceId: string;
-    workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
@@ -244,12 +239,9 @@ export class ConnectedAccountMetadataService {
 
     switch (connectedAccount.scope) {
       case 'WORKSPACE':
-        return this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          workspaceId,
-          applicationId,
-          agentId,
-          setting: getConnectedAccountAdministrationPermissionFlag(
+        return this.settingPermissionsService.hasPermissionFlag({
+          authContext: workspaceAuthContextStorage.getStore(),
+          permissionFlag: getConnectedAccountAdministrationPermissionFlag(
             connectedAccount.provider,
           ),
         });
@@ -264,23 +256,16 @@ export class ConnectedAccountMetadataService {
     id,
     userWorkspaceId,
     workspaceId,
-    applicationId,
-    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
-    applicationId?: string;
-    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
     const isAdministrableByCaller = await this.isAdministrableByCaller({
       connectedAccount,
       userWorkspaceId,
-      workspaceId,
-      applicationId,
-      agentId,
     });
 
     if (!isAdministrableByCaller) {

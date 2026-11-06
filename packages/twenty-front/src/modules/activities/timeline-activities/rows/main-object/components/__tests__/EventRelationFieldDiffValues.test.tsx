@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -37,14 +37,37 @@ const WORKSPACE_MEMBER_RECORDS = [
   { id: 'after-id', name: 'Tim Apple' },
 ];
 
-const relationFieldMetadataItem = {
+const fieldMetadataItemWithoutTarget: FieldMetadataItem = {
   id: 'field-account-owner',
+  universalIdentifier: 'field-account-owner',
   name: 'accountOwner',
+  label: 'Account owner',
   type: FieldMetadataType.RELATION,
+  createdAt: '2021-01-01',
+  updatedAt: '2021-01-01',
+};
+
+const relationFieldMetadataItem: FieldMetadataItem = {
+  ...fieldMetadataItemWithoutTarget,
   relation: {
-    targetObjectMetadata: { nameSingular: 'workspaceMember' },
+    type: RelationType.MANY_TO_ONE,
+    sourceFieldMetadata: { id: 'source-field-id', name: 'accountOwner' },
+    targetFieldMetadata: {
+      id: 'target-field-id',
+      name: 'accountOwnerForCompanies',
+    },
+    sourceObjectMetadata: {
+      id: 'source-object-id',
+      nameSingular: 'company',
+      namePlural: 'companies',
+    },
+    targetObjectMetadata: {
+      id: 'target-object-id',
+      nameSingular: 'workspaceMember',
+      namePlural: 'workspaceMembers',
+    },
   },
-} as unknown as FieldMetadataItem;
+};
 
 const renderWithI18n = (node: ReactNode) =>
   render(<I18nProvider i18n={i18n}>{node}</I18nProvider>);
@@ -59,8 +82,7 @@ class ResizeObserverMock {
 
 describe('EventRelationFieldDiffValues', () => {
   beforeAll(() => {
-    global.ResizeObserver =
-      ResizeObserverMock as unknown as typeof ResizeObserver;
+    global.ResizeObserver = ResizeObserverMock;
   });
 
   beforeEach(() => {
@@ -178,12 +200,6 @@ describe('EventRelationFieldDiffValues', () => {
   // Fallback branch: when the relation has no target object metadata, the
   // component skips the fetch and renders directly from the raw id.
   describe('without a relation target object metadata', () => {
-    const fieldMetadataItemWithoutTarget = {
-      id: 'field-account-owner',
-      name: 'accountOwner',
-      type: FieldMetadataType.RELATION,
-    } as unknown as FieldMetadataItem;
-
     it('renders "Empty" when changed from a value to null', () => {
       renderWithI18n(
         <EventRelationFieldDiffValues

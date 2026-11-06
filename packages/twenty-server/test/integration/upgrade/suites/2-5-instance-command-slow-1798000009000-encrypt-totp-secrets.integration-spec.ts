@@ -1,3 +1,5 @@
+import { Test } from '@nestjs/testing';
+
 import { createCipheriv, createHash, randomBytes, randomUUID } from 'crypto';
 
 import { config } from 'dotenv';
@@ -7,7 +9,7 @@ import { DataSource } from 'typeorm';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -70,17 +72,12 @@ const restoreCheckConstraint = async (
 };
 
 // Reproduces JwtWrapperService.generateAppSecret byte for byte so legacy CBC keys match production rows.
-const buildJwtWrapperServiceStub = (appSecret: string): JwtWrapperService => {
-  return {
-    generateAppSecret: (
-      type: JwtTokenTypeEnum,
-      appSecretBody: string,
-    ): string =>
-      createHash('sha256')
-        .update(`${appSecret}${appSecretBody}${type}`)
-        .digest('hex'),
-  } as unknown as JwtWrapperService;
-};
+const buildJwtWrapperServiceStub = (appSecret: string) => ({
+  generateAppSecret: (type: JwtTokenTypeEnum, appSecretBody: string): string =>
+    createHash('sha256')
+      .update(`${appSecret}${appSecretBody}${type}`)
+      .digest('hex'),
+});
 
 describe('2-5 slow instance command 1798000009000 - EncryptTotpSecretsSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
@@ -128,9 +125,18 @@ describe('2-5 slow instance command 1798000009000 - EncryptTotpSecretsSlowInstan
 
     appSecret = process.env.APP_SECRET;
     secretEncryptionService = buildSecretEncryptionServiceFromEnv();
-    simpleSecretEncryptionUtil = new SimpleSecretEncryptionUtil(
-      buildJwtWrapperServiceStub(appSecret),
-    );
+
+    const module = await Test.createTestingModule({
+      providers: [
+        SimpleSecretEncryptionUtil,
+        {
+          provide: JwtWrapperService,
+          useValue: buildJwtWrapperServiceStub(appSecret),
+        },
+      ],
+    }).compile();
+
+    simpleSecretEncryptionUtil = module.get(SimpleSecretEncryptionUtil);
     command = new EncryptTotpSecretsSlowInstanceCommand(
       secretEncryptionService,
       simpleSecretEncryptionUtil,

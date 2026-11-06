@@ -246,7 +246,7 @@ export class AgentInboxService {
           ...workspaceMemberIds,
           ...mentionedWorkspaceMemberIds,
         ]).map((workspaceMemberId) =>
-          this.sharingService.getAuthContext({
+          this.sharingService.getAuthContextOrThrow({
             workspaceId,
             workspaceMemberId,
           }),

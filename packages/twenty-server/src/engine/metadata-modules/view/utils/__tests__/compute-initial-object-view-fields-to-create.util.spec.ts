@@ -2,7 +2,7 @@ import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 
 import { computeInitialObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-fields-to-create.util';
 
@@ -13,12 +13,10 @@ const labelIdentifierFieldMetadataUniversalIdentifier =
   'd1d2d3d4-d5d6-4000-8000-000000000004';
 const callerFieldUniversalIdentifier = 'e1e2e3e4-e5e6-4000-8000-000000000005';
 
-const makeCallerField = (
-  universalIdentifier: string,
-  name: string,
-): UniversalFlatFieldMetadata =>
-  ({
+const makeCallerField = (universalIdentifier: string, name: string) =>
+  getFlatFieldMetadataMock({
     universalIdentifier,
+    objectMetadataId: 'object-metadata-id',
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
     applicationUniversalIdentifier,
     name,
@@ -31,8 +29,7 @@ const makeCallerField = (
     isNullable: true,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
-    deletedAt: null,
-  }) as unknown as UniversalFlatFieldMetadata;
+  });
 
 const sourceFlatObjectMetadata = {
   applicationUniversalIdentifier,

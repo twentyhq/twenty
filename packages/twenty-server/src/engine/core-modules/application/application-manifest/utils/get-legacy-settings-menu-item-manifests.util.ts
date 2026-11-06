@@ -16,9 +16,17 @@ const LEGACY_SETTINGS_MENU_ITEM_ICON = 'IconAdjustments';
 // the deprecated settingsFrontComponent pointer. Without this, syncing such an
 // application would find no item in its manifest and delete the one the upgrade
 // backfilled, dropping the tab the application already renders.
-export const getLegacySettingsMenuItemManifests = (
-  manifest: Manifest,
-): SettingsMenuItemManifest[] => {
+export const getLegacySettingsMenuItemManifests = (manifest: {
+  application: Pick<
+    Manifest['application'],
+    'universalIdentifier' | 'settingsFrontComponent'
+  >;
+  frontComponents: Pick<
+    Manifest['frontComponents'][number],
+    'universalIdentifier'
+  >[];
+  settingsMenuItems: Manifest['settingsMenuItems'];
+}): SettingsMenuItemManifest[] => {
   if (isNonEmptyArray(manifest.settingsMenuItems)) {
     return [];
   }

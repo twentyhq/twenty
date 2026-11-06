@@ -1,12 +1,13 @@
+import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
 import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -14,7 +15,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -30,8 +30,40 @@ export class AgentChatDirectMessageIdentityService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly directMessageConversationPrivacyService: AgentChatDirectMessageConversationPrivacyService,
   ) {}
+
+  async open({
+    workspaceId,
+    firstWorkspaceMemberId,
+    secondWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    firstWorkspaceMemberId: string;
+    secondWorkspaceMemberId: string;
+  }): Promise<string> {
+    const pair = normalizeAgentChatDirectMessagePairOrThrow({
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+    const { flatWorkspaceMemberMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'featureFlagsMap',
+      ]);
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
+
+    return this.getOrCreate({
+      workspaceId,
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+  }
 
   async getOrCreate({
     workspaceId,
@@ -56,20 +88,12 @@ export class AgentChatDirectMessageIdentityService {
       return existingThread.id;
     }
 
-    const { flatWorkspaceMemberMaps, flatObjectMetadataMaps } =
+    const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
       ]);
 
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
-
-    const threadObjectMetadata =
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThread',
-      ) ?? throwAgentChatThreadNotFound();
 
     const createdThreadId =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -83,22 +107,35 @@ export class AgentChatDirectMessageIdentityService {
                 )
                 .insert(
                   {
-                    conversationType: 'DIRECT_MESSAGE',
+                    conversationType:
+                      AgentChatThreadConversationType.DIRECT_MESSAGE,
                     ...pair,
                     isAssistantParticipant: false,
                   },
                   { onConflictDoNothing: true },
                 );
 
-              await this.privateRecordStorageService.setPrivate({
-                workspaceId,
-                flatObjectMetadata: threadObjectMetadata,
-                recordIds: identifiers.map(({ id }) => id),
-                isPrivate: true,
-                transactionScope,
-              });
+              const createdThreadId = identifiers[0]?.id;
 
-              return identifiers[0]?.id;
+              if (!isDefined(createdThreadId)) {
+                return undefined;
+              }
+
+              // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
+              await this.directMessageConversationPrivacyService.makeConversationRecordsPrivateToPair(
+                {
+                  workspaceId,
+                  transactionScope,
+                  pair: [
+                    pair.directMessageFirstWorkspaceMemberId,
+                    pair.directMessageSecondWorkspaceMemberId,
+                  ],
+                  conversationObjectName: 'agentChatThread',
+                  conversationRecordIds: [createdThreadId],
+                },
+              );
+
+              return createdThreadId;
             },
           ),
         buildSystemAuthContext(workspaceId),

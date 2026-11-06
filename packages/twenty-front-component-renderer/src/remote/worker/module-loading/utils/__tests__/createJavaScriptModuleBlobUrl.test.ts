@@ -16,12 +16,12 @@ describe('createJavaScriptModuleBlobUrl', () => {
   });
 
   it('should create a javascript blob from the source', () => {
-    const createObjectUrlSpy = jest.fn(() => 'blob:mock-url');
+    const createObjectUrlSpy = jest.fn<string, [Blob]>(() => 'blob:mock-url');
     URL.createObjectURL = createObjectUrlSpy;
 
     createJavaScriptModuleBlobUrl('export default () => {};');
 
-    const [blob] = createObjectUrlSpy.mock.calls[0] as unknown as [Blob];
+    const [blob] = createObjectUrlSpy.mock.calls[0];
     expect(blob).toBeInstanceOf(Blob);
     expect(blob.type).toBe('application/javascript');
   });

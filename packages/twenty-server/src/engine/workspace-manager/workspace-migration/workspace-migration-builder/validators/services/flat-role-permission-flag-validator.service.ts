@@ -23,8 +23,13 @@ export class FlatRolePermissionFlagValidatorService {
       flatRoleMaps,
     },
     buildOptions,
-  }: UniversalFlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.rolePermissionFlag
+  }: Pick<
+    UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.rolePermissionFlag
+    >,
+    | 'buildOptions'
+    | 'flatEntityToValidate'
+    | 'optimisticFlatEntityMapsAndRelatedFlatEntityMaps'
   >): FailedFlatEntityValidation<'rolePermissionFlag', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {

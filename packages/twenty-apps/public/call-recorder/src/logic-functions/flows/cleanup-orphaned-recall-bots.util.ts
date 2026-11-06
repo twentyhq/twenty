@@ -26,7 +26,7 @@ export const cleanupOrphanedRecallBots = async ({
   joinAtAfter,
   joinAtBefore,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   joinAtAfter: string;
   joinAtBefore: string;
 }): Promise<CleanupOrphanedRecallBotsResult> => {

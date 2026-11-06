@@ -2,7 +2,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isToolUIPart } from 'ai';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
@@ -34,12 +34,11 @@ const isAwaitingFirstChunkAtom =
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
 
-const readToolOutput = () =>
-  (
-    jotaiStore.get(messagesAtom)[0].parts[0] as unknown as {
-      output: unknown;
-    }
-  ).output;
+const readToolOutput = () => {
+  const part = jotaiStore.get(messagesAtom)[0].parts[0];
+
+  return isToolUIPart(part) ? part.output : undefined;
+};
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -83,7 +82,7 @@ describe('useAnswerAgentChatToolCall', () => {
           },
         ],
       },
-    ] as unknown as ExtendedUIMessage[]);
+    ]);
   });
 
   it('answers the tool call and shows the answer in it right away', async () => {

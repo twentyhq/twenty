@@ -1,5 +1,3 @@
-import { type Sandbox } from '@e2b/code-interpreter';
-
 import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
 import { releaseSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/release-session-sandboxes.util';
 
@@ -29,9 +27,9 @@ const paginatorOf = (items: ListedSandbox[]) => {
 
 const buildApi = (items: ListedSandbox[]) => {
   const kill = jest.fn().mockResolvedValue(true);
-  const list = jest.fn(() => paginatorOf(items));
+  const list = jest.fn().mockImplementation(() => paginatorOf(items));
 
-  return { api: { list, kill } as unknown as typeof Sandbox, kill, list };
+  return { api: { list, kill }, kill, list };
 };
 
 const sandboxInfo = (

@@ -10,7 +10,7 @@ import {
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 
 describe('WorkspaceSelectQueryBuilder selection', () => {
   it('should preserve raw dates only for pagination without global parser setup', async () => {
@@ -275,7 +275,7 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
           throw new Error('connection lost');
         },
       },
-      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
       tableShapeByObjectMetadataId: () => companyTableShape,
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,

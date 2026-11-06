@@ -46,10 +46,6 @@ describe('Chat message participation with real storage', () => {
       const threadId = await context.createThread(false);
       const messageId = randomUUID();
 
-      await context.setConversationType({
-        threadId,
-        conversationType: 'DIRECT_MESSAGE',
-      });
       const response = await runWithRejectedChatWrite({
         workspaceId: context.workspaceId,
         threadId,
@@ -91,10 +87,6 @@ describe('Chat message participation with real storage', () => {
   it('keeps Ada participation unchanged when a legacy chat send fails preflight', async () => {
     const threadId = await context.createThread(false);
 
-    await context.setConversationType({
-      threadId,
-      conversationType: 'DIRECT_MESSAGE',
-    });
     await context.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId: context.workspaceId,
       featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -246,7 +238,7 @@ describe('Chat message participation with real storage', () => {
           workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             'agentChatThreadParticipant',
           ),
-        await context.sharingService.getAuthContext(context),
+        await context.sharingService.getAuthContextOrThrow(context),
       );
     const repositoryPrototype: WorkspaceRepository = Object.getPrototypeOf(
       participantRepository,
@@ -346,15 +338,12 @@ describe('Chat message participation with real storage', () => {
     const firstMessageId = randomUUID();
     const secondMessageId = randomUUID();
 
-    await context.setConversationType({
-      threadId,
-      conversationType: 'DIRECT_MESSAGE',
-    });
     const firstResponse = await sendChatParticipationMessage({
       threadId,
       messageId: firstMessageId,
       isAssistantMentioned: true,
       shouldAssistantReply: false,
+      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
 
     expect(firstResponse.body.errors).toBeUndefined();
@@ -362,7 +351,7 @@ describe('Chat message participation with real storage', () => {
       true,
     );
     await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
+      aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
     });
     const secondResponse = await sendChatParticipationMessage({
       threadId,

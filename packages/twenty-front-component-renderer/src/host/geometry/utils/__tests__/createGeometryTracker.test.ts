@@ -75,8 +75,11 @@ describe('createGeometryTracker', () => {
       width: 320,
       height: 180,
     });
-    root.node.getClientRects = () =>
-      [root.node.getBoundingClientRect()] as unknown as DOMRectList;
+    root.node.getClientRects = () => {
+      const rect = root.node.getBoundingClientRect();
+
+      return { 0: rect, length: 1, item: () => rect };
+    };
     const portalLayer = document.createElement('div');
     tracker.setRoot(root.node);
     tracker.setPortalLayer(portalLayer);

@@ -251,6 +251,7 @@ export class CoreWorkflowMutationWorkspaceService {
       await this.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId,
+        callerApplication: undefined,
         coreWorkflowId: duplicatedCoreWorkflowId,
       });
 
@@ -755,6 +756,7 @@ export class CoreWorkflowMutationWorkspaceService {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
+      callerApplication: undefined,
       coreWorkflowId,
     });
   }
