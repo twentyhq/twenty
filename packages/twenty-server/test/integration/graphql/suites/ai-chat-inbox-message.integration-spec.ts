@@ -534,20 +534,23 @@ describe('Sending an inbox message as an application', () => {
       }
     });
 
-    it('refuses a mention of a member who cannot have the conversation', async () => {
+    it('sends the message and skips a mentioned member who cannot have the conversation', async () => {
       const threadKey = `inbox-thread-${uuidv4()}`;
-      const response = await sendInboxMessage(applicationToken, {
-        toolCall: null,
-        threadKey,
-        idempotencyKey: 'stranger',
-        text: `${mention(uuidv4())}, can you check the figures?`,
-      });
+      const mentionThreadId = buildThreadId(threadKey);
 
-      expect(JSON.stringify(response.body.errors)).toContain(
-        'THREAD_NOT_FOUND',
-      );
-      expect(await readMessages(buildThreadId(threadKey))).toEqual([]);
-      expect(await findMyParticipant(buildThreadId(threadKey))).toBeUndefined();
+      try {
+        const response = await sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'stranger',
+          text: `${mention(uuidv4())}, can you check the figures?`,
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+      } finally {
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
     });
   });
 });
