@@ -148,7 +148,7 @@ export const WorkflowEditActionCode = ({
 
   const handleExpectedOutputBodyChange = (
     parsedValue: Record<string, unknown>,
-  ) => saveSettings({ expectedOutputSchema: parsedValue });
+  ) => saveSettings({ expectedOutputSchema: parsedValue, outputSchema: {} });
 
   const handleTestInputChange = async (value: any, path: string[]) => {
     if (actionOptions.readonly === true) {

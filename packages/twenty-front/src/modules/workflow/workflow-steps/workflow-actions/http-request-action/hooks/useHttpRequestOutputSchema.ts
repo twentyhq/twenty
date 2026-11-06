@@ -47,6 +47,7 @@ export const useHttpRequestOutputSchema = ({
       settings: {
         ...action.settings,
         expectedOutputSchema: parsingResult.data,
+        outputSchema: {},
       },
     });
   };

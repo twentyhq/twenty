@@ -185,6 +185,7 @@ export const WorkflowEditActionLogicFunction = ({
       settings: {
         ...action.settings,
         expectedOutputSchema: parsedValue,
+        outputSchema: {},
       },
     });
   };

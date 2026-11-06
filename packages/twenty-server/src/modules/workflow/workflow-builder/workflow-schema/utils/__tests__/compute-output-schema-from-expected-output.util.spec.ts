@@ -32,12 +32,21 @@ describe('computeOutputSchemaFromExpectedOutput', () => {
     });
   });
 
-  it('keeps a test result schema stored before its sample', () => {
+  it('keeps a legacy test result schema stored without a sample', () => {
     expect(
       computeOutputSchemaFromExpectedOutput({
         expectedOutputSchema: {},
         outputSchema: TOTAL_OUTPUT_SCHEMA,
       }),
     ).toEqual(TOTAL_OUTPUT_SCHEMA);
+  });
+
+  it('returns no schema for a sample the editor cleared', () => {
+    expect(
+      computeOutputSchemaFromExpectedOutput({
+        expectedOutputSchema: {},
+        outputSchema: {},
+      }),
+    ).toEqual({});
   });
 });

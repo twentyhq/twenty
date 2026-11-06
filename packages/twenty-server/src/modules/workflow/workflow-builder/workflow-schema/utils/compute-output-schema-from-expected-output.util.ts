@@ -15,6 +15,7 @@ export const computeOutputSchemaFromExpectedOutput = ({
     computeOutputSchemaFromSample(expectedOutputSchema);
 
   // Fence until upgrade:2-57:move-step-output-samples-to-expected-output reaches every workspace; remove in 2.59
+  // (twentyhq/core-team-issues#3183). The editor clears outputSchema with every sample it writes, so only a legacy test run gets here
   if (isEmptyObject(sampleOutputSchema) && isBaseOutputSchemaV2(outputSchema)) {
     return outputSchema;
   }
