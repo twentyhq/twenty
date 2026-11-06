@@ -2478,6 +2478,7 @@ export interface Mutation {
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
     generateTransientToken: TransientToken
+    generateTwoFactorAuthenticationBackupCodes: TwoFactorAuthenticationBackupCodes
     generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromOTP: AuthTokens
@@ -3227,6 +3228,7 @@ export interface Query {
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
+    twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus
     twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     unsubscribeTopics: UnsubscribeTopic[]
     usageLimits: UsageLimit[]
@@ -3732,6 +3734,16 @@ export interface TriggerUpgradeApplicationResult {
     __typename: 'TriggerUpgradeApplicationResult'
 }
 
+export interface TwoFactorAuthenticationBackupCodeStatus {
+    remainingBackupCodeCount: Scalars['Int']
+    __typename: 'TwoFactorAuthenticationBackupCodeStatus'
+}
+
+export interface TwoFactorAuthenticationBackupCodes {
+    backupCodes: Scalars['String'][]
+    __typename: 'TwoFactorAuthenticationBackupCodes'
+}
+
 export interface TwoFactorAuthenticationMethodSummary {
     status: Scalars['String']
     strategy: Scalars['String']
@@ -3746,6 +3758,7 @@ export interface TwoFactorAuthenticationRecoveryCode {
 }
 
 export interface TwoFactorAuthenticationRecoveryCodeRedemption {
+    isTwoFactorAuthenticationReset: Scalars['Boolean']
     provisioningUri?: Scalars['String']
     tokens?: AuthTokenPair
     __typename: 'TwoFactorAuthenticationRecoveryCodeRedemption'
@@ -4007,6 +4020,7 @@ export interface VerifyEmailAndGetLoginToken {
 }
 
 export interface VerifyTwoFactorAuthenticationMethod {
+    backupCodes?: Scalars['String'][]
     success: Scalars['Boolean']
     __typename: 'VerifyTwoFactorAuthenticationMethod'
 }
@@ -7164,6 +7178,7 @@ export interface MutationGenqlSelection{
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
     generateTransientToken?: TransientTokenGenqlSelection
+    generateTwoFactorAuthenticationBackupCodes?: (TwoFactorAuthenticationBackupCodesGenqlSelection & { __args?: {otp?: (Scalars['String'] | null)} })
     generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {otp?: (Scalars['String'] | null), userId: Scalars['UUID']} })
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], otp: Scalars['String']} })
@@ -7966,6 +7981,7 @@ export interface QueryGenqlSelection{
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
+    twoFactorAuthenticationBackupCodeStatus?: TwoFactorAuthenticationBackupCodeStatusGenqlSelection
     twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     usageLimits?: UsageLimitGenqlSelection
@@ -8559,6 +8575,18 @@ export interface TriggerUpgradeApplicationResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationBackupCodeStatusGenqlSelection{
+    remainingBackupCodeCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationBackupCodesGenqlSelection{
+    backupCodes?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface TwoFactorAuthenticationMethodSummaryGenqlSelection{
     status?: boolean | number
     strategy?: boolean | number
@@ -8575,6 +8603,7 @@ export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
 }
 
 export interface TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection{
+    isTwoFactorAuthenticationReset?: boolean | number
     provisioningUri?: boolean | number
     tokens?: AuthTokenPairGenqlSelection
     __typename?: boolean | number
@@ -9085,6 +9114,7 @@ export interface VerifyEmailAndGetLoginTokenGenqlSelection{
 }
 
 export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
+    backupCodes?: boolean | number
     success?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -11970,6 +12000,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isTriggerUpgradeApplicationResult = (obj?: { __typename?: any } | null): obj is TriggerUpgradeApplicationResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUpgradeApplicationResult"')
       return TriggerUpgradeApplicationResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationBackupCodeStatus_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodeStatus']
+    export const isTwoFactorAuthenticationBackupCodeStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationBackupCodeStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodeStatus"')
+      return TwoFactorAuthenticationBackupCodeStatus_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationBackupCodes_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodes']
+    export const isTwoFactorAuthenticationBackupCodes = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationBackupCodes => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodes"')
+      return TwoFactorAuthenticationBackupCodes_possibleTypes.includes(obj.__typename)
     }
     
 
