@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { getUrlSafely } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -9,12 +8,6 @@ import { SettingsMcpServerStatus } from '@/settings/mcp-servers/components/Setti
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
-
-const StyledIconChevronRightContainer = styled.span`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-`;
 
 type SettingsMcpServerTableRowProps = {
   mcpServer: Pick<
@@ -50,12 +43,11 @@ export const SettingsMcpServerTableRow = ({
         align="center"
         padding={`0 ${themeCssVariables.spacing[1]} 0 0`}
       >
-        <StyledIconChevronRightContainer>
-          <IconChevronRight
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        </StyledIconChevronRightContainer>
+        <IconChevronRight
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.tertiary}
+        />
       </TableCell>
     </TableRow>
   );
