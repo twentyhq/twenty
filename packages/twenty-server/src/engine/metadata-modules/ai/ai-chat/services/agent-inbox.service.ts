@@ -386,9 +386,10 @@ export class AgentInboxService {
     };
   }): Promise<boolean> {
     try {
-      await this.conversationWriterService.runInTransaction(
+      await this.conversationWriterService.runInTransaction({
         workspaceId,
-        async (scope) => {
+        threadId: thread.id,
+        work: async (scope) => {
           await this.conversationWriterService.insertMessage({
             ...message,
             workspaceId,
@@ -414,7 +415,7 @@ export class AgentInboxService {
             });
           }
         },
-      );
+      });
 
       return true;
     } catch (error) {

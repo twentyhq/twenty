@@ -209,7 +209,7 @@ export class AgentChatInboxDeliveryService {
         (await this.sharingService.canManageThreadSharing({
           workspaceId,
           threadId: thread.id,
-          authContext: await this.sharingService.getAuthContext(access),
+          authContext: await this.sharingService.getAuthContextOrThrow(access),
         })),
       participantObjectMetadata,
     };

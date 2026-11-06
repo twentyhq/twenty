@@ -340,41 +340,34 @@ export class AgentChatSharingService {
     const objectMetadata = await this.getThreadObjectMetadata(
       access.workspaceId,
     );
-    const threadShares = await this.recordShareStorageService.findByRecordIds({
-      workspaceId: access.workspaceId,
-      objectMetadataId: objectMetadata.id,
-      recordIds: [access.threadId],
-      transactionScope: scope,
-    });
-    const hasMemberShare = ({
-      memberId,
-      accessLevels,
-    }: {
-      memberId: string;
-      accessLevels: (RecordShareAccessLevel | null | undefined)[];
-    }) =>
-      threadShares.some(
-        ({ principalType, principalId, accessLevel }) =>
-          principalType === RecordSharePrincipalType.WORKSPACE_MEMBER &&
-          principalId === memberId &&
-          accessLevels.includes(accessLevel),
-      );
+    const findShareAccessLevel = async (workspaceMemberId: string) => {
+      const { viewerAccessLevel } =
+        await this.recordSharingPermissionsService.findViewerRecordAccess({
+          authContext: await this.getAuthContextOrThrow({
+            workspaceId: access.workspaceId,
+            workspaceMemberId,
+          }),
+          objectMetadataId: objectMetadata.id,
+          recordId: access.threadId,
+          transactionScope: scope,
+        });
+
+      return viewerAccessLevel;
+    };
 
     if (
-      !hasMemberShare({
-        memberId: access.workspaceMemberId,
-        accessLevels: [RecordShareAccessLevel.FULL],
-      })
+      (await findShareAccessLevel(access.workspaceMemberId)) !==
+      RecordShareAccessLevel.FULL
     ) {
       return throwAgentChatThreadNotFound();
     }
 
     for (const memberId of memberIds) {
-      if (hasMemberShare({ memberId, accessLevels: EDIT_ACCESS_LEVELS })) {
+      if (EDIT_ACCESS_LEVELS.includes(await findShareAccessLevel(memberId))) {
         continue;
       }
 
-      await this.recordShareStorageService.setManualShare({
+      await this.recordSharingWriteService.setManualShare({
         workspaceId: access.workspaceId,
         transactionScope: scope,
         enabled: true,
