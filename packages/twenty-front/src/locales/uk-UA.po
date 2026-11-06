@@ -11280,10 +11280,10 @@ msgstr "Введіть об’єкт JSON"
 msgid "Enter a JSON value"
 msgstr "Введіть значення JSON"
 
-#. js-lingui-id: 0mwDxe
+#. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr "Введіть ім’я довжиною від 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} символів."
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr ""
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx

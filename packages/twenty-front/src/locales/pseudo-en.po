@@ -11275,9 +11275,9 @@ msgstr ""
 msgid "Enter a JSON value"
 msgstr ""
 
-#. js-lingui-id: 0mwDxe
+#. js-lingui-id: 8Yr1fg
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr ""
 
 #. js-lingui-id: peBb6B
