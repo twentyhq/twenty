@@ -12,6 +12,7 @@ import {
   results,
   token,
 } from '@/auth/hooks/__mocks__/useAuth';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import {
   type CurrentUser,
@@ -24,7 +25,6 @@ import {
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import Cookies from 'js-cookie';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
@@ -96,8 +96,8 @@ describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getDefaultStore().set(returnToPathState.atom, '');
+    getDefaultStore().set(partnerCookieState.atom, null);
     getDefaultStore().set(isEmailVerificationRequiredState.atom, false);
-    Cookies.remove('partner');
   });
 
   it('should return login token object', async () => {
@@ -226,7 +226,8 @@ describe('useAuth', () => {
     expect(mocks.signUpInWorkspace.result).toHaveBeenCalled();
   });
 
-  it('should send a partner stored by another tab with a credential sign-up', async () => {
+  it('should send the stored partner with a credential sign-up', async () => {
+    getDefaultStore().set(partnerCookieState.atom, { partner: 'northwind' });
     getDefaultStore().set(isEmailVerificationRequiredState.atom, true);
 
     const signUpResult = jest.fn(() => ({
@@ -271,8 +272,6 @@ describe('useAuth', () => {
         </MockedProvider>
       ),
     });
-
-    Cookies.set('partner', JSON.stringify({ partner: 'northwind' }));
 
     await act(async () => {
       await result.current.signUpWithCredentials(email, password);

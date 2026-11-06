@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 
-import { readPartnerFromCookie } from '@/auth/utils/readPartnerFromCookie';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -14,6 +15,7 @@ export const useHandleResendEmailVerificationToken = () => {
     ResendEmailVerificationTokenDocument,
   );
   const { origin } = useOrigin();
+  const partnerCookie = useAtomStateValue(partnerCookieState);
 
   const handleResendEmailVerificationToken = useCallback(
     (email: string | null) => {
@@ -28,7 +30,7 @@ export const useHandleResendEmailVerificationToken = () => {
             variables: {
               email,
               origin,
-              partner: readPartnerFromCookie(),
+              partner: partnerCookie?.partner,
             },
           });
 
@@ -45,7 +47,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [enqueueToast, resendEmailVerificationToken, origin],
+    [enqueueToast, resendEmailVerificationToken, origin, partnerCookie],
   );
 
   return { handleResendEmailVerificationToken, loading };
