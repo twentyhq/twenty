@@ -171,10 +171,10 @@ export class ApplicationMessageSendService {
             { attachments, workspaceId },
           );
 
-        const {
-          messages: [ingestedMessage],
-        } = await this.applicationMessageIngestionService
-          .ingest({
+        try {
+          const {
+            messages: [ingestedMessage],
+          } = await this.applicationMessageIngestionService.ingest({
             applicationId,
             workspaceId,
             requestUserWorkspaceId: userWorkspaceId,
@@ -203,17 +203,17 @@ export class ApplicationMessageSendService {
                 ],
               },
             ],
-          })
-          .finally(() =>
-            this.applicationMessageSendAttachmentsService.deleteUnclaimedCopies(
-              { copiedAttachments, workspaceId },
-            ),
-          );
+          });
 
-        return {
-          messageId: ingestedMessage.messageId,
-          messageThreadId: ingestedMessage.messageThreadId,
-        };
+          return {
+            messageId: ingestedMessage.messageId,
+            messageThreadId: ingestedMessage.messageThreadId,
+          };
+        } finally {
+          await this.applicationMessageSendAttachmentsService.deleteUnclaimedCopies(
+            { copiedAttachments, workspaceId },
+          );
+        }
       },
       deliveryKey,
       APP_MESSAGE_DELIVERY_LOCK_OPTIONS,
