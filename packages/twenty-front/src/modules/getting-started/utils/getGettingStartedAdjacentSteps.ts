@@ -26,8 +26,6 @@ export const getGettingStartedAdjacentSteps = ({
   const isRemaining = (stepActionKey: GettingStartedStepActionKey) =>
     !completedStepActionKeys.includes(stepActionKey);
 
-  // Down brings in the front card of the stack, which skips done steps
-  // while some remain, so up skips them too to undo it
   const previousStepActionKey =
     (isRemaining(selectedStepActionKey)
       ? stepsBeforeSelected.find(isRemaining)
