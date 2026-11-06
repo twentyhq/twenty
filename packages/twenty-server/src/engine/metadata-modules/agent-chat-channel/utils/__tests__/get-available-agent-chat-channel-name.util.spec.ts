@@ -5,7 +5,13 @@ describe('getAvailableAgentChatChannelName', () => {
     expect(
       getAvailableAgentChatChannelName({
         name: 'Support',
-        takenNames: ['Support', 'Support 2', 'Sales'],
+        flatAgentChatChannelMaps: {
+          byUniversalIdentifier: {
+            support: { name: 'Support' },
+            supportTwo: { name: 'Support 2' },
+            sales: { name: 'Sales' },
+          },
+        },
       }),
     ).toBe('Support 3');
   });

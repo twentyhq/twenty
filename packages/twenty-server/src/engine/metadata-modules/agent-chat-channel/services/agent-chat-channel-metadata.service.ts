@@ -317,11 +317,7 @@ export class AgentChatChannelMetadataService {
     const channelName = shouldPickAvailableName
       ? getAvailableAgentChatChannelName({
           name: requestedChannelName,
-          takenNames: Object.values(
-            channelMaps.flatAgentChatChannelMaps.byUniversalIdentifier,
-          )
-            .filter(isDefined)
-            .map((channel) => channel.name),
+          flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
         })
       : requestedChannelName;
     const now = new Date().toISOString();
