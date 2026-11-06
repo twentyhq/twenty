@@ -73,21 +73,41 @@ export const createSettingsAiAssistantStoryFixture = ({
     profile = { ...profile, ...patch };
   };
 
-  const save = async (input: UpdateWorkspaceMutationVariables['input']) => {
+  const getRequestErrorResponse = async ({
+    pendingRequest,
+    shouldRejectRequest,
+    errorMessage,
+  }: {
+    pendingRequest: Promise<void> | undefined;
+    shouldRejectRequest: boolean;
+    errorMessage: string;
+  }) => {
     const requestGeneration = generation;
-    const shouldRejectSave = shouldFailNextSave;
-    shouldFailNextSave = false;
-    saveProfile(input);
-    await pendingSave;
+    await pendingRequest;
 
     if (requestGeneration !== generation) {
       return HttpResponse.error();
     }
 
-    if (shouldRejectSave) {
-      return HttpResponse.json({
-        errors: [{ message: 'Assistant settings could not be saved' }],
-      });
+    if (!shouldRejectRequest) {
+      return undefined;
+    }
+
+    return HttpResponse.json({ errors: [{ message: errorMessage }] });
+  };
+
+  const save = async (input: UpdateWorkspaceMutationVariables['input']) => {
+    const shouldRejectSave = shouldFailNextSave;
+    shouldFailNextSave = false;
+    saveProfile(input);
+    const errorResponse = await getRequestErrorResponse({
+      pendingRequest: pendingSave,
+      shouldRejectRequest: shouldRejectSave,
+      errorMessage: 'Assistant settings could not be saved',
+    });
+
+    if (isDefined(errorResponse)) {
+      return errorResponse;
     }
 
     const result = getAiChatAssistantProfileSchema()
@@ -121,41 +141,30 @@ export const createSettingsAiAssistantStoryFixture = ({
   };
 
   const load = async () => {
-    const requestGeneration = generation;
     const shouldRejectLoad = shouldFailNextLoad;
     shouldFailNextLoad = false;
     loadProfile();
-    await pendingLoad;
 
-    if (requestGeneration !== generation) {
-      return HttpResponse.error();
-    }
-
-    if (shouldRejectLoad) {
-      return HttpResponse.json({
-        errors: [{ message: 'Assistant settings could not be loaded' }],
-      });
-    }
-
-    return undefined;
+    return getRequestErrorResponse({
+      pendingRequest: pendingLoad,
+      shouldRejectRequest: shouldRejectLoad,
+      errorMessage: 'Assistant settings could not be loaded',
+    });
   };
 
   const handlers = [
     graphql.mutation('ResetAiChatAssistantProfile', async () => {
-      const requestGeneration = generation;
       const shouldRejectSave = shouldFailNextSave;
       shouldFailNextSave = false;
       resetProfile();
-      await pendingSave;
+      const errorResponse = await getRequestErrorResponse({
+        pendingRequest: pendingSave,
+        shouldRejectRequest: shouldRejectSave,
+        errorMessage: 'Assistant settings could not be reset',
+      });
 
-      if (requestGeneration !== generation) {
-        return HttpResponse.error();
-      }
-
-      if (shouldRejectSave) {
-        return HttpResponse.json({
-          errors: [{ message: 'Assistant settings could not be reset' }],
-        });
+      if (isDefined(errorResponse)) {
+        return errorResponse;
       }
 
       profile = DEFAULT_AI_CHAT_ASSISTANT_PROFILE;
