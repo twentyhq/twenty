@@ -22,12 +22,13 @@ export interface MessageQueueDriver {
     data: T,
     options: QueueJobOptions,
   ): Promise<string | undefined>;
+  // All or nothing across tenants: fan-outs should enqueue one batch per workspace
   bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobSettings,
-  ): Promise<string[]>;
+  ): Promise<BulkAddResult>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void> | void,
@@ -70,6 +71,11 @@ export type QueueJobToAdd<T extends MessageQueueJobData> = {
   data: T;
   jobId?: string;
 } & QueueJobScope;
+
+export type BulkAddResult = {
+  jobs: { jobId: string; sizeBytes: number }[];
+  availableBytes: number | null;
+};
 
 export type QueueJobDetails<T extends MessageQueueJobData> = {
   id: string;
