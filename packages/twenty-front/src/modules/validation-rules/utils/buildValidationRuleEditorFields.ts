@@ -5,6 +5,7 @@ import {
   compositeTypeDefinitions,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -92,7 +93,7 @@ const buildScalarEditorFields = ({
   return [field, ...subfields];
 };
 
-export const buildValidationRuleEditorFields = ({
+const buildCurrentValueEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
 }: {
@@ -165,3 +166,37 @@ export const buildValidationRuleEditorFields = ({
 
       return [relationField, ...targetFields];
     });
+
+const buildPreviousValueEditorField = (
+  field: ValidationRuleEditorField,
+): ValidationRuleEditorField => {
+  const previousLabel = t`Previous`;
+
+  return {
+    ...field,
+    path: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${field.path}`,
+    parentLabel: isDefined(field.parentLabel)
+      ? `${previousLabel} › ${field.parentLabel}`
+      : previousLabel,
+  };
+};
+
+export const buildValidationRuleEditorFields = ({
+  objectMetadataItem,
+  objectMetadataItems,
+}: {
+  objectMetadataItem: ValidationRuleEditorObject;
+  objectMetadataItems: ValidationRuleEditorObject[];
+}): ValidationRuleEditorField[] => {
+  const currentValueFields = buildCurrentValueEditorFields({
+    objectMetadataItem,
+    objectMetadataItems,
+  });
+
+  // The compiler rejects previous values read through a relation
+  const previousValueFields = currentValueFields
+    .filter((field) => !field.readsRelatedRecord)
+    .map(buildPreviousValueEditorField);
+
+  return [...currentValueFields, ...previousValueFields];
+};

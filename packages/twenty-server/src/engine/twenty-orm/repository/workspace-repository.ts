@@ -5,7 +5,10 @@ import {
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidationRulePreviousValuePath,
+} from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -101,7 +104,13 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
-type ValidateWrittenRecords = (writtenRecords: ObjectRecord[]) => Promise<void>;
+type WrittenRecordsValidator = {
+  shouldReadRecordsBeforeWrite: boolean;
+  validate: (args: {
+    writtenRecords: ObjectRecord[];
+    recordsBeforeWrite: ObjectRecord[];
+  }) => Promise<void>;
+};
 
 type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   tableShape: WorkspaceTableShape;
@@ -712,7 +721,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }: {
     write: (
       repository: WorkspaceRepository<TEntity>,
-      validateWrittenRecords?: ValidateWrittenRecords,
+      writtenRecordsValidator?: WrittenRecordsValidator,
     ) => Promise<TResult>;
     inputRecordIds?: (string | undefined)[];
   }): Promise<TResult> {
@@ -726,16 +735,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return write(this);
     }
 
+    const shouldReadRecordsBeforeWrite = validationRules.some(
+      (validationRule) =>
+        Object.keys(validationRule.bindings).some(
+          isValidationRulePreviousValuePath,
+        ),
+    );
+
     return this.runAtomically((repository) =>
-      write(repository, (writtenRecords) =>
-        validateRecordsAgainstValidationRulesOrThrow({
-          repository,
-          tableShape: this.options.tableShape,
-          validationRules,
-          writtenRecords,
-          inputRecordIds,
-        }),
-      ),
+      write(repository, {
+        shouldReadRecordsBeforeWrite,
+        validate: ({ writtenRecords, recordsBeforeWrite }) =>
+          validateRecordsAgainstValidationRulesOrThrow({
+            repository,
+            tableShape: this.options.tableShape,
+            validationRules,
+            writtenRecords,
+            recordsBeforeWrite,
+            inputRecordIds,
+          }),
+      }),
     );
   }
 
@@ -945,8 +964,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }> {
     return this.runWithValidationRules({
       inputRecordIds: args.records.map((record) => record.id),
-      write: (repository, validateWrittenRecords) =>
-        repository.performInsert({ ...args, validateWrittenRecords }),
+      write: (repository, writtenRecordsValidator) =>
+        repository.performInsert({ ...args, writtenRecordsValidator }),
     });
   }
 
@@ -954,12 +973,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     records,
     columnsToReturn,
     onConflictDoNothing,
-    validateWrittenRecords,
+    writtenRecordsValidator,
   }: {
     records: Partial<ObjectRecord>[];
     columnsToReturn: string[];
     onConflictDoNothing?: boolean;
-    validateWrittenRecords?: ValidateWrittenRecords;
+    writtenRecordsValidator?: WrittenRecordsValidator;
   }): Promise<{
     identifiers: { id: string }[];
     generatedMaps: ObjectRecord[];
@@ -1021,7 +1040,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
 
-    await validateWrittenRecords?.(rawRows);
+    await writtenRecordsValidator?.validate({
+      writtenRecords: rawRows,
+      recordsBeforeWrite: [],
+    });
 
     await this.acquireRecordStock(rawRows.length);
 
@@ -1051,19 +1073,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }> {
     return this.runWithValidationRules({
       inputRecordIds: args.inputs.map((input) => input.id),
-      write: (repository, validateWrittenRecords) =>
-        repository.performBatchUpdate({ ...args, validateWrittenRecords }),
+      write: (repository, writtenRecordsValidator) =>
+        repository.performBatchUpdate({ ...args, writtenRecordsValidator }),
     });
   }
 
   private async performBatchUpdate({
     inputs,
     columnsToReturn,
-    validateWrittenRecords,
+    writtenRecordsValidator,
   }: {
     inputs: { id: string; data: Partial<ObjectRecord> }[];
     columnsToReturn: string[];
-    validateWrittenRecords?: ValidateWrittenRecords;
+    writtenRecordsValidator?: WrittenRecordsValidator;
   }): Promise<{
     identifiers: { id: string }[];
     generatedMaps: ObjectRecord[];
@@ -1093,9 +1115,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
 
     for (const input of writableInputs) {
-      const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
+      const recordBeforeQueryBuilder = this.buildIdsEventSnapshotQueryBuilder([
         input.id,
-      ]).getMany<ObjectRecord>({ noFormatting: true });
+      ]);
+
+      if (writtenRecordsValidator?.shouldReadRecordsBeforeWrite) {
+        recordBeforeQueryBuilder.forUpdate();
+      }
+
+      const rawBefore = await recordBeforeQueryBuilder.getMany<ObjectRecord>({
+        noFormatting: true,
+      });
 
       rawBeforeByInputIndex.push(rawBefore);
 
@@ -1209,7 +1239,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    await validateWrittenRecords?.(generatedMaps);
+    await writtenRecordsValidator?.validate({
+      writtenRecords: generatedMaps,
+      recordsBeforeWrite: Object.values(existingRecordsMapById),
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1448,14 +1481,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return this.runWithValidationRules({
-      write: (repository, validateWrittenRecords) =>
+      write: (repository, writtenRecordsValidator) =>
         repository.performMutation({
           ...args,
           selectQueryBuilder:
             repository === this
               ? args.selectQueryBuilder
               : args.selectQueryBuilder.clone(repository.options.executor),
-          validateWrittenRecords,
+          writtenRecordsValidator,
         }),
     });
   }
@@ -1466,14 +1499,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind,
     columnsToReturn,
     data,
-    validateWrittenRecords,
+    writtenRecordsValidator,
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
-    validateWrittenRecords?: ValidateWrittenRecords;
+    writtenRecordsValidator?: WrittenRecordsValidator;
   }): Promise<ObjectRecord[]> {
     await this.validateWriteIsPermitted({
       operationType: kind,
@@ -1489,10 +1522,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       await this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
 
-    // The before-image only feeds events, scoped-write checks and files field diffs
+    // The before-image feeds events, scoped-write checks, files field diffs and previous-value rules
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
       this.options.shouldSkipEventEmission &&
+      !writtenRecordsValidator?.shouldReadRecordsBeforeWrite &&
       !(
         kind === 'update' &&
         isDefined(data) &&
@@ -1504,6 +1538,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
+
+    if (writtenRecordsValidator?.shouldReadRecordsBeforeWrite) {
+      eventSelectQueryBuilder.forUpdate();
+    }
 
     const recordsBefore = canSkipBeforeImage
       ? []
@@ -1580,7 +1618,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       await this.releaseRecordStock(mutationResult.generatedMaps.length);
     }
 
-    await validateWrittenRecords?.(mutationResult.generatedMaps);
+    if (isDefined(writtenRecordsValidator)) {
+      await writtenRecordsValidator.validate({
+        writtenRecords: mutationResult.generatedMaps,
+        recordsBeforeWrite: writtenRecordsValidator.shouldReadRecordsBeforeWrite
+          ? this.formatResult<ObjectRecord[]>(recordsBefore)
+          : [],
+      });
+    }
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
