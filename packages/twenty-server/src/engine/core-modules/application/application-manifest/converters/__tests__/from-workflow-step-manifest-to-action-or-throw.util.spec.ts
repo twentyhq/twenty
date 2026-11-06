@@ -348,10 +348,11 @@ describe('application workflow actions', () => {
           },
         ],
       },
-      orderBy: {
-        recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
-        gqlOperationOrderBy: [{ owner: 'AscNullsLast' }],
-      },
+    });
+    expect(
+      convert(WorkflowActionType.FIND_RECORDS).settings.input,
+    ).toHaveProperty('orderBy', {
+      recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
     });
     expect(
       convert(WorkflowActionType.PICK_RECORD).settings.input,

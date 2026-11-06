@@ -527,7 +527,7 @@ export class WorkflowDatabaseEventTriggerListener {
       return [];
     }
 
-    return this.recordEventPermissionsService.findReadableEvents({
+    return this.recordEventPermissionsService.filterReadableEvents({
       authContext: {
         type: 'application',
         workspace: { id: workspaceEventBatch.workspaceId },
