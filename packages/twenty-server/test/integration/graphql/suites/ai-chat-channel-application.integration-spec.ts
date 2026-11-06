@@ -299,7 +299,7 @@ describe('Inbox channels for applications', () => {
     const repeatedResponse = await createChannel({
       input: {
         name: buildChannelName(),
-        universalIdentifier: universalIdentifier.toUpperCase(),
+        universalIdentifier,
         roleIds: [channelManager.roleId],
       },
       token: channelManager.token,

@@ -30,7 +30,6 @@ export enum AiExceptionCode {
   CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
   CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN = 'CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN',
   INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
-  INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER = 'INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER',
   INVALID_CHAT_CHANNEL_ROLE = 'INVALID_CHAT_CHANNEL_ROLE',
   INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
   INVALID_CHAT_CHANNEL_THREAD_CURSOR = 'INVALID_CHAT_CHANNEL_THREAD_CURSOR',
@@ -105,8 +104,6 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`A channel with this identifier belongs to another application.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
       return msg`A channel needs a name.`;
-    case AiExceptionCode.INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER:
-      return msg`A channel identifier must be a valid UUID v4 or later.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       return msg`One of these roles no longer exists.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:

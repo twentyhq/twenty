@@ -38,7 +38,6 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
       case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
-      case AiExceptionCode.INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:

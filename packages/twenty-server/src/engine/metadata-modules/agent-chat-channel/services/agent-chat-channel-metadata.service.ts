@@ -13,7 +13,6 @@ import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
 import { getAvailableAgentChatChannelName } from 'src/engine/metadata-modules/agent-chat-channel/utils/get-available-agent-chat-channel-name.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
-import { validateAgentChatChannelUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-universal-identifier-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
 import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
@@ -29,20 +28,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 type ChannelChanges = Partial<
   Pick<FlatAgentChatChannel, 'name' | 'icon' | 'color' | 'position'>
 >;
-
-type ChannelToCreate = {
-  name: string;
-  icon: string | null;
-  color: string | null;
-  roleIds: string[];
-};
-
-type ChannelToInsert = ChannelToCreate & {
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
-  universalIdentifier: string;
-  shouldPickAvailableName: boolean;
-};
 
 type ChannelMaps = Pick<
   AllFlatEntityMaps,
@@ -126,35 +111,97 @@ export class AgentChatChannelMetadataService {
     workspaceId,
     ownerFlatApplication,
     universalIdentifier,
-    ...channelToCreate
-  }: ChannelToCreate & {
+    name,
+    icon,
+    color,
+    roleIds,
+  }: {
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
     universalIdentifier?: string | null;
+    name: string;
+    icon: string | null;
+    color: string | null;
+    roleIds: string[];
   }): Promise<FlatAgentChatChannelWithRoleIds> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
       (await this.findWorkspaceCustomFlatApplication(workspaceId));
+    const channelUniversalIdentifier = universalIdentifier ?? v4();
+    const existingChannel = await this.findChannelByUniversalIdentifier({
+      workspaceId,
+      universalIdentifier: channelUniversalIdentifier,
+    });
 
-    const channel = await this.findOrInsertChannel({
-      ...channelToCreate,
+    if (isDefined(existingChannel)) {
+      assertAgentChatChannelUniversalIdentifierNotTakenOrThrow({
+        channel: existingChannel,
+        applicationId: resolvedOwnerFlatApplication.id,
+      });
+
+      return existingChannel;
+    }
+
+    const channelMaps = await this.getChannelMaps(workspaceId);
+    const requestedChannelName = validateAgentChatChannelNameOrThrow(name);
+    const channelName = isDefined(ownerFlatApplication)
+      ? getAvailableAgentChatChannelName({
+          name: requestedChannelName,
+          flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
+        })
+      : requestedChannelName;
+    const now = new Date().toISOString();
+    const channelId = v4();
+
+    assertAgentChatChannelNameNotTakenOrThrow({
+      name: channelName,
+      universalIdentifier: channelUniversalIdentifier,
+      flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
+    });
+
+    const lastPosition = Math.max(
+      -1,
+      ...Object.values(
+        channelMaps.flatAgentChatChannelMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .map(({ position }) => position),
+    );
+
+    await this.runMigration({
       workspaceId,
       applicationUniversalIdentifier:
         resolvedOwnerFlatApplication.universalIdentifier,
-      universalIdentifier: isDefined(universalIdentifier)
-        ? validateAgentChatChannelUniversalIdentifierOrThrow(
-            universalIdentifier,
-          )
-        : v4(),
-      shouldPickAvailableName: isDefined(ownerFlatApplication),
+      channelsToCreate: [
+        {
+          id: channelId,
+          universalIdentifier: channelUniversalIdentifier,
+          name: channelName,
+          icon,
+          color,
+          position: lastPosition + 1,
+          channelRoleUniversalIdentifiers: [],
+          navigationMenuItemUniversalIdentifiers: [],
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+      channelRolesToCreate: buildAgentChatChannelRolesToCreate({
+        channelUniversalIdentifier,
+        roleUniversalIdentifiers:
+          findAgentChatChannelRoleUniversalIdentifiersOrThrow({
+            flatRoleMaps: channelMaps.flatRoleMaps,
+            roleIds,
+          }),
+        applicationUniversalIdentifier:
+          resolvedOwnerFlatApplication.universalIdentifier,
+        now,
+      }),
     });
 
-    assertAgentChatChannelUniversalIdentifierNotTakenOrThrow({
-      channel,
-      applicationId: resolvedOwnerFlatApplication.id,
-    });
-
-    return channel;
+    return this.findChannelOrThrow({ workspaceId, channelId });
   }
 
   async updateChannel({
@@ -298,113 +345,6 @@ export class AgentChatChannelMetadataService {
       channel,
       flatAgentChatChannelRoleMaps,
     });
-  }
-
-  private async insertChannel({
-    workspaceId,
-    applicationUniversalIdentifier,
-    universalIdentifier,
-    shouldPickAvailableName,
-    name,
-    icon,
-    color,
-    roleIds,
-  }: ChannelToInsert): Promise<FlatAgentChatChannelWithRoleIds> {
-    const channelMaps = await this.getChannelMaps(workspaceId);
-    const requestedChannelName = validateAgentChatChannelNameOrThrow(name);
-    const channelName = shouldPickAvailableName
-      ? getAvailableAgentChatChannelName({
-          name: requestedChannelName,
-          flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
-        })
-      : requestedChannelName;
-    const now = new Date().toISOString();
-    const channelId = v4();
-
-    assertAgentChatChannelNameNotTakenOrThrow({
-      name: channelName,
-      universalIdentifier,
-      flatAgentChatChannelMaps: channelMaps.flatAgentChatChannelMaps,
-    });
-
-    const lastPosition = Math.max(
-      -1,
-      ...Object.values(
-        channelMaps.flatAgentChatChannelMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .map(({ position }) => position),
-    );
-    const channelRolesToCreate = buildAgentChatChannelRolesToCreate({
-      channelUniversalIdentifier: universalIdentifier,
-      roleUniversalIdentifiers:
-        findAgentChatChannelRoleUniversalIdentifiersOrThrow({
-          flatRoleMaps: channelMaps.flatRoleMaps,
-          roleIds,
-        }),
-      applicationUniversalIdentifier,
-      now,
-    });
-
-    try {
-      await this.runMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        channelsToCreate: [
-          {
-            id: channelId,
-            universalIdentifier,
-            name: channelName,
-            icon,
-            color,
-            position: lastPosition + 1,
-            channelRoleUniversalIdentifiers: [],
-            navigationMenuItemUniversalIdentifiers: [],
-            applicationUniversalIdentifier,
-            createdAt: now,
-            updatedAt: now,
-          },
-        ],
-        channelRolesToCreate,
-      });
-
-      return await this.findChannelOrThrow({ workspaceId, channelId });
-    } catch (error) {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: [
-          'flatAgentChatChannelMaps',
-          'flatAgentChatChannelRoleMaps',
-        ],
-      });
-
-      const concurrentlyCreatedChannel =
-        await this.findChannelByUniversalIdentifier({
-          workspaceId,
-          universalIdentifier,
-        });
-
-      if (!isDefined(concurrentlyCreatedChannel)) {
-        throw error;
-      }
-
-      return concurrentlyCreatedChannel;
-    }
-  }
-
-  private async findOrInsertChannel(
-    channelToInsert: ChannelToInsert,
-  ): Promise<FlatAgentChatChannelWithRoleIds> {
-    const existingChannel = await this.findChannelByUniversalIdentifier({
-      workspaceId: channelToInsert.workspaceId,
-      universalIdentifier: channelToInsert.universalIdentifier,
-    });
-
-    if (isDefined(existingChannel)) {
-      return existingChannel;
-    }
-
-    return this.insertChannel(channelToInsert);
   }
 
   private async findWorkspaceCustomFlatApplication(
