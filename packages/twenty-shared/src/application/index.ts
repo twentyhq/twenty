@@ -265,6 +265,7 @@ export type {
 } from './runAgentType';
 export type {
   SendAppMessageRecipient,
+  SendAppMessageAttachment,
   SendAppMessagePayload,
   SendAppMessageResult,
 } from './sendAppMessageType';
@@ -285,6 +286,12 @@ export {
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
+export type {
+  StartAppConversationRecipient,
+  StartAppConversationPayload,
+  StartAppConversationResultRecipient,
+  StartAppConversationResult,
+} from './startAppConversationType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

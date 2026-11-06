@@ -235,6 +235,7 @@ export class ApplicationMessageSendService {
               displayName: displayName ?? null,
             }),
           ),
+          attachments: [],
         },
       });
 
