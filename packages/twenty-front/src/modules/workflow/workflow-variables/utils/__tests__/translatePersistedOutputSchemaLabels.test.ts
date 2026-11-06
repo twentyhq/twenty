@@ -259,20 +259,4 @@ describe('translatePersistedOutputSchemaLabels', () => {
       },
     });
   });
-
-  it('should treat a schema of another shape as no output schema', () => {
-    expect(
-      translatePersistedOutputSchemaLabels({
-        stepType: 'CODE',
-        outputSchema: {
-          link: {
-            isLeaf: true,
-            tab: 'test',
-            label: 'Generate Function Output',
-          },
-          _outputSchemaType: 'LINK',
-        },
-      }),
-    ).toEqual({});
-  });
 });

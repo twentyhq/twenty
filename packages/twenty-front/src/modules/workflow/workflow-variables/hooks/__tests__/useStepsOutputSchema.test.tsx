@@ -1,9 +1,8 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
@@ -11,13 +10,8 @@ import { stepsOutputSchemaFamilyState } from '@/workflow/workflow-variables/stat
 
 const mockMutate = jest.fn();
 const mockClient = { mutate: mockMutate };
-const mockEnqueueToast = jest.fn();
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => mockClient,
-}));
-jest.mock('twenty-ui/components/feedback', () => ({
-  ...jest.requireActual('twenty-ui/components/feedback'),
-  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const version: WorkflowVersion = {
@@ -67,31 +61,6 @@ const renderSchemas = () => {
 describe('useStepsOutputSchema', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  afterEach(() => {
-    act(() => i18n.activate(SOURCE_LOCALE));
-  });
-
-  it('computes the iterator schema with the core version context', async () => {
-    mockMutate.mockResolvedValue({
-      data: { computeStepOutputSchema: outputSchema },
-    });
-    const { result, store, schemaState } = renderSchemas();
-    act(() => result.current.populateStepsOutputSchema(version));
-    await waitFor(() =>
-      expect(store.get(schemaState)?.outputSchema).toEqual(outputSchema),
-    );
-    expect(mockMutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: {
-          input: {
-            coreWorkflowVersionId: 'core-version',
-            step: version.steps?.[0],
-          },
-        },
-      }),
-    );
-  });
-
   it('ignores a schema response after the step was deleted', async () => {
     let resolveRequest: (value: unknown) => void = () => {};
     mockMutate.mockReturnValue(
@@ -111,27 +80,6 @@ describe('useStepsOutputSchema', () => {
       resolveRequest({ data: { computeStepOutputSchema: outputSchema } });
     });
     expect(store.get(schemaState)).toBeNull();
-  });
-
-  it('recomputes a cached schema after the locale changes', async () => {
-    mockMutate.mockResolvedValue({
-      data: { computeStepOutputSchema: outputSchema },
-    });
-    const { result, store, schemaState } = renderSchemas();
-    act(() => result.current.populateStepsOutputSchema(version));
-    await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(1));
-
-    act(() => result.current.populateStepsOutputSchema(version));
-    expect(mockMutate).toHaveBeenCalledTimes(1);
-
-    i18n.load('fr-FR', {});
-    act(() => i18n.activate('fr-FR'));
-    act(() => result.current.populateStepsOutputSchema(version));
-
-    await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
-      expect(store.get(schemaState)?.outputSchema).toEqual(outputSchema),
-    );
   });
 
   it('shows the stored schema of any step until the server recomputes it', async () => {

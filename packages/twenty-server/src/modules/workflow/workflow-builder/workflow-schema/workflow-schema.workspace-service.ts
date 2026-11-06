@@ -281,8 +281,7 @@ export class WorkflowSchemaWorkspaceService {
       settings.expectedOutputSchema,
     );
 
-    // Fence for test results stored as a schema before upgrade:2-57:move-step-output-samples-to-expected-output
-    // reached the workspace; remove once 2.57 leaves the cross-upgrade window
+    // Fence until upgrade:2-57:move-step-output-samples-to-expected-output reaches every workspace; remove in 2.59
     if (
       isEmptyObject(outputSchema) &&
       isBaseOutputSchemaV2(settings.outputSchema)
