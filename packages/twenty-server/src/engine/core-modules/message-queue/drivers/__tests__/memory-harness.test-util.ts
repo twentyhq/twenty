@@ -372,20 +372,28 @@ export const createMemoryHarness = async ({
       options,
     );
 
-  const emit = async (event: string, job: StoredJob, error?: Error) => {
+  const emit = async ({
+    event,
+    job,
+    error,
+  }: {
+    event: string;
+    job: StoredJob;
+    error?: Error;
+  }) => {
     mockBullMQ.listeners
       .filter((listener) => listener.event === event)
       .forEach(({ listener }) => listener(job, error));
     await flushReleases();
   };
 
-  // Runs one attempt of a stored job the way a BullMQ worker would, then emits its outcome
-  const process = async (
-    jobId: string,
-    handler: (
-      job: MessageQueueJob<MemoryScenarioJobData>,
-    ) => Promise<void> = async () => undefined,
-  ) => {
+  const processJobOrThrow = async ({
+    jobId,
+    handler = async () => undefined,
+  }: {
+    jobId: string;
+    handler?: (job: MessageQueueJob<MemoryScenarioJobData>) => Promise<void>;
+  }) => {
     const job = mockBullMQ.jobs.get(jobId);
 
     if (!isDefined(job) || !isDefined(mockBullMQ.processor)) {
@@ -416,14 +424,14 @@ export const createMemoryHarness = async ({
         mockBullMQ.waitingJobIds.push(jobId);
       }
 
-      await emit('failed', job, error as Error);
+      await emit({ event: 'failed', job, error: error as Error });
 
       return;
     }
 
     job.attemptsMade += 1;
     job.finishedOn = Date.now();
-    await emit('completed', job);
+    await emit({ event: 'completed', job });
   };
 
   const removeFromBullMQ = async (jobId: string) => {
@@ -451,7 +459,7 @@ export const createMemoryHarness = async ({
     buildApplicationJob,
     enqueue,
     enqueueBulk,
-    process,
+    processJobOrThrow,
     removeFromBullMQ,
     readUsedBytes,
     readTotalChargedBytes,

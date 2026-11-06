@@ -280,7 +280,7 @@ describe('BullMQDriver job memory scenarios', () => {
         }),
       ]);
 
-      await harness.process(firstJob.jobId);
+      await harness.processJobOrThrow({ jobId: firstJob.jobId });
 
       expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
         secondJob.sizeBytes,
@@ -318,11 +318,17 @@ describe('BullMQDriver job memory scenarios', () => {
         throw new Error('handler failed');
       };
 
-      await harness.process(job.jobId, failingHandler);
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: failingHandler,
+      });
 
       expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(job.sizeBytes);
 
-      await harness.process(job.jobId, failingHandler);
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: failingHandler,
+      });
 
       expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
       expect(await harness.readChargedJobs(WORKSPACE_A)).toEqual({});
@@ -344,12 +350,15 @@ describe('BullMQDriver job memory scenarios', () => {
         { retryLimit: 3 },
       );
 
-      await harness.process(job.jobId, async () => {
-        throw new MessageQueueException(
-          'payload too large',
-          MessageQueueExceptionCode.JOB_TOO_LARGE,
-          { index: 0, sizeBytes: 2_000_000, maxBytes: 1_048_576 },
-        );
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: async () => {
+          throw new MessageQueueException(
+            'payload too large',
+            MessageQueueExceptionCode.JOB_TOO_LARGE,
+            { index: 0, sizeBytes: 2_000_000, maxBytes: 1_048_576 },
+          );
+        },
       });
 
       expect(harness.storedJob(job.jobId)?.finishedOn).toBeDefined();
@@ -372,16 +381,19 @@ describe('BullMQDriver job memory scenarios', () => {
       ]);
       const usedBytesDuringRun: number[] = [];
 
-      await harness.process(job.jobId, async ({ updateData }) => {
-        await updateData?.({
-          label: 'A1',
-          workspaceId: 'A',
-          payload: 'y'.repeat(5_000),
-        });
-        usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: async ({ updateData }) => {
+          await updateData?.({
+            label: 'A1',
+            workspaceId: 'A',
+            payload: 'y'.repeat(5_000),
+          });
+          usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
 
-        await updateData?.({ label: 'A1', workspaceId: 'A', payload: '' });
-        usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
+          await updateData?.({ label: 'A1', workspaceId: 'A', payload: '' });
+          usedBytesDuringRun.push(await harness.readUsedBytes(WORKSPACE_A));
+        },
       });
 
       const [grownBytes, shrunkBytes] = usedBytesDuringRun;
@@ -405,14 +417,17 @@ describe('BullMQDriver job memory scenarios', () => {
         { retryLimit: 1 },
       );
 
-      await harness.process(job.jobId, async ({ updateData }) => {
-        await updateData?.({
-          label: 'A1',
-          workspaceId: 'A',
-          payload: 'y'.repeat(85_000),
-        });
+      await harness.processJobOrThrow({
+        jobId: job.jobId,
+        handler: async ({ updateData }) => {
+          await updateData?.({
+            label: 'A1',
+            workspaceId: 'A',
+            payload: 'y'.repeat(85_000),
+          });
 
-        throw new Error('retry me');
+          throw new Error('retry me');
+        },
       });
 
       await expect(
@@ -454,7 +469,7 @@ describe('BullMQDriver job memory scenarios', () => {
       });
 
       await harness.enqueueBulk([job]);
-      await harness.process('finished-id');
+      await harness.processJobOrThrow({ jobId: 'finished-id' });
 
       const { jobs } = await harness.enqueueBulk([
         job,
@@ -483,7 +498,7 @@ describe('BullMQDriver job memory scenarios', () => {
       });
 
       await harness.enqueueBulk([job]);
-      await harness.process('removed-id');
+      await harness.processJobOrThrow({ jobId: 'removed-id' });
       await harness.removeFromBullMQ('removed-id');
 
       const { jobs } = await harness.enqueueBulk([job]);
