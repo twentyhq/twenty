@@ -4733,7 +4733,13 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageAttachmentInput {
+  id: UUID!
+  name: String!
+}
+
 input SendAppChannelMessageInput {
+  attachments: [SendAppChannelMessageAttachmentInput!]
   idempotencyKey: UUID!
   messageChannelId: UUID!
   messageThreadId: UUID!
