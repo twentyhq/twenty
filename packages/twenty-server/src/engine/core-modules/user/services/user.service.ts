@@ -405,25 +405,11 @@ export class UserService {
       workspaceMemberId: workspaceMember.id,
     });
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
-
-      await workspaceMemberRepository.delete({
-        userId: userWorkspace.userId,
-      });
-    }, authContext);
-
-    await this.userWorkspaceService.deleteUserWorkspace({
+    await this.userWorkspaceService.deleteWorkspaceMemberAndUserWorkspace({
+      userId: userWorkspace.userId,
       userWorkspaceId,
       workspaceId,
     });
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatWorkspaceMemberMaps',
-    ]);
 
     // After the membership is gone, so a failed removal keeps the history and threads created meanwhile are cleaned.
     await this.agentChatThreadRepository.delete(workspaceId, {

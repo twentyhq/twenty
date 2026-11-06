@@ -165,52 +165,61 @@ export class UserWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-        );
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            const workspaceMemberRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+                'workspaceMember',
+              );
 
-      const existingWorkspaceMembers = await workspaceMemberRepository.find({
-        where: { userId: user.id },
-      });
+            const existingWorkspaceMembers =
+              await workspaceMemberRepository.find({
+                where: { userId: user.id },
+              });
 
-      if (existingWorkspaceMembers.length > 0) {
-        return;
-      }
+            if (existingWorkspaceMembers.length > 0) {
+              return;
+            }
 
-      const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-        where: {
-          userId: user.id,
-          workspaceId,
-        },
-      });
+            const userWorkspace =
+              await this.userWorkspaceRepository.findOneOrFail({
+                where: {
+                  userId: user.id,
+                  workspaceId,
+                },
+              });
 
-      await workspaceMemberRepository.insert({
-        name: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        colorScheme: 'System',
-        uiScale: 'Default',
-        openRecordIn: OpenRecordIn.SIDE_PANEL,
-        userId: user.id,
-        userEmail: user.email,
-        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
-        locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
-      });
+            await workspaceMemberRepository.insert({
+              name: {
+                firstName: user.firstName,
+                lastName: user.lastName,
+              },
+              colorScheme: 'System',
+              uiScale: 'Default',
+              openRecordIn: OpenRecordIn.SIDE_PANEL,
+              userId: user.id,
+              userEmail: user.email,
+              avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
+              locale: (user.locale ??
+                SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+            });
 
-      const workspaceMember = await workspaceMemberRepository.find({
-        where: {
-          userId: user.id,
-        },
-      });
+            const workspaceMember = await workspaceMemberRepository.find({
+              where: {
+                userId: user.id,
+              },
+            });
 
-      assert(
-        workspaceMember?.length === 1,
-        `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
-      );
-    }, authContext);
+            assert(
+              workspaceMember?.length === 1,
+              `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
+            );
+          },
+        ),
+      authContext,
+    );
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
@@ -239,17 +248,33 @@ export class UserWorkspaceService {
       locale: user.locale,
     });
 
-    await this.createWorkspaceMember(workspace.id, user);
+    // The member sits on the workspace connection, so no transaction spans both: a userWorkspace left without
+    // a member locks the user out, so undo it by hand. The member goes last, as the rollback does not remove it.
+    try {
+      await this.roleAssignmentService.assignRoleToManyUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: resolvedRoleId,
+      });
+
+      await this.createWorkspaceMember(workspace.id, user);
+    } catch (error) {
+      await this.deleteUserWorkspace({
+        userWorkspaceId: userWorkspace.id,
+        workspaceId: workspace.id,
+      }).catch((rollbackError) =>
+        this.logger.error(
+          `Failed to roll back userWorkspace ${userWorkspace.id} on workspace ${workspace.id}`,
+          rollbackError,
+        ),
+      );
+
+      throw error;
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
-
-    await this.roleAssignmentService.assignRoleToManyUserWorkspace({
-      workspaceId: workspace.id,
-      userWorkspaceIds: [userWorkspace.id],
-      roleId: resolvedRoleId,
-    });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       workspace.id,
@@ -359,13 +384,67 @@ export class UserWorkspaceService {
       // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
-      await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+      await this.deleteUserWorkspaceAndRoleTargets({
+        userWorkspaceId,
+        workspaceId,
+      });
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatRoleTargetMaps',
         'userApplicationVariableValueMaps',
       ]);
     }
+  }
+
+  async deleteWorkspaceMemberAndUserWorkspace({
+    userId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    // Core rows are deleted inside the workspace transaction, so a failure there rolls the member back.
+    // Only a failed commit can still split them, leaving a member that rejoining the workspace reuses.
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            await transactionScope
+              .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+                'workspaceMember',
+              )
+              .delete({ userId });
+
+            await this.deleteUserWorkspaceAndRoleTargets({
+              userWorkspaceId,
+              workspaceId,
+            });
+          },
+        ),
+      buildSystemAuthContext(workspaceId),
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatRoleTargetMaps',
+      'userApplicationVariableValueMaps',
+      'flatWorkspaceMemberMaps',
+    ]);
+  }
+
+  private async deleteUserWorkspaceAndRoleTargets({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.userWorkspaceRepository.manager.transaction(async (manager) => {
+      await this.roleTargetRepository
+        .withManager(manager)
+        .delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await manager.delete(UserWorkspaceEntity, { id: userWorkspaceId });
+    });
   }
 
   async findAvailableWorkspacesByEmail(email: string) {
