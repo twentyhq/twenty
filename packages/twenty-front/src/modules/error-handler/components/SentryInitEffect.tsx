@@ -9,6 +9,7 @@ import { SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE } from '@/error-handler/consta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isAiContentRecordingAllowed } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -113,10 +114,9 @@ export const SentryInitEffect = () => {
       const { addIntegration, getReplay, replayIntegration } =
         await import('@sentry/react');
 
-      const { isProductImprovementDataSharingEnabled } =
-        getWorkspaceAiDataPolicy(currentWorkspace);
-
-      if (!isProductImprovementDataSharingEnabled) {
+      if (
+        !isAiContentRecordingAllowed(getWorkspaceAiDataPolicy(currentWorkspace))
+      ) {
         await getReplay()?.stop();
 
         return;

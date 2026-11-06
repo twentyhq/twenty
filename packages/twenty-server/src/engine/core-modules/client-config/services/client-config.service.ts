@@ -165,18 +165,20 @@ export class ClientConfigService {
           aiDataPolicy,
         });
 
-        return isDefined(model)
-          ? [
-              {
-                tier,
-                modelId: model.modelId,
-                requiredDataResidencyRegion:
-                  aiDataPolicy.requiredDataResidencyRegion,
-                isZeroDataRetentionRequired:
-                  aiDataPolicy.isZeroDataRetentionRequired,
-              },
-            ]
-          : [];
+        if (!isDefined(model)) {
+          return [];
+        }
+
+        return [
+          {
+            tier,
+            modelId: model.modelId,
+            requiredDataResidencyRegion:
+              aiDataPolicy.requiredDataResidencyRegion,
+            isZeroDataRetentionRequired:
+              aiDataPolicy.isZeroDataRetentionRequired,
+          },
+        ];
       }),
     );
 

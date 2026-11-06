@@ -175,34 +175,41 @@ describe('workspace AI data policy', () => {
     ).toBe(false);
   });
 
-  it('keeps the stored sharing choice when an update leaves it out', async () => {
-    await updateAiDataPolicy({
-      data: {
-        aiDataPolicy: {
-          ...NO_POLICY,
-          isProductImprovementDataSharingEnabled: false,
+  it.each([
+    ['leaves it out', {}],
+    ['sends null', { isProductImprovementDataSharingEnabled: null }],
+  ])(
+    'keeps the stored sharing choice when an update %s',
+    async (_label, sharing) => {
+      await updateAiDataPolicy({
+        data: {
+          aiDataPolicy: {
+            ...NO_POLICY,
+            isProductImprovementDataSharingEnabled: false,
+          },
         },
-      },
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
 
-    const response = await updateAiDataPolicy({
-      data: {
-        aiDataPolicy: {
-          requiredDataResidencyRegion: 'eu',
-          isZeroDataRetentionRequired: true,
+      const response = await updateAiDataPolicy({
+        data: {
+          aiDataPolicy: {
+            requiredDataResidencyRegion: 'eu',
+            isZeroDataRetentionRequired: true,
+            ...sharing,
+          },
         },
-      },
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
-      requiredDataResidencyRegion: 'eu',
-      isZeroDataRetentionRequired: true,
-      isProductImprovementDataSharingEnabled: false,
-    });
-  });
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
+        requiredDataResidencyRegion: 'eu',
+        isZeroDataRetentionRequired: true,
+        isProductImprovementDataSharingEnabled: false,
+      });
+    },
+  );
 
   describe('with the feature flag off', () => {
     it('refuses to set a policy', async () => {

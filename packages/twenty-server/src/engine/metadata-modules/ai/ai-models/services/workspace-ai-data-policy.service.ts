@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { isAiDataPolicyActive, type AiDataPolicy } from 'twenty-shared/ai';
+import {
+  isAiContentRecordingAllowed,
+  type AiDataPolicy,
+} from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,11 +62,8 @@ export class WorkspaceAiDataPolicyService {
   async isContentRecordingAllowed(
     workspace: AiDataPolicyWorkspace,
   ): Promise<boolean> {
-    const aiDataPolicy = await this.getEffectiveAiDataPolicy(workspace);
-
-    return (
-      !isAiDataPolicyActive(aiDataPolicy) &&
-      aiDataPolicy.isProductImprovementDataSharingEnabled
+    return isAiContentRecordingAllowed(
+      await this.getEffectiveAiDataPolicy(workspace),
     );
   }
 

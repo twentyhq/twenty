@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { isUndefined } from '@sniptt/guards';
 import { IsBoolean, IsIn, ValidateIf } from 'class-validator';
 import {
   DATA_RESIDENCY_REGIONS,
   type DataResidencyRegion,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 @InputType()
 export class AiDataPolicyInput {
@@ -23,7 +23,7 @@ export class AiDataPolicyInput {
     ({
       isProductImprovementDataSharingEnabled,
     }: Pick<AiDataPolicyInput, 'isProductImprovementDataSharingEnabled'>) =>
-      !isUndefined(isProductImprovementDataSharingEnabled),
+      isDefined(isProductImprovementDataSharingEnabled),
   )
   isProductImprovementDataSharingEnabled?: boolean;
 }
