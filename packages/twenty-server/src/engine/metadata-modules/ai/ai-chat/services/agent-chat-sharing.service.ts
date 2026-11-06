@@ -25,6 +25,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -73,6 +74,7 @@ export class AgentChatSharingService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
@@ -291,7 +293,7 @@ export class AgentChatSharingService {
       authContext: await this.getAuthContextOrThrow(args),
     };
     const sharing =
-      await this.recordSharingPermissionsService.findRecordSharing(
+      await this.recordSharingPermissionsService.findRecordSharingPanel(
         recordTarget,
       );
 
@@ -381,7 +383,7 @@ export class AgentChatSharingService {
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
             const principals =
-              await this.principalPermissionsService.buildPermissionsPrincipals(
+              await this.principalPermissionsService.resolvePermissionsPrincipals(
                 {
                   authContext: {
                     type: 'user',
@@ -467,20 +469,20 @@ export class AgentChatSharingService {
           workspaceMemberId: authContext.workspaceMemberId,
           ...(isDefined(args.channelId) ? { channelId: args.channelId } : {}),
         });
-        await this.recordSharingWriteService.setRecordsPrivate({
+        await this.recordShareSystemWriteService.setRecordsPrivacy({
           workspaceId: args.workspaceId,
           flatObjectMetadata: objectMetadata,
           recordIds: [threadId],
           isPrivate: true,
           transactionScope,
         });
-        await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
+        await this.recordShareSystemWriteService.deleteRecordSharesByRecordIds({
           workspaceId: args.workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: [threadId],
           transactionScope,
         });
-        await this.recordSharingWriteService.insertRecordShares({
+        await this.recordShareSystemWriteService.insertRecordShares({
           workspaceId: args.workspaceId,
           recordShares: [
             {
@@ -684,7 +686,7 @@ export class AgentChatSharingService {
       ({ id }) => id,
     );
 
-    await this.recordSharingWriteService.setRecordsPrivate({
+    await this.recordShareSystemWriteService.setRecordsPrivacy({
       workspaceId,
       flatObjectMetadata: participantObjectMetadata,
       recordIds: insertedParticipantIds,
@@ -692,7 +694,7 @@ export class AgentChatSharingService {
       transactionScope,
     });
 
-    await this.recordSharingWriteService.insertRecordShares({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       recordShares: buildAgentChatThreadParticipantOwnerShares({
         participants: insertedParticipantIds.map((id) => ({

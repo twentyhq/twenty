@@ -84,7 +84,7 @@ export class PrivateRecordWriteService {
     });
   }
 
-  changeRecordPrivacy(
+  setRecordPrivacy(
     args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
     return this.recordSharingChangeService.runChange({

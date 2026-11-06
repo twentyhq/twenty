@@ -51,7 +51,7 @@ export class RecordEventPermissionsService {
     events?: TEvent[];
   }): Promise<TEvent[]> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
 

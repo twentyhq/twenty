@@ -262,7 +262,7 @@ describe('Records shared beyond the role that can access their object', () => {
     }
 
     const buildJonyPrincipals = async () =>
-      principalPermissionsService.buildPermissionsPrincipals({
+      principalPermissionsService.resolvePermissionsPrincipals({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -270,7 +270,7 @@ describe('Records shared beyond the role that can access their object', () => {
       });
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
+      await recordPermissionsService.canAccessSomeRecords({
         operationType: 'select',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
@@ -282,14 +282,14 @@ describe('Records shared beyond the role that can access their object', () => {
     const principals = await buildJonyPrincipals();
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
+      await recordPermissionsService.canAccessSomeRecords({
         operationType: 'select',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
+      await recordPermissionsService.canAccessSomeRecords({
         operationType: 'update',
         principals,
         objectMetadataId: flatObjectMetadata.id,

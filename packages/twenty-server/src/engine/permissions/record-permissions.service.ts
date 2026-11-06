@@ -75,7 +75,7 @@ export class RecordPermissionsService {
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
-  async findRecordsPermissions({
+  async findRecordsActions({
     authContext,
     objectNameSingular,
     recordIds,
@@ -131,7 +131,7 @@ export class RecordPermissionsService {
     return objects[objectMetadataId]?.restrictedFields ?? {};
   }
 
-  async hasAccessToSomeRecords({
+  async canAccessSomeRecords({
     principals,
     objectMetadataId,
     operationType,
@@ -173,7 +173,7 @@ export class RecordPermissionsService {
     );
   }
 
-  async canRoleReachSomeRecords({
+  async canRoleAccessSomeRecords({
     principals,
     objectMetadataId,
     operationType,
@@ -239,7 +239,7 @@ export class RecordPermissionsService {
     });
   }
 
-  async findRoleIdsUnableToReadObject({
+  async filterRoleIdsWithoutReadAccess({
     workspaceId,
     roleIds,
     objectMetadataId,
@@ -354,7 +354,7 @@ export class RecordPermissionsService {
     const isSystem = isSystemAuthContext(authContext);
     const principals = isSystem
       ? undefined
-      : await this.principalPermissionsService.buildPermissionsPrincipals({
+      : await this.principalPermissionsService.resolvePermissionsPrincipals({
           authContext,
         });
 

@@ -43,14 +43,14 @@ export const describePermissionTestRecordAccess = ({
           principals:
             await getAppProviderByClassName<PrincipalPermissionsService>(
               'PrincipalPermissionsService',
-            ).buildPermissionsPrincipals({ authContext }),
+            ).resolvePermissionsPrincipals({ authContext }),
           objectMetadataId: workspace.objectMetadataId,
           recordIds: [recordId],
         };
 
         expect({
-          findRecordsPermissions: (
-            await recordPermissionsService.findRecordsPermissions({
+          findRecordsActions: (
+            await recordPermissionsService.findRecordsActions({
               authContext,
               objectNameSingular: workspace.objectNameSingular,
               recordIds: [recordId],
