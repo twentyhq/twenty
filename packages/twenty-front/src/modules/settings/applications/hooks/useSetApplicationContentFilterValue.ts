@@ -4,7 +4,7 @@ import { type ApplicationContentFilterKey } from '@/settings/applications/types/
 import { getApplicationContentFilterSearchParams } from '@/settings/applications/utils/getApplicationContentFilterSearchParams';
 
 export const useSetApplicationContentFilterValue = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   return ({
     filterKey,
@@ -14,11 +14,12 @@ export const useSetApplicationContentFilterValue = () => {
     universalIdentifier: string | null;
   }) => {
     setSearchParams(
-      getApplicationContentFilterSearchParams({
-        searchParams,
-        filterKey,
-        universalIdentifier,
-      }),
+      (searchParams) =>
+        getApplicationContentFilterSearchParams({
+          searchParams,
+          filterKey,
+          universalIdentifier,
+        }),
       { replace: true },
     );
   };

@@ -9,7 +9,7 @@ const addInstalledIds = ({
   installedItems,
 }: {
   manifestItems: ApplicationContentItem[];
-  installedItems: ApplicationContentItem[];
+  installedItems: Pick<ApplicationContentItem, 'id' | 'universalIdentifier'>[];
 }): ApplicationContentItem[] => {
   const installedIdByUniversalIdentifier = new Map(
     installedItems.map((item) => [item.universalIdentifier, item.id]),
