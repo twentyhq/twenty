@@ -405,6 +405,7 @@ export class RecordSharingPermissionsService {
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],
+        transactionScope: args.transactionScope,
       });
 
     return (

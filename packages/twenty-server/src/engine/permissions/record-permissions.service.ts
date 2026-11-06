@@ -79,16 +79,19 @@ export class RecordPermissionsService {
     authContext,
     objectNameSingular,
     recordIds,
+    transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
     objectNameSingular: string;
     recordIds: string[];
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Map<string, RecordPermissionsDTO>> {
     const allowedRecordIds = await this.findGrantedRecordIdsByOperationType({
       authContext,
       objectNameSingular,
       recordIds,
       operationTypes: ['select', 'update', 'delete', 'soft-delete'],
+      transactionScope,
     });
     const isGranted = (
       recordId: string,
@@ -339,11 +342,13 @@ export class RecordPermissionsService {
     objectNameSingular,
     recordIds,
     operationTypes,
+    transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
     objectNameSingular: string;
     recordIds: string[];
     operationTypes: ObjectRecordsOperationType[];
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Map<ObjectRecordsOperationType, Set<string>>> {
     const workspaceId = authContext.workspace.id;
     const isSystem = isSystemAuthContext(authContext);
@@ -389,6 +394,7 @@ export class RecordPermissionsService {
           flatObjectMetadata,
           recordIds,
           conditions,
+          transactionScope,
         },
       );
 
