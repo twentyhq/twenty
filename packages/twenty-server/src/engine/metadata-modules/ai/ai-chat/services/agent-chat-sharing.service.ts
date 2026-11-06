@@ -335,9 +335,11 @@ export class AgentChatSharingService {
     workspaceMemberId,
     threadId,
     shouldConsiderNewShares = true,
+    transactionScope,
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
     shouldConsiderNewShares?: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<string[]> {
     const candidateMemberIds = [...new Set(memberIds)].filter(
       (memberId) => memberId !== workspaceMemberId,
@@ -360,13 +362,15 @@ export class AgentChatSharingService {
       return [];
     }
 
-    const canManageSharing = await this.canManageThreadSharing({
-      workspaceId,
-      threadId,
-      authContext,
-    });
     const threadFlatObjectMetadata =
       await this.getThreadObjectMetadata(workspaceId);
+    const canManageSharing =
+      await this.recordSharingPermissionsService.canManageRecordSharing({
+        objectMetadataId: threadFlatObjectMetadata.id,
+        recordId: threadId,
+        authContext,
+        transactionScope,
+      });
 
     const hypotheticalRecordShareAccessLevel =
       shouldConsiderNewShares && canManageSharing
@@ -391,6 +395,7 @@ export class AgentChatSharingService {
               objectMetadataId: threadFlatObjectMetadata.id,
               recordIds: [threadId],
               hypotheticalRecordShareAccessLevel,
+              transactionScope,
             };
             const [canReadThread, canUpdateThread] = await Promise.all([
               this.recordPermissionsService.canReadRecords(question),
@@ -418,6 +423,10 @@ export class AgentChatSharingService {
     isSubscribed?: boolean;
     // checked by the caller, as the member must be able to reach it
     channelId?: string;
+    validateThread?: (args: {
+      thread: AgentChatThreadWorkspaceEntity;
+      transactionScope: WorkspaceTransactionScope;
+    }) => Promise<void>;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContextOrThrow(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -507,11 +516,17 @@ export class AgentChatSharingService {
               isSubscribed: args.isSubscribed,
             });
 
-            const createdThread = await threadRepository.findOne({
-              where: { id: threadId },
+            const createdThread =
+              (await threadRepository.findOne({
+                where: { id: threadId },
+              })) ?? throwAgentChatThreadNotFound();
+
+            await args.validateThread?.({
+              thread: createdThread,
+              transactionScope,
             });
 
-            return createdThread ?? throwAgentChatThreadNotFound();
+            return createdThread;
           },
         ),
       buildSystemAuthContext(args.workspaceId),
@@ -916,23 +931,6 @@ export class AgentChatSharingService {
           : [],
       ),
     );
-  }
-
-  private async canManageThreadSharing({
-    workspaceId,
-    threadId,
-    authContext,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    authContext: UserWorkspaceAuthContext;
-  }): Promise<boolean> {
-    const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
-    return this.recordSharingPermissionsService.canManageRecordSharing({
-      objectMetadataId: objectMetadata.id,
-      recordId: threadId,
-      authContext,
-    });
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {

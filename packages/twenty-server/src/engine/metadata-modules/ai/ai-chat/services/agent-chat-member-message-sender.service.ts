@@ -86,10 +86,23 @@ export class AgentChatMemberMessageSenderService {
         message,
       });
 
-    await this.chatThreadService.createThreadIfMissing({
+    const shouldValidateRecipients =
+      !assistant.isInitiallyIncluded &&
+      !assistant.isMentioned &&
+      !isDefined(target.channelId) &&
+      (isNonEmptyArray(addressing.initialRecipientWorkspaceMemberIds) ||
+        isNonEmptyArray(addressing.mentionedWorkspaceMemberIds));
+    const createdThread = await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
+      isAssistantMentioned: assistant.isMentioned,
+      isInitialAssistantParticipant: assistant.isInitiallyIncluded,
+      mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
+      recipientWorkspaceMemberIds:
+        addressing.initialRecipientWorkspaceMemberIds,
       channelId: target.channelId,
       shouldApplyAssistantParticipation: false,
+      shouldValidateRecipients,
+      isReplyRequested: assistant.isReplyRequested,
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
@@ -138,7 +151,8 @@ export class AgentChatMemberMessageSenderService {
     }
 
     const participation =
-      await this.assistantParticipationService.resolveAssistantParticipation({
+      createdThread?.participation ??
+      (await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,
         workspaceMemberId: actor.workspaceMemberId,
         thread,
@@ -149,7 +163,7 @@ export class AgentChatMemberMessageSenderService {
         recipientWorkspaceMemberIds:
           messageAddressing.initialRecipientWorkspaceMemberIds,
         isReplyRequested: assistant.isReplyRequested,
-      });
+      }));
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
