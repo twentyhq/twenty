@@ -7,7 +7,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
+import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 
 const OPPORTUNITY_ID = '20000000-0000-4000-8000-000000000000';
 const COMPANY_ID = '20000000-0000-4000-8000-000000000001';

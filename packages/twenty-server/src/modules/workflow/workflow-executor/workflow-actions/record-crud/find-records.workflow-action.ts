@@ -14,7 +14,6 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
-import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -26,6 +25,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { computeRecordGqlOperationOrderByFromFlatMaps } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
 import { findRecordFilterWithMissingField } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/find-record-filter-with-missing-field.util';

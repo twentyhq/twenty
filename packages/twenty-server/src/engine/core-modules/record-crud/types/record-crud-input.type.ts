@@ -1,5 +1,5 @@
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
-import { type RecordSortToCompute } from 'src/engine/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
+import { type RecordSortToCompute } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 
 import { type ObjectRecordProperties } from './object-record-properties.type';
 
