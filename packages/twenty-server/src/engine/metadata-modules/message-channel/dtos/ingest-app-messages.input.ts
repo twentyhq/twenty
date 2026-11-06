@@ -14,12 +14,16 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { MessageParticipantRole } from 'twenty-shared/types';
+import {
+  MessageDeliveryStatus,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 // the role is a SELECT on messageParticipant, so this is the first surface exposing it as a GraphQL enum
 registerEnumType(MessageParticipantRole, { name: 'MessageParticipantRole' });
+registerEnumType(MessageDeliveryStatus, { name: 'MessageDeliveryStatus' });
 
 // one request runs in a single transaction and logic-function timeout, so provider backfills must page
 export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
@@ -125,6 +129,12 @@ export class AppMessageInput {
   @IsNotEmpty({ each: true })
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
+
+  // unlike the rest of the message, re-ingesting with a new status updates the stored one
+  @Field(() => MessageDeliveryStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(MessageDeliveryStatus)
+  deliveryStatus?: MessageDeliveryStatus;
 
   @Field(() => [AppMessageAttachmentInput], { nullable: true })
   @IsOptional()

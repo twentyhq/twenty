@@ -1,4 +1,7 @@
-import { type MessageParticipantRole } from '@/sdk/define/common/types/loose-shared-types.type';
+import {
+  type MessageDeliveryStatus,
+  type MessageParticipantRole,
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export type IngestMessageParticipant = {
   // Exactly one participant must be 'FROM'; when its handle equals the channel's, the message is outgoing
@@ -30,6 +33,8 @@ export type IngestMessage = {
   participants: IngestMessageParticipant[];
   folderExternalIds?: string[];
   attachments?: IngestMessageAttachment[];
+  // Outgoing messages only; re-ingesting with a later status updates it, an earlier one is ignored
+  deliveryStatus?: MessageDeliveryStatus;
 };
 
 export type IngestedMessage = {

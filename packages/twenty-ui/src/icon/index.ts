@@ -137,6 +137,7 @@ export {
   IconChartPie,
   IconCheck,
   IconCheckbox,
+  IconChecks,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,

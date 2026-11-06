@@ -2245,6 +2245,8 @@ export type MessageChannelType = 'APP' | 'EMAIL' | 'EMAIL_GROUP' | 'SMS'
 
 export type MessageChannelVisibility = 'METADATA' | 'SHARE_EVERYTHING' | 'SUBJECT'
 
+export type MessageDeliveryStatus = 'DELIVERED' | 'READ' | 'SENT'
+
 export interface MessageFolder {
     createdAt: Scalars['DateTime']
     externalId?: Scalars['String']
@@ -4767,7 +4769,7 @@ export interface AppMessageAttachmentInput {fileId: Scalars['UUID'],label: Scala
 
 export interface AppMessageFolderInput {externalId: Scalars['String'],isSynced?: (Scalars['Boolean'] | null),name: Scalars['String']}
 
-export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
+export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),deliveryStatus?: (MessageDeliveryStatus | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
 
@@ -12994,6 +12996,12 @@ export const enumMessageChannelVisibility = {
    METADATA: 'METADATA' as const,
    SHARE_EVERYTHING: 'SHARE_EVERYTHING' as const,
    SUBJECT: 'SUBJECT' as const
+}
+
+export const enumMessageDeliveryStatus = {
+   DELIVERED: 'DELIVERED' as const,
+   READ: 'READ' as const,
+   SENT: 'SENT' as const
 }
 
 export const enumMessageFolderImportPolicy = {

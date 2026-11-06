@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { ChatThreadMessageMeta } from '@/activities/emails/components/ChatThreadMessageMeta';
 import { StyledChatMessageBubble } from '@/activities/emails/components/StyledChatMessageBubble';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -42,6 +43,9 @@ export const ChatThreadPendingMessage = ({
         isDimmed={pendingMessage.status === 'sending'}
       >
         {pendingMessage.text}
+        {pendingMessage.status === 'sending' && (
+          <ChatThreadMessageMeta deliveryStatus="SENDING" />
+        )}
       </StyledChatMessageBubble>
       {pendingMessage.status === 'failed' && (
         <StyledFailedRow>

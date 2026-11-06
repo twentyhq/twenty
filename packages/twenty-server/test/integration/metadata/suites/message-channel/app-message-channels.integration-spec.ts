@@ -24,6 +24,7 @@ import {
   ConnectedAccountProvider,
   MessageChannelType,
   MessageChannelVisibility,
+  MessageDeliveryStatus,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -227,6 +228,7 @@ type AppMessagePayload = {
   participants: AppMessageParticipantPayload[];
   folderExternalIds?: string[];
   attachments?: { fileId: string; label: string }[];
+  deliveryStatus?: MessageDeliveryStatus;
 };
 
 type AppMessageFolderPayload = {
@@ -1039,6 +1041,40 @@ describe('app message channels API (e2e)', () => {
       );
 
       expect(Number(count)).toBe(1);
+    });
+
+    it('moves the delivery status of a redelivered message forward, never back', async () => {
+      const channel = await createChannelOrThrow();
+      const message = buildMessage({
+        externalId: `status-${uuidv4()}`,
+        threadExternalId: `thread-${uuidv4()}`,
+        senderHandle: CHANNEL_HANDLE,
+      });
+
+      const findDeliveryStatus = async () => {
+        const [{ deliveryStatus }] = await globalThis.testDataSource.query(
+          `SELECT "deliveryStatus" FROM "${WORKSPACE_SCHEMA}"."message"
+             WHERE "headerMessageId" = $1`,
+          [`app:${owningApplicationDbId}:${channel.id}:${message.externalId}`],
+        );
+
+        return deliveryStatus;
+      };
+
+      for (const deliveryStatus of [
+        MessageDeliveryStatus.SENT,
+        MessageDeliveryStatus.READ,
+        MessageDeliveryStatus.DELIVERED,
+      ]) {
+        const response = await ingest({
+          messageChannelId: channel.id,
+          messages: [{ ...message, deliveryStatus }],
+        });
+
+        expect(response.body.errors).toBeUndefined();
+      }
+
+      expect(await findDeliveryStatus()).toBe(MessageDeliveryStatus.READ);
     });
 
     it('derives direction from the sender, matching the handle case-insensitively', async () => {

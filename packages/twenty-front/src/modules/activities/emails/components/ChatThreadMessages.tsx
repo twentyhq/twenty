@@ -6,6 +6,7 @@ import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThrea
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getOutgoingMessageIds } from '@/activities/emails/utils/getOutgoingMessageIds';
 import { groupChatMessagesBySender } from '@/activities/emails/utils/groupChatMessagesBySender';
+import { resolveChatMessageDeliveryStatuses } from '@/activities/emails/utils/resolveChatMessageDeliveryStatuses';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,7 +36,10 @@ export const ChatThreadMessages = ({ messages }: ChatThreadMessagesProps) => {
     viewerMessageChannelIds: new Set(channels.map(({ id }) => id)),
   });
 
-  const groups = groupChatMessagesBySender(messages, outgoingMessageIds);
+  const groups = groupChatMessagesBySender(
+    resolveChatMessageDeliveryStatuses({ messages, outgoingMessageIds }),
+    outgoingMessageIds,
+  );
 
   return (
     <StyledContainer>

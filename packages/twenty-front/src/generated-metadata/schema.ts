@@ -500,6 +500,7 @@ export type AppMessageFolderInput = {
 
 export type AppMessageInput = {
   attachments?: InputMaybe<Array<AppMessageAttachmentInput>>;
+  deliveryStatus?: InputMaybe<MessageDeliveryStatus>;
   externalId: Scalars['String']['input'];
   folderExternalIds?: InputMaybe<Array<Scalars['String']['input']>>;
   participants: Array<AppMessageParticipantInput>;
@@ -3429,6 +3430,12 @@ export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
+}
+
+export enum MessageDeliveryStatus {
+  DELIVERED = 'DELIVERED',
+  READ = 'READ',
+  SENT = 'SENT'
 }
 
 export type MessageFolder = {
