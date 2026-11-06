@@ -128,13 +128,32 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     expect(result.data?.input.orderBy?.recordSorts).toEqual([recordSort]);
   });
 
-  it('should reject a GraphQL order by, which the run computes from record sorts', () => {
+  it('should reject a GraphQL order without record sorts, since the run computes it from them', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings({
+        orderBy: { gqlOperationOrderBy: [{ name: 'AscNullsLast' }] },
+      }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept the GraphQL order an older builder sends next to record sorts', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         orderBy: {
+          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
           gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
         },
       }),
+    );
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject an unknown order by key', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings({ orderBy: { recordSorts: [], direction: 'ASC' } }),
     );
 
     expect(result.success).toBe(false);

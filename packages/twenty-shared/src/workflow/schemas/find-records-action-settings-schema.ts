@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isDefined } from '@/utils';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { recordFilterGroupSchema } from './record-filter-group-schema';
 import { recordFilterSchema } from './record-filter-schema';
@@ -22,11 +23,23 @@ export const workflowFindRecordsActionSettingsSchema =
           recordFilters: z.array(recordFilterSchema).optional(),
         })
         .optional(),
-      // strict so a GraphQL orderBy is refused rather than silently dropped; the run computes it from recordSorts
       orderBy: z
         .strictObject({
           recordSorts: z.array(recordSortSchema).optional(),
+          // Computed from recordSorts when the step runs; accepted next to them until 2.57 leaves the cross-upgrade window
+          gqlOperationOrderBy: z
+            .array(z.record(z.string(), z.unknown()))
+            .optional(),
         })
+        .refine(
+          (orderBy) =>
+            !isDefined(orderBy.gqlOperationOrderBy) ||
+            isDefined(orderBy.recordSorts),
+          {
+            message:
+              'Sort with recordSorts; the GraphQL order is computed from them when the step runs',
+          },
+        )
         .optional(),
     }),
   });

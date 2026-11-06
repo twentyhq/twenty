@@ -23,6 +23,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { ensureWorkflowStepsTipTapSchemaVersion } from 'src/engine/core-modules/workflow/utils/ensure-workflow-steps-tiptap-schema-version.util';
+import { dropComputedFindRecordsOrderBy } from 'src/engine/core-modules/workflow/utils/drop-computed-find-records-order-by.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import {
   WorkflowQueryValidationException,
@@ -178,7 +179,9 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<CoreWorkflowVersionContent> {
-    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+    const versionedSteps = dropComputedFindRecordsOrderBy(
+      ensureWorkflowStepsTipTapSchemaVersion(callerSteps),
+    );
 
     await this.assertContentIsNotMalformed({
       workspaceId,
@@ -309,7 +312,9 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
-    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+    const versionedSteps = dropComputedFindRecordsOrderBy(
+      ensureWorkflowStepsTipTapSchemaVersion(callerSteps),
+    );
 
     await this.assertContentIsNotMalformed({
       workspaceId,
