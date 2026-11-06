@@ -98,27 +98,30 @@ describe('permissions read services', () => {
   }: {
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
-    recordPermissionsService.hasAccessToSomeRecords({
-      operationType: 'select',
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+    recordPermissionsService.canAccessSomeRecords({
+      operationType: 'read',
+      principals:
+        await principalPermissionsService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
     });
 
   const askRecordsQuestion = async ({
-    question = 'canReadRecords',
+    operationType = 'read',
     authContext,
     recordIds,
   }: {
-    question?: 'canReadRecords' | 'canUpdateRecords';
+    operationType?: 'read' | 'update';
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsService[question]({
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+    recordPermissionsService.canAccessRecords({
+      operationType,
+      principals:
+        await principalPermissionsService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
       recordIds,
     });
@@ -171,7 +174,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canReadRecords and canUpdateRecords', () => {
+  describe('canAccessRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
@@ -183,7 +186,7 @@ describe('permissions read services', () => {
         await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId],
-          question: 'canUpdateRecords',
+          operationType: 'update',
         }),
       ).toBe(true);
     });
@@ -207,7 +210,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('hasAccessToSomeRecords', () => {
+  describe('canAccessSomeRecords', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
         await askCanReadSomeRecords({
@@ -228,11 +231,6 @@ describe('permissions read services', () => {
   describe('role questions', () => {
     it('finds the roles of a principal', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
-          authContext: adminAuthContext,
-        }),
-      ).toBe(true);
-      expect(
         await rolePermissionsService.findRoleIds({
           authContext: adminAuthContext,
         }),
@@ -241,10 +239,10 @@ describe('permissions read services', () => {
 
     it('finds no role for an API key without one', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
+        await rolePermissionsService.findRoleIds({
           authContext: missingRoleAuthContext,
         }),
-      ).toBe(false);
+      ).toEqual([]);
     });
   });
 
@@ -295,7 +293,7 @@ describe('permissions read services', () => {
       apiKey: Pick<ApiKeyWithObjectRecordGrants, 'apiKeyId'>,
     ) => {
       const principals =
-        await principalPermissionsService.buildPermissionsPrincipals({
+        await principalPermissionsService.resolvePermissionsPrincipals({
           authContext: {
             type: 'apiKey',
             workspace: { id: SEED_APPLE_WORKSPACE_ID },
@@ -319,17 +317,17 @@ describe('permissions read services', () => {
         apiKey: { id: apiKey.apiKeyId },
       });
 
-      for (const question of ['canReadRecords', 'canUpdateRecords'] as const) {
+      for (const operationType of ['read', 'update'] as const) {
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(readRestricted),
             recordIds: [recordId],
           }),
         ).toBe(true);
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(idReadRestricted),
             recordIds: [recordId],
           }),

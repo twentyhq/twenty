@@ -87,7 +87,7 @@ export const RecordTable = () => {
     <>
       {canReachSomeRecords({
         objectRecordsPermissions: objectPermissions,
-        operationType: 'select',
+        operationType: 'read',
       }) && (
         <>
           <RecordTableBodyEffectsWrapper

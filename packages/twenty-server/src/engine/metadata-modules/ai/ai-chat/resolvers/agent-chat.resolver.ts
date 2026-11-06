@@ -1,3 +1,4 @@
+import { AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -79,6 +80,7 @@ export class AgentChatResolver {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly memberMessageSenderService: AgentChatMemberMessageSenderService,
+    private readonly directMessageIdentityService: AgentChatDirectMessageIdentityService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -92,6 +94,20 @@ export class AgentChatResolver {
       threadId: id,
       workspaceMemberId,
       workspaceId,
+    });
+  }
+
+  @Mutation(() => UUIDScalarType)
+  async openDirectMessage(
+    @Args('workspaceMemberId', { type: () => UUIDScalarType })
+    peerWorkspaceMemberId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string> {
+    return this.directMessageIdentityService.open({
+      workspaceId,
+      firstWorkspaceMemberId: workspaceMemberId,
+      secondWorkspaceMemberId: peerWorkspaceMemberId,
     });
   }
 
@@ -279,11 +295,12 @@ export class AgentChatResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.systemPromptBuilderService.buildPreview(
-      workspace.id,
+    return this.systemPromptBuilderService.buildPreview({
+      workspaceId: workspace.id,
       userWorkspaceId,
-      workspace.aiAdditionalInstructions ?? undefined,
-    );
+      workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
+      assistantProfile: workspace.aiChatAssistantProfile,
+    });
   }
 
   @ResolveField(() => Date)

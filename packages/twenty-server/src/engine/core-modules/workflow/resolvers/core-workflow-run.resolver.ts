@@ -4,29 +4,21 @@ import { Args, Mutation } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { RunCoreWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-core-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
+import { WorkflowRunGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-run-graphql-api-exception.filter';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionEdgeGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-edge-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
-import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
-import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @CoreResolver()
@@ -51,6 +43,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowQueryValidationGraphqlApiExceptionFilter,
+  WorkflowRunGraphqlApiExceptionFilter,
   WorkflowTriggerGraphqlApiExceptionFilter,
   WorkflowVersionEdgeGraphqlApiExceptionFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
@@ -58,20 +51,11 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 )
 export class CoreWorkflowRunResolver {
   constructor(
-    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly coreWorkflowVersionRunService: CoreWorkflowVersionRunService,
   ) {}
 
   @Mutation(() => RunWorkflowVersionDTO)
   async runCoreWorkflowVersion(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace()
-    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApplication({ allowUndefined: true })
-    callerApplication: FlatApplication | undefined,
     @Args('input')
     {
       coreWorkflowVersionId,
@@ -79,47 +63,17 @@ export class CoreWorkflowRunResolver {
       payload,
     }: RunCoreWorkflowVersionInput,
   ): Promise<RunWorkflowVersionDTO> {
-    const workspaceMember =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          );
+    const authContext = getWorkspaceAuthContext();
 
-        return workspaceMemberRepository.findOneOrFail({
-          where: { userId: user.id },
-        });
-      }, buildSystemAuthContext(workspaceId));
+    if (!isUserAuthContext(authContext)) {
+      throw new AuthenticationError('User authentication required');
+    }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow(
-      {
-        workspaceId,
-        workspaceCustomApplicationId,
-        callerApplication,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const { payload: triggerPayload, createdBy } =
-      buildWorkflowRunTriggerContext({
-        workspaceMember,
-        payload,
-      });
-
-    return this.coreWorkflowRunnerService.run({
-      workspaceId,
+    return this.coreWorkflowVersionRunService.run({
+      authContext,
       coreWorkflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: triggerPayload,
-      source: createdBy,
+      payload,
     });
   }
 }

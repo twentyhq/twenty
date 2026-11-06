@@ -1058,16 +1058,6 @@ msgstr "Fils de xat d'IA propietat del membre de l'espai de treball"
 msgid "AI component builder is disabled."
 msgstr "El creador de components d'IA està desactivat."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "La política de dades d'IA no està disponible fins que no s'hagi completat l'actualització."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "La política de dades d'IA no està habilitada per a aquest espai de treball."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "L'autenticació ha fallat, torna a iniciar la sessió."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "L'autenticació no està activada amb aquest proveïdor."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Es requereix autenticació per accedir a aquesta funció. Si us plau, inicia la sessió i torna-ho a intentar."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "No s'han especificat destinataris vàlids"
 msgid "No verified sending domain matches this from address."
 msgstr "No hi ha cap domini d’enviament verificat que coincideixi amb aquesta adreça de remitent."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Cap de les persones que heu seleccionat no pot respondre en aquest xat. Afegiu {AGENT_CHAT_ASSISTANT_NAME} o algú que pugui respondre."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "ID del principal"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Tipus de principal"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "La configuració de privadesa no està disponible fins que l'actualització s'hagi completat."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "La configuració de privadesa no està activada per a aquest espai de treball."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Enllaços curts"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Inicieu la sessió com a membre de l'espai de treball o utilitzeu un testimoni d'aplicació per canviar aquesta conversa."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Inicieu la sessió com a membre de l’espai de treball o utilitzeu un testimoni d’aplicació per fer aquesta sol·licitud."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Alguns dels permisos que has seleccionat no són vàlids. Si us plau, torna-ho a intentar amb una configuració de permisos vàlida."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "No s'han pogut trobar algunes membresies de l'espai de treball. És possible que ja no tinguin accés a aquest espai de treball."
 
@@ -13619,11 +13619,6 @@ msgstr "No s'ha trobat l'agent que aquest pas hauria d'executar."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "L'agent que estàs buscant no s'ha pogut trobar. Pot haver estat eliminat o potser no hi tens accés."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "La clau API no té un paper vàlid assignat. Si us plau, revisa la configuració de la teva clau API."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "El manifest de l'aplicació declara un requisit de versió del servidor 
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "El canal d'origen de l'aplicació no coincideix amb el tipus esperat."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "L'aplicació no té cap rol vàlid assignat. Si us plau, revisa la configuració de la teva aplicació."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "No pots generar un codi de recuperació per a tu mateix. En lloc d'això, restableix l'autenticació de dos factors des del teu perfil."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "No pots canviar el teu propi rol. Si us plau, demana a un altre administrador que actualitzi el teu rol."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "No pots eliminar l'accés a la configuració del teu propi rol. Demana a un altre administrador que faci aquest canvi."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "No pots eliminar el rol d'administrador de l'últim administrador. Si us plau, assigna primer un altre administrador."
 
@@ -18250,7 +18240,7 @@ msgstr "El vostre rol no pot suprimir alguns d'aquests registres, per la qual co
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "No es pot trobar el teu rol en aquest espai de treball. Si us plau, contacta amb l'administrador del teu espai de treball."
 

@@ -4,7 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
-import { RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
@@ -16,7 +16,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class WorkspaceDataSourceService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
-    private readonly recordRepositoryPermissionsService: RecordRepositoryPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -57,7 +57,7 @@ export class WorkspaceDataSourceService {
       recordReadRestrictions: workspaceContext.recordReadRestrictions,
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
-      recordRepositoryPermissions: this.recordRepositoryPermissionsService,
+      recordPermissions: this.recordPermissionsService,
       coreDataSource: this.coreDataSource,
     };
   }

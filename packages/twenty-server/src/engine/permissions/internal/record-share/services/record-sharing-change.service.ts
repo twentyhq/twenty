@@ -79,11 +79,14 @@ export class RecordSharingChangeService {
           });
 
           const principals =
-            await this.principalPermissionsService.buildPermissionsPrincipals({
-              authContext: args.authContext,
-            });
+            await this.principalPermissionsService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            );
           const isWritable =
-            await this.recordPermissionsService.canUpdateRecords({
+            await this.recordPermissionsService.canAccessRecords({
+              operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,
               recordIds: [args.recordId],
@@ -92,7 +95,7 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsService.canRoleReachSomeRecords({
+            !(await this.recordPermissionsService.canRoleAccessSomeRecords({
               operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,

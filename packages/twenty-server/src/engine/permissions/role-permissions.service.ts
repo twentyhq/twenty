@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -20,15 +18,12 @@ import { PrincipalPermissionsService } from 'src/engine/permissions/principal-pe
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class RolePermissionsService {
   constructor(
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
@@ -39,14 +34,6 @@ export class RolePermissionsService {
     authContext: PermissionsAuthContext | undefined;
   }): Promise<string[]> {
     return this.findPrincipalRoleIds(authContext);
-  }
-
-  public async hasAnyRole({
-    authContext,
-  }: {
-    authContext: PermissionsAuthContext | undefined;
-  }): Promise<boolean> {
-    return (await this.findPrincipalRoleIds(authContext)).length > 0;
   }
 
   async findUserWorkspaceRoleIdOrThrow({
@@ -187,54 +174,6 @@ export class RolePermissionsService {
     });
   }
 
-  async findSuccessorUserWorkspace({
-    removedUserWorkspace,
-    actingUserWorkspaceId,
-  }: {
-    removedUserWorkspace: Pick<UserWorkspaceEntity, 'id' | 'workspaceId'>;
-    actingUserWorkspaceId?: string;
-  }): Promise<UserWorkspaceEntity | undefined> {
-    const otherUserWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        workspaceId: removedUserWorkspace.workspaceId,
-        id: Not(removedUserWorkspace.id),
-      },
-      order: { createdAt: 'ASC' },
-    });
-
-    if (otherUserWorkspaces.length === 0) {
-      return undefined;
-    }
-
-    const actingUserWorkspace = otherUserWorkspaces.find(
-      (otherUserWorkspace) => otherUserWorkspace.id === actingUserWorkspaceId,
-    );
-
-    if (isDefined(actingUserWorkspace)) {
-      return actingUserWorkspace;
-    }
-
-    const rolesByUserWorkspaceId = await this.findRolesByUserWorkspaceIds({
-      userWorkspaceIds: otherUserWorkspaces.map(
-        (otherUserWorkspace) => otherUserWorkspace.id,
-      ),
-      workspaceId: removedUserWorkspace.workspaceId,
-    });
-
-    const oldestAdminUserWorkspace = otherUserWorkspaces.find(
-      (otherUserWorkspace) =>
-        rolesByUserWorkspaceId
-          .get(otherUserWorkspace.id)
-          ?.some(
-            (role) =>
-              role.universalIdentifier ===
-              STANDARD_ROLE.admin.universalIdentifier,
-          ),
-    );
-
-    return oldestAdminUserWorkspace ?? otherUserWorkspaces[0];
-  }
-
   // Empty for the system, which acts with no role
   private async findPrincipalRoleIds(
     authContext: PermissionsAuthContext | undefined,
@@ -244,7 +183,7 @@ export class RolePermissionsService {
     }
 
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
 

@@ -168,7 +168,7 @@ const findGranted = ({
       ),
     },
     flatObjectMetadata,
-    operationType: 'select',
+    operationType: 'read',
     records,
     context,
   });

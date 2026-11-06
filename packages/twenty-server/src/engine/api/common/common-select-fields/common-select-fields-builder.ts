@@ -40,9 +40,11 @@ export class CommonSelectFieldsBuilder {
     unreadableFieldMetadataIds: Set<string>;
   }> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
+      await this.principalPermissionsService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
+      );
 
     const flatObjectMetadatas = shouldIncludeRelationTargets
       ? Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
@@ -51,8 +53,8 @@ export class CommonSelectFieldsBuilder {
       : [];
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((relationTargetObjectMetadata) =>
-        this.recordPermissionsService.hasAccessToSomeRecords({
-          operationType: 'select',
+        this.recordPermissionsService.canAccessSomeRecords({
+          operationType: 'read',
           principals,
           objectMetadataId: relationTargetObjectMetadata.id,
         }),
