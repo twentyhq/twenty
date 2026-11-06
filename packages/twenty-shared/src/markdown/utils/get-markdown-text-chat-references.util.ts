@@ -82,7 +82,6 @@ const getTextPlaceholderIndexes = (
   );
 };
 
-// Delimiters already in the text become spaces, so the text cannot forge a placeholder
 const replaceReferencesWithPlaceholders = ({
   text,
   references,

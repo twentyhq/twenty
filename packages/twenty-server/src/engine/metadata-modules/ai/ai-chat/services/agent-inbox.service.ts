@@ -193,7 +193,6 @@ export class AgentInboxService {
         text: input.text,
         threadBefore: thread,
       });
-      // only once written, so a refused or repeated send mentions no one
       await this.mentionParticipants({
         workspaceId,
         thread,
@@ -356,8 +355,6 @@ export class AgentInboxService {
     }
   }
 
-  // As for teammate mentions, a failure is logged and never fails the message already written.
-  // Delivery skips the member whose access it uses, here the owner, so the owner's mention is written apart.
   private async mentionParticipants({
     workspaceId,
     thread,

@@ -4,7 +4,6 @@ import { formatChatReference } from '@/ai/utils/formatChatReference';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { getMarkdownTextChatReferences } from 'twenty-shared/markdown';
 
-// Markdown must not read the brackets as a link, since the shared reader treats each reference as one unit.
 const escapeChatReferenceBrackets = (reference: string): string =>
   `\\[\\[${reference.slice(2, -2)}\\]\\]`;
 
