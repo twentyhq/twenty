@@ -6,7 +6,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getFieldIdOrThrow = (objectNameSingular: string, fieldName: string) => {
+const getFieldIdOrThrow = ({
+  objectNameSingular,
+  fieldName,
+}: {
+  objectNameSingular: string;
+  fieldName: string;
+}) => {
   const field = getMockObjectMetadataItemOrThrow(
     objectNameSingular,
   ).fields.find((field) => field.name === fieldName);
@@ -24,9 +30,15 @@ describe('getChartDefaultFieldSelection', () => {
 
     expect(getChartDefaultFieldSelection(opportunity)).toEqual({
       objectMetadataId: opportunity.id,
-      aggregateFieldMetadataId: getFieldIdOrThrow('opportunity', 'amount'),
+      aggregateFieldMetadataId: getFieldIdOrThrow({
+        objectNameSingular: 'opportunity',
+        fieldName: 'amount',
+      }),
       aggregateOperation: AggregateOperations.SUM,
-      groupByFieldMetadataId: getFieldIdOrThrow('opportunity', 'stage'),
+      groupByFieldMetadataId: getFieldIdOrThrow({
+        objectNameSingular: 'opportunity',
+        fieldName: 'stage',
+      }),
       groupByOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
     });
   });

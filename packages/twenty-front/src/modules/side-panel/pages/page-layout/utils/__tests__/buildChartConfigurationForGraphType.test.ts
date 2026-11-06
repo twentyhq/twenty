@@ -88,6 +88,8 @@ describe('buildChartConfigurationForGraphType', () => {
       (field) => field.name === 'stage',
     );
 
+    expect(stageField).toBeDefined();
+
     const result = buildChartConfigurationForGraphType({
       configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
       graphType: GraphType.VERTICAL_BAR,
