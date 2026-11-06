@@ -129,7 +129,6 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
       }),
     ];
 
-    // the write path refuses fieldsToUpdate on these steps now, so the stored shape is written directly
     await global.testDataSource.query(
       `UPDATE core."workflowVersion" SET steps = $2::jsonb WHERE id = $1`,
       [coreWorkflowVersionId, JSON.stringify(legacySteps)],

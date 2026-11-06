@@ -28,7 +28,6 @@ export const useWorkflowRun = ({
     recordGqlFields,
   });
 
-  // A run keeps the steps it ran with, which a later schema can refuse: it renders empty instead of crashing
   const { data: record } = useMemo(
     () => workflowRunSchema.safeParse(rawRecord),
     [rawRecord],

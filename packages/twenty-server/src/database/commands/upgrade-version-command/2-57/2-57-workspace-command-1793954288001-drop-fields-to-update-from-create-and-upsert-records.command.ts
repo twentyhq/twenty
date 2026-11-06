@@ -14,7 +14,6 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Runs are left as they are: CREATE_RECORD and UPSERT_RECORD never read fieldsToUpdate when they execute
 @RegisteredWorkspaceCommand('2.57.0', 1793954288001)
 @Command({
   name: 'upgrade:2-57:drop-fields-to-update-from-create-and-upsert-records',

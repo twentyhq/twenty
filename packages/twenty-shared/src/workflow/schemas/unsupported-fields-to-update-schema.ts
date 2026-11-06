@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Accepts the [] builders stored before 2.57; refuse the key outright in 2.59 (twentyhq/core-team-issues#3180)
 export const unsupportedFieldsToUpdateSchema = z
   .array(z.string())
   .max(
