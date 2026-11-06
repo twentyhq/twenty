@@ -118,14 +118,15 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
         })
       : 0;
 
-    if (coreVersionCount + workspaceVersionCount + runCount === 0) {
-      return;
-    }
-
+    // refreshed even when nothing is left, so a rerun after an interrupted run still clears stale versions
     if (!isDryRun) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatWorkflowVersionMaps',
       ]);
+    }
+
+    if (coreVersionCount + workspaceVersionCount + runCount === 0) {
+      return;
     }
 
     this.logger.log(
