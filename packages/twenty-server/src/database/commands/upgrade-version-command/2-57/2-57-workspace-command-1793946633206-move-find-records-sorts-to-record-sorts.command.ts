@@ -188,17 +188,24 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): string | undefined {
-    const labelIdentifierFieldMetadataId = findFlatEntityByIdInFlatEntityMaps({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
-    })?.labelIdentifierFieldMetadataId;
+    });
 
-    return isDefined(labelIdentifierFieldMetadataId)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: labelIdentifierFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })?.name
-      : 'name';
+    if (!isDefined(flatObjectMetadata)) {
+      return undefined;
+    }
+
+    // an object without a label identifier is labelled by its name field, as the run sorts it
+    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
+      return 'name';
+    }
+
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    })?.name;
   }
 
   private async tableExists({
