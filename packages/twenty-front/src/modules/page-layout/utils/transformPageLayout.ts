@@ -1,5 +1,6 @@
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { removeNonNullableNullsFromWidgetConfiguration } from '@/page-layout/utils/removeNonNullableNullsFromWidgetConfiguration';
 import { type PageLayout as PageLayoutGenerated } from '~/generated-metadata/graphql';
 
 export const transformPageLayout = (
@@ -12,7 +13,12 @@ export const transformPageLayout = (
       .map((tab): PageLayoutTab => {
         return {
           ...tab,
-          widgets: tab.widgets ?? [],
+          widgets: (tab.widgets ?? []).map((widget) => ({
+            ...widget,
+            configuration: removeNonNullableNullsFromWidgetConfiguration(
+              widget.configuration,
+            ),
+          })),
         };
       }),
   };

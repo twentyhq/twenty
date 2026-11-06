@@ -352,6 +352,19 @@ describe('validateWidgetConfigurationInputOrThrow', () => {
       ).toThrow('label: label should not be null');
     });
 
+    it('should throw error for null on a setting another configuration type allows to be null', () => {
+      expect(() =>
+        validateWidgetConfigurationInputOrThrow({
+          configuration: {
+            configurationType: WidgetConfigurationType.FIELD,
+            fieldMetadataId: '20202020-0000-4000-8000-000000000001',
+            fieldDisplayMode: 'FIELD',
+            viewId: null,
+          },
+        }),
+      ).toThrow('viewId: viewId should not be null');
+    });
+
     it.each([
       {
         configurationType: WidgetConfigurationType.RECORD_TABLE,

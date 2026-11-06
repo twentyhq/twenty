@@ -1,8 +1,10 @@
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import {
+  AggregateOperations,
   type PageLayout,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 
 const makePageLayout = (overrides: Partial<PageLayout> = {}): PageLayout =>
@@ -85,6 +87,10 @@ describe('transformPageLayout', () => {
       id: 'w1',
       title: 'Widget',
       type: 'FIELDS',
+      configuration: {
+        __typename: 'FieldsConfiguration',
+        configurationType: WidgetConfigurationType.FIELDS,
+      },
     };
 
     const layout = makePageLayout({
@@ -107,5 +113,79 @@ describe('transformPageLayout', () => {
 
     expect(result.tabs[0].widgets).toHaveLength(1);
     expect(result.tabs[0].widgets[0].id).toBe('w1');
+  });
+
+  it('should drop the nulls GraphQL returns for unset settings, except on settings the configuration type allows to be null', () => {
+    const makeTabWithWidgetConfigurations = (
+      configurations: Record<string, unknown>[],
+    ) => ({
+      id: 'tab-1',
+      position: 0,
+      title: 'Tab',
+      pageLayoutId: 'layout-1',
+      applicationId: 'app-1',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      widgets: configurations.map((configuration, index) => ({
+        id: `w${index}`,
+        title: 'Widget',
+        type: 'GRAPH',
+        configuration,
+      })),
+      createdAt: '2025-01-01',
+      updatedAt: '2025-01-01',
+    });
+
+    const layout = makePageLayout({
+      tabs: [
+        makeTabWithWidgetConfigurations([
+          {
+            __typename: 'AggregateChartConfiguration',
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+            aggregateFieldMetadataId: 'field-1',
+            aggregateOperation: AggregateOperations.COUNT,
+            label: null,
+          },
+          {
+            __typename: 'RecordTableConfiguration',
+            configurationType: WidgetConfigurationType.RECORD_TABLE,
+            viewId: null,
+            recordLimit: null,
+          },
+          {
+            __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
+            fieldMetadataId: 'field-2',
+            fieldDisplayMode: 'FIELD',
+            viewId: null,
+            nestedRelationFieldMetadataId: null,
+          },
+        ]),
+      ] as any,
+    });
+
+    const result = transformPageLayout(layout);
+
+    expect(
+      result.tabs[0].widgets.map((widget) => widget.configuration),
+    ).toEqual([
+      {
+        __typename: 'AggregateChartConfiguration',
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataId: 'field-1',
+        aggregateOperation: AggregateOperations.COUNT,
+      },
+      {
+        __typename: 'RecordTableConfiguration',
+        configurationType: WidgetConfigurationType.RECORD_TABLE,
+        viewId: null,
+      },
+      {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId: 'field-2',
+        fieldDisplayMode: 'FIELD',
+        nestedRelationFieldMetadataId: null,
+      },
+    ]);
   });
 });

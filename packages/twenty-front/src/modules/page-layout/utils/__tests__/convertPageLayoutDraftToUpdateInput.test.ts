@@ -89,7 +89,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
   });
 
-  it('should send configurations without typenames and without null on settings that cannot be null', () => {
+  it('should send configurations as held in state, without typenames', () => {
     const chartWidget = makeWidget({
       id: 'w1',
       type: WidgetType.GRAPH,
@@ -98,7 +98,6 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
-        label: null,
         ratioAggregateConfig: {
           __typename: 'RatioAggregateConfig',
           fieldMetadataId: 'field-2',

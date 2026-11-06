@@ -1,5 +1,5 @@
 import { isNotEmptyObject, type ValidationError } from 'class-validator';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-configuration-input-dto-by-type.constant';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -32,17 +32,17 @@ const formatValidationErrors = (
 ): string => {
   return errors
     .map((error) => {
-      const propertyPath = parentProperty
+      const propertyPath = isDefined(parentProperty)
         ? `${parentProperty}.${error.property}`
         : error.property;
 
-      if (error.constraints) {
+      if (isDefined(error.constraints)) {
         const constraints = Object.values(error.constraints).join(', ');
 
         return `${propertyPath}: ${constraints}`;
       }
 
-      if (error.children && error.children.length > 0) {
+      if (isNonEmptyArray(error.children)) {
         return formatValidationErrors(error.children, propertyPath);
       }
 
@@ -97,6 +97,7 @@ export const validateWidgetConfigurationInputOrThrow = ({
 
   const errors = validateWidgetConfigurationByDto({
     DtoClass: WidgetConfigurationDto,
+    configurationType,
     configuration: configurationRecord,
   });
 

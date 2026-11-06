@@ -37,6 +37,24 @@ describe('cleanPageLayoutWidgetConfiguration', () => {
     });
   });
 
+  it('drops null on a setting only another widget type allows to be null', () => {
+    expect(
+      cleanPageLayoutWidgetConfiguration({
+        configurationType: 'FIELD',
+        fieldMetadataId: 'field-id',
+        fieldDisplayMode: 'FIELD',
+        viewId: null,
+      }),
+    ).toEqual({
+      value: {
+        configurationType: 'FIELD',
+        fieldMetadataId: 'field-id',
+        fieldDisplayMode: 'FIELD',
+      },
+      hasChanged: true,
+    });
+  });
+
   it('leaves a missing configuration alone', () => {
     expect(cleanPageLayoutWidgetConfiguration(null)).toEqual({
       value: null,
