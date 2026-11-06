@@ -27,8 +27,14 @@ const SALARY: SortableField = {
   type: FieldMetadataType.CURRENCY,
 };
 
+const TARGET: SortableField = {
+  id: 'target-field-id',
+  name: 'target',
+  type: FieldMetadataType.MORPH_RELATION,
+};
+
 const fieldsByObjectName = new Map([
-  ['person', [STATUS, NAME, COMPANY, SALARY]],
+  ['person', [STATUS, NAME, COMPANY, SALARY, TARGET]],
 ]);
 
 const findRecordsStep = (orderBy: Record<string, unknown>) => ({
@@ -116,6 +122,7 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         { company: { employees: 'DescNullsLast' } },
         { unknownField: 'AscNullsLast' },
         { position: 'DescNullsLast' },
+        { targetId: 'AscNullsLast' },
       ],
     });
 
@@ -153,6 +160,7 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
       },
       { stepId: 'step-id', orderByEntry: { unknownField: 'AscNullsLast' } },
       { stepId: 'step-id', orderByEntry: { position: 'DescNullsLast' } },
+      { stepId: 'step-id', orderByEntry: { targetId: 'AscNullsLast' } },
     ]);
   });
 

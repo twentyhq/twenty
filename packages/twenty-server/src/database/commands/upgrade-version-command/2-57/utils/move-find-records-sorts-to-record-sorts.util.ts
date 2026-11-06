@@ -39,11 +39,6 @@ const SORTED_SUB_FIELD_BY_COMPOSITE_FIELD_TYPE: Partial<
   [FieldMetadataType.PHONES]: 'primaryPhoneNumber',
 };
 
-const RELATION_FIELD_TYPES = new Set<FieldMetadataType>([
-  FieldMetadataType.RELATION,
-  FieldMetadataType.MORPH_RELATION,
-]);
-
 const findLeafDirection = (value: unknown): string | undefined => {
   if (isString(value)) {
     return value;
@@ -60,12 +55,21 @@ const findSortedField = ({
 }: {
   fieldName: string;
   fields: SortableField[];
-}): SortableField | undefined =>
-  fields.find((field) => field.name === fieldName) ??
-  fields.find(
-    (field) =>
-      RELATION_FIELD_TYPES.has(field.type) && `${field.name}Id` === fieldName,
+}): SortableField | undefined => {
+  // a record sort can't order by a morph relation, so its orders are reported instead
+  const recordSortableFields = fields.filter(
+    (field) => field.type !== FieldMetadataType.MORPH_RELATION,
   );
+
+  return (
+    recordSortableFields.find((field) => field.name === fieldName) ??
+    recordSortableFields.find(
+      (field) =>
+        field.type === FieldMetadataType.RELATION &&
+        `${field.name}Id` === fieldName,
+    )
+  );
+};
 
 // A record sort orders a relation by its target's label and a composite field by one fixed sub-field
 const isOrderedAsRecordSort = ({
@@ -79,7 +83,7 @@ const isOrderedAsRecordSort = ({
     ? Object.keys(value)[0]
     : undefined;
 
-  if (RELATION_FIELD_TYPES.has(field.type)) {
+  if (field.type === FieldMetadataType.RELATION) {
     return (
       isString(value) ||
       sortedSubFieldName === field.relationTargetLabelFieldName
