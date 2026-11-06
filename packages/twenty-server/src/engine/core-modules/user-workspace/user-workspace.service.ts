@@ -165,59 +165,53 @@ export class UserWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            const workspaceMemberRepository =
-              transactionScope.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-                'workspaceMember',
-              );
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        const workspaceMemberRepository =
+          transactionScope.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+          );
 
-            const existingWorkspaceMembers =
-              await workspaceMemberRepository.find({
-                where: { userId: user.id },
-              });
+        const existingWorkspaceMembers = await workspaceMemberRepository.find({
+          where: { userId: user.id },
+        });
 
-            if (existingWorkspaceMembers.length > 0) {
-              return;
-            }
+        if (existingWorkspaceMembers.length > 0) {
+          return;
+        }
 
-            const userWorkspace =
-              await this.userWorkspaceRepository.findOneOrFail({
-                where: {
-                  userId: user.id,
-                  workspaceId,
-                },
-              });
-
-            await workspaceMemberRepository.insert({
-              name: {
-                firstName: user.firstName,
-                lastName: user.lastName,
-              },
-              colorScheme: 'System',
-              uiScale: 'Default',
-              openRecordIn: OpenRecordIn.SIDE_PANEL,
-              userId: user.id,
-              userEmail: user.email,
-              avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
-              locale: (user.locale ??
-                SOURCE_LOCALE) as keyof typeof APP_LOCALES,
-            });
-
-            const workspaceMember = await workspaceMemberRepository.find({
-              where: {
-                userId: user.id,
-              },
-            });
-
-            assert(
-              workspaceMember?.length === 1,
-              `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
-            );
+        const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+          where: {
+            userId: user.id,
+            workspaceId,
           },
-        ),
+        });
+
+        await workspaceMemberRepository.insert({
+          name: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+          },
+          colorScheme: 'System',
+          uiScale: 'Default',
+          openRecordIn: OpenRecordIn.SIDE_PANEL,
+          userId: user.id,
+          userEmail: user.email,
+          avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
+          locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+        });
+
+        const workspaceMember = await workspaceMemberRepository.find({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        assert(
+          workspaceMember?.length === 1,
+          `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
+        );
+      },
       authContext,
     );
   }
@@ -406,22 +400,19 @@ export class UserWorkspaceService {
   }): Promise<void> {
     // Core rows are deleted inside the workspace transaction, so a failure there rolls the member back.
     // Only a failed commit can still split them, leaving a member that rejoining the workspace reuses.
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            await transactionScope
-              .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-                'workspaceMember',
-              )
-              .delete({ userId });
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        await transactionScope
+          .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+          )
+          .delete({ userId });
 
-            await this.deleteUserWorkspaceAndRoleTargets({
-              userWorkspaceId,
-              workspaceId,
-            });
-          },
-        ),
+        await this.deleteUserWorkspaceAndRoleTargets({
+          userWorkspaceId,
+          workspaceId,
+        });
+      },
       buildSystemAuthContext(workspaceId),
     );
 
