@@ -278,6 +278,7 @@ describe('useAuth', () => {
       await result.current.signUpWithCredentials(email, password);
     });
 
+    expect(signUpResult).toHaveBeenCalledTimes(1);
     expect(signUpResult).toHaveBeenCalledWith(
       expect.objectContaining({ email, partner: 'northwind' }),
     );

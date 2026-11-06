@@ -121,12 +121,17 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async resendEmailVerificationToken(
-    email: string,
-    workspace: WorkspaceDomainConfig | undefined,
-    locale: keyof typeof APP_LOCALES,
-    partner?: string,
-  ) {
+  async resendEmailVerificationToken({
+    email,
+    workspace,
+    locale,
+    partner,
+  }: {
+    email: string;
+    workspace: WorkspaceDomainConfig | undefined;
+    locale: keyof typeof APP_LOCALES;
+    partner?: string;
+  }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
         'Email verification token cannot be sent because email verification is not required',

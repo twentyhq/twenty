@@ -1,8 +1,9 @@
 import { PARTNER_COOKIE_KEY } from '@/auth/constants/PartnerCookieKey';
+import { type PartnerCookie } from '@/auth/types/PartnerCookie';
+import { isValidPartnerCookie } from '@/auth/utils/isValidPartnerCookie';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { isDefined, normalizePartner } from 'twenty-shared/utils';
 
-export const partnerCookieState = createAtomState<{ partner: string } | null>({
+export const partnerCookieState = createAtomState<PartnerCookie | null>({
   key: 'partnerCookie',
   defaultValue: null,
   useCookieStorage: {
@@ -10,8 +11,6 @@ export const partnerCookieState = createAtomState<{ partner: string } | null>({
     attributes: {
       expires: 30,
     },
-    validateInitFn: (payload) =>
-      isDefined(payload.partner) &&
-      normalizePartner(payload.partner) === payload.partner,
+    validateInitFn: isValidPartnerCookie,
   },
 });
