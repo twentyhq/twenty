@@ -1088,10 +1088,10 @@ describe('Conversations through the record API', () => {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
-    const readableRecordIds =
+    const readableEvents =
       await getAppProviderByClassName<RecordEventPermissionsService>(
         'RecordEventPermissionsService',
-      ).findReadableEventRecordIds({
+      ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId,
@@ -1099,7 +1099,7 @@ describe('Conversations through the record API', () => {
         eventBatch: batch,
       });
 
-    return readableRecordIds.has(threadId);
+    return readableEvents.some(({ recordId }) => recordId === threadId);
   };
 
   it.each([false, true])(
