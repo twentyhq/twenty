@@ -7,53 +7,13 @@ import { type ApplicationContentFilterOption } from '@/settings/applications/typ
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
 import { type ApplicationContentObjectResolver } from '@/settings/applications/types/ApplicationContentObjectResolver';
+import { getApplicationContentParentFilterOptions } from '@/settings/applications/utils/getApplicationContentParentFilterOptions';
 
 export type ApplicationContentFilter = {
   key: ApplicationContentFilterKey;
   options: ApplicationContentFilterOption[];
   isSelectable: boolean;
   getItemKeys: (item: ApplicationContentItem) => (string | null | undefined)[];
-};
-
-// Parents can live outside the app's own lists, so options come from the rows
-const getParentOptions = ({
-  items,
-  parents,
-  resolveObject,
-}: {
-  items: ApplicationContentItem[];
-  parents: ApplicationContentItem[];
-  resolveObject: ApplicationContentObjectResolver;
-}): ApplicationContentFilterOption[] => {
-  const optionsByUniversalIdentifier = new Map<
-    string,
-    ApplicationContentFilterOption
-  >();
-
-  for (const item of items) {
-    const parentUniversalIdentifier = item.parentUniversalIdentifier;
-
-    if (
-      !isDefined(parentUniversalIdentifier) ||
-      optionsByUniversalIdentifier.has(parentUniversalIdentifier)
-    ) {
-      continue;
-    }
-
-    const parent = parents.find(
-      ({ universalIdentifier }) =>
-        universalIdentifier === parentUniversalIdentifier,
-    );
-
-    optionsByUniversalIdentifier.set(parentUniversalIdentifier, {
-      universalIdentifier: parentUniversalIdentifier,
-      label: parent?.label ?? item.parentLabel ?? parentUniversalIdentifier,
-      icon: parent?.icon,
-      color: resolveObject(parent?.objectUniversalIdentifier)?.color,
-    });
-  }
-
-  return [...optionsByUniversalIdentifier.values()];
 };
 
 export const getApplicationContentFilters = ({
@@ -90,7 +50,7 @@ export const getApplicationContentFilters = ({
         return {
           key,
           isSelectable: true,
-          options: getParentOptions({
+          options: getApplicationContentParentFilterOptions({
             items,
             parents: content.views,
             resolveObject,
@@ -101,7 +61,7 @@ export const getApplicationContentFilters = ({
         return {
           key,
           isSelectable: true,
-          options: getParentOptions({
+          options: getApplicationContentParentFilterOptions({
             items,
             parents: content.pageLayouts,
             resolveObject,
