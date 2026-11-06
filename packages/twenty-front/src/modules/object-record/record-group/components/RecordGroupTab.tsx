@@ -29,10 +29,11 @@ export const RecordGroupTab = ({
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const aggregateDisplayValue = useAtomComponentFamilyStateValue(
-    recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
-    { groupValue: recordGroupDefinition?.value ?? '' },
-  );
+  const recordIndexAggregateDisplayValueForGroupValue =
+    useAtomComponentFamilyStateValue(
+      recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
+      { groupValue: recordGroupDefinition?.value ?? '' },
+    );
 
   const { ref: dropTargetRef, isDropTarget } = useDroppable({
     id: `record-group-tab-${recordGroupId}`,
@@ -51,7 +52,11 @@ export const RecordGroupTab = ({
       ref={dropTargetRef}
       value={recordGroupId}
       highlighted={isDropTarget}
-      badge={isDefined(aggregateDisplayValue) ? aggregateDisplayValue : '-'}
+      badge={
+        isDefined(recordIndexAggregateDisplayValueForGroupValue)
+          ? recordIndexAggregateDisplayValueForGroupValue
+          : '-'
+      }
     >
       <RecordGroupChip
         recordGroupDefinition={recordGroupDefinition}

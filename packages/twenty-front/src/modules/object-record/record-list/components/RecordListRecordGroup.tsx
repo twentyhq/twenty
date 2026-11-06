@@ -1,6 +1,6 @@
-import { useActiveRecordGroupTabId } from '@/object-record/record-group/hooks/useActiveRecordGroupTabId';
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useIsRecordGroupTabsDisplayed } from '@/object-record/record-group/hooks/useIsRecordGroupTabsDisplayed';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RecordListRecordGroupSection } from '@/object-record/record-list/components/RecordListRecordGroupSection';
@@ -9,7 +9,7 @@ import { RecordListRecordsEffect } from '@/object-record/record-list/components/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { isRecordListGroupSectionToggledComponentState } from '@/object-record/record-list/states/isRecordListGroupSectionToggledComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { ViewType } from '@/views/types/ViewType';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,9 +34,13 @@ export const RecordListRecordGroup = () => {
     currentRecordGroupId,
   );
 
-  const isRecordGroupTabsDisplayed = useIsRecordGroupTabsDisplayed();
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
 
-  const activeRecordGroupTabId = useActiveRecordGroupTabId(ViewType.LIST);
+  const activeRecordGroupTabId = useAtomComponentSelectorValue(
+    activeRecordGroupTabIdComponentSelector,
+  );
 
   const isSectionDisplayed = isRecordGroupTabsDisplayed
     ? activeRecordGroupTabId === currentRecordGroupId

@@ -1,4 +1,6 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -21,6 +23,20 @@ export const recordIndexDisplayedRecordIdsComponentSelector =
 
         if (recordGroupIds.length === 0 || !isDefined(viewType)) {
           return get(recordIndexAllRecordIdsComponentSelector, { instanceId });
+        }
+
+        if (get(isRecordGroupTabsDisplayedComponentSelector, { instanceId })) {
+          const activeRecordGroupTabId = get(
+            activeRecordGroupTabIdComponentSelector,
+            { instanceId },
+          );
+
+          return isDefined(activeRecordGroupTabId)
+            ? get(recordIndexRecordIdsByGroupComponentFamilyState, {
+                instanceId,
+                familyKey: activeRecordGroupTabId,
+              })
+            : [];
         }
 
         return get(visibleRecordGroupIdsComponentFamilySelector, {
