@@ -11,6 +11,7 @@ import { ChartColorSelectionDropdownContent } from '@/side-panel/pages/page-layo
 import { ChartDataSourceDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent';
 import { ChartNumberFormatSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartNumberFormatSelectionDropdownContent';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { msg } from '@lingui/core/macro';
@@ -98,16 +99,23 @@ export const SearchAndCommitSourceWithKeyboard: Story = {
     await waitFor(() =>
       expect(trigger).toHaveAttribute('aria-expanded', 'false'),
     );
-    expect(jotaiStore.get(draftState).tabs[0].widgets[0]).toEqual(
-      expect.objectContaining({
-        objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
-        configuration: expect.objectContaining({
-          aggregateFieldMetadataId: undefined,
-          primaryAxisGroupByFieldMetadataId: undefined,
-          filter: {},
-        }),
-      }),
-    );
+    const companyMetadataItem = getMockObjectMetadataItemOrThrow('company');
+    const companyFieldIds = companyMetadataItem.fields.map(({ id }) => id);
+    const { objectMetadataId, configuration } =
+      jotaiStore.get(draftState).tabs[0].widgets[0];
+
+    expect(objectMetadataId).toBe(companyMetadataItem.id);
+    expect(
+      isWidgetConfigurationOfType(configuration, 'BarChartConfiguration'),
+    ).toBe(true);
+
+    if (isWidgetConfigurationOfType(configuration, 'BarChartConfiguration')) {
+      expect(companyFieldIds).toContain(configuration.aggregateFieldMetadataId);
+      expect(companyFieldIds).toContain(
+        configuration.primaryAxisGroupByFieldMetadataId,
+      );
+      expect(configuration.filter).toEqual({});
+    }
     await waitFor(() => expect(trigger).toHaveFocus());
     expect(onBackgroundClickOutside).not.toHaveBeenCalled();
   },
