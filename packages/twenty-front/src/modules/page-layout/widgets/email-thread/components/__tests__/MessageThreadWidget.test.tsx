@@ -22,6 +22,11 @@ jest.mock('@/activities/emails/hooks/useMessageThreadChannel', () => ({
 }));
 
 jest.mock(
+  '@/activities/emails/hooks/useSubscribeToMessageThreadMessages',
+  () => ({ useSubscribeToMessageThreadMessages: jest.fn() }),
+);
+
+jest.mock(
   '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent',
   () => ({ ChatThreadWidgetContent: () => <div>Chat thread</div> }),
 );
