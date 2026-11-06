@@ -31,7 +31,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-const setRecordGroup = (recordGroupId: string, position: number) =>
+const setRecordGroup = ({
+  recordGroupId,
+  position,
+}: {
+  recordGroupId: string;
+  position: number;
+}) =>
   jotaiStore.set(recordGroupDefinitionFamilyState.atomFamily(recordGroupId), {
     id: recordGroupId,
     type: RecordGroupDefinitionType.Value,
@@ -59,8 +65,8 @@ describe('useSetRecordTableData', () => {
         },
       ],
     });
-    setRecordGroup('group-1', 0);
-    setRecordGroup('group-2', 1);
+    setRecordGroup({ recordGroupId: 'group-1', position: 0 });
+    setRecordGroup({ recordGroupId: 'group-2', position: 1 });
     jotaiStore.set(recordGroupIdsComponentState.atomFamily({ instanceId }), [
       'group-1',
       'group-2',
