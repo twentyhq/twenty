@@ -41,26 +41,7 @@ export class RecordEventPermissionsService {
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
-  async findReadableEventRecordIds({
-    authContext,
-    eventBatch,
-  }: {
-    authContext: PermissionsAuthContext;
-    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  }): Promise<Set<string>> {
-    const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      });
-
-    return isDefined(principals)
-      ? this.findEventBatchAccessLoaders(
-          eventBatch,
-        ).findReadableRecordIdsInBatch(principals)
-      : new Set<string>();
-  }
-
-  async findReadableEvents<TEvent extends ObjectRecordEvent>({
+  async filterReadableEvents<TEvent extends ObjectRecordEvent>({
     authContext,
     eventBatch,
     events = eventBatch.events,
