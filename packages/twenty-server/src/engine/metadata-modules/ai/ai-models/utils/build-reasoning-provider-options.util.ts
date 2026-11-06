@@ -100,7 +100,6 @@ export const buildReasoningProviderOptions = (
       return isDefined(effort) ? { mistral: { reasoningEffort: effort } } : {};
     case AI_SDK_XAI:
       return isDefined(effort) ? { xai: { reasoningEffort: effort } } : {};
-    // read for any provider name, unlike the provider's own key, which the SDK also copies into the request body
     case AI_SDK_OPENAI_COMPATIBLE:
       return isDefined(effort)
         ? { openaiCompatible: { reasoningEffort: effort } }
