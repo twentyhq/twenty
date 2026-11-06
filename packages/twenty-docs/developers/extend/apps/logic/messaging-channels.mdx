@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none and a later [delivery status](#delivery-status), so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none, a later [delivery status](#delivery-status) and [reactions](#reactions), so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
@@ -159,6 +159,10 @@ Attachments follow the channel's `visibility` like the body: unless the conversa
 ### Delivery status
 
 Set `deliveryStatus` on a message you sent to show whether its recipients got it: `SENT`, `DELIVERED` or `READ`. Conversations show it as ticks next to the time. Ingesting the message again with a later status updates it, and an earlier one is ignored, so an out-of-order webhook never moves a read message back to sent. Leave it out on received messages and when the provider reports nothing. Requires `"engines": { "twenty": ">=2.57.0" }`.
+
+### Reactions
+
+Pass a message's emoji reactions as `reactions`, each with the reactor's `handle` (the same namespace as participant handles), an optional `displayName` and the `emoji`. The list is the message's full current set: it replaces the stored reactions, so send it again whenever a reaction is added or removed, leave it out to keep what is stored, and pass `[]` to clear them. Conversations show them under the message, and they follow the channel's `visibility` like the body. Requires `"engines": { "twenty": ">=2.57.0" }`.
 
 ### Linking participants to People
 
