@@ -4,10 +4,11 @@ import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { workflowActionSchema } from 'twenty-shared/workflow';
-import { v5 } from 'uuid';
+import {
+  computeRecordSortId,
+  workflowActionSchema,
+} from 'twenty-shared/workflow';
 
-import { MANIFEST_RECORD_SORT_ID_NAMESPACE } from 'src/engine/core-modules/application/application-manifest/constants/manifest-record-sort-id-namespace.constant';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import {
   ApplicationException,
@@ -114,10 +115,10 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                           ),
                           id: isString(reference.id)
                             ? reference.id
-                            : v5(
-                                `${step.universalIdentifier}:${index}`,
-                                MANIFEST_RECORD_SORT_ID_NAMESPACE,
-                              ),
+                            : computeRecordSortId({
+                                stepId: step.universalIdentifier,
+                                index,
+                              }),
                         }),
                       ),
                     }

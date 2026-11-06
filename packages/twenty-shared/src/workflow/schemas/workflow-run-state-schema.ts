@@ -1,6 +1,7 @@
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isString } from '@sniptt/guards';
 import { z } from 'zod';
+import { computeRecordSortId } from '@/workflow/utils/computeRecordSortId';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowCreateRecordActionSettingsSchema } from './create-record-action-settings-schema';
 import { workflowUpsertRecordActionSchema } from './upsert-record-action-schema';
@@ -27,7 +28,10 @@ const dropStoredFindRecordsGqlOrderBy = (step: unknown): unknown => {
   if (Array.isArray(orderBy.recordSorts)) {
     orderBy.recordSorts = orderBy.recordSorts.map((recordSort, index) =>
       isPlainObject(recordSort) && !isString(recordSort.id)
-        ? { ...recordSort, id: `${String(step.id)}-${index}` }
+        ? {
+            ...recordSort,
+            id: computeRecordSortId({ stepId: String(step.id), index }),
+          }
         : recordSort,
     );
   }

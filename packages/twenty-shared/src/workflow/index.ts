@@ -13,6 +13,7 @@ export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesH
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
 export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSyncedFromConnectedAccounts';
+export { RECORD_SORT_ID_NAMESPACE } from './constants/RecordSortIdNamespace';
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeatureFlags';
@@ -169,6 +170,7 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
+export { computeRecordSortId } from './utils/computeRecordSortId';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';

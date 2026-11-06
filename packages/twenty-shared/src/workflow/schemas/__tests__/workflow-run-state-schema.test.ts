@@ -1,3 +1,5 @@
+import { computeRecordSortId } from '@/workflow/utils/computeRecordSortId';
+
 import { workflowRunStateSchema } from '../workflow-run-state-schema';
 
 const STEP_ID = '5f0f7f3a-6d7e-4a0b-9a51-2d6c7c1e9b10';
@@ -34,7 +36,7 @@ describe('workflowRunStateSchema', () => {
           orderBy: {
             recordSorts: [
               {
-                id: `${STEP_ID}-0`,
+                id: computeRecordSortId({ stepId: STEP_ID, index: 0 }),
                 fieldMetadataId: 'field-id',
                 direction: 'ASC',
               },
