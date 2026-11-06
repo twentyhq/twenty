@@ -1,13 +1,12 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getDeclaredOutputSchema } from 'src/database/commands/upgrade-version-command/2-57/utils/get-declared-output-schema.util';
 import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { moveStepOutputSamplesToExpectedOutput } from 'src/database/commands/upgrade-version-command/2-57/utils/move-step-output-samples-to-expected-output.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -55,7 +54,7 @@ export class MoveStepOutputSamplesToExpectedOutputCommand extends ProvisionedWor
 
     const declaredOutputSchemaByLogicFunctionId = new Map<
       string,
-      BaseOutputSchemaV2
+      Record<string, unknown>
     >();
 
     for (const flatLogicFunction of Object.values(
@@ -67,7 +66,7 @@ export class MoveStepOutputSamplesToExpectedOutputCommand extends ProvisionedWor
       if (isDefined(flatLogicFunction) && isDefined(declaredInputSchema)) {
         declaredOutputSchemaByLogicFunctionId.set(
           flatLogicFunction.id,
-          inputSchemaToOutputSchema(declaredInputSchema),
+          getDeclaredOutputSchema(declaredInputSchema),
         );
       }
     }

@@ -313,8 +313,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       });
 
     if (!isDefined(persistedTrigger)) {
-      throw new Error(
+      throw new WorkflowVersionStepException(
         `Core workflow version '${coreWorkflowVersionId}' lost its trigger while saving it`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
 

@@ -242,7 +242,6 @@ export class CoreWorkflowVersionListService {
     return { ...storedCoreWorkflowVersion, trigger, steps };
   }
 
-  // the version as stored, for callers that never read its output schemas
   async findOneStoredByCoreWorkflowVersionId({
     workspaceId,
     userWorkspaceId,

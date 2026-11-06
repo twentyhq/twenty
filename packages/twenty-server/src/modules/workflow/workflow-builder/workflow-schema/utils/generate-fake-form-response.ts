@@ -41,7 +41,6 @@ export const generateFakeFormResponse = ({
           })
         : undefined;
 
-      // a field on a deleted object offers nothing, while the other fields keep their variables
       if (!isDefined(flatObjectMetadata)) {
         return undefined;
       }

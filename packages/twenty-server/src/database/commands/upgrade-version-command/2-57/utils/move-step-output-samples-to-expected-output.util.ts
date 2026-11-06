@@ -1,11 +1,8 @@
 import isEqual from 'lodash.isequal';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import {
-  type BaseOutputSchemaV2,
-  isBaseOutputSchemaV2,
-} from 'twenty-shared/workflow';
 
 import { getOutputSchemaFromSample } from 'src/database/commands/upgrade-version-command/2-57/utils/get-output-schema-from-sample.util';
+import { isStoredOutputSchema } from 'src/database/commands/upgrade-version-command/2-57/utils/is-stored-output-schema.util';
 
 const SAMPLE_STEP_TYPES = new Set(['CODE', 'HTTP_REQUEST', 'LOGIC_FUNCTION']);
 
@@ -43,7 +40,7 @@ export const moveStepOutputSamplesToExpectedOutput = ({
   declaredOutputSchemaByLogicFunctionId,
 }: {
   steps: unknown;
-  declaredOutputSchemaByLogicFunctionId: Map<string, BaseOutputSchemaV2>;
+  declaredOutputSchemaByLogicFunctionId: Map<string, Record<string, unknown>>;
 }): { steps: unknown; movedStepIds: string[] } => {
   if (!Array.isArray(steps)) {
     return { steps, movedStepIds: [] };
@@ -63,7 +60,7 @@ export const moveStepOutputSamplesToExpectedOutput = ({
     const { outputSchema, expectedOutputSchema, input } = step.settings;
 
     // a legacy placeholder such as the LINK one is not an output, so it has no sample to move
-    if (!isBaseOutputSchemaV2(outputSchema)) {
+    if (!isStoredOutputSchema(outputSchema)) {
       return step;
     }
 
