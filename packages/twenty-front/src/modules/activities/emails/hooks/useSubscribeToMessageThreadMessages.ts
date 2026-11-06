@@ -33,10 +33,19 @@ export const useSubscribeToMessageThreadMessages = ({
     [messageThreadId],
   );
 
+  const refetchMessagesIfSinglePage = useCallback(() => {
+    // refetch resets to the first page and would drop pages loaded through fetchMore
+    if (loadedMessageCount > QUERY_MAX_RECORDS) {
+      return;
+    }
+
+    refetchMessages();
+  }, [loadedMessageCount, refetchMessages]);
+
   useListenToEventsForQuery({
     queryId,
     operationSignature,
-    onSseReconnected: refetchMessages,
+    onSseReconnected: refetchMessagesIfSinglePage,
   });
 
   const handleMessageOperation = useCallback(
@@ -48,14 +57,9 @@ export const useSubscribeToMessageThreadMessages = ({
         return;
       }
 
-      // refetch resets to the first page and would drop pages loaded through fetchMore
-      if (loadedMessageCount > QUERY_MAX_RECORDS) {
-        return;
-      }
-
-      refetchMessages();
+      refetchMessagesIfSinglePage();
     },
-    [loadedMessageCount, messageThreadId, refetchMessages],
+    [messageThreadId, refetchMessagesIfSinglePage],
   );
 
   useListenToObjectRecordOperationBrowserEvent({
