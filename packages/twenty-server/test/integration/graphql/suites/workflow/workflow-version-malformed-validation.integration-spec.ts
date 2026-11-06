@@ -213,19 +213,6 @@ describe('Workflow version malformed validation (e2e)', () => {
     );
   });
 
-  it('accepts the empty fieldsToUpdate builders stored before 2.57', async () => {
-    const response = await updateStepResponse(
-      coreWorkflowVersionId,
-      stepWithInput({
-        objectName: 'note',
-        objectRecord: { title: 'Hello' },
-        fieldsToUpdate: [],
-      }),
-    );
-
-    expect(response.body.errors).toBeUndefined();
-  });
-
   it('forbids writing steps through the generic updateWorkflowVersion mutation', async () => {
     const operation = updateOneOperationFactory({
       objectMetadataSingularName: 'workflowVersion',

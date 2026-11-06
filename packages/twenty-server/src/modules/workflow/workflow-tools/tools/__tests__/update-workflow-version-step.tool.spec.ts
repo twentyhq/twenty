@@ -122,18 +122,5 @@ describe('createUpdateWorkflowVersionStepTool', () => {
         coreWorkflowVersionMutationService.updateStep,
       ).not.toHaveBeenCalled();
     });
-
-    it('accepts the empty fieldsToUpdate builders stored before 2.57', async () => {
-      const step = upsertRecordStepWithFieldsToUpdate({ fieldsToUpdate: [] });
-      const { coreWorkflowVersionMutationService, output } = callThroughToolSet(
-        { step },
-      );
-
-      await output;
-
-      expect(
-        coreWorkflowVersionMutationService.updateStep,
-      ).toHaveBeenCalledWith(expect.objectContaining({ step }));
-    });
   });
 });

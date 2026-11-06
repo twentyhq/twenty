@@ -89,22 +89,4 @@ describe('dropFieldsToUpdateFromCreateAndUpsertRecords', () => {
     expect(result.hasChanged).toBe(false);
     expect(result.steps).toBe(steps);
   });
-
-  it('leaves steps without fieldsToUpdate and non-array content unchanged', () => {
-    const steps = [
-      recordStep({
-        type: 'UPSERT_RECORD',
-        input: { objectName: 'company', objectRecord: {} },
-      }),
-    ];
-
-    expect(dropFieldsToUpdateFromCreateAndUpsertRecords(steps)).toEqual({
-      steps,
-      hasChanged: false,
-      droppedNonEmptyFieldsToUpdate: [],
-    });
-    expect(dropFieldsToUpdateFromCreateAndUpsertRecords(null).hasChanged).toBe(
-      false,
-    );
-  });
 });

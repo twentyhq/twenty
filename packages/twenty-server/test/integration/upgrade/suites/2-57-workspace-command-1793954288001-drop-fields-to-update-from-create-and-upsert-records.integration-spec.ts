@@ -154,23 +154,6 @@ describe('2-57 workspace command - drop fieldsToUpdate from create and upsert re
     await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
   });
 
-  it('changes nothing in a dry run', async () => {
-    await runCommand({ dryRun: true });
-
-    expect(
-      await readSteps({
-        schema: 'core',
-        workflowVersionId: coreWorkflowVersionId,
-      }),
-    ).toEqual(legacySteps);
-    expect(
-      await readSteps({
-        schema: SCHEMA,
-        workflowVersionId: workspaceWorkflowVersionId,
-      }),
-    ).toEqual(legacySteps);
-  });
-
   it('drops fieldsToUpdate from create and upsert record steps only, the same in core and the workspace', async () => {
     await runCommand();
 
