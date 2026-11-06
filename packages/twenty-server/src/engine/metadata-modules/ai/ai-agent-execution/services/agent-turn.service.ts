@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isAiDataPolicyActive } from 'twenty-shared/ai';
-
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type AgentStepLoop,
@@ -93,7 +91,10 @@ export class AgentTurnService {
       await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
         workspace,
       );
-    const isContentRecordingAllowed = !isAiDataPolicyActive(aiDataPolicy);
+    const isContentRecordingAllowed =
+      await this.workspaceAiDataPolicyService.isContentRecordingAllowed(
+        workspace,
+      );
 
     this.aiModelRegistryService.validateModelAvailabilityOrThrow({
       modelId,

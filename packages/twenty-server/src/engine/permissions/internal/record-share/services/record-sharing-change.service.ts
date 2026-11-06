@@ -92,7 +92,8 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsService.canRoleUpdateSomeRecords({
+            !(await this.recordPermissionsService.canRoleReachSomeRecords({
+              operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,
             }))
