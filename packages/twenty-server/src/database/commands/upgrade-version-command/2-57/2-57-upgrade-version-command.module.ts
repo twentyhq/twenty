@@ -16,6 +16,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [AddAgentsNavigationMenuItemCommand, AddMessageAttachmentTargetCommand],
+  providers: [
+    AddAgentsNavigationMenuItemCommand,
+    AddMessageAttachmentTargetCommand,
+  ],
 })
 export class V2_57_UpgradeVersionCommandModule {}
