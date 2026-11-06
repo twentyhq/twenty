@@ -95,11 +95,13 @@ export class MessageListDuplicationService {
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsService.canRoleReadSomeRecords({
+            this.recordPermissionsService.canRoleReachSomeRecords({
+              operationType: 'select',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsService.canRoleUpdateSomeRecords({
+            this.recordPermissionsService.canRoleReachSomeRecords({
+              operationType: 'update',
               principals,
               objectMetadataId,
             }),

@@ -1,4 +1,4 @@
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -25,8 +25,8 @@ export interface WorkspaceInternalContext {
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordReadRestrictions: RecordReadRestrictions;
-  recordPermissions: Pick<
-    RecordPermissionsService,
+  recordRepositoryPermissions: Pick<
+    RecordRepositoryPermissionsService,
     | 'isOperationDisabled'
     | 'assertObjectOperationAccessibleOrThrow'
     | 'assertColumnsReadableAndUpdatableOrThrow'

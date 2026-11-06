@@ -422,7 +422,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 objectName: activeObjectMetadataItem?.nameSingular || '',
                 objectRecord: {},
-                fieldsToUpdate: [],
               },
             },
           },
