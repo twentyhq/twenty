@@ -145,14 +145,15 @@ export const SelectsAGroup: Story = {
       expect(canvas.getByRole('tab', { name: /Contacted/ })).toBeVisible();
     });
 
+    const allTab = canvas.getByRole('tab', { name: /All/ });
+    expect(allTab).toHaveAttribute('aria-selected', 'true');
+
     const contactedTab = canvas.getByRole('tab', { name: /Contacted/ });
-    expect(contactedTab).toHaveAttribute('aria-selected', 'true');
     expect(contactedTab).toHaveTextContent('214');
 
-    const repliedTab = canvas.getByRole('tab', { name: /Replied/ });
-    await userEvent.click(repliedTab);
+    await userEvent.click(contactedTab);
 
-    expect(repliedTab).toHaveAttribute('aria-selected', 'true');
-    expect(contactedTab).toHaveAttribute('aria-selected', 'false');
+    expect(contactedTab).toHaveAttribute('aria-selected', 'true');
+    expect(allTab).toHaveAttribute('aria-selected', 'false');
   },
 };

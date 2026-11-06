@@ -17,7 +17,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableRecordGroupsBody = () => {
   const recordTableHasRecords = useAtomComponentSelectorValue(
@@ -42,7 +41,9 @@ export const RecordTableRecordGroupsBody = () => {
   );
 
   const displayedRecordGroupIds = isRecordGroupTabsDisplayed
-    ? [activeRecordGroupTabId].filter(isDefined)
+    ? visibleRecordGroupIds.filter(
+        (recordGroupId) => recordGroupId === activeRecordGroupTabId,
+      )
     : visibleRecordGroupIds;
 
   if (isRecordTableInitialLoading && !recordTableHasRecords) {

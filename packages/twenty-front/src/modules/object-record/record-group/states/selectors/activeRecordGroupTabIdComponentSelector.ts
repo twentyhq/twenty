@@ -1,3 +1,4 @@
+import { ALL_RECORD_GROUPS_TAB_ID } from '@/object-record/record-group/constants/AllRecordGroupsTabId';
 import { selectedRecordGroupTabIdComponentState } from '@/object-record/record-group/states/selectedRecordGroupTabIdComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { getActiveRecordGroupTabId } from '@/object-record/record-group/utils/getActiveRecordGroupTabId';
@@ -7,7 +8,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { isDefined } from 'twenty-shared/utils';
 
 export const activeRecordGroupTabIdComponentSelector =
-  createAtomComponentSelector<string | null>({
+  createAtomComponentSelector<string>({
     key: 'activeRecordGroupTabIdComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
@@ -16,7 +17,7 @@ export const activeRecordGroupTabIdComponentSelector =
         const viewType = get(recordIndexViewTypeState, { instanceId });
 
         if (!isDefined(viewType)) {
-          return null;
+          return ALL_RECORD_GROUPS_TAB_ID;
         }
 
         return getActiveRecordGroupTabId({

@@ -9,6 +9,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -50,9 +51,15 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
+  const isAllRecordGroupsTabActive = useAtomComponentSelectorValue(
+    isAllRecordGroupsTabActiveComponentSelector,
+    recordIndexId,
+  );
+
   // Targeting the whole view would reach the groups hidden behind other tabs
   const isWholeViewTargeted =
-    hasUserSelectedAllRecords && !isRecordGroupTabsDisplayed;
+    hasUserSelectedAllRecords &&
+    (!isRecordGroupTabsDisplayed || isAllRecordGroupsTabActive);
 
   const recordIndexAllRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,

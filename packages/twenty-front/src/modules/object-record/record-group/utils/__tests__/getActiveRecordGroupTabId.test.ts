@@ -1,3 +1,4 @@
+import { ALL_RECORD_GROUPS_TAB_ID } from '@/object-record/record-group/constants/AllRecordGroupsTabId';
 import { getActiveRecordGroupTabId } from '@/object-record/record-group/utils/getActiveRecordGroupTabId';
 
 describe('getActiveRecordGroupTabId', () => {
@@ -10,30 +11,30 @@ describe('getActiveRecordGroupTabId', () => {
     ).toBe('replied');
   });
 
-  it('should fall back to the first visible group when nothing is selected', () => {
+  it('should fall back to the All tab when nothing is selected', () => {
     expect(
       getActiveRecordGroupTabId({
         selectedRecordGroupId: null,
         visibleRecordGroupIds: ['contacted', 'replied'],
       }),
-    ).toBe('contacted');
+    ).toBe(ALL_RECORD_GROUPS_TAB_ID);
   });
 
-  it('should fall back to the first visible group when the selected one was hidden', () => {
+  it('should fall back to the All tab when the selected group was hidden', () => {
     expect(
       getActiveRecordGroupTabId({
         selectedRecordGroupId: 'not-now',
         visibleRecordGroupIds: ['contacted', 'replied'],
       }),
-    ).toBe('contacted');
+    ).toBe(ALL_RECORD_GROUPS_TAB_ID);
   });
 
-  it('should return null when no group is visible', () => {
+  it('should keep the All tab when it is selected', () => {
     expect(
       getActiveRecordGroupTabId({
-        selectedRecordGroupId: 'replied',
-        visibleRecordGroupIds: [],
+        selectedRecordGroupId: ALL_RECORD_GROUPS_TAB_ID,
+        visibleRecordGroupIds: ['contacted', 'replied'],
       }),
-    ).toBeNull();
+    ).toBe(ALL_RECORD_GROUPS_TAB_ID);
   });
 });

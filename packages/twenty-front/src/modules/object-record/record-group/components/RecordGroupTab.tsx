@@ -34,6 +34,7 @@ export const RecordGroupTab = ({ recordGroupId }: RecordGroupTabProps) => {
 
   return (
     <Tabs.Tab
+      variant="filled"
       value={recordGroupId}
       badge={
         isDefined(recordIndexAggregateDisplayValueForGroupValue)

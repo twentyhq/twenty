@@ -1,3 +1,4 @@
+import { ALL_RECORD_GROUPS_TAB_ID } from '@/object-record/record-group/constants/AllRecordGroupsTabId';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetActiveRecordGroupTabIdArgs = {
@@ -8,7 +9,7 @@ type GetActiveRecordGroupTabIdArgs = {
 export const getActiveRecordGroupTabId = ({
   selectedRecordGroupId,
   visibleRecordGroupIds,
-}: GetActiveRecordGroupTabIdArgs): string | null => {
+}: GetActiveRecordGroupTabIdArgs): string => {
   if (
     isDefined(selectedRecordGroupId) &&
     visibleRecordGroupIds.includes(selectedRecordGroupId)
@@ -16,5 +17,5 @@ export const getActiveRecordGroupTabId = ({
     return selectedRecordGroupId;
   }
 
-  return visibleRecordGroupIds[0] ?? null;
+  return ALL_RECORD_GROUPS_TAB_ID;
 };
