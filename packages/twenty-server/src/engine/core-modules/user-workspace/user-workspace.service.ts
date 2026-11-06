@@ -381,14 +381,7 @@ export class UserWorkspaceService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    // Core and workspace writes never share a transaction, so each step must leave a recoverable state:
-    // the soft delete revokes access first and keeps the row, so a removal that fails later can be retried.
-    await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
-    await this.coreEntityCacheService.invalidate(
-      'userWorkspaceEntity',
-      userWorkspaceId,
-    );
-
+    // Member first: a member left without its userWorkspace breaks the workspace members query for everyone
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager
         .getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
@@ -402,35 +395,15 @@ export class UserWorkspaceService {
       workspaceId,
     });
 
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatRoleTargetMaps',
       'userApplicationVariableValueMaps',
       'flatWorkspaceMemberMaps',
     ]);
-  }
-
-  async findUserWorkspaceToRemove({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<UserWorkspaceEntity | null> {
-    const userWorkspace = await this.userWorkspaceRepository.findOneBy({
-      userId,
-      workspaceId,
-    });
-
-    if (isDefined(userWorkspace)) {
-      return userWorkspace;
-    }
-
-    // A removal that stopped after its soft delete is resumed from that row
-    return this.userWorkspaceRepository.findOne({
-      where: { userId, workspaceId },
-      withDeleted: true,
-      order: { deletedAt: 'DESC' },
-    });
   }
 
   private async deleteUserWorkspaceAndRoleTargets({
