@@ -1,14 +1,14 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
+import { type WorkflowRecordSort } from '@/workflow/types/Workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { ViewSortDirection } from 'twenty-shared/types';
 import { IconArrowsSort, IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { v4 as uuidv4 } from 'uuid';
-import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -28,8 +28,8 @@ const StyledAddButtonContainer = styled.div`
 `;
 
 type WorkflowFindRecordsSortsProps = {
-  recordSorts: RecordSort[];
-  onChange: (recordSorts: RecordSort[]) => void;
+  recordSorts: WorkflowRecordSort[];
+  onChange: (recordSorts: WorkflowRecordSort[]) => void;
   objectMetadataItem: EnrichedObjectMetadataItem;
   readonly: boolean;
 };
@@ -67,7 +67,7 @@ export const WorkflowFindRecordsSorts = ({
       return;
     }
 
-    const newSort: RecordSort = {
+    const newSort: WorkflowRecordSort = {
       id: uuidv4(),
       fieldMetadataId: sortableFields[0]?.value ?? '',
       direction: ViewSortDirection.ASC,

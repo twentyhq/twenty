@@ -142,7 +142,9 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         orderBy: {
-          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
+          recordSorts: [
+            { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
+          ],
           gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
         },
       }),
@@ -159,12 +161,28 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should reject a record sort without an id, which the sort list keys on', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings({
+        orderBy: {
+          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
+        },
+      }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject a record sort with an unknown direction', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         orderBy: {
           recordSorts: [
-            { fieldMetadataId: 'field-id', direction: 'AscNullsLast' },
+            {
+              id: 'sort-id',
+              fieldMetadataId: 'field-id',
+              direction: 'AscNullsLast',
+            },
           ],
         },
       }),

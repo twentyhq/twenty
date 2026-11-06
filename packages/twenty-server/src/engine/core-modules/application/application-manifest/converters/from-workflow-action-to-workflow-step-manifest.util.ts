@@ -40,7 +40,18 @@ const fromFindRecordsOrderBy = ({
   isDefined(orderBy.recordSorts)
     ? {
         ...orderBy,
-        recordSorts: toArray(orderBy.recordSorts).map(resolvers.fieldReference),
+        // the sort id only keys the builder's sort list; importing gives it back
+        recordSorts: toArray(orderBy.recordSorts).map((recordSort) => {
+          const reference = resolvers.fieldReference(recordSort);
+
+          if (!isDefined(reference)) {
+            return reference;
+          }
+
+          const { id: _id, ...referenceWithoutId } = reference;
+
+          return referenceWithoutId;
+        }),
       }
     : orderBy;
 

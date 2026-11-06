@@ -29,6 +29,9 @@ const RUN_STATUSES_STILL_EXECUTING_STEPS = [
   'RUNNING',
 ];
 
+// rows with record sorts are read too, since sorts written without an id get one
+const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `(steps::text LIKE '%gqlOperationOrderBy%' OR steps::text LIKE '%recordSorts%')`;
+
 @RegisteredWorkspaceCommand('2.57.0', 1793946633206)
 @Command({
   name: 'upgrade:2-57:move-find-records-sorts-to-record-sorts',
@@ -85,7 +88,7 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
       isDryRun,
       tableName: 'core."workflowVersion"',
       columnName: 'steps',
-      whereClause: `"workspaceId" = $1 AND steps::text LIKE '%gqlOperationOrderBy%'`,
+      whereClause: `"workspaceId" = $1 AND ${FIND_RECORDS_ORDER_BY_STEPS_CLAUSE}`,
       whereParameters: [workspaceId],
       mapRow: convertSteps,
     });
@@ -98,7 +101,7 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
           isDryRun,
           tableName: workspaceVersionTable,
           columnName: 'steps',
-          whereClause: `steps::text LIKE '%gqlOperationOrderBy%'`,
+          whereClause: FIND_RECORDS_ORDER_BY_STEPS_CLAUSE,
           whereParameters: [],
           mapRow: convertSteps,
         })

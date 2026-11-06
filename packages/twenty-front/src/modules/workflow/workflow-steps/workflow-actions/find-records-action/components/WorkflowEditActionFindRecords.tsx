@@ -5,7 +5,6 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
-import { v4 } from 'uuid';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -14,7 +13,6 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -44,13 +42,9 @@ type WorkflowEditActionFindRecordsProps = {
 type FindRecordsFormData = {
   objectNameSingular: string;
   filter?: FindRecordsActionFilter;
-  orderBy?: FindRecordsActionOrderBy;
+  orderBy?: WorkflowFindRecordsAction['settings']['input']['orderBy'];
   limit?: number | string;
   offset?: number | string;
-};
-
-type FindRecordsActionOrderBy = {
-  recordSorts?: RecordSort[];
 };
 
 export const WorkflowEditActionFindRecords = ({
@@ -77,15 +71,7 @@ export const WorkflowEditActionFindRecords = ({
         ? action.settings.input.offset
         : 0,
     filter: action.settings.input.filter as FindRecordsActionFilter,
-    orderBy: isDefined(action.settings.input.orderBy?.recordSorts)
-      ? {
-          // sorts written through the API or a manifest carry no id, which the sort list keys on
-          recordSorts: action.settings.input.orderBy.recordSorts.map(
-            (recordSort) => ({ ...recordSort, id: recordSort.id ?? v4() }),
-          ) as RecordSort[],
-        }
-      : // a sort stored in another shape is kept, so saving is refused rather than dropping it
-        (action.settings.input.orderBy as FindRecordsActionOrderBy | undefined),
+    orderBy: action.settings.input.orderBy,
   }));
 
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
@@ -137,7 +123,7 @@ export const WorkflowEditActionFindRecords = ({
               ? Math.max(0, Math.floor(updatedOffset))
               : (updatedOffset ?? 0),
             filter: updatedFilter,
-            orderBy: updatedOrderBy as Record<string, any[]> | undefined,
+            orderBy: updatedOrderBy,
           },
         },
       });
@@ -243,7 +229,7 @@ export const WorkflowEditActionFindRecords = ({
               <WorkflowFindRecordsSorts
                 recordSorts={formData.orderBy?.recordSorts ?? []}
                 objectMetadataItem={selectedObjectMetadataItem}
-                onChange={(sorts: RecordSort[]) => {
+                onChange={(sorts) => {
                   if (isFormDisabled === true) {
                     return;
                   }

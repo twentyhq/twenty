@@ -1,0 +1,2 @@
+export const MANIFEST_RECORD_SORT_ID_NAMESPACE =
+  '6a0d1f3e-58c4-4b2a-9e7d-3c1b8f5a2e64';

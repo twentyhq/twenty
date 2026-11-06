@@ -200,7 +200,11 @@ describe('Workflow version malformed validation (e2e)', () => {
       [SEED_APPLE_WORKSPACE_ID],
     );
     const recordSorts = [
-      { fieldMetadataId: companyNameFieldId, direction: 'DESC' },
+      {
+        id: '5b9f0e64-3c2a-4d1e-9f7b-8a6c4e2d1b0a',
+        fieldMetadataId: companyNameFieldId,
+        direction: 'DESC',
+      },
     ];
 
     const response = await updateStepResponse(

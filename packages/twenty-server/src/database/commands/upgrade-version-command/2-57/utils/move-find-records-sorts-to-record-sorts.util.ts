@@ -200,20 +200,31 @@ export const moveFindRecordsSortsToRecordSorts = ({
       step.type !== 'FIND_RECORDS' ||
       !isPlainObject(step.settings) ||
       !isPlainObject(step.settings.input) ||
-      !isPlainObject(step.settings.input.orderBy) ||
-      !('gqlOperationOrderBy' in step.settings.input.orderBy)
+      !isPlainObject(step.settings.input.orderBy)
     ) {
+      return step;
+    }
+
+    const { input } = step.settings;
+    const stepId = String(step.id);
+    const { gqlOperationOrderBy, ...orderBy } = step.settings.input.orderBy;
+    const hasGqlOperationOrderBy =
+      'gqlOperationOrderBy' in step.settings.input.orderBy;
+    const hasSortsWithoutId =
+      Array.isArray(orderBy.recordSorts) &&
+      orderBy.recordSorts.some(
+        (recordSort) => isPlainObject(recordSort) && !isString(recordSort.id),
+      );
+
+    if (!hasGqlOperationOrderBy && !hasSortsWithoutId) {
       return step;
     }
 
     hasChanged = true;
 
-    const { input } = step.settings;
-    const { gqlOperationOrderBy, ...orderBy } = step.settings.input.orderBy;
-
-    if (!isDefined(orderBy.recordSorts)) {
+    if (hasGqlOperationOrderBy && !isDefined(orderBy.recordSorts)) {
       const converted = toRecordSorts({
-        stepId: String(step.id),
+        stepId,
         gqlOperationOrderBy,
         fields: isString(input.objectName)
           ? (fieldsByObjectName.get(input.objectName) ?? [])
@@ -225,6 +236,18 @@ export const moveFindRecordsSortsToRecordSorts = ({
       if (converted.recordSorts.length > 0) {
         orderBy.recordSorts = converted.recordSorts;
       }
+    }
+
+    // sorts written through the API or a manifest had no id, which the sort schema now requires
+    if (Array.isArray(orderBy.recordSorts)) {
+      orderBy.recordSorts = orderBy.recordSorts.map((recordSort, index) =>
+        isPlainObject(recordSort) && !isString(recordSort.id)
+          ? {
+              ...recordSort,
+              id: v5(`${stepId}:${index}`, RECORD_SORT_ID_NAMESPACE),
+            }
+          : recordSort,
+      );
     }
 
     return {

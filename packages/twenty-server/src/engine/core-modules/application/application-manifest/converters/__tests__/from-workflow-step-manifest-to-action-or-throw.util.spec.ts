@@ -349,9 +349,18 @@ describe('application workflow actions', () => {
         ],
       },
       orderBy: {
-        recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
+        recordSorts: [
+          {
+            id: expect.any(String),
+            fieldMetadataId: LOCAL_ID,
+            direction: 'ASC',
+          },
+        ],
       },
     });
+    expect(
+      convert(WorkflowActionType.FIND_RECORDS).settings.input.orderBy,
+    ).toEqual(convert(WorkflowActionType.FIND_RECORDS).settings.input.orderBy);
     expect(
       convert(WorkflowActionType.FIND_RECORDS).settings.input,
     ).not.toHaveProperty('orderBy.gqlOperationOrderBy');

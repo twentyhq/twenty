@@ -154,6 +154,38 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
     ]);
   });
 
+  it('gives record sorts written without an id a stable one', () => {
+    const run = () =>
+      moveFindRecordsSortsToRecordSorts({
+        steps: [
+          findRecordsStep({
+            recordSorts: [
+              { id: 'kept-id', fieldMetadataId: 'name-id', direction: 'ASC' },
+              { fieldMetadataId: 'employees-id', direction: 'DESC' },
+            ],
+          }),
+        ],
+        fieldsByObjectName,
+      });
+
+    const result = run();
+
+    expect(result.hasChanged).toBe(true);
+    expect(result.steps).toEqual([
+      findRecordsStep({
+        recordSorts: [
+          { id: 'kept-id', fieldMetadataId: 'name-id', direction: 'ASC' },
+          {
+            id: expect.any(String),
+            fieldMetadataId: 'employees-id',
+            direction: 'DESC',
+          },
+        ],
+      }),
+    ]);
+    expect(run().steps).toEqual(result.steps);
+  });
+
   it('leaves steps without a GraphQL order untouched', () => {
     const steps = [
       findRecordsStep({ recordSorts: [] }),
