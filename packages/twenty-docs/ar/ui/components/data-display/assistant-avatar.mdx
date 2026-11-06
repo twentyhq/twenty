@@ -1,9 +1,9 @@
 ---
 title: الصورة الرمزية للمساعد
-description: شخصية مساعد ثابتة ذات شكل وتعبير ولون وحجم قابلة للتهيئة.
+description: شخصية مساعد ذات شكل وتعبير ولون وحجم ورسوم متحركة أثناء الخمول قابلة للتهيئة.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
@@ -33,12 +33,13 @@ export const AssistantLabel = () => (
 
 اختر الأشكال بشكل مستقل عن التعابير والألوان.
 
-| خاصية   | القيم                                                                                      | الإعداد الافتراضي   |
-| ------- | ------------------------------------------------------------------------------------------ | ------------------- |
-| `shape` | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`            |
-| `face`  | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `الإعداد الافتراضي` |
-| `اللون` | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `أزرق`              |
-| `الحجم` | `14`, `16`, `20`, `24`, `40` بكسل                                                          | `24`                |
+| خاصية        | القيم                                                                                      | الإعداد الافتراضي   |
+| ------------ | ------------------------------------------------------------------------------------------ | ------------------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`            |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `الإعداد الافتراضي` |
+| `اللون`      | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `أزرق`              |
+| `الحجم`      | `14`, `16`, `20`, `24`, `40` بكسل                                                          | `24`                |
+| `isAnimated` | `true`, `false`                                                                            | `خاطئ`              |
 
 يستخدم الجسم والوجه رموز النسق الخاصة بلوحة الألوان المحددة ويتبعان النسق الفاتح أو الداكن المحيط. عيّن `size` لشخصية مربعة. تستهدف السمات والأحداث الأصلية و`className` و`style` و`ref` عنصر span الخارجي؛ وتتجاوز الأنماط الصريحة أبعاده وإعدادات لوحة الألوان الافتراضية.
 
@@ -55,6 +56,24 @@ export const CustomAssistant = () => (
   />
 );
 ```
+
+## الرسوم المتحركة في وضع السكون
+
+عيّن `isAnimated` لتشغيل حلقة السكون للتعبير المحدد. يرمش Default ويلقي نظرات جانبية، ويرفع Happy عينيه، ويغلق Wink عينًا واحدة، ويوسّع Surprised عينيه، ويُظهر Sleepy علامة نوم عائمة، وتنبض عينا Love على شكل قلب. يبقى الجسم ثابتًا.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--idle-faces" title="الرسوم المتحركة في وضع السكون لكل تعبير" height={180} />
+
+الرسوم المتحركة معطلة افتراضيًا. عيّن `isAnimated={false}` لعرض التعبير الثابت، بما في ذلك الغمزة الظاهرة. عندما يفضّل المتصفح تقليل الحركة، يعرض المكوّن التعبير الثابت حتى عند تمكين `isAnimated`. ينطبق التفضيل أيضًا إذا تغيّر أثناء عرض الشخصية.
+
+يتحكم التطبيق في مفتاح تبديل الرسوم المتحركة. تتحكم هذه الخاصية في العرض في وضع السكون ولا تمثل الاستماع أو التحدث أو التفكير أو أي نشاط آخر للمساعد.
 
 ## إمكانية الوصول
 

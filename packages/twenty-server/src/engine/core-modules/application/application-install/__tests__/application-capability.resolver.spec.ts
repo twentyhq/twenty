@@ -21,8 +21,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -68,8 +68,8 @@ describe('ApplicationCapabilityResolver', () => {
     findOneApplicationWithRelationsOrThrow: jest.fn(),
     update: jest.fn(),
   };
-  const permissionsService = {
-    userHasWorkspaceSettingPermission: jest.fn(),
+  const settingPermissionsService = {
+    hasPermissionFlag: jest.fn(),
   };
 
   const grantCapabilities = ({
@@ -102,7 +102,10 @@ describe('ApplicationCapabilityResolver', () => {
         TestQueryResolver,
         ApplicationCapabilityResolver,
         { provide: ApplicationService, useValue: applicationService },
-        { provide: PermissionsService, useValue: permissionsService },
+        {
+          provide: SettingPermissionsService,
+          useValue: settingPermissionsService,
+        },
         { provide: FeatureFlagService, useValue: {} },
         AccessPolicyService,
       ],
@@ -115,9 +118,7 @@ describe('ApplicationCapabilityResolver', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-      true,
-    );
+    settingPermissionsService.hasPermissionFlag.mockResolvedValue(true);
     applicationService.findOneApplicationWithRelationsOrThrow.mockResolvedValue(
       {
         id: APPLICATION_ID,
@@ -145,15 +146,16 @@ describe('ApplicationCapabilityResolver', () => {
       id: APPLICATION_ID,
       grantedCapabilities: ['microphone', 'camera'],
     });
-    expect(
-      permissionsService.userHasWorkspaceSettingPermission,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: USER_REQUEST.userWorkspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
-      }),
+    expect(settingPermissionsService.hasPermissionFlag).toHaveBeenCalledTimes(
+      1,
     );
+    expect(settingPermissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+      authContext: expect.objectContaining({
+        type: 'pendingActivationUser',
+        userWorkspaceId: USER_REQUEST.userWorkspaceId,
+      }),
+      permissionFlag: PermissionFlagType.APPLICATIONS,
+    });
     expect(
       applicationService.findOneApplicationWithRelationsOrThrow,
     ).toHaveBeenCalledWith({
@@ -192,9 +194,7 @@ describe('ApplicationCapabilityResolver', () => {
   });
 
   it('rejects members without the manage-apps permission', async () => {
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-      false,
-    );
+    settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
     const result = await grantCapabilities();
 

@@ -49,7 +49,10 @@ export type LearnToolsOptions = {
 };
 
 export const createLearnToolsTool = (
-  toolRegistry: ToolRegistryService,
+  toolRegistry: Pick<
+    ToolRegistryService,
+    'getToolInfo' | 'suggestSimilarToolNames' | 'spillToolOutputIfTooLarge'
+  >,
   context: ToolContext,
   options?: LearnToolsOptions,
 ) => ({

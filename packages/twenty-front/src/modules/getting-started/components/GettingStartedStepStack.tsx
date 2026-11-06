@@ -3,13 +3,20 @@ import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/c
 import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { getGettingStartedAdjacentSteps } from '@/getting-started/utils/getGettingStartedAdjacentSteps';
 import { getGettingStartedStackedSteps } from '@/getting-started/utils/getGettingStartedStackedSteps';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { IconCircleCheck } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconCircleCheck,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
@@ -25,19 +32,31 @@ const StyledActiveStep = styled.div`
   position: relative;
 `;
 
-const StyledSteps = styled.nav`
-  align-items: flex-end;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledStepsTrack = styled.div`
+  bottom: 0;
   position: absolute;
   right: calc(100% + ${themeCssVariables.spacing[10]});
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
 
   @container getting-started-scroll (max-width: ${GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH}px) {
     display: none;
   }
+`;
+
+const StyledSteps = styled.nav`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  position: sticky;
+  top: ${themeCssVariables.spacing[10]};
+`;
+
+const StyledTicks = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTick = styled.button`
@@ -145,6 +164,12 @@ export const GettingStartedStepStack = ({
     ({ actionKey }) => actionKey === selectedStepActionKey,
   );
   const selectedStepDefinition = steps[selectedStepIndex];
+  const { previousStepActionKey, nextStepActionKey } =
+    getGettingStartedAdjacentSteps({
+      steps,
+      completedStepActionKeys,
+      selectedStepActionKey,
+    });
   const stackedSteps = getGettingStartedStackedSteps({
     steps,
     completedStepActionKeys,
@@ -195,23 +220,51 @@ export const GettingStartedStepStack = ({
         })}
       </AnimatePresence>
       <StyledActiveStep>
-        <StyledSteps aria-label={t`Getting started steps`}>
-          {steps.map(({ actionKey, title }) => (
-            <StyledTick
-              key={actionKey}
-              type="button"
-              aria-label={title}
-              aria-current={
-                actionKey === selectedStepActionKey ? 'step' : undefined
+        <StyledStepsTrack>
+          <StyledSteps aria-label={t`Getting started steps`}>
+            <LightIconButton
+              size="xs"
+              emphasis="subtle"
+              aria-label={t`Previous step`}
+              disabled={isSaving || !isDefined(previousStepActionKey)}
+              onClick={() =>
+                isDefined(previousStepActionKey) &&
+                selectGettingStartedStep(previousStepActionKey)
               }
-              data-completed={
-                completedStepActionKeys.includes(actionKey) || undefined
+            >
+              <IconChevronUp />
+            </LightIconButton>
+            <StyledTicks>
+              {steps.map(({ actionKey, title }) => (
+                <StyledTick
+                  key={actionKey}
+                  type="button"
+                  aria-label={title}
+                  aria-current={
+                    actionKey === selectedStepActionKey ? 'step' : undefined
+                  }
+                  data-completed={
+                    completedStepActionKeys.includes(actionKey) || undefined
+                  }
+                  disabled={isSaving}
+                  onClick={() => selectGettingStartedStep(actionKey)}
+                />
+              ))}
+            </StyledTicks>
+            <LightIconButton
+              size="xs"
+              emphasis="subtle"
+              aria-label={t`Next step`}
+              disabled={isSaving || !isDefined(nextStepActionKey)}
+              onClick={() =>
+                isDefined(nextStepActionKey) &&
+                selectGettingStartedStep(nextStepActionKey)
               }
-              disabled={isSaving}
-              onClick={() => selectGettingStartedStep(actionKey)}
-            />
-          ))}
-        </StyledSteps>
+            >
+              <IconChevronDown />
+            </LightIconButton>
+          </StyledSteps>
+        </StyledStepsTrack>
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={selectedStepActionKey}

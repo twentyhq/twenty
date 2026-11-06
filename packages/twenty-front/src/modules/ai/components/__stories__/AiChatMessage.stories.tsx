@@ -7,8 +7,12 @@ import {
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -26,9 +30,12 @@ import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
@@ -352,6 +359,31 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Ada]]';
+const RENAMED_ASSISTANT_MENTION =
+  '[[record:agentChatAssistant:agentChatAssistant:Scout Bot: [support] 100%]]';
+
+const mockAssistantMentionMessage: ExtendedUIMessage = {
+  id: 'msg-assistant-mentions',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'text',
+      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review [[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]].
+
+Legacy text: @Ada wrote this.
+
+\`\`\`text
+${ASSISTANT_MENTION}
+\`\`\``,
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+  },
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockLongUserMessage,
@@ -520,6 +552,26 @@ export const AssistantTextResponse: Story = {
   render: () => <AiChatMessage messageId={mockSimpleTextResponse.id} />,
 };
 
+export const AssistantMentions: Story = {
+  decorators: [MemoryRouterDecorator],
+  parameters: { messages: [mockAssistantMentionMessage] },
+  render: () => <AiChatMessage messageId={mockAssistantMentionMessage.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('@Ada')).toBeVisible();
+    await expect(canvas.getByText('@Scout Bot: [support] 100%')).toBeVisible();
+    await expect(canvas.getByText('Charles Test')).toBeVisible();
+    await expect(
+      canvas.getByText('Legacy text: @Ada wrote this.'),
+    ).toBeVisible();
+    await expect(canvas.getByText(ASSISTANT_MENTION)).toBeVisible();
+    await expect(
+      canvas.queryByText(RENAMED_ASSISTANT_MENTION),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const AssistantStreaming: Story = {
   render: () => <AiChatMessage messageId={mockStreamingMessage.id} />,
 };
@@ -588,6 +640,30 @@ export const MultiplayerConversation: Story = {
     })[1];
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
+
+    const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+    assertIsDefinedOrThrow(threadId);
+    const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
+    const previousThread = jotaiStore.get(threadRecordAtom);
+
+    try {
+      jotaiStore.set(threadRecordAtom, {
+        ...previousThread,
+        id: threadId,
+        __typename: 'AgentChatThread',
+        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+      });
+      await waitFor(() =>
+        expect(
+          canvas.queryByRole('button', { name: 'Add reaction' }),
+        ).not.toBeInTheDocument(),
+      );
+      await expect(
+        canvas.queryByRole('button', { name: '👍 by You' }),
+      ).not.toBeInTheDocument();
+    } finally {
+      jotaiStore.set(threadRecordAtom, previousThread);
+    }
   },
 };
 

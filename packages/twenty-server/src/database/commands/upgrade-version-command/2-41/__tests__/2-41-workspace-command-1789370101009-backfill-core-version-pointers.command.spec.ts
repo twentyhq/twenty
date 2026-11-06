@@ -1,7 +1,8 @@
-import { type DataSource } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789370101009-backfill-core-version-pointers.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -12,7 +13,7 @@ const isUpdate = (sql: unknown) =>
 const updatedTable = (sql: string) =>
   sql.includes('core."workflow" cw') ? 'workflow' : 'commandMenuItem';
 
-const setup = ({
+const setup = async ({
   workflowTotal = 0,
   commandMenuItemTotal = 0,
   hasCoreWorkflowVersionIdColumn = true,
@@ -21,7 +22,7 @@ const setup = ({
   commandMenuItemTotal?: number;
   hasCoreWorkflowVersionIdColumn?: boolean;
 } = {}) => {
-  const query = jest.fn(async (...args: unknown[]) => {
+  const query = jest.fn().mockImplementation(async (...args: unknown[]) => {
     const sql = args[0] as string;
 
     if (sql.includes('information_schema.columns')) {
@@ -40,22 +41,24 @@ const setup = ({
     return [];
   });
 
-  const queryRunner = {
-    connect: jest.fn(),
-    release: jest.fn(),
-    query,
-  };
+  const dataSource = new DataSource({ type: 'postgres' });
+  const queryRunner = dataSource.createQueryRunner();
 
-  const dataSource = {
-    createQueryRunner: () => queryRunner,
-  } as unknown as DataSource;
+  queryRunner.connect = jest.fn();
+  queryRunner.release = jest.fn();
+  queryRunner.query = query;
+  dataSource.createQueryRunner = () => queryRunner;
 
   const flush = jest.fn();
 
-  const command = new BackfillCoreVersionPointersCommand(
-    {} as WorkspaceIteratorService,
-    { flush } as unknown as WorkspaceCacheService,
-  );
+  const module = await Test.createTestingModule({
+    providers: [
+      BackfillCoreVersionPointersCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      { provide: WorkspaceCacheService, useValue: { flush } },
+    ],
+  }).compile();
+  const command = module.get(BackfillCoreVersionPointersCommand);
 
   const run = (dryRun = false) =>
     command.runOnWorkspace({
@@ -73,7 +76,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('builds single-FROM statements', async () => {
-    const { run, query } = setup({
+    const { run, query } = await setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
     });
@@ -92,7 +95,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('updates both tables when both have rows left to fill', async () => {
-    const { run, query, queryRunner, flush } = setup({
+    const { run, query, queryRunner, flush } = await setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
     });
@@ -112,7 +115,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('updates only the table that has rows left to fill', async () => {
-    const { run, query } = setup({
+    const { run, query } = await setup({
       workflowTotal: 0,
       commandMenuItemTotal: 3,
     });
@@ -127,7 +130,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('skips a workspace whose workflowVersion table has no coreWorkflowVersionId column', async () => {
-    const { run, query, queryRunner } = setup({
+    const { run, query, queryRunner } = await setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
       hasCoreWorkflowVersionIdColumn: false,
@@ -140,7 +143,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('does not update on a dry run', async () => {
-    const { run, query, flush } = setup({
+    const { run, query, flush } = await setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
     });
@@ -152,7 +155,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('is a no-op when nothing is left to fill', async () => {
-    const { run, query } = setup();
+    const { run, query } = await setup();
 
     await run();
 
@@ -160,7 +163,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('releases the query runner when an update throws', async () => {
-    const { run, queryRunner, query } = setup({ workflowTotal: 2 });
+    const { run, queryRunner, query } = await setup({ workflowTotal: 2 });
 
     query.mockImplementation(async (...args: unknown[]) => {
       const sql = args[0] as string;

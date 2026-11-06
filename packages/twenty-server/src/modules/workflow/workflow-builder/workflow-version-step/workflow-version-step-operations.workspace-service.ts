@@ -22,7 +22,7 @@ import {
 } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { getLogicFunctionSeedSourceCodeOrThrow } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-source-code-or-throw.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -422,7 +422,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 objectName: activeObjectMetadataItem?.nameSingular || '',
                 objectRecord: {},
-                fieldsToUpdate: [],
               },
             },
           },

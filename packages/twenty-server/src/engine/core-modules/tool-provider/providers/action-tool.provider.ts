@@ -36,7 +36,7 @@ import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-
 import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Injectable()
@@ -60,7 +60,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly saveCampaignTool: SaveCampaignTool,
     private readonly shareRecordTool: ShareRecordTool,
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly i18nService: I18nService,
   ) {
     this.toolMap = new Map<string, Tool>([
@@ -91,10 +91,11 @@ export class ActionToolProvider implements ToolProvider {
     const includeSchemas = options?.includeSchemas ?? true;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const hasHttpPermission = await this.permissionsService.hasPermissionFlag({
-      authContext: context.authContext,
-      setting: PermissionFlagType.HTTP_REQUEST_TOOL,
-    });
+    const hasHttpPermission =
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        permissionFlag: PermissionFlagType.HTTP_REQUEST_TOOL,
+      });
 
     if (hasHttpPermission) {
       descriptors.push(
@@ -107,10 +108,11 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    const hasEmailPermission = await this.permissionsService.hasPermissionFlag({
-      authContext: context.authContext,
-      setting: PermissionFlagType.SEND_EMAIL_TOOL,
-    });
+    const hasEmailPermission =
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
+      });
 
     if (hasEmailPermission) {
       descriptors.push(
@@ -142,9 +144,9 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasCreateCalendarEventPermission =
-      await this.permissionsService.hasPermissionFlag({
+      await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+        permissionFlag: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
       });
 
     if (hasCreateCalendarEventPermission) {
@@ -159,9 +161,9 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasUploadFilePermission =
-      await this.permissionsService.hasPermissionFlag({
+      await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.UPLOAD_FILE,
+        permissionFlag: PermissionFlagType.UPLOAD_FILE,
       });
 
     if (hasUploadFilePermission) {
@@ -230,9 +232,9 @@ export class ActionToolProvider implements ToolProvider {
 
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      (await this.permissionsService.hasPermissionFlag({
+      (await this.settingPermissionsService.hasPermissionFlag({
         authContext: context.authContext,
-        setting: PermissionFlagType.CODE_INTERPRETER_TOOL,
+        permissionFlag: PermissionFlagType.CODE_INTERPRETER_TOOL,
       }));
 
     if (hasCodeInterpreterPermission) {

@@ -1,10 +1,11 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ContractTimelineActivityCompatibilityCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787648000000-contract-timeline-activity-compatibility.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000002';
@@ -23,7 +24,7 @@ const buildField = ({
   isNullable,
 });
 
-const buildCommand = ({
+const buildCommand = async ({
   audit = {
     missingTypeIdCount: '0',
     missingSnapshotCount: '0',
@@ -48,48 +49,61 @@ const buildCommand = ({
     .fn()
     .mockResolvedValue(migrationResult);
   const query = jest.fn().mockResolvedValue([audit]);
-  const command = new ContractTimelineActivityCompatibilityCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: {
-            universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          },
-        }),
-    } as unknown as ApplicationService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatObjectMetadataMaps: {
-          byUniversalIdentifier: {
-            [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
-          },
+  const module = await Test.createTestingModule({
+    providers: [
+      ContractTimelineActivityCompatibilityCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: {
+                universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+              },
+            }),
         },
-        flatFieldMetadataMaps: {
-          byUniversalIdentifier: {
-            ...(includeLegacyName
-              ? {
-                  [LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER]: legacyNameField,
-                }
-              : {}),
-          },
-        },
-        flatTimelineActivityTypeMaps: {
-          byUniversalIdentifier: {
-            '00000000-0000-4000-8000-000000000003': {
-              id: '00000000-0000-4000-8000-000000000004',
-              action: 'linked',
-              objectUniversalIdentifier: null,
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatObjectMetadataMaps: {
+              byUniversalIdentifier: {
+                [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
+              },
             },
-          },
+            flatFieldMetadataMaps: {
+              byUniversalIdentifier: {
+                ...(includeLegacyName
+                  ? {
+                      [LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER]: legacyNameField,
+                    }
+                  : {}),
+              },
+            },
+            flatTimelineActivityTypeMaps: {
+              byUniversalIdentifier: {
+                '00000000-0000-4000-8000-000000000003': {
+                  id: '00000000-0000-4000-8000-000000000004',
+                  action: 'linked',
+                  objectUniversalIdentifier: null,
+                },
+              },
+            },
+          }),
         },
-      }),
-    } as unknown as WorkspaceCacheService,
-    {
-      validateBuildAndRunLegacyWorkspaceMigration,
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-  );
+      },
+      {
+        provide: WorkspaceMigrationValidateBuildAndRunService,
+        useValue: {
+          validateBuildAndRunLegacyWorkspaceMigration,
+        },
+      },
+    ],
+  }).compile();
+  const command = module.get(ContractTimelineActivityCompatibilityCommand);
 
   return {
     command,
@@ -107,7 +121,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
       dataSource,
       legacyNameField,
       validateBuildAndRunLegacyWorkspaceMigration,
-    } = buildCommand();
+    } = await buildCommand();
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -135,7 +149,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
 
   it('is idempotent after the compatibility fields are contracted', async () => {
     const { command, dataSource, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand({ includeLegacyName: false });
+      await buildCommand({ includeLegacyName: false });
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -154,7 +168,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
       dataSource,
       query,
       validateBuildAndRunLegacyWorkspaceMigration,
-    } = buildCommand({
+    } = await buildCommand({
       audit: {
         missingTypeIdCount: '2',
         missingSnapshotCount: '3',
@@ -180,7 +194,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
       dataSource,
       query,
       validateBuildAndRunLegacyWorkspaceMigration,
-    } = buildCommand({
+    } = await buildCommand({
       audit: {
         missingTypeIdCount: '1',
         missingSnapshotCount: '1',
@@ -234,7 +248,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
 
   it('accepts a historical snapshot whose live type was uninstalled', async () => {
     const { command, dataSource, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand({
+      await buildCommand({
         includeLegacyName: false,
         audit: {
           missingTypeIdCount: '0',
@@ -255,7 +269,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
   });
 
   it('does not block contraction on an unrepairable missing historical snapshot', async () => {
-    const { command, dataSource, query } = buildCommand({
+    const { command, dataSource, query } = await buildCommand({
       includeLegacyName: false,
       audit: {
         missingTypeIdCount: '0',
@@ -279,7 +293,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
   });
 
   it('continues the type ID backfill while PostgreSQL reports full batches', async () => {
-    const { command, dataSource, query } = buildCommand({
+    const { command, dataSource, query } = await buildCommand({
       audit: {
         missingTypeIdCount: '5002',
         missingSnapshotCount: '0',
@@ -324,7 +338,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
   });
 
   it('refuses unresolved references when the legacy repair source is gone', async () => {
-    const { command, dataSource } = buildCommand({
+    const { command, dataSource } = await buildCommand({
       includeLegacyName: false,
       audit: {
         missingTypeIdCount: '1',

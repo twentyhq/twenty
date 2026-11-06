@@ -11,7 +11,7 @@ export type PersonMeetingParticipant = {
 };
 
 export const collectPersonMeetingParticipants = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   {
     from,
     to,

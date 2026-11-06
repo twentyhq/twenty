@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import ical from 'ical-generator';
+import { type DAVClient } from 'tsdav';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { pickCalDavOrganizerEmail } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/pick-caldav-organizer-email.util';
 import {
   CalendarEventCreationException,
   CalendarEventCreationExceptionCode,
@@ -14,7 +17,10 @@ import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
+import {
+  type FetchedCalendarEvent,
+  type FetchedCalendarEventParticipant,
+} from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 @Injectable()
 export class CalDavCreateEventService implements CalendarEventCreationDriver {
@@ -25,7 +31,10 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle'
+    >,
   ): Promise<FetchedCalendarEvent> {
     try {
       const client = await this.calDavClientProvider.getClient(
@@ -42,6 +51,14 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         );
       }
 
+      const organizerEmail =
+        input.attendees.length > 0
+          ? await this.resolveOrganizerEmail({
+              client,
+              handle: connectedAccount.handle,
+            })
+          : undefined;
+
       const uid = uuid();
       const calendar = ical({ prodId: '//Twenty//Calendar//EN' });
 
@@ -53,6 +70,9 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         summary: input.title,
         description: input.description,
         location: input.location,
+        organizer: isDefined(organizerEmail)
+          ? { name: organizerEmail, email: organizerEmail }
+          : undefined,
         attendees: input.attendees.map((attendee) => ({
           email: attendee.email,
           name: attendee.displayName,
@@ -93,6 +113,27 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
 
       const now = new Date().toISOString();
 
+      const participants: FetchedCalendarEventParticipant[] = input.attendees
+        .filter(
+          (attendee) =>
+            attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
+        )
+        .map((attendee) => ({
+          displayName: attendee.displayName ?? '',
+          handle: attendee.email,
+          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
+          isOrganizer: false,
+        }));
+
+      if (isDefined(organizerEmail)) {
+        participants.unshift({
+          displayName: organizerEmail,
+          handle: organizerEmail.toLowerCase(),
+          responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
+          isOrganizer: true,
+        });
+      }
+
       return {
         id,
         iCalUid: uid,
@@ -111,12 +152,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         conferenceSolution: '',
         externalCreatedAt: now,
         externalUpdatedAt: now,
-        participants: input.attendees.map((attendee) => ({
-          displayName: attendee.displayName ?? '',
-          handle: attendee.email,
-          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
-          isOrganizer: false,
-        })),
+        participants,
       };
     } catch (error) {
       if (error instanceof CalendarEventCreationException) {
@@ -128,6 +164,22 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
+
+  private async resolveOrganizerEmail({
+    client,
+    handle,
+  }: {
+    client: DAVClient;
+    handle: string;
+  }): Promise<string> {
+    const calendarUserAddresses = isDefined(client.account)
+      ? await client
+          .fetchCalendarUserAddresses({ account: client.account })
+          .catch(() => [])
+      : [];
+
+    return pickCalDavOrganizerEmail({ calendarUserAddresses, handle });
   }
 
   private resolveCreatedEventUrl({

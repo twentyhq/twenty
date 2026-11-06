@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -15,17 +16,18 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class ImpersonatePermissionGuard implements CanActivate {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext().req;
     const userWorkspaceId = request.userWorkspaceId;
-    const workspaceId = request.workspace.id;
 
     if (!isDefined(userWorkspaceId)) {
       throw new PermissionsException(
@@ -42,12 +44,9 @@ export class ImpersonatePermissionGuard implements CanActivate {
     }
 
     const hasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        setting: PermissionFlagType.IMPERSONATE,
-        workspaceId,
-        applicationId: undefined,
-        agentId: request.agentId,
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: buildWorkspaceAuthContextFromRequest(request),
+        permissionFlag: PermissionFlagType.IMPERSONATE,
       });
 
     if (hasPermission === true) return true;

@@ -1,10 +1,12 @@
 import { type TargetFunction } from '@/app/source/extract-define-entity';
+import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { planPullWrites } from '@/app/pull/plan-pull-writes';
 import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 import {
   type Manifest,
   type NavigationMenuItemManifest,
+  type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type StandaloneViewFieldManifest,
@@ -14,6 +16,7 @@ import {
 } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
+  FieldMetadataType,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -77,7 +80,7 @@ const buildObject = ({
   nameSingular: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string;
   label?: string;
-}) => ({
+}): ObjectManifest => ({
   universalIdentifier,
   nameSingular,
   namePlural: `${nameSingular}s`,
@@ -89,23 +92,24 @@ const buildObject = ({
       universalIdentifier: labelIdentifierFieldMetadataUniversalIdentifier,
       name: 'name',
       label,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
     },
   ],
 });
 
-const buildManifest = (objects: unknown[]): Manifest =>
-  ({
-    application: {
-      universalIdentifier: APP_UID,
-      displayName: 'Pets',
-      description: '',
-      defaultRoleUniversalIdentifier: 'role-uid',
-    },
-    objects,
-    fields: [],
-    indexes: [],
-  }) as unknown as Manifest;
+const buildManifest = (objects: ObjectManifest[]): Manifest => ({
+  ...EMPTY_MANIFEST,
+  application: {
+    universalIdentifier: APP_UID,
+    displayName: 'Pets',
+    description: '',
+    defaultRoleUniversalIdentifier: 'role-uid',
+    packageJsonChecksum: 'package-checksum',
+    yarnLockChecksum: null,
+  },
+  objects,
+  indexes: [],
+});
 
 const MANIFEST = buildManifest([
   buildObject({
@@ -529,18 +533,18 @@ describe('planPullWrites', () => {
             universalIdentifier: 'field-one',
             name: 'notes',
             label: 'Notes',
-            type: 'TEXT',
+            type: FieldMetadataType.TEXT,
             objectUniversalIdentifier: PET_UID,
           },
           {
             universalIdentifier: 'field-two',
             name: 'notes',
             label: 'Notes',
-            type: 'TEXT',
+            type: FieldMetadataType.TEXT,
             objectUniversalIdentifier: ROCKET_UID,
           },
         ],
-      } as unknown as Manifest,
+      },
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
@@ -1336,7 +1340,7 @@ describe('planPullWrites', () => {
         defaultRoleUniversalIdentifier: SUPPORT_ROLE_UID,
       },
       roles: [{ universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' }],
-    } as unknown as Manifest;
+    };
     const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',

@@ -22,41 +22,17 @@ describe('assertFieldWidgetOrThrow', () => {
     expect(() => assertFieldWidgetOrThrow(widget)).not.toThrow();
   });
 
-  it('should throw when configuration is undefined', () => {
-    const widget = {
-      id: 'w1',
-      type: WidgetType.FIELD,
-      configuration: undefined,
-    } as unknown as PageLayoutWidget;
-
-    expect(() => assertFieldWidgetOrThrow(widget)).toThrow(
-      'Widget configuration is required',
-    );
-  });
-
   it('should throw when configuration typename does not match', () => {
-    const widget = {
-      id: 'w1',
-      type: WidgetType.FIELD,
+    const widget: Pick<PageLayoutWidget, 'configuration'> = {
       configuration: {
-        __typename: 'WidgetConfiguration',
+        __typename: 'IframeConfiguration',
+        configurationType: WidgetConfigurationType.IFRAME,
+        url: 'https://example.com',
       },
-    } as unknown as PageLayoutWidget;
+    };
 
     expect(() => assertFieldWidgetOrThrow(widget)).toThrow(
-      'Expected FieldConfiguration but got WidgetConfiguration',
+      'Expected FieldConfiguration but got IframeConfiguration',
     );
-  });
-
-  it('should throw when configuration typename is empty string', () => {
-    const widget = {
-      id: 'w1',
-      type: WidgetType.FIELD,
-      configuration: {
-        __typename: '',
-      },
-    } as unknown as PageLayoutWidget;
-
-    expect(() => assertFieldWidgetOrThrow(widget)).toThrow();
   });
 });

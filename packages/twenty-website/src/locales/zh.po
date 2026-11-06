@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 18:13\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -4749,10 +4749,10 @@ msgstr "ICP"
 msgid "Identity"
 msgstr "身份信息"
 
-#. js-lingui-id: 02Xy0V
+#. js-lingui-id: 9JU/6K
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr "如果这是他们的第一个 Twenty 工作区，且尚未设置合作伙伴代码，他们可以在免费试用期间前往“设置”→“账单”输入您的代码。在首次付款后的 30 天内，他们也可以请求我们添加该代码。代码一旦保存到工作区，就无法更改。"
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "如果这是他们的第一个 Twenty 工作区，并且尚未设置合作伙伴代码，他们可以在免费试用期间于其工作区的 /settings/partner 页面输入您的代码。在首次付款后的 30 天内，他们也可以请求我们添加该代码。代码一旦保存到工作区，就无法更改。"
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
