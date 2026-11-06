@@ -42,7 +42,7 @@ export class AgentChatAssistantPolicyService {
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
   ) {}
 
-  async resolveAssistantMessageDecision({
+  async resolveAssistantMessageDecisionOrThrow({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],

@@ -69,7 +69,7 @@ export class AgentChatAssistantParticipationService {
         ],
       });
     const assistantMessageDecision =
-      await this.assistantPolicyService.resolveAssistantMessageDecision({
+      await this.assistantPolicyService.resolveAssistantMessageDecisionOrThrow({
         workspaceId,
         thread,
         candidateWorkspaceMemberIds: [
