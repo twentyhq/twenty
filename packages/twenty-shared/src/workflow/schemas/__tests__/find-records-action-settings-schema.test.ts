@@ -114,7 +114,6 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
 
   it('should accept record sorts that reference fields by id', () => {
     const recordSort = {
-      id: 'sort-id',
       fieldMetadataId: 'field-id',
       direction: 'DESC',
       subFieldName: 'lastName',
@@ -132,9 +131,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         orderBy: {
-          recordSorts: [
-            { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
-          ],
+          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
           gqlOperationOrderBy: [{ name: 'AscNullsLast' }],
         },
       }),
@@ -151,16 +148,21 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should reject a record sort without an id, which the sort list keys on', () => {
+  it('should drop the id a record sort was stored with before sorts lost it', () => {
     const result = workflowFindRecordsActionSettingsSchema.safeParse(
       buildSettings({
         orderBy: {
-          recordSorts: [{ fieldMetadataId: 'field-id', direction: 'ASC' }],
+          recordSorts: [
+            { id: 'sort-id', fieldMetadataId: 'field-id', direction: 'ASC' },
+          ],
         },
       }),
     );
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    expect(result.data?.input.orderBy?.recordSorts).toEqual([
+      { fieldMetadataId: 'field-id', direction: 'ASC' },
+    ]);
   });
 
   it('should reject a record sort with an unknown direction', () => {
@@ -168,11 +170,7 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
       buildSettings({
         orderBy: {
           recordSorts: [
-            {
-              id: 'sort-id',
-              fieldMetadataId: 'field-id',
-              direction: 'AscNullsLast',
-            },
+            { fieldMetadataId: 'field-id', direction: 'AscNullsLast' },
           ],
         },
       }),

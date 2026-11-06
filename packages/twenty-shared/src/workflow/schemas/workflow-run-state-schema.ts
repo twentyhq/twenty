@@ -1,7 +1,5 @@
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isString } from '@sniptt/guards';
 import { z } from 'zod';
-import { computeRecordSortId } from '@/workflow/utils/computeRecordSortId';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowCreateRecordActionSettingsSchema } from './create-record-action-settings-schema';
 import { workflowUpsertRecordActionSchema } from './upsert-record-action-schema';
@@ -10,7 +8,7 @@ import { workflowActionSchema } from './workflow-action-schema';
 import { workflowRunStateStepInfosSchema } from './workflow-run-state-step-infos-schema';
 import { workflowTriggerSchema } from './workflow-trigger-schema';
 
-// Runs keep the steps they ran with, so a find records step may still hold the GraphQL order or sorts without an id
+// Runs keep the steps they ran with, so a find records step may still hold the GraphQL order
 const dropStoredFindRecordsGqlOrderBy = (step: unknown): unknown => {
   if (
     !isPlainObject(step) ||
@@ -24,17 +22,6 @@ const dropStoredFindRecordsGqlOrderBy = (step: unknown): unknown => {
 
   const { gqlOperationOrderBy: _gqlOperationOrderBy, ...orderBy } =
     step.settings.input.orderBy;
-
-  if (Array.isArray(orderBy.recordSorts)) {
-    orderBy.recordSorts = orderBy.recordSorts.map((recordSort, index) =>
-      isPlainObject(recordSort) && !isString(recordSort.id)
-        ? {
-            ...recordSort,
-            id: computeRecordSortId({ stepId: String(step.id), index }),
-          }
-        : recordSort,
-    );
-  }
 
   return {
     ...step,

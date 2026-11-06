@@ -31,8 +31,7 @@ const RUN_STATUSES_STILL_EXECUTING_STEPS = [
 
 const RUN_PAGE_SIZE = 500;
 
-// versions with record sorts are read too, since sorts written without an id get one
-const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `(steps::text LIKE '%gqlOperationOrderBy%' OR steps::text LIKE '%recordSorts%')`;
+const FIND_RECORDS_ORDER_BY_STEPS_CLAUSE = `steps::text LIKE '%gqlOperationOrderBy%'`;
 
 @RegisteredWorkspaceCommand('2.57.0', 1793965625303)
 @Command({

@@ -231,13 +231,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     });
 
     expect(coreStep.settings.input.orderBy).toEqual({
-      recordSorts: [
-        {
-          id: expect.any(String),
-          fieldMetadataId: companyNameFieldId,
-          direction: 'DESC',
-        },
-      ],
+      recordSorts: [{ fieldMetadataId: companyNameFieldId, direction: 'DESC' }],
     });
     expect(
       await readSteps({

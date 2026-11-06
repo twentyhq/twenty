@@ -2,12 +2,8 @@ import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/app
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
-import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  computeRecordSortId,
-  workflowActionSchema,
-} from 'twenty-shared/workflow';
+import { workflowActionSchema } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import {
@@ -106,20 +102,8 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                 ...orderBy,
                 ...(isDefined(orderBy.recordSorts)
                   ? {
-                      // a manifest sort may omit its id; the stable one keeps re-syncs from rewriting the step
-                      recordSorts: orderBy.recordSorts.map(
-                        (reference, index) => ({
-                          ...fieldReference(
-                            reference,
-                            objectUniversalIdentifier,
-                          ),
-                          id: isString(reference.id)
-                            ? reference.id
-                            : computeRecordSortId({
-                                stepId: step.universalIdentifier,
-                                index,
-                              }),
-                        }),
+                      recordSorts: orderBy.recordSorts.map((reference) =>
+                        fieldReference(reference, objectUniversalIdentifier),
                       ),
                     }
                   : {}),

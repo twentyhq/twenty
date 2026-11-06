@@ -8,7 +8,6 @@ import { ViewSortDirection } from 'twenty-shared/types';
 import { IconArrowsSort, IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
-import { v4 as uuidv4 } from 'uuid';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -68,7 +67,6 @@ export const WorkflowFindRecordsSorts = ({
     }
 
     const newSort: WorkflowRecordSort = {
-      id: uuidv4(),
       fieldMetadataId: sortableFields[0]?.value ?? '',
       direction: ViewSortDirection.ASC,
     };
@@ -76,28 +74,28 @@ export const WorkflowFindRecordsSorts = ({
     onChange([...recordSorts, newSort]);
   };
 
-  const handleRemoveSort = (sortId: string) => {
+  const handleRemoveSort = (sortIndex: number) => {
     if (readonly) {
       return;
     }
 
-    onChange(recordSorts.filter((sort) => sort.id !== sortId));
+    onChange(recordSorts.filter((_sort, index) => index !== sortIndex));
   };
 
-  const handleFieldChange = (sortId: string, fieldMetadataId: string) => {
+  const handleFieldChange = (sortIndex: number, fieldMetadataId: string) => {
     if (readonly) {
       return;
     }
 
     onChange(
-      recordSorts.map((sort) =>
-        sort.id === sortId ? { ...sort, fieldMetadataId } : sort,
+      recordSorts.map((sort, index) =>
+        index === sortIndex ? { ...sort, fieldMetadataId } : sort,
       ),
     );
   };
 
   const handleDirectionChange = (
-    sortId: string,
+    sortIndex: number,
     direction: ViewSortDirection,
   ) => {
     if (readonly) {
@@ -105,41 +103,41 @@ export const WorkflowFindRecordsSorts = ({
     }
 
     onChange(
-      recordSorts.map((sort) =>
-        sort.id === sortId ? { ...sort, direction } : sort,
+      recordSorts.map((sort, index) =>
+        index === sortIndex ? { ...sort, direction } : sort,
       ),
     );
   };
 
   return (
     <StyledContainer>
-      {recordSorts.map((sort) => {
+      {recordSorts.map((sort, index) => {
         return (
-          <StyledSortItemContainer key={sort.id}>
+          <StyledSortItemContainer key={index}>
             <Select
-              dropdownId={`workflow-find-records-sort-field-${sort.id}`}
+              dropdownId={`workflow-find-records-sort-field-${index}`}
               fullWidth
               disabled={readonly}
               value={sort.fieldMetadataId}
               options={sortableFields}
-              onChange={(value) => handleFieldChange(sort.id, value)}
+              onChange={(value) => handleFieldChange(index, value)}
               withSearchInput
             />
 
             <Select
-              dropdownId={`workflow-find-records-sort-direction-${sort.id}`}
+              dropdownId={`workflow-find-records-sort-direction-${index}`}
               fullWidth
               disabled={readonly}
               value={sort.direction}
               options={directionOptions}
               onChange={(value) =>
-                handleDirectionChange(sort.id, value as ViewSortDirection)
+                handleDirectionChange(index, value as ViewSortDirection)
               }
             />
 
             {!readonly && (
               <Button
-                onClick={() => handleRemoveSort(sort.id)}
+                onClick={() => handleRemoveSort(index)}
                 startIcon={<IconTrash />}
                 aria-label={t`Delete`}
                 disabled={readonly}

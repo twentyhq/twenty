@@ -87,28 +87,20 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
 
     expect(inexactlyConvertedSorts).toEqual([]);
     expect(recordSortsOf(steps)).toEqual([
-      expect.objectContaining({
+      {
         fieldMetadataId: STATUS.id,
         direction: 'DESC',
-      }),
-      expect.objectContaining({
+      },
+      {
         fieldMetadataId: NAME.id,
         direction: 'ASC',
         subFieldName: 'lastName',
-      }),
-      expect.objectContaining({
+      },
+      {
         fieldMetadataId: COMPANY.id,
         direction: 'ASC',
-      }),
+      },
     ]);
-  });
-
-  it('gives converted sorts the same ids each time it runs', () => {
-    const orderBy = { gqlOperationOrderBy: [{ status: 'DescNullsLast' }] };
-
-    expect(recordSortsOf(convert(orderBy).steps)).toEqual(
-      recordSortsOf(convert(orderBy).steps),
-    );
   });
 
   it('reports orders that record sorts cannot express exactly', () => {
@@ -127,21 +119,21 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
     });
 
     expect(recordSortsOf(steps)).toEqual([
-      expect.objectContaining({ fieldMetadataId: STATUS.id, direction: 'ASC' }),
-      expect.objectContaining({
+      { fieldMetadataId: STATUS.id, direction: 'ASC' },
+      {
         fieldMetadataId: COMPANY.id,
         direction: 'DESC',
-      }),
-      expect.objectContaining({
+      },
+      {
         fieldMetadataId: NAME.id,
         direction: 'ASC',
         subFieldName: 'firstName',
-      }),
-      expect.objectContaining({ fieldMetadataId: SALARY.id, direction: 'ASC' }),
-      expect.objectContaining({
+      },
+      { fieldMetadataId: SALARY.id, direction: 'ASC' },
+      {
         fieldMetadataId: COMPANY.id,
         direction: 'DESC',
-      }),
+      },
     ]);
     expect(inexactlyConvertedSorts).toEqual([
       { stepId: 'step-id', orderByEntry: { status: 'AscNullsFirst' } },
@@ -164,41 +156,11 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
     ]);
   });
 
-  it('gives record sorts written without an id a stable one', () => {
-    const run = () =>
-      moveFindRecordsSortsToRecordSorts({
-        steps: [
-          findRecordsStep({
-            recordSorts: [
-              { id: 'kept-id', fieldMetadataId: 'name-id', direction: 'ASC' },
-              { fieldMetadataId: 'employees-id', direction: 'DESC' },
-            ],
-          }),
-        ],
-        fieldsByObjectName,
-      });
-
-    const result = run();
-
-    expect(result.hasChanged).toBe(true);
-    expect(result.steps).toEqual([
-      findRecordsStep({
-        recordSorts: [
-          { id: 'kept-id', fieldMetadataId: 'name-id', direction: 'ASC' },
-          {
-            id: expect.any(String),
-            fieldMetadataId: 'employees-id',
-            direction: 'DESC',
-          },
-        ],
-      }),
-    ]);
-    expect(run().steps).toEqual(result.steps);
-  });
-
   it('leaves steps without a GraphQL order untouched', () => {
     const steps = [
-      findRecordsStep({ recordSorts: [] }),
+      findRecordsStep({
+        recordSorts: [{ fieldMetadataId: STATUS.id, direction: 'ASC' }],
+      }),
       { id: 'other', type: 'CREATE_RECORD', settings: { input: {} } },
     ];
 

@@ -1,7 +1,6 @@
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
-import { v5 } from 'uuid';
 
 export type SortableField = {
   id: string;
@@ -16,13 +15,10 @@ export type InexactlyConvertedSort = {
 };
 
 type ConvertedRecordSort = {
-  id: string;
   fieldMetadataId: string;
   direction: 'ASC' | 'DESC';
   subFieldName?: string;
 };
-
-const RECORD_SORT_ID_NAMESPACE = '2f1c6f0e-9a57-4d3b-8a51-7b8e2c4d1a57';
 
 const SUB_FIELD_SORTED_FIELD_TYPES = new Set<FieldMetadataType>([
   FieldMetadataType.FULL_NAME,
@@ -174,8 +170,6 @@ const toRecordSorts = ({
         : undefined;
 
     recordSorts.push({
-      // deterministic so the core and workspace copies of a version stay identical
-      id: v5(`${stepId}:${recordSorts.length}`, RECORD_SORT_ID_NAMESPACE),
       fieldMetadataId: field.id,
       direction: recordSortDirection,
       ...(isDefined(subFieldName) ? { subFieldName } : {}),
@@ -209,31 +203,20 @@ export const moveFindRecordsSortsToRecordSorts = ({
       step.type !== 'FIND_RECORDS' ||
       !isPlainObject(step.settings) ||
       !isPlainObject(step.settings.input) ||
-      !isPlainObject(step.settings.input.orderBy)
+      !isPlainObject(step.settings.input.orderBy) ||
+      !('gqlOperationOrderBy' in step.settings.input.orderBy)
     ) {
-      return step;
-    }
-
-    const { input } = step.settings;
-    const stepId = String(step.id);
-    const { gqlOperationOrderBy, ...orderBy } = step.settings.input.orderBy;
-    const hasGqlOperationOrderBy =
-      'gqlOperationOrderBy' in step.settings.input.orderBy;
-    const hasSortsWithoutId =
-      Array.isArray(orderBy.recordSorts) &&
-      orderBy.recordSorts.some(
-        (recordSort) => isPlainObject(recordSort) && !isString(recordSort.id),
-      );
-
-    if (!hasGqlOperationOrderBy && !hasSortsWithoutId) {
       return step;
     }
 
     hasChanged = true;
 
-    if (hasGqlOperationOrderBy && !isDefined(orderBy.recordSorts)) {
+    const { input } = step.settings;
+    const { gqlOperationOrderBy, ...orderBy } = step.settings.input.orderBy;
+
+    if (!isDefined(orderBy.recordSorts)) {
       const converted = toRecordSorts({
-        stepId,
+        stepId: String(step.id),
         gqlOperationOrderBy,
         fields: isString(input.objectName)
           ? (fieldsByObjectName.get(input.objectName) ?? [])
@@ -245,18 +228,6 @@ export const moveFindRecordsSortsToRecordSorts = ({
       if (isNonEmptyArray(converted.recordSorts)) {
         orderBy.recordSorts = converted.recordSorts;
       }
-    }
-
-    // sorts written through the API or a manifest had no id, which the sort schema now requires
-    if (Array.isArray(orderBy.recordSorts)) {
-      orderBy.recordSorts = orderBy.recordSorts.map((recordSort, index) =>
-        isPlainObject(recordSort) && !isString(recordSort.id)
-          ? {
-              ...recordSort,
-              id: v5(`${stepId}:${index}`, RECORD_SORT_ID_NAMESPACE),
-            }
-          : recordSort,
-      );
     }
 
     return {
