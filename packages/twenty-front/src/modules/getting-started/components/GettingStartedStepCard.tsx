@@ -181,10 +181,7 @@ export const GettingStartedStepCard = ({
         </StyledTitle>
         {isDefined(doneCta) && (
           <StyledDoneButton>
-            <GettingStartedStepDoneButton
-              stepActionKey={stepDefinition.actionKey}
-              doneCta={doneCta}
-            />
+            <GettingStartedStepDoneButton doneCta={doneCta} />
           </StyledDoneButton>
         )}
       </StyledHeading>

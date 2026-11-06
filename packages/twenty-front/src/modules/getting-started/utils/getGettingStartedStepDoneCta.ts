@@ -16,7 +16,7 @@ export const getGettingStartedStepDoneCta = ({
   'kind' | 'actionKey' | 'doneChatThreadId'
 >): GettingStartedStepDoneCta | null => {
   if (kind === GettingStartedStepKind.WORKFLOW) {
-    return { type: 'workflow' };
+    return { type: 'workflow', stepActionKey: actionKey };
   }
 
   if (actionKey === GettingStartedStepActionKey.INVITE_TEAM) {

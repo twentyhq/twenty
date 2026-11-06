@@ -15,7 +15,10 @@ describe('getGettingStartedStepDoneCta', () => {
         actionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
         doneChatThreadId: null,
       },
-      expected: { type: 'workflow' },
+      expected: {
+        type: 'workflow',
+        stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
+      },
     },
     {
       description: 'continues the thread of a prompt step',
