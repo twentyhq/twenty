@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.10.1
+## 1.11.0
 
 - Ignore draft emails. A draft linked to a person was counted as a contact, both when its participant was linked and in the backfill, so writing an email without sending it moved the person's last contact.
 
