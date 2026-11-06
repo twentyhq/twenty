@@ -12,7 +12,10 @@ import { FilesFieldService } from 'src/engine/core-modules/file/files-field/serv
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type MessageAttachmentFile } from 'src/modules/messaging/message-import-manager/types/message.type';
+import {
+  type MessageAttachmentFile,
+  type MessageWithParticipants,
+} from 'src/modules/messaging/message-import-manager/types/message.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
 import { type PersistedSentMessage } from 'src/modules/messaging/message-outbound-manager/types/persisted-sent-message.type';
@@ -46,20 +49,12 @@ export class SentMessagePersistenceService {
     const attachmentFiles = await this.uploadAttachmentFiles(input);
     const messageToSave = formatSentMessage({ input, attachmentFiles });
 
-    const savedMessagesResult =
-      await this.saveMessagesAndEnqueueContactCreationService
-        .saveMessagesAndEnqueueContactCreation({
-          messagesToSave: [messageToSave],
-          messageChannel,
-          connectedAccount: messageChannel.connectedAccount,
-          workspaceId: input.workspaceId,
-        })
-        .finally(() =>
-          this.deleteUnclaimedAttachmentFiles({
-            attachmentFiles,
-            workspaceId: input.workspaceId,
-          }),
-        );
+    const savedMessagesResult = await this.saveMessageAndCleanUpAttachments({
+      messageToSave,
+      messageChannel,
+      attachmentFiles,
+      workspaceId: input.workspaceId,
+    });
 
     const messageId = savedMessagesResult?.messageExternalIdsAndIdsMap.get(
       messageToSave.externalId,
@@ -74,6 +69,34 @@ export class SentMessagePersistenceService {
     }
 
     return { messageId, messageThreadId };
+  }
+
+  private async saveMessageAndCleanUpAttachments({
+    messageToSave,
+    messageChannel,
+    attachmentFiles,
+    workspaceId,
+  }: {
+    messageToSave: MessageWithParticipants;
+    messageChannel: MessageChannelEntity;
+    attachmentFiles: MessageAttachmentFile[];
+    workspaceId: string;
+  }) {
+    try {
+      return await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+        {
+          messagesToSave: [messageToSave],
+          messageChannel,
+          connectedAccount: messageChannel.connectedAccount,
+          workspaceId,
+        },
+      );
+    } finally {
+      await this.deleteUnclaimedAttachmentFiles({
+        attachmentFiles,
+        workspaceId,
+      });
+    }
   }
 
   private async uploadAttachmentFiles({
@@ -123,8 +146,7 @@ export class SentMessagePersistenceService {
     });
   }
 
-  // Copies without an expiry are never collected by cleanup crons, and the save skips them when the
-  // message already has attachments; claimed copies back committed attachment rows and are kept
+  // Unclaimed copies have no expiry, so cleanup crons never collect them
   private async deleteUnclaimedAttachmentFiles({
     attachmentFiles,
     workspaceId,
@@ -143,7 +165,7 @@ export class SentMessagePersistenceService {
 
     await Promise.allSettled(
       files
-        .filter((file) => file.settings?.isTemporaryFile === true)
+        .filter((file) => file.settings?.isTemporaryFile)
         .map((file) =>
           this.filesFieldService.deleteFilesFieldFile({
             fileId: file.id,
