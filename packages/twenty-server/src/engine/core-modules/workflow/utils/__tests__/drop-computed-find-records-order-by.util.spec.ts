@@ -14,7 +14,7 @@ const findRecordsStep = (orderBy: Record<string, unknown>) =>
     settings: {
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
       input: { objectName: 'company', orderBy },
