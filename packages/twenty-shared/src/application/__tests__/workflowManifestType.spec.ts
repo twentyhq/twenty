@@ -7,6 +7,7 @@ import {
   workflowManifestSchema,
   type WorkflowManifest,
 } from '../workflowManifestType';
+import { workflowStepManifestSchema } from '../workflowStepManifestType';
 
 const iteratorId = '44444444-4444-4444-8444-444444444444';
 const delayId = '55555555-5555-4555-8555-555555555555';
@@ -648,7 +649,7 @@ describe('workflow manifest database event trigger', () => {
     },
   });
 
-  it('accepts the watched object, fields and a record filter', () => {
+  it('accepts the watched object, fields and a record filter, ignoring the type it no longer stores', () => {
     const result = workflowManifestSchema.safeParse(
       withDatabaseEvent({
         objectUniversalIdentifier: OBJECT_ID,
@@ -672,6 +673,9 @@ describe('workflow manifest database event trigger', () => {
       }),
     );
     expect(result.success).toBe(true);
+    expect(result.data?.version.trigger.settings).not.toHaveProperty(
+      'filter.stepFilters.0.type',
+    );
   });
 
   it('only watches fields on update events', () => {
@@ -705,7 +709,6 @@ describe('workflow manifest database event trigger', () => {
           stepFilters: [
             {
               id: 'filter',
-              type: 'TEXT',
               stepOutputKey: '{{trigger.properties.after.status}}',
               operand: 'IS',
               value: 'open',
@@ -760,7 +763,6 @@ describe('workflow manifest database event trigger', () => {
           stepFilters: [
             {
               id: 'filter',
-              type: 'TEXT',
               stepOutputKey: '{{trigger.properties.after.status}}',
               operand: 'IS',
               value: 'open',
@@ -775,6 +777,44 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest filter step written before 2.57', () => {
+  it('parses a filter that still declares its type and imports it without the type', () => {
+    const result = workflowStepManifestSchema.safeParse({
+      universalIdentifier: iteratorId,
+      name: 'Filter',
+      type: 'FILTER',
+      input: {
+        stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+        stepFilters: [
+          {
+            id: 'filter',
+            type: 'NUMBER',
+            stepOutputKey: '{{trigger.amount}}',
+            operand: 'GREATER_THAN_OR_EQUAL',
+            value: '10',
+            stepFilterGroupId: 'group',
+          },
+        ],
+      },
+      nextStepIds: [],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data?.input).toEqual({
+      stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+      stepFilters: [
+        {
+          id: 'filter',
+          stepOutputKey: '{{trigger.amount}}',
+          operand: 'GREATER_THAN_OR_EQUAL',
+          value: '10',
+          stepFilterGroupId: 'group',
+        },
+      ],
+    });
   });
 });
 
