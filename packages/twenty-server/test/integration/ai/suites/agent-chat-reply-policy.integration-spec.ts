@@ -362,6 +362,7 @@ describe('Assistant reply selection with stored conversation participants', () =
         context.workspaceId,
       );
       await shouldReply({ threadId, text: 'Scout, can you help?' });
+      expect(models.evaluate).toHaveBeenCalledTimes(1);
       expect(models.evaluate).toHaveBeenCalledWith(
         expect.objectContaining({
           state: expect.objectContaining({
