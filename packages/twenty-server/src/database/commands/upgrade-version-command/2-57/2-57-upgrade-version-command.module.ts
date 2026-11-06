@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddAgentsNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793963783152-add-agents-navigation-menu-item.command';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -15,6 +16,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [AddMessageAttachmentTargetCommand],
+  providers: [AddAgentsNavigationMenuItemCommand, AddMessageAttachmentTargetCommand],
 })
 export class V2_57_UpgradeVersionCommandModule {}

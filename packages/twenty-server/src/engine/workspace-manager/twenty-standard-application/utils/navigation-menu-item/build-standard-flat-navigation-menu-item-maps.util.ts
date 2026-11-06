@@ -31,6 +31,7 @@ const FOLDERS = [
       'workflowsFolderAllWorkflows',
       'workflowsFolderAllWorkflowRuns',
       'workflowsFolderAllWorkflowVersions',
+      'workflowsFolderAllAgents',
     ],
   },
   {
