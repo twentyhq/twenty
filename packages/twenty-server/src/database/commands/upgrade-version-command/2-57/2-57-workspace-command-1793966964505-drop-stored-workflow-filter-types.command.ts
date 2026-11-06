@@ -119,52 +119,55 @@ export class DropStoredWorkflowFilterTypesCommand extends ProvisionedWorkspaceCo
       dataSource,
       tableName: workspaceVersionTable,
     });
-    const workspaceStepsCount = hasWorkspaceVersionTable
-      ? await rewriteJsonbRowsWithCompareAndSet({
-          dataSource,
-          isDryRun,
-          tableName: workspaceVersionTable,
-          columnName: 'steps',
-          whereClause: `steps${HAS_STEP_FILTERS}`,
-          whereParameters: [],
-          mapRow: mapSteps,
-        })
-      : 0;
-    const workspaceTriggerCount = hasWorkspaceVersionTable
-      ? await rewriteJsonbRowsWithCompareAndSet({
-          dataSource,
-          isDryRun,
-          tableName: workspaceVersionTable,
-          columnName: 'trigger',
-          whereClause: `trigger${HAS_STEP_FILTERS}`,
-          whereParameters: [],
-          mapRow: ({ value }) =>
-            logTypeChanges(
-              dropStoredStepFilterTypesFromTrigger({
-                trigger: value,
-                fieldTypeById,
-              }),
-            ),
-        })
-      : 0;
-    const runCount = (await this.tableExists({
+    let workspaceVersionCount = 0;
+
+    if (hasWorkspaceVersionTable) {
+      const workspaceStepsCount = await rewriteJsonbRowsWithCompareAndSet({
+        dataSource,
+        isDryRun,
+        tableName: workspaceVersionTable,
+        columnName: 'steps',
+        whereClause: `steps${HAS_STEP_FILTERS}`,
+        whereParameters: [],
+        mapRow: mapSteps,
+      });
+      const workspaceTriggerCount = await rewriteJsonbRowsWithCompareAndSet({
+        dataSource,
+        isDryRun,
+        tableName: workspaceVersionTable,
+        columnName: 'trigger',
+        whereClause: `trigger${HAS_STEP_FILTERS}`,
+        whereParameters: [],
+        mapRow: ({ value }) =>
+          logTypeChanges(
+            dropStoredStepFilterTypesFromTrigger({
+              trigger: value,
+              fieldTypeById,
+            }),
+          ),
+      });
+
+      workspaceVersionCount = workspaceStepsCount + workspaceTriggerCount;
+    }
+
+    const hasWorkspaceRunTable = await this.tableExists({
       dataSource,
       tableName: workspaceRunTable,
-    }))
-      ? await this.rewriteRunFlowSteps({
-          dataSource,
-          isDryRun,
-          tableName: workspaceRunTable,
-          mapRow: mapSteps,
-        })
-      : 0;
+    });
+
+    let runCount = 0;
+
+    if (hasWorkspaceRunTable) {
+      runCount = await this.rewriteRunFlowSteps({
+        dataSource,
+        isDryRun,
+        tableName: workspaceRunTable,
+        mapRow: mapSteps,
+      });
+    }
 
     const rewrittenCount =
-      coreStepsCount +
-      coreTriggersCount +
-      workspaceStepsCount +
-      workspaceTriggerCount +
-      runCount;
+      coreStepsCount + coreTriggersCount + workspaceVersionCount + runCount;
 
     if (rewrittenCount === 0) {
       return;
@@ -184,7 +187,7 @@ export class DropStoredWorkflowFilterTypesCommand extends ProvisionedWorkspaceCo
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Dropped stored filter types from ${coreStepsCount + coreTriggersCount} core version column(s), ${workspaceStepsCount + workspaceTriggerCount} workspace version column(s) and ${runCount} pending run(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Dropped stored filter types from ${coreStepsCount + coreTriggersCount} core version column(s), ${workspaceVersionCount} workspace version column(s) and ${runCount} pending run(s) for workspace ${workspaceId}`,
     );
   }
 
