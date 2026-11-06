@@ -97,26 +97,6 @@ export class WorkspaceAssistantProfileService {
     return DEFAULT_AI_CHAT_ASSISTANT_PROFILE;
   }
 
-  async get(workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>) {
-    if (isDefined(workspace.aiChatAssistantProfile)) {
-      return workspace.aiChatAssistantProfile;
-    }
-
-    await this.coreEntityCacheService.invalidateAndRecompute(
-      'workspaceEntity',
-      workspace.id,
-    );
-
-    const refreshedWorkspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspace.id,
-    );
-
-    assertIsDefinedOrThrow(refreshedWorkspace, WorkspaceNotFoundDefaultError);
-
-    return refreshedWorkspace.aiChatAssistantProfile;
-  }
-
   private async assertCanChangeProfileOrThrow(
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {

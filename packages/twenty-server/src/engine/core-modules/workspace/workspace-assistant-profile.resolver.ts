@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Mutation, Parent, ResolveField } from '@nestjs/graphql';
+import { Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -27,11 +27,6 @@ export class WorkspaceAssistantProfileResolver {
   constructor(
     private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
   ) {}
-
-  @ResolveField(() => AiChatAssistantProfileDTO)
-  async aiChatAssistantProfile(@Parent() workspace: WorkspaceEntity) {
-    return this.workspaceAssistantProfileService.get(workspace);
-  }
 
   @Mutation(() => AiChatAssistantProfileDTO)
   @UseGuards(
