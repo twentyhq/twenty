@@ -797,6 +797,15 @@ describe('Uninstalling an application that created inbox channels', () => {
           shouldRunUninstallHook: false,
         }),
       ).rejects.toBe(migrationError);
+      expect(failingMigration).toHaveBeenCalledTimes(1);
+      expect(failingMigration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationUniversalIdentifier:
+            uninstalledApplication.application.universalIdentifier,
+          isSystemBuild: true,
+        }),
+      );
     } finally {
       failingMigration.mockRestore();
     }
