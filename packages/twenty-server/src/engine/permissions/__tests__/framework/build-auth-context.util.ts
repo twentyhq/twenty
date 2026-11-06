@@ -45,11 +45,10 @@ export const WEBHOOK_AUTH_CONTEXT = {
   webhook: { id: WEBHOOK_ID },
 } as unknown as WorkspaceAuthContext;
 
-const throwUnreachablePrincipals = (reason: string): never => {
-  throw new Error(`These principals cannot be reached: ${reason}`);
-};
+const buildUnreachablePrincipalsError = (reason: string) =>
+  new Error(`These principals cannot be reached: ${reason}`);
 
-const findActingApplicationId = (
+const findActingApplicationIdOrThrow = (
   applicationPrincipal: GivenPrincipals<unknown>['applicationPrincipal'],
 ) => {
   switch (applicationPrincipal.type) {
@@ -60,13 +59,13 @@ const findActingApplicationId = (
     case 'customApplication':
       return undefined;
     case 'sameApplicationAsMain':
-      return throwUnreachablePrincipals(
+      throw buildUnreachablePrincipalsError(
         'only a main application shares its application',
       );
   }
 };
 
-const buildMemberOrApiKeyAuthContext = ({
+const buildMemberOrApiKeyAuthContextOrThrow = ({
   baseAuthContext,
   limitingPrincipal,
   applicationPrincipal,
@@ -76,7 +75,8 @@ const buildMemberOrApiKeyAuthContext = ({
 > & {
   baseAuthContext: WorkspaceAuthContext;
 }) => {
-  const actingApplicationId = findActingApplicationId(applicationPrincipal);
+  const actingApplicationId =
+    findActingApplicationIdOrThrow(applicationPrincipal);
 
   return {
     ...baseAuthContext,
@@ -87,7 +87,7 @@ const buildMemberOrApiKeyAuthContext = ({
   };
 };
 
-const buildAuthContextFromPrincipals = ({
+const buildAuthContextFromPrincipalsOrThrow = ({
   mainPrincipal,
   limitingPrincipal,
   applicationPrincipal,
@@ -97,60 +97,68 @@ const buildAuthContextFromPrincipals = ({
     mainPrincipal.type !== 'workspaceMember' &&
     mainPrincipal.type !== 'apiKey'
   ) {
-    return throwUnreachablePrincipals(
+    throw buildUnreachablePrincipalsError(
       `a ${mainPrincipal.type} takes no limiting principal`,
     );
   }
 
   switch (mainPrincipal.type) {
     case 'workspaceMember':
-      return buildMemberOrApiKeyAuthContext({
+      return buildMemberOrApiKeyAuthContextOrThrow({
         baseAuthContext: USER_AUTH_CONTEXT,
         limitingPrincipal,
         applicationPrincipal,
       });
     case 'apiKey':
-      return buildMemberOrApiKeyAuthContext({
+      return buildMemberOrApiKeyAuthContextOrThrow({
         baseAuthContext: API_KEY_AUTH_CONTEXT,
         limitingPrincipal,
         applicationPrincipal,
       });
     case 'application':
-      return applicationPrincipal.type === 'sameApplicationAsMain'
-        ? APPLICATION_AUTH_CONTEXT
-        : throwUnreachablePrincipals(
-            'a main application acts as its own application',
-          );
+      if (applicationPrincipal.type !== 'sameApplicationAsMain') {
+        throw buildUnreachablePrincipalsError(
+          'a main application acts as its own application',
+        );
+      }
+
+      return APPLICATION_AUTH_CONTEXT;
     case 'agent':
-      return applicationPrincipal.type === 'application'
-        ? {
-            ...APPLICATION_AUTH_CONTEXT,
-            agentId: MAIN_AGENT_ID,
-            application: { id: APPLICATION_ID },
-          }
-        : throwUnreachablePrincipals(
-            'a main agent runs inside an application with a role',
-          );
+      if (applicationPrincipal.type !== 'application') {
+        throw buildUnreachablePrincipalsError(
+          'a main agent runs inside an application with a role',
+        );
+      }
+
+      return {
+        ...APPLICATION_AUTH_CONTEXT,
+        agentId: MAIN_AGENT_ID,
+        application: { id: APPLICATION_ID },
+      };
     case 'webhook':
-      return applicationPrincipal.type === 'customApplication'
-        ? WEBHOOK_AUTH_CONTEXT
-        : throwUnreachablePrincipals('a webhook has no application');
+      if (applicationPrincipal.type !== 'customApplication') {
+        throw buildUnreachablePrincipalsError('a webhook has no application');
+      }
+
+      return WEBHOOK_AUTH_CONTEXT;
     case 'role':
-      return applicationPrincipal.type === 'customApplication'
-        ? undefined
-        : throwUnreachablePrincipals('a bare role has no application');
+      if (applicationPrincipal.type !== 'customApplication') {
+        throw buildUnreachablePrincipalsError('a bare role has no application');
+      }
+
+      return undefined;
   }
 };
 
 // A bare role main principal has no auth context, callers build its principals directly
-export const buildAuthContext = ({
+export const buildAuthContextOrThrow = ({
   principals,
   aiRunScope,
 }: {
   principals: GivenPrincipals<unknown>;
   aiRunScope?: 'none' | 'allRecords';
 }): WorkspaceAuthContext | undefined => {
-  const authContext = buildAuthContextFromPrincipals(principals);
+  const authContext = buildAuthContextFromPrincipalsOrThrow(principals);
 
   if (!isDefined(authContext)) {
     return undefined;

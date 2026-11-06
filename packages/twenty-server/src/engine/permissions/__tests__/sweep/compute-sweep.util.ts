@@ -7,7 +7,7 @@ import {
   type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import { WORKSPACE_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { resolveWorldOrThrow } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
 import { buildStoredRecords } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 import {
   SWEEP_RECORDS,
@@ -58,7 +58,7 @@ const computeWorldEntries = async (
     principals,
     metadataMaps,
     flatObjectMetadata,
-  } = await resolveWorld({ world, storedRecords: STORED_RECORDS });
+  } = await resolveWorldOrThrow({ world, storedRecords: STORED_RECORDS });
   const readableEventRecordIds = isDefined(authContext)
     ? await services.recordPermissionsService.findReadableEventRecordIds({
         authContext,

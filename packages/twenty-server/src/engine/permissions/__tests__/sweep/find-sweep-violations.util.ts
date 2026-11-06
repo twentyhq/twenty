@@ -2,7 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   findHeldRoles,
-  type RecordAccessWorld,
+  type GivenPrincipals,
+  type RecordOperation,
   type RoleGrant,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import { MEMBER_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
@@ -29,22 +30,20 @@ const NARROWER_TO_WIDER_GRANTS: [RoleGrant, RoleGrant][] = [
 const toEntryKey = ({
   world,
   operationType,
-}: Pick<SweepEntry, 'world' | 'operationType'>) =>
-  JSON.stringify({ world, operationType });
+}: {
+  world: object;
+  operationType: RecordOperation;
+}) => JSON.stringify({ world, operationType });
 
 const buildEntryWithSlotKey = ({
-  entry,
+  entry: { world, operationType },
   slot,
   principal,
 }: {
-  entry: SweepEntry;
+  entry: Pick<SweepEntry, 'world' | 'operationType'>;
   slot: PrincipalSlot;
   principal: object;
-}) =>
-  toEntryKey({
-    operationType: entry.operationType,
-    world: { ...entry.world, [slot]: principal } as RecordAccessWorld,
-  });
+}) => toEntryKey({ operationType, world: { ...world, [slot]: principal } });
 
 const findRecordIdsMissingFrom = ({
   recordIds,
@@ -81,30 +80,34 @@ export const findAccessLostByWideningRole = ({
   return entries.flatMap((entry) => {
     const principal = entry.world[slot];
 
-    return !('role' in principal)
-      ? []
-      : NARROWER_TO_WIDER_GRANTS.flatMap(([narrower, wider]) => {
-          const widerEntry =
-            principal.role === narrower
-              ? entriesByKey.get(
-                  buildEntryWithSlotKey({
-                    entry,
-                    slot,
-                    principal: { ...principal, role: wider },
-                  }),
-                )
-              : undefined;
+    if (!('role' in principal)) {
+      return [];
+    }
 
-          return !isDefined(widerEntry)
-            ? []
-            : findRecordIdsMissingFrom({
-                recordIds: entry.grantedRecordIds,
-                widerRecordIds: widerEntry.grantedRecordIds,
-              }).map(
-                (recordId) =>
-                  `${describeSweepEntry(widerEntry)} loses ${recordId}`,
-              );
-        });
+    return NARROWER_TO_WIDER_GRANTS.flatMap(([narrower, wider]) => {
+      if (principal.role !== narrower) {
+        return [];
+      }
+
+      const widerEntry = entriesByKey.get(
+        buildEntryWithSlotKey({
+          entry,
+          slot,
+          principal: { ...principal, role: wider },
+        }),
+      );
+
+      if (!isDefined(widerEntry)) {
+        return [];
+      }
+
+      return findRecordIdsMissingFrom({
+        recordIds: entry.grantedRecordIds,
+        widerRecordIds: widerEntry.grantedRecordIds,
+      }).map(
+        (recordId) => `${describeSweepEntry(widerEntry)} loses ${recordId}`,
+      );
+    });
   });
 };
 
@@ -156,7 +159,7 @@ export const findPlainSqlDisagreements = (entries: SweepEntry[]) =>
       : [];
   });
 
-const findFiltersHeldByWorld = (world: RecordAccessWorld) => {
+const findFiltersHeldByPrincipals = (world: GivenPrincipals<RoleGrant>) => {
   const { mainPrincipal, limitingPrincipal, applicationPrincipal } = world;
   const isReachedByRoles = findHeldRoles(world).every(
     (grant) => grant !== 'none',
@@ -194,7 +197,7 @@ export const findSqlContentViolations = (entries: SweepEntry[]) =>
       ),
     );
     const filterViolations = Object.entries(
-      findFiltersHeldByWorld(entry.world),
+      findFiltersHeldByPrincipals(entry.world),
     ).flatMap(([columnName, isHeld]) =>
       isHeld === sql.includes(`"${columnName}"`)
         ? []

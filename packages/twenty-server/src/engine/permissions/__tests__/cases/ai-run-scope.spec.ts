@@ -9,7 +9,8 @@ import {
 import { MEMBER_ID } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
 import { read } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 
-describeRecordAccess('an AI run scope', {
+describeRecordAccess({
+  name: 'an AI run scope',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,

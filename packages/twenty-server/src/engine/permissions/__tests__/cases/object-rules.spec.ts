@@ -9,7 +9,8 @@ import {
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 
-describeRecordAccess('a disabled object action, for a role with all records', {
+describeRecordAccess({
+  name: 'a disabled object action, for a role with all records',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -43,7 +44,8 @@ describeRecordAccess('a disabled object action, for a role with all records', {
   ],
 });
 
-describeRecordAccess('a disabled object action, for an application', {
+describeRecordAccess({
+  name: 'a disabled object action, for an application',
   given: {
     mainPrincipal: application({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,

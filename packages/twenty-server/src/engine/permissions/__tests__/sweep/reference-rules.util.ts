@@ -3,7 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   findHeldRoles,
+  type GivenPrincipals,
   type RecordAccessWorld,
+  type RoleGrant,
   type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import {
@@ -42,7 +44,7 @@ const findShareKeys = ({
   mainPrincipal,
   limitingPrincipal,
   applicationPrincipal,
-}: RecordAccessWorld) => [
+}: GivenPrincipals<RoleGrant>) => [
   MAIN_ROLE_ID,
   ...(mainPrincipal.type === 'workspaceMember' ? [MEMBER_ID] : []),
   ...(limitingPrincipal.type === 'agent' ? [LIMITING_ROLE_ID] : []),

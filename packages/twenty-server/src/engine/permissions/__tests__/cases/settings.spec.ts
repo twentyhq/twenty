@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
-  buildAuthContext,
+  buildAuthContextOrThrow,
   USER_AUTH_CONTEXT,
 } from 'src/engine/permissions/__tests__/framework/build-auth-context.util';
 import {
@@ -40,7 +40,7 @@ describe('hasPermissionFlag', () => {
   const combinations = buildReachablePrincipals({ roles: ROLE_SETTINGS })
     .map((principals) => ({
       principals,
-      authContext: buildAuthContext({ principals }),
+      authContext: buildAuthContextOrThrow({ principals }),
     }))
     .filter(({ authContext }) => isDefined(authContext));
 

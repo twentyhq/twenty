@@ -11,7 +11,7 @@ import {
   OBJECT_ID,
   STATUS_FIELD_ID,
 } from 'src/engine/permissions/__tests__/framework/permission-test-ids.constant';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { resolveWorldOrThrow } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
 
 const MEMBER_WITH_ALL_RECORDS: RecordAccessWorld = {
   mainPrincipal: workspaceMember({ role: 'allRecords' }),
@@ -21,7 +21,7 @@ const MEMBER_WITH_ALL_RECORDS: RecordAccessWorld = {
 };
 
 const findDeniedFields = async (world: RecordAccessWorld) => {
-  const { services, principals } = await resolveWorld({ world });
+  const { services, principals } = await resolveWorldOrThrow({ world });
   const question = { principals, objectMetadataId: OBJECT_ID };
 
   return {

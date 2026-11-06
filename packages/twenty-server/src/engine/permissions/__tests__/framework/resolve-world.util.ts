@@ -1,9 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildAuthContext } from 'src/engine/permissions/__tests__/framework/build-auth-context.util';
+import { buildAuthContextOrThrow } from 'src/engine/permissions/__tests__/framework/build-auth-context.util';
 import { buildWorldCacheValues } from 'src/engine/permissions/__tests__/framework/build-permission-cache-values.util';
 import { buildPermissionServices } from 'src/engine/permissions/__tests__/framework/build-permission-services.util';
-import { type RecordAccessWorld } from 'src/engine/permissions/__tests__/framework/given-principals.util';
+import {
+  type GivenPrincipals,
+  type RecordAccessWorld,
+  type RoleGrant,
+} from 'src/engine/permissions/__tests__/framework/given-principals.util';
 import {
   APPLICATION_ROLE_ID,
   LIMITING_ROLE_ID,
@@ -15,7 +19,7 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 const findExpectedApplicationRoleId = (
-  applicationPrincipal: RecordAccessWorld['applicationPrincipal'],
+  applicationPrincipal: GivenPrincipals<RoleGrant>['applicationPrincipal'],
 ) => {
   switch (applicationPrincipal.type) {
     case 'application':
@@ -33,7 +37,7 @@ const assertPrincipalsMatchWorldOrThrow = ({
   world: { mainPrincipal, limitingPrincipal, applicationPrincipal },
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
-  world: RecordAccessWorld;
+  world: GivenPrincipals<RoleGrant>;
 }) => {
   const resolved = {
     mainType: principals.mainPrincipal.type,
@@ -57,7 +61,7 @@ const assertPrincipalsMatchWorldOrThrow = ({
   }
 };
 
-export const resolveWorld = async ({
+export const resolveWorldOrThrow = async ({
   world,
   storedRecords,
 }: {
@@ -66,7 +70,7 @@ export const resolveWorld = async ({
 }) => {
   const { cacheValues, flatObjectMetadata } = buildWorldCacheValues(world);
   const services = buildPermissionServices({ cacheValues, storedRecords });
-  const authContext = buildAuthContext({
+  const authContext = buildAuthContextOrThrow({
     principals: world,
     aiRunScope: world.aiRunScope,
   });

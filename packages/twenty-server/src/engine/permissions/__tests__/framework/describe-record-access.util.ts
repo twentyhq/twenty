@@ -5,7 +5,7 @@ import {
   type RecordAccessWorld,
   type RecordOperation,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
-import { resolveWorld } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
+import { resolveWorldOrThrow } from 'src/engine/permissions/__tests__/framework/resolve-world.util';
 import {
   buildStoredRecords,
   type RecordFixture,
@@ -37,10 +37,11 @@ const findGrantedOperations = async ({
   hypotheticalShareAccessLevel?: RecordShareAccessLevel;
 }) => {
   const storedRecords = buildStoredRecords([{ ...record, id: RECORD_ID }]);
-  const { principals, metadataMaps, flatObjectMetadata } = await resolveWorld({
-    world,
-    storedRecords,
-  });
+  const { principals, metadataMaps, flatObjectMetadata } =
+    await resolveWorldOrThrow({
+      world,
+      storedRecords,
+    });
   const grantedOperations: RecordOperation[] = [];
 
   for (const operationType of RECORD_OPERATIONS) {
@@ -95,12 +96,10 @@ const registerCases = ({
   });
 
 export const describeRecordAccess = (
-  name: string,
-  recordAccessCases: RecordAccessCases,
-) => registerCases({ name, ...recordAccessCases, registerTest: it });
+  recordAccessCases: RecordAccessCases & { name: string },
+) => registerCases({ ...recordAccessCases, registerTest: it });
 
 // Each case states the wanted rule: it passes while the code differs and fails once the code is fixed
 export const describeKnownRecordAccessDifferences = (
-  name: string,
-  recordAccessCases: RecordAccessCases,
-) => registerCases({ name, ...recordAccessCases, registerTest: it.failing });
+  recordAccessCases: RecordAccessCases & { name: string },
+) => registerCases({ ...recordAccessCases, registerTest: it.failing });

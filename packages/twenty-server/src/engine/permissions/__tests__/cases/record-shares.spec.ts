@@ -21,7 +21,8 @@ import {
   readWrite,
 } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 
-describeRecordAccess('a share beyond the role', {
+describeRecordAccess({
+  name: 'a share beyond the role',
   given: {
     mainPrincipal: workspaceMember({ role: 'none' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -74,7 +75,8 @@ describeRecordAccess('a share beyond the role', {
   ],
 });
 
-describeRecordAccess('a share on a private record the role reaches', {
+describeRecordAccess({
+  name: 'a share on a private record the role reaches',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -101,7 +103,8 @@ describeRecordAccess('a share on a private record the role reaches', {
   ],
 });
 
-describeRecordAccess('a share against a row level filter', {
+describeRecordAccess({
+  name: 'a share against a row level filter',
   given: {
     mainPrincipal: workspaceMember({ role: 'rowLevel' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -126,7 +129,8 @@ describeRecordAccess('a share against a row level filter', {
   ],
 });
 
-describeRecordAccess('a hypothetical share on a private record', {
+describeRecordAccess({
+  name: 'a hypothetical share on a private record',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,

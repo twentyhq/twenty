@@ -13,7 +13,8 @@ import {
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 
-describeRecordAccess('a main role', {
+describeRecordAccess({
+  name: 'a main role',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -41,7 +42,8 @@ describeRecordAccess('a main role', {
   ],
 });
 
-describeRecordAccess('every kind of main principal holds its role', {
+describeRecordAccess({
+  name: 'every kind of main principal holds its role',
   given: {
     mainPrincipal: apiKey({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,

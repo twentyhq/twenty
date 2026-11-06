@@ -17,7 +17,8 @@ import {
   read,
 } from 'src/engine/permissions/__tests__/framework/stored-records.util';
 
-describeKnownRecordAccessDifferences('an everyone share', {
+describeKnownRecordAccessDifferences({
+  name: 'an everyone share',
   given: {
     mainPrincipal: workspaceMember({ role: 'none' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -33,7 +34,8 @@ describeKnownRecordAccessDifferences('an everyone share', {
   ],
 });
 
-describeKnownRecordAccessDifferences('a limiting role with no access', {
+describeKnownRecordAccessDifferences({
+  name: 'a limiting role with no access',
   given: {
     mainPrincipal: workspaceMember({ role: 'none' }),
     limitingPrincipal: agent({ role: 'none' }),
@@ -63,7 +65,8 @@ describeKnownRecordAccessDifferences('a limiting role with no access', {
   ],
 });
 
-describeKnownRecordAccessDifferences('a share to an intersecting role', {
+describeKnownRecordAccessDifferences({
+  name: 'a share to an intersecting role',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: agent({ role: 'allRecords' }),

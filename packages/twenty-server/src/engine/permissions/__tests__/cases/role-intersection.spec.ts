@@ -10,7 +10,8 @@ import {
   workspaceMember,
 } from 'src/engine/permissions/__tests__/framework/given-principals.util';
 
-describeRecordAccess('a limiting principal', {
+describeRecordAccess({
+  name: 'a limiting principal',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: agent({ role: 'allRecords' }),
@@ -39,7 +40,8 @@ describeRecordAccess('a limiting principal', {
   ],
 });
 
-describeRecordAccess('two row level filters', {
+describeRecordAccess({
+  name: 'two row level filters',
   given: {
     mainPrincipal: workspaceMember({ role: 'rowLevel' }),
     limitingPrincipal: agent({ role: 'rowLevel' }),
@@ -61,7 +63,8 @@ describeRecordAccess('two row level filters', {
   ],
 });
 
-describeRecordAccess('an application principal', {
+describeRecordAccess({
+  name: 'an application principal',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -84,7 +87,8 @@ describeRecordAccess('an application principal', {
   ],
 });
 
-describeRecordAccess('an OAuth application has no role of its own', {
+describeRecordAccess({
+  name: 'an OAuth application has no role of its own',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: NO_LIMITING_PRINCIPAL,
@@ -102,7 +106,8 @@ describeRecordAccess('an OAuth application has no role of its own', {
   ],
 });
 
-describeRecordAccess('all three principals with a role', {
+describeRecordAccess({
+  name: 'all three principals with a role',
   given: {
     mainPrincipal: workspaceMember({ role: 'allRecords' }),
     limitingPrincipal: agent({ role: 'allRecords' }),
