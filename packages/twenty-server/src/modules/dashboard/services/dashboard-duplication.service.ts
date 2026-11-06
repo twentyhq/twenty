@@ -93,7 +93,7 @@ export class DashboardDuplicationService {
 
       // The layout copy lives outside the dashboard insert, so refuse before creating it
       if (
-        !(await this.recordPermissionsService.canRoleReachSomeRecords({
+        !(await this.recordPermissionsService.canRoleAccessSomeRecords({
           operationType: 'insert',
           principals: permissionsPrincipals,
           objectMetadataId: objectIdByNameSingular.dashboard,

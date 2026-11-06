@@ -98,11 +98,12 @@ describe('permissions read services', () => {
   }: {
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
-    recordPermissionsService.hasAccessToSomeRecords({
+    recordPermissionsService.canAccessSomeRecords({
       operationType: 'select',
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+      principals:
+        await principalPermissionsService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
     });
 
@@ -116,9 +117,10 @@ describe('permissions read services', () => {
     recordIds: string[];
   }): Promise<boolean> =>
     recordPermissionsService[question]({
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+      principals:
+        await principalPermissionsService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
       recordIds,
     });
@@ -207,7 +209,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('hasAccessToSomeRecords', () => {
+  describe('canAccessSomeRecords', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
         await askCanReadSomeRecords({
@@ -228,11 +230,6 @@ describe('permissions read services', () => {
   describe('role questions', () => {
     it('finds the roles of a principal', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
-          authContext: adminAuthContext,
-        }),
-      ).toBe(true);
-      expect(
         await rolePermissionsService.findRoleIds({
           authContext: adminAuthContext,
         }),
@@ -241,10 +238,10 @@ describe('permissions read services', () => {
 
     it('finds no role for an API key without one', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
+        await rolePermissionsService.findRoleIds({
           authContext: missingRoleAuthContext,
         }),
-      ).toBe(false);
+      ).toEqual([]);
     });
   });
 
@@ -295,7 +292,7 @@ describe('permissions read services', () => {
       apiKey: Pick<ApiKeyWithObjectRecordGrants, 'apiKeyId'>,
     ) => {
       const principals =
-        await principalPermissionsService.buildPermissionsPrincipals({
+        await principalPermissionsService.resolvePermissionsPrincipals({
           authContext: {
             type: 'apiKey',
             workspace: { id: SEED_APPLE_WORKSPACE_ID },
