@@ -7,14 +7,14 @@ import {
 
 const queryDefaultUrl = async () => {
   const { GeneratedClientClass, cleanup } = await loadGeneratedClientClass();
-  const fetchMock = vi.fn(async (_url: string | URL | Request) =>
+  const fetchMock = vi.fn<typeof globalThis.fetch>(async () =>
     createJsonResponse({ body: { data: { record: { id: 'record-id' } } } }),
   );
 
   try {
-    await new GeneratedClientClass({
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    }).query({ record: { id: true } });
+    await new GeneratedClientClass({ fetch: fetchMock }).query({
+      record: { id: true },
+    });
   } finally {
     await cleanup();
   }

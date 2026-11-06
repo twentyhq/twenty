@@ -53,13 +53,13 @@ describe('RestApiClient', () => {
   });
 
   it('should call the internal api url when the runtime provides one', async () => {
-    (globalThis as Record<string, unknown>).process = {
+    vi.stubGlobal('process', {
       env: {
         TWENTY_API_URL: 'https://api.twenty.test',
         TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
         TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
       },
-    };
+    });
     const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 
     await new RestApiClient({ fetch: fetchMock }).get('/rest/companies');
@@ -239,14 +239,14 @@ describe('RestApiClient', () => {
     });
 
     it('should fall back to the internal api url /s route when one is provided', async () => {
-      (globalThis as Record<string, unknown>).process = {
+      vi.stubGlobal('process', {
         env: {
           TWENTY_API_URL: 'https://api.twenty.test',
           TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
           TWENTY_FUNCTIONS_URL: '',
           TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
         },
-      };
+      });
       const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 
       await new RestApiClient({ fetch: fetchMock }).post('/s/my-app/my-route');
