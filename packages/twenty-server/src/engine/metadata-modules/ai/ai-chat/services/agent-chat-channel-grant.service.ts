@@ -96,24 +96,21 @@ export class AgentChatChannelGrantService {
     workspaceId: string;
     channelId: string;
   }): Promise<void> {
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            await acquireAgentChatChannelGrantLocks({
-              transactionScope,
-              workspaceId,
-              channelIds: [channelId],
-              mode: 'exclusive',
-            });
+    await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      async (transactionScope) => {
+        await acquireAgentChatChannelGrantLocks({
+          transactionScope,
+          workspaceId,
+          channelIds: [channelId],
+          mode: 'exclusive',
+        });
 
-            await this.replaceRuleGrantsInTransaction({
-              transactionScope,
-              workspaceId,
-              scope: { channelId },
-            });
-          },
-        ),
+        await this.replaceRuleGrantsInTransaction({
+          transactionScope,
+          workspaceId,
+          scope: { channelId },
+        });
+      },
       buildSystemAuthContext(workspaceId),
       { lite: true },
     );

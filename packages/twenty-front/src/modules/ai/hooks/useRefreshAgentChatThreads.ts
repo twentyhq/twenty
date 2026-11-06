@@ -6,14 +6,17 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 export const useRefreshAgentChatThreads = () => {
   const store = useStore();
@@ -60,6 +63,39 @@ export const useRefreshAgentChatThreads = () => {
           return undefined;
         }
 
+        const pageThreadIds = page.threads.map(({ id }) => id);
+        const unloadedFavoriteThreadIds = store
+          .get(agentChatFavoriteThreadsSelector.atom)
+          .filter(
+            ({ id, conversationType }) =>
+              !isDefined(conversationType) && !pageThreadIds.includes(id),
+          )
+          .map(({ id }) => id);
+        const favoriteThreads: AgentChatThreadRecord[] = [];
+        const favoriteParticipants: AgentChatThreadParticipantFieldsFragment[] =
+          [];
+
+        if (mode === 'refresh' && isNonEmptyArray(unloadedFavoriteThreadIds)) {
+          let favoriteCursor: string | null = null;
+
+          do {
+            const favoritePage = await fetchAgentChatThreadsPage({
+              lastCursor: favoriteCursor,
+              threadIdFilter: { id: { in: unloadedFavoriteThreadIds } },
+            });
+
+            if (!isDefined(favoritePage) || !isSameSession()) {
+              return undefined;
+            }
+
+            favoriteThreads.push(...favoritePage.threads);
+            favoriteParticipants.push(...favoritePage.participants);
+            favoriteCursor = favoritePage.hasNextPage
+              ? favoritePage.endCursor
+              : null;
+          } while (isDefined(favoriteCursor));
+        }
+
         // Retry rather than overwrite a record event applied mid-request.
         if (hasChangedSinceRequest()) {
           continue;
@@ -68,6 +104,7 @@ export const useRefreshAgentChatThreads = () => {
         const selectedThreadId = store.get(currentAiChatThreadState.atom);
         await refreshAgentChatThreadPermissions([
           ...page.threads.map(({ id }) => id),
+          ...favoriteThreads.map(({ id }) => id),
           ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
             ? [selectedThreadId]
             : []),
@@ -77,10 +114,14 @@ export const useRefreshAgentChatThreads = () => {
           continue;
         }
 
-        upsertRecordsInStore({ partialRecords: page.threads });
-        addAgentChatThreadParticipants(page.participants);
+        upsertRecordsInStore({
+          partialRecords: [...page.threads, ...favoriteThreads],
+        });
+        addAgentChatThreadParticipants([
+          ...page.participants,
+          ...favoriteParticipants,
+        ]);
 
-        const pageThreadIds = page.threads.map(({ id }) => id);
         const previousThreadIds =
           mode === 'fetch-more' ? (listBeforeRequest?.threadIds ?? []) : [];
 

@@ -11,14 +11,16 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 import { type TextUIPart } from 'ai';
 
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
