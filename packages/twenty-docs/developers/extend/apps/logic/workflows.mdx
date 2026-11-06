@@ -120,6 +120,7 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
     logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
   },
   ```
+- A `CODE`, `HTTP_REQUEST` or `LOGIC_FUNCTION` step exposes its output to later steps through `expectedOutputSchema`: a sample of what the step returns, as an object or an array. A `LOGIC_FUNCTION` whose function declares an output schema uses that schema instead.
 - `AI_AGENT` steps come in two kinds, which you can't mix:
   - A Generate step has no agent. It carries its own `instructions`, `modelId`, `modelConfiguration` and `scope`, and runs once: no conversation, no human input, no waiting.
   - An Agent step runs one of your app's agents, named with `agentUniversalIdentifier`, which brings its own instructions, model and permissions. Only an Agent step takes `humanInputInstructions` and `conversation`.
