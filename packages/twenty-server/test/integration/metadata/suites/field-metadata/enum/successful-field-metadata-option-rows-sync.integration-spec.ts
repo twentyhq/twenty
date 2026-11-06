@@ -226,7 +226,7 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
-  it('rejects an option id already used by another field', async () => {
+  it('accepts an option id already used by another field, leaving the copy without its row', async () => {
     const { data: createData } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -240,29 +240,47 @@ describe('field metadata option rows follow field options', () => {
       gqlFields: 'id options',
     });
 
-    const [webOption] = createData.createOneField.options as StoredOption[];
+    const sourceFieldId: string = createData.createOneField.id;
+    const sourceOptions = createData.createOneField.options as StoredOption[];
 
-    const { errors } = await createOneFieldMetadata({
-      expectToFail: true,
+    const { data: copyData } = await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         objectMetadataId,
         type: FieldMetadataType.SELECT,
         name: 'copiedSourceField',
         label: 'Copied Source Field',
         isLabelSyncedWithName: false,
-        options: [webOption],
+        options: sourceOptions,
       },
       gqlFields: 'id',
     });
 
-    const validationErrors = errors?.[0]?.extensions?.errors;
+    const copiedFieldId: string = copyData.createOneField.id;
 
-    expect(validationErrors?.fieldMetadata?.[0]?.errors).toEqual([
-      expect.objectContaining({
-        message: `Option id "${webOption.id}" is already used by another field`,
-      }),
-    ]);
-    expect(validationErrors?.fieldMetadataOption).toBeUndefined();
+    try {
+      expect(await findOptionRows(copiedFieldId)).toEqual([]);
+      expect(await findOptionRows(sourceFieldId)).toEqual(
+        toExpectedRows({
+          options: sourceOptions,
+          applicationId: await findFieldApplicationId(sourceFieldId),
+        }),
+      );
+    } finally {
+      for (const fieldMetadataId of [copiedFieldId, sourceFieldId]) {
+        await updateOneFieldMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: fieldMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneFieldMetadata({
+          expectToFail: false,
+          input: { idToDelete: fieldMetadataId },
+        });
+      }
+    }
   });
 
   it('adds a caller-owned row on a standard field and leaves its standard rows alone', async () => {
@@ -331,7 +349,7 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
-  it('renames a field whose legacy option ids await the backfill', async () => {
+  it('keeps editing a field whose legacy option ids await the backfill', async () => {
     const { data } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -387,8 +405,8 @@ describe('field metadata option rows follow field options', () => {
           [fieldMetadataId],
         );
 
-      const { errors } = await updateOneFieldMetadata({
-        expectToFail: true,
+      await updateOneFieldMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: fieldMetadataId,
           updatePayload: {
@@ -400,9 +418,7 @@ describe('field metadata option rows follow field options', () => {
         },
       });
 
-      expect(JSON.stringify(errors)).toContain(
-        'Option id must be a lowercase UUID of version 4 or later',
-      );
+      expect(await findOptionRows(fieldMetadataId)).toEqual([]);
     } finally {
       await updateOneFieldMetadata({
         expectToFail: false,

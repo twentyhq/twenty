@@ -12,8 +12,6 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFieldMetadataInputOptions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util';
-import { validateOptionIdsAreUniversalIdentifiers } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util';
-import { validateOptionIdsNotUsedByOtherFields } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-not-used-by-other-fields.util';
 import { validateSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-select-option-colors.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -147,8 +145,6 @@ const validateFieldMetadataDefaultValue = ({
 export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
   update,
-  optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-  buildOptions,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     universalFlatFieldMetadataToValidate,
@@ -160,28 +156,6 @@ export const validateEnumSelectFlatFieldMetadata = ({
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
     : [];
 
-  // Only workspace edits are rejected: an app manifest with legacy ids keeps syncing, its rows skipped.
-  const isWorkspaceWritingOptions =
-    isWritingOptions &&
-    buildOptions.applicationUniversalIdentifier ===
-      buildOptions.workspaceCustomApplicationUniversalIdentifier;
-
-  const optionUniversalIdentifierValidationErrors = isWorkspaceWritingOptions
-    ? validateOptionIdsAreUniversalIdentifiers(
-        universalFlatFieldMetadataToValidate,
-      )
-    : [];
-
-  const optionIdValidationErrors = isWritingOptions
-    ? validateOptionIdsNotUsedByOtherFields({
-        universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
-        flatFieldMetadataMaps:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataOptionMaps,
-      })
-    : [];
-
   const defaultValueValidationErrors = isDefined(
     universalFlatFieldMetadataToValidate.defaultValue,
   )
@@ -191,11 +165,10 @@ export const validateEnumSelectFlatFieldMetadata = ({
       })
     : [];
 
+  // Option ids are not checked until the 2.57 backfill has regenerated legacy ones on every workspace.
   return [
     ...optionsValidationErrors,
     ...optionColorValidationErrors,
-    ...optionUniversalIdentifierValidationErrors,
-    ...optionIdValidationErrors,
     ...defaultValueValidationErrors,
   ];
 };
