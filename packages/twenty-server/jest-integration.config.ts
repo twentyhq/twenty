@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === 'test') {
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
+const isOktaSsoTestTenantConfigured = Boolean(process.env.OKTA_SSO_TEST_ISSUER);
 
 const tsConfig = require('./tsconfig.json');
 
@@ -30,6 +31,9 @@ const jestConfig: JestConfigWithTsJest = {
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
+    ...(isOktaSsoTestTenantConfigured
+      ? []
+      : ['<rootDir>/test/integration/sso']),
     // Needs a secure-deployment app; runs via jest-integration-secure.config.ts (nx test:integration:secure)
     '<rootDir>/test/integration/secure-deployment',
   ],
