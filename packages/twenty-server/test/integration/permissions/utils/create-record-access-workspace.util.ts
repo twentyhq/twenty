@@ -6,7 +6,7 @@ import { createAgentForRole } from 'test/integration/permissions/utils/create-ag
 import { createAgentWithoutRole } from 'test/integration/permissions/utils/create-agent-without-role.util';
 import { createApiKeyForRole } from 'test/integration/permissions/utils/create-api-key-for-role.util';
 import { createApplicationWithDefaultRole } from 'test/integration/permissions/utils/create-application-with-default-role.util';
-import { createOauthOnlyApplication } from 'test/integration/permissions/utils/create-oauth-only-application.util';
+import { authorizeOauthOnlyApplicationOrThrow } from 'test/integration/permissions/utils/authorize-oauth-only-application.util';
 import { createRecordAccessObject } from 'test/integration/permissions/utils/create-record-access-object.util';
 import { createRecordAccessRole } from 'test/integration/permissions/utils/create-record-access-role.util';
 import { createWebhookForRole } from 'test/integration/permissions/utils/create-webhook-for-role.util';
@@ -139,7 +139,9 @@ export const createRecordAccessWorkspace =
         objectUniversalIdentifier,
         accessToken,
       }),
-      oauthApplicationId: await createOauthOnlyApplication({ accessToken }),
+      oauthApplicationId: await authorizeOauthOnlyApplicationOrThrow({
+        accessToken,
+      }),
       recordIds: {
         insideEveryFilter: await createRecord({}),
         outsideStatusFilter: await createRecord({ status: 'archived' }),

@@ -20,7 +20,10 @@ const findApplicationOrThrow = async ({
   workspace,
 }: {
   applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
-  workspace: RecordAccessWorkspace;
+  workspace: Pick<
+    RecordAccessWorkspace,
+    'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
+  >;
 }) => {
   const findApplicationById = async (id: string) =>
     fromApplicationEntityToFlatApplication(
@@ -48,7 +51,10 @@ const buildApplicationNarrowing = async ({
   workspace,
 }: {
   applicationPrincipal: RecordAccessPrincipals['applicationPrincipal'];
-  workspace: RecordAccessWorkspace;
+  workspace: Pick<
+    RecordAccessWorkspace,
+    'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
+  >;
 }) =>
   applicationPrincipal.type === 'customApplication'
     ? {}
@@ -64,7 +70,10 @@ const buildLimitingNarrowing = ({
   workspace,
 }: {
   limitingPrincipal: RecordAccessPrincipals['limitingPrincipal'];
-  workspace: RecordAccessWorkspace;
+  workspace: Pick<
+    RecordAccessWorkspace,
+    'limitingAgentIds' | 'limitingAgentWithoutRoleId'
+  >;
 }) => {
   switch (limitingPrincipal.type) {
     case 'agent':
