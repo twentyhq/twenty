@@ -477,7 +477,7 @@ export class WorkspaceService {
 
     const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
     const assistantProfilePatch =
-      await this.workspaceAssistantProfileService.preparePatchOrThrow({
+      await this.workspaceAssistantProfileService.validateProfileUpdateOrThrow({
         workspace,
         profile: aiChatAssistantProfile,
       });

@@ -44,7 +44,7 @@ export class WorkspaceAssistantProfileService {
     private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
-  async preparePatchOrThrow({
+  async validateProfileUpdateOrThrow({
     workspace,
     profile,
   }: {
