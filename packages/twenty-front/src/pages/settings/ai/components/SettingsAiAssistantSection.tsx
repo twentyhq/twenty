@@ -18,6 +18,8 @@ import { getSettingsAiAssistantPreset } from '@/settings/ai/utils/getSettingsAiA
 export const SettingsAiAssistantSection = ({
   value,
   onChange,
+  onReset,
+  onRetry,
   disabled = false,
   isSaving = false,
   errorMessage,
@@ -72,7 +74,9 @@ export const SettingsAiAssistantSection = ({
         <SettingsAiAssistantCustomize
           value={value}
           onChange={onChange}
-          disabled={isDisabled}
+          onReset={onReset}
+          disabled={disabled}
+          isSaving={isSaving}
           isCustom={!isDefined(selectedPreset)}
           describedBy={hasError ? errorId : undefined}
         />
@@ -87,6 +91,13 @@ export const SettingsAiAssistantSection = ({
           status="error"
           icon={<IconAlertTriangle aria-hidden />}
           embedded
+          action={
+            isDefined(onRetry) ? (
+              <InlineBanner.Action onClick={onRetry} disabled={isDisabled}>
+                {t`Retry`}
+              </InlineBanner.Action>
+            ) : undefined
+          }
         >
           {errorMessage}
         </InlineBanner>

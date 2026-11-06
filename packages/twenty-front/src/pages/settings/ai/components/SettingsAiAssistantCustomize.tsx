@@ -8,8 +8,10 @@ import { SettingsAiAssistantCustomizeMenu } from '~/pages/settings/ai/components
 
 type SettingsAiAssistantCustomizeProps = {
   value: AiChatAssistantProfile;
-  onChange: (value: AiChatAssistantProfile) => void;
+  onChange: (value: Partial<AiChatAssistantProfile>) => void;
+  onReset: () => void;
   disabled: boolean;
+  isSaving: boolean;
   isCustom: boolean;
   describedBy?: string;
 };
@@ -17,7 +19,9 @@ type SettingsAiAssistantCustomizeProps = {
 export const SettingsAiAssistantCustomize = ({
   value,
   onChange,
+  onReset,
   disabled,
+  isSaving,
   isCustom,
   describedBy,
 }: SettingsAiAssistantCustomizeProps) => {
@@ -31,7 +35,7 @@ export const SettingsAiAssistantCustomize = ({
   return (
     <Dropdown.Root type="panel" open={isOpen} onOpenChange={setIsOpen}>
       <Dropdown.Trigger
-        disabled={disabled}
+        disabled={disabled || isSaving}
         aria-label={t`Customize`}
         aria-pressed={isCustom}
         aria-describedby={describedBy}
@@ -62,7 +66,8 @@ export const SettingsAiAssistantCustomize = ({
         <SettingsAiAssistantCustomizeMenu
           value={value}
           onChange={onChange}
-          disabled={disabled}
+          onReset={onReset}
+          disabled={disabled || isSaving}
         />
       </Dropdown.Content>
     </Dropdown.Root>

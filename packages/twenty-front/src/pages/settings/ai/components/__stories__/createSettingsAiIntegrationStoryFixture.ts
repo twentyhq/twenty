@@ -23,10 +23,13 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { createSettingsAiAssistantStoryFixture } from '~/pages/settings/ai/components/__stories__/createSettingsAiAssistantStoryFixture';
 
 type SettingsAiIntegrationStoryOptions = {
   permissionFlags: PermissionFlagType[];
   isInboxEnabled: boolean;
+  shouldFailAssistantLoad?: boolean;
+  shouldPauseAssistantLoad?: boolean;
 };
 
 export const createSettingsAiIntegrationStoryFixture = () => {
@@ -42,9 +45,13 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     ...mockCurrentWorkspace,
     aiAdditionalInstructions: null,
   };
+  const assistant = createSettingsAiAssistantStoryFixture({
+    getWorkspace: () => workspace,
+  });
 
   const reset = async (options: SettingsAiIntegrationStoryOptions) => {
     resetGeneration += 1;
+    assistant.reset(options);
     resumeBehaviorSave();
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
@@ -117,6 +124,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   };
 
   const handlers = [
+    ...assistant.handlers,
     graphql.query('GetAgentChatOpenThreadsSummary', () =>
       HttpResponse.json({
         data: {
@@ -144,7 +152,13 @@ export const createSettingsAiIntegrationStoryFixture = () => {
         data: {
           currentUser: {
             ...mockedUserData,
-            currentWorkspace: workspace,
+            currentWorkspace: {
+              ...workspace,
+              aiChatAssistantProfile: {
+                ...assistant.getProfile(),
+                __typename: 'AiChatAssistantProfile',
+              },
+            },
             currentUserWorkspace: {
               ...mockedUserData.currentUserWorkspace,
               id: 'ai-settings-user-workspace',
@@ -157,6 +171,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     graphql.mutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(
       'UpdateWorkspace',
       async ({ variables }) => {
+        if (isDefined(variables.input.aiChatAssistantProfile)) {
+          return assistant.save(variables.input);
+        }
+
         const requestGeneration = resetGeneration;
         const hasBehaviorUpdate =
           isDefined(variables.input.aiChatDirectMessageAssistantMode) ||
@@ -217,7 +235,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
               ...workspace,
               __typename: 'Workspace',
               aiChatAssistantProfile: {
-                ...workspace.aiChatAssistantProfile,
+                ...assistant.getProfile(),
                 __typename: 'AiChatAssistantProfile',
               },
               customDomain: workspace.customDomain ?? null,
@@ -245,6 +263,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   ];
 
   return {
+    assistant,
     reset,
     handlers,
     saveInstructions,

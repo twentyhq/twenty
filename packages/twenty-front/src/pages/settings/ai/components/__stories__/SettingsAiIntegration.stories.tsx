@@ -66,8 +66,8 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     expect(canvas.getByRole('heading', { name: 'MCP Server' })).toBeVisible();
     expect(canvas.getByRole('heading', { name: 'Behavior' })).toBeVisible();
     expect(
-      canvas.queryByRole('heading', { name: 'Avatar' }),
-    ).not.toBeInTheDocument();
+      await canvas.findByRole('heading', { name: 'Avatar' }),
+    ).toBeVisible();
 
     const instructions = await canvas.findByRole('textbox', {
       name: 'Workspace Instructions',
@@ -204,6 +204,9 @@ export const LegacyTabsWithoutInbox: Story = {
       canvas.getByRole('heading', { name: 'System Prompt' }),
     ).toBeVisible();
     expect(fixture.saveBehavior).not.toHaveBeenCalled();
+    expect(fixture.assistant.loadProfile).not.toHaveBeenCalled();
+    expect(fixture.assistant.saveProfile).not.toHaveBeenCalled();
+    expect(fixture.assistant.resetProfile).not.toHaveBeenCalled();
   },
 };
 
@@ -223,6 +226,9 @@ export const SettingsPermissionDenied: Story = {
     expect(fixture.loadSystemPrompts).not.toHaveBeenCalled();
     expect(fixture.saveInstructions).not.toHaveBeenCalled();
     expect(fixture.saveBehavior).not.toHaveBeenCalled();
+    expect(fixture.assistant.loadProfile).not.toHaveBeenCalled();
+    expect(fixture.assistant.saveProfile).not.toHaveBeenCalled();
+    expect(fixture.assistant.resetProfile).not.toHaveBeenCalled();
   },
 };
 
