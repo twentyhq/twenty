@@ -23,7 +23,7 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/internal/role/constants/no-role-records-permissions.constant';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 
 jest.mock(
   'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util',

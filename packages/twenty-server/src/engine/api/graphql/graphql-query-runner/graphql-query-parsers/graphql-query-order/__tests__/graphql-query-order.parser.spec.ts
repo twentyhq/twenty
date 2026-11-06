@@ -227,16 +227,9 @@ describe('GraphqlQueryOrderFieldParser', () => {
       parser.parse({
         orderBy: [{ stage: OrderByDirection.AscNullsLast }],
         objectNameSingular: 'opportunity',
-        recordsPermissions: {
-          objects: {
-            [objectMetadataId]: {
-              canReadAllRecords: true,
-              canUpdateAllRecords: true,
-              canSoftDeleteAllRecords: true,
-              canDestroyAllRecords: true,
-              restrictedFields: { 'stage-id': { canRead: false } },
-            },
-          },
+        recordReadRestrictions: {
+          unreadableObjectMetadataIds: new Set(),
+          unreadableFieldMetadataIds: new Set(['stage-id']),
         },
       }),
     ).toThrow('does not have permission');

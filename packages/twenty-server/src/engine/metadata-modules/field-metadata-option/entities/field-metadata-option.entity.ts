@@ -7,6 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -28,10 +29,11 @@ export type FieldMetadataOptionOverrides = {
   upgradeCommandName: ADD_FIELD_METADATA_OPTION_TABLE_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_FIELD_METADATA_OPTION_APPLICATION_ID', ['applicationId'])
-@Index(
+// Deferred so one migration can swap or shift values across a field's options.
+@Unique(
   'IDX_FIELD_METADATA_OPTION_FIELD_METADATA_ID_VALUE_UNIQUE',
   ['fieldMetadataId', 'value'],
-  { unique: true },
+  { deferrable: 'INITIALLY DEFERRED' },
 )
 export class FieldMetadataOptionEntity
   extends OverridableEntity<FieldMetadataOptionOverrides>

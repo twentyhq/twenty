@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +20,7 @@ import { type PrincipalPermissionsService } from 'src/engine/permissions/princip
 import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -122,6 +124,54 @@ describe('permissions read services', () => {
       recordIds,
     });
 
+  describe('permission flags of a named subject', () => {
+    const buildSettingPermissionsService = () =>
+      getAppProviderByClassName<SettingPermissionsService>(
+        'SettingPermissionsService',
+      );
+
+    it('answers for a user workspace like the check on its auth context', async () => {
+      const janeAuthContext = await resolveWorkspaceMemberAuthContext({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      });
+      const settingPermissionsService = buildSettingPermissionsService();
+
+      expect(
+        await settingPermissionsService.userWorkspaceHasPermissionFlag({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          userWorkspaceId: janeAuthContext.userWorkspaceId,
+          permissionFlag: PermissionFlagType.WORKSPACE,
+        }),
+      ).toBe(
+        await settingPermissionsService.hasPermissionFlag({
+          authContext: janeAuthContext,
+          permissionFlag: PermissionFlagType.WORKSPACE,
+        }),
+      );
+    });
+
+    it('denies a user workspace with no role', async () => {
+      expect(
+        await buildSettingPermissionsService().userWorkspaceHasPermissionFlag({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          userWorkspaceId: randomUUID(),
+          permissionFlag: PermissionFlagType.WORKSPACE,
+        }),
+      ).toBe(false);
+    });
+
+    it('denies an application that does not exist', async () => {
+      expect(
+        await buildSettingPermissionsService().applicationHasPermissionFlag({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: randomUUID(),
+          permissionFlag: PermissionFlagType.WORKSPACE,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('canReadRecords and canUpdateRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
@@ -204,11 +254,12 @@ describe('permissions read services', () => {
   describe('field questions', () => {
     let readRestricted: ApiKeyWithObjectRecordGrants;
     let updateRestricted: ApiKeyWithObjectRecordGrants;
+    let idReadRestricted: ApiKeyWithObjectRecordGrants;
     let introFieldMetadataId: string;
     let jobTitleFieldMetadataId: string;
 
     beforeAll(async () => {
-      [readRestricted, updateRestricted] = await Promise.all([
+      [readRestricted, updateRestricted, idReadRestricted] = await Promise.all([
         createApiKeyWithFieldPermission({
           objectNameSingular: 'person',
           fieldName: 'intro',
@@ -218,6 +269,11 @@ describe('permissions read services', () => {
           objectNameSingular: 'person',
           fieldName: 'intro',
           canUpdateFieldValue: false,
+        }),
+        createApiKeyWithFieldPermission({
+          objectNameSingular: 'person',
+          fieldName: 'id',
+          canReadFieldValue: false,
         }),
       ]);
       [introFieldMetadataId, jobTitleFieldMetadataId] = await Promise.all(
@@ -234,6 +290,7 @@ describe('permissions read services', () => {
       await deleteApiKeysWithObjectRecordGrants([
         readRestricted,
         updateRestricted,
+        idReadRestricted,
       ]);
     });
 
@@ -255,6 +312,33 @@ describe('permissions read services', () => {
 
       return principals;
     };
+
+    it('denies record questions when the role cannot read the id field', async () => {
+      const buildApiKeyAuthContext = (
+        apiKey: ApiKeyWithObjectRecordGrants,
+      ): PermissionsAuthContext => ({
+        type: 'apiKey',
+        workspace: { id: SEED_APPLE_WORKSPACE_ID },
+        apiKey: { id: apiKey.apiKeyId },
+      });
+
+      for (const question of ['canReadRecords', 'canUpdateRecords'] as const) {
+        expect(
+          await askRecordsQuestion({
+            question,
+            authContext: buildApiKeyAuthContext(readRestricted),
+            recordIds: [recordId],
+          }),
+        ).toBe(true);
+        expect(
+          await askRecordsQuestion({
+            question,
+            authContext: buildApiKeyAuthContext(idReadRestricted),
+            recordIds: [recordId],
+          }),
+        ).toBe(false);
+      }
+    });
 
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);

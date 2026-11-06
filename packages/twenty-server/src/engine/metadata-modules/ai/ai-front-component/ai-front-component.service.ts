@@ -76,12 +76,10 @@ export class AiFrontComponentService {
   }) {
     await this.assertEnabledOrThrow(workspaceId);
     if (
-      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
+      !(await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
         userWorkspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
-        applicationId: undefined,
-        agentId: undefined,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
       }))
     ) {
       throw new ApplicationException(

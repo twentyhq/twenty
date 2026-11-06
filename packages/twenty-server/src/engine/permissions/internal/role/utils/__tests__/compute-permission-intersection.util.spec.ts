@@ -5,7 +5,7 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/internal/role/constants/no-role-records-permissions.constant';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 

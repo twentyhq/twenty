@@ -21,7 +21,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';

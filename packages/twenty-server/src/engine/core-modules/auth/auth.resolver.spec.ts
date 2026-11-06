@@ -38,7 +38,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 import { AuthResolver } from './auth.resolver';

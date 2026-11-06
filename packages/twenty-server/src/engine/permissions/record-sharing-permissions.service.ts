@@ -176,7 +176,7 @@ export class RecordSharingPermissionsService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordAccessDecisionService.isOperationPermittedByRole({
+      (await this.recordAccessDecisionService.canRoleReachSomeRecords({
         principals:
           await this.principalPermissionsService.buildPermissionsPrincipals({
             authContext: args.authContext,

@@ -6,11 +6,8 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -30,7 +27,6 @@ type RecordSharePrincipal = Pick<
 export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
@@ -66,43 +62,32 @@ export class RecordSharePrincipalService {
       return;
     }
 
-    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap, rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
+        'rolesPermissions',
       ]);
     const roleIds = resolveRecordSharePrincipalRoleIds({
       principals: namedPrincipals,
       flatWorkspaceMemberMaps,
       userWorkspaceRoleMap,
     });
-    const metadataMaps = await this.permissionsMetadataMapsService.load({
-      workspaceId,
-    });
+    const roleIdsUnableToReadObject =
+      await this.recordPermissionsService.findRoleIdsUnableToReadObject({
+        workspaceId,
+        roleIds: roleIds.filter(isDefined),
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
 
-      if (
-        !isDefined(roleId) ||
-        !isDefined(metadataMaps.rolesPermissions[roleId])
-      ) {
+      if (!isDefined(roleId) || !isDefined(rolesPermissions[roleId])) {
         continue;
       }
 
-      const rolePrincipals = buildRolePermissionsPrincipals({
-        workspaceId,
-        roleId,
-      });
-
-      if (
-        !isRolePermittingOperation({
-          principals: rolePrincipals,
-          metadataMaps,
-          flatObjectMetadata,
-          operationType: 'select',
-        })
-      ) {
+      if (roleIdsUnableToReadObject.has(roleId)) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,

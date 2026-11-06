@@ -11,6 +11,7 @@ import {
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
 import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 @Injectable()
@@ -30,8 +31,6 @@ export class RecordPermissionQueryService {
     transactionScope?: RecordPermissionTransactionScope;
     query: RecordPermissionQuery;
   }): Promise<TRow[]> {
-    const statement = compileNamedParameters(query.sql, query.parameters);
-
     if (
       isDefined(transactionScope) &&
       transactionScope.workspaceId !== workspaceId
@@ -42,12 +41,31 @@ export class RecordPermissionQueryService {
       );
     }
 
-    const rows = isDefined(transactionScope)
-      ? await transactionScope.executeRawQuery(statement.text, statement.values)
-      : await this.workspaceQueryExecutorService
-          .getPrimaryQueryExecutorOrThrow()
-          .execute(statement);
+    const rows = await this.executeQuery({ query, transactionScope });
 
     return rows as TRow[];
+  }
+
+  private async executeQuery({
+    query,
+    transactionScope,
+  }: {
+    query: RecordPermissionQuery;
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<Record<string, unknown>[]> {
+    try {
+      const statement = compileNamedParameters(query.sql, query.parameters);
+
+      return isDefined(transactionScope)
+        ? await transactionScope.executeRawQuery(
+            statement.text,
+            statement.values,
+          )
+        : await this.workspaceQueryExecutorService
+            .getPrimaryQueryExecutorOrThrow()
+            .execute(statement);
+    } catch (error) {
+      throw toPermissionsException(error);
+    }
   }
 }

@@ -8,10 +8,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/internal/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
@@ -38,7 +38,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   }
 
   for (const record of records) {
-    const matchesRLS = isRecordMatchingRLSRowLevelPermissionPredicate({
+    const matchesRLS = isRecordMatchingFilter({
       record: record as unknown as ObjectRecord,
       filter: recordFilter,
       flatObjectMetadata: objectMetadata,
@@ -46,9 +46,9 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     });
 
     if (!matchesRLS) {
-      throw new TwentyOrmException(
+      throw new PermissionsException(
         'Record does not satisfy row-level security constraints of your current role',
-        TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
+        PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
     }
   }
