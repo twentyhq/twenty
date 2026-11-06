@@ -4,7 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
-import { ClearIfElseNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954626110-clear-if-else-next-step-ids.command';
+import { ClearIfElseNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793966626110-clear-if-else-next-step-ids.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';

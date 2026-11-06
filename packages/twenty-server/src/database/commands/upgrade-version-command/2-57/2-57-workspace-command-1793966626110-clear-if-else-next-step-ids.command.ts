@@ -18,7 +18,7 @@ const IF_ELSE_WITH_NEXT_STEP_IDS_JSON_PATH =
   '$[*] ? (@.type == "IF_ELSE" && @.nextStepIds.type() == "array" && @.nextStepIds.size() > 0)';
 
 // Runs are not rewritten: from 2.57 the executor ignores these next steps, as it always did when choosing what runs
-@RegisteredWorkspaceCommand('2.57.0', 1793954626110)
+@RegisteredWorkspaceCommand('2.57.0', 1793966626110)
 @Command({
   name: 'upgrade:2-57:clear-if-else-next-step-ids',
   description:
