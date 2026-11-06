@@ -1,4 +1,8 @@
-import { getLogoUrlFromDomainName, normalizeDomain } from 'twenty-shared/utils';
+import {
+  getLogoUrlFromDomainName,
+  isValidDomain,
+  normalizeDomain,
+} from 'twenty-shared/utils';
 import { IconWorld } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -15,6 +19,10 @@ export const SettingsSecurityOriginTableCell = ({
 }: SettingsSecurityOriginTableCellProps) => {
   const theme = useTheme();
 
+  const faviconUrl = isValidDomain(origin)
+    ? getLogoUrlFromDomainName(normalizeDomain(origin))
+    : undefined;
+
   return (
     <TableCell
       color={themeCssVariables.font.color.primary}
@@ -28,10 +36,7 @@ export const SettingsSecurityOriginTableCell = ({
         backgroundColor="transparent"
         aria-hidden
       >
-        <Avatar.Image
-          src={getLogoUrlFromDomainName(normalizeDomain(origin))}
-          alt=""
-        />
+        <Avatar.Image src={faviconUrl} alt="" />
         <Avatar.Fallback render={<IconWorld size={theme.icon.size.md} />} />
       </Avatar.Root>
       <OverflowingTextWithTooltip text={origin} />
