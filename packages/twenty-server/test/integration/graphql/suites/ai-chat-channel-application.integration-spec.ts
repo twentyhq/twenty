@@ -878,12 +878,40 @@ describe('Uninstalling an application that created inbox channels', () => {
     const reinstalledApplication = await reinstallApplicationOrThrow(
       uninstalledApplication.application.universalIdentifier,
     );
+    const reclaimInput = {
+      name: buildChannelName(),
+      universalIdentifier,
+      roleIds: [reinstalledApplication.roleId, memberRoleId],
+    };
+    const failingRoleRestore = jest
+      .spyOn(migrationService, 'validateBuildAndRunWorkspaceMigration')
+      .mockRejectedValueOnce(new Error('Role restore failed'));
+
+    try {
+      const failedReclaimResponse = await createChannel({
+        input: reclaimInput,
+        token: reinstalledApplication.token,
+      });
+
+      expect(failedReclaimResponse.body.errors).toBeDefined();
+      expect(failingRoleRestore).toHaveBeenCalledTimes(1);
+      expect(failingRoleRestore).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationUniversalIdentifier:
+            uninstalledApplication.application.universalIdentifier,
+        }),
+      );
+    } finally {
+      failingRoleRestore.mockRestore();
+    }
+
+    expect(await readChannelApplicationId(channelId)).toBe(
+      reinstalledApplication.id,
+    );
+
     const reclaimResponse = await createChannel({
-      input: {
-        name: buildChannelName(),
-        universalIdentifier,
-        roleIds: [reinstalledApplication.roleId, memberRoleId],
-      },
+      input: reclaimInput,
       token: reinstalledApplication.token,
     });
 

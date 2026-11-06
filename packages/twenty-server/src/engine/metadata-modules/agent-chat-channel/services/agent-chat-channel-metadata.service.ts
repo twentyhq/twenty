@@ -494,32 +494,70 @@ export class AgentChatChannelMetadataService {
       isDefined(channel.retainedApplicationId) &&
       channel.retainedApplicationId !== ownerFlatApplication.id;
 
-    if (
-      channel.applicationId === ownerFlatApplication.id ||
-      !isRetainedByCallingApplication ||
-      !isRetainedByAnotherInstallation
-    ) {
+    if (!isRetainedByCallingApplication || !isRetainedByAnotherInstallation) {
       return { channel, shouldRewriteChannelGrants: false };
     }
 
+    const isOwnedByCallingApplication =
+      channel.applicationId === ownerFlatApplication.id ||
+      (await this.claimRetainedChannel({
+        workspaceId,
+        channel,
+        ownerFlatApplication,
+      }));
+
+    if (!isOwnedByCallingApplication) {
+      return {
+        channel: await this.findChannelOrThrow({
+          workspaceId,
+          channelId: channel.id,
+        }),
+        shouldRewriteChannelGrants: false,
+      };
+    }
+
+    await this.restoreApplicationRoles({
+      workspaceId,
+      channel,
+      ownerFlatApplication,
+      roleIds,
+    });
+
+    await this.channelRepository.update(
+      workspaceId,
+      { id: channel.id, applicationId: ownerFlatApplication.id },
+      { retainedApplicationId: ownerFlatApplication.id },
+    );
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatAgentChatChannelMaps'],
+    });
+
+    return {
+      channel: await this.findChannelOrThrow({
+        workspaceId,
+        channelId: channel.id,
+      }),
+      shouldRewriteChannelGrants: true,
+    };
+  }
+
+  private async claimRetainedChannel({
+    workspaceId,
+    channel,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    channel: FlatAgentChatChannelWithRoleIds;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<boolean> {
     const workspaceCustomFlatApplication =
       await this.findWorkspaceCustomFlatApplication(workspaceId);
 
     if (channel.applicationId !== workspaceCustomFlatApplication.id) {
-      return { channel, shouldRewriteChannelGrants: false };
+      return false;
     }
-
-    const { flatRoleMaps } = await this.getChannelMaps(workspaceId);
-    const applicationRoleIdsToAdd = findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityIds: roleIds,
-      flatEntityMaps: flatRoleMaps,
-    })
-      .filter(
-        ({ id, applicationId }) =>
-          applicationId === ownerFlatApplication.id &&
-          !channel.roleIds.includes(id),
-      )
-      .map(({ id }) => id);
 
     const { affected } = await this.channelRepository.update(
       workspaceId,
@@ -538,26 +576,43 @@ export class AgentChatChannelMetadataService {
       flatMapsKeys: ['flatAgentChatChannelMaps'],
     });
 
-    if (affected !== 1 || !isNonEmptyArray(applicationRoleIdsToAdd)) {
-      return {
-        channel: await this.findChannelOrThrow({
-          workspaceId,
-          channelId: channel.id,
-        }),
-        shouldRewriteChannelGrants: false,
-      };
+    return affected === 1;
+  }
+
+  private async restoreApplicationRoles({
+    workspaceId,
+    channel,
+    ownerFlatApplication,
+    roleIds,
+  }: {
+    workspaceId: string;
+    channel: FlatAgentChatChannelWithRoleIds;
+    ownerFlatApplication: FlatApplication;
+    roleIds: string[];
+  }): Promise<void> {
+    const { flatRoleMaps } = await this.getChannelMaps(workspaceId);
+    const applicationRoleIdsToAdd = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: roleIds,
+      flatEntityMaps: flatRoleMaps,
+    })
+      .filter(
+        ({ id, applicationId }) =>
+          applicationId === ownerFlatApplication.id &&
+          !channel.roleIds.includes(id),
+      )
+      .map(({ id }) => id);
+
+    if (!isNonEmptyArray(applicationRoleIdsToAdd)) {
+      return;
     }
 
-    return {
-      channel: await this.updateChannel({
-        workspaceId,
-        ownerFlatApplication,
-        channelId: channel.id,
-        changes: {},
-        roleIds: [...channel.roleIds, ...applicationRoleIdsToAdd],
-      }),
-      shouldRewriteChannelGrants: true,
-    };
+    await this.updateChannel({
+      workspaceId,
+      ownerFlatApplication,
+      channelId: channel.id,
+      changes: {},
+      roleIds: [...channel.roleIds, ...applicationRoleIdsToAdd],
+    });
   }
 
   private async findWorkspaceCustomFlatApplication(
