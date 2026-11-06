@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import ical from 'ical-generator';
-import { type DAVClient } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { pickCalDavOrganizerEmail } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/pick-caldav-organizer-email.util';
+import { CalDavInvitationService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-invitation.service';
 import {
   CalendarEventCreationException,
   CalendarEventCreationExceptionCode,
@@ -27,13 +26,14 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly calDavClientProvider: CalDavClientProvider,
     private readonly calDavFetchEventsService: CalDavFetchEventsService,
+    private readonly calDavInvitationService: CalDavInvitationService,
   ) {}
 
   async createCalendarEvent(
     input: CalendarEventToCreate,
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'id' | 'provider' | 'handle'
+      'id' | 'provider' | 'handle' | 'connectionParameters'
     >,
   ): Promise<FetchedCalendarEvent> {
     try {
@@ -51,13 +51,19 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         );
       }
 
-      const organizerEmail =
+      const organizer =
         input.attendees.length > 0
-          ? await this.resolveOrganizerEmail({
+          ? await this.calDavInvitationService.resolveOrganizer({
               client,
+              calendarUrl: targetCalendar.url,
               handle: connectedAccount.handle,
             })
           : undefined;
+      const organizerEmail = organizer?.email;
+      const invitees = input.attendees.filter(
+        (attendee) =>
+          attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
+      );
 
       const uid = uuid();
       const calendar = ical({ prodId: '//Twenty//Calendar//EN' });
@@ -76,6 +82,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         attendees: input.attendees.map((attendee) => ({
           email: attendee.email,
           name: attendee.displayName,
+          rsvp: true,
         })),
       });
 
@@ -111,19 +118,26 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         // fall back to the reconstructed href rather than failing the create.
       }
 
+      if (isDefined(organizer) && !organizer.isServerScheduling) {
+        await this.calDavInvitationService.sendInvitationEmail({
+          connectedAccount,
+          calendar,
+          organizerEmail: organizer.email,
+          inviteeEmails: invitees.map((invitee) => invitee.email),
+          input,
+        });
+      }
+
       const now = new Date().toISOString();
 
-      const participants: FetchedCalendarEventParticipant[] = input.attendees
-        .filter(
-          (attendee) =>
-            attendee.email.toLowerCase() !== organizerEmail?.toLowerCase(),
-        )
-        .map((attendee) => ({
-          displayName: attendee.displayName ?? '',
-          handle: attendee.email,
+      const participants: FetchedCalendarEventParticipant[] = invitees.map(
+        (invitee) => ({
+          displayName: invitee.displayName ?? '',
+          handle: invitee.email,
           responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
           isOrganizer: false,
-        }));
+        }),
+      );
 
       if (isDefined(organizerEmail)) {
         participants.unshift({
@@ -164,22 +178,6 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
-  }
-
-  private async resolveOrganizerEmail({
-    client,
-    handle,
-  }: {
-    client: DAVClient;
-    handle: string;
-  }): Promise<string> {
-    const calendarUserAddresses = isDefined(client.account)
-      ? await client
-          .fetchCalendarUserAddresses({ account: client.account })
-          .catch(() => [])
-      : [];
-
-    return pickCalDavOrganizerEmail({ calendarUserAddresses, handle });
   }
 
   private resolveCreatedEventUrl({
