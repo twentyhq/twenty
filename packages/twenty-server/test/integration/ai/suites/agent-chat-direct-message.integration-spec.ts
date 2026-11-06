@@ -276,7 +276,7 @@ describe('Private text direct messages', () => {
           senderUserWorkspaceId: null,
           parts: [{ type: 'text', text: 'Uncommitted reply' }],
         }),
-      ).rejects.toBe(sharingFailure);
+      ).rejects.toThrow(sharingFailure.message);
 
       expect(insertShares).toHaveBeenCalledTimes(2);
       expect(await readContentRecords(threadId)).toEqual(recordsBefore);
