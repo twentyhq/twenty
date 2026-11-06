@@ -6,7 +6,7 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const ifElseStep = {
+const ifElseStep: WorkflowIfElseAction = {
   id: 'if-else',
   name: 'If/Else',
   type: WorkflowActionType.IF_ELSE,
@@ -26,7 +26,7 @@ const ifElseStep = {
       retryOnFailure: { value: 0 },
     },
   },
-} as WorkflowIfElseAction;
+};
 
 const branchOptions = (branchId: string) => ({
   connectedStepType: WorkflowActionType.IF_ELSE as const,
@@ -35,22 +35,28 @@ const branchOptions = (branchId: string) => ({
 
 describe('If/Else edges', () => {
   it('adds and removes the target in the branch the options name', () => {
-    const added = buildSourceStepWithAddedEdge({
+    const { updatedSourceStep: connectedStep } = buildSourceStepWithAddedEdge({
       sourceStep: ifElseStep,
       target: 'c',
       sourceConnectionOptions: branchOptions('else'),
-    }).updatedSourceStep as WorkflowIfElseAction;
+    });
 
-    expect(added.nextStepIds).toBeUndefined();
-    expect(added.settings.input.branches[1].nextStepIds).toEqual(['b', 'c']);
+    expect(connectedStep.nextStepIds).toBeUndefined();
+    expect(connectedStep).toMatchObject({
+      settings: {
+        input: {
+          branches: [{ id: 'if' }, { id: 'else', nextStepIds: ['b', 'c'] }],
+        },
+      },
+    });
 
-    const removed = buildSourceStepWithRemovedEdge({
-      sourceStep: added,
-      target: 'c',
-      sourceConnectionOptions: branchOptions('else'),
-    }).updatedSourceStep as WorkflowIfElseAction;
-
-    expect(removed.settings.input.branches[1].nextStepIds).toEqual(['b']);
+    expect(
+      buildSourceStepWithRemovedEdge({
+        sourceStep: connectedStep,
+        target: 'c',
+        sourceConnectionOptions: branchOptions('else'),
+      }).updatedSourceStep,
+    ).toEqual(ifElseStep);
   });
 
   it('refuses an edge that names no branch, listing the branch ids', () => {

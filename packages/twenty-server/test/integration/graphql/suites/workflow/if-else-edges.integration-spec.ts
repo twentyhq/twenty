@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
@@ -39,7 +40,7 @@ describe('If/Else edges (e2e)', () => {
 
     const step = (steps ?? []).find((step) => step.id === ifElseStep.id);
 
-    if (step === undefined) {
+    if (!isDefined(step)) {
       throw new Error('If/Else step not found');
     }
 

@@ -17,7 +17,6 @@ export const getStepInput = (
   return undefined;
 };
 
-// Mirrors the run: an If/Else only continues through its branches
 export const getStepOutgoingStepIds = (
   step: ValidatableWorkflowStep,
 ): string[] => {

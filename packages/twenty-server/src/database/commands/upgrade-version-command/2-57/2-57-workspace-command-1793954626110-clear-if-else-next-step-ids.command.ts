@@ -46,7 +46,6 @@ export class ClearIfElseNextStepIdsCommand extends ProvisionedWorkspaceCommandRu
     }
 
     const isDryRun = options.dryRun ?? false;
-    const workspaceVersionTable = `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`;
 
     const clearSteps = ({ id, value }: StoredJsonbRow<unknown>) => {
       const cleared = clearIfElseNextStepIds(value);
@@ -70,34 +69,56 @@ export class ClearIfElseNextStepIdsCommand extends ProvisionedWorkspaceCommandRu
       mapRow: clearSteps,
     });
 
-    const workspaceVersionCount = (await this.tableExists({
+    const workspaceVersionCount = await this.rewriteWorkspaceVersions({
       dataSource,
-      tableName: workspaceVersionTable,
-    }))
-      ? await rewriteJsonbRowsWithCompareAndSet({
-          dataSource,
-          isDryRun,
-          tableName: workspaceVersionTable,
-          columnName: 'steps',
-          whereClause: 'jsonb_path_exists(steps, $1::jsonpath)',
-          whereParameters: [IF_ELSE_WITH_NEXT_STEP_IDS_JSON_PATH],
-          mapRow: clearSteps,
-        })
-      : 0;
+      isDryRun,
+      tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
+      mapRow: clearSteps,
+    });
 
-    if (coreVersionCount + workspaceVersionCount === 0) {
-      return;
-    }
-
+    // Also on a rerun that finds nothing left, so a run stopped before this point still refreshes the cache
     if (!isDryRun) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatWorkflowVersionMaps',
       ]);
     }
 
+    if (coreVersionCount + workspaceVersionCount === 0) {
+      return;
+    }
+
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Cleared If/Else next steps outside branches in ${coreVersionCount} core version(s) and ${workspaceVersionCount} workspace version(s) for workspace ${workspaceId}`,
     );
+  }
+
+  private async rewriteWorkspaceVersions({
+    dataSource,
+    isDryRun,
+    tableName,
+    mapRow,
+  }: {
+    dataSource: DataSource;
+    isDryRun: boolean;
+    tableName: string;
+    mapRow: (row: StoredJsonbRow<unknown>) => {
+      value: unknown;
+      hasChanged: boolean;
+    };
+  }): Promise<number> {
+    if (!(await this.tableExists({ dataSource, tableName }))) {
+      return 0;
+    }
+
+    return rewriteJsonbRowsWithCompareAndSet({
+      dataSource,
+      isDryRun,
+      tableName,
+      columnName: 'steps',
+      whereClause: 'jsonb_path_exists(steps, $1::jsonpath)',
+      whereParameters: [IF_ELSE_WITH_NEXT_STEP_IDS_JSON_PATH],
+      mapRow,
+    });
   }
 
   private async tableExists({

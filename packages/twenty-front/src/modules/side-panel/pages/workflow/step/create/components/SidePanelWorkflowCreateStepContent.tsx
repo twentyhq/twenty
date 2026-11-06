@@ -80,7 +80,6 @@ export const SidePanelWorkflowCreateStepContent = () => {
       parentStep?.type === 'IF_ELSE' &&
       connectionOptions?.connectedStepType !== 'IF_ELSE';
 
-    // The step joins the If/Else through the new branch, not as its child
     const createdStep = await createStep({
       newStepType: selection.type,
       parentStepId: isNewIfElseBranch ? undefined : parentStepId,
