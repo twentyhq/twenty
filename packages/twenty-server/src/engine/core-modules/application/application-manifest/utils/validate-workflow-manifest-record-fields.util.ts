@@ -17,7 +17,13 @@ const toFieldReferenceSource = ({
   field,
   objectByUniversalIdentifier,
 }: {
-  field: WorkflowManifestFieldReference;
+  field: Pick<
+    WorkflowManifestFieldReference,
+    | 'name'
+    | 'type'
+    | 'universalSettings'
+    | 'relationTargetObjectMetadataUniversalIdentifier'
+  >;
   objectByUniversalIdentifier: ReadonlyMap<
     string,
     WorkflowManifestObjectReference
