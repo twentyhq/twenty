@@ -54,11 +54,11 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
     );
   });
 
-  it.each([
-    WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE,
-    WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID,
-  ])('maps invalid workspace settings %s to UserInputError', (code) => {
-    const error = new WorkspaceException('Invalid workspace settings', code);
+  it('should throw UserInputError when iframe media origins overflow the policy header', () => {
+    const error = new WorkspaceException(
+      'Iframe media origins exceed the Permissions-Policy size limit',
+      WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE,
+    );
 
     expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
       UserInputError,

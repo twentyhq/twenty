@@ -5,14 +5,7 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import assert from 'assert';
 
@@ -28,7 +21,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -51,7 +43,6 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { AiDataPolicyDTO } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.dto';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { AiChatAssistantProfileDTO } from 'src/engine/core-modules/workspace/dtos/ai-chat-assistant-profile.dto';
 import {
   type AuthProvidersDTO,
   PublicWorkspaceDataDTO,
@@ -147,11 +138,6 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @ResolveField(() => AiChatAssistantProfileDTO)
-  async aiChatAssistantProfile(@Parent() workspace: WorkspaceEntity) {
-    return this.workspaceService.getAiChatAssistantProfile(workspace);
-  }
-
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
     AccessPolicyGuard({
@@ -198,43 +184,20 @@ export class WorkspaceResolver {
   )
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
-    @Context('req') authContext: RawAuthContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ) {
     try {
-      return await this.workspaceService.writeWorkspace({
-        change: { type: 'update', data },
-        authContext,
-      });
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-    }
-  }
-
-  @Mutation(() => WorkspaceEntity)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
+      return await this.workspaceService.updateWorkspaceById({
+        payload: {
+          ...data,
+          id: workspace.id,
         },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
-      requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
-    }),
-  )
-  async resetAiChatAssistantProfile(
-    @Context('req') authContext: RawAuthContext,
-  ) {
-    try {
-      return await this.workspaceService.writeWorkspace({
-        change: { type: 'resetAssistantProfile' },
-        authContext,
+        userWorkspaceId,
+        application,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
