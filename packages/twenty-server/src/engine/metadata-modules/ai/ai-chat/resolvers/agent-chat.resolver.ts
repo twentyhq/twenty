@@ -295,11 +295,11 @@ export class AgentChatResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.systemPromptBuilderService.buildPreview(
-      workspace.id,
+    return this.systemPromptBuilderService.buildPreview({
+      workspaceId: workspace.id,
       userWorkspaceId,
-      workspace.aiAdditionalInstructions ?? undefined,
-    );
+      workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
+    });
   }
 
   @ResolveField(() => Date)

@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -12,6 +15,7 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     AgentChatStreamStateModule,
     AgentChatThreadModule,
     AgentHistoryModule,

@@ -1,3 +1,4 @@
+import { assistantSystemPromptPreviewQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/assistant-system-prompt-preview-query-factory.util';
 import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
 import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
@@ -133,6 +134,59 @@ describe('workspace assistant profile settings', () => {
     } finally {
       await setInboxEnabled(isInboxInitiallyEnabled);
     }
+  });
+
+  it('previews the configured name while Inbox is enabled and defaults after reset', async () => {
+    const preview = await makeMetadataApiRequest(
+      assistantSystemPromptPreviewQueryFactory(),
+    );
+
+    expect(preview.body.errors).toBeUndefined();
+    expect(preview.body.data.getAiSystemPromptPreview.sections).toContainEqual({
+      title: 'Assistant Identity',
+      content: expect.stringContaining(
+        JSON.stringify(CUSTOM_ASSISTANT_PROFILE.displayName),
+      ),
+    });
+
+    const reset = await makeMetadataApiRequest(
+      resetWorkspaceAssistantProfileQueryFactory(),
+    );
+
+    expect(reset.body.errors).toBeUndefined();
+
+    const resetPreview = await makeMetadataApiRequest(
+      assistantSystemPromptPreviewQueryFactory(),
+    );
+
+    expect(resetPreview.body.errors).toBeUndefined();
+    expect(
+      resetPreview.body.data.getAiSystemPromptPreview.sections,
+    ).toContainEqual({
+      title: 'Assistant Identity',
+      content: expect.stringContaining(
+        JSON.stringify(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName),
+      ),
+    });
+
+    await updateWorkspace({
+      data: { aiChatAssistantProfile: CUSTOM_ASSISTANT_PROFILE },
+    });
+    await setInboxEnabled(false);
+
+    const disabledPreview = await makeMetadataApiRequest(
+      assistantSystemPromptPreviewQueryFactory(),
+    );
+
+    expect(disabledPreview.body.errors).toBeUndefined();
+    expect(
+      disabledPreview.body.data.getAiSystemPromptPreview.sections,
+    ).toContainEqual({
+      title: 'Assistant Identity',
+      content: expect.stringContaining(
+        JSON.stringify(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName),
+      ),
+    });
   });
 
   it('resets every profile field to Ada defaults and reads them back', async () => {

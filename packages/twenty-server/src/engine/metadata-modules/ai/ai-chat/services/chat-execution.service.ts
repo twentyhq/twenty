@@ -252,6 +252,9 @@ export class ChatExecutionService {
 
         return {
           systemPrompt: buildFullSystemPrompt({
+            assistantDisplayName: isAiChatInboxEnabled
+              ? workspace.aiChatAssistantProfile.displayName
+              : undefined,
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,

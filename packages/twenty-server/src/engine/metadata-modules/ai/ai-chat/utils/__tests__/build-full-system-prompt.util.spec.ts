@@ -91,6 +91,7 @@ describe('buildFullSystemPrompt', () => {
       toolCatalog: [],
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
+      assistantDisplayName: 'Scout',
       preloadedTools: [],
       userWorkspaceId: USER_WORKSPACE_ID,
       workspaceId: EVEN_WORKSPACE_ID,
@@ -98,6 +99,7 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
     expect(prompt).toContain('Always create a trigger first.');
+    expect(prompt).toContain('Your display name in this workspace is "Scout".');
   });
 
   it('should omit the referenced skills section when nothing is referenced', () => {
@@ -107,6 +109,7 @@ describe('buildFullSystemPrompt', () => {
   it('should keep the standard composition for regular threads', () => {
     const prompt = buildPrompt(false);
 
+    expect(prompt).toContain('Your display name in this workspace is "Ada".');
     expect(prompt).toContain(
       'You are a helpful AI assistant integrated into Twenty',
     );
