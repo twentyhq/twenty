@@ -92,7 +92,7 @@ export class CallWebhookJobsJob {
 
       const readableRecordIds =
         readableRecordIdsByRoleId.get(webhookRoleId) ??
-        this.recordEventPermissionsService.findReadableEventRecordIds({
+        this.recordEventPermissionsService.filterReadableEventRecordIds({
           authContext: {
             type: 'webhook',
             workspace: { id: workspaceEventBatch.workspaceId },

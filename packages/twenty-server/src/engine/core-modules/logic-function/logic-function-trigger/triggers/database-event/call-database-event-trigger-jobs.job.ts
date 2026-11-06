@@ -91,7 +91,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const readableEvents =
-        await this.recordEventPermissionsService.findReadableEvents({
+        await this.recordEventPermissionsService.filterReadableEvents({
           authContext: {
             type: 'application',
             workspace: { id: workspaceEventBatch.workspaceId },

@@ -297,7 +297,7 @@ describe('A restricted record on an object open by default', () => {
     const readableRecordIds =
       await getAppProviderByClassName<RecordEventPermissionsService>(
         'RecordEventPermissionsService',
-      ).findReadableEventRecordIds({
+      ).filterReadableEventRecordIds({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
