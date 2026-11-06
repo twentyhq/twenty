@@ -1827,11 +1827,6 @@ msgstr "Autentiseringen misslyckades, logga in igen."
 msgid "Authentication is not enabled with this provider."
 msgstr "Autentisering är inte aktiverad med denna leverantör."
 
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Autentisering krävs för att komma åt den här funktionen. Logga in och försök igen."
-
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
 msgid "Authentication is required to perform this action"
@@ -13625,11 +13620,6 @@ msgstr "Agenten som det här steget ska köra hittades inte."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Agenten du letar efter kunde inte hittas. Den kan ha raderats eller så har du kanske inte åtkomst till den."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API-nyckeln har ingen giltig roll tilldelad. Vänligen kontrollera din API-nyckelkonfiguration."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13640,11 +13630,6 @@ msgstr "Appens manifest anger ett ogiltigt versionskrav för servern."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Applikationens källkanal stämmer inte överens med den förväntade typen."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Applikationen har ingen giltig roll tilldelad. Vänligen kontrollera din applikationskonfiguration."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
