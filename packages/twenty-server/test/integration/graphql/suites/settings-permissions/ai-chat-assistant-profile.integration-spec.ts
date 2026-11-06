@@ -115,6 +115,8 @@ describe('workspace assistant profile settings', () => {
 
   afterAll(async () => {
     try {
+      await assignMemberRole(originalMemberRoleId);
+
       const response = await updateWorkspace({
         data: {
           aiChatAssistantProfile: originalProfile,
@@ -122,7 +124,6 @@ describe('workspace assistant profile settings', () => {
       });
 
       expect(response.body.errors).toBeUndefined();
-      await assignMemberRole(originalMemberRoleId);
 
       const { errors } = await deleteOneRole({
         input: { idToDelete: aiSettingsRoleId },
