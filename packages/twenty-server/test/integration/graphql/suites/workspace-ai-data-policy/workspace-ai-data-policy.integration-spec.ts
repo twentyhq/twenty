@@ -8,15 +8,17 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 const UNLABELED_CATALOG_MODEL_ID = 'openai/gpt-5.6-luna';
 
 const NO_POLICY = {
-  dataResidency: null,
+  requiredDataResidencyRegion: null,
   isZeroDataRetentionRequired: false,
+  isProductImprovementDataSharingEnabled: true,
 };
 const EU_ZERO_RETENTION_POLICY = {
-  dataResidency: 'eu',
+  ...NO_POLICY,
+  requiredDataResidencyRegion: 'eu',
   isZeroDataRetentionRequired: true,
 };
 const ZERO_RETENTION_POLICY = {
-  dataResidency: null,
+  ...NO_POLICY,
   isZeroDataRetentionRequired: true,
 };
 
@@ -50,7 +52,7 @@ const readAiDataPolicy = () =>
         query {
           currentWorkspace {
             aiDataPolicy {
-              dataResidency
+              requiredDataResidencyRegion
             }
           }
         }
@@ -104,11 +106,17 @@ describe('workspace AI data policy', () => {
   });
 
   it.each([
-    ['an unknown residency', { ...NO_POLICY, dataResidency: 'us' }],
-    ['a missing residency', { isZeroDataRetentionRequired: true }],
+    [
+      'an unknown residency',
+      { ...NO_POLICY, requiredDataResidencyRegion: 'us' },
+    ],
+    [
+      'a missing residency',
+      { ...NO_POLICY, requiredDataResidencyRegion: undefined },
+    ],
     [
       'a null retention requirement',
-      { dataResidency: 'eu', isZeroDataRetentionRequired: null },
+      { requiredDataResidencyRegion: 'eu', isZeroDataRetentionRequired: null },
     ],
     ['a null policy', null],
   ])('refuses %s', async (_label, aiDataPolicy) => {
@@ -148,6 +156,60 @@ describe('workspace AI data policy', () => {
       'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
     );
   });
+
+  it('keeps the sharing choice in the policy', async () => {
+    const response = await updateAiDataPolicy({
+      data: {
+        aiDataPolicy: {
+          ...NO_POLICY,
+          isProductImprovementDataSharingEnabled: false,
+        },
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.updateWorkspace.aiDataPolicy
+        .isProductImprovementDataSharingEnabled,
+    ).toBe(false);
+  });
+
+  it.each([
+    ['leaves it out', {}],
+    ['sends null', { isProductImprovementDataSharingEnabled: null }],
+  ])(
+    'keeps the stored sharing choice when an update %s',
+    async (_label, sharing) => {
+      await updateAiDataPolicy({
+        data: {
+          aiDataPolicy: {
+            ...NO_POLICY,
+            isProductImprovementDataSharingEnabled: false,
+          },
+        },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      const response = await updateAiDataPolicy({
+        data: {
+          aiDataPolicy: {
+            requiredDataResidencyRegion: 'eu',
+            isZeroDataRetentionRequired: true,
+            ...sharing,
+          },
+        },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateWorkspace.aiDataPolicy).toEqual({
+        requiredDataResidencyRegion: 'eu',
+        isZeroDataRetentionRequired: true,
+        isProductImprovementDataSharingEnabled: false,
+      });
+    },
+  );
 
   describe('with the feature flag off', () => {
     it('refuses to set a policy', async () => {

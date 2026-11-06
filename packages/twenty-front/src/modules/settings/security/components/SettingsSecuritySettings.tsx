@@ -18,6 +18,7 @@ import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdent
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -28,6 +29,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
@@ -58,6 +60,9 @@ export const SettingsSecuritySettings = () => {
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
+  );
+  const isAiDataPolicyEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
   );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
   const authProviders = useAtomStateValue(authProvidersState);
@@ -214,13 +219,15 @@ export const SettingsSecuritySettings = () => {
             </StyledContainer>
           </Section.Root>
         )}
-        {isMultiWorkspaceEnabled && (
+        {isMultiWorkspaceEnabled && !isAiDataPolicyEnabled && (
           <Section.Root>
             <Section.Header
               title={t`Support`}
               description={t`Manage support access settings`}
             />
-            <ImpersonationSwitch />
+            <Card.Root>
+              <ImpersonationSwitch />
+            </Card.Root>
           </Section.Root>
         )}
         <Section.Root>

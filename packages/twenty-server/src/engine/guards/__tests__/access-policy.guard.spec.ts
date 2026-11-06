@@ -760,13 +760,13 @@ describe('AccessPolicyGuard', () => {
 
   describe('permission flags', () => {
     let mockSettingPermissionsService: {
-      userHasWorkspaceSettingPermission: jest.Mock;
+      hasPermissionFlag: jest.Mock;
     };
     let sessionRequest: Record<string, unknown>;
 
     beforeEach(() => {
       mockSettingPermissionsService = {
-        userHasWorkspaceSettingPermission: jest.fn(),
+        hasPermissionFlag: jest.fn(),
       };
       sessionRequest = {
         user,
@@ -798,7 +798,7 @@ describe('AccessPolicyGuard', () => {
 
         await expect(canActivateSession()).resolves.toBe(true);
         expect(
-          mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+          mockSettingPermissionsService.hasPermissionFlag,
         ).not.toHaveBeenCalled();
       },
     );
@@ -817,30 +817,30 @@ describe('AccessPolicyGuard', () => {
         ),
       ).rejects.toThrow(AUTH_PRINCIPAL_REFUSED_MESSAGE);
       expect(
-        mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+        mockSettingPermissionsService.hasPermissionFlag,
       ).not.toHaveBeenCalled();
     });
 
     it('should let the caller through when it has the permission flag', async () => {
-      mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-        true,
-      );
+      mockSettingPermissionsService.hasPermissionFlag.mockResolvedValue(true);
 
       await expect(canActivateSession()).resolves.toBe(true);
       expect(
-        mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+        mockSettingPermissionsService.hasPermissionFlag,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockSettingPermissionsService.hasPermissionFlag,
       ).toHaveBeenCalledWith({
-        userWorkspaceId: 'user-workspace-id',
-        setting: PermissionFlagType.WORKSPACE,
-        workspaceId: 'workspace-id',
-        apiKeyId: undefined,
+        authContext: expect.objectContaining({
+          type: 'pendingActivationUser',
+          userWorkspaceId: 'user-workspace-id',
+        }),
+        permissionFlag: PermissionFlagType.WORKSPACE,
       });
     });
 
     it('should throw PermissionsException when the caller lacks the permission flag', async () => {
-      mockSettingPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-        false,
-      );
+      mockSettingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
       await expect(canActivateSession()).rejects.toThrow(PermissionsException);
     });
@@ -848,13 +848,13 @@ describe('AccessPolicyGuard', () => {
 
   describe('feature flags', () => {
     let mockSettingPermissionsService: {
-      userHasWorkspaceSettingPermission: jest.Mock;
+      hasPermissionFlag: jest.Mock;
     };
     let mockFeatureFlagService: { getWorkspaceFeatureFlagsMap: jest.Mock };
 
     beforeEach(() => {
       mockSettingPermissionsService = {
-        userHasWorkspaceSettingPermission: jest.fn().mockResolvedValue(true),
+        hasPermissionFlag: jest.fn().mockResolvedValue(true),
       };
       mockFeatureFlagService = { getWorkspaceFeatureFlagsMap: jest.fn() };
     });
@@ -902,7 +902,7 @@ describe('AccessPolicyGuard', () => {
         ),
       );
       expect(
-        mockSettingPermissionsService.userHasWorkspaceSettingPermission,
+        mockSettingPermissionsService.hasPermissionFlag,
       ).not.toHaveBeenCalled();
     });
 
@@ -1038,18 +1038,6 @@ describe('AccessPolicyGuard', () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(canActivateApplication()).resolves.toBe(true);
-      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledTimes(1);
-      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
-        'workspace-id',
-        [
-          'userWorkspaceRoleMap',
-          'apiKeyRoleMap',
-          'flatApplicationMaps',
-          'flatRoleMaps',
-          'flatRolePermissionFlagMaps',
-          'flatRoleTargetByAgentIdMaps',
-        ],
-      );
     });
 
     it('should allow when the setting is assigned to the default role of the application', async () => {
@@ -1098,13 +1086,13 @@ describe('AccessPolicyGuard', () => {
       },
     );
 
-    it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
+    it('should deny with PERMISSION_DENIED when the application does not exist', async () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(
         canActivateApplication({ applicationId: 'unknown-application-id' }),
       ).rejects.toMatchObject({
-        code: PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
     });
   });

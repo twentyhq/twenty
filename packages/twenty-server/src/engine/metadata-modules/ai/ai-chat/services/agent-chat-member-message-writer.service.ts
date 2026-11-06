@@ -17,6 +17,7 @@ import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules
 import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
 import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -76,9 +77,10 @@ export class AgentChatMemberMessageWriterService {
       },
     );
     const persistedMessage =
-      await this.conversationWriterService.runInTransaction(
-        actor.workspaceId,
-        async (transactionScope) => {
+      await this.conversationWriterService.runInTransaction({
+        workspaceId: actor.workspaceId,
+        threadId: thread.id,
+        work: async (transactionScope) => {
           await this.threadParticipantService.resolveMentionInTransaction({
             ...threadAccess,
             scope: transactionScope,
@@ -123,29 +125,37 @@ export class AgentChatMemberMessageWriterService {
             senderApplicationId: resolveMessageSenderApplicationId(actor),
           };
 
-          await transactionScope.insert('agentMessage', queuedMemberMessage);
-          await transactionScope.insert(
-            'agentMessagePart',
-            mapUIMessagePartsToDBParts(
+          await transactionScope.insert({
+            name: 'agentMessage',
+            values: queuedMemberMessage,
+          });
+          await transactionScope.insert({
+            name: 'agentMessagePart',
+            values: mapUIMessagePartsToDBParts(
               messagePartsWithReplyContext,
               queuedMemberMessage.id,
             ),
-          );
+          });
 
           return queuedMemberMessage;
         },
-      );
+      });
     let delivery: AgentChatInboxDeliveryResult = {
       deliveredMentionWorkspaceMemberIds: [],
       deliveredRecipientWorkspaceMemberIds: [],
     };
 
     if (isDefined(participation) && isDefined(addressing)) {
+      const shouldDeliverToInitialRecipients =
+        participation.isInitialMessage ||
+        thread.conversationType ===
+          AgentChatThreadConversationType.DIRECT_MESSAGE;
+
       delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
         ...threadAccess,
         messageId: persistedMessage.id,
         mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-        initialRecipientWorkspaceMemberIds: participation.isInitialMessage
+        initialRecipientWorkspaceMemberIds: shouldDeliverToInitialRecipients
           ? addressing.initialRecipientWorkspaceMemberIds
           : [],
       });
