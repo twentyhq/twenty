@@ -10,8 +10,8 @@ export const reportJobMemoryLimitRefusal = ({
   metricsService,
   refusal,
 }: {
-  logger: Logger;
-  metricsService: MetricsService;
+  logger: Pick<Logger, 'warn'>;
+  metricsService: Pick<MetricsService, 'incrementCounterForEvent'>;
   refusal: JobMemoryLimitRefusal;
 }): void => {
   logger.warn(buildJobMemoryLimitRefusalLogMessage(refusal));
