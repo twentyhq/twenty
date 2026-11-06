@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
 import { Select } from '@/ui/input/components/Select';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -16,9 +17,12 @@ export const SettingsMcpServerConnectionProviderSelect = ({
 }: SettingsMcpServerConnectionProviderSelectProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<McpServerFormValues>();
-  const { data, loading } = useQuery(ApplicationConnectionProvidersDocument, {
-    variables: { applicationId },
-  });
+  const { data, loading, error } = useQuery(
+    ApplicationConnectionProvidersDocument,
+    {
+      variables: { applicationId },
+    },
+  );
 
   const options: SelectOption<string | null>[] = [
     { value: null, label: t`None` },
@@ -31,19 +35,25 @@ export const SettingsMcpServerConnectionProviderSelect = ({
   ];
 
   return (
-    <Controller
-      name="connectionProviderId"
-      control={control}
-      render={({ field: { onChange, value } }) => (
-        <Select<string | null>
-          dropdownId="mcp-server-connection-provider-select"
-          options={options}
-          value={value}
-          onChange={onChange}
-          disabled={loading}
-          fullWidth
-        />
-      )}
-    />
+    <>
+      <ToastOnQueryErrorEffect
+        error={error}
+        message={t`Failed to load connection providers`}
+      />
+      <Controller
+        name="connectionProviderId"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select<string | null>
+            dropdownId="mcp-server-connection-provider-select"
+            options={options}
+            value={value}
+            onChange={onChange}
+            disabled={loading}
+            fullWidth
+          />
+        )}
+      />
+    </>
   );
 };
