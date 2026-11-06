@@ -122,35 +122,35 @@ export class JobMemoryLimiter {
       groupKeys.map((groupKey, index) => [groupKey, index + 1]),
     );
 
-    let admitResult: ReturnType<JobMemoryLimiter['parseAdmitResult']>;
-
-    try {
-      const rawResult = await runRedisScript({
-        client: await this.options.getClient(queueName),
-        script: JOB_MEMORY_ADMIT_SCRIPT,
-        keys: groupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
-        args: [
-          capacityBytes,
-          memoryInfo.usedMemoryBytes,
-          JOB_MEMORY_CHARGE_TTL_SECONDS,
+    const admitResult = await runRedisScript({
+      client: await this.options.getClient(queueName),
+      script: JOB_MEMORY_ADMIT_SCRIPT,
+      keys: groupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
+      args: [
+        capacityBytes,
+        memoryInfo.usedMemoryBytes,
+        JOB_MEMORY_CHARGE_TTL_SECONDS,
+        groupKeys.length,
+        ...groupKeys.map((groupKey) => this.getShare(groupKey)),
+        chargedJobs.length,
+        ...chargedJobs.flatMap(({ jobId, sizeBytes, groupKeys }) => [
+          this.buildMember({ queueName, jobId }),
+          sizeBytes,
           groupKeys.length,
-          ...groupKeys.map((groupKey) => this.getShare(groupKey)),
-          chargedJobs.length,
-          ...chargedJobs.flatMap(({ jobId, sizeBytes, groupKeys }) => [
-            this.buildMember({ queueName, jobId }),
-            sizeBytes,
-            groupKeys.length,
-            ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
-          ]),
-        ],
+          ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
+        ]),
+      ],
+    })
+      .then((rawResult) => this.parseAdmitResult({ rawResult, groupKeys }))
+      .catch((error: unknown) => {
+        this.logger.warn(
+          `Failed to admit the job memory on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+
+        return undefined;
       });
 
-      admitResult = this.parseAdmitResult({ rawResult, groupKeys });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to admit the job memory on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
+    if (!isDefined(admitResult)) {
       return NOT_CHARGED;
     }
 

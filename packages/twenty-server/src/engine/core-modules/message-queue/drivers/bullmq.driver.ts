@@ -763,11 +763,7 @@ export class BullMQDriver
     preparedJobs: PreparedJob[];
     addJobs: () => Promise<Job[]>;
   }): Promise<Job[]> {
-    let addedJobs: Job[];
-
-    try {
-      addedJobs = await addJobs();
-    } catch (error) {
+    const addedJobs = await addJobs().catch(async (error: unknown) => {
       await Promise.all(
         preparedJobs.map((preparedJob) =>
           this.releaseJobMemoryIfNotAdded({ queueName, preparedJob }),
@@ -775,7 +771,7 @@ export class BullMQDriver
       );
 
       throw error;
-    }
+    });
 
     await Promise.all(
       addedJobs.map((addedJob, index) => {
