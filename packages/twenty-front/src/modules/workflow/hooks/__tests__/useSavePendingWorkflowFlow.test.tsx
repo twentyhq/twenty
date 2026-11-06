@@ -2,7 +2,9 @@ import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkf
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
 import { type WorkflowAction } from '@/workflow/types/Workflow';
+import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { shouldRecomputeOutputSchemaFamilyState } from '@/workflow/workflow-variables/states/shouldRecomputeOutputSchemaFamilyState';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -50,24 +52,36 @@ const findRecordsStep: WorkflowAction = {
   },
 };
 
+const serverOutputSchema = {
+  first: { isLeaf: true, type: 'string', label: 'Person', value: '' },
+};
+
+const shouldRecomputeFindRecordsAtom =
+  shouldRecomputeOutputSchemaFamilyState.atomFamily(
+    getStepOutputSchemaFamilyStateKey('version-id', findRecordsStep.id),
+  );
+
 describe('useSavePendingWorkflowFlow', () => {
   it('puts the schema the server computed for a saved step into the flow', async () => {
-    const serverOutputSchema = {
-      first: { isLeaf: true, type: 'string', label: 'Person', value: '' },
-    };
-    mockUpdateWorkflowVersionStep.mockResolvedValue({
-      data: {
-        updateWorkflowVersionStep: {
-          ...findRecordsStep,
-          settings: {
-            ...findRecordsStep.settings,
-            outputSchema: serverOutputSchema,
+    const store = createStore();
+
+    // The version refetch during the save recomputes the variables from the previous schema
+    mockUpdateWorkflowVersionStep.mockImplementation(async () => {
+      store.set(shouldRecomputeFindRecordsAtom, false);
+
+      return {
+        data: {
+          updateWorkflowVersionStep: {
+            ...findRecordsStep,
+            settings: {
+              ...findRecordsStep.settings,
+              outputSchema: serverOutputSchema,
+            },
           },
         },
-      },
+      };
     });
 
-    const store = createStore();
     const flowAtom = flowComponentState.atomFamily({ instanceId: INSTANCE_ID });
     store.set(flowAtom, {
       workflowVersionId: 'version-id',
@@ -107,5 +121,6 @@ describe('useSavePendingWorkflowFlow', () => {
         outputSchema: serverOutputSchema,
       },
     });
+    expect(store.get(shouldRecomputeFindRecordsAtom)).toBe(true);
   });
 });

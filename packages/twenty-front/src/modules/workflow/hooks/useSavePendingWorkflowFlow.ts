@@ -9,6 +9,7 @@ import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { setFlowNodeOutputSchema } from '@/workflow/utils/setFlowNodeOutputSchema';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,13 +46,16 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
     useUpdateWorkflowVersionStep(instanceId);
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
+  const { markStepForRecomputation } = useStepsOutputSchema();
 
   // only the schema is taken, as the user may have edited the step again while it saved
   const writeSavedOutputSchemaToFlow = useCallback(
     ({
+      workflowVersionId,
       flowKey,
       outputSchema,
     }: {
+      workflowVersionId: string;
       flowKey: string;
       outputSchema: WorkflowStep['settings']['outputSchema'];
     }) => {
@@ -60,8 +64,10 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
           ? setFlowNodeOutputSchema({ flow, flowKey, outputSchema })
           : flow,
       );
+      // The refetch during the save may already have recomputed from the previous schema
+      markStepForRecomputation({ stepId: flowKey, workflowVersionId });
     },
-    [flowState, store],
+    [flowState, markStepForRecomputation, store],
   );
 
   const saveFlowKeys = useCallback(
@@ -85,6 +91,7 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
 
           if (isDefined(savedTrigger)) {
             writeSavedOutputSchemaToFlow({
+              workflowVersionId,
               flowKey,
               outputSchema: savedTrigger.settings.outputSchema,
             });
@@ -107,6 +114,7 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
 
         if (isDefined(savedStep)) {
           writeSavedOutputSchemaToFlow({
+            workflowVersionId,
             flowKey,
             outputSchema: savedStep.settings.outputSchema,
           });
