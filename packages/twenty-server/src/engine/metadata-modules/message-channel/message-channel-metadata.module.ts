@@ -4,6 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -16,6 +19,7 @@ import { MessageChannelResolver } from 'src/engine/metadata-modules/message-chan
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
@@ -33,6 +37,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       MessageChannelEntity,
       MessageFolderEntity,
       ConnectedAccountEntity,
+      FileEntity,
     ]),
     CacheLockModule,
     PermissionsModule,
@@ -43,6 +48,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     EmailingDomainModule,
     WorkspaceCacheModule,
     MessagingProviderModule,
+    FileUrlModule,
+    FilesFieldModule,
   ],
   providers: [
     MessageChannelMetadataService,
@@ -54,8 +61,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationMessageIngestionService,
     ApplicationMessageIngestionResolver,
     ApplicationMessageSendService,
+    ApplicationMessageSendAttachmentsService,
     ApplicationMessageSendResolver,
     provideWorkspaceScopedRepository(MessageFolderEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [MessageChannelMetadataService],
 })

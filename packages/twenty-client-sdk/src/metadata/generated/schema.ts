@@ -8292,7 +8292,9 @@ export interface SearchFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendAppChannelMessageInput {idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text: Scalars['String']}
+export interface SendAppChannelMessageAttachmentInput {id: Scalars['UUID'],name: Scalars['String']}
+
+export interface SendAppChannelMessageInput {attachments?: (SendAppChannelMessageAttachmentInput[] | null),idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text: Scalars['String']}
 
 export interface SendAppChannelMessageOutputGenqlSelection{
     messageId?: boolean | number
