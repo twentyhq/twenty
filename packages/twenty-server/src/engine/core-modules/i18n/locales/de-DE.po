@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Einige der von Ihnen ausgewählten Berechtigungen sind nicht gültig. Bitte versuchen Sie es erneut mit gültigen Berechtigungseinstellungen."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Einige Mitgliedschaften im Arbeitsbereich konnten nicht gefunden werden. Diese haben möglicherweise keinen Zugriff mehr auf diesen Arbeitsbereich."
 
@@ -17982,7 +17982,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Sie können keinen Wiederherstellungscode für sich selbst generieren. Setzen Sie stattdessen die Zwei-Faktor-Authentifizierung über Ihr Profil zurück."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Sie können Ihre eigene Rolle nicht ändern. Bitte bitten Sie einen anderen Administrator, Ihre Rolle zu aktualisieren."
 
@@ -18003,7 +18003,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Sie können Ihrer eigenen Rolle den Zugriff auf die Einstellungen nicht entziehen. Bitten Sie eine andere Administratorin oder einen anderen Administrator, diese Änderung vorzunehmen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Sie können die Adminrolle nicht vom letzten Administrator entfernen. Bitte weisen Sie zuerst einem anderen Administrator zu."
 
@@ -18250,7 +18250,7 @@ msgstr "Ihre Rolle kann einige dieser Datensätze nicht löschen, daher können 
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ihre Rolle in diesem Arbeitsbereich konnte nicht gefunden werden. Bitte kontaktieren Sie Ihren Arbeitsbereichsadministrator."
 
