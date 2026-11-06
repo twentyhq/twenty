@@ -5119,11 +5119,6 @@ msgstr "Marró"
 msgid "Browse partners"
 msgstr "Explora els socis"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Consulta els canvis als registres, els esdeveniments de seguretat, els registres de l'aplicació i molt més"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -17165,11 +17160,6 @@ msgstr "Bloqueja el diagrama"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Registra una nova oportunitat (empresa, import, etapa, tancament previst). Detalls: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Consola de registres"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -20889,11 +20879,6 @@ msgstr "Obre al panell lateral"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "Obrir l’enllaç"
-
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Obre la consola de registres"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

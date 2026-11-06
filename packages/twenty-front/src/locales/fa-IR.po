@@ -5119,11 +5119,6 @@ msgstr "قهوه‌ای"
 msgid "Browse partners"
 msgstr "مرور همکاران"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "تغییرات رکورد، رویدادهای امنیتی، گزارش‌های برنامه و موارد دیگر را مرور کنید"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -17165,11 +17160,6 @@ msgstr "قفل کردن نمودار"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "یک معامله جدید ثبت کنید (شرکت، مبلغ، مرحله، زمان مورد انتظار برای بسته‌شدن). جزئیات: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "کنسول گزارش"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -20889,11 +20879,6 @@ msgstr "باز کردن در پنل کناری"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "باز کردن پیوند"
-
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "باز کردن کنسول گزارش"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

@@ -5119,11 +5119,6 @@ msgstr "Nâu"
 msgid "Browse partners"
 msgstr "Duyệt đối tác"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Duyệt các thay đổi bản ghi, sự kiện bảo mật, nhật ký ứng dụng và hơn thế nữa"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -17165,11 +17160,6 @@ msgstr "Khóa sơ đồ"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Ghi nhận một thương vụ mới (công ty, số tiền, giai đoạn, ngày dự kiến chốt). Chi tiết: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Bảng điều khiển nhật ký"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -20889,11 +20879,6 @@ msgstr "Mở trong ngăn bên"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "Mở liên kết"
-
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Mở bảng điều khiển nhật ký"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

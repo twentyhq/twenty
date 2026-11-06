@@ -5119,11 +5119,6 @@ msgstr "Коричневий"
 msgid "Browse partners"
 msgstr "Переглянути партнерів"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Переглядайте зміни записів, події безпеки, журнали застосунку тощо"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -17165,11 +17160,6 @@ msgstr "Заблокувати діаграму"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Зареєструйте нову угоду (компанія, сума, етап, очікуване закриття). Подробиці: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Консоль журналів"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -20889,11 +20879,6 @@ msgstr "Відкрити на бічній панелі"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "Відкрити посилання"
-
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Відкрити консоль журналів"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

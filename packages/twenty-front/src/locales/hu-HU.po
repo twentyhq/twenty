@@ -5119,11 +5119,6 @@ msgstr "Barna"
 msgid "Browse partners"
 msgstr "Partnerek böngészése"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Rekordmódosítások, biztonsági események, alkalmazásnaplók és egyebek böngészése"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -17165,11 +17160,6 @@ msgstr "Diagram zárolása"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Rögzítsen egy új ügyletet (vállalat, összeg, szakasz, várható lezárás). Részletek: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Naplókonzol"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -20889,11 +20879,6 @@ msgstr "Megnyitás az oldalsávban"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "Hivatkozás megnyitása"
-
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Naplókonzol megnyitása"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
