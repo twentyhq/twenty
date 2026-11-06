@@ -35,32 +35,37 @@ const renderItem = ({
   onSelect: (item: MentionSearchResult) => void;
   id: string;
   assistantDisplayName: string;
-}) => (
-  <SuggestionListItem
-    id={id}
-    startIcon={
-      isAgentChatAssistantReference({ kind: 'record', ...item }) ? (
-        <AiChatAssistantAvatar size={14} />
-      ) : (
-        <AvatarOrIcon
-          name={item.label}
-          colorSeed={item.recordId}
-          shape="circle"
-          src={getAbsoluteImageUrl(item.imageUrl)}
-        />
-      )
-    }
-    description={item.objectLabelSingular}
-    selected={isSelected}
-    onSelect={() => {
-      onSelect(item);
-    }}
-  >
-    {isAgentChatAssistantReference({ kind: 'record', ...item })
-      ? assistantDisplayName
-      : item.label}
-  </SuggestionListItem>
-);
+}) => {
+  const isAssistantReference = isAgentChatAssistantReference({
+    kind: 'record',
+    ...item,
+  });
+
+  return (
+    <SuggestionListItem
+      id={id}
+      startIcon={
+        isAssistantReference ? (
+          <AiChatAssistantAvatar size={14} />
+        ) : (
+          <AvatarOrIcon
+            name={item.label}
+            colorSeed={item.recordId}
+            shape="circle"
+            src={getAbsoluteImageUrl(item.imageUrl)}
+          />
+        )
+      }
+      description={item.objectLabelSingular}
+      selected={isSelected}
+      onSelect={() => {
+        onSelect(item);
+      }}
+    >
+      {isAssistantReference ? assistantDisplayName : item.label}
+    </SuggestionListItem>
+  );
+};
 
 export const MentionSuggestionMenu = forwardRef<
   unknown,
