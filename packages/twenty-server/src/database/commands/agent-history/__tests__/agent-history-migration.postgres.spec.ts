@@ -199,7 +199,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: string;
         threadId: string;
       }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-      getAuthContext: jest.fn().mockResolvedValue({
+      getAuthContextOrThrow: jest.fn().mockResolvedValue({
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       }),
