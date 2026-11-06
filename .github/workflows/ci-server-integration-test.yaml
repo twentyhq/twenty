@@ -13,13 +13,7 @@ on:
         value: ${{ jobs.server-integration-test-timings.outputs.run-id }}
     # Okta SSO test tenant, see packages/twenty-server/test/integration/sso/README.md
     secrets:
-      OKTA_SSO_TEST_ISSUER:
-        required: false
-      OKTA_SSO_TEST_CLIENT_ID:
-        required: false
       OKTA_SSO_TEST_CLIENT_SECRET:
-        required: false
-      OKTA_SSO_TEST_USERNAME:
         required: false
       OKTA_SSO_TEST_PASSWORD:
         required: false
@@ -98,10 +92,10 @@ jobs:
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 24
       INTEGRATION_TEST_DB_RESET_STATUS_FILE: ${{ github.workspace }}/.cache/integration-db-reset-status
-      OKTA_SSO_TEST_ISSUER: ${{ secrets.OKTA_SSO_TEST_ISSUER }}
-      OKTA_SSO_TEST_CLIENT_ID: ${{ secrets.OKTA_SSO_TEST_CLIENT_ID }}
+      OKTA_SSO_TEST_ISSUER: ${{ vars.OKTA_SSO_TEST_ISSUER }}
+      OKTA_SSO_TEST_CLIENT_ID: ${{ vars.OKTA_SSO_TEST_CLIENT_ID }}
+      OKTA_SSO_TEST_USERNAME: ${{ vars.OKTA_SSO_TEST_USERNAME }}
       OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
-      OKTA_SSO_TEST_USERNAME: ${{ secrets.OKTA_SSO_TEST_USERNAME }}
       OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
     steps:
       - name: Fetch custom Github Actions and base branch history

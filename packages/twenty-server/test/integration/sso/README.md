@@ -1,7 +1,7 @@
 # SSO integration tests
 
 These suites log in through a real identity provider tenant instead of mocked
-passport strategies. They are skipped unless `OKTA_SSO_TEST_ISSUER` is set, so
+passport strategies. They are skipped unless `OKTA_SSO_TEST_PASSWORD` is set, so
 fork PRs (no secrets) and local runs without a tenant are unaffected.
 
 ## Why Okta
@@ -34,15 +34,15 @@ authentication policy is password-only, and free orgs get no Okta support.
    - sign-in redirect URI: `http://localhost:3000/auth/oidc/callback` (the
      default `SERVER_URL`)
    - assign it to the test user and to the password-only policy from step 4
-6. Add these repository secrets:
+6. Add these to the repository's Actions settings:
 
-| Secret                        | Value                    |
-| ----------------------------- | ------------------------ |
-| `OKTA_SSO_TEST_ISSUER`        | `https://<org>.okta.com` |
-| `OKTA_SSO_TEST_CLIENT_ID`     | app client ID            |
-| `OKTA_SSO_TEST_CLIENT_SECRET` | app client secret        |
-| `OKTA_SSO_TEST_USERNAME`      | test user login          |
-| `OKTA_SSO_TEST_PASSWORD`      | test user password       |
+| Name                          | Kind     | Value                    |
+| ----------------------------- | -------- | ------------------------ |
+| `OKTA_SSO_TEST_ISSUER`        | variable | `https://<org>.okta.com` |
+| `OKTA_SSO_TEST_CLIENT_ID`     | variable | app client ID            |
+| `OKTA_SSO_TEST_USERNAME`      | variable | test user login          |
+| `OKTA_SSO_TEST_CLIENT_SECRET` | secret   | app client secret        |
+| `OKTA_SSO_TEST_PASSWORD`      | secret   | test user password       |
 
 ## Running locally
 

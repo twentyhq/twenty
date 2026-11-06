@@ -284,10 +284,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/ci-server-integration-test.yaml
     secrets:
-      OKTA_SSO_TEST_ISSUER: ${{ secrets.OKTA_SSO_TEST_ISSUER }}
-      OKTA_SSO_TEST_CLIENT_ID: ${{ secrets.OKTA_SSO_TEST_CLIENT_ID }}
       OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
-      OKTA_SSO_TEST_USERNAME: ${{ secrets.OKTA_SSO_TEST_USERNAME }}
       OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
 
   cross-version-upgrade:
