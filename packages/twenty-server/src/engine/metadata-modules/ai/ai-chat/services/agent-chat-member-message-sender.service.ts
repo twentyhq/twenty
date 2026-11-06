@@ -94,7 +94,11 @@ export class AgentChatMemberMessageSenderService {
         isNonEmptyArray(addressing.mentionedWorkspaceMemberIds));
     const createdThread = await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
-      ...assistantParticipationInput,
+      isAssistantMentioned: assistant.isMentioned,
+      isInitialAssistantParticipant: assistant.isInitiallyIncluded,
+      recipientWorkspaceMemberIds:
+        addressing.initialRecipientWorkspaceMemberIds,
+      mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
       channelId: target.channelId,
       shouldApplyAssistantParticipation: false,
       shouldValidateRecipients,
