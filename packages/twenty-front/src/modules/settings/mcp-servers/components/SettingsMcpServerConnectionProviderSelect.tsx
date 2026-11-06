@@ -46,6 +46,8 @@ export const SettingsMcpServerConnectionProviderSelect = ({
         render={({ field: { onChange, value } }) => (
           <Select<string | null>
             dropdownId="mcp-server-connection-provider-select"
+            label={t`Connection provider`}
+            description={t`Optional. Its connected account authenticates calls to this server.`}
             options={options}
             value={value}
             onChange={onChange}

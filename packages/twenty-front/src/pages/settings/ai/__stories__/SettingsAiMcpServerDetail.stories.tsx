@@ -65,8 +65,6 @@ export const Default: Story = {
 
     expect(canvas.getByDisplayValue('linear')).toBeDisabled();
     await canvas.findByText('search_issues');
-    await canvas.findByText('Read-only');
-    await canvas.findByText('Destructive');
     await canvas.findByRole('button', { name: 'Deactivate' });
   },
 };

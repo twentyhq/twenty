@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { MCP_SERVER_TOOL_TABLE_BODY_MAX_HEIGHT } from '@/settings/mcp-servers/constants/McpServerToolTableBodyMaxHeight';
 import { MCP_SERVER_TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/mcp-servers/constants/McpServerToolTableRowGridTemplateColumns';
-import { getMcpServerToolAnnotationBadges } from '@/settings/mcp-servers/utils/getMcpServerToolAnnotationBadges';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -27,14 +25,8 @@ const StyledEmptyState = styled.div`
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
-const StyledBadges = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 type SettingsMcpServerToolsTableProps = {
-  tools: Pick<McpServerTool, 'name' | 'description' | 'annotations'>[];
+  tools: Pick<McpServerTool, 'name' | 'description'>[];
 };
 
 export const SettingsMcpServerToolsTable = ({
@@ -53,7 +45,6 @@ export const SettingsMcpServerToolsTable = ({
       >
         <TableHeader>{t`Name`}</TableHeader>
         <TableHeader>{t`Description`}</TableHeader>
-        <TableHeader>{t`Annotations`}</TableHeader>
       </TableRow>
       <StyledTableBodyContainer>
         <TableBody>
@@ -72,17 +63,6 @@ export const SettingsMcpServerToolsTable = ({
               </TableCell>
               <TableCell overflow="hidden">
                 <OverflowingTextWithTooltip text={tool.description ?? ''} />
-              </TableCell>
-              <TableCell>
-                <StyledBadges>
-                  {getMcpServerToolAnnotationBadges(tool.annotations).map(
-                    (badge) => (
-                      <Status key={badge.key} color={badge.color}>
-                        {badge.label}
-                      </Status>
-                    ),
-                  )}
-                </StyledBadges>
               </TableCell>
             </TableRow>
           ))}
