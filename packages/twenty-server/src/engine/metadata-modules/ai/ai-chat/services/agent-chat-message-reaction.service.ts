@@ -1,9 +1,8 @@
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
   AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH,
+  AgentChatThreadConversationType,
   type AgentMessageReactionSummary,
   isValidAgentMessageReactionEmoji,
 } from 'twenty-shared/ai';
@@ -19,6 +18,7 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,

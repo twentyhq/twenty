@@ -40,6 +40,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   thread: {
     id: true,
     title: true,
+    conversationType: true,
+    directMessageFirstWorkspaceMemberId: true,
+    directMessageSecondWorkspaceMemberId: true,
     deletedAt: true,
     createdAt: true,
     updatedAt: true,

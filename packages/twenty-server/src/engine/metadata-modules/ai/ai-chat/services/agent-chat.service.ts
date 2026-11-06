@@ -6,7 +6,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import {
   isDefined,
   isNonEmptyArray,
@@ -15,7 +18,7 @@ import {
 import { In, Not } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
+
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
