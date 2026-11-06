@@ -118,8 +118,8 @@ export const WorkflowFieldsMultiSelect = ({
     return optionRecordKey ?? fieldReference;
   };
 
-  const selectedFields = defaultFields && [
-    ...new Set(defaultFields.map(toFieldOptionValue)),
+  const selectedFields = [
+    ...new Set((defaultFields ?? []).map(toFieldOptionValue)),
   ];
 
   return (
