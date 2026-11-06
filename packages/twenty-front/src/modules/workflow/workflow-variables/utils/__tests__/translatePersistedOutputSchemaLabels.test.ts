@@ -5,7 +5,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getMessageId = (message?: MessageDescriptor) => {
+const getMessageIdOrThrow = (message?: MessageDescriptor) => {
   if (!isDefined(message?.id)) {
     throw new Error('Persisted output schema label not found');
   }
@@ -49,10 +49,10 @@ const companyRecordOutputSchema = {
 describe('translatePersistedOutputSchemaLabels', () => {
   beforeEach(() => {
     i18n.load('fr-FR', {
-      [getMessageId(
+      [getMessageIdOrThrow(
         WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.ITERATOR?.currentItemIndex,
       )]: "Index de l'élément courant",
-      [getMessageId(
+      [getMessageIdOrThrow(
         WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.CLASSIFY?.['answers.*.choice'],
       )]: 'Choix',
     });
