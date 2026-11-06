@@ -117,7 +117,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         permissionsPrincipals: undefined,
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
-        recordRepositoryPermissions: {} as never,
+        recordPermissions: {} as never,
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),

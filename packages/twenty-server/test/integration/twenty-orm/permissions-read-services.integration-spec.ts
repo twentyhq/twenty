@@ -99,7 +99,7 @@ describe('permissions read services', () => {
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
     recordPermissionsService.canAccessSomeRecords({
-      operationType: 'select',
+      operationType: 'read',
       principals:
         await principalPermissionsService.resolvePermissionsPrincipals({
           authContext,
@@ -108,15 +108,16 @@ describe('permissions read services', () => {
     });
 
   const askRecordsQuestion = async ({
-    question = 'canReadRecords',
+    operationType = 'read',
     authContext,
     recordIds,
   }: {
-    question?: 'canReadRecords' | 'canUpdateRecords';
+    operationType?: 'read' | 'update';
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsService[question]({
+    recordPermissionsService.canAccessRecords({
+      operationType,
       principals:
         await principalPermissionsService.resolvePermissionsPrincipals({
           authContext,
@@ -173,7 +174,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canReadRecords and canUpdateRecords', () => {
+  describe('canAccessRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
@@ -185,7 +186,7 @@ describe('permissions read services', () => {
         await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId],
-          question: 'canUpdateRecords',
+          operationType: 'update',
         }),
       ).toBe(true);
     });
@@ -316,17 +317,17 @@ describe('permissions read services', () => {
         apiKey: { id: apiKey.apiKeyId },
       });
 
-      for (const question of ['canReadRecords', 'canUpdateRecords'] as const) {
+      for (const operationType of ['read', 'update'] as const) {
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(readRestricted),
             recordIds: [recordId],
           }),
         ).toBe(true);
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(idReadRestricted),
             recordIds: [recordId],
           }),

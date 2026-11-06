@@ -9,18 +9,17 @@ const REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE: Record<
   ObjectRecordsOperationType,
   RecordShareAccessLevel[]
 > = {
-  select: [
+  read: [
     RecordShareAccessLevel.READ,
     RecordShareAccessLevel.READ_WRITE,
     RecordShareAccessLevel.FULL,
   ],
   // an insert has no record yet, so no share row can exist to check: whether
   // the caller may create at all stays the role's object-level decision
-  insert: [],
+  create: [],
   update: [RecordShareAccessLevel.READ_WRITE, RecordShareAccessLevel.FULL],
-  'soft-delete': [RecordShareAccessLevel.FULL],
-  restore: [RecordShareAccessLevel.FULL],
-  delete: [RecordShareAccessLevel.FULL],
+  softDelete: [RecordShareAccessLevel.FULL],
+  destroy: [RecordShareAccessLevel.FULL],
 };
 
 export const resolveRequiredRecordShareAccessLevels = (

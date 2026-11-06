@@ -181,7 +181,7 @@ export class RecordEventPermissionsService {
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
-        operationType: 'select',
+        operationType: 'read',
         records: resolveEventRecordSnapshots(events),
         context: {
           shouldIgnoreSoftDeleteDefaultFilter: true,
