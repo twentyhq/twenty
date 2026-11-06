@@ -11,15 +11,20 @@ export const useDeleteMcpServer = () => {
   const { enqueueToast } = useToast();
   const { navigateToMcpServersList } = useNavigateToMcpServersList();
 
-  const [deleteMcpServerMutation] = useMutation(DeleteMcpServerDocument, {
-    update: (cache) => {
-      cache.evict({ id: 'ROOT_QUERY', fieldName: 'mcpServers' });
-    },
-  });
+  const [deleteMcpServerMutation] = useMutation(DeleteMcpServerDocument);
 
   const deleteMcpServer = async (mcpServerId: string) => {
     try {
-      await deleteMcpServerMutation({ variables: { id: mcpServerId } });
+      await deleteMcpServerMutation({
+        variables: { id: mcpServerId },
+        update: (cache) => {
+          cache.evict({ id: 'ROOT_QUERY', fieldName: 'mcpServers' });
+          cache.evict({
+            id: cache.identify({ __typename: 'McpServer', id: mcpServerId }),
+          });
+          cache.gc();
+        },
+      });
 
       enqueueToast({
         status: 'success',
