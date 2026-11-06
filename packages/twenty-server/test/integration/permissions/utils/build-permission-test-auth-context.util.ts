@@ -15,16 +15,18 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const findApplicationOrThrow = async ({
-  applicationPrincipal,
-  workspace,
-}: {
+type ApplicationPrincipalQuestion = {
   applicationPrincipal: PermissionTestPrincipals['applicationPrincipal'];
   workspace: Pick<
     PermissionTestWorkspace,
     'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
   >;
-}) => {
+};
+
+const findApplicationOrThrow = async ({
+  applicationPrincipal,
+  workspace,
+}: ApplicationPrincipalQuestion) => {
   const findApplicationById = async (id: string) =>
     fromApplicationEntityToFlatApplication(
       await getCoreRepository<ApplicationEntity>(
@@ -49,13 +51,7 @@ const findApplicationOrThrow = async ({
 const buildApplicationNarrowing = async ({
   applicationPrincipal,
   workspace,
-}: {
-  applicationPrincipal: PermissionTestPrincipals['applicationPrincipal'];
-  workspace: Pick<
-    PermissionTestWorkspace,
-    'applicationIds' | 'mainApplicationId' | 'oauthApplicationId'
-  >;
-}) =>
+}: ApplicationPrincipalQuestion) =>
   applicationPrincipal.type === 'customApplication'
     ? {}
     : {
