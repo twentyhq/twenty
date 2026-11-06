@@ -76,6 +76,7 @@ export enum SettingsPath {
   ApplicationContent = 'applications/:applicationId/content',
   ApplicationContentTypeDetail = 'applications/:applicationId/content/:contentType',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
+  AvailableApplicationResources = 'applications/available/:availableApplicationId/resources',
   AvailableApplicationContent = 'applications/available/:availableApplicationId/content',
   AvailableApplicationContentTypeDetail = 'applications/available/:availableApplicationId/content/:contentType',
   ApplicationRegistrationDetail = 'developers/apps/:applicationRegistrationId',
