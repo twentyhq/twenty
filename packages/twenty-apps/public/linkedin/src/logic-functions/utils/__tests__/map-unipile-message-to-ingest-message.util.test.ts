@@ -72,6 +72,30 @@ describe('mapUnipileMessageToIngestMessage', () => {
     ]);
   });
 
+  it.each([
+    [{}, 'SENT'],
+    [{ is_delivered: true }, 'DELIVERED'],
+    [{ is_delivered: true, is_seen: true }, 'READ'],
+  ])('reports a sent message with %o as %s', (flags, deliveryStatus) => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage({ is_sender: true, ...flags }),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [],
+      })?.deliveryStatus,
+    ).toBe(deliveryStatus);
+  });
+
+  it('reports no delivery status on a received message', () => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage({ is_seen: true }),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [],
+      }),
+    ).not.toHaveProperty('deliveryStatus');
+  });
+
   it('falls back to the sender id when the sender profile is missing', () => {
     expect(
       mapUnipileMessageToIngestMessage({

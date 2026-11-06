@@ -4,6 +4,7 @@ import {
   type IngestMessageParticipant,
 } from 'twenty-sdk/logic-function';
 
+import { getLinkedinMessageDeliveryStatus } from 'src/logic-functions/utils/get-linkedin-message-delivery-status.util';
 import { buildLinkedinParticipant } from 'src/logic-functions/utils/build-linkedin-participant.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
@@ -51,6 +52,9 @@ export const mapUnipileMessageToIngestMessage = ({
   }
 
   return {
+    ...(message.is_sender && {
+      deliveryStatus: getLinkedinMessageDeliveryStatus(message),
+    }),
     externalId: message.id,
     threadExternalId: message.chat_id,
     text: message.text ?? '',
