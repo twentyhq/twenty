@@ -43,6 +43,8 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   let shouldFailNextBehaviorSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
+  let hasLoadedInitialUser = false;
+  let initialAssistantProfile = mockCurrentWorkspace.aiChatAssistantProfile;
   let workspace: CurrentWorkspace = {
     ...mockCurrentWorkspace,
     aiAdditionalInstructions: null,
@@ -61,6 +63,13 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
     permissionFlags = options.permissionFlags;
+    hasLoadedInitialUser = false;
+    initialAssistantProfile = {
+      ...assistant.getProfile(),
+      displayName: options.hasInvalidAssistantProfile
+        ? ''
+        : assistant.getProfile().displayName,
+    };
     workspace = {
       ...mockCurrentWorkspace,
       aiAdditionalInstructions: null,
@@ -73,15 +82,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
       ],
     };
     jotaiStore.set(isCookieAuthActiveState.atom, true);
-    jotaiStore.set(isCurrentUserLoadedState.atom, true);
+    jotaiStore.set(isCurrentUserLoadedState.atom, false);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...workspace,
-      aiChatAssistantProfile: {
-        ...assistant.getProfile(),
-        displayName: options.hasInvalidAssistantProfile
-          ? ''
-          : assistant.getProfile().displayName,
-      },
+      aiChatAssistantProfile: initialAssistantProfile,
     });
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -159,7 +163,11 @@ export const createSettingsAiIntegrationStoryFixture = () => {
       HttpResponse.json({ data: { myConnectedAccounts: [] } }),
     ),
     graphql.query('GetCurrentUser', async () => {
-      const loadErrorResponse = await assistant.load();
+      const isInitialUserLoad = !hasLoadedInitialUser;
+      hasLoadedInitialUser = true;
+      const loadErrorResponse = isInitialUserLoad
+        ? undefined
+        : await assistant.load();
 
       if (isDefined(loadErrorResponse)) {
         return loadErrorResponse;
@@ -172,7 +180,9 @@ export const createSettingsAiIntegrationStoryFixture = () => {
             currentWorkspace: {
               ...workspace,
               aiChatAssistantProfile: {
-                ...assistant.getProfile(),
+                ...(isInitialUserLoad
+                  ? initialAssistantProfile
+                  : assistant.getProfile()),
                 __typename: 'AiChatAssistantProfile',
               },
             },

@@ -1,6 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 import {
   PageDecorator,
@@ -29,6 +32,16 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
+        graphql.query('GetCurrentUser', () =>
+          HttpResponse.json({
+            data: {
+              currentUser: {
+                ...mockedUserData,
+                currentWorkspace: jotaiStore.get(currentWorkspaceState.atom),
+              },
+            },
+          }),
+        ),
         graphql.mutation('StartChannelSync', () =>
           HttpResponse.json({
             data: {

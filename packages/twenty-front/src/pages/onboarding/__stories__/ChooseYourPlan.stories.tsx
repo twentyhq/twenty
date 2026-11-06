@@ -48,10 +48,7 @@ const meta: Meta<PageDecoratorArgs> = {
             data: {
               currentUser: {
                 ...mockedOnboardingUserData(OnboardingStatus.COMPLETED),
-                currentWorkspace: {
-                  ...mockCurrentWorkspace,
-                  billingSubscriptions: [],
-                },
+                currentWorkspace: jotaiStore.get(currentWorkspaceState.atom),
               },
             },
           });
