@@ -100,7 +100,7 @@ const NULLABLE_CONFIGURATION_KEYS: Record<string, true> = {
 // References are nullable because they may point at entities that no longer exist
 const isNullableConfigurationKey = (key: string) =>
   key.endsWith('UniversalIdentifier') ||
-  NULLABLE_CONFIGURATION_KEYS[key] === true;
+  isDefined(NULLABLE_CONFIGURATION_KEYS[key]);
 
 // A cleared setting is null in the UI and absent in manifests; both leave it unset
 export const normalizePageLayoutWidgetConfigurationForManifest = (
@@ -117,8 +117,8 @@ export const normalizePageLayoutWidgetConfigurationForManifest = (
   return Object.fromEntries(
     Object.entries(configuration).filter(
       ([key, value]) =>
-        (value !== null || isNullableConfigurationKey(key)) &&
-        (!isDefined(chartKeys) || chartKeys[key] === true),
+        (isDefined(value) || isNullableConfigurationKey(key)) &&
+        (!isDefined(chartKeys) || isDefined(chartKeys[key])),
     ),
   ) as PageLayoutWidgetUniversalConfiguration;
 };
