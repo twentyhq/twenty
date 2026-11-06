@@ -4,7 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
+import { AiChatAgentMessageHeader } from '@/ai/components/AiChatAgentMessageHeader';
 import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -14,12 +16,14 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatMessageAuthorHeaderProps = {
   metadata: ExtendedUIMessage['metadata'];
+  role: ExtendedUIMessage['role'];
   messageId: string;
   createdAt: Date | string;
 };
 
 export const AiChatMessageAuthorHeader = ({
   metadata,
+  role,
   messageId,
   createdAt,
 }: AiChatMessageAuthorHeaderProps) => {
@@ -48,6 +52,10 @@ export const AiChatMessageAuthorHeader = ({
     );
   }
 
+  if (isDefined(agentId) && !isDefined(applicationId) && !isDefined(senderId)) {
+    return <AiChatAgentMessageHeader agentId={agentId} createdAt={createdAt} />;
+  }
+
   const application = currentWorkspace?.installedApplications.find(
     ({ id }) => id === applicationId,
   );
@@ -64,7 +72,9 @@ export const AiChatMessageAuthorHeader = ({
       });
     }
 
-    return isDefined(agentId) ? t`Agent` : t`Unknown sender`;
+    return role === AGENT_MESSAGE_ROLE.ASSISTANT
+      ? t`Assistant`
+      : t`Unknown sender`;
   };
   const authorName = getAuthorName();
   const avatarUrl = isDefined(applicationId)

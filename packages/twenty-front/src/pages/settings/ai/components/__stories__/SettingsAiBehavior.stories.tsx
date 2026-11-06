@@ -181,12 +181,16 @@ export const Narrow: Story = {
 };
 
 export const RefreshedSettings: Story = {
+  args: { assistantDisplayName: 'Scout' },
   render: function Render(args) {
     const [hasRefreshedSettings, setHasRefreshedSettings] = useState(false);
 
     return (
       <>
         <SettingsAiBehaviorExample
+          assistantDisplayName={
+            hasRefreshedSettings ? 'Nova' : args.assistantDisplayName
+          }
           directMessageMode={
             hasRefreshedSettings ? args.inboxMode : args.directMessageMode
           }
@@ -220,10 +224,21 @@ export const RefreshedSettings: Story = {
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
 
+    expect(
+      canvas.getByText(
+        'Choose when Scout participates in conversations across your workspace',
+      ),
+    ).toBeVisible();
     await userEvent.click(
       canvas.getByRole('button', { name: 'Refresh saved settings' }),
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Auto'));
+    expect(
+      canvas.getByText(
+        'Choose when Nova participates in conversations across your workspace',
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText(/Never keeps Nova out\./)).toBeVisible();
     expect(inbox).toHaveTextContent('Only when mentioned');
     expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
     expect(args.onInboxModeChange).not.toHaveBeenCalled();

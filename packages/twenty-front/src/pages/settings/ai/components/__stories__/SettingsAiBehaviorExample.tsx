@@ -9,6 +9,7 @@ type SettingsAiBehaviorExampleProps = ComponentProps<
 };
 
 export const SettingsAiBehaviorExample = ({
+  assistantDisplayName,
   directMessageMode,
   inboxMode,
   onDirectMessageModeChange,
@@ -31,6 +32,7 @@ export const SettingsAiBehaviorExample = ({
         setInboxMode={setInboxMode}
       />
       <SettingsAiBehaviorSection
+        assistantDisplayName={assistantDisplayName}
         directMessageMode={currentDirectMessageMode}
         inboxMode={currentInboxMode}
         onDirectMessageModeChange={(value) => {

@@ -6,6 +6,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
+import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   AgentChatThreadConversationType,
@@ -20,11 +21,16 @@ import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
@@ -431,6 +437,7 @@ const AgentChatMessagesSetterEffect = ({
       agentChatDisplayedThreadState.atom,
     );
     const previousWorkspace = store.get(currentWorkspaceState.atom);
+    const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
     const previousVisit = store.get(agentChatThreadVisitState.atom);
@@ -444,6 +451,10 @@ const AgentChatMessagesSetterEffect = ({
     store.set(currentAiChatThreadState.atom, currentThreadId);
     store.set(agentChatDisplayedThreadState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+    store.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.AI],
+    });
     store.set(currentWorkspaceMembersState.atom, [
       mockedWorkspaceMemberData,
       mockTeammate,
@@ -475,6 +486,7 @@ const AgentChatMessagesSetterEffect = ({
       store.set(currentAiChatThreadState.atom, previousCurrentThread);
       store.set(agentChatDisplayedThreadState.atom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
+      store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
       store.set(agentChatThreadVisitState.atom, previousVisit);
@@ -706,11 +718,21 @@ export const SenderFallbacks: Story = {
   },
 };
 
+const CUSTOM_AGENT_ID = '6d31ba1e-e9d6-4d8e-b914-486e3b8de9e0';
+const UNAVAILABLE_AGENT_ID = 'eaf274cb-b304-4dd6-b3bc-d57139e11942';
+
 const mockDistinctAgentMessage: ExtendedUIMessage = {
   id: 'msg-custom-agent',
   role: 'assistant',
   parts: [{ type: 'text', text: 'A custom agent response.' }],
-  metadata: { createdAt: MOCKED_DATE, agentId: 'custom-agent' },
+  metadata: { createdAt: MOCKED_DATE, agentId: CUSTOM_AGENT_ID },
+};
+
+const mockUnavailableAgentMessage: ExtendedUIMessage = {
+  id: 'msg-unavailable-agent',
+  role: 'assistant',
+  parts: [{ type: 'text', text: 'A response from an unavailable agent.' }],
+  metadata: { createdAt: MOCKED_DATE, agentId: UNAVAILABLE_AGENT_ID },
 };
 
 const mockLegacyAssistantMessage: ExtendedUIMessage = {
@@ -728,15 +750,40 @@ export const ConfiguredAssistantIdentity: Story = {
       mockSimpleTextResponse,
       mockTeammateMessage,
       mockDistinctAgentMessage,
+      mockUnavailableAgentMessage,
       mockLegacyAssistantMessage,
+      mockUnknownSenderMessage,
     ],
+    msw: {
+      handlers: [
+        graphql.query('FindChatMessageAgent', ({ variables }) => {
+          if (variables.id !== CUSTOM_AGENT_ID) {
+            return HttpResponse.json({
+              errors: [{ message: 'Agent not found' }],
+            });
+          }
+
+          return HttpResponse.json({
+            data: {
+              findOneAgent: {
+                __typename: 'Agent',
+                id: CUSTOM_AGENT_ID,
+                label: 'Sales assistant',
+              },
+            },
+          });
+        }),
+      ],
+    },
   },
   render: () => (
     <StyledConversationContainer>
       <AiChatMessage messageId={mockSimpleTextResponse.id} />
       <AiChatMessage messageId={mockTeammateMessage.id} />
       <AiChatMessage messageId={mockDistinctAgentMessage.id} />
+      <AiChatMessage messageId={mockUnavailableAgentMessage.id} />
       <AiChatMessage messageId={mockLegacyAssistantMessage.id} />
+      <AiChatMessage messageId={mockUnknownSenderMessage.id} />
     </StyledConversationContainer>
   ),
   play: async ({ canvasElement }) => {
@@ -744,7 +791,9 @@ export const ConfiguredAssistantIdentity: Story = {
 
     await expect(await canvas.findByText('Scout')).toBeVisible();
     await expect(canvas.getByText('Marco Rossi')).toBeVisible();
+    await expect(await canvas.findByText('Sales assistant')).toBeVisible();
     await expect(canvas.getByText('Agent')).toBeVisible();
+    await expect(canvas.getByText('Assistant')).toBeVisible();
     await expect(canvas.getByText('Unknown sender')).toBeVisible();
     await expect(
       canvas.getByText('Legacy prose mentions Ada unchanged.'),

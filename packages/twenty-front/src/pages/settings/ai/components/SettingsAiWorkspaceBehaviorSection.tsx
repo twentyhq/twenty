@@ -1,7 +1,9 @@
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useSettingsAiBehavior } from '@/settings/ai/hooks/useSettingsAiBehavior';
 import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
 
 export const SettingsAiWorkspaceBehaviorSection = () => {
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const {
     directMessageMode,
     inboxMode,
@@ -19,6 +21,7 @@ export const SettingsAiWorkspaceBehaviorSection = () => {
 
   return (
     <SettingsAiBehaviorSection
+      assistantDisplayName={assistantDisplayName}
       directMessageMode={directMessageMode}
       inboxMode={inboxMode}
       onDirectMessageModeChange={saveDirectMessageMode}

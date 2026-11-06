@@ -15,6 +15,7 @@ import {
 const fixture = createSettingsAiIntegrationStoryFixture();
 
 type SettingsAiIntegrationStoryArgs = PageDecoratorArgs & {
+  assistantDisplayName: string;
   permissionFlags: PermissionFlagType[];
   isInboxEnabled: boolean;
 };
@@ -24,6 +25,7 @@ const meta = {
   component: SettingsAI,
   decorators: [PageDecorator],
   args: {
+    assistantDisplayName: 'Ada',
     routePath: '/settings/ai',
     routeParams: {},
     additionalRoutes: ['/settings/profile'],
@@ -36,6 +38,7 @@ const meta = {
   },
   beforeEach: async ({ args }) => {
     await fixture.reset({
+      assistantDisplayName: args.assistantDisplayName,
       permissionFlags: args.permissionFlags,
       isInboxEnabled: args.isInboxEnabled,
     });
@@ -129,11 +132,19 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
 };
 
 export const BehaviorPersistenceAndRetry: Story = {
+  args: { assistantDisplayName: 'Scout' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const bodyQueries = within(canvasElement.ownerDocument.body);
     const directMessages = await canvas.findByRole('combobox', { name: 'DMs' });
     const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
+
+    expect(
+      canvas.getByText(
+        'Choose when Scout participates in conversations across your workspace',
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText(/Never keeps Scout out\./)).toBeVisible();
 
     fixture.failNextBehaviorSave();
     await userEvent.click(directMessages);
