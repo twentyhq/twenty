@@ -17,7 +17,7 @@ type IframeMediaAccess = 'microphoneAndCamera' | 'microphone' | 'camera';
 const getIframeMediaAccess = ({
   microphone,
   camera,
-}: IframeMediaPermission): IframeMediaAccess => {
+}: Pick<IframeMediaPermission, 'microphone' | 'camera'>): IframeMediaAccess => {
   if (!camera) {
     return 'microphone';
   }

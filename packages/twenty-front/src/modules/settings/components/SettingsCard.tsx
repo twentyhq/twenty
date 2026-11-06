@@ -205,10 +205,10 @@ export const SettingsCard = ({
     </>
   );
 
-  return (
-    <StyledCardWrapper disabled={disabled} className={className}>
-      <Card.Root fullWidth>
-        {isDefined(illustrationColor) ? (
+  if (isDefined(illustrationColor)) {
+    return (
+      <StyledCardWrapper disabled={disabled} className={className}>
+        <Card.Root fullWidth>
           <StyledIllustratedCardContent render={getContentOwner()}>
             <StyledIllustration
               illustrationColor={illustrationColor}
@@ -234,21 +234,27 @@ export const SettingsCard = ({
               )}
             </StyledIllustratedText>
           </StyledIllustratedCardContent>
-        ) : (
-          <StyledCardContent render={getContentOwner()}>
-            <StyledHeader>
-              <StyledIconContainer disabled={disabled} iconColor={iconColor}>
-                {Icon}
-              </StyledIconContainer>
-              {titleAndActions}
-            </StyledHeader>
-            {isNonEmptyString(description) && (
-              <StyledDescription disabled={disabled}>
-                {description}
-              </StyledDescription>
-            )}
-          </StyledCardContent>
-        )}
+        </Card.Root>
+      </StyledCardWrapper>
+    );
+  }
+
+  return (
+    <StyledCardWrapper disabled={disabled} className={className}>
+      <Card.Root fullWidth>
+        <StyledCardContent render={getContentOwner()}>
+          <StyledHeader>
+            <StyledIconContainer disabled={disabled} iconColor={iconColor}>
+              {Icon}
+            </StyledIconContainer>
+            {titleAndActions}
+          </StyledHeader>
+          {isNonEmptyString(description) && (
+            <StyledDescription disabled={disabled}>
+              {description}
+            </StyledDescription>
+          )}
+        </StyledCardContent>
       </Card.Root>
     </StyledCardWrapper>
   );
