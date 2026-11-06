@@ -12,6 +12,12 @@ const baseValidConfig = {
   sendMessageLogicFunction: {
     universalIdentifier: '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e03',
   },
+  startConversationLogicFunction: {
+    universalIdentifier: '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e04',
+  },
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e05',
+  },
 };
 
 describe('defineMessagingProvider', () => {
@@ -23,8 +29,12 @@ describe('defineMessagingProvider', () => {
   });
 
   it('accepts a provider that only ingests', () => {
-    const { sendMessageLogicFunction: _, ...ingestOnlyConfig } =
-      baseValidConfig;
+    const {
+      sendMessageLogicFunction: _sendMessageLogicFunction,
+      startConversationLogicFunction: _startConversationLogicFunction,
+      markThreadAsReadLogicFunction: _markThreadAsReadLogicFunction,
+      ...ingestOnlyConfig
+    } = baseValidConfig;
 
     expect(defineMessagingProvider(ingestOnlyConfig).success).toBe(true);
   });
@@ -43,8 +53,12 @@ describe('defineMessagingProvider', () => {
       ...baseValidConfig,
       connectionProvider: { universalIdentifier: 'unipile' },
       sendMessageLogicFunction: { universalIdentifier: 'send-message' },
+      startConversationLogicFunction: {
+        universalIdentifier: 'start-conversation',
+      },
+      markThreadAsReadLogicFunction: { universalIdentifier: 'mark-as-read' },
     });
 
-    expect(result.errors).toHaveLength(2);
+    expect(result.errors).toHaveLength(4);
   });
 });
