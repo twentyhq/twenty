@@ -237,7 +237,11 @@ export const moveFindRecordsSortsToRecordSorts = ({
       });
     }
 
-    if (!isDefined(orderBy.recordSorts)) {
+    const hasRecordSorts =
+      Array.isArray(orderBy.recordSorts) &&
+      isNonEmptyArray(orderBy.recordSorts);
+
+    if (!hasRecordSorts) {
       const converted = toRecordSorts({
         stepId: String(step.id),
         gqlOperationOrderBy,

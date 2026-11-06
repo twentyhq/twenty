@@ -41,4 +41,12 @@ describe('workflowRunStateSchema', () => {
       'settings.input.orderBy.gqlOperationOrderBy',
     );
   });
+
+  it('should still refuse a past run whose find records sort is invalid', () => {
+    expect(
+      parseRunSteps({
+        recordSorts: [{ fieldMetadataId: 'field-id', direction: 'SIDEWAYS' }],
+      }).success,
+    ).toBe(false);
+  });
 });

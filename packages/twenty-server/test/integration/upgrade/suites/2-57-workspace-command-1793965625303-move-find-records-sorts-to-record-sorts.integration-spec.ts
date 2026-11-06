@@ -274,8 +274,11 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     ).toMatchObject({ first: { name: lastCompanyName } });
   });
 
-  it('converts the steps of runs still executing and leaves ended runs as they ran', async () => {
-    const [pendingRunId, endedRunId] = [
+  it('converts the steps of runs that can still execute and leaves ended runs as they ran', async () => {
+    const [pendingRunId, failedRunId, endedRunId] = [
+      await runCoreWorkflowVersion({
+        coreWorkflowVersionId: apiSortedWorkflow.coreWorkflowVersionId,
+      }),
       await runCoreWorkflowVersion({
         coreWorkflowVersionId: apiSortedWorkflow.coreWorkflowVersionId,
       }),
@@ -285,6 +288,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     ];
 
     await waitForWorkflowCompletion(pendingRunId);
+    await waitForWorkflowCompletion(failedRunId);
     await waitForWorkflowCompletion(endedRunId);
 
     const legacySteps = JSON.stringify([apiSortedWorkflow.step]);
@@ -292,6 +296,10 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."workflowRun" SET status = 'NOT_STARTED', state = jsonb_set(state, '{flow,steps}', $2::jsonb) WHERE id = $1`,
       [pendingRunId, legacySteps],
+    );
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."workflowRun" SET status = 'FAILED', state = jsonb_set(state, '{flow,steps}', $2::jsonb) WHERE id = $1`,
+      [failedRunId, legacySteps],
     );
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."workflowRun" SET state = jsonb_set(state, '{flow,steps}', $2::jsonb) WHERE id = $1`,
@@ -313,6 +321,9 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     );
     expect(pendingRunAfter.state.stepInfos).toEqual(
       pendingRunBefore.state.stepInfos,
+    );
+    expect((await readRun(failedRunId)).state.flow.steps).toEqual(
+      pendingRunAfter.state.flow.steps,
     );
     expect(await readRun(endedRunId)).toEqual(endedRunBefore);
   });

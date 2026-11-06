@@ -22,11 +22,12 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Runs that ended never execute their steps again, so their snapshot is left as it ran
-const RUN_STATUSES_STILL_EXECUTING_STEPS = [
+// FAILED runs can be retried from their saved steps; other ended runs never execute again
+const RUN_STATUSES_THAT_CAN_EXECUTE_STEPS = [
   'NOT_STARTED',
   'ENQUEUED',
   'RUNNING',
+  'FAILED',
 ];
 
 const RUN_PAGE_SIZE = 500;
@@ -243,7 +244,7 @@ export class MoveFindRecordsSortsToRecordSortsCommand extends ProvisionedWorkspa
     while (true) {
       const rows: StoredJsonbRow<unknown>[] = await dataSource.query(
         `SELECT id, state->'flow'->'steps' AS value FROM ${tableName} WHERE status::text = ANY($1) AND (state->'flow'->'steps')::text LIKE '%gqlOperationOrderBy%' AND ($2::uuid IS NULL OR id > $2::uuid) ORDER BY id LIMIT $3`,
-        [RUN_STATUSES_STILL_EXECUTING_STEPS, lastRunId ?? null, RUN_PAGE_SIZE],
+        [RUN_STATUSES_THAT_CAN_EXECUTE_STEPS, lastRunId ?? null, RUN_PAGE_SIZE],
       );
 
       for (const row of rows) {

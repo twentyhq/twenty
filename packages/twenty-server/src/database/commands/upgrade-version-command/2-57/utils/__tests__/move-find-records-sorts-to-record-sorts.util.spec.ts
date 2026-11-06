@@ -101,6 +101,17 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
     ]);
   });
 
+  it('converts a GraphQL order sent next to empty record sorts', () => {
+    const { steps } = convert({
+      recordSorts: [],
+      gqlOperationOrderBy: [{ status: 'AscNullsLast' }],
+    });
+
+    expect(recordSortsOf(steps)).toMatchObject([
+      { fieldMetadataId: STATUS.id, direction: 'ASC' },
+    ]);
+  });
+
   it('reports orders that record sorts cannot express exactly', () => {
     const { steps, inexactlyConvertedSorts } = convert({
       gqlOperationOrderBy: [
