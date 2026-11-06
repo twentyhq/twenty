@@ -1,6 +1,10 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  buildWorkflowRecordKeysByFieldReference,
+  type WorkflowRecordFieldReferenceSource,
+} from 'twenty-shared/workflow';
+import {
   type WorkflowManifestFieldReference,
   type WorkflowManifestObjectReference,
   type WorkflowManifestReferences,
@@ -8,18 +12,17 @@ import {
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
-import {
-  buildWorkflowRecordKeysByFieldReference,
-  type WorkflowRecordFieldReferenceSource,
-} from 'src/modules/workflow/workflow-executor/utils/build-workflow-record-keys-by-field-reference.util';
 
-const toFieldReferenceSource = (
-  field: WorkflowManifestFieldReference,
+const toFieldReferenceSource = ({
+  field,
+  objectByUniversalIdentifier,
+}: {
+  field: WorkflowManifestFieldReference;
   objectByUniversalIdentifier: ReadonlyMap<
     string,
     WorkflowManifestObjectReference
-  >,
-): WorkflowRecordFieldReferenceSource => {
+  >;
+}): WorkflowRecordFieldReferenceSource => {
   const isManyToOneRelation =
     (field.type === FieldMetadataType.RELATION ||
       field.type === FieldMetadataType.MORPH_RELATION) &&
@@ -87,7 +90,7 @@ export const validateWorkflowManifestRecordFields = ({
         ...(fieldReferenceSourcesByObjectIdentifier.get(
           field.objectUniversalIdentifier,
         ) ?? []),
-        toFieldReferenceSource(field, objectByUniversalIdentifier),
+        toFieldReferenceSource({ field, objectByUniversalIdentifier }),
       ],
     );
   }

@@ -178,7 +178,6 @@ export class CoreWorkflowVersionWriteService {
     expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
-    // The content the written steps derive from, when it is not the version being overwritten
     sourceSteps?: WorkflowAction[] | null;
   }): Promise<CoreWorkflowVersionContent> {
     const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);

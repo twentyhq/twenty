@@ -3,14 +3,15 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getWorkflowRecordKeysByFieldReference } from '@/workflow/utils/getWorkflowRecordKeysByFieldReference';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { isDefined } from 'twenty-shared/utils';
-import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 export const WorkflowFieldsMultiSelect = ({
@@ -57,20 +58,15 @@ export const WorkflowFieldsMultiSelect = ({
       )
     : [];
 
-  const isFieldOfObject = (fieldName: string) =>
-    objectMetadataItem.fields.some(
-      (field) =>
-        field.name === fieldName ||
-        ((field.type === FieldMetadataType.RELATION ||
-          field.type === FieldMetadataType.MORPH_RELATION) &&
-          `${field.name}Id` === fieldName),
-    );
+  const recordKeysByFieldReference =
+    getWorkflowRecordKeysByFieldReference(objectMetadataItem);
 
   // A field deleted after it was selected stays listed, so it can be unchecked
   const missingFieldOptions: SelectOption[] = (defaultFields ?? [])
     .filter(
       (fieldName) =>
-        !isStandaloneVariableString(fieldName) && !isFieldOfObject(fieldName),
+        !isDefined(fieldName.match(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX)) &&
+        !recordKeysByFieldReference.has(fieldName),
     )
     .map((fieldName) => ({
       label: t`Field not found: ${fieldName}`,

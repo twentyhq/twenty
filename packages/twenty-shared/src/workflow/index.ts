@@ -167,6 +167,8 @@ export type {
   AiAgentStepLogDetails,
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
+export type { WorkflowRecordFieldReferenceSource } from './utils/buildWorkflowRecordKeysByFieldReference';
+export { buildWorkflowRecordKeysByFieldReference } from './utils/buildWorkflowRecordKeysByFieldReference';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';

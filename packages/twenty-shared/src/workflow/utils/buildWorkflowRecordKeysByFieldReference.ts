@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export type WorkflowRecordFieldReferenceSource = {
   name: string;
@@ -11,7 +11,13 @@ export const buildWorkflowRecordKeysByFieldReference = (
 ): Map<string, string[]> => {
   const recordKeysByFieldReference = new Map<string, Set<string>>();
 
-  const addRecordKeys = (references: string[], recordKeys: string[]) => {
+  const addRecordKeys = ({
+    references,
+    recordKeys,
+  }: {
+    references: string[];
+    recordKeys: string[];
+  }) => {
     for (const reference of references) {
       const existingRecordKeys =
         recordKeysByFieldReference.get(reference) ?? new Set<string>();
@@ -26,7 +32,7 @@ export const buildWorkflowRecordKeysByFieldReference = (
 
   for (const { name, manyToOneRelation } of fields) {
     if (!isDefined(manyToOneRelation)) {
-      addRecordKeys([name], [name]);
+      addRecordKeys({ references: [name], recordKeys: [name] });
       continue;
     }
 
@@ -34,14 +40,17 @@ export const buildWorkflowRecordKeysByFieldReference = (
     const fieldRecordKeys = [name, joinColumnName];
 
     if (!isDefined(morphName)) {
-      addRecordKeys(fieldRecordKeys, fieldRecordKeys);
+      addRecordKeys({
+        references: fieldRecordKeys,
+        recordKeys: fieldRecordKeys,
+      });
       continue;
     }
 
-    addRecordKeys(
-      [...fieldRecordKeys, morphName],
-      [morphName, ...fieldRecordKeys],
-    );
+    addRecordKeys({
+      references: [...fieldRecordKeys, morphName],
+      recordKeys: [morphName, ...fieldRecordKeys],
+    });
   }
 
   return new Map(

@@ -257,10 +257,13 @@ describe('Workflow version update step listing a deleted field (e2e)', () => {
   let secondUpdateStepId: string;
   let draftStepById: Map<string, UpdateRecordStep>;
 
-  const updateStepOnPerson = (
-    step: UpdateRecordStep,
-    fieldsToUpdate: string[],
-  ) => ({
+  const updateStepOnPerson = ({
+    step,
+    fieldsToUpdate,
+  }: {
+    step: UpdateRecordStep;
+    fieldsToUpdate: string[];
+  }) => ({
     ...step,
     settings: {
       ...step.settings,
@@ -372,7 +375,7 @@ describe('Workflow version update step listing a deleted field (e2e)', () => {
     ] as const) {
       const response = await updateStepResponse(
         coreWorkflowVersionId,
-        updateStepOnPerson(step, [...fieldsToUpdate]),
+        updateStepOnPerson({ step, fieldsToUpdate: [...fieldsToUpdate] }),
       );
 
       expect(response.body.errors).toBeUndefined();
@@ -415,11 +418,14 @@ describe('Workflow version update step listing a deleted field (e2e)', () => {
 
   it('keeps saving a draft copied from a version that lists the deleted field', async () => {
     for (const step of [
-      updateStepOnPerson(draftStep(secondUpdateStepId), ['jobTitle', 'city']),
-      updateStepOnPerson(draftStep(firstUpdateStepId), [
-        'jobTitle',
-        DELETED_FIELD_NAME,
-      ]),
+      updateStepOnPerson({
+        step: draftStep(secondUpdateStepId),
+        fieldsToUpdate: ['jobTitle', 'city'],
+      }),
+      updateStepOnPerson({
+        step: draftStep(firstUpdateStepId),
+        fieldsToUpdate: ['jobTitle', DELETED_FIELD_NAME],
+      }),
     ]) {
       const response = await updateStepResponse(
         draftCoreWorkflowVersionId,
@@ -433,11 +439,10 @@ describe('Workflow version update step listing a deleted field (e2e)', () => {
   it('refuses adding another unknown field to that step', async () => {
     const response = await updateStepResponse(
       draftCoreWorkflowVersionId,
-      updateStepOnPerson(draftStep(firstUpdateStepId), [
-        'jobTitle',
-        DELETED_FIELD_NAME,
-        'employer',
-      ]),
+      updateStepOnPerson({
+        step: draftStep(firstUpdateStepId),
+        fieldsToUpdate: ['jobTitle', DELETED_FIELD_NAME, 'employer'],
+      }),
     );
 
     expect(response.body.errors).toBeDefined();

@@ -49,7 +49,13 @@ const objectMetadataInfo: ObjectMetadataInfo = {
   }),
 };
 
-const getIssues = (fieldsToUpdate: string[], sourceFieldsToUpdate?: string[]) =>
+const getIssues = ({
+  fieldsToUpdate,
+  sourceFieldsToUpdate,
+}: {
+  fieldsToUpdate: string[];
+  sourceFieldsToUpdate?: string[];
+}) =>
   getUpdateRecordFieldsToUpdateIssues({
     step: {
       id: 'update-step',
@@ -74,15 +80,21 @@ const getIssues = (fieldsToUpdate: string[], sourceFieldsToUpdate?: string[]) =>
 
 describe('getUpdateRecordFieldsToUpdateIssues', () => {
   it('accepts field names, relation names and join columns', () => {
-    expect(getIssues(['jobTitle', 'company', 'companyId'])).toEqual([]);
+    expect(
+      getIssues({ fieldsToUpdate: ['jobTitle', 'company', 'companyId'] }),
+    ).toEqual([]);
   });
 
   it('accepts a variable, resolved when the step runs', () => {
-    expect(getIssues(['{{trigger.fieldName}}'])).toEqual([]);
+    expect(getIssues({ fieldsToUpdate: ['{{trigger.fieldName}}'] })).toEqual(
+      [],
+    );
   });
 
   it('blocks activation while names match no field of the object', () => {
-    expect(getIssues(['jobTitle', 'employer', 'salary'])).toEqual([
+    expect(
+      getIssues({ fieldsToUpdate: ['jobTitle', 'employer', 'salary'] }),
+    ).toEqual([
       expect.objectContaining({
         severity: 'error',
         code: 'FIELD_NOT_FOUND',
@@ -94,7 +106,12 @@ describe('getUpdateRecordFieldsToUpdateIssues', () => {
   });
 
   it('refuses writing names the step did not already have', () => {
-    expect(getIssues(['employer', 'salary'], ['employer'])).toEqual([
+    expect(
+      getIssues({
+        fieldsToUpdate: ['employer', 'salary'],
+        sourceFieldsToUpdate: ['employer'],
+      }),
+    ).toEqual([
       expect.objectContaining({ code: 'FIELD_NOT_FOUND' }),
       expect.objectContaining({
         code: 'INVALID_FIELD_TO_UPDATE',
@@ -105,8 +122,11 @@ describe('getUpdateRecordFieldsToUpdateIssues', () => {
   });
 
   it('lets a write keep a name that became stale', () => {
-    expect(getIssues(['jobTitle', 'employer'], ['employer'])).toEqual([
-      expect.objectContaining({ code: 'FIELD_NOT_FOUND' }),
-    ]);
+    expect(
+      getIssues({
+        fieldsToUpdate: ['jobTitle', 'employer'],
+        sourceFieldsToUpdate: ['employer'],
+      }),
+    ).toEqual([expect.objectContaining({ code: 'FIELD_NOT_FOUND' })]);
   });
 });

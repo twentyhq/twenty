@@ -1,11 +1,11 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isMorphRelationHead } from 'twenty-shared/utils';
+import { buildWorkflowRecordKeysByFieldReference } from 'twenty-shared/workflow';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { buildWorkflowRecordKeysByFieldReference } from 'src/modules/workflow/workflow-executor/utils/build-workflow-record-keys-by-field-reference.util';
 import { getMorphRelationTargetJoinColumnsByMorphName } from 'src/modules/workflow/workflow-executor/utils/get-morph-relation-target-join-columns-by-morph-name.util';
 
 export const getWorkflowRecordKeysByFieldReference = (
