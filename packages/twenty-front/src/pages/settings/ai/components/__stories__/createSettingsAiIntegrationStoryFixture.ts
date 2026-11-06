@@ -216,6 +216,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
             updateWorkspace: {
               ...workspace,
               __typename: 'Workspace',
+              aiChatAssistantProfile: {
+                ...workspace.aiChatAssistantProfile,
+                __typename: 'AiChatAssistantProfile',
+              },
               customDomain: workspace.customDomain ?? null,
               displayName: workspace.displayName ?? null,
               logo: workspace.logo ?? null,

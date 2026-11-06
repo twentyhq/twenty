@@ -44,6 +44,7 @@ import {
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceAssistantProfileService } from 'src/engine/core-modules/workspace/services/workspace-assistant-profile.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -167,6 +168,7 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
@@ -184,6 +186,7 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceAssistantProfileService: WorkspaceAssistantProfileService,
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
@@ -472,6 +475,12 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
+    const aiChatAssistantProfile =
+      await this.workspaceAssistantProfileService.validateProfileUpdateOrThrow({
+        workspace,
+        profile: payload.aiChatAssistantProfile,
+      });
+
     const isUpdatingAssistantModes =
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode);
@@ -625,6 +634,7 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
@@ -1296,8 +1306,7 @@ export class WorkspaceService {
     application,
     workspaceActivationStatus,
   }: {
-    payload: Omit<Partial<WorkspaceEntity>, 'aiDataPolicy'> &
-      Pick<UpdateWorkspaceInput, 'aiDataPolicy'>;
+    payload: UpdateWorkspaceInput;
     userWorkspaceId?: string;
     application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;
