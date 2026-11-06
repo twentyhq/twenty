@@ -1,36 +1,30 @@
-import {
-  DELETED_FIELD_TYPE,
-  dropStoredStepFilterTypesFromSteps,
-  dropStoredStepFilterTypesFromTriggers,
-} from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
+import { type StepFilter, ViewFilterOperand } from 'twenty-shared/types';
+
+import { DELETED_FIELD_TYPE } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
+import { dropStoredStepFilterTypesFromSteps } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types-from-steps.util';
 
 const fieldTypeById = new Map([
   ['stage-field', 'SELECT'],
   ['target-field', 'MORPH_RELATION'],
 ]);
 
-const storedFilter = (overrides: Record<string, unknown>) => ({
+type StoredStepFilter = StepFilter & { type?: string };
+
+const storedFilter = (
+  overrides: Partial<StoredStepFilter>,
+): StoredStepFilter => ({
   id: 'filter',
-  operand: 'IS',
+  operand: ViewFilterOperand.IS,
   value: '',
   stepFilterGroupId: 'group',
   stepOutputKey: '{{trigger.properties.after.stage}}',
   ...overrides,
 });
 
-const filterStep = (stepFilters: unknown[]) => ({
+const filterStep = (stepFilters: StoredStepFilter[]) => ({
   id: 'filter-step',
   type: 'FILTER',
   settings: { input: { stepFilterGroups: [], stepFilters } },
-});
-
-const databaseEventTrigger = (stepFilters: unknown[]) => ({
-  type: 'DATABASE_EVENT',
-  settings: {
-    eventName: 'opportunity.updated',
-    outputSchema: {},
-    filter: { stepFilterGroups: [], stepFilters },
-  },
 });
 
 describe('dropStoredStepFilterTypesFromSteps', () => {
@@ -98,40 +92,5 @@ describe('dropStoredStepFilterTypesFromSteps', () => {
     expect(
       dropStoredStepFilterTypesFromSteps({ steps, fieldTypeById }),
     ).toMatchObject({ value: steps, hasChanged: false });
-  });
-});
-
-describe('dropStoredStepFilterTypesFromTriggers', () => {
-  it('should drop the stored type of database event trigger filters', () => {
-    const manualTrigger = { type: 'MANUAL', settings: { outputSchema: {} } };
-
-    expect(
-      dropStoredStepFilterTypesFromTriggers({
-        triggers: [
-          databaseEventTrigger([
-            storedFilter({ type: 'TEXT', fieldMetadataId: 'stage-field' }),
-          ]),
-          manualTrigger,
-        ],
-        fieldTypeById,
-      }),
-    ).toEqual({
-      value: [
-        databaseEventTrigger([
-          storedFilter({ fieldMetadataId: 'stage-field' }),
-        ]),
-        manualTrigger,
-      ],
-      hasChanged: true,
-      typeChanges: [
-        {
-          stepId: 'trigger',
-          stepFilterId: 'filter',
-          storedType: 'TEXT',
-          computedType: 'SELECT',
-        },
-      ],
-      variableFilterCount: 0,
-    });
   });
 });

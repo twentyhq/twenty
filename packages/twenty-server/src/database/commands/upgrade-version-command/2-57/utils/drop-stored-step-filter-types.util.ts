@@ -1,7 +1,5 @@
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const STEP_TYPES_WITH_FILTERS = ['FILTER', 'IF_ELSE'];
-
 export const DELETED_FIELD_TYPE = 'none, the field was deleted';
 
 export type StepFilterTypeChange = {
@@ -18,7 +16,7 @@ export type DroppedStepFilterTypes<TValue> = {
   variableFilterCount: number;
 };
 
-const UNCHANGED = {
+export const UNCHANGED_STEP_FILTER_TYPES = {
   hasChanged: false,
   typeChanges: [],
   variableFilterCount: 0,
@@ -38,7 +36,7 @@ const computeFieldFilterTypeAsOf257 = (
   return fieldType === 'MORPH_RELATION' ? 'RELATION' : fieldType;
 };
 
-const dropStepFilterTypes = ({
+export const dropStoredStepFilterTypes = ({
   stepId,
   stepFilters,
   fieldTypeById,
@@ -53,7 +51,7 @@ const dropStepFilterTypes = ({
       (stepFilter) => isPlainObject(stepFilter) && 'type' in stepFilter,
     )
   ) {
-    return { value: stepFilters, ...UNCHANGED };
+    return { value: stepFilters, ...UNCHANGED_STEP_FILTER_TYPES };
   }
 
   const typeChanges: StepFilterTypeChange[] = [];
@@ -91,126 +89,4 @@ const dropStepFilterTypes = ({
   });
 
   return { value, hasChanged: true, typeChanges, variableFilterCount };
-};
-
-export const dropStoredStepFilterTypesFromSteps = ({
-  steps,
-  fieldTypeById,
-}: {
-  steps: unknown;
-  fieldTypeById: Map<string, string>;
-}): DroppedStepFilterTypes<unknown> => {
-  if (!Array.isArray(steps)) {
-    return { value: steps, ...UNCHANGED };
-  }
-
-  let hasChanged = false;
-  let variableFilterCount = 0;
-  const typeChanges: StepFilterTypeChange[] = [];
-
-  const value = steps.map((step) => {
-    if (
-      !isPlainObject(step) ||
-      !STEP_TYPES_WITH_FILTERS.includes(String(step.type)) ||
-      !isPlainObject(step.settings) ||
-      !isPlainObject(step.settings.input)
-    ) {
-      return step;
-    }
-
-    const dropped = dropStepFilterTypes({
-      stepId: String(step.id),
-      stepFilters: step.settings.input.stepFilters,
-      fieldTypeById,
-    });
-
-    if (!dropped.hasChanged) {
-      return step;
-    }
-
-    hasChanged = true;
-    typeChanges.push(...dropped.typeChanges);
-    variableFilterCount += dropped.variableFilterCount;
-
-    return {
-      ...step,
-      settings: {
-        ...step.settings,
-        input: { ...step.settings.input, stepFilters: dropped.value },
-      },
-    };
-  });
-
-  return {
-    value: hasChanged ? value : steps,
-    hasChanged,
-    typeChanges,
-    variableFilterCount,
-  };
-};
-
-export const dropStoredStepFilterTypesFromTrigger = ({
-  trigger,
-  fieldTypeById,
-}: {
-  trigger: unknown;
-  fieldTypeById: Map<string, string>;
-}): DroppedStepFilterTypes<unknown> => {
-  if (
-    !isPlainObject(trigger) ||
-    trigger.type !== 'DATABASE_EVENT' ||
-    !isPlainObject(trigger.settings) ||
-    !isPlainObject(trigger.settings.filter)
-  ) {
-    return { value: trigger, ...UNCHANGED };
-  }
-
-  const dropped = dropStepFilterTypes({
-    stepId: 'trigger',
-    stepFilters: trigger.settings.filter.stepFilters,
-    fieldTypeById,
-  });
-
-  if (!dropped.hasChanged) {
-    return { value: trigger, ...UNCHANGED };
-  }
-
-  return {
-    ...dropped,
-    value: {
-      ...trigger,
-      settings: {
-        ...trigger.settings,
-        filter: { ...trigger.settings.filter, stepFilters: dropped.value },
-      },
-    },
-  };
-};
-
-export const dropStoredStepFilterTypesFromTriggers = ({
-  triggers,
-  fieldTypeById,
-}: {
-  triggers: unknown;
-  fieldTypeById: Map<string, string>;
-}): DroppedStepFilterTypes<unknown> => {
-  if (!Array.isArray(triggers)) {
-    return { value: triggers, ...UNCHANGED };
-  }
-
-  const droppedPerTrigger = triggers.map((trigger) =>
-    dropStoredStepFilterTypesFromTrigger({ trigger, fieldTypeById }),
-  );
-
-  const hasChanged = droppedPerTrigger.some(({ hasChanged }) => hasChanged);
-
-  return {
-    value: hasChanged ? droppedPerTrigger.map(({ value }) => value) : triggers,
-    hasChanged,
-    typeChanges: droppedPerTrigger.flatMap(({ typeChanges }) => typeChanges),
-    variableFilterCount: droppedPerTrigger.reduce(
-      (count, dropped) => count + dropped.variableFilterCount,
-      0,
-    ),
-  };
 };

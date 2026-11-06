@@ -9,12 +9,10 @@ import {
   rewriteJsonbRowsWithCompareAndSet,
   type StoredJsonbRow,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
-import {
-  dropStoredStepFilterTypesFromSteps,
-  dropStoredStepFilterTypesFromTrigger,
-  dropStoredStepFilterTypesFromTriggers,
-  type DroppedStepFilterTypes,
-} from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
+import { type DroppedStepFilterTypes } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types.util';
+import { dropStoredStepFilterTypesFromSteps } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types-from-steps.util';
+import { dropStoredStepFilterTypesFromTrigger } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types-from-trigger.util';
+import { dropStoredStepFilterTypesFromTriggers } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-stored-step-filter-types-from-triggers.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
