@@ -31,8 +31,8 @@ export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
-export type { DataResidencyRegion } from './constants/data-residencies-by-region.const';
 export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
+export type { DataResidencyRegion } from './constants/data-residency-regions.const';
 export { DATA_RESIDENCY_REGIONS } from './constants/data-residency-regions.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCIES } from './constants/data-residency.const';

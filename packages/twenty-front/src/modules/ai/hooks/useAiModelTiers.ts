@@ -41,7 +41,6 @@ const getCostDeltaPercent = ({
   });
 };
 
-// Mirrors the server: a pin counts only with auto-selection off and the model still served and allowed by the policy.
 export const useAiModelTiers = (): ResolvedAiModelTier[] => {
   const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
   const aiModelTiers = useAtomStateValue(aiModelTiersState);
