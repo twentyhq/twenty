@@ -3,6 +3,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { workflowRunSchema } from 'twenty-shared/workflow';
 
 export const useWorkflowRun = ({
@@ -28,10 +29,19 @@ export const useWorkflowRun = ({
     recordGqlFields,
   });
 
-  const { data: record } = useMemo(
-    () => workflowRunSchema.safeParse(rawRecord),
-    [rawRecord],
-  );
+  const {
+    success,
+    data: record,
+    error,
+  } = useMemo(() => workflowRunSchema.safeParse(rawRecord), [rawRecord]);
+
+  if (!isDefined(rawRecord)) {
+    return undefined;
+  }
+
+  if (!success) {
+    throw error;
+  }
 
   return record;
 };
