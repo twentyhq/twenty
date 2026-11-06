@@ -112,34 +112,57 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
     expect(issues).toEqual([]);
   });
 
-  it('flags an update step whose fieldsToUpdate names no field of the object', () => {
-    const issues = getIssues([
-      {
-        id: 'step-1',
-        name: 'Update Record',
-        type: WorkflowActionType.UPDATE_RECORD,
-        valid: true,
-        settings: {
-          input: {
-            objectName: 'note',
-            objectRecordId: '{{trigger.id}}',
-            objectRecord: { body: { markdown: 'hi' } },
-            fieldsToUpdate: ['body', 'title'],
-          },
-          outputSchema: {},
-          errorHandlingOptions: {
-            continueOnFailure: { value: false },
-            retryOnFailure: { value: 0 },
-          },
-        },
+  const buildUpdateStep = (fieldsToUpdate: string[]): WorkflowAction => ({
+    id: 'step-1',
+    name: 'Update Record',
+    type: WorkflowActionType.UPDATE_RECORD,
+    valid: true,
+    settings: {
+      input: {
+        objectName: 'note',
+        objectRecordId: '{{trigger.id}}',
+        objectRecord: { body: { markdown: 'hi' } },
+        fieldsToUpdate,
       },
-    ]);
+      outputSchema: {},
+      errorHandlingOptions: {
+        continueOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
+      },
+    },
+  });
+
+  it('flags an update step whose fieldsToUpdate names no field of the object', () => {
+    const issues = getIssues([buildUpdateStep(['body', 'title'])]);
 
     expect(issues).toHaveLength(1);
     expect(issues[0]).toMatchObject({
       code: 'FIELD_NOT_FOUND',
       stepId: 'step-1',
     });
+  });
+
+  it('leaves a malformed fieldsToUpdate to the step params check', () => {
+    // @ts-expect-error stored step inputs are unvalidated JSON
+    const issues = getIssues([buildUpdateStep('title')]);
+
+    expect(issues).toEqual([]);
+  });
+
+  it('refuses only unknown names the source content did not have for the object', () => {
+    const issues = getWorkflowRecordStepMetadataIssues({
+      steps: [buildUpdateStep(['body', 'title', 'author'])],
+      sourceSteps: [buildUpdateStep(['body', 'title'])],
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    });
+
+    expect(issues.map(({ code }) => code)).toEqual([
+      'FIELD_NOT_FOUND',
+      'INVALID_FIELD_TO_UPDATE',
+    ]);
+    expect(issues[1].message).toContain(': author.');
   });
 
   it('ignores steps that do not target a record object', () => {

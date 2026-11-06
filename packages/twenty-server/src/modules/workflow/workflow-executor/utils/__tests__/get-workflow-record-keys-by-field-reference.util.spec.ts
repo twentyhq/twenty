@@ -133,20 +133,25 @@ describe('getWorkflowRecordKeysByFieldReference', () => {
     ]);
   });
 
-  it('maps a morph relation target by name or join column', () => {
+  it('maps a morph target by name or join column to its keys and morph name', () => {
     expect(recordKeysByFieldReference.get('targetPerson')).toEqual([
+      'target',
       'targetPerson',
       'targetPersonId',
     ]);
     expect(recordKeysByFieldReference.get('targetCompanyId')).toEqual([
+      'target',
       'targetCompany',
       'targetCompanyId',
     ]);
   });
 
-  it('maps a morph name to the join columns of all its targets', () => {
+  it('maps a morph name to the keys of all its targets', () => {
     expect(recordKeysByFieldReference.get('target')).toEqual([
+      'target',
+      'targetPerson',
       'targetPersonId',
+      'targetCompany',
       'targetCompanyId',
     ]);
   });

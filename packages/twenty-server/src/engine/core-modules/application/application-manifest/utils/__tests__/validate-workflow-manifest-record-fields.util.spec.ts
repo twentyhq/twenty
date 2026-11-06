@@ -16,6 +16,18 @@ const ownerField = {
   universalSettings: { relationType: RelationType.MANY_TO_ONE },
 } as WorkflowManifestFieldReference;
 
+const PERSON_ID = '44444444-4444-4444-8444-444444444444';
+
+const targetPersonField: WorkflowManifestFieldReference = {
+  objectUniversalIdentifier: COMPANY_ID,
+  id: '55555555-5555-4555-8555-555555555555',
+  name: 'targetPerson',
+  type: FieldMetadataType.MORPH_RELATION,
+  settings: null,
+  relationTargetObjectMetadataUniversalIdentifier: PERSON_ID,
+  universalSettings: { relationType: RelationType.MANY_TO_ONE },
+};
+
 const validateUpdate = (
   objectRecord: Record<string, unknown>,
   fieldsToUpdate: string[],
@@ -39,8 +51,12 @@ const validateUpdate = (
     ],
     objectByUniversalIdentifier: new Map([
       [COMPANY_ID, { nameSingular: 'company' }],
+      [PERSON_ID, { nameSingular: 'person', namePlural: 'people' }],
     ]),
-    fieldByUniversalIdentifier: new Map([[ownerField.id, ownerField]]),
+    fieldByUniversalIdentifier: new Map([
+      [ownerField.id, ownerField],
+      [targetPersonField.id, targetPersonField],
+    ]),
   });
 
 describe('validateWorkflowManifestRecordFields', () => {
@@ -57,6 +73,22 @@ describe('validateWorkflowManifestRecordFields', () => {
     'accepts a many-to-one relation selected by %s',
     (_, objectRecord, fieldToUpdate) => {
       expect(validateUpdate(objectRecord, [fieldToUpdate])).toEqual([]);
+    },
+  );
+
+  it.each([
+    ['its morph name', 'target'],
+    ['a morph target', 'targetPerson'],
+    ['a morph target join column', 'targetPersonId'],
+  ])(
+    'accepts a morph relation set by its morph name and selected by %s',
+    (_, fieldToUpdate) => {
+      expect(
+        validateUpdate(
+          { target: { targetObjectMetadataId: PERSON_ID, id: 'person' } },
+          [fieldToUpdate],
+        ),
+      ).toEqual([]);
     },
   );
 

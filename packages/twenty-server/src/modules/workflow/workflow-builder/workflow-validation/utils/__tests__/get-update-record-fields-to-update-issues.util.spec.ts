@@ -49,7 +49,7 @@ const objectMetadataInfo: ObjectMetadataInfo = {
   }),
 };
 
-const getIssues = (fieldsToUpdate: string[]) =>
+const getIssues = (fieldsToUpdate: string[], sourceFieldsToUpdate?: string[]) =>
   getUpdateRecordFieldsToUpdateIssues({
     step: {
       id: 'update-step',
@@ -69,6 +69,7 @@ const getIssues = (fieldsToUpdate: string[]) =>
       },
     } satisfies Pick<WorkflowUpdateRecordAction, 'id' | 'name' | 'settings'>,
     objectMetadataInfo,
+    sourceFieldsToUpdate,
   });
 
 describe('getUpdateRecordFieldsToUpdateIssues', () => {
@@ -80,19 +81,32 @@ describe('getUpdateRecordFieldsToUpdateIssues', () => {
     expect(getIssues(['{{trigger.fieldName}}'])).toEqual([]);
   });
 
-  it('refuses names that match no field of the object', () => {
+  it('blocks activation while names match no field of the object', () => {
     expect(getIssues(['jobTitle', 'employer', 'salary'])).toEqual([
       expect.objectContaining({
         severity: 'error',
         code: 'FIELD_NOT_FOUND',
         stepId: 'update-step',
         message:
-          'Step "Update Person" updates unknown fields of "person": employer, salary.',
+          'Step "Update Person" updates fields that "person" does not have: employer, salary. Remove them before activating.',
       }),
     ]);
   });
 
-  it('leaves a malformed fieldsToUpdate to the step params check', () => {
-    expect(getIssues('company' as unknown as string[])).toEqual([]);
+  it('refuses writing names the step did not already have', () => {
+    expect(getIssues(['employer', 'salary'], ['employer'])).toEqual([
+      expect.objectContaining({ code: 'FIELD_NOT_FOUND' }),
+      expect.objectContaining({
+        code: 'INVALID_FIELD_TO_UPDATE',
+        message:
+          'Step "Update Person" updates unknown fields of "person": salary.',
+      }),
+    ]);
+  });
+
+  it('lets a write keep a name that became stale', () => {
+    expect(getIssues(['jobTitle', 'employer'], ['employer'])).toEqual([
+      expect.objectContaining({ code: 'FIELD_NOT_FOUND' }),
+    ]);
   });
 });

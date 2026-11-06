@@ -5,9 +5,12 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 export const WorkflowFieldsMultiSelect = ({
@@ -54,38 +57,62 @@ export const WorkflowFieldsMultiSelect = ({
       )
     : [];
 
+  const isFieldOfObject = (fieldName: string) =>
+    objectMetadataItem.fields.some(
+      (field) =>
+        field.name === fieldName ||
+        ((field.type === FieldMetadataType.RELATION ||
+          field.type === FieldMetadataType.MORPH_RELATION) &&
+          `${field.name}Id` === fieldName),
+    );
+
+  // A field deleted after it was selected stays listed, so it can be unchecked
+  const missingFieldOptions: SelectOption[] = (defaultFields ?? [])
+    .filter(
+      (fieldName) =>
+        !isStandaloneVariableString(fieldName) && !isFieldOfObject(fieldName),
+    )
+    .map((fieldName) => ({
+      label: t`Field not found: ${fieldName}`,
+      value: fieldName,
+      Icon: IconAlertTriangle,
+      color: 'red',
+    }));
+
+  const fieldOptions: SelectOption[] = inlineFieldDefinitions.map((field) => {
+    const isIdField = field.metadata.fieldName === 'id';
+
+    if (isIdField && actionType === 'UPSERT_RECORD') {
+      return {
+        label: t`ID`,
+        value: field.metadata.fieldName,
+        Icon: getIcon('IconId'),
+        color: 'gray',
+      };
+    }
+
+    const isFieldRelationManyToOne =
+      isFieldRelation(field) &&
+      field.metadata.relationType === RelationType.MANY_TO_ONE;
+
+    const value = isFieldRelationManyToOne
+      ? doNotTranslate(`${field.metadata.fieldName}Id`)
+      : field.metadata.fieldName;
+
+    return {
+      label: field.label,
+      value,
+      Icon: getIcon(field.iconName),
+      color: 'gray',
+    };
+  });
+
   return (
     <FormMultiSelectFieldInput
       testId="workflow-fields-multi-select"
       label={label}
       defaultValue={defaultFields}
-      options={inlineFieldDefinitions.map((field) => {
-        const isIdField = field.metadata.fieldName === 'id';
-
-        if (isIdField && actionType === 'UPSERT_RECORD') {
-          return {
-            label: t`ID`,
-            value: field.metadata.fieldName,
-            Icon: getIcon('IconId'),
-            color: 'gray',
-          };
-        }
-
-        const isFieldRelationManyToOne =
-          isFieldRelation(field) &&
-          field.metadata.relationType === RelationType.MANY_TO_ONE;
-
-        const value = isFieldRelationManyToOne
-          ? doNotTranslate(`${field.metadata.fieldName}Id`)
-          : field.metadata.fieldName;
-
-        return {
-          label: field.label,
-          value,
-          Icon: getIcon(field.iconName),
-          color: 'gray',
-        };
-      })}
+      options={[...fieldOptions, ...missingFieldOptions]}
       onChange={handleFieldsChange}
       placeholder={placeholder}
       readonly={readonly}

@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isArray, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
@@ -9,21 +9,30 @@ import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-s
 import { getWorkflowRecordKeysByFieldReference } from 'src/modules/workflow/workflow-executor/utils/get-workflow-record-keys-by-field-reference.util';
 import { type WorkflowUpdateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
+const FIELDS_TO_UPDATE_PATH = 'settings.input.fieldsToUpdate';
+
+const FIELDS_TO_UPDATE_HINT =
+  'Use field names of the object; a relation can also be named by its join column (company or companyId).';
+
 export const getUpdateRecordFieldsToUpdateIssues = ({
   step,
   objectMetadataInfo,
+  sourceFieldsToUpdate,
 }: {
   step: Pick<WorkflowUpdateRecordAction, 'id' | 'name' | 'settings'>;
   objectMetadataInfo: ObjectMetadataInfo;
+  // Set on writes: unknown names the source content already had for this object may stay, new ones are refused
+  sourceFieldsToUpdate?: string[];
 }): WorkflowValidationIssue[] => {
-  const recordKeysByFieldReference =
-    getWorkflowRecordKeysByFieldReference(objectMetadataInfo);
+  const { fieldsToUpdate } = step.settings.input;
 
-  const fieldsToUpdate: unknown = step.settings.input.fieldsToUpdate;
-
-  if (!Array.isArray(fieldsToUpdate)) {
+  // Writes run these checks on caller input its schema has not validated yet
+  if (!isArray(fieldsToUpdate)) {
     return [];
   }
+
+  const recordKeysByFieldReference =
+    getWorkflowRecordKeysByFieldReference(objectMetadataInfo);
 
   const unknownFieldNames = fieldsToUpdate.filter(
     (fieldName): fieldName is string =>
@@ -37,16 +46,38 @@ export const getUpdateRecordFieldsToUpdateIssues = ({
     return [];
   }
 
+  const stepLabel = step.name ?? step.id;
   const objectName = objectMetadataInfo.flatObjectMetadata.nameSingular;
 
-  return [
+  const issues: WorkflowValidationIssue[] = [
     {
       severity: 'error',
       code: 'FIELD_NOT_FOUND',
-      message: `Step "${step.name ?? step.id}" updates unknown fields of "${objectName}": ${unknownFieldNames.join(', ')}.`,
+      message: `Step "${stepLabel}" updates fields that "${objectName}" does not have: ${unknownFieldNames.join(', ')}. Remove them before activating.`,
       stepId: step.id,
-      path: 'settings.input.fieldsToUpdate',
-      hint: 'Use field names of the object; a relation can also be named by its join column (company or companyId).',
+      path: FIELDS_TO_UPDATE_PATH,
+      hint: FIELDS_TO_UPDATE_HINT,
     },
   ];
+
+  if (!isDefined(sourceFieldsToUpdate)) {
+    return issues;
+  }
+
+  const introducedUnknownFieldNames = unknownFieldNames.filter(
+    (fieldName) => !sourceFieldsToUpdate.includes(fieldName),
+  );
+
+  if (introducedUnknownFieldNames.length > 0) {
+    issues.push({
+      severity: 'error',
+      code: 'INVALID_FIELD_TO_UPDATE',
+      message: `Step "${stepLabel}" updates unknown fields of "${objectName}": ${introducedUnknownFieldNames.join(', ')}.`,
+      stepId: step.id,
+      path: FIELDS_TO_UPDATE_PATH,
+      hint: FIELDS_TO_UPDATE_HINT,
+    });
+  }
+
+  return issues;
 };

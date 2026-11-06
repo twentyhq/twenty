@@ -1,16 +1,17 @@
+import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
-import { type UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import {
   type ObjectMetadataInfo,
-  type WorkflowCommonWorkspaceService,
+  WorkflowCommonWorkspaceService,
 } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { type WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -76,21 +77,42 @@ const buildUpdateStep = (
 });
 
 describe('UpdateRecordWorkflowAction', () => {
-  const updateRecordService = {
-    execute: jest.fn().mockResolvedValue({ success: true, result: {} }),
-  };
+  const executeUpdateRecord = jest
+    .fn()
+    .mockResolvedValue({ success: true, result: {} });
 
-  const workflowAction = new UpdateRecordWorkflowAction(
-    updateRecordService as unknown as UpdateRecordService,
-    {
-      getExecutionContext: jest
-        .fn()
-        .mockResolvedValue({ isActingOnBehalfOfUser: false, authContext: {} }),
-    } as unknown as WorkflowExecutionContextService,
-    {
-      getObjectMetadataInfo: jest.fn().mockResolvedValue(objectMetadataInfo),
-    } as unknown as WorkflowCommonWorkspaceService,
-  );
+  let workflowAction: UpdateRecordWorkflowAction;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UpdateRecordWorkflowAction,
+        {
+          provide: UpdateRecordService,
+          useValue: { execute: executeUpdateRecord },
+        },
+        {
+          provide: WorkflowExecutionContextService,
+          useValue: {
+            getExecutionContext: jest.fn().mockResolvedValue({
+              isActingOnBehalfOfUser: false,
+              authContext: {},
+            }),
+          },
+        },
+        {
+          provide: WorkflowCommonWorkspaceService,
+          useValue: {
+            getObjectMetadataInfo: jest
+              .fn()
+              .mockResolvedValue(objectMetadataInfo),
+          },
+        },
+      ],
+    }).compile();
+
+    workflowAction = module.get(UpdateRecordWorkflowAction);
+  });
 
   const execute = (step: WorkflowAction) =>
     workflowAction.execute({
@@ -104,7 +126,7 @@ describe('UpdateRecordWorkflowAction', () => {
     });
 
   beforeEach(() => {
-    updateRecordService.execute.mockClear();
+    executeUpdateRecord.mockClear();
   });
 
   it.each([
@@ -118,7 +140,8 @@ describe('UpdateRecordWorkflowAction', () => {
       }),
     );
 
-    expect(updateRecordService.execute).toHaveBeenCalledWith(
+    expect(executeUpdateRecord).toHaveBeenCalledTimes(1);
+    expect(executeUpdateRecord).toHaveBeenCalledWith(
       expect.objectContaining({
         objectRecord: { companyId: COMPANY_ID, jobTitle: 'CTO' },
         fieldsToUpdate: ['companyId', 'jobTitle'],
@@ -134,7 +157,8 @@ describe('UpdateRecordWorkflowAction', () => {
       }),
     );
 
-    expect(updateRecordService.execute).toHaveBeenCalledWith(
+    expect(executeUpdateRecord).toHaveBeenCalledTimes(1);
+    expect(executeUpdateRecord).toHaveBeenCalledWith(
       expect.objectContaining({ fieldsToUpdate: ['companyId'] }),
     );
   });
@@ -149,6 +173,6 @@ describe('UpdateRecordWorkflowAction', () => {
       ),
     ).rejects.toThrow('Failed to update: No fields to update');
 
-    expect(updateRecordService.execute).not.toHaveBeenCalled();
+    expect(executeUpdateRecord).not.toHaveBeenCalled();
   });
 });

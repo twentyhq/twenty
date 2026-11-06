@@ -18,6 +18,7 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 type WorkflowVersionMalformedCheckArgs = {
   trigger: WorkflowTrigger | null | undefined;
   steps: WorkflowAction[] | null | undefined;
+  sourceSteps: WorkflowAction[];
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
@@ -26,6 +27,7 @@ type WorkflowVersionMalformedCheckArgs = {
 const getMalformedWorkflowVersionIssues = ({
   trigger,
   steps,
+  sourceSteps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   objectIdByNameSingular,
@@ -36,6 +38,7 @@ const getMalformedWorkflowVersionIssues = ({
     ...structureResult.errors,
     ...getWorkflowRecordStepMetadataIssues({
       steps: steps ?? [],
+      sourceSteps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectIdByNameSingular,

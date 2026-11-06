@@ -123,6 +123,21 @@ export const WithDefaultValues: Story = {
   },
 };
 
+export const WithDeletedField: Story = {
+  args: {
+    ...Default.args,
+    defaultFields: ['name', 'deletedField'],
+    actionType: 'UPDATE_RECORD',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText('Name')).toBeVisible();
+    expect(
+      await canvas.findByText('Field not found: deletedField'),
+    ).toBeVisible();
+  },
+};
+
 export const ReadOnly: Story = {
   args: {
     ...Default.args,
