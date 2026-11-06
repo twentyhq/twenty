@@ -262,7 +262,7 @@ export class RecordSharingPermissionsService {
           label,
           canRead: canReachSomeRecords({
             objectRecordsPermissions,
-            operationType: 'select',
+            operationType: 'read',
           }),
           canUpdate: canReachSomeRecords({
             objectRecordsPermissions,

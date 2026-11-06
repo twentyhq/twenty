@@ -103,7 +103,8 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordPermissionsService.canReadRecords({
+      const hasGrant = await this.recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals:
           await this.principalPermissionsService.resolvePermissionsPrincipals({
             authContext: {

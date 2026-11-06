@@ -163,7 +163,7 @@ export class AgentChatSharingService {
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
-    return this.getThreadWithAccess({ ...args, operationType: 'select' });
+    return this.getThreadWithAccess({ ...args, operationType: 'read' });
   }
 
   async getThreadWithAccess({
@@ -260,7 +260,7 @@ export class AgentChatSharingService {
       async () => [
         ...(await this.findThreadIdsGrantedForOperation({
           threadIds,
-          operationType: 'select',
+          operationType: 'read',
         })),
       ],
       authContext,
@@ -400,8 +400,14 @@ export class AgentChatSharingService {
               transactionScope,
             };
             const [canReadThread, canUpdateThread] = await Promise.all([
-              this.recordPermissionsService.canReadRecords(question),
-              this.recordPermissionsService.canUpdateRecords(question),
+              this.recordPermissionsService.canAccessRecords({
+                ...question,
+                operationType: 'read',
+              }),
+              this.recordPermissionsService.canAccessRecords({
+                ...question,
+                operationType: 'update',
+              }),
             ]);
 
             return canReadThread && canUpdateThread ? memberId : undefined;
@@ -543,7 +549,7 @@ export class AgentChatSharingService {
         this.workspaceOrmManager
           .getRepository('agentChatThread')
           .validateWriteIsPermitted({
-            operationType: 'insert',
+            operationType: 'create',
             columnsToReturn: ['id'],
             updatedColumns,
           }),
@@ -740,7 +746,7 @@ export class AgentChatSharingService {
             if (!isDefined(thread)) {
               return throwAgentChatThreadNotFound();
             }
-            await this.assertOperationAllowed(args.threadId, 'restore');
+            await this.assertOperationAllowed(args.threadId, 'softDelete');
             if (!isDefined(thread.deletedAt)) {
               return thread;
             }
