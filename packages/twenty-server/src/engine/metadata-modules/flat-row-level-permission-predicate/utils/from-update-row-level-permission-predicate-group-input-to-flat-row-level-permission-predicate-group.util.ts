@@ -35,7 +35,7 @@ export const fromUpdateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
         input.positionInRowLevelPermissionPredicateGroup ?? null,
       canReadRecords: input.canReadRecords ?? existingGroup.canReadRecords,
       canCreateRecords:
-        input.canUpdateRecords === true || existingGroup.canCreateRecords,
+        input.canUpdateRecords ?? existingGroup.canCreateRecords,
       canUpdateRecords:
         input.canUpdateRecords ?? existingGroup.canUpdateRecords,
       canSoftDeleteRecords:

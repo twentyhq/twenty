@@ -150,8 +150,8 @@ export class ObjectPermissionService {
             : current.canDestroyObjectRecords;
 
         const effectiveCanCreate =
-          desired.canUpdateObjectRecords === true
-            ? true
+          desired.canUpdateObjectRecords !== undefined
+            ? desired.canUpdateObjectRecords
             : current.canCreateObjectRecords;
 
         const canChanged =

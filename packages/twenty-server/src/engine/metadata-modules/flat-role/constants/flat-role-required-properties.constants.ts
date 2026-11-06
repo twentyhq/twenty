@@ -6,7 +6,6 @@ export const FLAT_ROLE_REQUIRED_PROPERTIES = [
   'canAccessAllTools',
   'canAccessAllAgentChatChannels',
   'canReadAllObjectRecords',
-  'canCreateAllObjectRecords',
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
   'canDestroyAllObjectRecords',

@@ -51,7 +51,7 @@ const createRole = async (canUpdateAllObjectRecords: boolean) => {
     },
   });
 
-  return data.createOneRole.id as string;
+  return data.createOneRole.id;
 };
 
 describe('create permission when update is granted', () => {
@@ -73,7 +73,7 @@ describe('create permission when update is granted', () => {
     roleIds = [];
   });
 
-  it('should grant it on a role created with update', async () => {
+  it('should follow update on a created role', async () => {
     expect(await findRoleCreatePermission(await createTrackedRole(true))).toBe(
       true,
     );
@@ -82,7 +82,7 @@ describe('create permission when update is granted', () => {
     );
   });
 
-  it('should add it when update is added to a role, and keep it when update is removed', async () => {
+  it('should follow update when a role is updated', async () => {
     const roleId = await createTrackedRole(false);
 
     await updateOneRole({
@@ -101,7 +101,7 @@ describe('create permission when update is granted', () => {
       },
     });
 
-    expect(await findRoleCreatePermission(roleId)).toBe(true);
+    expect(await findRoleCreatePermission(roleId)).toBe(false);
   });
 
   it('should follow update on object permissions', async () => {
@@ -137,14 +137,20 @@ describe('create permission when update is granted', () => {
     await upsertUpdatePermission(false);
 
     expect(await findObjectCreatePermission({ roleId, objectMetadataId })).toBe(
-      true,
+      false,
     );
   });
 
   it('should follow update on row level permission groups', async () => {
     const roleId = await createTrackedRole(false);
     const objectMetadataId = await findObjectMetadataIdByName('company');
-    const upsertGroup = async (canUpdateRecords: boolean, id?: string) => {
+    const upsertGroup = async ({
+      canUpdateRecords,
+      id,
+    }: {
+      canUpdateRecords: boolean;
+      id?: string;
+    }) => {
       const { data } = await upsertRowLevelPermissionPredicates({
         expectToFail: false,
         input: {
@@ -163,20 +169,19 @@ describe('create permission when update is granted', () => {
         },
       });
 
-      return data.upsertRowLevelPermissionPredicates.predicateGroups[0]
-        .id as string;
+      return data.upsertRowLevelPermissionPredicates.predicateGroups[0].id;
     };
 
-    const groupId = await upsertGroup(false);
+    const groupId = await upsertGroup({ canUpdateRecords: false });
 
     expect(await findGroupCreatePermission(groupId)).toBe(false);
 
-    await upsertGroup(true, groupId);
+    await upsertGroup({ canUpdateRecords: true, id: groupId });
 
     expect(await findGroupCreatePermission(groupId)).toBe(true);
 
-    await upsertGroup(false, groupId);
+    await upsertGroup({ canUpdateRecords: false, id: groupId });
 
-    expect(await findGroupCreatePermission(groupId)).toBe(true);
+    expect(await findGroupCreatePermission(groupId)).toBe(false);
   });
 });
