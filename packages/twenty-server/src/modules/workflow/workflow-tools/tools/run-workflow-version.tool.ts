@@ -28,7 +28,7 @@ export const createRunWorkflowVersionTool = (
 ) => ({
   name: 'run_workflow_version' as const,
   description:
-    'Run a workflow version now, the same way the Test button in the workflow builder does. The run has real side effects: records are created or updated, emails are sent and HTTP requests are made. The run is queued and executes in the background: follow it with get_workflow_run, which returns each step status, output and error.',
+    'Run a workflow version now, the same way the Test button in the workflow builder does. The run has real side effects: records are created or updated, emails are sent and HTTP requests are made, so confirm with the user before running a workflow that has them. The run is queued and executes in the background: follow it with get_workflow_run, which returns each step status, output and error.',
   inputSchema: runWorkflowVersionSchema,
   execute: async (parameters: RunWorkflowVersionInput) => {
     const { authContext } = context;

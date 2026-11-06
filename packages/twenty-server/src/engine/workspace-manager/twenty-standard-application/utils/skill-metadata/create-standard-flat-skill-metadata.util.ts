@@ -90,20 +90,12 @@ To delete a workflow entirely, use \`delete_workflow\` with its \`coreWorkflowId
 - IMPORTANT : Always confirm with the user before deleting, and make sure you are deleting the correct workflow.
 - To simply stop a workflow from running without removing it, prefer \`deactivate_workflow_version\` instead of deleting.
 
-## Testing Workflows
-
-To test a workflow, run its draft version with \`run_workflow_version\` (\`coreWorkflowVersionId\`, optional \`payload\`), then call \`get_workflow_run\` on the returned \`workflowRunId\` to read each step's status, output and error. The run is real: it creates and updates records, sends emails and makes HTTP requests, so confirm with the user before running a workflow with side effects.
-
-- Manual and scheduled triggers: omit \`payload\`.
-- Webhook trigger: pass the request body as \`payload\`.
-- Database event trigger: pass \`{ "properties": { "after": <record> } }\` (\`before\` for deleted events), ideally a real record fetched first.
-
 ## Troubleshooting Workflow Runs
 
 When a user reports a failing or misbehaving workflow, diagnose it with two read-only tools:
 
 - \`list_workflow_runs\`: lists runs (optional \`coreWorkflowId\`, optional \`status\`, optional \`limit\`), most recent first. Each result carries the run \`id\`, \`name\`, \`status\`, run-level \`error\`, \`startedAt\`, \`endedAt\`, \`coreWorkflowId\`, and \`coreWorkflowVersionId\`.
-- \`get_workflow_run\`: returns full details for one run (\`workflowRunId\`) — overall status, run-level error, every step's status/output/error, and the execution logs of the steps that failed.
+- \`get_workflow_run\`: returns full details for one run (\`workflowRunId\`) — overall status, run-level error, every step's status/error, and the execution logs of the steps that failed.
 
 ### Resolving the run when no id is given
 
