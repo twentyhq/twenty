@@ -3,8 +3,7 @@ import { parseAgentChatAssistantReferenceBody } from '@/ai/utils/parse-agent-cha
 
 describe('parseAgentChatAssistantReferenceBody', () => {
   it('reads the shared formatter output without losing label characters', () => {
-    const displayName =
-      'Nova: [[team]] ] [ 50% %3A \\ *helper* Équipe 🤖\nline\rreturn';
+    const displayName = 'Nova: [team] 50% %3A \\ *helper* Équipe 🤖';
     const reference = formatRecordReference({
       objectNameSingular: 'agentChatAssistant',
       recordId: 'agentChatAssistant',
@@ -26,14 +25,11 @@ describe('parseAgentChatAssistantReferenceBody', () => {
     'record:agentChatAssistant:agentChatAssistant:Ad\ra',
     'record:agentChatAssistant:agentChatAssistant:Ada\n',
     'record:agentChatAssistant:agentChatAssistant:Ada]',
-    'record:agentChatAssistant:agentChatAssistant:Ada:team',
-    'record:agentChatAssistant:agentChatAssistant:%E0%A4',
-  ])(
-    'rejects malformed bodies and encoded labels without throwing: %j',
-    (body) => {
-      expect(parseAgentChatAssistantReferenceBody(body)).toBeUndefined();
-    },
-  );
+    'record:agentChatAssistant:agentChatAssistant:Ada[team',
+    'record:agentChatAssistant:agentChatAssistant:[[team]]',
+  ])('rejects malformed reference bodies: %j', (body) => {
+    expect(parseAgentChatAssistantReferenceBody(body)).toBeUndefined();
+  });
 
   it.each([
     'agentChatAssistant:agentChatAssistant:Ada',

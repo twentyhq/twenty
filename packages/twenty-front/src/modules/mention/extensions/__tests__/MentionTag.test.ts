@@ -52,7 +52,7 @@ describe('MentionTag', () => {
 
   describe('renderText', () => {
     it('preserves assistant identity and its saved label through editor reload and markdown export', () => {
-      const label = 'Scout: [[team]] *helper* 100%';
+      const label = 'Scout Bot: [team] *helper* 100%';
 
       editor.commands.setContent({
         type: 'doc',

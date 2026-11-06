@@ -1,18 +1,17 @@
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
-import { parseChatReferences } from '@/ai/utils/parseChatReferences';
 import {
   AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
   formatRecordReference,
 } from 'twenty-shared/ai';
 
 describe('protectChatReferencesForMarkdown', () => {
-  it('encodes raw markdown punctuation in an assistant reference without adding display backslashes', () => {
+  it('escapes assistant labels using the same markdown protection as ordinary references', () => {
     expect(
       protectChatReferencesForMarkdown(
         'Ask [[record:agentChatAssistant:agentChatAssistant:*Ada* _team_]] now',
       ),
     ).toBe(
-      'Ask [[record:agentChatAssistant:agentChatAssistant:%2AAda%2A%20%5Fteam%5F]] now',
+      'Ask [[record:agentChatAssistant:agentChatAssistant:\\*Ada\\* \\_team\\_]] now',
     );
   });
 
@@ -22,8 +21,8 @@ describe('protectChatReferencesForMarkdown', () => {
     ).toBe('Which company should we contact?');
   });
 
-  it('preserves encoded assistant labels while protecting ordinary references', () => {
-    const displayName = 'Nova: [[team]] %3A \\ `code` *bold* _name_';
+  it('protects raw assistant and record labels together without decoding percent sequences', () => {
+    const displayName = 'Scout Bot: [team] %20 *bold*';
     const assistantReference = formatRecordReference({
       objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
       recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
@@ -34,16 +33,7 @@ describe('protectChatReferencesForMarkdown', () => {
     );
 
     expect(protectedText).toBe(
-      `Ask ${assistantReference} about [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme \\(EMEA\\)]]`,
-    );
-    expect(parseChatReferences(protectedText)[0]).toEqual(
-      expect.objectContaining({
-        kind: 'record',
-        objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-        recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-        displayName,
-        fullMatch: assistantReference,
-      }),
+      'Ask [[record:agentChatAssistant:agentChatAssistant:Scout Bot: \\[team\\] %20 \\*bold\\*]] about [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme \\(EMEA\\)]]',
     );
   });
 

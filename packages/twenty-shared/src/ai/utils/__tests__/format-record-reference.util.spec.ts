@@ -22,15 +22,15 @@ describe('formatRecordReference', () => {
     ).toBe('[[record:agentChatAssistant:agentChatAssistant:Ada]]');
   });
 
-  it('encodes assistant label delimiters and markdown punctuation', () => {
+  it('keeps the assistant label readable for message and model consumers', () => {
     expect(
       formatRecordReference({
         objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
         recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-        displayName: 'Ada: [[*a_b*]] 100% (hi)!~.-',
+        displayName: 'Scout Bot: [EMEA] 100% %20 (*helper*) Équipe',
       }),
     ).toBe(
-      '[[record:agentChatAssistant:agentChatAssistant:Ada%3A%20%5B%5B%2Aa%5Fb%2A%5D%5D%20100%25%20%28hi%29%21%7E%2E%2D]]',
+      '[[record:agentChatAssistant:agentChatAssistant:Scout Bot: [EMEA] 100% %20 (*helper*) Équipe]]',
     );
   });
 

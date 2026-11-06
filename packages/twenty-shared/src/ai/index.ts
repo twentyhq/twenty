@@ -153,6 +153,7 @@ export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-mess
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
+export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
 export type { AgentMessageRow } from './utils/map-agent-messages-to-ui-messages.util';

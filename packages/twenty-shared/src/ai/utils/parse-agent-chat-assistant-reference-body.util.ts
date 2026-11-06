@@ -22,20 +22,16 @@ export const parseAgentChatAssistantReferenceBody = (
     return undefined;
   }
 
-  const [, encodedDisplayName] = match;
+  const [, displayName] = match;
 
-  if (!isDefined(encodedDisplayName) || encodedDisplayName.includes(':')) {
+  if (!isDefined(displayName)) {
     return undefined;
   }
 
-  try {
-    return {
-      kind: 'record',
-      objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-      recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-      displayName: decodeURIComponent(encodedDisplayName),
-    };
-  } catch {
-    return undefined;
-  }
+  return {
+    kind: 'record',
+    objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+    recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+    displayName,
+  };
 };

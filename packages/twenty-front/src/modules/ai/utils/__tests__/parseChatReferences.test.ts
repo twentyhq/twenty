@@ -33,8 +33,8 @@ describe('parseChatReferences', () => {
   });
 
   it.each([
-    'Nova: [support] [[team]] ] [',
-    '50% ready %3A \\ next\nline\rreturn',
+    'Nova: [support] [team]',
+    '50% ready %3A %GG %E0%A4 \\ next',
     'Nova `code` *bold* _italic_ (team)! ~name~',
     'Équipe 🤖',
   ])('round-trips the assistant label %j', (displayName) => {
@@ -57,9 +57,9 @@ describe('parseChatReferences', () => {
   });
 
   it.each([
-    '[[record:agentChatAssistant:agentChatAssistant:%]]',
-    '[[record:agentChatAssistant:agentChatAssistant:%GG]]',
-    '[[record:agentChatAssistant:agentChatAssistant:%E0%A4]]',
+    '[[record:agentChatAssistant:agentChatAssistant:Ad\ra]]',
+    '[[record:agentChatAssistant:agentChatAssistant:Ad\na]]',
+    '[[record:agentChatAssistant:agentChatAssistant:Ad[a]]',
     '[[record:agentChatAssistant:agentChatAssistant]]',
     '[[agentChatAssistant:agentChatAssistant:Ada]]',
     '[[record:workspaceMember:agentChatAssistant:Ada]]',
