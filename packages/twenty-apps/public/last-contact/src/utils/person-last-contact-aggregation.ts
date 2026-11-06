@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
@@ -63,10 +64,10 @@ const collectEmailInteractions = async (
       for (const edge of messageParticipants?.edges ?? []) {
         const { personId, message } = edge.node;
         if (
-          personId &&
-          message?.id &&
-          message?.receivedAt &&
-          !message.isDraft
+          isDefined(personId) &&
+          isDefined(message?.id) &&
+          isDefined(message.receivedAt) &&
+          message.isDraft !== true
         ) {
           interactions.push({
             personId,

@@ -52,7 +52,10 @@ const setupQueryMock = (
       return Promise.resolve({
         messageParticipants: buildPage(
           messageParticipants.map((node) =>
-            pickSelectedFields(node, query.messageParticipants.edges.node),
+            pickSelectedFields({
+              record: node,
+              selection: query.messageParticipants.edges.node,
+            }),
           ),
         ),
       });
@@ -62,7 +65,10 @@ const setupQueryMock = (
       return Promise.resolve({
         messages: buildPage(
           messages.map((node) =>
-            pickSelectedFields(node, query.messages.edges.node),
+            pickSelectedFields({
+              record: node,
+              selection: query.messages.edges.node,
+            }),
           ),
         ),
       });

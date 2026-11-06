@@ -39,7 +39,10 @@ describe('buildPersonAggregates', () => {
                   },
                 },
               ].map((node) =>
-                pickSelectedFields(node, query.messageParticipants.edges.node),
+                pickSelectedFields({
+                  record: node,
+                  selection: query.messageParticipants.edges.node,
+                }),
               ),
             ),
           });
