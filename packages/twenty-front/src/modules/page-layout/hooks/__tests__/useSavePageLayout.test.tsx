@@ -1,10 +1,12 @@
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import {
   makeDraft,
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
@@ -57,7 +59,10 @@ const makeChartWidget = (
   configuration,
 });
 
-const renderSaveHook = (widgets: PageLayoutWidget[]) => {
+const renderSaveHook = (
+  widgets: PageLayoutWidget[],
+  persistedWidgets: PageLayoutWidget[] = [],
+) => {
   const store = createStore();
 
   store.set(
@@ -65,6 +70,12 @@ const renderSaveHook = (widgets: PageLayoutWidget[]) => {
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
     }),
     makeDraft([makeTab('tab-1', widgets)]),
+  );
+  store.set(
+    pageLayoutPersistedComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    }),
+    makeDraft([makeTab('tab-1', persistedWidgets)]) as PageLayout,
   );
 
   return renderHook(() => useSavePageLayout(PAGE_LAYOUT_TEST_INSTANCE_ID), {
@@ -109,6 +120,25 @@ describe('useSavePageLayout', () => {
     const { result } = renderSaveHook([
       makeChartWidget(TEST_BAR_CHART_CONFIGURATION),
     ]);
+
+    await act(async () => {
+      await result.current.savePageLayout();
+    });
+
+    expect(enqueueToast).not.toHaveBeenCalled();
+    expect(updatePageLayoutWithTabsAndWidgets).toHaveBeenCalledTimes(1);
+  });
+
+  it('should send the layout when an incomplete chart is left as it was saved', async () => {
+    const savedIncompleteChart = makeChartWidget({
+      ...TEST_BAR_CHART_CONFIGURATION,
+      primaryAxisGroupByFieldMetadataId: undefined,
+    } as PageLayoutWidget['configuration']);
+
+    const { result } = renderSaveHook(
+      [savedIncompleteChart],
+      [savedIncompleteChart],
+    );
 
     await act(async () => {
       await result.current.savePageLayout();

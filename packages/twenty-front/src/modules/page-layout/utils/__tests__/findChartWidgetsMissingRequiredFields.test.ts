@@ -34,7 +34,10 @@ describe('findChartWidgetsMissingRequiredFields', () => {
     ]);
 
     expect(
-      findChartWidgetsMissingRequiredFields(draft).map((widget) => widget.id),
+      findChartWidgetsMissingRequiredFields({
+        pageLayoutDraft: draft,
+        persistedPageLayout: undefined,
+      }).map((widget) => widget.id),
     ).toEqual(['chart-without-group-by']);
   });
 
@@ -54,6 +57,41 @@ describe('findChartWidgetsMissingRequiredFields', () => {
       ),
     ]);
 
-    expect(findChartWidgetsMissingRequiredFields(draft)).toEqual([]);
+    expect(
+      findChartWidgetsMissingRequiredFields({
+        pageLayoutDraft: draft,
+        persistedPageLayout: undefined,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should ignore an incomplete chart left as it was saved, and flag it once edited', () => {
+    const savedIncompleteChart = makeChartWidget('saved-chart', {
+      ...TEST_PIE_CHART_CONFIGURATION,
+      groupByFieldMetadataId: '',
+    });
+    const persistedPageLayout = makeDraft([
+      makeTab('tab-1', [savedIncompleteChart]),
+    ]);
+
+    expect(
+      findChartWidgetsMissingRequiredFields({
+        pageLayoutDraft: makeDraft([makeTab('tab-1', [savedIncompleteChart])]),
+        persistedPageLayout,
+      }),
+    ).toEqual([]);
+
+    const editedChart = makeChartWidget('saved-chart', {
+      ...TEST_PIE_CHART_CONFIGURATION,
+      groupByFieldMetadataId: '',
+      displayDataLabel: false,
+    });
+
+    expect(
+      findChartWidgetsMissingRequiredFields({
+        pageLayoutDraft: makeDraft([makeTab('tab-1', [editedChart])]),
+        persistedPageLayout,
+      }).map((widget) => widget.id),
+    ).toEqual(['saved-chart']);
   });
 });

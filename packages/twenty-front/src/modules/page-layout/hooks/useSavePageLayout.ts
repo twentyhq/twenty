@@ -60,9 +60,10 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const store = useStore();
 
   const savePageLayout = useCallback(async () => {
-    const [unfinishedChartWidget] = findChartWidgetsMissingRequiredFields(
-      store.get(pageLayoutDraftCallbackState),
-    );
+    const [unfinishedChartWidget] = findChartWidgetsMissingRequiredFields({
+      pageLayoutDraft: store.get(pageLayoutDraftCallbackState),
+      persistedPageLayout: store.get(pageLayoutPersistedCallbackState),
+    });
 
     if (isDefined(unfinishedChartWidget)) {
       const widgetTitle = unfinishedChartWidget.title;
