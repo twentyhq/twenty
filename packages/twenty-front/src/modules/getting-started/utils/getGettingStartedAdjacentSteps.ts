@@ -19,7 +19,7 @@ export const getGettingStartedAdjacentSteps = ({
 } => {
   const stepActionKeys = steps.map(({ actionKey }) => actionKey);
   const selectedStepIndex = stepActionKeys.indexOf(selectedStepActionKey);
-  const stepsBeforeSelected = [
+  const otherStepsPreviousFirst = [
     ...stepActionKeys.slice(0, selectedStepIndex).reverse(),
     ...stepActionKeys.slice(selectedStepIndex + 1).reverse(),
   ];
@@ -28,8 +28,8 @@ export const getGettingStartedAdjacentSteps = ({
 
   const previousStepActionKey =
     (isRemaining(selectedStepActionKey)
-      ? stepsBeforeSelected.find(isRemaining)
-      : undefined) ?? stepsBeforeSelected[0];
+      ? otherStepsPreviousFirst.find(isRemaining)
+      : undefined) ?? otherStepsPreviousFirst[0];
   const [frontStackedStep] = getGettingStartedStackedSteps({
     steps,
     completedStepActionKeys,
