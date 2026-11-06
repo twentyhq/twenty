@@ -709,14 +709,18 @@ export class BullMQDriver
       const { options, sizeBytes, groupKeys } = sizedJob;
       const memoryGroupKeys = getChargedGroupKeys(groupKeys);
 
+      const isJobCharged =
+        isCharged &&
+        chargeableJobs.includes(sizedJob) &&
+        isNonEmptyArray(memoryGroupKeys);
+
+      if (!isJobCharged) {
+        return { sizeBytes, options };
+      }
+
       return {
         sizeBytes,
-        options:
-          isCharged &&
-          chargeableJobs.includes(sizedJob) &&
-          isNonEmptyArray(memoryGroupKeys)
-            ? { ...options, memoryGroupKeys, memorySizeBytes: sizeBytes }
-            : options,
+        options: { ...options, memoryGroupKeys, memorySizeBytes: sizeBytes },
       };
     });
 
