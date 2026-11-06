@@ -14,9 +14,10 @@ if (process.env.NODE_ENV === 'test') {
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
-// CI only, so a local identity provider setup can never fail other engineers' runs
+// Always in CI so a missing secret fails loudly, except fork PRs which get no secrets
 const isSsoSuiteEnabled =
-  process.env.CI === 'true' && isSsoTestIdentityProviderConfigured();
+  (process.env.CI === 'true' && process.env.IS_FORK_PULL_REQUEST !== 'true') ||
+  isSsoTestIdentityProviderConfigured();
 
 const tsConfig = require('./tsconfig.json');
 
