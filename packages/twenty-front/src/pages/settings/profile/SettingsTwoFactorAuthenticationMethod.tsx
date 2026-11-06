@@ -18,7 +18,11 @@ import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authe
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -92,7 +96,10 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
     onBackupCodesIssued: setGeneratedBackupCodes,
   });
 
-  const shouldShowActionButtons = !has2FAMethod;
+  const isSetupCompleted =
+    has2FAMethod || isNonEmptyArray(generatedBackupCodes);
+
+  const shouldShowActionButtons = !isSetupCompleted;
 
   const handleCopySetupKey = async () => {
     if (!isNonEmptyString(qrCode)) {
@@ -138,7 +145,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
         }
       >
         <SettingsPageContainer>
-          {has2FAMethod ? (
+          {isSetupCompleted ? (
             <>
               <TwoFactorAuthenticationBackupCodesSection
                 generatedBackupCodes={generatedBackupCodes}

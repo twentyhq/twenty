@@ -47,12 +47,13 @@ export const useTwoFactorVerificationForSettings = ({
       children: t`Two-factor authentication setup completed successfully!`,
     });
 
-    await loadCurrentUser();
-
     if (isNonEmptyArray(backupCodes)) {
       onBackupCodesIssued(backupCodes);
+      await loadCurrentUser();
       return;
     }
+
+    await loadCurrentUser();
 
     navigate(SettingsPath.ProfilePage);
   };
