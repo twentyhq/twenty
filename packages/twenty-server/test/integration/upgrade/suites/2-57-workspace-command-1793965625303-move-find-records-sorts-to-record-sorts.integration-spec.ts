@@ -241,14 +241,14 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     ).toEqual([coreStep]);
   });
 
-  it('keeps only the record sorts of a sort written in the builder', async () => {
+  it('keeps only the record sorts of a sort written in the builder, without their stored ids', async () => {
     const [coreStep] = await readSteps({
       schema: 'core',
       workflowVersionId: builderSortedWorkflow.coreWorkflowVersionId,
     });
 
     expect(coreStep.settings.input.orderBy).toEqual({
-      recordSorts: builderRecordSorts,
+      recordSorts: [{ fieldMetadataId: companyNameFieldId, direction: 'DESC' }],
     });
   });
 

@@ -2,7 +2,7 @@ import { workflowRunStateSchema } from '../workflow-run-state-schema';
 
 const STEP_ID = '5f0f7f3a-6d7e-4a0b-9a51-2d6c7c1e9b10';
 
-const parseRunSteps = (orderBy: unknown) =>
+const parseRunSteps = (orderBy: Record<string, unknown>) =>
   workflowRunStateSchema.shape.flow.shape.steps.safeParse([
     {
       id: STEP_ID,

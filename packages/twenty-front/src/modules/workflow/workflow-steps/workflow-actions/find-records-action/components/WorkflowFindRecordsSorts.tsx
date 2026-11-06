@@ -130,9 +130,7 @@ export const WorkflowFindRecordsSorts = ({
               disabled={readonly}
               value={sort.direction}
               options={directionOptions}
-              onChange={(value) =>
-                handleDirectionChange(index, value as ViewSortDirection)
-              }
+              onChange={(value) => handleDirectionChange(index, value)}
             />
 
             {!readonly && (
