@@ -119,7 +119,12 @@ const toRecordSorts = ({
       : [];
     const [fieldName, value] = entries[0] ?? [];
 
-    if (entries.length === 1 && fieldName === 'position') {
+    // the run appends this tiebreaker itself; any other position order is reported below
+    if (
+      entries.length === 1 &&
+      fieldName === 'position' &&
+      value === 'AscNullsFirst'
+    ) {
       continue;
     }
 

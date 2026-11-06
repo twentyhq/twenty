@@ -115,6 +115,7 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         { salary: { currencyCode: 'AscNullsLast' } },
         { company: { employees: 'DescNullsLast' } },
         { unknownField: 'AscNullsLast' },
+        { position: 'DescNullsLast' },
       ],
     });
 
@@ -151,6 +152,7 @@ describe('moveFindRecordsSortsToRecordSorts', () => {
         orderByEntry: { company: { employees: 'DescNullsLast' } },
       },
       { stepId: 'step-id', orderByEntry: { unknownField: 'AscNullsLast' } },
+      { stepId: 'step-id', orderByEntry: { position: 'DescNullsLast' } },
     ]);
   });
 
