@@ -96,11 +96,32 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
             ],
           );
 
-          // Row sync skips fields with unusable ids, so their rows are stale and rebuilt from the rewritten options.
+          // Row sync skipped these fields, so stale rows go and kept rows are refreshed, keeping their owner.
+          const rewrittenFieldOptionRows = JSON.stringify(
+            optionRowsToInsert.filter(({ fieldMetadataId }) =>
+              optionsToRewriteByFieldMetadataId.has(fieldMetadataId),
+            ),
+          );
+
           await entityManager.query(
-            `DELETE FROM core."fieldMetadataOption"
-              WHERE "workspaceId" = $1 AND "fieldMetadataId" = ANY($2::uuid[])`,
-            [workspaceId, rewrittenFieldMetadataIds],
+            `DELETE FROM core."fieldMetadataOption" existing
+              WHERE existing."workspaceId" = $1 AND existing."fieldMetadataId" = ANY($2::uuid[])
+                AND NOT EXISTS (
+                  SELECT 1 FROM jsonb_to_recordset($3::jsonb) AS row("universalIdentifier" uuid, "fieldMetadataId" uuid)
+                  WHERE row."universalIdentifier" = existing."universalIdentifier"
+                    AND row."fieldMetadataId" = existing."fieldMetadataId"
+                )`,
+            [workspaceId, rewrittenFieldMetadataIds, rewrittenFieldOptionRows],
+          );
+
+          await entityManager.query(
+            `UPDATE core."fieldMetadataOption" AS existing
+              SET value = row.value, label = row.label, color = row.color, position = row.position, "updatedAt" = now()
+              FROM jsonb_to_recordset($2::jsonb) AS row("universalIdentifier" uuid, "fieldMetadataId" uuid, value varchar, label varchar, color varchar, position double precision)
+              WHERE existing."workspaceId" = $1
+                AND existing."universalIdentifier" = row."universalIdentifier"
+                AND existing."fieldMetadataId" = row."fieldMetadataId"`,
+            [workspaceId, rewrittenFieldOptionRows],
           );
         }
 
