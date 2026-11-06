@@ -55,15 +55,13 @@ export class MessageListDuplicationService {
     });
 
     // One transaction so a failed member insert never leaves a list copy without its members
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
-          this.duplicateInTransaction({
-            messageListId,
-            authContext,
-            transactionScope,
-          }),
-        ),
+    return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      (transactionScope) =>
+        this.duplicateInTransaction({
+          messageListId,
+          authContext,
+          transactionScope,
+        }),
       authContext,
     );
   }

@@ -32,6 +32,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -135,16 +136,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         },
       };
       const workspaceDataSource = new WorkspaceDataSource(options);
+      const executeInWorkspaceContext = async <TResult>(
+        work: () => Promise<TResult>,
+      ) =>
+        withWorkspaceContext(
+          {
+            ...options.internalContext,
+            authContext: options.authContext,
+          },
+          work,
+        );
       return {
-        executeInWorkspaceContext: async <TResult>(
-          work: () => Promise<TResult>,
+        executeInWorkspaceContext,
+        executeTransactionInWorkspaceContext: <TResult>(
+          work: (
+            transactionScope: WorkspaceTransactionScope,
+          ) => Promise<TResult>,
         ) =>
-          withWorkspaceContext(
-            {
-              ...options.internalContext,
-              authContext: options.authContext,
-            },
-            work,
+          executeInWorkspaceContext(() =>
+            workspaceDataSource.transaction(work),
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
