@@ -33,7 +33,7 @@ export class WorkspaceAssistantProfileResolver {
     return this.workspaceAssistantProfileService.get(workspace);
   }
 
-  @Mutation(() => WorkspaceEntity)
+  @Mutation(() => AiChatAssistantProfileDTO)
   @UseGuards(
     AccessPolicyGuard({
       authPrincipals: {

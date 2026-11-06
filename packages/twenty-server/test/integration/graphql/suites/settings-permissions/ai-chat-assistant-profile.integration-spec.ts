@@ -241,9 +241,9 @@ describe('workspace assistant profile settings', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.resetAiChatAssistantProfile.aiChatAssistantProfile,
-    ).toEqual(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
+    expect(response.body.data.resetAiChatAssistantProfile).toEqual(
+      DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+    );
 
     const persisted = await readWorkspace(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 

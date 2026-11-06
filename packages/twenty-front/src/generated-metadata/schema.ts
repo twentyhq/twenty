@@ -3754,7 +3754,7 @@ export type Mutation = {
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
   resendWorkspaceInvitation: SendInvitations;
-  resetAiChatAssistantProfile: Workspace;
+  resetAiChatAssistantProfile: AiChatAssistantProfile;
   resetCommandMenuItem: CommandMenuItem;
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;

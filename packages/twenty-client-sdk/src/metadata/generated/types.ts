@@ -8605,7 +8605,7 @@ export default {
                 }
             ],
             "resetAiChatAssistantProfile": [
-                683
+                29
             ],
             "resetCommandMenuItem": [
                 162,

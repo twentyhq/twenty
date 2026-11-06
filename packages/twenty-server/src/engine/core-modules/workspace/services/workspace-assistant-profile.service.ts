@@ -114,13 +114,7 @@ export class WorkspaceAssistantProfileService {
       workspaceId,
     );
 
-    const updatedWorkspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    assertIsDefinedOrThrow(updatedWorkspace, WorkspaceNotFoundDefaultError);
-
-    return updatedWorkspace;
+    return DEFAULT_AI_CHAT_ASSISTANT_PROFILE;
   }
 
   async get(workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>) {

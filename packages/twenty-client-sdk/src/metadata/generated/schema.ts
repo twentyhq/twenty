@@ -2522,7 +2522,7 @@ export interface Mutation {
     reportAppConnectionAuthFailure: Scalars['Boolean']
     resendEmailVerificationToken: ResendEmailVerificationToken
     resendWorkspaceInvitation: SendInvitations
-    resetAiChatAssistantProfile: Workspace
+    resetAiChatAssistantProfile: AiChatAssistantProfile
     resetCommandMenuItem: CommandMenuItem
     resetPageLayoutTabToDefault: PageLayoutTab
     resetPageLayoutToDefault: PageLayout
@@ -7226,7 +7226,7 @@ export interface MutationGenqlSelection{
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
-    resetAiChatAssistantProfile?: WorkspaceGenqlSelection
+    resetAiChatAssistantProfile?: AiChatAssistantProfileGenqlSelection
     resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     resetPageLayoutTabToDefault?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutToDefault?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
