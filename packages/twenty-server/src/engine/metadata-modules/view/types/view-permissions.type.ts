@@ -11,8 +11,5 @@ export type ViewChildEntityKind =
 export type ViewAccessContext = {
   workspaceId: string;
   userWorkspaceId?: string;
-  apiKeyId?: string;
-  applicationId?: string;
-  agentId?: string;
   authContext?: WorkspaceAuthContext;
 };
