@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Berig"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Indtast et navn på mellem 1 og {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tegn og understøttede indstillinger for assistentens udseende."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "I gang"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Indbakke er ikke aktiveret for dette arbejdsområde."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Nogle af de tilladelser du har valgt er ugyldige. Prøv venligst igen med gyldige tilladelsesindstillinger."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Nogle medlemskaber til arbejdsområdet kunne ikke findes. De har muligvis ikke længere adgang til dette arbejdsområde."
 
@@ -13651,6 +13657,11 @@ msgstr "Applikationens produktionsafhængigheder er for store til at kunne insta
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Applikationens anmodede tilladelser er ændret. Gennemgå dem igen, før du godkender."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Assistentprofilen kan ikke opdateres, før arbejdsområdet er aktiveret."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Dette indeks findes ikke eller er allerede blevet slettet."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Denne instans rapporterede ikke et server-id. Angiv SERVER_ID på denne instans, og prøv igen."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Dette job er for stort til at blive sat i kø."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "Der blev fundet for mange admin-kandidater."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "For mange deltagere: {attendeeCount}. Det maksimalt tilladte antal er {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "For mange job venter. Prøv igen senere."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Du kan ikke generere en gendannelseskode til dig selv. Nulstil i stedet tofaktorgodkendelse fra din profil."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Du kan ikke ændre din egen rolle. Bed venligst en anden administrator om at opdatere din rolle."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Du kan ikke fjerne adgang til indstillinger fra din egen rolle. Bed en anden administrator om at foretage denne ændring."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Du kan ikke fjerne administratorrollen fra den sidste administrator. Tildel venligst en anden administrator først."
 
@@ -18114,6 +18135,11 @@ msgstr "Du har ikke tilladelse til at udføre denne handling."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Du har ikke tilladelse til at udføre denne arbejdsgangshandling."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Du har ikke tilladelse til at opdatere assistentprofilen. Kontakt venligst din workspace-administrator."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Din rolle kan ikke slette nogle af disse poster, så de kan ikke flettes
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din rolle i denne workspace kunne ikke findes. Kontakt venligst din workspace administrator."
 

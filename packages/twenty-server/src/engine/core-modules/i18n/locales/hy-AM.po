@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Հարստացնել"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Մուտքագրեք 1-ից {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} նիշ ունեցող անուն և օգնականի արտաքին տեսքի աջակցվող ընտրանքներ։"
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "Ընթացքում"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Մուտքայինը միացված չէ այս աշխատանքային տարածքի համար։"
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Ձեր ընտրած որոշ թույլտվություններ անվավեր են։ Խնդրում ենք փորձել կրկին՝ օգտագործելով վավեր թույլտվությունների կարգավորումներ։"
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Աշխատանքային տարածքի որոշ անդամակցություններ չեն գտնվել։ Հնարավոր է՝ նրանք այլևս այս աշխատանքային տարածքին հասանելիություն չունեն։"
 
@@ -13651,6 +13657,11 @@ msgstr "Հավելվածի production կախվածությունները չափ�
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Հավելվածի պահանջված թույլտվությունները փոխվել են։ Հաստատելուց առաջ կրկին ստուգեք դրանք։"
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Օգնականի պրոֆիլը հնարավոր չէ թարմացնել աշխատատարածքը ակտիվացնելուց առաջ։"
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Այս ինդեքսը գոյություն չունի կամ արդեն 
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Այս instance-ը չի հաղորդել սերվերի նույնացուցիչ։ Կարգավորեք SERVER_ID այս instance-ում և կրկին փորձեք։"
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Այս առաջադրանքը չափազանց մեծ է հերթագրման համար։"
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "Գտնվել են չափազանց շատ ադմինիստրատորի �
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Չափազանց շատ մասնակիցներ՝ {attendeeCount}։ Առավելագույն թույլատրելի քանակը {MAX_EMAIL_RECIPIENTS} է։"
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Չափազանց շատ առաջադրանքներ են սպասման մեջ։ Խնդրում ենք կրկին փորձել ավելի ուշ։"
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Դուք չեք կարող վերականգնման կոդ ստեղծել ինքներդ ձեզ համար։ Փոխարենը վերակայեք երկգործոն նույնականացումը ձեր պրոֆիլից։"
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Դուք չեք կարող փոխել ձեր սեփական դերային կարգավիճակը։ Խնդրում ենք դիմել մեկ այլ ադմինիստրատորի, որպեսզի նա փոխի ձեր դերային կարգավիճակը։"
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Դուք չեք կարող ձեր սեփական դերից հեռացնել կարգավորումներին մուտքի իրավունքը։ Խնդրեք մեկ այլ ադմինիստրատորի կատարել այս փոփոխությունը։"
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Դուք չեք կարող հեռացնել ադմինիստրատորի դերը վերջին ադմինիստրատորից։ Նախ նշանակեք մեկ այլ ադմինիստրատոր։"
 
@@ -18114,6 +18135,11 @@ msgstr "Դուք իրավունք չունեք կատարել այս գործո�
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Դուք իրավունք չունեք կատարել այս աշխատընթացի գործողությունը։"
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Դուք չունեք օգնականի պրոֆիլը թարմացնելու թույլտվություն։ Խնդրում ենք կապվել ձեր աշխատատարածքի ադմինիստրատորի հետ։"
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Ձեր դերը չի կարող ջնջել այս գրառումների
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ձեր դերը այս workspace-ում չի գտնվել։ Խնդրում ենք կապվել workspace-ի ադմինիստրատորի հետ։"
 

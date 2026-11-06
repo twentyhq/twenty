@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Berik"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Skriv inn et navn på mellom 1 og {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tegn og støttede alternativer for assistentens utseende."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "Pågår"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Innboks er ikke aktivert for dette arbeidsområdet."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Noen av rettighetene du valgte er ikke gyldige. Vennligst prøv igjen med gyldige tillatelsesinnstillinger."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13651,6 +13657,11 @@ msgstr "Applikasjonens produksjonsavhengigheter er for store til å installeres.
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Applikasjonens forespurte tillatelser er endret. Gå gjennom dem på nytt før du godkjenner."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Assistentprofilen kan ikke oppdateres før arbeidsområdet er aktivert."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Denne indeksen finnes ikke eller er allerede slettet."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Denne instansen rapporterte ikke en serveridentifikator. Sett SERVER_ID på denne instansen, og prøv deretter igjen."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Denne jobben er for stor til å settes i kø."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "For mange administratorkandidater funnet."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "For mange deltakere: {attendeeCount}. Maksimalt tillatt antall er {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "For mange jobber venter. Vennligst prøv igjen senere."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Du kan ikke generere en gjenopprettingskode for deg selv. Tilbakestill tofaktorautentisering fra profilen din i stedet."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Du kan ikke endre din egen rolle. Vennligst spør en annen administrator om å oppdatere din rolle."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Du kan ikke fjerne tilgang til innstillinger fra din egen rolle. Be en annen administrator om å gjøre denne endringen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Du kan ikke fjerne administratorrollen fra den siste administratoren. Vennligst tilordne en annen administrator først."
 
@@ -18114,6 +18135,11 @@ msgstr "Du har ikke tillatelse til å utføre denne handlingen."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Du har ikke tillatelse til å utføre denne arbeidsflythandlingen."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Du har ikke tillatelse til å oppdatere assistentprofilen. Kontakt arbeidsområdeadministratoren din."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Rollen din kan ikke slette noen av disse postene, så de kan ikke slås 
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din rolle i denne arbeidsplassen kunne ikke bli funnet. Vennligst kontakt arbeidsplassadministratoren din."
 

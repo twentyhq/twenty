@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Wzbogać"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Wprowadź nazwę o długości od 1 do {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znaków oraz obsługiwane opcje wyglądu asystenta."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "W trakcie"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Skrzynka odbiorcza nie jest włączona w tej przestrzeni roboczej."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Niektóre z wybranych przez Ciebie uprawnień są nieprawidłowe. Spróbuj ponownie z poprawnymi ustawieniami uprawnień."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Nie znaleziono niektórych członkostw w obszarze roboczym. Możliwe, że nie mają już dostępu do tego obszaru roboczego."
 
@@ -13651,6 +13657,11 @@ msgstr "Zależności produkcyjne aplikacji są zbyt duże, aby je zainstalować.
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Uprawnienia żądane przez aplikację uległy zmianie. Sprawdź je ponownie przed zatwierdzeniem."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Profil asystenta nie może zostać zaktualizowany, dopóki obszar roboczy nie zostanie aktywowany."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Ten indeks nie istnieje lub został już usunięty."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Ta instancja nie zgłosiła identyfikatora serwera. Ustaw SERVER_ID na tej instancji, a następnie spróbuj ponownie."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "To zadanie jest zbyt duże, aby można było je umieścić w kolejce."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "Znaleziono zbyt wielu kandydatów na administratorów."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Zbyt wielu uczestników: {attendeeCount}. Maksymalna dozwolona liczba to {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Zbyt wiele zadań oczekuje. Spróbuj ponownie później."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Nie możesz wygenerować kodu odzyskiwania dla siebie. Zamiast tego zresetuj uwierzytelnianie dwuskładnikowe w swoim profilu."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Nie możesz zmienić swojej roli. Poproś innego administratora o aktualizację swojej roli."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Nie możesz odebrać dostępu do ustawień swojej własnej roli. Poproś innego administratora o wprowadzenie tej zmiany."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Nie możesz usunąć roli administratora od ostatniego administratora. Najpierw przypisz innego administratora."
 
@@ -18114,6 +18135,11 @@ msgstr "Nie masz uprawnień do wykonania tej operacji."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Nie masz uprawnień do wykonania tej akcji przepływu pracy."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Nie masz uprawnień do aktualizacji profilu asystenta. Skontaktuj się z administratorem obszaru roboczego."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Twoja rola nie może usunąć niektórych z tych rekordów, więc nie mo
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Nie znaleziono twojej roli w tym obszarze roboczym. Skontaktuj się z administratorem obszaru roboczego."
 
