@@ -1,9 +1,6 @@
 import { convertPieChartConfigToBarOrLineChart } from '@/side-panel/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import {
-  TEST_BAR_CHART_CONFIGURATION,
-  TEST_PIE_CHART_CONFIGURATION,
-} from '~/testing/mock-data/widget-configurations';
+import { TEST_PIE_CHART_CONFIGURATION } from '~/testing/mock-data/widget-configurations';
 
 describe('convertPieChartConfigToBarOrLineChart', () => {
   it('maps pie chart fields to bar/line chart equivalents', () => {
@@ -24,10 +21,9 @@ describe('convertPieChartConfigToBarOrLineChart', () => {
     });
   });
 
-  it('handles null/undefined fields', () => {
+  it('handles null fields', () => {
     const minimalPieConfig: PieChartConfiguration = {
       ...TEST_PIE_CHART_CONFIGURATION,
-      groupByFieldMetadataId: undefined as unknown as string,
       groupBySubFieldName: null,
       dateGranularity: null,
       orderBy: null,
@@ -38,19 +34,12 @@ describe('convertPieChartConfigToBarOrLineChart', () => {
     expect(result).toEqual({
       aggregateFieldMetadataId:
         TEST_PIE_CHART_CONFIGURATION.aggregateFieldMetadataId,
-      primaryAxisGroupByFieldMetadataId: undefined,
+      primaryAxisGroupByFieldMetadataId:
+        TEST_PIE_CHART_CONFIGURATION.groupByFieldMetadataId,
       primaryAxisGroupBySubFieldName: null,
       primaryAxisDateGranularity: null,
       primaryAxisOrderBy: null,
       splitMultiValueFields: TEST_PIE_CHART_CONFIGURATION.splitMultiValueFields,
     });
-  });
-
-  it('returns empty object for non-pie chart configuration', () => {
-    const result = convertPieChartConfigToBarOrLineChart(
-      TEST_BAR_CHART_CONFIGURATION as unknown as PieChartConfiguration,
-    );
-
-    expect(result).toEqual({});
   });
 });

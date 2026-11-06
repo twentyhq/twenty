@@ -82,20 +82,18 @@ export class MessagingMessageService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
-            { shouldBypassPermissionChecks: true },
           );
 
         const messageRepository =
-          transactionScope.getRepository<MessageWorkspaceEntity>('message', {
-            shouldBypassPermissionChecks: true,
-          });
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+            'message',
+          );
 
         const messageThreadRepository =
-          transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
             'messageThread',
-            { shouldBypassPermissionChecks: true },
           );
 
         const messageAccumulatorMap = new Map<string, MessageAccumulator>();
@@ -400,21 +398,19 @@ export class MessagingMessageService {
     }
 
     const messageRepository =
-      transactionScope.getRepository<MessageWorkspaceEntity>('message', {
-        shouldBypassPermissionChecks: true,
-      });
+      transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+        'message',
+      );
 
     const messageParticipantRepository =
-      transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+      transactionScope.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
-        { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
 
     const messageFolderAssociationRepository =
-      transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+      transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
         'messageChannelMessageAssociationMessageFolder',
-        { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
 

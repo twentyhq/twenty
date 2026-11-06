@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,11 +13,13 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
 import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useLingui } from '@lingui/react/macro';
 
 // Re-mint when less than this remains so the user never lands on a token about to expire.
 const TOKEN_FRESHNESS_BUFFER_MS = 5 * 60 * 1000;
 
 export const useOpenPlayground = () => {
+  const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
     playgroundApiKeyState,

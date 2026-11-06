@@ -13,10 +13,9 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { UpdateLabPublicFeatureFlagInput } from 'src/engine/core-modules/lab/dtos/update-lab-public-feature-flag.input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -26,18 +25,20 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/uti
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: false,
+    requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
   }),
-  SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 export class LabResolver {
   constructor(private featureFlagService: FeatureFlagService) {}

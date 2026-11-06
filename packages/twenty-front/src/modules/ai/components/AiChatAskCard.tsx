@@ -7,9 +7,13 @@ import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCa
 
 type AiChatAskCardProps = {
   pendingToolCall: AgentChatPendingToolCall;
+  isActive?: boolean;
 };
 
-export const AiChatAskCard = ({ pendingToolCall }: AiChatAskCardProps) => {
+export const AiChatAskCard = ({
+  pendingToolCall,
+  isActive = true,
+}: AiChatAskCardProps) => {
   switch (pendingToolCall.kind) {
     case 'question':
     case 'questions':
@@ -26,6 +30,7 @@ export const AiChatAskCard = ({ pendingToolCall }: AiChatAskCardProps) => {
         <AiChatToolCallApprovalCard
           toolCallId={pendingToolCall.toolCallId}
           proposal={pendingToolCall.proposal}
+          isActive={isActive}
         />
       );
     default:

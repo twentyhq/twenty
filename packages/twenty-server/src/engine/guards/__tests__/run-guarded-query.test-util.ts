@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Module,
+  type Provider,
   type Type,
   UseGuards,
 } from '@nestjs/common';
@@ -34,9 +35,11 @@ const EXCEPTION_HANDLER_SERVICE_PROVIDER = {
 export const runGuardedQuery = async ({
   guard,
   request,
+  providers = [],
 }: {
   guard: Type<CanActivate>;
   request: Record<string, unknown>;
+  providers?: Provider[];
 }) => {
   @Resolver()
   class TestResolver {
@@ -47,7 +50,7 @@ export const runGuardedQuery = async ({
     }
   }
 
-  @Module({ providers: [TestResolver] })
+  @Module({ providers: [TestResolver, ...providers] })
   class FeatureModule {}
 
   @Module({
@@ -90,9 +93,11 @@ export const runGuardedQuery = async ({
 export const runGuardedRestRequest = async ({
   guard,
   request,
+  providers = [],
 }: {
   guard: Type<CanActivate>;
   request: Record<string, unknown>;
+  providers?: Provider[];
 }) => {
   @Controller('guarded')
   class TestController {
@@ -108,6 +113,7 @@ export const runGuardedRestRequest = async ({
     providers: [
       { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
       EXCEPTION_HANDLER_SERVICE_PROVIDER,
+      ...providers,
     ],
   })
   class RootModule {}

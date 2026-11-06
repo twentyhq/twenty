@@ -31,14 +31,12 @@ import { computeLineAreaPath } from '@/page-layout/widgets/graph/graph-widget-li
 
 const buildComputedSeries = (
   points: { x: number; y: number }[],
-): ComputedSeries<LineSeries> =>
-  ({
-    id: 'series',
-    data: points.map(({ x, y }) => ({
-      data: { x, y },
-      position: { x, y },
-    })),
-  }) as unknown as ComputedSeries<LineSeries>;
+): Pick<ComputedSeries<LineSeries>, 'data'> => ({
+  data: points.map(({ x, y }) => ({
+    data: { x, y, xFormatted: String(x), yFormatted: String(y) },
+    position: { x, y },
+  })),
+});
 
 describe('computeLineAreaPath', () => {
   it('fills to the provided baseline for non-stacked mode', () => {

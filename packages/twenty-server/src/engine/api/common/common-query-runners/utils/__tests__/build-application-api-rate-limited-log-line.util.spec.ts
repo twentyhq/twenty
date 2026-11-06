@@ -1,17 +1,15 @@
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
-import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const authContext = {
-  type: 'application',
   workspace: { id: '00000000-0000-4000-8000-000000000010' },
   application: {
     id: '00000000-0000-4000-8000-000000000001',
     name: 'Call Recorder',
     universalIdentifier: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
   },
-} as unknown as ApplicationWorkspaceAuthContext;
+};
 
 const exhaustedScope = {
   limitValue: 500,

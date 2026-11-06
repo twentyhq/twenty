@@ -5,12 +5,16 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
 import { Injectable } from '@nestjs/common';
+import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { msg } from '@lingui/core/macro';
 import {
   ApplicationException,
@@ -27,6 +31,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 
 const DRAFT_TIME_TO_LIVE_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -38,8 +43,11 @@ export class AiFrontComponentService {
     private readonly queryContext: CommonApiContextBuilderService,
     private readonly compiler: FrontComponentCompilerService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
-    private readonly permissions: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly fileStorageService: FileStorageService,
+    private readonly frontComponentService: FrontComponentService,
+    @InjectWorkspaceScopedRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -68,12 +76,10 @@ export class AiFrontComponentService {
   }) {
     await this.assertEnabledOrThrow(workspaceId);
     if (
-      !(await this.permissions.userHasWorkspaceSettingPermission({
+      !(await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
         userWorkspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
-        applicationId: undefined,
-        agentId: undefined,
+        permissionFlag: PermissionFlagType.APPLICATIONS,
       }))
     ) {
       throw new ApplicationException(
@@ -190,11 +196,7 @@ export class AiFrontComponentService {
     draftInput: FrontComponentDraftInput;
     context: Pick<
       ToolProviderContext,
-      | 'workspaceId'
-      | 'userWorkspaceId'
-      | 'threadId'
-      | 'authContext'
-      | 'rolePermissionConfig'
+      'workspaceId' | 'userWorkspaceId' | 'threadId' | 'authContext'
     >;
   }) {
     const { userWorkspaceId, threadId } = context;
@@ -228,7 +230,6 @@ export class AiFrontComponentService {
     const objectNamePlural = await this.getQueryObjectNamePluralOrThrow({
       query: input.query,
       authContext: context.authContext,
-      rolePermissionConfig: context.rolePermissionConfig,
     });
     validateFrontComponentSampleRecordsOrThrow({
       sampleRecords: input.sampleRecords,
@@ -264,14 +265,18 @@ export class AiFrontComponentService {
           draftId: previous.id,
         });
 
-        if (previous.isSuperseded || previous.threadId !== threadId) {
+        if (
+          previous.isSuperseded ||
+          previous.isPublicationStarted ||
+          previous.threadId !== threadId
+        ) {
           throw new ApplicationException(
             doNotTranslate(
-              'This draft was superseded or belongs to another chat. Start a new draft.',
+              'This draft was superseded, saved or belongs to another chat. Start a new draft.',
             ),
             ApplicationExceptionCode.INVALID_INPUT,
             {
-              userFriendlyMessage: msg`This draft was superseded or belongs to another chat. Start a new draft.`,
+              userFriendlyMessage: msg`This draft was superseded, saved or belongs to another chat. Start a new draft.`,
             },
           );
         }
@@ -342,7 +347,9 @@ export class AiFrontComponentService {
     return {
       draftId: draft.id,
       name: draft.name,
+      pageLayoutType: draft.pageLayoutType,
       isCurrent: !draft.isSuperseded,
+      publishedComponentId: draft.publishedComponentId,
       componentSource: draft.compiledSource,
       applicationId: draft.applicationId,
       sharedDependenciesChecksum:
@@ -386,20 +393,210 @@ export class AiFrontComponentService {
     });
   }
 
+  async publish({
+    draftId,
+    checksum,
+    context,
+  }: {
+    draftId: string;
+    checksum: string;
+    context: Pick<
+      ToolProviderContext,
+      | 'workspaceId'
+      | 'userWorkspaceId'
+      | 'authContext'
+      | 'approvedToolName'
+      | 'threadId'
+    >;
+  }) {
+    const { workspaceId, userWorkspaceId, authContext } = context;
+
+    if (
+      context.approvedToolName !== PUBLISH_FRONT_COMPONENT_TOOL.name ||
+      !isDefined(userWorkspaceId) ||
+      !isDefined(authContext)
+    ) {
+      throw new ApplicationException(
+        doNotTranslate('Saving a component requires human approval.'),
+        ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Saving a component requires human approval.`,
+        },
+      );
+    }
+
+    return this.withDraftLock({
+      workspaceId,
+      draftId,
+      callback: async () => {
+        const draft = await this.getDraftOrThrow({
+          workspaceId,
+          userWorkspaceId,
+          draftId,
+        });
+
+        if (draft.threadId !== context.threadId) {
+          throw new ApplicationException(
+            doNotTranslate('Approve this draft in its original chat.'),
+            ApplicationExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`Approve this draft in its original chat.`,
+            },
+          );
+        }
+        if (draft.isSuperseded || draft.checksum !== checksum) {
+          throw new ApplicationException(
+            doNotTranslate(
+              'This preview changed. Approve the latest revision.',
+            ),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`This preview changed. Approve the latest revision.`,
+            },
+          );
+        }
+
+        const { workspaceCustomFlatApplication: application } =
+          await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+        const sourceComponentPath = `src/ai-front-components/${draftId}.front-component.tsx`;
+        const builtComponentPath = `src/ai-front-components/${draftId}.mjs`;
+        const existing = await this.frontComponentRepository.findOne(
+          workspaceId,
+          { where: { id: draftId } },
+        );
+
+        if (
+          draft.applicationId !== application.id ||
+          (isDefined(existing) &&
+            (existing.applicationId !== application.id ||
+              existing.builtComponentChecksum !== checksum ||
+              existing.sourceComponentPath !== sourceComponentPath ||
+              existing.builtComponentPath !== builtComponentPath))
+        ) {
+          throw new ApplicationException(
+            doNotTranslate('The saved component differs from this draft.'),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`The saved component differs from this draft.`,
+            },
+          );
+        }
+
+        if (!isDefined(existing) && isDefined(draft.publishedComponentId)) {
+          throw new ApplicationException(
+            doNotTranslate(
+              'This saved component was deleted. Create a new draft.',
+            ),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`This saved component was deleted. Create a new draft.`,
+            },
+          );
+        }
+
+        if (!isDefined(existing)) {
+          await this.getQueryObjectNamePluralOrThrow({
+            query: draft.query,
+            authContext,
+          });
+          await this.saveDraft({
+            workspaceId,
+            draft: { ...draft, isPublicationStarted: true },
+          });
+
+          const files = [
+            {
+              resourcePath: sourceComponentPath,
+              sourceFile: draft.entrySource,
+              fileFolder: FileFolder.Source,
+            },
+            {
+              resourcePath: builtComponentPath,
+              sourceFile: draft.compiledSource,
+              fileFolder: FileFolder.BuiltFrontComponent,
+            },
+          ];
+
+          try {
+            for (const file of files) {
+              await this.fileStorageService.writeFile({
+                ...file,
+                workspaceId,
+                applicationUniversalIdentifier: application.universalIdentifier,
+                applicationId: application.id,
+                settings: { isTemporaryFile: false, toDelete: false },
+              });
+            }
+            await this.frontComponentService.createOne({
+              workspaceId,
+              ownerFlatApplication: application,
+              input: {
+                id: draftId,
+                universalIdentifier: draftId,
+                name: draft.name,
+                componentName: draft.componentName,
+                universalWidgetAvailability: [
+                  { pageLayoutType: draft.pageLayoutType },
+                ],
+                usesSdkClient: draft.hasSdkClientImport,
+                sourceComponentPath,
+                builtComponentPath,
+                builtComponentChecksum: checksum,
+              },
+            });
+          } catch (error) {
+            const registered = await this.frontComponentRepository.existsBy(
+              workspaceId,
+              { id: draftId },
+            );
+
+            if (!registered) {
+              for (const file of files) {
+                await this.fileStorageService.deleteFile({
+                  workspaceId,
+                  applicationUniversalIdentifier:
+                    application.universalIdentifier,
+                  applicationId: application.id,
+                  resourcePath: file.resourcePath,
+                  fileFolder: file.fileFolder,
+                });
+              }
+              await this.saveDraft({
+                workspaceId,
+                draft: { ...draft, isPublicationStarted: false },
+              });
+            }
+            throw error;
+          }
+        }
+
+        await this.saveDraft({
+          workspaceId,
+          draft: {
+            ...draft,
+            isPublicationStarted: true,
+            publishedComponentId: draftId,
+          },
+        });
+
+        return { frontComponentId: draftId, applicationId: application.id };
+      },
+    });
+  }
+
   private async getQueryObjectNamePluralOrThrow({
     query,
     authContext,
-    rolePermissionConfig,
   }: {
     query: FrontComponentQuery;
     authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
   }) {
     const { selectedFields, flatObjectMetadata } =
       await this.queryContext.build({
         authContext,
         objectName: query.objectName,
-        rolePermissionConfig,
       });
 
     for (const fieldName of query.select) {

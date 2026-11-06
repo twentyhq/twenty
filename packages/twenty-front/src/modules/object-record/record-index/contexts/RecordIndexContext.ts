@@ -3,8 +3,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { createRequiredContext } from '~/utils/createRequiredContext';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export type RecordIndexContextValue = {
   indexIdentifierUrl: (recordId: string) => string;
@@ -12,10 +12,7 @@ export type RecordIndexContextValue = {
   objectNamePlural: string;
   objectNameSingular: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   recordIndexId: string;
   viewBarInstanceId: string;
   recordFieldByFieldMetadataItemId: Record<string, RecordField>;

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,25 +13,14 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { CORE_PICTURE_UPLOAD_PERMISSION_FLAGS } from 'src/engine/core-modules/file/file-upload/constants/core-picture-upload-permission-flags.constant';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-
-const buildPermissionDeniedException = () =>
-  new PermissionsException(
-    PermissionsExceptionMessage.PERMISSION_DENIED,
-    PermissionsExceptionCode.PERMISSION_DENIED,
-    {
-      userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-    },
-  );
+import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class CreateFileUploadPermissionGuard implements CanActivate {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
@@ -42,7 +31,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
       fileFolder === FileFolder.AppTarball &&
       isDefined(getScopedCallingApplication(request.application))
     ) {
-      throw buildPermissionDeniedException();
+      throw buildPermissionFlagDeniedException();
     }
 
     if (
@@ -61,13 +50,9 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
 
     for (const permissionFlag of acceptedPermissionFlags) {
       const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId: request.userWorkspaceId,
-          workspaceId: request.workspace.id,
-          setting: permissionFlag,
-          apiKeyId: request.apiKey?.id,
-          applicationId: request.application?.id,
-          agentId: request.agentId,
+        await this.settingPermissionsService.hasPermissionFlag({
+          authContext: buildWorkspaceAuthContextFromRequest(request),
+          permissionFlag: permissionFlag,
         });
 
       if (hasPermission) {
@@ -75,6 +60,6 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
       }
     }
 
-    throw buildPermissionDeniedException();
+    throw buildPermissionFlagDeniedException();
   }
 }

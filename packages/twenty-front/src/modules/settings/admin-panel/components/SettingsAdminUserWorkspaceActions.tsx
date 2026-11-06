@@ -4,11 +4,11 @@ import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpe
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEyeShare } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledActionRow = styled.div`
   column-gap: ${themeCssVariables.spacing[2]};
@@ -28,6 +28,7 @@ export const SettingsAdminUserWorkspaceActions = ({
   workspace,
   memberName,
 }: SettingsAdminUserWorkspaceActionsProps) => {
+  const { t } = useLingui();
   const currentUser = useAtomStateValue(currentUserState);
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 

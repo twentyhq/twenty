@@ -85,7 +85,7 @@ TWENTY_API_URL=http://localhost:2021 yarn test
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-twenty auth login --url http://localhost:3000 --name local
+twenty auth login --url http://localhost:3000 --name local --use
 ```
 
 استخدم عنوان URL والمنفذ الفعليين لخادمك. بالنسبة إلى مساحات العمل ذات النطاقات الفرعية، استخدم
@@ -94,8 +94,8 @@ twenty auth login --url http://localhost:3000 --name local
 
 ## تبعيّات المشروع
 
-ثبّت `twenty-sdk` و`twenty-client-sdk` كتبعيّات للمشروع. ثبّت واجهة سطر الأوامر
-`twenty` على مستوى النظام، ثم شغّل `twenty app typecheck` و`twenty app build` و
-`twenty app apply` من دليل التطبيق.
+يُعلن `twenty app init` عن `twenty-sdk` و`twenty-client-sdk` و`twenty-ui` في
+`devDependencies`، لكنه لا يثبّتها. بعد تثبيت واجهة سطر الأوامر `twenty` على مستوى النظام، شغّل `yarn install` من دليل التطبيق المُنشأ قبل تشغيل
+`twenty app typecheck` أو `twenty app build` أو `twenty app apply`.
 
 <PageBanner illustration="dev-self-host" />

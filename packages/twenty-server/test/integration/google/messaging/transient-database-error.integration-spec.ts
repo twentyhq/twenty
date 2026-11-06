@@ -6,7 +6,7 @@ import {
   MessageChannelSyncStatus,
 } from 'twenty-shared/types';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';

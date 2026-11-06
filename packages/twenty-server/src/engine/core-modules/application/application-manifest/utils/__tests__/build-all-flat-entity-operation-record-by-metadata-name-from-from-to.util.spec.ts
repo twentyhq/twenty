@@ -59,6 +59,8 @@ const ROLE_TARGET: FlatRoleTarget = {
   apiKeyId: null,
   webhookId: null,
   webhookUniversalIdentifier: null,
+  targetApplicationId: null,
+  targetApplicationUniversalIdentifier: null,
 };
 
 const WEBHOOK: FlatWebhook = {
@@ -94,6 +96,7 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   conditionalPinnedExpression: null,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,
@@ -116,6 +119,7 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   type: NavigationMenuItemType.LINK,
   name: 'App link',
   link: 'https://example.com',
+  nativePageKey: null,
   icon: null,
   color: null,
   folderId: null,
@@ -437,6 +441,25 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
         isFirstTabPinned: false,
       },
     });
+  });
+
+  it('keeps a role assignable to applications when its manifest is synced back', () => {
+    const buildAllFlatEntityMapsWithRole = (flatRole: FlatRole) =>
+      withRole(flatRole)(createEmptyAllFlatEntityMaps());
+
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps: buildAllFlatEntityMapsWithRole({
+        ...ROLE,
+        canBeAssignedToApplications: true,
+      }),
+      toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithRole({
+        ...ROLE,
+        canBeAssignedToApplications: false,
+      }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result).toEqual({});
   });
 
   it('uses the app default when creating a layout', () => {

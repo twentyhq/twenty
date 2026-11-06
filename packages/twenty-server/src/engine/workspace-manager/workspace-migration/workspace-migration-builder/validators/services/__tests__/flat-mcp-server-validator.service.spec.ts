@@ -51,6 +51,9 @@ const buildMcpServer = (
   url: 'https://docs.example.com/mcp',
   connectionProviderUniversalIdentifier: null,
   isActive: true,
+  tools: [],
+  toolsSyncedAt: null,
+  toolsSyncError: null,
   createdAt: now,
   updatedAt: now,
   ...overrides,
@@ -110,6 +113,7 @@ const buildValidationArgs = (
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceCustomApplicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     },
   };
 };

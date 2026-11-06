@@ -4,16 +4,9 @@ import {
 } from 'twenty-shared/application';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 import { computeRecordFormWidgetForExistingObject } from '../compute-record-form-widget-for-existing-object.util';
-
-type RecordFormFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatPageLayoutTabMaps' | 'flatPageLayoutWidgetMaps'
->;
 
 const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const objectUniversalIdentifier = 'b1b2b3b4-b5b6-4000-8000-000000000001';
@@ -33,12 +26,11 @@ const pageLayoutTabUniversalIdentifier =
     title: 'Fields',
   });
 
-const buildFlatFieldMetadata = (universalIdentifier: string) =>
-  ({
-    universalIdentifier,
-    applicationUniversalIdentifier,
-    objectMetadataUniversalIdentifier: objectUniversalIdentifier,
-  }) as unknown as UniversalFlatFieldMetadata;
+const buildFlatFieldMetadata = (universalIdentifier: string) => ({
+  universalIdentifier,
+  applicationUniversalIdentifier,
+  objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+});
 
 const sourceFlatFieldMetadata = buildFlatFieldMetadata(
   fieldUniversalIdentifier,
@@ -71,11 +63,11 @@ const buildFormFieldWidget = ({
   type: WidgetType.FORM_FIELD,
   deletedAt,
   position: {
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST as const,
     index,
   },
   universalConfiguration: {
-    configurationType: WidgetConfigurationType.FORM_FIELD,
+    configurationType: WidgetConfigurationType.FORM_FIELD as const,
     fieldMetadataId,
   },
 });
@@ -89,17 +81,16 @@ const buildMaps = ({
     string,
     ReturnType<typeof buildFormFieldWidget>
   >;
-}): RecordFormFlatEntityMaps =>
-  ({
-    flatPageLayoutTabMaps: {
-      byUniversalIdentifier: flatPageLayoutTab
-        ? { [pageLayoutTabUniversalIdentifier]: flatPageLayoutTab }
-        : {},
-    },
-    flatPageLayoutWidgetMaps: {
-      byUniversalIdentifier: flatPageLayoutWidgets,
-    },
-  }) as unknown as RecordFormFlatEntityMaps;
+}) => ({
+  flatPageLayoutTabMaps: {
+    byUniversalIdentifier: flatPageLayoutTab
+      ? { [pageLayoutTabUniversalIdentifier]: flatPageLayoutTab }
+      : {},
+  },
+  flatPageLayoutWidgetMaps: {
+    byUniversalIdentifier: flatPageLayoutWidgets,
+  },
+});
 
 describe('computeRecordFormWidgetForExistingObject', () => {
   it('should append at index 0 on a tab with no widget', () => {

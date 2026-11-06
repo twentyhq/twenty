@@ -1,3 +1,5 @@
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 
@@ -156,12 +158,19 @@ describe('Shared conversation API boundaries', () => {
 
   it('denies a viewer send, restore, queued deletion and cancellation while allowing an editor to delete a queued message', async () => {
     const threadId = await context.createThread(false);
-    const queued = await queue.queueMessage({
-      workspaceId: context.workspaceId,
-      threadId,
-      workspaceMemberId: context.workspaceMemberId,
-      userWorkspaceId: context.userWorkspaceId,
-      text: 'An existing queued message',
+    const queued = await writeChatMemberMessage({
+      actor: {
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        userWorkspaceId: context.userWorkspaceId,
+      },
+      thread: await context.threadService.getWritableThread({
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        threadId,
+      }),
+      message: { text: 'An existing queued message' },
+      placement: AgentChatMemberMessagePlacement.QUEUED,
     });
     const streamId = randomUUID();
 
@@ -250,6 +259,7 @@ describe('Shared conversation API boundaries', () => {
     const response = await sendChatParticipationMessage({
       threadId,
       messageId,
+      isAssistantMentioned: true,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -313,6 +323,7 @@ describe('Shared conversation API boundaries', () => {
     });
 
     expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage.streamId).toBeNull();
     expect(
       response.body.data.sendChatMessage.mentionedParticipantWorkspaceMemberIds,
     ).toEqual([recipientId]);
@@ -382,6 +393,7 @@ describe('Shared conversation API boundaries', () => {
     const response = await sendChatParticipationMessage({
       threadId,
       messageId,
+      isAssistantMentioned: true,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 

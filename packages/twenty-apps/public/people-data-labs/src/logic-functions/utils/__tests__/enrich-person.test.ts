@@ -42,6 +42,20 @@ describe('enrichPerson', () => {
     });
   });
 
+  it('forwards required output fields when provided', async () => {
+    await enrichPerson([
+      { profile: 'linkedin.com/in/jane', required: 'work_email AND job_title' },
+    ]);
+
+    expect(postPdlSingleEnrichMock).toHaveBeenCalledWith({
+      path: '/person/enrich',
+      params: {
+        profile: 'linkedin.com/in/jane',
+        required: 'work_email AND job_title',
+      },
+    });
+  });
+
   it('returns one outcome per request, preserving order', async () => {
     postPdlSingleEnrichMock
       .mockResolvedValueOnce({

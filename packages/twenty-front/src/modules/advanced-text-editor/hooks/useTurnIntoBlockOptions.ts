@@ -54,10 +54,12 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
     const liftOutOfBlockquote = (chain: ChainedCommands) =>
       isInBlockquote ? chain.lift(TIPTAP_NODE_TYPES.BLOCKQUOTE) : chain;
 
-    const configuredHeadingLevels: number[] =
-      currentEditor.extensionManager.extensions.find(
-        ({ name }) => name === TIPTAP_NODE_TYPES.HEADING,
-      )?.options.levels ?? [];
+    // the selector runs once more after unmount, when a destroyed editor has no extensions left
+    const configuredHeadingLevels: number[] = currentEditor.isDestroyed
+      ? []
+      : (currentEditor.extensionManager.extensions.find(
+          ({ name }) => name === TIPTAP_NODE_TYPES.HEADING,
+        )?.options.levels ?? []);
 
     return [
       {

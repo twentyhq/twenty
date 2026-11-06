@@ -177,10 +177,7 @@ describe('addErrorsAndRunHooks', () => {
 
   it('should add errors for unique field', () => {
     const result = addErrorsAndRunHooks(
-      [
-        dataWithDuplicatedValue,
-        dataWithDuplicatedValue,
-      ] as unknown as ImportedStructuredRow[],
+      [dataWithDuplicatedValue, dataWithDuplicatedValue],
       [uniqueField],
     );
 

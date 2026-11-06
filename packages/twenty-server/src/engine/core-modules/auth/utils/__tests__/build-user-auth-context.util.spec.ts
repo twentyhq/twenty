@@ -9,6 +9,7 @@ const baseInput = {
   workspaceMember: { id: 'workspace-member-1' } as NonNullable<
     RawAuthContext['workspaceMember']
   >,
+  userSessionVariant: 'standard' as const,
 };
 
 const application = {
@@ -17,28 +18,16 @@ const application = {
 } as NonNullable<RawAuthContext['application']>;
 
 describe('buildUserAuthContext', () => {
-  it('builds a user context without either application field by default', () => {
+  it('builds a user context without an application by default', () => {
     const context = buildUserAuthContext(baseInput);
 
     expect(context.type).toBe('user');
     expect('application' in context).toBe(false);
-    expect('viaApplication' in context).toBe(false);
   });
 
   it('carries a user-bound application on the application field', () => {
     const context = buildUserAuthContext({ ...baseInput, application });
 
     expect(context.application).toBe(application);
-    expect('viaApplication' in context).toBe(false);
-  });
-
-  it('carries run-as provenance on viaApplication without touching application', () => {
-    const context = buildUserAuthContext({
-      ...baseInput,
-      viaApplication: application,
-    });
-
-    expect(context.viaApplication).toBe(application);
-    expect('application' in context).toBe(false);
   });
 });

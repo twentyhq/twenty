@@ -49,6 +49,7 @@ const NEW_CHAT: FlatCommandMenuItem = {
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   conditionalAvailabilityExpression: 'permissionFlags.AI',
   conditionalPinnedExpression: NEW_CHAT_PINNED_EXPRESSION,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,

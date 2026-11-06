@@ -181,6 +181,12 @@ msgstr "Kaaviosuodattimella ei ole kenttää"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "Pienoisohjelman \"{widgetTitle}\" kaaviosuodattimella ei ole kenttämetadatan universaalia tunnistetta"
 
+#. js-lingui-id: aFbjy7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "A command menu item cannot target both an object and a core object"
+msgstr "Komentovalikkokohde ei voi kohdistua sekä objektiin että ydinkohteeseen"
+
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -203,15 +209,15 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Koontinäyttö"
 
+#. js-lingui-id: Fypv4q
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "A deal is won"
+msgstr "Kauppa voitetaan"
+
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
 msgid "A DNS manager error occurred."
 msgstr "DNS-hallinnassa tapahtui virhe."
-
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Päällekkäinen merkintä havaittiin."
 
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -389,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Pakollinen kenttä puuttuu."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Pakollinen kenttä puuttuu. Anna kaikki vaaditut arvot ja yritä uudelleen."
 
@@ -487,6 +493,12 @@ msgstr "AGENT_CHAT_CHANNEL-tyypille vaaditaan kelvollinen agentChatChannelUniver
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid link is required for LINK type"
 msgstr "LINK-tyypille vaaditaan kelvollinen linkki"
+
+#. js-lingui-id: SdzwAi
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid nativePageKey is required for NATIVE_PAGE type"
+msgstr "Kelvollinen nativePageKey vaaditaan NATIVE_PAGE-tyypille"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -781,6 +793,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
 msgstr "Lisää listaan"
 
+#. js-lingui-id: BBzZ81
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Add tools to your workspace."
+msgstr "Lisää työkaluja työtilaasi."
+
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -815,8 +832,13 @@ msgstr "Ylläpitopaneeli"
 msgid "Admin role not found."
 msgstr "Ylläpitäjäroolia ei löytynyt."
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr "Agentti \"{label}\" on arkistoitu tai kuuluu toiseen työnkulun vaiheeseen, joten uusi vaihe ei voi suorittaa sitä."
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "Agentti \"{label}\" on arkistoitu."
 
@@ -1074,10 +1096,20 @@ msgstr "Määrä"
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "Agentilla ei voi olla enempää kuin {maxTriggers} laukaisinta"
 
+#. js-lingui-id: KfRVdE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent drafts a follow-up for every deal about to close."
+msgstr "Agentti laatii seurantasähköpostin jokaisesta pian sulkeutuvasta kaupasta."
+
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
 msgstr "Sovelluksen asentamaa agenttia ei voi nimetä uudelleen."
+
+#. js-lingui-id: 3tWubk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent shapes your objects and fields around how you work."
+msgstr "Agentti muotoilee objektisi ja kenttäsi työskentelytapasi mukaan."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1098,6 +1130,11 @@ msgstr "Tämän niminen agentti on jo olemassa."
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
 msgstr "Sovellus voi käynnistää vain omia työnkulkujaan."
+
+#. js-lingui-id: T/ZKXs
+#: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
+msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
+msgstr "Sovellus voi pyytää iframe-median käyttöoikeutta enintään {MAX_ALLOWED_IFRAME_ORIGINS} alkuperälle"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1131,7 +1168,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "Kaksivaiheisen todennuksen tiedoissa tapahtui virhe."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1155,6 +1192,11 @@ msgstr "Tälle työtilalle on jo käynnissä vienti."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Tässä työtilassa on jo käynnissä vienti. Odota, että se valmistuu."
+
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Ulkoisella palvelulla kesti liian kauan vastata."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1274,12 +1316,23 @@ msgstr "Toinen asetusten valikkokohta käyttää jo sijaintia {0}"
 msgid "Another settings menu item already uses position {nextPosition}"
 msgstr "Toinen asetusten valikkokohta käyttää jo sijaintia {nextPosition}"
 
+#. js-lingui-id: b2UKvQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item already uses slug \"{slug}\""
+msgstr "Toinen asetusvalikon kohde käyttää jo polkutunnistetta \"{slug}\""
+
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
 msgstr "Toinen tämän sovelluksen asetusten valikkokohta käyttää jo tätä sijaintia."
+
+#. js-lingui-id: Dswht3
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item of this application already uses this slug."
+msgstr "Toinen tämän sovelluksen asetusvalikon kohde käyttää jo tätä polkutunnistetta."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1312,11 +1365,32 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Heittomerkki ja piste"
 
+#. js-lingui-id: oABUXG
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "App installed"
+msgstr "Sovellus asennettu"
+
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Sovellus"
+
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr "Sovellukselle \"{applicationName}\" ei voida määrittää roolia"
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr "Sovellukselle \"{applicationName}\" ei voida määrittää roolia: vain asennetuille sovelluksille voidaan määrittää rooli"
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr "Sovellukselle on jo liitetty rooli"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1435,6 +1509,11 @@ msgstr "Sovellusmuuttujan laajuutta ei voi muuttaa luomisen jälkeen"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Sovellukset eivät voi päivittää näitä kenttiä: {fieldsList}."
+
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "Hyväksy tämä luonnos sen alkuperäisessä keskustelussa."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1584,6 +1663,7 @@ msgstr "liitti tiedoston"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Liitetty kohteeseen"
@@ -1631,6 +1711,7 @@ msgid "Attachment record position"
 msgstr "Liitteen tietueen sijainti"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1735,11 +1816,6 @@ msgstr "Todennus epäonnistui, kirjaudu sisään uudelleen."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Tunnistautuminen ei ole käytössä tällä palveluntarjoajalla."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Autentikointi on pakollinen tämän ominaisuuden käyttämiseksi. Ole hyvä ja kirjaudu sisään ja yritä uudelleen."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -1948,6 +2024,16 @@ msgstr "Palautunut"
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
 msgstr "Palautunut"
+
+#. js-lingui-id: 7piJZ+
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your companies, contacts and deals from any CRM export."
+msgstr "Tuo yrityksesi, yhteyshenkilösi ja kauppasi mistä tahansa CRM-viennistä."
+
+#. js-lingui-id: YYQkoU
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your team into Twenty."
+msgstr "Tuo tiimisi Twentyyn."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2870,7 +2956,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Valitse korvattava olemassa oleva aikajanatoimintotyyppi."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Valitse yksi henkilö tai yksi rooli, jonka kanssa jaetaan."
 
@@ -2929,6 +3015,11 @@ msgstr "Lunastustunnus"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "Omistuksen vahvistusta ei ole otettu käyttöön tällä palvelimella. Pyydä ylläpitäjää määrittämään GitHub OAuth -sovellus."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "Luokittelu ei ole käytettävissä tämän työtilan tietosuoja-asetuksilla."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3019,6 +3110,11 @@ msgstr "Yhteisö"
 msgctxt "objectMetadata.labelPlural"
 msgid "Companies"
 msgstr "Yritykset"
+
+#. js-lingui-id: UcnBjr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Companies and people fill in from your emails and meetings."
+msgstr "Yritykset ja henkilöt täydennetään sähköposteistasi ja kokouksistasi."
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3239,10 +3335,20 @@ msgstr "Ristiriitainen puhelimen suuntanumero."
 msgid "Conflicting phone country code."
 msgstr "Ristiriitainen puhelimen maatunnus."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Yhdistä ensin tili tähän MCP-palvelimeen."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Yhteyden muodostaminen ei ole sallittua kohteelle {connectFieldName} kohteeseen {objectMetadataNameSingular}."
+
+#. js-lingui-id: oduBE8
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr "Yhdistä sähköpostisi ja kalenterisi nähdäksesi koko verkostosi heti. Vie vain 30 sekuntia."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3608,6 +3714,11 @@ msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
 msgstr "Luo {objectLabelSingular}"
 
+#. js-lingui-id: Y8ye8i
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Create a kickoff task"
+msgstr "Luo aloitustehtävä"
+
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Create Calendar Event"
@@ -3713,7 +3824,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Kentän metatiedot luotu, emäobjektin metatietoja ei löytynyt"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Yksityisen kohteen tietueen luominen edellyttää shareWith-argumenttia"
 
@@ -3948,6 +4059,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "Koontinäytöt"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr "Tiedot tuotu"
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -3961,6 +4077,7 @@ msgid "Data Model"
 msgstr "Tietomalli"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Tietorakenne on virheellinen."
@@ -4058,6 +4175,11 @@ msgstr "Kauppa"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "Kauppa"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr "Kaupan seurannat hallinnassa"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4389,11 +4511,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "Toimitusaika"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "evätty"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4625,9 +4742,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Jokaisen liittyvän tietueen polun kentän on kuuluttava edellisen relaation kautta saavutettuun objektiin"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Jokaisen shareWith-merkinnän on kohdistuttava täsmälleen yhteen seuraavista: workspaceMemberId, roleId tai everyone"
+
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr "Joka viikko jokaisesta pian päättyvästä kaupasta luodaan seurantal uonnos."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4807,6 +4929,11 @@ msgctxt "fieldMetadata.description"
 msgid "Email subject line"
 msgstr "Sähköpostin aiherivi"
 
+#. js-lingui-id: 4VrNsb
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Email the account owner"
+msgstr "Lähetä sähköpostia asiakkuuden omistajalle"
+
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
@@ -4839,14 +4966,12 @@ msgstr "Sähköpostit"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "Sähköpostit"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "Sähköpostit"
@@ -5141,6 +5266,11 @@ msgstr "Henkilöön liittyvät tapahtumat"
 msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Työtilan jäseneen liittyvät tapahtumat"
+
+#. js-lingui-id: idSfue
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
+msgstr "Laadi joka maanantai seurantasähköposti jokaisesta seuraavien 30 päivän aikana sulkeutuvasta kaupasta."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5474,6 +5604,23 @@ msgstr "Kentän nimi ei ole synkronoitu tunnisteen kanssa."
 msgid "Field not found."
 msgstr "Kenttää ei löytynyt."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Kentän vaihtoehtokenttää ei löytynyt"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Kentän vaihtoehtoa ei löytynyt"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Kentän vaihtoehtoa ei löytynyt."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -5690,6 +5837,7 @@ msgstr "Tiedosto"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Tiedosto {fileId} on jo liitetty pysyvään tiedostokenttään. Lähetä tiedosto uudelleen."
 
@@ -5779,6 +5927,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Tiedostot"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr "Viestiin liitetyt tiedostot"
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -5820,6 +5974,12 @@ msgstr "Etsi"
 msgid "Find Connected Accounts"
 msgstr "Etsi liitetyt tilit"
 
+#. js-lingui-id: HEpRJM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "First direct message member ID"
+msgstr "Ensimmäisen suoraviestin jäsenen tunnus"
+
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "First friendly message"
@@ -5846,6 +6006,16 @@ msgstr "Työnkulku"
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
 msgstr "Kansiopolussa ei saa olla tiedostopäätettä — käytä deleteFile-funktiota tiedostopoluille"
+
+#. js-lingui-id: 9J7Yxo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow up on closing deals"
+msgstr "Seuraa sulkeutuvia kauppoja"
+
+#. js-lingui-id: Y2RyNo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up instructions"
+msgstr "Seurantaohjeet"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6231,6 +6401,11 @@ msgctxt "fieldMetadata.label"
 msgid "Group hash"
 msgstr "Ryhmän tiiviste"
 
+#. js-lingui-id: cGqZJs
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Hand over won deals"
+msgstr "Siirrä voitetut kaupat"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6263,6 +6438,11 @@ msgstr "Käsittelijän nimi on virheellinen"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "\"handlerName\"-arvon on oltava kelvollinen JavaScript-tunniste tai pistepolku"
+
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr "Luovutus valmis"
 
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -6449,11 +6629,26 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "Tuo {objectLabelPlural}"
 
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr "Tuo yhteystietosi"
+
+#. js-lingui-id: gQ9//i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your data"
+msgstr "Tuo tietosi"
+
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "In progress"
 msgstr "Käynnissä"
+
+#. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Inbox is not enabled for this workspace."
+msgstr "Saapuneet-kansio ei ole käytössä tässä työtilassa."
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -6537,6 +6732,11 @@ msgctxt "fieldMetadata.label"
 msgid "Input Tokens"
 msgstr "Syötetokenit"
 
+#. js-lingui-id: 5u6qKW
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Install an app"
+msgstr "Asenna sovellus"
+
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6571,8 +6771,8 @@ msgid "Internal name of the campaign"
 msgstr "Kampanjan sisäinen nimi"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Virheellinen käyttöoikeustaso."
 
@@ -6790,6 +6990,11 @@ msgstr "Virheellinen ominaisuuslipun avain."
 msgid "Invalid field input."
 msgstr "Virheellinen kentän syöte."
 
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Virheellinen kentän vaihtoehdon syöte."
+
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
 msgid "Invalid field selection. Check the requested fields and relation depth."
@@ -6834,7 +7039,7 @@ msgid "Invalid filter parameter."
 msgstr "Virheellinen suodatinparametri."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Virheellinen suodattimen arvo"
 
@@ -6946,9 +7151,9 @@ msgid "Invalid input for application registration."
 msgstr "Virheellinen syöte sovelluksen rekisteröintiin."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Annettu syöte on virheellinen."
 
@@ -7285,8 +7490,8 @@ msgstr "Virheellinen URL-muoto."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Virheellinen UUID-muoto."
 
@@ -7525,6 +7730,21 @@ msgstr "Virheellinen työnkulun versio."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Invitation not found"
 msgstr "Kutsua ei löytynyt"
+
+#. js-lingui-id: ZMCmkn
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invitations sent"
+msgstr "Kutsuja lähetetty"
+
+#. js-lingui-id: d+Y+rP
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invite your team"
+msgstr "Kutsu tiimisi"
+
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr "Kutsut on lähetetty. Voit kutsua lisää ihmisiä milloin tahansa."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8140,6 +8360,16 @@ msgstr "Logiikkafunktiota ei löytynyt."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Logiikkafunktio, jolla on sama universaalitunniste, on jo olemassa"
 
+#. js-lingui-id: y5Ysbs
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
+msgstr "Tarkastele tuomiani tietoja ja ehdota liiketoimintani hoitamiseen tarvitsemiani objekteja, kenttiä ja näkymiä. Kysy minulta, mitä haluan seurata, ennen kuin luot mitään."
+
+#. js-lingui-id: AgKpIa
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Mailbox connected"
+msgstr "Postilaatikko yhdistetty"
+
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8151,6 +8381,11 @@ msgstr "Muuta yksityiseksi"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Tee työnkulusta yksityinen"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr "Hallinnoi sovelluksiasi asetuksissa."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -8729,6 +8964,20 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Messages"
 msgstr "Viestit"
 
+#. js-lingui-id: x+60lt
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
+msgid "Messages"
+msgstr "Viestit"
+
+#. js-lingui-id: JJTyHZ
+#: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
+msgid "Messages"
+msgstr "Viestit"
+
 #. js-lingui-id: PLP882
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -9086,6 +9335,11 @@ msgstr "Uuden työtilan määritys on poistettu käytöstä"
 msgid "No"
 msgstr "Ei"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "Yksikään tekoälymalli ei täytä tämän työtilan tietosuoja-asetuksia."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9211,6 +9465,11 @@ msgstr "Kelvollisia vastaanottajia ei ole määritetty"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "No verified sending domain matches this from address."
 msgstr "Yksikään varmennettu lähetysverkkotunnus ei täsmää tähän lähettäjäosoitteeseen."
+
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Kukaan valitsemistasi henkilöistä ei voi vastata tässä chatissa. Lisää {AGENT_CHAT_ASSISTANT_NAME} tai joku, joka voi vastata."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9622,6 +9881,11 @@ msgstr "ObjectMetadataId on pakollinen, että voi luoda näkymän."
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "ObjectMetadataId vaaditaan näkymää luotaessa"
 
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr "Objektit, kentät ja näkymät mukautuvat tiimisi työskentelytapaan."
+
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
@@ -9662,6 +9926,11 @@ msgstr "Yksi tai useampi pyydetyistä käyttöoikeusalueista on virheellinen."
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Vain luonnos- tai ajoitettu kampanja voidaan lähettää."
+
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Vain juuritason rivitason käyttöoikeusehtoryhmä voi myöntää toimintoja"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9719,10 +9988,25 @@ msgstr "Vain tämän agentin omistava sovellus voi muuttaa sen laukaisimia"
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Vain tämän työnkulun luonut henkilö voi muuttaa sitä, kuka näkee sen"
 
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Vain tietuetason säännön ylimmän tason ryhmä voi myöntää toimintoja"
+
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Vain tämän lomakkeen arvoja voi muuttaa."
+
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr "Vain työtila voi liittää rooleja sovelluksiin"
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr "Vain työtilan mukautettu sovellus voi liittää rooleja sovelluksiin"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9918,6 +10202,12 @@ msgstr "Vaihtoehdon etiketin on oltava merkkijono, jossa on vähintään yksi me
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Vaihtoehtoarvo \"{sanitizedValue}\" on alle 1 merkin"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Vaihtoehdon arvo \"{value}\" on jo olemassa tässä kentässä"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -9944,6 +10234,12 @@ msgstr "Vaihtoehdon arvon on oltava merkkijono, jossa on vähintään yksi merkk
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Valintavaihtoehdot vaaditaan enum-kentille"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Vaihtoehdot voivat kuulua vain valinta-, monivalinta- tai luokituskenttiin"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10171,6 +10467,11 @@ msgstr "Osallistujat"
 msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr "Osallistujat"
+
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr "Kumppanikoodit koskevat vain uusia Twenty-asiakkaita."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10684,10 +10985,15 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Päämiehen tyyppi"
 
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Yksityiset tietueet eivät ole vielä käytettävissä tässä työtilassa."
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Tietosuoja-asetukset eivät ole käytettävissä, ennen kuin päivitys on valmis."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Tietosuoja-asetukset eivät ole käytössä tässä työtilassa."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10827,11 +11133,6 @@ msgstr "Kyselyn suoritus epäonnistui."
 msgid "Query failed."
 msgstr "Kysely epäonnistui."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Kyselyn aikaraja ylittyi. Yritä uudelleen."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -10962,7 +11263,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Tietue, johon agentin keskusteluketju on liitetty"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "Tietue ei täytä suojausrajoituksia."
 
@@ -11496,6 +11797,13 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr ""
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr "Roolia \"{roleLabel}\" ei voida liittää sovelluksiin"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11512,6 +11820,11 @@ msgstr "Roolia \"{roleLabel}\" ei voi määrittää webhookeille."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Roolia \"{roleLabel}\" ei voi määrittää: mukautetut roolit edellyttävät Organization Plan -pakettia"
+
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr "Roolin \"{roleLabel}\" on oltava työtilan mukautetun sovelluksen omistuksessa, jotta se voidaan liittää sovellukseen"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11610,11 +11923,11 @@ msgstr "Roolikohde on jo olemassa"
 msgid "Role target is missing identifier."
 msgstr "Roolin kohteelta puuttuu tunniste."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr "Roolin kohteella on oltava täsmälleen yksi seuraavista: apiKeyId, userWorkspaceId, agentUniversalIdentifier tai webhookUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr "Roolikohteella on oltava täsmälleen yksi seuraavista: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier tai targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11792,6 +12105,11 @@ msgstr "Suoritukset"
 msgid "Sample records exceed 100 KB."
 msgstr "Esimerkkitietueet ylittävät 100 kt."
 
+#. js-lingui-id: P79LWT
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must include every selected field."
+msgstr "Esimerkkitietueiden on sisällettävä kaikki valitut kentät."
+
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
@@ -11818,6 +12136,11 @@ msgstr "Tallenna kampanja"
 msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Tallenna hallintapaneeli"
+
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "Komponentin tallentaminen edellyttää ihmisen hyväksyntää."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -11957,6 +12280,12 @@ msgstr "Hakuvektorikentän on kuuluttava samaan objektiin"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 msgid "Search vector field not found"
 msgstr "Hakuvektorikenttää ei löytynyt"
+
+#. js-lingui-id: pMB33L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Second direct message member ID"
+msgstr "Toisen suoraviestin jäsenen tunnus"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -12240,6 +12569,16 @@ msgstr "Asetusten valikkokohdan laajuus \"{0}\" on virheellinen"
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
 msgstr "Asetusten valikkokohdan laajuus \"{nextScope}\" on virheellinen"
 
+#. js-lingui-id: nI9Ltr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" is reserved"
+msgstr "Asetusvalikon kohteen polkutunniste \"{slug}\" on varattu"
+
+#. js-lingui-id: x515yK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
+msgstr "Asetusvalikon kohteen polkutunnisteen \"{slug}\" on oltava pienaakkosilla kirjoitettua kebab-case-muotoa ja enintään {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} merkkiä pitkä"
+
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -12258,6 +12597,11 @@ msgstr "Asetusten valikkokohdan otsikko \"{updatedTitle}\" on varattu"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Asetusten valikkokohdan otsikko vaaditaan"
+
+#. js-lingui-id: x4ZiTl
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup instructions"
+msgstr "Asennusohjeet"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12314,17 +12658,17 @@ msgid "Shared record"
 msgstr "Jaettu tietue"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith nimeää roolin, joka ei kuulu tähän työtilaan"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith nimeää työtilan jäsenen, joka ei kuulu tähän työtilaan"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith nimeää saman päämiehen useammin kuin kerran"
 
@@ -12340,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Lyhyet linkit"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Kirjaudu sisään työtilan jäsenenä tai käytä sovellustunnusta muuttaaksesi tätä keskustelua."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Kirjaudu sisään työtilan jäsenenä tai käytä sovellustunnusta tämän pyynnön tekemiseen."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12447,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Jotkut valitsemistasi oikeuksista eivät ole kelvollisia. Yritä uudelleen validilla oikeusasetuksilla."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -12673,6 +13017,11 @@ msgstr "Aloituspäivä"
 msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "Viikon alku"
+
+#. js-lingui-id: wcXsug
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Start the handover when a deal is won."
+msgstr "Aloita luovutus, kun kauppa on voitettu."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -12945,10 +13294,21 @@ msgstr "Välilehti 1"
 msgid "Tab not found for widget duplication."
 msgstr "Välilehteä ei löytynyt widgetin kopiointia varten."
 
+#. js-lingui-id: xRgQRi
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Tailor your workspace"
+msgstr "Mukauta työtilaasi"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Tarball-latausta ei löytynyt."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr "Kohdesovellusta ei löytynyt"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -13249,15 +13609,15 @@ msgstr "{reservedViewKey}-näkymäavain on varattu oletusnäkymälle"
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "{reservedViewKey}-näkymäavain on varattu järjestelmän omistamalle oletusnäkymälle; poista avain näkymän määrityksestä"
 
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr "Agenttia, jonka tämän vaiheen pitäisi suorittaa, ei löytynyt."
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Agenttia, jota etsit, ei löytynyt. Se saatettiin poistaa tai sinulla ei ehkä ole siihen pääsyä."
-
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API-avaimella ei ole määritetty kelvollista roolia. Tarkista API-avaimen asetukset."
 
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13269,11 +13629,6 @@ msgstr "Sovelluksen manifesti määrittelee virheellisen palvelinversiovaatimuks
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Sovelluksen lähdekanava ei vastaa odotettua tyyppiä."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Sovellukselle ei ole määritetty kelvollista roolia. Tarkista sovelluksen asetukset."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -13291,6 +13646,11 @@ msgstr "Sovellustyönkulun määritelmä on virheellinen."
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Sovelluksen tuotantoriippuvuudet ovat liian suuria asennettavaksi. Siirrä paketit, joita sen logiikkafunktiot eivät tuo (käyttöliittymäkirjastot, kehitystyökalut), pois \"dependencies\"-osiosta."
+
+#. js-lingui-id: 2a7bjg
+#: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
+msgid "The application's requested permissions have changed. Review them again before approving."
+msgstr "Sovelluksen pyytämät käyttöoikeudet ovat muuttuneet. Tarkista ne uudelleen ennen hyväksymistä."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -13536,6 +13896,12 @@ msgstr "Tiedosto on tyhjä tai ylittää sallitun enimmäiskoon."
 msgid "The file upload has not been completed. Please retry the upload."
 msgstr "Tiedoston latausta ei ole suoritettu loppuun. Yritä latausta uudelleen."
 
+#. js-lingui-id: 2T6q1O
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The first member in the fixed direct message pair"
+msgstr "Kiinteän suoraviestiparin ensimmäinen jäsen"
+
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -13622,6 +13988,11 @@ msgstr "Yhteyden katkaisemisen yhteydessä suoritettavaa logiikkafunktiota ei l�
 msgid "The MCP request parameters are invalid."
 msgstr "MCP-pyynnön parametrit eivät kelpaa."
 
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "MCP-palvelin tarjoaa synkronoitavaksi liian monta työkalua."
+
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
@@ -13696,6 +14067,11 @@ msgstr "Mahdollisuuden nimi"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr "Pakettirekisteriin ei saatu yhteyttä paketin alkuperän varmentamiseksi. Yritä myöhemmin uudelleen."
+
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr "Kumppanikoodia ei voi enää lisätä tai muuttaa. Ota yhteyttä tukeen."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,10 +14162,26 @@ msgstr "Roolia, jota yrität muokata, ei löytynyt."
 msgid "The same column cannot appear twice in an index."
 msgstr "Sama sarake ei voi esiintyä indeksissä kahdesti."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "Tallennettu komponentti poikkeaa tästä luonnoksesta."
+
+#. js-lingui-id: i+FcdU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The second member in the fixed direct message pair"
+msgstr "Kiinteän suoraviestiparin toinen jäsen"
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "Järjestelmänvalvoja on poistanut valitun mallin käytöstä."
+
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "Valittu malli ei ole sallittu tämän työtilan tietosuoja-asetuksissa."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
@@ -13997,12 +14389,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Työtilan jäsen, joka viimeksi päivitti tietueen"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Heidän roolillaan ei ole pääsyä näihin tietueisiin, ja tämä objekti on jaettu vain rooleille, joilla on pääsy."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Heidän roolinsa ei voi nähdä tätä tietuetta, ja tämä objekti on jaettu vain henkilöille, jotka voivat."
 
@@ -14290,10 +14682,10 @@ msgstr "Tämä verkkotunnus on jo varattu."
 msgid "This draft is being updated. Try again."
 msgstr "Tätä luonnosta päivitetään. Yritä uudelleen."
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "Tämä luonnos korvattiin uudemmalla tai se kuuluu toiseen keskusteluun. Aloita uusi luonnos."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "Tämä luonnos korvattiin, tallennettiin tai se kuuluu toiseen keskusteluun. Aloita uusi luonnos."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14547,7 +14939,7 @@ msgid "This operation is not supported."
 msgstr "Tätä toimintoa ei tueta."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Tämä toimenpide viittaa tietueeseen, jota ei ole olemassa tai jota ei voida muokata olemassa olevien suhteiden vuoksi."
 
@@ -14555,6 +14947,11 @@ msgstr "Tämä toimenpide viittaa tietueeseen, jota ei ole olemassa tai jota ei 
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
 msgstr "Tämä Organisaatioavain on jo käytössä toisessa palvelininstanssissa. Vapauta se siltä palvelimelta tai siirrä se tähän palvelimeen."
+
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
+msgstr "Tämä kumppanikoodi ei ole kelvollinen."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -14577,6 +14974,11 @@ msgstr "Tämä lupa on poistettu käytöstä objektissa, eikä sitä voi myönt�
 msgid "This plan is not available."
 msgstr "Tämä tilaus ei ole saatavilla."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "Tämä esikatselu muuttui. Hyväksy uusin versio."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14588,12 +14990,12 @@ msgid "This public domain is already registered."
 msgstr "Tämä julkinen verkkotunnus on jo rekisteröity."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Tämä tietue on jo olemassa. Tarkista tietosi ja yritä uudelleen."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Tätä tietuetta ei voi poistaa, koska muut tietueet viittaavat siihen edelleen."
 
@@ -14682,6 +15084,11 @@ msgstr "Tätä roolia ei voi muokata."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Tätä roolia ei voi muokata, koska se on järjestelmärooli. Vain mukautettuja rooleja voidaan muokata."
 
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "Tämä tallennettu komponentti poistettiin. Luo uusi luonnos."
+
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."
@@ -14693,12 +15100,24 @@ msgstr "Tämä palvelinavain on jo toisen työtilan varaama."
 msgid "This settings menu item scope is not supported."
 msgstr "Tätä asetusten valikkokohdan laajuutta ei tueta."
 
+#. js-lingui-id: jzBAe4
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "This settings menu item slug is invalid or reserved."
+msgstr "Tämä asetusvalikon kohteen polkutunnus on virheellinen tai varattu."
+
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
 msgstr "Tämä asetusten valikkokohdan otsikko on varattu."
+
+#. js-lingui-id: ukriVV
+#: src/engine/core-modules/getting-started/getting-started.exception.ts
+msgid "This step has no workflow."
+msgstr "Tällä vaiheella ei ole työnkulkua."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -15356,6 +15775,11 @@ msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Vuoro"
 
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr "Ota se käyttöön, niin voitetut kaupat siirtyvät toimitukseen automaattisesti."
+
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15449,6 +15873,16 @@ msgstr "Universaalitunniste on varattu järjestelmän hallitsemille metatiedoill
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Tuntematon"
+
+#. js-lingui-id: jR10dh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Unknown availabilityCoreObjectName {availabilityCoreObjectName}"
+msgstr "Tuntematon availabilityCoreObjectName {availabilityCoreObjectName}"
+
+#. js-lingui-id: U1gpBt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Unknown core object for this command menu item"
+msgstr "Tuntematon ydinkohde tälle komentovalikkokohteelle"
 
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
@@ -16483,8 +16917,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Seurattuja kenttiä käytetään vain \"updated\"-tietokantatapahtuman laukaisimissa"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Koemme tilapäistä ongelmaa tietokannassamme. Yritä uudelleen myöhemmin."
 
@@ -16557,6 +16991,11 @@ msgstr "Emme voineet kirjautua sisään sähköpostitilillesi. Tarkista sähköp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Kohtasimme ongelman muodostaessamme yhteyttä sähköpostitilillesi. Tarkista asetuksesi ja yritä uudelleen."
+
+#. js-lingui-id: b6WVV+
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
+msgstr "Olemme {companyName}, {industry}-alan yritys. Tarkastele tuomiani tietoja ja ehdota liiketoimintamme hoitamiseen tarvitsemiamme objekteja, kenttiä ja näkymiä. Kysy meiltä ennen kuin luot mitään."
 
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17188,6 +17627,11 @@ msgstr "Työtilan esittelytietojen lisäys"
 msgid "Workspace does not exist."
 msgstr "Työtilaa ei ole olemassa."
 
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr "Työtila prosessisi mukaiseksi"
+
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
@@ -17528,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Et voi luoda palautuskoodia itsellesi. Nollaa sen sijaan kaksivaiheinen todennus profiilistasi."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Et voi vaihtaa omaa rooliasi. Pyydä toista ylläpitäjää päivittämään roolisi."
 
@@ -17549,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Et voi poistaa asetusoikeuksia omalta rooliltasi. Pyydä toista ylläpitäjää tekemään tämä muutos."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Et voi poistaa viimeiseltä ylläpitäjältä admin-roolia. Määritä ensin toinen ylläpitäjä."
 
@@ -17599,9 +18043,8 @@ msgid "You do not have access to this message folder."
 msgstr "Sinulla ei ole pääsyä tähän viestikansioon."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Sinulla ei ole lupaa käyttää tätä ominaisuutta. Ota yhteyttä työtilan ylläpitäjään saadaksesi käyttöoikeuden."
 
@@ -17785,14 +18228,19 @@ msgstr "Maksutapa hylättiin. Päivitä se ja yritä uudelleen."
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Ostamiasi krediittejä ei voitu lisätä. Ota yhteyttä tukeen."
 
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr "Tietueesi on tuotu ja järjestetty työskentelytapasi mukaan."
+
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Roolisi ei voi poistaa joitakin näistä tietueista, joten niitä ei voida yhdistää."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Rooliasi tässä työtilassa ei löytynyt. Ota yhteyttä työtilan ylläpitäjään."
 

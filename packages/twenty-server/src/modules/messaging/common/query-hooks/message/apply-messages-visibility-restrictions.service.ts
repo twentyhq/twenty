@@ -19,7 +19,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
-const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text'];
+const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text', 'attachments'];
 
 @Injectable()
 export class ApplyMessagesVisibilityRestrictionsService
@@ -56,7 +56,7 @@ export class ApplyMessagesVisibilityRestrictionsService
 
     const { fullyVisibleMessageIds, subjectVisibleMessageIds } =
       await this.findVisibleMessageIds({
-        messages: restrictableMessages,
+        messageIds: restrictableMessages.map((message) => message.id),
         authContext,
       });
 
@@ -69,17 +69,21 @@ export class ApplyMessagesVisibilityRestrictionsService
         message.text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
       }
 
+      if ('attachments' in message) {
+        message.attachments = [];
+      }
+
       if (!subjectVisibleMessageIds.has(message.id) && 'subject' in message) {
         message.subject = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
       }
     }
   }
 
-  private async findVisibleMessageIds({
-    messages,
+  public async findVisibleMessageIds({
+    messageIds: requestedMessageIds,
     authContext,
   }: {
-    messages: ObjectRecord[];
+    messageIds: string[];
     authContext: WorkspaceAuthContext;
   }): Promise<{
     fullyVisibleMessageIds: Set<string>;
@@ -89,9 +93,7 @@ export class ApplyMessagesVisibilityRestrictionsService
     const fullyVisibleMessageIds = new Set<string>();
     const subjectVisibleMessageIds = new Set<string>();
 
-    const messageIds = [
-      ...new Set(messages.map((message) => message.id)),
-    ].filter(isDefined);
+    const messageIds = [...new Set(requestedMessageIds)].filter(isDefined);
 
     if (messageIds.length === 0) {
       return { fullyVisibleMessageIds, subjectVisibleMessageIds };
@@ -101,9 +103,8 @@ export class ApplyMessagesVisibilityRestrictionsService
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
-            .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
-              { shouldBypassPermissionChecks: true },
             )
             .find({
               where: { messageId: In(messageIds) },

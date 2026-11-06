@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
@@ -20,6 +19,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledToolDetailsContainer = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -71,6 +71,7 @@ export const ThinkingToolStepRow = ({
   isActive,
   part,
 }: ThinkingToolStepRowProps) => {
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const rawToolName = getToolName(part);
   const { toolInput, toolName } = unwrapToolInput({

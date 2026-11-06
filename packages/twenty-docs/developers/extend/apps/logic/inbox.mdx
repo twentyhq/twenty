@@ -90,7 +90,7 @@ await sendInboxMessage({
 - Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
 - A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
-- `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
+- `INBOX_ASSISTANT_MENTION` writes the composer's canonical assistant reference. The inbox displays it as `@Ada`; its stable identity is separate from its label. This reference alone does not request an assistant reply from an application message.
 
 ## Attaching records to a conversation
 

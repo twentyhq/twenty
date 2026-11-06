@@ -1,5 +1,4 @@
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
-import { computeWorkflowManifestOrderBy } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-order-by.util';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
@@ -46,14 +45,27 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       break;
     case 'AI_AGENT': {
       const { agentUniversalIdentifier, ...rest } = step.input;
-      input = {
-        ...rest,
-        agentId: resolve(
-          references.agentIdByUniversalIdentifier,
-          agentUniversalIdentifier,
-          'application agent',
-        ),
-      };
+
+      // the scope names objects and fields by universal identifier, so it is checked rather than rewritten
+      for (const { objectUniversalIdentifier } of rest.scope
+        ?.objectPermissions ?? []) {
+        objectName(objectUniversalIdentifier);
+      }
+      for (const { objectUniversalIdentifier, fieldUniversalIdentifier } of rest
+        .scope?.fieldPermissions ?? []) {
+        field(fieldUniversalIdentifier, objectUniversalIdentifier);
+      }
+
+      input = isDefined(agentUniversalIdentifier)
+        ? {
+            ...rest,
+            agentId: resolve(
+              references.agentIdByUniversalIdentifier,
+              agentUniversalIdentifier,
+              'application agent',
+            ),
+          }
+        : rest;
       break;
     }
     case 'CREATE_RECORD':
@@ -90,18 +102,6 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                 ...orderBy,
                 ...(isDefined(orderBy.recordSorts)
                   ? {
-                      gqlOperationOrderBy: orderBy.recordSorts.flatMap(
-                        (reference) =>
-                          computeWorkflowManifestOrderBy({
-                            field: field(
-                              reference.fieldMetadataUniversalIdentifier,
-                              objectUniversalIdentifier,
-                            ),
-                            direction: reference.direction,
-                            subFieldName: reference.subFieldName,
-                            references,
-                          }),
-                      ),
                       recordSorts: orderBy.recordSorts.map((reference) =>
                         fieldReference(reference, objectUniversalIdentifier),
                       ),

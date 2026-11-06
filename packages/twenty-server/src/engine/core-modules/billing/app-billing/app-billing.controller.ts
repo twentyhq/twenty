@@ -32,8 +32,7 @@ import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 // On top of the executor's throttle: application-access tokens are JWTs usable outside the runtime
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
@@ -50,13 +49,15 @@ const CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON: Record<
 @Controller(`${ApiPath.App}/billing`)
 @UseGuards(
   JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: true,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: false,
+      apiKey: false,
+      oauthClient: false,
+      application: true,
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 export class AppBillingController {
   constructor(

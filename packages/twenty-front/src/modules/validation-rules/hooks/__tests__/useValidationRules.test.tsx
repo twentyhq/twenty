@@ -3,7 +3,6 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import {
   jotaiStore,
@@ -13,10 +12,8 @@ import { useValidationRules } from '@/validation-rules/hooks/useValidationRules'
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import {
   AllMetadataName,
-  FeatureFlagKey,
   FindManyValidationRulesDocument,
 } from '~/generated-metadata/graphql';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000001';
 const OTHER_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000002';
@@ -63,21 +60,12 @@ const buildValidationRulesMock = (validationRules: ValidationRule[]) => ({
 
 const renderUseValidationRules = ({
   mocks,
-  isRecordCreationFormEnabled = true,
+  objectMetadataId = OBJECT_METADATA_ID,
 }: {
   mocks: ReturnType<typeof buildValidationRulesMock>[];
-  isRecordCreationFormEnabled?: boolean;
+  objectMetadataId?: string;
 }) => {
   resetJotaiStore();
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-        value: isRecordCreationFormEnabled,
-      },
-    ],
-  });
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
@@ -85,10 +73,9 @@ const renderUseValidationRules = ({
     </JotaiProvider>
   );
 
-  return renderHook(
-    () => useValidationRules({ objectMetadataId: OBJECT_METADATA_ID }),
-    { wrapper },
-  );
+  return renderHook(() => useValidationRules({ objectMetadataId }), {
+    wrapper,
+  });
 };
 
 const dispatchValidationRuleUpdate = (updatedRecord: ValidationRule) =>
@@ -210,14 +197,14 @@ describe('useValidationRules', () => {
     expect(result.current.validationRules).toHaveLength(1);
   });
 
-  it('should neither load nor listen when the feature flag is disabled', async () => {
+  it('should neither load nor listen without an object metadata ID', async () => {
     const validationRulesMock = buildValidationRulesMock([
       ACTIVE_VALIDATION_RULE,
     ]);
 
     const { result } = renderUseValidationRules({
       mocks: [validationRulesMock],
-      isRecordCreationFormEnabled: false,
+      objectMetadataId: '',
     });
 
     act(() => {

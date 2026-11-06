@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Any } from 'typeorm';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
+import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
@@ -24,6 +26,11 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChannelChanges = {
@@ -46,23 +53,21 @@ export class AgentChatChannelService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
   ) {}
 
   async findChannels({
-    workspaceId,
-    workspaceMemberId,
+    authContext,
     canManageChannels,
   }: {
-    workspaceId: string;
-    workspaceMemberId: string;
+    authContext: AgentInboxCallerAuthContext;
     canManageChannels: boolean;
   }): Promise<(FlatAgentChatChannelWithRoleIds & { isAccessible: boolean })[]> {
     const [channels, role] = await Promise.all([
-      this.channelMetadataService.findChannels(workspaceId),
-      this.channelAccessService.findMemberRole({
-        workspaceId,
-        workspaceMemberId,
-      }),
+      this.channelMetadataService.findChannels(authContext.workspace.id),
+      this.channelAccessService.findCallerRole(authContext),
     ]);
 
     return channels
@@ -234,66 +239,87 @@ export class AgentChatChannelService {
       after: AgentChatThreadWorkspaceEntity;
     }[]
   > {
-    return this.threadRepository.query(
-      workspaceId,
-      async ({ manager, table }) => {
-        await assertAgentChatChannelExists({ manager, workspaceId, channelId });
+    const [doesSourceChannelExist, doesSourceChannelHaveThreads] =
+      await Promise.all([
+        this.channelRepository.existsBy(workspaceId, { id: channelId }),
+        this.threadRepository.existsBy(workspaceId, { channelId }),
+      ]);
 
-        const threadsBefore = await manager.query<
-          AgentChatThreadWorkspaceEntity[]
-        >(
-          `SELECT * FROM ${table('agentChatThread')}
-           WHERE "channelId" = $1 FOR NO KEY UPDATE`,
-          [channelId],
-        );
+    if (!doesSourceChannelExist) {
+      throw new AiException(
+        'Chat channel not found',
+        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+      );
+    }
 
-        if (threadsBefore.length === 0) {
-          return [];
-        }
+    if (!doesSourceChannelHaveThreads) {
+      return [];
+    }
 
-        if (!isDefined(destinationChannelId)) {
-          throw new AiException(
-            'The channel still has chats',
-            AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
-          );
-        }
+    if (!isDefined(destinationChannelId)) {
+      throw new AiException(
+        'The channel still has chats',
+        AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+      );
+    }
 
-        await lockAgentChatChannelForThreadWriteOrThrow({
-          manager,
-          workspaceId,
-          channelId: destinationChannelId,
-        });
+    const { threadsBefore, threadsAfter } =
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          await lockAgentChatChannelForThreadWriteOrThrow({
+            transactionScope,
+            channelRepository: this.channelRepository,
+            workspaceId,
+            channelId: destinationChannelId,
+          });
 
-        const threadsAfter = await manager.query<
-          AgentChatThreadWorkspaceEntity[]
-        >(
-          `WITH moved_thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "channelId" = $2, "updatedAt" = now()
-             WHERE id = ANY($1::uuid[])
-             RETURNING *
-           )
-           SELECT * FROM moved_thread`,
-          [threadsBefore.map(({ id }) => id), destinationChannelId],
-        );
+          const threadRepository =
+            transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+              'agentChatThread',
+              { shouldSkipEventEmission: true },
+            );
+          const threadsBefore = await threadRepository.find({
+            where: { channelId },
+            withDeleted: true,
+          });
+          const movedThreadIds = threadsBefore.map(({ id }) => id);
 
-        await this.channelGrantService.rewriteThreadGrantsInTransaction({
-          manager,
-          workspaceId,
-          threadIds: threadsAfter.map(({ id }) => id),
-          affectedChannelIds: [channelId, destinationChannelId],
-        });
+          await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+            threadRepository
+              .createQueryBuilder()
+              .where({ channelId })
+              .withDeleted(),
+            'update',
+          )
+            .set({ channelId: destinationChannelId })
+            .returning(['id'])
+            .execute();
 
-        const threadBeforeById = new Map(
-          threadsBefore.map((thread) => [thread.id, thread]),
-        );
+          const threadsAfter = await threadRepository.find({
+            where: { id: Any(movedThreadIds) },
+            withDeleted: true,
+          });
 
-        return threadsAfter.flatMap((after) => {
-          const before = threadBeforeById.get(after.id);
+          await this.channelGrantService.rewriteThreadGrantsInTransaction({
+            transactionScope,
+            workspaceId,
+            threadIds: movedThreadIds,
+            affectedChannelIds: [channelId, destinationChannelId],
+          });
 
-          return isDefined(before) ? [{ before, after }] : [];
-        });
-      },
+          return { threadsBefore, threadsAfter };
+        },
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+    const threadAfterById = new Map(
+      threadsAfter.map((threadAfter) => [threadAfter.id, threadAfter]),
     );
+
+    return threadsBefore.flatMap((before) => {
+      const after = threadAfterById.get(before.id);
+
+      return isDefined(after) ? [{ before, after }] : [];
+    });
   }
 }

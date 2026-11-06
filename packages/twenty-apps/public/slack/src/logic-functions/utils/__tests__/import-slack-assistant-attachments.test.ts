@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
@@ -24,7 +23,7 @@ const PNG_FILE = {
 
 const slackClient = {
   files: { info: vi.fn() },
-} as unknown as WebClient;
+};
 
 const importFiles = async (files: SlackMessageFile[]) =>
   await importSlackAssistantAttachments({
@@ -225,9 +224,7 @@ describe('importSlackAssistantAttachments', () => {
       }),
     );
 
-    await importFiles([
-      { id: 'F9', file_access: 'check_file_info' },
-    ]);
+    await importFiles([{ id: 'F9', file_access: 'check_file_info' }]);
 
     expect(reportSlackConnectionAuthFailure).not.toHaveBeenCalled();
   });
@@ -295,7 +292,7 @@ describe('importSlackAssistantAttachments', () => {
       {
         id: 'F1',
         file_access: 'check_file_info',
-      } as unknown as typeof PNG_FILE,
+      },
     ]);
 
     expect(slackClient.files.info).toHaveBeenCalledWith({ file: 'F1' });

@@ -37,6 +37,7 @@ const MERGE_COMMAND: FlatCommandMenuItem = {
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   conditionalAvailabilityExpression: PREVIOUS_EXPRESSION,
   conditionalPinnedExpression: null,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,

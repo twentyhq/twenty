@@ -2,13 +2,13 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useState } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -39,7 +39,7 @@ const meta: Meta<typeof RecordCalendarGrid> = {
     (Story) => {
       const companyObjectMetadataItem =
         getTestEnrichedObjectMetadataItemsMock().find(
-          (item) => item.nameSingular === CoreObjectNameSingular.Company,
+          (item) => item.nameSingular === StandardObjectNameSingular.Company,
         )!;
       const instanceId = companyObjectMetadataItem.id;
 
@@ -104,8 +104,8 @@ const meta: Meta<typeof RecordCalendarGrid> = {
             objectPermissionsByObjectMetadataId: {},
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
-            objectNamePlural: CoreObjectNamePlural.Company,
-            objectNameSingular: CoreObjectNameSingular.Company,
+            objectNamePlural: StandardObjectNamePlural.Company,
+            objectNameSingular: StandardObjectNameSingular.Company,
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
             viewBarInstanceId: instanceId,
@@ -130,18 +130,16 @@ const meta: Meta<typeof RecordCalendarGrid> = {
                   <RecordCalendarContextProvider
                     value={{
                       viewBarInstanceId: instanceId,
-                      objectNameSingular: CoreObjectNameSingular.Company,
+                      objectNameSingular: StandardObjectNameSingular.Company,
                       visibleRecordFields: [],
                       objectMetadataItem: companyObjectMetadataItem,
                       objectPermissions: {
-                        objectMetadataId: companyObjectMetadataItem.id,
-                        canReadObjectRecords: true,
-                        canUpdateObjectRecords: true,
-                        canSoftDeleteObjectRecords: true,
-                        canDestroyObjectRecords: true,
+                        canReadAllRecords: true,
+                        canUpdateAllRecords: true,
+                        canSoftDeleteAllRecords: true,
+                        canDestroyAllRecords: true,
                         restrictedFields: {},
-                        rowLevelPermissionPredicates: [],
-                        rowLevelPermissionPredicateGroups: [],
+                        rowLevelRecordsPermissions: null,
                       },
                     }}
                   >

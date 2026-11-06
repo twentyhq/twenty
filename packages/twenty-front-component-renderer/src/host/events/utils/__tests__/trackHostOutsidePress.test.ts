@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from '@/constants/FrontComponentHostUiClassName';
 import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
 import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
@@ -106,6 +107,27 @@ describe('trackHostOutsidePress', () => {
     try {
       child.dispatchEvent(createPress('click'));
       portalChild.dispatchEvent(createPress('click'));
+
+      expect(pushOutsidePressEvent).not.toHaveBeenCalled();
+    } finally {
+      dispose();
+    }
+  });
+
+  it('does not forward presses inside host UI outside owned geometry', () => {
+    const hostUi = document.createElement('div');
+    const hostUiButton = document.createElement('button');
+
+    hostUi.className = FRONT_COMPONENT_HOST_UI_CLASS_NAME;
+    hostUi.append(hostUiButton);
+    document.body.append(hostUi);
+
+    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker();
+
+    try {
+      for (const eventType of OUTSIDE_PRESS_EVENT_TYPES) {
+        hostUiButton.dispatchEvent(createPress(eventType));
+      }
 
       expect(pushOutsidePressEvent).not.toHaveBeenCalled();
     } finally {

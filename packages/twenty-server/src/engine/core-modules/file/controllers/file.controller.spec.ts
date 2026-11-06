@@ -30,6 +30,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 import { FileController } from './file.controller';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 const createMockStream = (): Readable => {
   const stream = new Readable();
@@ -90,6 +91,7 @@ describe('FileController', () => {
             readServerFile: jest.fn(),
           },
         },
+        { provide: AccessPolicyService, useValue: {} },
       ],
     })
       .overrideGuard(JwtAuthGuard)

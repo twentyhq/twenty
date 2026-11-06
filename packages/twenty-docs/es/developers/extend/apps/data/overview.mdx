@@ -46,6 +46,10 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
     <CardTitle>Tipos de actividad de línea de tiempo</CardTitle>
     Definir eventos de auditoría automática y eventos explícitos de la aplicación para grabar cronología.
   </Card>
+  <Card href="/es/developers/extend/apps/data/validation-rules" img="/images/user-guide/halftone/card-page-validation-rules.svg">
+    <CardTitle>Reglas de validación</CardTitle>
+    `defineValidationRule` — declara las condiciones que un registro debe cumplir antes de poder guardarse.
+  </Card>
 </CardGroup>
 
 ## Entidades de un vistazo
@@ -58,8 +62,9 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 | **Índice**                             | Un índice de base de datos para acelerar una consulta recurrente sobre uno de tus objetos                                                | `defineIndex()`                          |
 | **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros                     | `defineTimelineActivityType()`           |
 | **Ruta de registros relacionados**     | Una cadena de hasta tres relaciones a través de las cuales el acceso a un registro se extiende a sus registros relacionados              | `defineRelatedRecordPath()`              |
+| **Regla de validación**                | Una condición que un registro debe cumplir antes de poder guardarse                                                                      | `defineValidationRule()`                 |
 
-El CLI detecta estas mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` y `src/related-record-paths/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
+La CLI detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de los archivos depende de ti; la convención es `src/objects/`, `src/validation-rules/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` y `src/related-record-paths/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
 
 ## Índices (opcional)
 

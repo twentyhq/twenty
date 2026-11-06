@@ -6,10 +6,11 @@ import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filt
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { IconUserCircle } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterRelationTargetFieldSelectMenuProps = {
   recordFilterId: string;
@@ -20,6 +21,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   recordFilterId,
   sourceFieldMetadataItem,
 }: AdvancedFilterRelationTargetFieldSelectMenuProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { applyAdvancedFilterRelationTargetField } =
     useApplyAdvancedFilterRelationTargetField();
@@ -29,7 +31,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
     usePushFocusForLeafFieldValuePicker();
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     });
   const targetObjectMetadataId = isManyToOneRelationField(
     sourceFieldMetadataItem,
@@ -45,7 +47,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
 
   const isWorkspaceMemberTarget =
     sourceFieldMetadataItem.relation.targetObjectMetadata.nameSingular ===
-    CoreObjectNameSingular.WorkspaceMember;
+    StandardObjectNameSingular.WorkspaceMember;
 
   const handleSelectTargetField = (
     relationTargetFieldMetadataItem: FieldMetadataItem,

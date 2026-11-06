@@ -1,12 +1,19 @@
+import { ManagedIframe } from '@/media-access/components/ManagedIframe';
+import { useWorkspaceIframeMediaPermissions } from '@/media-access/hooks/useWorkspaceIframeMediaPermissions';
+import { limitToDocumentIframeMediaPermissions } from '@/media-access/utils/limitToDocumentIframeMediaPermissions';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
+import { MEDIA_CAPABILITIES } from 'twenty-shared/constants';
 import { getSafeUrl, isDefined, isHttpUrl } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { GetIframeWidgetMediaPermissionsDocument } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -21,7 +28,7 @@ const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   width: 100%;
 `;
 
-const StyledIframe = styled.iframe<{ $isEditMode: boolean }>`
+const StyledIframe = styled(ManagedIframe)<{ $isEditMode: boolean }>`
   border: none;
   flex: 1;
   height: 100%;
@@ -52,12 +59,38 @@ const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-export type IframeWidgetProps = {
+type IframeWidgetProps = {
   widget: PageLayoutWidget;
 };
 
 export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const workspaceIframeMediaPermissions = useWorkspaceIframeMediaPermissions();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isWorkspaceWidget = getIsMetadataItemCustom(widget);
+  const { data, error } = useQuery(GetIframeWidgetMediaPermissionsDocument, {
+    variables: { id: widget.id },
+    skip: isWorkspaceWidget,
+    fetchPolicy: 'cache-and-network',
+  });
+  const applicationWidget = data?.getPageLayoutWidget;
+  const hasMatchingApplication =
+    !isDefined(error) &&
+    applicationWidget?.id === widget.id &&
+    applicationWidget?.applicationId === widget.applicationId;
+  const applicationIframeMediaPermissions =
+    applicationWidget?.applicationGrantedIframeMediaPermissions ?? [];
+  const matchingApplicationIframeMediaPermissions = hasMatchingApplication
+    ? applicationIframeMediaPermissions
+    : [];
+  const iframeMediaPermissions = isWorkspaceWidget
+    ? workspaceIframeMediaPermissions
+    : limitToDocumentIframeMediaPermissions(
+        matchingApplicationIframeMediaPermissions,
+      );
+  const applicationName = hasMatchingApplication
+    ? (applicationWidget?.applicationName ?? widget.title)
+    : widget.title;
 
   const configuration = widget.configuration;
 
@@ -104,6 +137,17 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
       )}
       <StyledIframe
         $isEditMode={isPageLayoutInEditMode}
+        owner={
+          isWorkspaceWidget
+            ? { type: 'workspace-widget', id: widget.id, name: title }
+            : {
+                type: 'application',
+                id: widget.applicationId,
+                name: applicationName,
+              }
+        }
+        iframeMediaPermissions={iframeMediaPermissions}
+        requestedMediaCapabilities={MEDIA_CAPABILITIES}
         src={safeUrl}
         title={title}
         onLoad={handleIframeLoad}

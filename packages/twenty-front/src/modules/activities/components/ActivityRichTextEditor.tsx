@@ -17,14 +17,14 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type Editor } from '@tiptap/core';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
   activityObjectNameSingular:
-    | CoreObjectNameSingular.Task
-    | CoreObjectNameSingular.Note;
+    | StandardObjectNameSingular.Task
+    | StandardObjectNameSingular.Note;
 };
 
 export const ActivityRichTextEditor = ({

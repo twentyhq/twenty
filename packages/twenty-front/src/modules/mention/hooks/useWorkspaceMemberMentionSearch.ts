@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
@@ -32,7 +32,7 @@ export const useWorkspaceMemberMentionSearch = () => {
         .slice(0, WORKSPACE_MEMBER_MENTION_SEARCH_LIMIT)
         .map(({ workspaceMember, fullName }) => ({
           recordId: workspaceMember.id,
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
           objectLabelSingular: workspaceMember.userEmail,
           objectLabelPlural: t`Teammates`,
           label: fullName || workspaceMember.userEmail,
