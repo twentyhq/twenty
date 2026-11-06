@@ -10,7 +10,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -249,13 +249,17 @@ describe('Private text direct messages', () => {
       status: AgentTurnStatus.COMPLETED,
     });
     const recordsBefore = await readContentRecords(threadId);
-    const shareStorage = getAppProviderByClassName<RecordShareStorageService>(
-      'RecordShareStorageService',
-    );
+    const recordSharingWriteService =
+      getAppProviderByClassName<RecordSharingWriteService>(
+        'RecordSharingWriteService',
+      );
     const sharingFailure = new Error('Part sharing failed');
-    const insertRecordShares = shareStorage.insertMany.bind(shareStorage);
+    const insertRecordShares =
+      recordSharingWriteService.insertRecordShares.bind(
+        recordSharingWriteService,
+      );
     const insertShares = jest
-      .spyOn(shareStorage, 'insertMany')
+      .spyOn(recordSharingWriteService, 'insertRecordShares')
       .mockImplementationOnce(insertRecordShares)
       .mockRejectedValueOnce(sharingFailure);
     const messageId = randomUUID();

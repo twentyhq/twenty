@@ -8433,10 +8433,10 @@ export default {
                 }
             ],
             "openDirectMessage": [
-                543,
+                545,
                 {
                     "workspaceMemberId": [
-                        543,
+                        545,
                         "UUID!"
                     ]
                 }
