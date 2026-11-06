@@ -44,8 +44,6 @@ import {
   mapErrorToStreamError,
   type StreamErrorPayload,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { isBuiltInAssistantMessage } from 'src/engine/metadata-modules/ai/ai-history/utils/is-built-in-assistant-message.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -77,7 +75,6 @@ export type AgentTurnStreamSource = Pick<AgentTurn, 'modelConfig'> & {
 
 export type AgentTurnStreamResult = {
   assistantMessageId: string;
-  agentId: string | null;
   replyParts: ExtendedUIMessagePart[];
   isAborted: boolean;
   streamError: unknown;
@@ -103,6 +100,8 @@ export type AgentTurnStreamInput<
   // where a turn without a claim streams, when its caller follows it; a claimed turn streams to its thread
   streamChannelId?: string;
   turnId: string;
+  agentId: string | null;
+  isBuiltInAssistant?: boolean;
   abortSignal?: AbortSignal;
   startTurn: (
     writer: UIMessageStreamWriter<ExtendedUIMessage>,
@@ -288,6 +287,8 @@ export class AgentTurnStreamService {
     claim,
     streamChannelId,
     turnId,
+    agentId,
+    isBuiltInAssistant = false,
     abortSignal,
     startTurn,
     completeTurn,
@@ -302,6 +303,8 @@ export class AgentTurnStreamService {
       claim,
       channelId,
       turnId,
+      agentId,
+      isBuiltInAssistant,
       startTurn,
     });
     const completion = await completeTurn(streamed).catch(
@@ -321,6 +324,7 @@ export class AgentTurnStreamService {
       workspaceId,
       claim,
       turnId,
+      agentId,
       result: {
         ...streamed,
         isAborted: streamed.isAborted || completion.isAborted === true,
@@ -378,35 +382,21 @@ export class AgentTurnStreamService {
     claim,
     channelId,
     turnId,
+    agentId,
+    isBuiltInAssistant,
     startTurn,
   }: Pick<
     AgentTurnStreamInput<TStarted, AgentTurnCompletion>,
-    'workspaceId' | 'claim' | 'turnId' | 'startTurn'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId' | 'startTurn'
   > & {
     channelId: string | undefined;
+    isBuiltInAssistant: boolean;
   }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     // a turn without a claim keeps no reply, so its id only has to be its own
     const assistantMessageId = uuidv5(
       claim?.streamId ?? turnId,
       ASSISTANT_MESSAGE_ID_NAMESPACE,
     );
-    const turn = isDefined(claim)
-      ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
-      : null;
-    const agentId = turn?.agentId ?? null;
-    const isBuiltInAssistant =
-      isDefined(claim) &&
-      isBuiltInAssistantMessage({
-        message: {
-          role: AgentMessageRole.ASSISTANT,
-          threadId: claim.threadId,
-          turnId,
-          agentId,
-          senderWorkspaceMemberId: null,
-          senderApplicationId: null,
-        },
-        turn,
-      });
     const usage: AgentTurnStreamUsage = {
       inputTokens: 0,
       outputTokens: 0,
@@ -418,7 +408,6 @@ export class AgentTurnStreamService {
     };
     const result: AgentTurnStreamResult = {
       assistantMessageId,
-      agentId,
       replyParts: [],
       isAborted: false,
       streamError: undefined,
@@ -568,6 +557,7 @@ export class AgentTurnStreamService {
     workspaceId,
     claim,
     turnId,
+    agentId,
     result,
     modelId,
     stopReason,
@@ -578,7 +568,7 @@ export class AgentTurnStreamService {
       { source: AgentTurnStreamSource },
       AgentTurnCompletion
     >,
-    'workspaceId' | 'claim' | 'turnId'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId'
   > & {
     result: AgentTurnStreamResult;
     modelId: string;
@@ -665,7 +655,7 @@ export class AgentTurnStreamService {
       id: assistantMessageId,
       threadId: claim.threadId,
       turnId,
-      agentId: result.agentId,
+      agentId,
       parts: replyParts,
     });
 

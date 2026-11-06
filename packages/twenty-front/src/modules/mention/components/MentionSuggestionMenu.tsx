@@ -11,7 +11,6 @@ import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIco
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
@@ -28,13 +27,11 @@ const renderItem = ({
   isSelected,
   onSelect,
   id,
-  assistantDisplayName,
 }: {
   item: MentionSearchResult;
   isSelected: boolean;
   onSelect: (item: MentionSearchResult) => void;
   id: string;
-  assistantDisplayName: string;
 }) => {
   const isAssistantReference = isAgentChatAssistantReference({
     kind: 'record',
@@ -62,7 +59,7 @@ const renderItem = ({
         onSelect(item);
       }}
     >
-      {isAssistantReference ? assistantDisplayName : item.label}
+      {item.label}
     </SuggestionListItem>
   );
 };
@@ -72,7 +69,6 @@ export const MentionSuggestionMenu = forwardRef<
   MentionSuggestionMenuProps
 >((props, ref) => {
   const { items, onSelect, editor, range } = props;
-  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
 
   return (
     <SuggestionMenu
@@ -84,7 +80,7 @@ export const MentionSuggestionMenu = forwardRef<
       getItemKey={getItemKey}
       getItemSection={getItemSection}
       renderItem={({ item, isSelected, id }) =>
-        renderItem({ item, isSelected, onSelect, id, assistantDisplayName })
+        renderItem({ item, isSelected, onSelect, id })
       }
     />
   );

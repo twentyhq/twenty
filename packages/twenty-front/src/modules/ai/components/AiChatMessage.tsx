@@ -270,12 +270,6 @@ export const AiChatMessage = ({
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
-  const senderLabel = isDefined(senderId)
-    ? getAgentChatSenderLabel({
-        sender,
-        isCurrentWorkspaceMember: isOwnMessage,
-      })
-    : t`Unknown sender`;
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
@@ -314,12 +308,18 @@ export const AiChatMessage = ({
         {hasHeader && (
           <AiChatMessageAuthorHeader
             metadata={agentChatMessage.metadata}
+            sender={sender}
             messageId={messageId}
             createdAt={createdAt}
           />
         )}
         {!isAiChatInboxEnabled && isUser && isDefined(senderId) && (
-          <StyledSender>{senderLabel}</StyledSender>
+          <StyledSender>
+            {getAgentChatSenderLabel({
+              sender,
+              isCurrentWorkspaceMember: isOwnMessage,
+            })}
+          </StyledSender>
         )}
         <StyledMessageContainer isUser={isUser}>
           {isUser ? (

@@ -288,22 +288,10 @@ export class AgentTurnRecorderService {
   }: {
     workspaceId: string;
     turnId: string;
-  }): Promise<Pick<
-    AgentTurnWorkspaceEntity,
-    'id' | 'status' | 'threadId' | 'agentId' | 'createdBy'
-  > | null> {
+  }): Promise<Pick<AgentTurnWorkspaceEntity, 'id' | 'status'> | null> {
     return this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
-      select: [
-        'id',
-        'status',
-        'threadId',
-        'agentId',
-        'createdBySource',
-        'createdByWorkspaceMemberId',
-        'createdByName',
-        'createdByContext',
-      ],
+      select: ['id', 'status'],
     });
   }
 

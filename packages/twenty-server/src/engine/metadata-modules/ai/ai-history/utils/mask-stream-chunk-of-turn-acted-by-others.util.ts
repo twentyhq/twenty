@@ -27,20 +27,17 @@ export const maskStreamChunkOfTurnActedByOthers = (
   }
 
   // the turn's usage and credits ride on its metadata, which history keeps from other members too
-  const visibleChunk = Object.fromEntries(
-    Object.entries(chunk).filter(([key]) => key !== 'messageMetadata'),
-  );
-  const publicMetadataEntries =
-    chunk.type === 'start' && isPlainObject(chunk.messageMetadata)
-      ? Object.entries(chunk.messageMetadata).filter(([key]) =>
-          PUBLIC_MESSAGE_METADATA_FIELDS.has(key),
-        )
-      : [];
+  const { messageMetadata, ...visibleChunk } = chunk;
+  const publicMetadataEntries = isPlainObject(messageMetadata)
+    ? Object.entries(messageMetadata).filter(([key]) =>
+        PUBLIC_MESSAGE_METADATA_FIELDS.has(key),
+      )
+    : [];
 
-  return {
-    ...visibleChunk,
-    ...(isNonEmptyArray(publicMetadataEntries)
-      ? { messageMetadata: Object.fromEntries(publicMetadataEntries) }
-      : {}),
-  };
+  return isNonEmptyArray(publicMetadataEntries)
+    ? {
+        ...visibleChunk,
+        messageMetadata: Object.fromEntries(publicMetadataEntries),
+      }
+    : visibleChunk;
 };

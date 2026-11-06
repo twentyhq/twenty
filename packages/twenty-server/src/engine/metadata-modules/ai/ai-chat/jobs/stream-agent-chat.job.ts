@@ -222,6 +222,8 @@ export class StreamAgentChatJob {
       workspaceId: data.workspaceId,
       claim,
       turnId,
+      agentId: null,
+      isBuiltInAssistant: true,
       abortSignal,
       startTurn: async (writer) => {
         const turn = await this.chatExecutionService.streamChat({
