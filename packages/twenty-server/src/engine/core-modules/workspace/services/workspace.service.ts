@@ -11,7 +11,6 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import {
-  AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   getAiChatAssistantProfileSchema,
   isAiModelCompliantWithDataPolicy,
@@ -70,7 +69,6 @@ import {
 } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { isIframeMediaPermissionsPolicyWithinSizeLimit } from 'src/engine/core-modules/frontend/utils/is-iframe-media-permissions-policy-within-size-limit.util';
 import {
@@ -531,9 +529,10 @@ export class WorkspaceService {
       );
 
     if (!profileValidation.success) {
-      throw new UserInputError(doNotTranslate('Invalid assistant profile'), {
-        userFriendlyMessage: msg`Enter a name between 1 and ${AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options.`,
-      });
+      throw new WorkspaceException(
+        doNotTranslate('Invalid assistant profile'),
+        WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID,
+      );
     }
 
     const assistantProfilePatch =
