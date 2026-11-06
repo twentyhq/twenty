@@ -41,6 +41,9 @@ export class MessagingProviderEntity
   sendMessageLogicFunctionUniversalIdentifier: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
+  startConversationLogicFunctionUniversalIdentifier: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
   markThreadAsReadLogicFunctionUniversalIdentifier: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })

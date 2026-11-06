@@ -291,6 +291,7 @@ import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/com
 import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793898855453-make-field-metadata-option-value-unique-deferred';
 import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
 import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793981587618-add-mark-thread-as-read-to-messaging-provider';
+import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793981729458-add-start-conversation-logic-function-to-messaging-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -584,4 +585,5 @@ export const INSTANCE_COMMANDS = [
   MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand,
   AddAiDataPolicyToWorkspaceSlowInstanceCommand,
   AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
+  AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
 ];
