@@ -23,7 +23,6 @@ const canReachRowLevelRecords = ({
       return rowLevelRecordsPermissions.canUpdateRecords;
     case 'destroy':
       return rowLevelRecordsPermissions.canDestroyRecords;
-    case 'restore':
     case 'softDelete':
       return rowLevelRecordsPermissions.canSoftDeleteRecords;
     default:

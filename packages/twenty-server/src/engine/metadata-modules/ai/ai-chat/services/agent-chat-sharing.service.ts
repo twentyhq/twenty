@@ -746,7 +746,7 @@ export class AgentChatSharingService {
             if (!isDefined(thread)) {
               return throwAgentChatThreadNotFound();
             }
-            await this.assertOperationAllowed(args.threadId, 'restore');
+            await this.assertOperationAllowed(args.threadId, 'softDelete');
             if (!isDefined(thread.deletedAt)) {
               return thread;
             }

@@ -106,7 +106,7 @@ const OPERATION_TYPE_BY_MUTATION_KIND: Record<
   Exclude<ObjectRecordsOperationType, 'read'>
 > = {
   delete: 'destroy',
-  restore: 'restore',
+  restore: 'softDelete',
   'soft-delete': 'softDelete',
   update: 'update',
 };

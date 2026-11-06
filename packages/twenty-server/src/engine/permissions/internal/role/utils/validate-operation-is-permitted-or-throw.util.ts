@@ -74,7 +74,6 @@ export const validateOperationIsPermittedOrThrow = ({
   switch (operationType) {
     case 'read':
     case 'destroy':
-    case 'restore':
     case 'softDelete':
       validateReadFieldPermissionOrThrow({
         restrictedFields,

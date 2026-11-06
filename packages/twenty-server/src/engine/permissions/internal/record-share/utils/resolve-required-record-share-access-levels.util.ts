@@ -19,7 +19,6 @@ const REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE: Record<
   create: [],
   update: [RecordShareAccessLevel.READ_WRITE, RecordShareAccessLevel.FULL],
   softDelete: [RecordShareAccessLevel.FULL],
-  restore: [RecordShareAccessLevel.FULL],
   destroy: [RecordShareAccessLevel.FULL],
 };
 

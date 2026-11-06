@@ -30,7 +30,6 @@ export const canReachAllRecords = ({
       return objectRecordsPermissions.canUpdateAllRecords;
     case 'destroy':
       return objectRecordsPermissions.canDestroyAllRecords;
-    case 'restore':
     case 'softDelete':
       return objectRecordsPermissions.canSoftDeleteAllRecords;
     default:

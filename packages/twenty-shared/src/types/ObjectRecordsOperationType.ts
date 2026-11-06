@@ -3,5 +3,4 @@ export type ObjectRecordsOperationType =
   | 'read'
   | 'update'
   | 'softDelete'
-  | 'restore'
   | 'destroy';

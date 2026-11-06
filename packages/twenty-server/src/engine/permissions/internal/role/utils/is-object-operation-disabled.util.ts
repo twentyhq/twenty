@@ -15,7 +15,6 @@ const getObjectPermissionAction = (
       return 'canUpdateObjectRecords';
     case 'destroy':
       return 'canDestroyObjectRecords';
-    case 'restore':
     case 'softDelete':
       return 'canSoftDeleteObjectRecords';
     default:
