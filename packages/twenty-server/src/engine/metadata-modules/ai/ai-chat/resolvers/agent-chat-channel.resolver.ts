@@ -8,14 +8,13 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -152,16 +151,11 @@ export class AgentChatChannelResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
   ): Promise<AgentChatChannelDTO[]> {
     const canManageChannels =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId,
-        setting: PermissionFlagType.AI_SETTINGS,
-        applicationId: callingApplication?.id,
-        agentId: undefined,
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: workspaceAuthContextStorage.getStore(),
+        permissionFlag: PermissionFlagType.AI_SETTINGS,
       });
 
     return this.channelService.findChannels({

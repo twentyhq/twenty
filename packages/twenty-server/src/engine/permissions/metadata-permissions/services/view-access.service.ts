@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
@@ -162,34 +163,11 @@ export class ViewAccessService {
   }
 
   private async hasViewsPermission({
-    workspaceId,
-    userWorkspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
     authContext,
   }: ViewAccessContext): Promise<boolean> {
-    // A tool call's auth context also carries the AI run scope, which can narrow VIEWS
-    if (isDefined(authContext)) {
-      return this.settingPermissionsService.hasPermissionFlag({
-        authContext,
-        permissionFlag: PermissionFlagType.VIEWS,
-      });
-    }
-
-    // An unauthenticated request must surface the view-specific denial below
-    // rather than the generic one userHasWorkspaceSettingPermission throws
-    if (![userWorkspaceId, apiKeyId, applicationId].some(isDefined)) {
-      return false;
-    }
-
-    return this.settingPermissionsService.userHasWorkspaceSettingPermission({
-      workspaceId,
-      userWorkspaceId,
-      apiKeyId,
-      applicationId,
-      agentId,
-      setting: PermissionFlagType.VIEWS,
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: authContext ?? workspaceAuthContextStorage.getStore(),
+      permissionFlag: PermissionFlagType.VIEWS,
     });
   }
 

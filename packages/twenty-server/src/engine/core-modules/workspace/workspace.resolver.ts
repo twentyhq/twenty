@@ -15,7 +15,6 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -62,7 +61,6 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -186,7 +184,6 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ) {
@@ -197,9 +194,7 @@ export class WorkspaceResolver {
           id: workspace.id,
         },
         userWorkspaceId,
-        apiKey,
         application,
-        agentId: undefined,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
