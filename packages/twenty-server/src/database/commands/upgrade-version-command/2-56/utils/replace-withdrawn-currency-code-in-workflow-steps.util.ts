@@ -66,17 +66,19 @@ const replaceWithdrawnCurrencyCodeInStepInput = ({
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
     case WorkflowActionType.UPSERT_RECORD:
-      return isString(input.objectName) && isPlainObject(input.objectRecord)
-        ? {
-            ...input,
-            objectRecord: replaceWithdrawnCurrencyCodeInObjectRecord({
-              objectRecord: input.objectRecord,
-              currencyFieldNames: currencyFieldNamesByObjectNameSingular.get(
-                input.objectName,
-              ),
-            }),
-          }
-        : input;
+      if (!isString(input.objectName) || !isPlainObject(input.objectRecord)) {
+        return input;
+      }
+
+      return {
+        ...input,
+        objectRecord: replaceWithdrawnCurrencyCodeInObjectRecord({
+          objectRecord: input.objectRecord,
+          currencyFieldNames: currencyFieldNamesByObjectNameSingular.get(
+            input.objectName,
+          ),
+        }),
+      };
     default:
       return input;
   }

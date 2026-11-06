@@ -1,3 +1,6 @@
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { type RecordFilter } from 'twenty-shared/utils';
+
 import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-56/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
 
 const CURRENCY_FIELD_ID = '11111111-1111-4111-8111-111111111111';
@@ -6,15 +9,17 @@ const RELATION_FIELD_ID = '33333333-3333-4333-8333-333333333333';
 
 const currencyFieldMetadataIds = new Set([CURRENCY_FIELD_ID]);
 
-const buildFilter = (recordFilters: Record<string, unknown>[]) => ({
+type StoredRecordFilter = Omit<RecordFilter, 'id'>;
+
+const buildFilter = (recordFilters: StoredRecordFilter[]) => ({
   recordFilters,
   recordFilterGroups: [],
 });
 
-const currencyCodeRecordFilter = {
+const currencyCodeRecordFilter: StoredRecordFilter = {
   fieldMetadataId: CURRENCY_FIELD_ID,
   subFieldName: 'currencyCode',
-  operand: 'IS',
+  operand: ViewFilterOperand.IS,
   value: '["ANG","USD"]',
 };
 
@@ -63,16 +68,14 @@ describe('replaceWithdrawnCurrencyCodeInChartConfiguration', () => {
     });
   });
 
-  it.each([
-    [{ ...currencyCodeRecordFilter, fieldMetadataId: OTHER_FIELD_ID }],
-    [{ ...currencyCodeRecordFilter, subFieldName: 'amountMicros' }],
-    [
-      {
-        ...currencyCodeRecordFilter,
-        fieldMetadataId: RELATION_FIELD_ID,
-        relationTargetFieldMetadataId: OTHER_FIELD_ID,
-      },
-    ],
+  it.each<StoredRecordFilter>([
+    { ...currencyCodeRecordFilter, fieldMetadataId: OTHER_FIELD_ID },
+    { ...currencyCodeRecordFilter, subFieldName: 'amountMicros' },
+    {
+      ...currencyCodeRecordFilter,
+      fieldMetadataId: RELATION_FIELD_ID,
+      relationTargetFieldMetadataId: OTHER_FIELD_ID,
+    },
   ])('leaves other record filters unchanged', (recordFilter) => {
     const configuration = { filter: buildFilter([recordFilter]) };
 
