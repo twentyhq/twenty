@@ -140,7 +140,10 @@ describe('Chat participation through the authenticated API', () => {
         .addSelect(`part."${IS_PRIVATE_COLUMN_NAME}"`, 'partIsPrivate')
         .from(`${context.schema}.agentMessage`, 'message')
         .leftJoin(
-          `${context.schema}.agentMessagePart`,
+          (queryBuilder) =>
+            queryBuilder
+              .select('*')
+              .from(`${context.schema}.agentMessagePart`, 'messagePart'),
           'part',
           'part."messageId" = message.id',
         )
