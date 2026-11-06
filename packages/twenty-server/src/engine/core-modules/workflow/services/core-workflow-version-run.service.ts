@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CoreWorkflowVersionRunService {
@@ -13,28 +12,23 @@ export class CoreWorkflowVersionRunService {
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
-  async runAsWorkspaceMember({
-    workspaceId,
-    workspaceCustomApplicationId,
-    userWorkspaceId,
-    callerApplication,
-    workspaceMember,
+  async run({
+    authContext,
     coreWorkflowVersionId,
     workflowRunId,
     payload,
   }: {
-    workspaceId: string;
-    workspaceCustomApplicationId: string;
-    userWorkspaceId: string | undefined;
-    callerApplication: FlatApplication | undefined;
-    workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name'>;
+    authContext: UserWorkspaceAuthContext;
     coreWorkflowVersionId: string;
     workflowRunId?: string;
     payload?: object | null;
   }): Promise<{ workflowRunId: string }> {
+    const { workspace, userWorkspaceId, application, workspaceMember } =
+      authContext;
+
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
       {
-        workspaceId,
+        workspaceId: workspace.id,
         userWorkspaceId,
         coreWorkflowVersionIds: [coreWorkflowVersionId],
       },
@@ -42,9 +36,9 @@ export class CoreWorkflowVersionRunService {
 
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow(
       {
-        workspaceId,
-        workspaceCustomApplicationId,
-        callerApplication,
+        workspaceId: workspace.id,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+        callerApplication: application,
         coreWorkflowVersionIds: [coreWorkflowVersionId],
       },
     );
@@ -56,7 +50,7 @@ export class CoreWorkflowVersionRunService {
       });
 
     return this.coreWorkflowRunnerService.run({
-      workspaceId,
+      workspaceId: workspace.id,
       coreWorkflowVersionId,
       workflowRunId,
       payload: triggerPayload,

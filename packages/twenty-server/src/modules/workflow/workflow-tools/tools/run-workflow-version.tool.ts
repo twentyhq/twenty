@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -33,7 +34,7 @@ export const createRunWorkflowVersionTool = (
   execute: async (parameters: RunWorkflowVersionInput) => {
     const { authContext } = context;
 
-    if (authContext.type !== 'user') {
+    if (!isUserAuthContext(authContext)) {
       return {
         success: false,
         error: 'Only a signed-in workspace member can run a workflow',
@@ -43,17 +44,11 @@ export const createRunWorkflowVersionTool = (
     }
 
     try {
-      const { workflowRunId } =
-        await deps.coreWorkflowVersionRunService.runAsWorkspaceMember({
-          workspaceId: context.workspaceId,
-          workspaceCustomApplicationId:
-            authContext.workspace.workspaceCustomApplicationId,
-          userWorkspaceId: context.userWorkspaceId,
-          callerApplication: authContext.application ?? undefined,
-          workspaceMember: authContext.workspaceMember,
-          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-          payload: parameters.payload,
-        });
+      const { workflowRunId } = await deps.coreWorkflowVersionRunService.run({
+        authContext,
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+        payload: parameters.payload,
+      });
 
       return {
         success: true,
