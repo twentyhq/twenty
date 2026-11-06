@@ -14828,7 +14828,7 @@ msgstr "Bu örnek bir sunucu tanımlayıcısı bildirmedi. SERVER_ID değerini b
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Bu iş kuyruğa alınamayacak kadar büyük."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "Այս instance-ը չի հաղորդել սերվերի նույնացո
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Այս առաջադրանքը չափազանց մեծ է հերթագրման համար։"
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "این نمونه شناسه سرور را گزارش نکرد. SERVER_I
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "این کار برای قرار گرفتن در صف بسیار بزرگ است."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

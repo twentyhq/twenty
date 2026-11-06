@@ -14828,7 +14828,7 @@ msgstr "이 인스턴스는 서버 식별자를 보고하지 않았습니다. �
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "이 작업은 큐에 넣기에는 너무 큽니다."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "Questa istanza non ha riportato un identificatore del server. Imposta SE
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Questo processo è troppo grande per essere accodato."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

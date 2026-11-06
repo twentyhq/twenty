@@ -14828,7 +14828,7 @@ msgstr "Esta instancia no informó un identificador de servidor. Establece SERVE
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Este trabajo es demasiado grande para ponerse en cola."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

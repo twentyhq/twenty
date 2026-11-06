@@ -14828,7 +14828,7 @@ msgstr "Dit exemplaar heeft geen serveridentifier gerapporteerd. Stel SERVER_ID 
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Deze taak is te groot om in de wachtrij te worden geplaatst."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

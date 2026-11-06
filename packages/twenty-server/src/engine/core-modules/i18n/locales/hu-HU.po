@@ -14828,7 +14828,7 @@ msgstr "Ez a példány nem jelentett kiszolgálóazonosítót. Állítsa be a SE
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Ez a feladat túl nagy ahhoz, hogy sorba legyen állítva."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

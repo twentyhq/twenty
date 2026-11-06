@@ -14828,7 +14828,7 @@ msgstr "Această instanță nu a raportat un identificator de server. Setați SE
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Această sarcină este prea mare pentru a fi pusă în coadă."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "Αυτό το στιγμιότυπο δεν ανέφερε αναγνω�
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Αυτή η εργασία είναι πολύ μεγάλη για να προστεθεί στην ουρά."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

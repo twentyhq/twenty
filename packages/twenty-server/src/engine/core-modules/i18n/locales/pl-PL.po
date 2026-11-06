@@ -14828,7 +14828,7 @@ msgstr "Ta instancja nie zgłosiła identyfikatora serwera. Ustaw SERVER_ID na t
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "To zadanie jest zbyt duże, aby można było je umieścić w kolejce."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "Tämä instanssi ei raportoinut palvelintunnistetta. Aseta SERVER_ID tä
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Tämä työ on liian suuri asetettavaksi jonoon."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

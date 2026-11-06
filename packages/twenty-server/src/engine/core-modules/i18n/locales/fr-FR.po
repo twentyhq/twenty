@@ -14828,7 +14828,7 @@ msgstr "Cette instance n'a pas signalé d'identifiant de serveur. Définissez SE
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Cette tâche est trop volumineuse pour être mise en file d'attente."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

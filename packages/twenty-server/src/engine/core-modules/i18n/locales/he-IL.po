@@ -14828,7 +14828,7 @@ msgstr "מופע זה לא דיווח על מזהה שרת. הגדר SERVER_ID �
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "משימה זו גדולה מדי מכדי להיכנס לתור."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "此實例未回報伺服器識別碼。請在此實例上設定 SERVER_I
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "此工作過大，無法加入佇列。"
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

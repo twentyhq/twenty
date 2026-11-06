@@ -14828,7 +14828,7 @@ msgstr "Tato instance nehlásí identifikátor serveru. Nastavte na této instan
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Tato úloha je příliš velká na zařazení do fronty."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

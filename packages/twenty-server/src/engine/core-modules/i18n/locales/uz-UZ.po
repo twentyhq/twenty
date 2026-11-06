@@ -14828,7 +14828,7 @@ msgstr "Ushbu instansiya server identifikatorini bildirmadi. SERVER_ID ni ushbu 
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Bu vazifa navbatga qo‘shish uchun juda katta."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

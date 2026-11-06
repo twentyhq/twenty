@@ -14828,7 +14828,7 @@ msgstr "Hierdie instansie het nie ’n bedieneridentifiseerder gerapporteer nie.
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Hierdie taak is te groot om in die tou geplaas te word."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

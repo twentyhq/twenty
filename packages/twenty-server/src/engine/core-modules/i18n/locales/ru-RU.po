@@ -14828,7 +14828,7 @@ msgstr "Этот экземпляр не сообщил идентификато
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Эта задача слишком велика для постановки в очередь."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

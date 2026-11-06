@@ -14828,7 +14828,7 @@ msgstr "Denne instans rapporterede ikke et server-id. Angiv SERVER_ID på denne 
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Dette job er for stort til at blive sat i kø."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

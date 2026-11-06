@@ -14828,7 +14828,7 @@ msgstr "Phiên bản này không báo cáo mã định danh máy chủ. Hãy đ�
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "Tác vụ này quá lớn để được đưa vào hàng đợi."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts

@@ -14828,7 +14828,7 @@ msgstr "このインスタンスはサーバー識別子を報告しませんで
 #. js-lingui-id: pYq4bp
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
-msgstr ""
+msgstr "このジョブは大きすぎるため、キューに登録できません。"
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
