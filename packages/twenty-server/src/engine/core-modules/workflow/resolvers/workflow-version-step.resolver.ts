@@ -267,12 +267,14 @@ export class WorkflowVersionStepResolver {
     workflowVersionId: string;
   }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
     const coreWorkflowVersion =
-      await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
-        workspaceId,
-        userWorkspaceId,
-        callerApplication: undefined,
-        coreWorkflowVersionId: workflowVersionId,
-      });
+      await this.coreWorkflowVersionListService.findOneStoredByCoreWorkflowVersionId(
+        {
+          workspaceId,
+          userWorkspaceId,
+          callerApplication: undefined,
+          coreWorkflowVersionId: workflowVersionId,
+        },
+      );
 
     if (!isDefined(coreWorkflowVersion?.coreWorkflowId)) {
       throw new WorkflowVersionStepException(

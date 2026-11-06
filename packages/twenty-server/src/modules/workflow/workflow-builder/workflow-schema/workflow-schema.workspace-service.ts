@@ -205,10 +205,12 @@ export class WorkflowSchemaWorkspaceService {
     trigger,
     steps,
     workspaceId,
+    shouldKeepStoredSchemaOnError = false,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
     workspaceId: string;
+    shouldKeepStoredSchemaOnError?: boolean;
   }): Promise<WorkflowVersionContent> {
     const workflowVersionContent = { trigger, steps };
 
@@ -221,6 +223,7 @@ export class WorkflowSchemaWorkspaceService {
           step: enrichedTrigger,
           workspaceId,
           workflowVersionContent,
+          shouldKeepStoredSchemaOnError,
         }),
       };
     }
@@ -236,6 +239,7 @@ export class WorkflowSchemaWorkspaceService {
                 step,
                 workspaceId,
                 workflowVersionContent,
+                shouldKeepStoredSchemaOnError,
               }),
             };
 
@@ -251,10 +255,12 @@ export class WorkflowSchemaWorkspaceService {
     step,
     workspaceId,
     workflowVersionContent,
+    shouldKeepStoredSchemaOnError,
   }: {
     step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
     workflowVersionContent: WorkflowVersionContent;
+    shouldKeepStoredSchemaOnError: boolean;
   }): Promise<OutputSchema> {
     try {
       return await this.computeStepOutputSchema({
@@ -267,7 +273,16 @@ export class WorkflowSchemaWorkspaceService {
         !(error instanceof WorkflowCommonException) ||
         error.code !== WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND
       ) {
-        throw error;
+        // a read shows the stored schema rather than failing the whole version over one step
+        if (!shouldKeepStoredSchemaOnError) {
+          throw error;
+        }
+
+        this.logger.error(
+          `Workspace ${workspaceId}: could not compute the output schema of ${step.type} step ${'id' in step ? step.id : 'trigger'}, the stored one is shown: ${error}`,
+        );
+
+        return step.settings.outputSchema;
       }
 
       // a step on a deleted object must still save; validation reports the object

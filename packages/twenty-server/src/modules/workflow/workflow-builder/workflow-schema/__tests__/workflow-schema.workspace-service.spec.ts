@@ -187,5 +187,33 @@ describe('WorkflowSchemaWorkspaceService', () => {
         }),
       ).rejects.toThrow('Connection lost');
     });
+
+    it('keeps the stored schema of a step that fails to compute on a read', async () => {
+      const storedOutputSchema = {
+        id: { isLeaf: true, type: 'string', label: 'Id', value: '' },
+      } as const;
+      const service = await buildService(
+        jest.fn().mockRejectedValue(new Error('Connection lost')),
+      );
+
+      const { steps } = await service.enrichWorkflowVersionContentOutputSchemas(
+        {
+          workspaceId: WORKSPACE_ID,
+          trigger: null,
+          steps: [
+            {
+              ...createRecordStep,
+              settings: {
+                ...createRecordStep.settings,
+                outputSchema: storedOutputSchema,
+              },
+            },
+          ],
+          shouldKeepStoredSchemaOnError: true,
+        },
+      );
+
+      expect(steps?.[0].settings.outputSchema).toEqual(storedOutputSchema);
+    });
   });
 });

@@ -39,6 +39,7 @@ export class WorkflowRunFindOnePostQueryHook implements WorkspacePostQueryHookIn
             trigger: state.flow.trigger,
             steps: state.flow.steps,
             workspaceId: authContext.workspace.id,
+            shouldKeepStoredSchemaOnError: true,
           },
         );
 

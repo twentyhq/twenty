@@ -250,6 +250,7 @@ export class CoreWorkflowListService {
                 trigger: version.triggers?.[0] ?? null,
                 steps: version.steps ?? null,
                 workspaceId,
+                shouldKeepStoredSchemaOnError: true,
               },
             ),
           ],
