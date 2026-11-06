@@ -307,7 +307,7 @@ export class MetadataApiClient {
 
     const response = await fetchImplementation.call(
       globalThis,
-      this.toInternalApiUrl(uploadTarget.uploadUrl),
+      uploadTarget.uploadUrl,
       {
         method: 'PUT',
         headers: { 'Content-Type': uploadTarget.contentType },
@@ -321,18 +321,6 @@ export class MetadataApiClient {
         `File upload failed (${response.status} ${response.statusText}): ${await response.text()}`,
       );
     }
-  }
-
-  // Without presigned URLs, upload URLs point at the public server URL, which an authenticating proxy rejects.
-  private toInternalApiUrl(url: string): string {
-    const { TWENTY_API_URL: apiUrl, TWENTY_INTERNAL_API_URL: internalApiUrl } =
-      getProcessEnvironment();
-
-    if (!apiUrl || !internalApiUrl || !url.startsWith(`${apiUrl}/`)) {
-      return url;
-    }
-
-    return `${internalApiUrl}${url.slice(apiUrl.length)}`;
   }
 
   private async executeMutationOrThrow<TData>({
