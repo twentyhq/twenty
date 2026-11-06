@@ -13,8 +13,8 @@ export const JOB_MEMORY_ADMIT_SCRIPT = `
 --   4 .. 3 + K: share of the free memory each key may use (0.1 = 10%)
 --   4 + K: job count, then for each job: member, size, number of keys, key indexes
 --
--- Charges never expire: they last until the job is released or the reconcile cron
--- finds its BullMQ job gone.
+-- Charges never expire: they last until the job is released or job-memory:reconcile
+-- finds its BullMQ job gone or finished.
 
 local capacity = tonumber(ARGV[1])
 local usedMemory = tonumber(ARGV[2])

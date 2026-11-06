@@ -2,6 +2,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as generateUuid } from 'uuid';
 
 import { JobMemoryReconcileCommand } from 'src/engine/core-modules/message-queue/commands/job-memory-reconcile.command';
@@ -10,26 +11,11 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
-jest.mock(
-  'src/engine/core-modules/message-queue/constants/queue-retention.constants',
-  () => ({
-    QUEUE_RETENTION: {
-      completedMaxAge: 1,
-      completedMaxCount: 1000,
-      failedMaxAge: 1,
-      failedMaxCount: 1000,
-    },
-  }),
-);
-
 const QUEUE = MessageQueue.logicFunctionQueue;
 const WORKSPACE_ID = 'job-memory-reconcile-workspace';
 const PAYLOAD = 'x'.repeat(64 * 1024);
 const SHARE_HEADROOM_BYTES = 100_000;
 const TEST_MAX_MEMORY_BYTES = 512 * 1024 * 1024;
-
-const sleep = (milliseconds: number) =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 describe('Job memory reconcile command (integration)', () => {
   let connection: IORedis;
@@ -55,14 +41,14 @@ describe('Job memory reconcile command (integration)', () => {
   });
 
   afterAll(async () => {
-    if (previousMaxMemory !== undefined) {
+    if (isDefined(previousMaxMemory)) {
       await connection.config('SET', 'maxmemory', previousMaxMemory);
     }
 
     await connection.quit();
   });
 
-  it('deletes expired finished jobs and gives back the budget of a waiting job deleted outside the worker', async () => {
+  it('gives back the budget of a waiting job deleted outside the worker', async () => {
     const prefix = `job-memory-reconcile-${generateUuid()}`;
     const memoryInfo = String(await connection.info('memory'));
     const readMemoryValue = (name: string) =>
@@ -109,34 +95,17 @@ describe('Job memory reconcile command (integration)', () => {
 
     try {
       const {
-        jobs: [finishedJob],
-      } = await enqueue();
-
-      for (let attempt = 0; attempt < 100; attempt++) {
-        if (
-          (await inspectionQueue.getJobState(finishedJob.jobId)) === 'completed'
-        ) {
-          break;
-        }
-
-        await sleep(100);
-      }
-
-      const {
         jobs: [waitingJob],
       } = await enqueue(60 * 60 * 1000);
 
       await expect(enqueue()).rejects.toThrow(MessageQueueException);
 
       await (await inspectionQueue.getJob(waitingJob.jobId))?.remove();
-      await sleep(1_500);
 
-      expect(await inspectionQueue.getJob(finishedJob.jobId)).toBeDefined();
       await expect(enqueue()).rejects.toThrow(MessageQueueException);
 
       await command.run([], { graceSeconds: 0 });
 
-      expect(await inspectionQueue.getJob(finishedJob.jobId)).toBeUndefined();
       await expect(enqueue()).resolves.toMatchObject({
         jobs: [expect.anything()],
       });

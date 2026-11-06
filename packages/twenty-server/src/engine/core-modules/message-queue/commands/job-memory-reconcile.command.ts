@@ -15,7 +15,7 @@ type JobMemoryReconcileCommandOptions = {
 @Command({
   name: 'job-memory:reconcile',
   description:
-    'Deletes finished jobs past their retention age, then releases job memory charges whose job is gone or finished',
+    'Releases job memory charges whose BullMQ job is gone or finished',
 })
 export class JobMemoryReconcileCommand extends CommandRunner {
   private readonly logger = new Logger(JobMemoryReconcileCommand.name);
@@ -33,7 +33,15 @@ export class JobMemoryReconcileCommand extends CommandRunner {
     required: false,
   })
   parseGraceSeconds(value: string): number {
-    return Number(value);
+    const graceSeconds = Number(value);
+
+    if (!Number.isFinite(graceSeconds) || graceSeconds < 0) {
+      throw new Error(
+        `--grace-seconds must be a positive number, got ${value}`,
+      );
+    }
+
+    return graceSeconds;
   }
 
   async run(
@@ -41,9 +49,6 @@ export class JobMemoryReconcileCommand extends CommandRunner {
     options: JobMemoryReconcileCommandOptions,
   ): Promise<void> {
     const graceSeconds = options.graceSeconds ?? DEFAULT_GRACE_SECONDS;
-    const cleanedCount =
-      await this.messageQueueService.cleanExpiredFinishedJobs();
-
     // a charge is only released when two passes miss its job, so a job charged just before BullMQ adds it survives
     await this.messageQueueService.reconcileJobMemory();
     await new Promise((resolve) => setTimeout(resolve, graceSeconds * 1000));
@@ -52,7 +57,7 @@ export class JobMemoryReconcileCommand extends CommandRunner {
       await this.messageQueueService.reconcileJobMemory();
 
     this.logger.log(
-      `Cleaned ${cleanedCount} expired finished jobs, released ${releasedCount} job memory charges (${releasedBytes} bytes)`,
+      `Released ${releasedCount} job memory charges (${releasedBytes} bytes)`,
     );
   }
 }

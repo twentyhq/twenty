@@ -280,7 +280,7 @@ The queue Redis runs with `noeviction`: once it is full, every enqueue fails for
 
 The share limit needs `maxmemory` set on the queue Redis. Refusals are logged and counted in `job_memory_limit_refused_total` by queue, job name and reason, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
 
-A job is charged until it completes or fails for good, and charges do not expire. A job removed from a queue outside the worker (admin panel delete, queue clean) keeps its charge until you run `yarn command:prod job-memory:reconcile`. The command deletes finished jobs past their retention age, then releases the charge of every job that is gone or finished, checking twice a few seconds apart (`--grace-seconds`, default 10) so a job being enqueued is not released by mistake.
+A job is charged until it completes or fails for good, and charges do not expire. A job removed from a queue outside the worker (admin panel delete, queue clean) keeps its charge until you run `yarn command:prod job-memory:reconcile`. The command releases the charge of every job that is gone or finished, checking twice a few seconds apart (`--grace-seconds`, default 10) so a job being enqueued is not released by mistake.
 
 ## Outbound Connections to Internal Hosts
 

@@ -2,6 +2,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as generateUuid } from 'uuid';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -132,7 +133,7 @@ describe('BullMQDriver job memory accounting (integration)', () => {
   });
 
   afterAll(async () => {
-    if (previousMaxMemory !== undefined) {
+    if (isDefined(previousMaxMemory)) {
       await connection.config('SET', 'maxmemory', previousMaxMemory);
     }
 
