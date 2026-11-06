@@ -44,11 +44,35 @@ exports[`Core workflow version runs should fail with an OAuth client signed in a
 }
 `;
 
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a workflow version without a trigger should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running a workflow version without a trigger should refuse through the MCP run_workflow_version tool 1`] = `
 {
   "error": "Core workflow version is missing its execution definition",
   "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
   "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an OAuth client signed in as the admin running an unknown workflow version should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
 }
 `;
 
@@ -80,11 +104,35 @@ exports[`Core workflow version runs should fail with an admin session running a 
 }
 `;
 
+exports[`Core workflow version runs should fail with an admin session running a workflow version without a trigger should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Core workflow version runs should fail with an admin session running a workflow version without a trigger should refuse through the MCP run_workflow_version tool 1`] = `
 {
   "error": "Core workflow version is missing its execution definition",
   "message": "Failed to run workflow version: Core workflow version is missing its execution definition",
   "success": false,
+}
+`;
+
+exports[`Core workflow version runs should fail with an admin session running an unknown workflow version should refuse through the GraphQL API 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_RUN_INVALID",
+    "userFriendlyMessage": "Invalid workflow run.",
+  },
+  "message": "Core workflow version is missing its execution definition",
+  "name": "UserInputError",
 }
 `;
 

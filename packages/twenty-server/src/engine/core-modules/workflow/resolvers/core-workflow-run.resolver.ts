@@ -12,6 +12,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { RunCoreWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-core-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
+import { WorkflowRunGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-run-graphql-api-exception.filter';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionEdgeGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-edge-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
@@ -42,6 +43,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowQueryValidationGraphqlApiExceptionFilter,
+  WorkflowRunGraphqlApiExceptionFilter,
   WorkflowTriggerGraphqlApiExceptionFilter,
   WorkflowVersionEdgeGraphqlApiExceptionFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
