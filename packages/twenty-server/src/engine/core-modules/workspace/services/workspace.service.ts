@@ -475,11 +475,10 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const { aiChatAssistantProfile, ...workspaceUpdates } = payload;
-    const assistantProfilePatch =
+    const aiChatAssistantProfile =
       await this.workspaceAssistantProfileService.validateProfileUpdateOrThrow({
         workspace,
-        profile: aiChatAssistantProfile,
+        profile: payload.aiChatAssistantProfile,
       });
 
     const isUpdatingAssistantModes =
@@ -633,8 +632,9 @@ export class WorkspaceService {
     let updatedWorkspace: WorkspaceEntity;
 
     try {
-      const workspaceUpdateValues = {
-        ...workspaceUpdates,
+      await this.workspaceRepository.update(workspace.id, {
+        ...payload,
+        ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
@@ -645,20 +645,7 @@ export class WorkspaceService {
           ? { isCustomDomainEnabled: false }
           : {}),
         ...(payload.logo === null ? { logoFileId: null } : {}),
-      };
-
-      if (isDefined(assistantProfilePatch)) {
-        await this.workspaceAssistantProfileService.updateWorkspaceWithProfile({
-          workspaceId: workspace.id,
-          values: workspaceUpdateValues,
-          patch: assistantProfilePatch,
-        });
-      } else {
-        await this.workspaceRepository.update(
-          workspace.id,
-          workspaceUpdateValues,
-        );
-      }
+      });
       updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
         id: workspace.id,
       });

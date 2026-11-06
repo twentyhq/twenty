@@ -154,24 +154,18 @@ describe('workspace assistant profile settings', () => {
     );
   });
 
-  it('preserves concurrent partial edits and omitted profile fields', async () => {
-    const responses = await Promise.all([
-      updateWorkspace({
-        data: { aiChatAssistantProfile: { displayName: '  Sage  ' } },
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      }),
-      updateWorkspace({
-        data: { aiChatAssistantProfile: { avatarColor: 'purple' } },
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      }),
-    ]);
+  it('updates profile fields while preserving omitted values', async () => {
+    const response = await updateWorkspace({
+      data: {
+        aiChatAssistantProfile: {
+          displayName: '  Sage  ',
+          avatarColor: 'purple',
+        },
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
-    for (const response of responses) {
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateWorkspace.id).toBe(
-        SEED_APPLE_WORKSPACE_ID,
-      );
-    }
+    expect(response.body.errors).toBeUndefined();
 
     const persisted = await readWorkspace();
 

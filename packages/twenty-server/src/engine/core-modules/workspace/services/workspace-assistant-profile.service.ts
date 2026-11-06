@@ -6,15 +6,17 @@ import { isUndefined } from '@sniptt/guards';
 import {
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   getAiChatAssistantProfileSchema,
-  type AiChatAssistantProfile,
 } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  removeUndefinedFields,
+} from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -48,7 +50,7 @@ export class WorkspaceAssistantProfileService {
     workspace,
     profile,
   }: {
-    workspace: Pick<WorkspaceEntity, 'id'>;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
     profile: unknown;
   }) {
     if (isUndefined(profile)) {
@@ -70,31 +72,10 @@ export class WorkspaceAssistantProfileService {
       );
     }
 
-    return result.data;
-  }
-
-  async updateWorkspaceWithProfile({
-    workspaceId,
-    values,
-    patch,
-  }: {
-    workspaceId: string;
-    values: QueryDeepPartialEntity<WorkspaceEntity>;
-    patch: Partial<AiChatAssistantProfile>;
-  }) {
-    return this.workspaceRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        ...values,
-        aiChatAssistantProfile: () =>
-          doNotTranslate(
-            '"aiChatAssistantProfile" || :assistantProfilePatch::jsonb',
-          ),
-      })
-      .where({ id: workspaceId })
-      .setParameters({ assistantProfilePatch: JSON.stringify(patch) })
-      .execute();
+    return {
+      ...workspace.aiChatAssistantProfile,
+      ...removeUndefinedFields(result.data),
+    };
   }
 
   async reset(workspaceId: string) {
