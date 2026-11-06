@@ -127,8 +127,16 @@ export const createCreateWorkflowVersionStepTool = (
               (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0),
           );
 
+          if (leafSteps.length === 0) {
+            return {
+              success: false,
+              error:
+                'Every end of this workflow is an If/Else branch. Pass parentStepId (the If/Else step id) and parentStepConnectionOptions { connectedStepType: "IF_ELSE", settings: { branchId } } to choose the branch the step goes into.',
+            };
+          }
+
           effectiveParentStepId =
-            leafSteps.length > 1 ? undefined : leafSteps[0]?.id;
+            leafSteps.length > 1 ? undefined : leafSteps[0].id;
         }
       }
 
