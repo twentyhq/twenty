@@ -72,7 +72,7 @@ export class CallAgentDatabaseEventTriggersJob {
         agentId: flatAgent.id,
       };
       const readableEvents =
-        await this.recordEventPermissionsService.findReadableEvents({
+        await this.recordEventPermissionsService.filterReadableEvents({
           authContext: agentAuthContext,
           eventBatch: workspaceEventBatch,
           // Masking can drop the actor fields, so the agent's own writes are skipped first

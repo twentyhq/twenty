@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldActorSource } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -134,7 +134,11 @@ export class WorkflowExecutionContextService {
         })
       : buildApplicationAuthContext({ workspace, application });
 
-    if (!(await this.rolePermissionsService.hasAnyRole({ authContext }))) {
+    if (
+      !isNonEmptyArray(
+        await this.rolePermissionsService.findRoleIds({ authContext }),
+      )
+    ) {
       throw new WorkflowStepExecutorException(
         'No role is left to run this step with',
         WorkflowStepExecutorExceptionCode.FORBIDDEN,

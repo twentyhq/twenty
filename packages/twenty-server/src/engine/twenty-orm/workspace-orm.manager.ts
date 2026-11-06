@@ -24,7 +24,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 type OrmRepositoryOptions = WorkspaceRepositoryOptions & {
   useReplica?: boolean;
@@ -38,7 +38,7 @@ export class WorkspaceOrmManager {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordRepositoryPermissionsService: RecordRepositoryPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -138,15 +138,13 @@ export class WorkspaceOrmManager {
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const permissionsPrincipals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
     const recordReadRestrictions = isDefined(permissionsPrincipals)
-      ? await this.recordRepositoryPermissionsService.findRecordReadRestrictions(
-          {
-            principals: permissionsPrincipals,
-          },
-        )
+      ? await this.recordPermissionsService.findRecordReadRestrictions({
+          principals: permissionsPrincipals,
+        })
       : NO_RECORD_READ_RESTRICTIONS;
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
