@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import gql from 'graphql-tag';
 import { currentUserAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/current-user-assistant-profile-query-factory.util';
 import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
@@ -254,12 +255,20 @@ describe('workspace assistant profile settings', () => {
 
   it('rejects an invalid mixed update without committing either change', async () => {
     await expectRejectedOperation({
-      operation: updateWorkspaceAssistantProfileQueryFactory({
-        data: {
-          displayName: 'Rejected workspace edit',
-          aiChatAssistantProfile: { avatarColor: 'unsupported' },
-        },
-      }),
+      operation: {
+        query: gql`
+          mutation {
+            updateWorkspace(
+              data: {
+                displayName: "Rejected workspace edit"
+                aiChatAssistantProfile: { avatarColor: "unsupported" }
+              }
+            ) {
+              id
+            }
+          }
+        `,
+      },
       errorCode: ErrorCode.BAD_USER_INPUT,
     });
   });
