@@ -29,7 +29,7 @@ export const buildSystemPromptSections = ({
   userWorkspaceId,
   workspaceId,
   isWorkspaceSetupThread,
-  canAttachConversationToRecords,
+  canAttachConversationToRecords = false,
 }: BuildSystemPromptArguments): SystemPromptSection[] => {
   const workspaceInstructionsSection = isWorkspaceSetupThread
     ? ''
@@ -56,7 +56,7 @@ export const buildSystemPromptSections = ({
             title: 'Browsing Context',
             content: CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
           },
-          canAttachConversationToRecords === true && {
+          canAttachConversationToRecords && {
             title: 'Conversation Attachment',
             content: CHAT_SYSTEM_PROMPTS.CONVERSATION_ATTACHMENT,
           },
