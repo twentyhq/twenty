@@ -54,14 +54,12 @@ export class SentMessagePersistenceService {
           connectedAccount: messageChannel.connectedAccount,
           workspaceId: input.workspaceId,
         })
-        .catch(async (saveError) => {
-          await this.deleteUnclaimedAttachmentFiles(
+        .finally(() =>
+          this.deleteUnclaimedAttachmentFiles({
             attachmentFiles,
-            input.workspaceId,
-          );
-
-          throw saveError;
-        });
+            workspaceId: input.workspaceId,
+          }),
+        );
 
     const messageId = savedMessagesResult?.messageExternalIdsAndIdsMap.get(
       messageToSave.externalId,
@@ -125,11 +123,15 @@ export class SentMessagePersistenceService {
     });
   }
 
-  // Copies without an expiry are never collected by cleanup crons; claimed ones back committed attachments
-  private async deleteUnclaimedAttachmentFiles(
-    attachmentFiles: MessageAttachmentFile[],
-    workspaceId: string,
-  ): Promise<void> {
+  // Copies without an expiry are never collected by cleanup crons, and the save skips them when the
+  // message already has attachments; claimed copies back committed attachment rows and are kept
+  private async deleteUnclaimedAttachmentFiles({
+    attachmentFiles,
+    workspaceId,
+  }: {
+    attachmentFiles: MessageAttachmentFile[];
+    workspaceId: string;
+  }): Promise<void> {
     if (attachmentFiles.length === 0) {
       return;
     }

@@ -68,6 +68,7 @@ describe('SentMessagePersistenceService', () => {
     jest.clearAllMocks();
     saveMessagesAndEnqueueContactCreation.mockResolvedValue(undefined);
     isFeatureEnabled.mockResolvedValue(true);
+    findFiles.mockResolvedValue([]);
   });
 
   it('should save uploaded attachments as message attachment files', async () => {
@@ -121,6 +122,30 @@ describe('SentMessagePersistenceService', () => {
     );
 
     expect(deleteFilesFieldFile).toHaveBeenCalledTimes(1);
+    expect(deleteFilesFieldFile).toHaveBeenCalledWith({
+      fileId: 'file-1',
+      workspaceId: 'workspace-1',
+    });
+  });
+
+  it('should delete attachment copies the save left unclaimed', async () => {
+    uploadFile.mockResolvedValueOnce({ id: 'file-1' });
+    findFiles.mockResolvedValue([
+      { id: 'file-1', settings: { isTemporaryFile: true } },
+    ]);
+
+    await service.persistSentMessage(
+      buildInput({
+        attachments: [
+          {
+            filename: 'report.pdf',
+            content: Buffer.from('report'),
+            contentType: 'application/pdf',
+          },
+        ],
+      }),
+    );
+
     expect(deleteFilesFieldFile).toHaveBeenCalledWith({
       fileId: 'file-1',
       workspaceId: 'workspace-1',
