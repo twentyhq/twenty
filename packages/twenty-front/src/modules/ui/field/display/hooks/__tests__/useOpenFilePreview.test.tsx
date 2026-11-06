@@ -22,12 +22,19 @@ const FILE: FieldFilesValue = {
   url: 'https://example.com/report.pdf',
 };
 
-const PreviewableFileChip = () => {
+const ARCHIVE_FILE: FieldFilesValue = {
+  fileId: 'archive-file-id',
+  label: 'export.zip',
+  extension: 'zip',
+  url: 'https://example.com/export.zip',
+};
+
+const PreviewableFileChip = ({ file }: { file: FieldFilesValue }) => {
   const { openFilePreview } = useOpenFilePreview();
 
   return (
     <>
-      <FileChip file={FILE} onClick={openFilePreview} />
+      <FileChip file={file} onClick={openFilePreview} />
       <GlobalFilePreviewModal />
     </>
   );
@@ -35,8 +42,10 @@ const PreviewableFileChip = () => {
 
 const renderFileChip = ({
   isAttachmentPreviewEnabled,
+  file = FILE,
 }: {
   isAttachmentPreviewEnabled: boolean;
+  file?: FieldFilesValue;
 }) => {
   const store = createStore();
 
@@ -45,7 +54,7 @@ const renderFileChip = ({
   render(
     <Provider store={store}>
       <I18nProvider i18n={i18n}>
-        <PreviewableFileChip />
+        <PreviewableFileChip file={file} />
       </I18nProvider>
     </Provider>,
   );
@@ -108,6 +117,34 @@ describe('useOpenFilePreview', () => {
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Download file' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('offers a download for a file that cannot be previewed with download permission', async () => {
+    jest.mocked(useHasPermissionFlag).mockReturnValue(true);
+    renderFileChip({ isAttachmentPreviewEnabled: true, file: ARCHIVE_FILE });
+
+    await userEvent.click(screen.getByText('export.zip'));
+
+    expect(
+      await screen.findByText('Preview Not Available'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Download File' }),
+    ).toBeInTheDocument();
+  });
+
+  it('hides the download of a file that cannot be previewed without download permission', async () => {
+    jest.mocked(useHasPermissionFlag).mockReturnValue(false);
+    renderFileChip({ isAttachmentPreviewEnabled: true, file: ARCHIVE_FILE });
+
+    await userEvent.click(screen.getByText('export.zip'));
+
+    expect(
+      await screen.findByText('Preview Not Available'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Download File' }),
     ).not.toBeInTheDocument();
   });
 });
