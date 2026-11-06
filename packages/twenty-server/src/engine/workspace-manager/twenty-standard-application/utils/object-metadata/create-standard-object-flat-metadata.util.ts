@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import {
-  type ObjectPermissionAction,
+  type DisableableObjectPermissionAction,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 
@@ -23,7 +23,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isAuditLogged?: boolean;
   isUIEditable?: boolean;
   isUICreatable?: boolean;
-  disabledObjectPermissionActions?: ObjectPermissionAction[];
+  disabledObjectPermissionActions?: DisableableObjectPermissionAction[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
