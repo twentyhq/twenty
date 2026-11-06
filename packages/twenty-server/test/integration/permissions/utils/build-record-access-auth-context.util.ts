@@ -3,6 +3,7 @@ import {
   type RecordAccessWorkspace,
 } from 'test/integration/permissions/utils/record-access-workspace.type';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
@@ -57,8 +58,7 @@ export const buildRecordAccessAuthContext = async ({
   const narrowing = {
     workspace: workspaceReference,
     agentId: findLimitingAgentId({ limitingPrincipal, workspace }),
-    application:
-      applicationId === undefined ? undefined : { id: applicationId },
+    application: isDefined(applicationId) ? { id: applicationId } : undefined,
   };
 
   switch (mainPrincipal.type) {

@@ -2,7 +2,7 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createOauthOnlyApplication = async ({
+export const createOauthOnlyApplicationOrThrow = async ({
   accessToken,
 }: {
   accessToken: string;
@@ -15,7 +15,13 @@ export const createOauthOnlyApplication = async ({
     accessToken,
   });
 
-  return data.findManyApplications.find(
+  const oauthOnlyApplication = data.findManyApplications.find(
     ({ defaultRoleId }) => !isDefined(defaultRoleId),
-  )?.id as string;
+  );
+
+  if (!isDefined(oauthOnlyApplication)) {
+    throw new Error('No application without a default role was found');
+  }
+
+  return oauthOnlyApplication.id as string;
 };

@@ -5,7 +5,7 @@ import { createActiveWorkspaceWithAdmin } from 'test/integration/permissions/uti
 import { createAgentForRole } from 'test/integration/permissions/utils/create-agent-for-role.util';
 import { createApiKeyForRole } from 'test/integration/permissions/utils/create-api-key-for-role.util';
 import { createApplicationWithDefaultRole } from 'test/integration/permissions/utils/create-application-with-default-role.util';
-import { createOauthOnlyApplication } from 'test/integration/permissions/utils/create-oauth-only-application.util';
+import { createOauthOnlyApplicationOrThrow } from 'test/integration/permissions/utils/create-oauth-only-application.util';
 import { createRecordAccessObject } from 'test/integration/permissions/utils/create-record-access-object.util';
 import { createRecordAccessRole } from 'test/integration/permissions/utils/create-record-access-role.util';
 import { createWebhookForRole } from 'test/integration/permissions/utils/create-webhook-for-role.util';
@@ -146,7 +146,9 @@ export const createRecordAccessWorkspace =
         objectUniversalIdentifier,
         accessToken,
       }),
-      oauthApplicationId: await createOauthOnlyApplication({ accessToken }),
+      oauthApplicationId: await createOauthOnlyApplicationOrThrow({
+        accessToken,
+      }),
       recordIds,
     };
   };
