@@ -122,7 +122,10 @@ describe('WorkflowSchemaWorkspaceService', () => {
             provide: WorkflowCommonWorkspaceService,
             useValue: { getObjectMetadataInfo },
           },
-          { provide: WorkspaceManyOrAllFlatEntityMapsCacheService, useValue: {} },
+          {
+            provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+            useValue: {},
+          },
         ],
       }).compile();
 

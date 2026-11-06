@@ -11,7 +11,8 @@ export const computeOutputSchemaFromExpectedOutput = ({
   expectedOutputSchema?: object;
   outputSchema: OutputSchema;
 }): OutputSchema => {
-  const sampleOutputSchema = computeOutputSchemaFromSample(expectedOutputSchema);
+  const sampleOutputSchema =
+    computeOutputSchemaFromSample(expectedOutputSchema);
 
   // Fence until upgrade:2-57:move-step-output-samples-to-expected-output reaches every workspace; remove in 2.59
   if (isEmptyObject(sampleOutputSchema) && isBaseOutputSchemaV2(outputSchema)) {

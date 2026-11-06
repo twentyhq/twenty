@@ -1,14 +1,10 @@
-import {
-  WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS,
-  type WorkflowPersistedOutputSchemaLabel,
-} from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
+import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
-import { i18n } from '@lingui/core';
+import { i18n, type MessageDescriptor } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getMessageId = (label?: WorkflowPersistedOutputSchemaLabel) =>
-  typeof label === 'object' ? (label.id ?? '') : '';
+const getMessageId = (message?: MessageDescriptor) => message?.id ?? '';
 
 const company = getMockObjectMetadataItemOrThrow('company');
 const companyNameField = company.fields.find(({ name }) => name === 'name');
@@ -42,8 +38,9 @@ const companyRecordOutputSchema = {
 describe('translatePersistedOutputSchemaLabels', () => {
   beforeEach(() => {
     i18n.load('fr-FR', {
-      [getMessageId(WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.ITERATOR?.currentItemIndex)]:
-        "Index de l'élément courant",
+      [getMessageId(
+        WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.ITERATOR?.currentItemIndex,
+      )]: "Index de l'élément courant",
       [getMessageId(
         WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.CLASSIFY?.['answers.*.choice'],
       )]: 'Choix',

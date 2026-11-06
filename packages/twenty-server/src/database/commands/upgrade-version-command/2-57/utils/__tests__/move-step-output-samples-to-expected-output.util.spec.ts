@@ -22,24 +22,25 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
   it.each([
     { description: 'an object', testResult: { total: 3, tags: ['a'] } },
     { description: 'an array', testResult: [{ id: 1 }, { id: 2 }] },
-  ])('moves a test result that is $description into expectedOutputSchema', ({
-    testResult,
-  }) => {
-    const step = buildStep('CODE', {
-      outputSchema: getOutputSchemaFromValue(testResult),
-      expectedOutputSchema: { typed: 'by hand' },
-    });
+  ])(
+    'moves a test result that is $description into expectedOutputSchema',
+    ({ testResult }) => {
+      const step = buildStep('CODE', {
+        outputSchema: getOutputSchemaFromValue(testResult),
+        expectedOutputSchema: { typed: 'by hand' },
+      });
 
-    expect(moveSamples([step])).toEqual({
-      steps: [
-        {
-          ...step,
-          settings: { ...step.settings, expectedOutputSchema: testResult },
-        },
-      ],
-      movedStepIds: ['CODE-step'],
-    });
-  });
+      expect(moveSamples([step])).toEqual({
+        steps: [
+          {
+            ...step,
+            settings: { ...step.settings, expectedOutputSchema: testResult },
+          },
+        ],
+        movedStepIds: ['CODE-step'],
+      });
+    },
+  );
 
   it('leaves steps whose schema is not a test result', () => {
     const declaredOutputSchema: BaseOutputSchemaV2 = {
@@ -52,7 +53,11 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
       }),
       buildStep('CODE', {
         outputSchema: {
-          link: { isLeaf: true, tab: 'test', label: 'Generate Function Output' },
+          link: {
+            isLeaf: true,
+            tab: 'test',
+            label: 'Generate Function Output',
+          },
           _outputSchemaType: 'LINK',
         },
         expectedOutputSchema: { result: 42 },

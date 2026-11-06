@@ -17,7 +17,9 @@ const convertOutputSchemaToSample = (
   const values = keys.map((key) => {
     const entry = outputSchema[key];
 
-    return entry.isLeaf ? entry.value : convertOutputSchemaToSample(entry.value);
+    return entry.isLeaf
+      ? entry.value
+      : convertOutputSchemaToSample(entry.value);
   });
 
   if (keys.length > 0 && keys.every((key, index) => key === String(index))) {

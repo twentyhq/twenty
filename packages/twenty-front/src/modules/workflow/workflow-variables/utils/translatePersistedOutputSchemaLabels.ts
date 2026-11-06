@@ -1,14 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import {
-  WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS,
-  type WorkflowPersistedOutputSchemaLabel,
-} from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
+import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
 import {
   type FieldOutputSchemaV2,
   type RecordOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
+import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -17,7 +15,8 @@ import {
 } from 'twenty-shared/workflow';
 
 type TranslationContext = {
-  labels: Record<string, WorkflowPersistedOutputSchemaLabel>;
+  stepType: string;
+  labels: Record<string, MessageDescriptor>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   stepObjectMetadataItem?: EnrichedObjectMetadataItem;
 };
@@ -61,6 +60,57 @@ const matchesPath = ({
   );
 };
 
+// labels naming the step's object, so the viewer sees that object's label in their language
+const translateObjectLabel = ({
+  stepType,
+  key,
+  value,
+  objectMetadataItem,
+}: {
+  stepType: string;
+  key: string;
+  value: unknown;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
+}): string | undefined => {
+  if (stepType === 'MANUAL' && key === 'payload') {
+    return isRecordOutputSchemaV2(value) ? t`Record` : t`Records`;
+  }
+
+  if (stepType === 'ITERATOR' && key === 'currentItem') {
+    if (!isDefined(objectMetadataItem)) {
+      return t`Current Item`;
+    }
+
+    const objectLabel = objectMetadataItem.labelSingular;
+
+    return t`Current Item (${objectLabel})`;
+  }
+
+  if (!isDefined(objectMetadataItem)) {
+    return undefined;
+  }
+
+  const { labelSingular, labelPlural } = objectMetadataItem;
+
+  if (stepType === 'FIND_RECORDS' && key === 'first') {
+    return t`First ${labelSingular}`;
+  }
+
+  if (stepType === 'FIND_RECORDS' && key === 'all') {
+    return t`All ${labelPlural}`;
+  }
+
+  if (stepType === 'WAIT_FOR_EVENT' && key === 'record') {
+    return labelSingular;
+  }
+
+  if (stepType === 'WAIT_FOR_EVENT' && key === 'before') {
+    return t`${labelSingular} Before Update`;
+  }
+
+  return undefined;
+};
+
 const translateLabel = ({
   path,
   node,
@@ -70,22 +120,24 @@ const translateLabel = ({
   node: BaseOutputSchemaV2[string];
   context: TranslationContext;
 }): string => {
-  const label = Object.entries(context.labels).find(([labelPath]) =>
+  const message = Object.entries(context.labels).find(([labelPath]) =>
     matchesPath({ labelPath, path }),
   )?.[1];
 
-  if (!isDefined(label)) {
+  if (isDefined(message)) {
+    return t(message);
+  }
+
+  if (path.length !== 1) {
     return node.label;
   }
 
-  if (typeof label !== 'function') {
-    return t(label);
-  }
-
   return (
-    label({
-      objectMetadataItem: context.stepObjectMetadataItem,
+    translateObjectLabel({
+      stepType: context.stepType,
+      key: path[0],
       value: node.value,
+      objectMetadataItem: context.stepObjectMetadataItem,
     }) ?? node.label
   );
 };
@@ -219,6 +271,7 @@ export const translatePersistedOutputSchemaLabels = ({
     outputSchema,
     path: [],
     context: {
+      stepType,
       labels: WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS[stepType] ?? {},
       objectMetadataItems,
       stepObjectMetadataItem: isDefined(objectMetadataId)
