@@ -45,6 +45,35 @@ describe('moveStepOutputSamplesToExpectedOutput', () => {
     },
   );
 
+  it('keeps the value of a node that holds no object', () => {
+    const step = buildStep('CODE', {
+      outputSchema: {
+        customer: {
+          isLeaf: false,
+          type: 'object',
+          label: 'customer',
+          value: null,
+        },
+        status: {
+          isLeaf: false,
+          type: 'object',
+          label: 'status',
+          value: 'done',
+        },
+      },
+    });
+
+    expect(moveSamples({ steps: [step] }).steps).toEqual([
+      {
+        ...step,
+        settings: {
+          ...step.settings,
+          expectedOutputSchema: { customer: null, status: 'done' },
+        },
+      },
+    ]);
+  });
+
   it('leaves steps whose schema is not a test result', () => {
     const declaredOutputSchema: BaseOutputSchemaV2 = {
       result: { isLeaf: true, type: 'string', label: 'result', value: '' },

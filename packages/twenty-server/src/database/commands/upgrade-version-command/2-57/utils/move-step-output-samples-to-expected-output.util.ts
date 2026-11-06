@@ -9,16 +9,21 @@ import {
 const SAMPLE_STEP_TYPES = new Set(['CODE', 'HTTP_REQUEST', 'LOGIC_FUNCTION']);
 
 const convertOutputSchemaToSample = (
-  outputSchema: BaseOutputSchemaV2,
+  outputSchema: Record<string, unknown>,
 ): Record<string, unknown> | unknown[] => {
   const keys = Object.keys(outputSchema);
 
   const values = keys.map((key) => {
     const entry = outputSchema[key];
 
-    return entry.isLeaf
-      ? entry.value
-      : convertOutputSchemaToSample(entry.value);
+    if (!isPlainObject(entry)) {
+      return entry;
+    }
+
+    // a node whose value is not an object holds that value, like a leaf
+    return entry.isLeaf === false && isPlainObject(entry.value)
+      ? convertOutputSchemaToSample(entry.value)
+      : entry.value;
   });
 
   if (keys.length > 0 && keys.every((key, index) => key === String(index))) {
