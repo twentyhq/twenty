@@ -4,14 +4,19 @@ import { type ApplicationContentFilterOption } from '@/settings/applications/typ
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
 import { type ApplicationContentObjectResolver } from '@/settings/applications/types/ApplicationContentObjectResolver';
 
-// Parents can live outside the app's own lists, so options come from the rows
 export const getApplicationContentParentFilterOptions = ({
   items,
   parents,
   resolveObject,
 }: {
-  items: ApplicationContentItem[];
-  parents: ApplicationContentItem[];
+  items: Pick<
+    ApplicationContentItem,
+    'parentUniversalIdentifier' | 'parentLabel'
+  >[];
+  parents: Pick<
+    ApplicationContentItem,
+    'universalIdentifier' | 'label' | 'icon' | 'objectUniversalIdentifier'
+  >[];
   resolveObject: ApplicationContentObjectResolver;
 }): ApplicationContentFilterOption[] => {
   const optionsByUniversalIdentifier = new Map<
