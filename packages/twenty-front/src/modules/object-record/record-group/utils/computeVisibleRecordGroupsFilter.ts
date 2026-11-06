@@ -5,7 +5,7 @@ import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 type ComputeVisibleRecordGroupsFilterArgs = {
   recordGroupFieldMetadata: FieldMetadataItem | null | undefined;
-  recordGroupDefinitions: RecordGroupDefinition[];
+  recordGroupDefinitions: Pick<RecordGroupDefinition, 'isVisible' | 'value'>[];
 };
 
 export const computeVisibleRecordGroupsFilter = ({

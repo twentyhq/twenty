@@ -1058,16 +1058,6 @@ msgstr "KI-Chat-Threads, die dem Arbeitsbereichsmitglied gehören"
 msgid "AI component builder is disabled."
 msgstr "Der KI-Komponenten-Builder ist deaktiviert."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Die KI-Datenrichtlinie ist erst verfügbar, wenn das Upgrade abgeschlossen ist."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Die KI-Datenrichtlinie ist für diesen Arbeitsbereich nicht aktiviert."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "Authentifizierung fehlgeschlagen. Bitte melden Sie sich erneut an."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Authentifizierung ist bei diesem Anbieter nicht aktiviert."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Eine Authentifizierung ist erforderlich, um auf diese Funktion zuzugreifen. Bitte melden Sie sich an und versuchen Sie es erneut."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "Keine gültigen Empfänger angegeben"
 msgid "No verified sending domain matches this from address."
 msgstr "Keine verifizierte Versanddomain stimmt mit dieser Absenderadresse überein."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Keine der Personen, die du ausgewählt hast, kann in diesem Chat antworten. Füge {AGENT_CHAT_ASSISTANT_NAME} oder jemanden hinzu, der antworten kann."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "ID des Berechtigten"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Typ des Berechtigten"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Datenschutzeinstellungen sind erst verfügbar, wenn das Upgrade abgeschlossen ist."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Datenschutzeinstellungen sind für diesen Arbeitsbereich nicht aktiviert."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Kurzlinks"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Melden Sie sich als Workspace-Mitglied an oder verwenden Sie ein Anwendungstoken, um diese Unterhaltung zu ändern."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Melden Sie sich als Workspace-Mitglied an oder verwenden Sie ein Anwendungstoken, um diese Anfrage auszuführen."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Einige der von Ihnen ausgewählten Berechtigungen sind nicht gültig. Bitte versuchen Sie es erneut mit gültigen Berechtigungseinstellungen."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Einige Mitgliedschaften im Arbeitsbereich konnten nicht gefunden werden. Diese haben möglicherweise keinen Zugriff mehr auf diesen Arbeitsbereich."
 
@@ -13619,11 +13619,6 @@ msgstr "Der Agent, den dieser Schritt ausführen soll, wurde nicht gefunden."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Der Agent, den Sie suchen, konnte nicht gefunden werden. Möglicherweise wurde er gelöscht oder Sie haben keinen Zugriff darauf."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "Dem API-Schlüssel wurde keine gültige Rolle zugewiesen. Bitte überprüfen Sie Ihre API-Schlüssel-Konfiguration."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "Das App-Manifest legt eine ungültige Anforderung an die Serverversion f
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Der Quellkanal der App entspricht nicht dem erwarteten Typ."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Der Anwendung wurde keine gültige Rolle zugewiesen. Bitte überprüfen Sie Ihre Anwendungskonfiguration."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Sie können keinen Wiederherstellungscode für sich selbst generieren. Setzen Sie stattdessen die Zwei-Faktor-Authentifizierung über Ihr Profil zurück."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Sie können Ihre eigene Rolle nicht ändern. Bitte bitten Sie einen anderen Administrator, Ihre Rolle zu aktualisieren."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Sie können Ihrer eigenen Rolle den Zugriff auf die Einstellungen nicht entziehen. Bitten Sie eine andere Administratorin oder einen anderen Administrator, diese Änderung vorzunehmen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Sie können die Adminrolle nicht vom letzten Administrator entfernen. Bitte weisen Sie zuerst einem anderen Administrator zu."
 
@@ -18250,7 +18240,7 @@ msgstr "Ihre Rolle kann einige dieser Datensätze nicht löschen, daher können 
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ihre Rolle in diesem Arbeitsbereich konnte nicht gefunden werden. Bitte kontaktieren Sie Ihren Arbeitsbereichsadministrator."
 

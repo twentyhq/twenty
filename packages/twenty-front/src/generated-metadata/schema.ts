@@ -298,6 +298,23 @@ export enum AiChatAssistantMode {
   NEVER = 'NEVER'
 }
 
+export type AiChatAssistantProfile = {
+  __typename?: 'AiChatAssistantProfile';
+  avatarColor: Scalars['String']['output'];
+  avatarFace: Scalars['String']['output'];
+  avatarShape: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  isAvatarAnimated: Scalars['Boolean']['output'];
+};
+
+export type AiChatAssistantProfileInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarFace?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  isAvatarAnimated?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
@@ -2384,10 +2401,18 @@ export type EnqueueJobsInput = {
 
 export type EnqueueJobsResult = {
   __typename?: 'EnqueueJobsResult';
+  availableBytes?: Maybe<Scalars['Float']['output']>;
   enqueued: Scalars['Boolean']['output'];
   enqueuedJobsCount: Scalars['Int']['output'];
   jobIds: Array<Scalars['String']['output']>;
+  jobs: Array<EnqueuedJob>;
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
+};
+
+export type EnqueuedJob = {
+  __typename?: 'EnqueuedJob';
+  jobId: Scalars['String']['output'];
+  sizeBytes: Scalars['Int']['output'];
 };
 
 export type EnterpriseLicenseInfoDto = {
@@ -3726,6 +3751,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
+  openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
@@ -3739,6 +3765,7 @@ export type Mutation = {
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
   resendWorkspaceInvitation: SendInvitations;
+  resetAiChatAssistantProfile: AiChatAssistantProfile;
   resetCommandMenuItem: CommandMenuItem;
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;
@@ -4666,6 +4693,11 @@ export type MutationMoveAgentChatThreadToChannelArgs = {
 };
 
 
+export type MutationOpenDirectMessageArgs = {
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+
 export type MutationPrepareGettingStartedWorkflowArgs = {
   stepActionKey: GettingStartedStepActionKey;
 };
@@ -4714,6 +4746,7 @@ export type MutationReportAppConnectionAuthFailureArgs = {
 
 
 export type MutationResendEmailVerificationTokenArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   origin: Scalars['String']['input'];
 };
@@ -4897,6 +4930,7 @@ export type MutationSignOutArgs = {
 
 
 export type MutationSignUpArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
@@ -7198,9 +7232,9 @@ export type SignUp = {
 };
 
 export type SignUpInNewWorkspaceInput = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8007,6 +8041,7 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
+  aiChatAssistantProfile?: InputMaybe<AiChatAssistantProfileInput>;
   aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
@@ -8793,6 +8828,7 @@ export type Workspace = {
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
+  aiChatAssistantProfile: AiChatAssistantProfile;
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
   aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;

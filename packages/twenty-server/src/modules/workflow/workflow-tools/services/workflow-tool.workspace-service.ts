@@ -8,6 +8,7 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -31,6 +32,7 @@ import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/to
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
 import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 import { createListWorkflowsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflows.tool';
+import { createRunWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/run-workflow-version.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
@@ -52,6 +54,7 @@ export class WorkflowToolWorkspaceService {
     coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
     coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService,
     coreWorkflowLifecycleService: CoreWorkflowLifecycleWorkspaceService,
+    coreWorkflowVersionRunService: CoreWorkflowVersionRunService,
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     workspaceOrmManager: WorkspaceOrmManager,
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -66,6 +69,7 @@ export class WorkflowToolWorkspaceService {
       coreWorkflowVersionMutationService,
       coreWorkflowVersionWriteService,
       coreWorkflowLifecycleService,
+      coreWorkflowVersionRunService,
       workflowSchemaService,
       workspaceOrmManager,
       logicFunctionFromSourceService,
@@ -106,6 +110,7 @@ export class WorkflowToolWorkspaceService {
       createGetWorkflowCurrentVersionTool(this.deps, context),
       createListWorkflowsTool(this.deps, context),
       createDeleteWorkflowTool(this.deps, context),
+      createRunWorkflowVersionTool(this.deps, context),
       createGetWorkflowRunTool(this.deps, context),
       createListWorkflowRunsTool(this.deps, context),
       createGetLogicFunctionSourceTool(this.deps, context),

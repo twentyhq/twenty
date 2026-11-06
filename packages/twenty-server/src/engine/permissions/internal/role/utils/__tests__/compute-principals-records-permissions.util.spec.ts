@@ -767,7 +767,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'select',
+        operationType: 'read',
       }),
     ).toBe(true);
     expect(
@@ -786,7 +786,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'delete',
+        operationType: 'destroy',
       }),
     ).toBe(false);
   });
@@ -797,7 +797,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'select',
+        operationType: 'read',
       }),
     ).toBe(false);
     expect(
@@ -841,7 +841,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     ) =>
       validateOperationIsPermittedOrThrow({
         entityName: 'invoice',
-        operationType: 'insert',
+        operationType: 'create',
         recordsPermissions: buildRoleRecordsPermissions(
           isDefined(invoicePermissions)
             ? { [INVOICE_ID]: invoicePermissions }

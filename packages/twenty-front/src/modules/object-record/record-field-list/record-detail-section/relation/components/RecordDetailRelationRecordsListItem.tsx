@@ -245,7 +245,7 @@ export const RecordDetailRelationRecordsListItem = ({
                 {!isAccountOwnerRelation &&
                   canReachSomeRecords({
                     objectRecordsPermissions: relationObjectPermissions,
-                    operationType: 'soft-delete',
+                    operationType: 'softDelete',
                   }) && (
                     <Dropdown.ActionItem
                       startIcon={<IconTrash />}

@@ -1058,16 +1058,6 @@ msgstr "Ish maydoni aʼzosiga tegishli AI chat mavzulari"
 msgid "AI component builder is disabled."
 msgstr "AI komponent yaratuvchisi o‘chirilgan."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "Yangilash yakunlanmaguncha AI ma’lumotlar siyosati mavjud emas."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "Ushbu ish maydoni uchun AI ma’lumotlar siyosati yoqilmagan."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "Autentifikatsiya amalga oshmadi, iltimos, qayta tizimga kiring."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Ushbu provayder bilan autentifikatsiya yoqilmagan."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Ushbu funksiyaga kirish uchun autentifikatsiya talab qilinadi. Iltimos, tizimga kiring va qayta urinib ko‘ring."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -9481,6 +9466,11 @@ msgstr "Yaroqli qabul qiluvchilar ko‘rsatilmagan"
 msgid "No verified sending domain matches this from address."
 msgstr "Hech qanday tasdiqlangan yuboruvchi domeni ushbu \"from\" manzili bilan mos kelmaydi."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Siz tanlagan hech kim bu chatda javob bera olmaydi. {AGENT_CHAT_ASSISTANT_NAME} yoki javob bera oladigan biror kishini qo‘shing."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10994,6 +10984,16 @@ msgstr "Subyekt ID"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Subyekt turi"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Yangilash yakunlanmaguncha maxfiylik sozlamalari mavjud emas."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Ushbu ish maydoni uchun maxfiylik sozlamalari yoqilmagan."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12684,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Qisqa havolalar"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Bu suhbatni o'zgartirish uchun ish maydoni a'zosi sifatida tizimga kiring yoki ilova tokenidan foydalaning."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Ushbu so‘rovni yuborish uchun ish maydoni a’zosi sifatida tizimga kiring yoki ilova tokenidan foydalaning."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12791,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Siz tanlagan ruxsatlarning ayrimlari yaroqsiz. Iltimos, ruxsat sozlamalarini to‘g‘ri ko‘rinishda qayta tanlab ko‘ring."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Ba’zi ish maydoni a’zoliklari topilmadi. Ular endi bu ish maydoniga kirish huquqiga ega bo‘lmasligi mumkin."
 
@@ -13619,11 +13619,6 @@ msgstr "Bu bosqich ishga tushirishi kerak bo‘lgan agent topilmadi."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Siz izlayotgan agent topilmadi. U o‘chirilgan bo‘lishi yoki sizda unga kirish huquqi bo‘lmasligi mumkin."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API kalitiga yaroqli rol biriktirilmagan. Iltimos, API kaliti konfiguratsiyasini tekshiring."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13629,6 @@ msgstr "Ilova manifesti server versiyasi talabi bo‘yicha yaroqsiz qiymat ko‘
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Ilova manba kanali kutilgan turga mos kelmaydi."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Ilovaga yaroqli rol biriktirilmagan. Iltimos, ilova konfiguratsiyasini tekshiring."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -17982,7 +17972,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "O‘zingiz uchun tiklash kodini yarata olmaysiz. Buning o‘rniga profilingizdan ikki faktorli autentifikatsiyani tiklang."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "O‘zingizning rolingizni o‘zgartira olmaysiz. Iltimos, boshqa administrator rolingizni yangilashini so‘rang."
 
@@ -18003,7 +17993,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "O‘z rolingizdan sozlamalarga kirish huquqini olib qo‘ya olmaysiz. Bu o‘zgarishni kiritish uchun boshqa administratorga murojaat qiling."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "So‘nggi administratordan admin rolini olib tashlab bo‘lmaydi. Iltimos, avval boshqa administrator tayinlang."
 
@@ -18250,7 +18240,7 @@ msgstr "Sizning rolingiz ushbu yozuvlarning ayrimlarini o‘chira olmaydi, shuni
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ushbu ish maydonida sizning rolingiz topilmadi. Iltimos, ish maydoni administratoriga murojaat qiling."
 

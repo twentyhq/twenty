@@ -429,7 +429,7 @@ export class TimelineMessagingService {
     workspaceId: string;
   }): Promise<TimelineThreadChannelDTO | null> {
     const recordsPermissions =
-      await this.recordPermissionsService.findRecordsPermissions({
+      await this.recordPermissionsService.findRecordsActions({
         authContext: getWorkspaceAuthContext(),
         objectNameSingular: 'messageThread',
         recordIds: [messageThreadId],
