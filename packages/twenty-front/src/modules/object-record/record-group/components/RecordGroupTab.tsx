@@ -22,10 +22,11 @@ export const RecordGroupTab = ({ recordGroupId }: RecordGroupTabProps) => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const aggregateDisplayValue = useAtomComponentFamilyStateValue(
-    recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
-    { groupValue: recordGroupDefinition?.value ?? '' },
-  );
+  const recordIndexAggregateDisplayValueForGroupValue =
+    useAtomComponentFamilyStateValue(
+      recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
+      { groupValue: recordGroupDefinition?.value ?? '' },
+    );
 
   if (!isDefined(recordGroupDefinition)) {
     return null;
@@ -34,7 +35,11 @@ export const RecordGroupTab = ({ recordGroupId }: RecordGroupTabProps) => {
   return (
     <Tabs.Tab
       value={recordGroupId}
-      badge={isDefined(aggregateDisplayValue) ? aggregateDisplayValue : '-'}
+      badge={
+        isDefined(recordIndexAggregateDisplayValueForGroupValue)
+          ? recordIndexAggregateDisplayValueForGroupValue
+          : '-'
+      }
     >
       <RecordGroupChip
         recordGroupDefinition={recordGroupDefinition}

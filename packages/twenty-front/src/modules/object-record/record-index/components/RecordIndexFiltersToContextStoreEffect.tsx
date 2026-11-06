@@ -9,6 +9,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -43,6 +44,15 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     hasUserSelectedAllRecordsComponentState,
     recordIndexId,
   );
+
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordIndexId,
+  );
+
+  // Targeting the whole view would reach the groups hidden behind other tabs
+  const isWholeViewTargeted =
+    hasUserSelectedAllRecords && !isRecordGroupTabsDisplayed;
 
   const recordIndexAllRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -91,7 +101,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
     setIfChanged(
       contextStoreTargetedRecordsRuleAtom,
-      hasUserSelectedAllRecords
+      isWholeViewTargeted
         ? {
             mode: 'exclusion',
             excludedRecordIds: recordIndexAllRecordIds.filter(
@@ -107,7 +117,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         previousRecordIdsInSelectionOrder: store.get(
           contextStoreRecordIdsInSelectionOrderAtom,
         ),
-        selectedRecordIds: hasUserSelectedAllRecords ? [] : selectedRecordIds,
+        selectedRecordIds: isWholeViewTargeted ? [] : selectedRecordIds,
       }),
     );
 
@@ -132,7 +142,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     contextStoreTargetedRecordsRuleAtom,
     currentRecordFilterGroups,
     currentRecordFilters,
-    hasUserSelectedAllRecords,
+    isWholeViewTargeted,
     recordIndexAllRecordIds,
     selectedRecordIds,
     store,

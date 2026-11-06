@@ -27,7 +27,7 @@ export const ObjectOptionsDropdownRecordGroupDisplayContent = () => {
 
   const { onContentChange, dropdownId } = useObjectOptionsDropdown();
 
-  const shouldDisplayGroupsAsTabs = useAtomComponentStateValue(
+  const recordIndexShouldDisplayGroupsAsTabs = useAtomComponentStateValue(
     recordIndexShouldDisplayGroupsAsTabsComponentState,
   );
 
@@ -64,8 +64,8 @@ export const ObjectOptionsDropdownRecordGroupDisplayContent = () => {
               onClick={() => updateRecordGroupDisplay(false)}
               focused={selectedItemId === SECTIONS_ITEM_ID}
               role="option"
-              aria-selected={!shouldDisplayGroupsAsTabs}
-              selected={!shouldDisplayGroupsAsTabs}
+              aria-selected={!recordIndexShouldDisplayGroupsAsTabs}
+              selected={!recordIndexShouldDisplayGroupsAsTabs}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconLayoutList} />}
             >{t`Sections`}</ListItemButton>
@@ -78,8 +78,8 @@ export const ObjectOptionsDropdownRecordGroupDisplayContent = () => {
               onClick={() => updateRecordGroupDisplay(true)}
               focused={selectedItemId === TABS_ITEM_ID}
               role="option"
-              aria-selected={shouldDisplayGroupsAsTabs}
-              selected={shouldDisplayGroupsAsTabs}
+              aria-selected={recordIndexShouldDisplayGroupsAsTabs}
+              selected={recordIndexShouldDisplayGroupsAsTabs}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconLayoutNavbar} />}
             >{t`Tabs`}</ListItemButton>

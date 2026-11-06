@@ -1,11 +1,14 @@
 import { RecordGroupTab } from '@/object-record/record-group/components/RecordGroupTab';
-import { useActiveRecordGroupTabId } from '@/object-record/record-group/hooks/useActiveRecordGroupTabId';
-import { useIsRecordGroupTabsDisplayed } from '@/object-record/record-group/hooks/useIsRecordGroupTabsDisplayed';
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { selectedRecordGroupTabIdComponentState } from '@/object-record/record-group/states/selectedRecordGroupTabIdComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type ViewType } from '@/views/types/ViewType';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Tabs } from 'twenty-ui/primitives/navigation';
@@ -26,18 +29,31 @@ type RecordGroupTabsProps = {
 export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
   const { t } = useLingui();
 
-  const isRecordGroupTabsDisplayed = useIsRecordGroupTabsDisplayed();
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
 
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );
 
-  const activeRecordGroupTabId = useActiveRecordGroupTabId(viewType);
+  const activeRecordGroupTabId = useAtomComponentSelectorValue(
+    activeRecordGroupTabIdComponentSelector,
+  );
 
   const setSelectedRecordGroupTabId = useSetAtomComponentState(
     selectedRecordGroupTabIdComponentState,
   );
+
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
+  const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
+
+  const handleRecordGroupTabChange = (recordGroupId: string) => {
+    resetRecordSelection();
+    setSelectedRecordGroupTabId(recordGroupId);
+  };
 
   if (!isRecordGroupTabsDisplayed) {
     return null;
@@ -46,9 +62,7 @@ export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
   return (
     <Tabs.Root
       value={activeRecordGroupTabId}
-      onValueChange={(recordGroupId: string) =>
-        setSelectedRecordGroupTabId(recordGroupId)
-      }
+      onValueChange={handleRecordGroupTabChange}
     >
       <StyledTabsScrollContainer>
         <Tabs.List aria-label={t`Groups`} render={<StyledTabsList />}>

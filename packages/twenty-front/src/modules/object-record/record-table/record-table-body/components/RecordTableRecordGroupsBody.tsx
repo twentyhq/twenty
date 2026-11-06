@@ -1,5 +1,5 @@
-import { useActiveRecordGroupTabId } from '@/object-record/record-group/hooks/useActiveRecordGroupTabId';
-import { useIsRecordGroupTabsDisplayed } from '@/object-record/record-group/hooks/useIsRecordGroupTabsDisplayed';
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
@@ -33,9 +33,13 @@ export const RecordTableRecordGroupsBody = () => {
     ViewType.TABLE,
   );
 
-  const isRecordGroupTabsDisplayed = useIsRecordGroupTabsDisplayed();
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
 
-  const activeRecordGroupTabId = useActiveRecordGroupTabId(ViewType.TABLE);
+  const activeRecordGroupTabId = useAtomComponentSelectorValue(
+    activeRecordGroupTabIdComponentSelector,
+  );
 
   const displayedRecordGroupIds = isRecordGroupTabsDisplayed
     ? [activeRecordGroupTabId].filter(isDefined)

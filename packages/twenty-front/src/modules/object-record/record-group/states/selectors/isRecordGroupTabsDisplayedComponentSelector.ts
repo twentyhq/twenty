@@ -1,0 +1,34 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
+import { isRecordGroupTabsSupportedForViewType } from '@/object-record/record-group/utils/isRecordGroupTabsSupportedForViewType';
+import { recordIndexShouldDisplayGroupsAsTabsComponentState } from '@/object-record/record-index/states/recordIndexShouldDisplayGroupsAsTabsComponentState';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { FeatureFlagKey } from 'twenty-shared/types';
+
+export const isRecordGroupTabsDisplayedComponentSelector =
+  createAtomComponentSelector<boolean>({
+    key: 'isRecordGroupTabsDisplayedComponentSelector',
+    componentInstanceContext: ViewComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const isRecordGroupTabsEnabled =
+          get(currentWorkspaceState)?.featureFlags?.find(
+            (featureFlag) =>
+              featureFlag.key === FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED,
+          )?.value ?? false;
+
+        return (
+          isRecordGroupTabsEnabled &&
+          get(recordIndexShouldDisplayGroupsAsTabsComponentState, {
+            instanceId,
+          }) &&
+          get(recordGroupIdsComponentState, { instanceId }).length > 0 &&
+          isRecordGroupTabsSupportedForViewType(
+            get(recordIndexViewTypeState, { instanceId }),
+          )
+        );
+      },
+  });
