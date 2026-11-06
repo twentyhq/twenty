@@ -28,6 +28,10 @@ export const useUpdateMcpServer = () => {
       });
 
       if (!isDefined(data)) {
+        enqueueToast({
+          status: 'error',
+          children: t`Failed to update MCP server`,
+        });
         return;
       }
 

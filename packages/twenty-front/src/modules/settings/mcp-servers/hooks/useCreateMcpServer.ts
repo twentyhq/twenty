@@ -27,6 +27,10 @@ export const useCreateMcpServer = () => {
       });
 
       if (!isDefined(data)) {
+        enqueueToast({
+          status: 'error',
+          children: t`Failed to create MCP server`,
+        });
         return;
       }
 
