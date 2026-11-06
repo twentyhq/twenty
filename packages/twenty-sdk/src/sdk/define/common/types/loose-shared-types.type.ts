@@ -32,6 +32,8 @@ export type IndexManifest = LooseEnumValues<SharedApplication.IndexManifest>;
 export type LogicFunctionConfig = LooseEnumValues<StrictLogicFunctionConfig>;
 export type MessageChannelVisibility =
   LooseEnumValues<SharedTypes.MessageChannelVisibility>;
+export type MessageDeliveryStatus =
+  LooseEnumValues<SharedTypes.MessageDeliveryStatus>;
 export type MessageParticipantRole =
   LooseEnumValues<SharedTypes.MessageParticipantRole>;
 export type ObjectFieldManifest =

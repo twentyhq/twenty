@@ -7,6 +7,7 @@ import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMe
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
@@ -25,6 +26,14 @@ export const useEmailThread = (threadId: string | null) => {
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
   const isMessageAttachmentEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+  );
+
+  const { objectMetadataItem: messageObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.Message,
+    });
+  const hasMessageDeliveryStatus = messageObjectMetadataItem.fields.some(
+    (field) => field.name === 'deliveryStatus',
   );
 
   const { record: thread, loading: threadRecordLoading } =
@@ -46,6 +55,7 @@ export const useEmailThread = (threadId: string | null) => {
     fetchAllThreadMessagesOperationSignatureFactory({
       messageThreadId: threadId,
       isMessageAttachmentEnabled,
+      hasMessageDeliveryStatus,
     });
 
   const {

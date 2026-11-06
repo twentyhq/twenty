@@ -1,3 +1,5 @@
+import { type MessageDeliveryStatus } from 'twenty-shared/types';
+
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
@@ -17,6 +19,7 @@ export type EmailThreadMessage = {
   >[];
   messageThread: MessageThread;
   isDraft: boolean;
+  deliveryStatus?: MessageDeliveryStatus | null;
   attachments?: Pick<Attachment, 'id' | 'file'>[];
   __typename: 'EmailThreadMessage';
 };

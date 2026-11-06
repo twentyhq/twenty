@@ -1719,6 +1719,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "918cb351-2490-540b-b02d-e6052042dddc",
       },
+      "deliveryStatus": {
+        "universalIdentifier": "c3f1e8a2-5b7d-4e9a-8f21-6d4b0a9e7c53",
+      },
       "headerMessageId": {
         "universalIdentifier": "20202020-72b5-416d-aed8-b55609067d01",
       },

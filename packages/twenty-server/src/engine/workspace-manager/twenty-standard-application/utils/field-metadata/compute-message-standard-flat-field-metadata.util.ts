@@ -4,6 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  MessageDeliveryStatus,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -477,6 +478,59 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIEditable: false,
       defaultValue: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  deliveryStatus: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'deliveryStatus',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(
+        msg({ message: `Delivery status`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Whether the recipients received or read this message, when the provider reports it`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconChecks',
+      isNullable: true,
+      isUIEditable: false,
+      options: [
+        {
+          id: '66d49e3e-9de5-489e-9597-2bb5b59ff8b4',
+          value: MessageDeliveryStatus.SENT,
+          label: i18nLabel(
+            msg({ message: `Sent`, context: 'fieldMetadata.label' }),
+          ),
+          position: 0,
+          color: 'gray',
+        },
+        {
+          id: '7255dceb-61f0-4d6c-ae2a-0b37c6deab5b',
+          value: MessageDeliveryStatus.DELIVERED,
+          label: i18nLabel(
+            msg({ message: `Delivered`, context: 'fieldMetadata.label' }),
+          ),
+          position: 1,
+          color: 'blue',
+        },
+        {
+          id: 'b3f9f9c9-67a9-4486-9e17-ddef03192e38',
+          value: MessageDeliveryStatus.READ,
+          label: i18nLabel(
+            msg({ message: `Read`, context: 'fieldMetadata.label' }),
+          ),
+          position: 2,
+          color: 'green',
+        },
+      ],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

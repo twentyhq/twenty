@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, MessageParticipantRole } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type MessageDeliveryStatus,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -16,6 +20,7 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { buildAppIngestionLockKey } from 'src/engine/metadata-modules/message-channel/utils/build-app-ingestion-lock-key.util';
+import { isMessageDeliveryStatusAhead } from 'src/engine/metadata-modules/message-channel/utils/is-message-delivery-status-ahead.util';
 import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-header-message-id.util';
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
@@ -25,6 +30,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -129,6 +135,19 @@ export class ApplicationMessageIngestionService {
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
 
+    await this.advanceMessageDeliveryStatuses({
+      workspaceId,
+      deliveryStatusByMessageId: new Map(
+        messages.flatMap(({ externalId, deliveryStatus }) => {
+          const messageId = messageExternalIdsAndIdsMap.get(externalId);
+
+          return isDefined(messageId) && isDefined(deliveryStatus)
+            ? [[messageId, deliveryStatus] as const]
+            : [];
+        }),
+      ),
+    });
+
     const messageIdsWithAttachments = await this.findMessageIdsWithAttachments({
       workspaceId,
       messageIds: [...new Set(messageExternalIdsAndIdsMap.values())],
@@ -157,6 +176,66 @@ export class ApplicationMessageIngestionService {
         };
       }),
     };
+  }
+
+  // a late redelivery of an older webhook must not move a read message back to sent
+  private async advanceMessageDeliveryStatuses({
+    workspaceId,
+    deliveryStatusByMessageId,
+  }: {
+    workspaceId: string;
+    deliveryStatusByMessageId: Map<string, MessageDeliveryStatus>;
+  }): Promise<void> {
+    if (deliveryStatusByMessageId.size === 0) {
+      return;
+    }
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+            'message',
+          );
+
+        const storedMessages = await messageRepository.find({
+          where: { id: In([...deliveryStatusByMessageId.keys()]) },
+          select: { id: true, deliveryStatus: true },
+        });
+
+        const messageIdsByNextStatus = new Map<
+          MessageDeliveryStatus,
+          string[]
+        >();
+
+        for (const storedMessage of storedMessages) {
+          const nextStatus = deliveryStatusByMessageId.get(storedMessage.id);
+
+          if (
+            !isDefined(nextStatus) ||
+            !isMessageDeliveryStatusAhead({
+              nextStatus,
+              currentStatus: storedMessage.deliveryStatus,
+            })
+          ) {
+            continue;
+          }
+
+          messageIdsByNextStatus.set(nextStatus, [
+            ...(messageIdsByNextStatus.get(nextStatus) ?? []),
+            storedMessage.id,
+          ]);
+        }
+
+        for (const [deliveryStatus, messageIds] of messageIdsByNextStatus) {
+          await messageRepository.update(
+            { id: In(messageIds) },
+            { deliveryStatus },
+          );
+        }
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   private async findMessageIdsWithAttachments({

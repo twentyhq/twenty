@@ -7,6 +7,7 @@ import {
   CalendarStartDay,
   FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
 } from 'twenty-shared/constants';
+import { MessageDeliveryStatus } from 'twenty-shared/types';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -293,6 +294,47 @@ describe('ChatThreadMessageGroup', () => {
       expect(screen.getByText(expectedTime)).toBeInTheDocument();
     },
   );
+
+  it.each([
+    [MessageDeliveryStatus.SENT, 'Sent'],
+    [MessageDeliveryStatus.DELIVERED, 'Delivered'],
+    [MessageDeliveryStatus.READ, 'Read'],
+  ])(
+    'shows the %s status of an outgoing message',
+    (deliveryStatus, expectedLabel) => {
+      render(
+        <I18nProvider i18n={i18n}>
+          <ChatThreadMessageGroup
+            group={{
+              id: 'group-id',
+              isOutgoing: true,
+              messages: [buildMessage({ deliveryStatus })],
+            }}
+          />
+        </I18nProvider>,
+      );
+
+      expect(screen.getByLabelText(expectedLabel)).toBeInTheDocument();
+    },
+  );
+
+  it('shows no status on an incoming message', () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadMessageGroup
+          group={{
+            id: 'group-id',
+            isOutgoing: false,
+            messages: [
+              buildMessage({ deliveryStatus: MessageDeliveryStatus.READ }),
+            ],
+          }}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.queryByLabelText('Read')).not.toBeInTheDocument();
+  });
 
   it('does not render a body masked by metadata visibility', () => {
     render(

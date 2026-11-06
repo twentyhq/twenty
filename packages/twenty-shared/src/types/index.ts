@@ -176,6 +176,7 @@ export { MessageChannelSyncStage } from './MessageChannelSyncStage';
 export { MessageChannelSyncStatus } from './MessageChannelSyncStatus';
 export { MessageChannelType } from './MessageChannelType';
 export { MessageChannelVisibility } from './MessageChannelVisibility';
+export { MessageDeliveryStatus } from './MessageDeliveryStatus';
 export { MessageFolderImportPolicy } from './MessageFolderImportPolicy';
 export { MessageFolderPendingSyncAction } from './MessageFolderPendingSyncAction';
 export { MessageParticipantRole } from './MessageParticipantRole';
