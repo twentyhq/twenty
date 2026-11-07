@@ -151,3 +151,32 @@ export const KeepsUnsupportedValueAsCustom: Story = {
     expect(await canvas.findByText('No default')).toBeVisible();
   },
 };
+
+export const KeepsTheValueUntilADateIsEntered: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Relative date'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Date range' }),
+    );
+
+    const [startDateInput] = await canvas.findAllByRole('textbox', {
+      name: 'Date',
+    });
+
+    expect(args.onChange).not.toHaveBeenCalled();
+
+    await userEvent.click(startDateInput);
+    await userEvent.keyboard('03102026');
+
+    await waitFor(() =>
+      expect(args.onChange).toHaveBeenLastCalledWith({
+        conditions: [
+          { operand: ViewFilterOperand.IS_AFTER, value: '2026-03-10' },
+        ],
+      }),
+    );
+  },
+};

@@ -1,3 +1,4 @@
+import { DashboardFiltersContext } from '@/page-layout/contexts/DashboardFiltersContext';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -16,12 +17,18 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore } from 'jotai';
 import { expect, waitFor, within } from 'storybook/test';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
+  ViewFilterOperand,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 type WidgetCardShellStoryProps = {
   isEditable: boolean;
@@ -95,6 +102,110 @@ const WidgetCardShellStory = ({
             onRemove={() => undefined}
           />
         </PageLayoutContentProvider>
+      </PageLayoutTestWrapper>
+    </div>
+  );
+};
+
+const PERIOD_FILTER_ID = 'period-filter-id';
+
+const opportunityObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('opportunity');
+
+const closeDateField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: opportunityObjectMetadataItem,
+  fieldName: 'closeDate',
+});
+
+type DashboardFilterWidgetCardShellStoryProps = {
+  boundFieldMetadataId: string;
+};
+
+const DashboardFilterWidgetCardShellStory = ({
+  boundFieldMetadataId,
+}: DashboardFilterWidgetCardShellStoryProps) => {
+  const store = createStore();
+  const widget = {
+    ...makeWidget('dashboard-filter-widget-story', 0),
+    title: 'Opportunities',
+    type: WidgetType.RECORD_TABLE,
+    objectMetadataId: opportunityObjectMetadataItem.id,
+    configuration: {
+      __typename: 'RecordTableConfiguration' as const,
+      configurationType: WidgetConfigurationType.RECORD_TABLE,
+      dashboardFilterBindings: [
+        {
+          pageLayoutFilterId: PERIOD_FILTER_ID,
+          fieldMetadataId: boundFieldMetadataId,
+        },
+      ],
+    },
+  };
+
+  store.set(
+    pageLayoutPersistedComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    }),
+    {
+      ...makeDraft([makeTab('tab-1', [widget])]),
+      type: PageLayoutType.DASHBOARD,
+      applicationId: '',
+      createdAt: '2026-08-22T00:00:00.000Z',
+      deletedAt: null,
+      isSystemSideEffect: false,
+      universalIdentifier: 'dashboard-filter-widget-card-shell-layout',
+      updatedAt: '2026-08-22T00:00:00.000Z',
+    },
+  );
+
+  return (
+    <div style={{ height: 200, width: 480 }}>
+      <PageLayoutTestWrapper
+        layoutType={PageLayoutType.DASHBOARD}
+        store={store}
+      >
+        <MockedMetadataLoadEffect />
+        <DashboardFiltersContext.Provider
+          value={{
+            pageLayoutFilters: [
+              { id: PERIOD_FILTER_ID, label: 'Period', position: 0 },
+            ],
+            urlValueByPageLayoutFilterId: {},
+            valueByPageLayoutFilterId: {
+              [PERIOD_FILTER_ID]: {
+                conditions: [
+                  {
+                    operand: ViewFilterOperand.IS_RELATIVE,
+                    value: 'THIS_1_MONTH;;UTC;;MONDAY;;',
+                  },
+                ],
+              },
+            },
+            timeZone: 'UTC',
+            firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
+          }}
+        >
+          <PageLayoutContentProvider
+            value={{
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              presentation: 'stack',
+              tabId: 'tab-1',
+            }}
+          >
+            <WidgetCardShell
+              widget={widget}
+              variant="framed"
+              isEditable={false}
+              isEditing={false}
+              isDragging={false}
+              isResizing={false}
+              showHeader
+              hasAccess
+              restriction={{ type: null }}
+              onRemove={() => undefined}
+            />
+          </PageLayoutContentProvider>
+        </DashboardFiltersContext.Provider>
       </PageLayoutTestWrapper>
     </div>
   );
@@ -198,5 +309,31 @@ export const FlushTasks: Story = {
     await waitFor(() =>
       expect(getComputedStyle(content).paddingTop).not.toBe('0px'),
     );
+  },
+};
+
+export const DashboardFilterChip: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      boundFieldMetadataId={closeDateField.id}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Period: This month')).toBeVisible();
+    expect(canvas.queryByText('Invalid filter')).not.toBeInTheDocument();
+  },
+};
+
+export const InvalidDashboardFilter: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory boundFieldMetadataId="deleted-field-id" />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Invalid filter')).toBeVisible();
+    expect(canvas.queryByText('Period: This month')).not.toBeInTheDocument();
   },
 };

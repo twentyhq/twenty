@@ -1,8 +1,11 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useDashboardFilterForWidget } from '@/page-layout/hooks/useDashboardFilterForWidget';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
+import { WidgetDashboardFilterChips } from '@/page-layout/widgets/components/WidgetDashboardFilterChips';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
+import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
@@ -13,6 +16,7 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/icon';
@@ -60,8 +64,11 @@ export const WidgetCardShell = ({
   onMouseEnter,
   onMouseLeave,
 }: WidgetCardShellProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { layoutMode, presentation } = usePageLayoutContentContext();
+  const { isInvalid: isDashboardFilterInvalid } =
+    useDashboardFilterForWidget(widget);
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
@@ -107,6 +114,9 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            filterChips={
+              hasAccess && <WidgetDashboardFilterChips widget={widget} />
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay
@@ -138,7 +148,15 @@ export const WidgetCardShell = ({
                 widget.objectMetadataId,
               ]}
             >
-              <WidgetContentRenderer widget={widget} />
+              {isDashboardFilterInvalid ? (
+                <PageLayoutWidgetStatusDisplay
+                  tooltipId={`widget-invalid-dashboard-filter-tooltip-${widget.id}`}
+                  text={t`Invalid filter`}
+                  tooltipContent={t`The dashboard filter value cannot be applied to this widget.`}
+                />
+              ) : (
+                <WidgetContentRenderer widget={widget} />
+              )}
             </ErrorBoundary>
           ) : (
             <StyledNoAccessContainer>

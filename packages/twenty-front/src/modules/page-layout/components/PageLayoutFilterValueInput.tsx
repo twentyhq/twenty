@@ -76,8 +76,7 @@ export const PageLayoutFilterValueInput = ({
   };
 
   const valueMode = getPageLayoutFilterValueMode(value ?? null);
-  const mode =
-    valueMode === 'NONE' && isDateRangeChosen ? 'DATE_RANGE' : valueMode;
+  const mode = isDateRangeChosen ? 'DATE_RANGE' : valueMode;
   const storedDateRange = getPageLayoutFilterDateRange(value ?? null);
   const { startDate, endDate } = storedDateRange;
 
@@ -153,6 +152,11 @@ export const PageLayoutFilterValueInput = ({
 
     setIsDateRangeChosen(newMode === 'DATE_RANGE');
     showError(null);
+
+    // An empty range would apply no filter, so the value only changes with a date
+    if (newMode === 'DATE_RANGE') {
+      return;
+    }
 
     if (newMode === 'RELATIVE') {
       handleRelativeDateChange(

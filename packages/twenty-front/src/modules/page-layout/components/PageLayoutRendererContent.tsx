@@ -1,3 +1,4 @@
+import { DashboardFiltersProvider } from '@/page-layout/components/DashboardFiltersProvider';
 import { PageLayoutTabsRenderer } from '@/page-layout/components/PageLayoutTabsRenderer';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -11,5 +12,9 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
-  return <PageLayoutTabsRenderer />;
+  return (
+    <DashboardFiltersProvider>
+      <PageLayoutTabsRenderer />
+    </DashboardFiltersProvider>
+  );
 };
