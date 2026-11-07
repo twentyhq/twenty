@@ -34,7 +34,7 @@ export class AccessGroupService {
   }
 
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
-    await this.workspaceCacheService.clearMemoizedReads(workspaceId);
+    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const { definitions, failures } = buildWorkspaceAccessGroupDefinitions(
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
