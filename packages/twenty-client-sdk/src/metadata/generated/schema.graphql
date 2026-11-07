@@ -3905,6 +3905,7 @@ enum ObjectRecordGroupByDateGranularity {
 }
 
 type ObjectRecordsPermissions {
+  canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
@@ -4655,6 +4656,7 @@ enum RowLevelPermissionPredicateOperand {
 }
 
 type RowLevelRecordsPermissions {
+  canCreateRecords: Boolean!
   canDestroyRecords: Boolean!
   canReadRecords: Boolean!
   canSoftDeleteRecords: Boolean!

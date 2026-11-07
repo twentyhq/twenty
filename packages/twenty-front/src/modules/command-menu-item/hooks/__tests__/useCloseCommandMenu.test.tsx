@@ -53,6 +53,7 @@ const getWrapper =
           hasAnySoftDeleteFilterOnView: false,
           numberOfSelectedRecords: 0,
           objectPermissions: {
+            canCreateObjectRecords: false,
             canReadObjectRecords: false,
             canUpdateObjectRecords: false,
             canSoftDeleteObjectRecords: false,

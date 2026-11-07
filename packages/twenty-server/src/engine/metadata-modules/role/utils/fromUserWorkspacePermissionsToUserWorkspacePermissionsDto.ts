@@ -1,6 +1,10 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canReachAllRecords,
+  canReachSomeRecords,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
@@ -52,14 +56,27 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       continue;
     }
 
+    const { rowLevelRecordsPermissions } = permissions;
+
     objectRecordsPermissions.push({
       objectMetadataId,
+      canCreateAllRecords: canReachAllRecords({
+        objectRecordsPermissions: permissions,
+        operationType: 'create',
+      }),
       canReadAllRecords: permissions.canReadAllRecords,
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
       restrictedFields: permissions.restrictedFields,
-      rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
+      rowLevelRecordsPermissions: isDefined(rowLevelRecordsPermissions)
+        ? {
+            ...rowLevelRecordsPermissions,
+            canCreateRecords:
+              rowLevelRecordsPermissions.canCreateRecords ??
+              rowLevelRecordsPermissions.canUpdateRecords,
+          }
+        : rowLevelRecordsPermissions,
     });
     legacyObjectPermissions.push(
       fromObjectRecordsPermissionsToLegacyObjectPermission({

@@ -19,6 +19,18 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     expect(result).toBe(true);
   });
 
+  it('should return false without create permission, even with update permission', () => {
+    const result = canCreateRecordsForObjectMetadataItem({
+      objectPermissions: {
+        ...objectPermissionsAllowingUpdate,
+        canCreateAllRecords: false,
+      },
+      objectMetadataItem: creatableObjectMetadataItem,
+    });
+
+    expect(result).toBe(false);
+  });
+
   it('should return false when the object is not UI creatable', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: objectPermissionsAllowingUpdate,

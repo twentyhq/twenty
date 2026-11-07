@@ -29,6 +29,7 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
           canDestroyAllRecords: false,
           restrictedFields: {},
           rowLevelRecordsPermissions: {
+            canCreateRecords: false,
             canReadRecords: true,
             canUpdateRecords: true,
             canSoftDeleteRecords: false,
@@ -40,6 +41,7 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
       }),
     ).toEqual({
       objectMetadataId: 'person-object-metadata-id',
+      canCreateObjectRecords: false,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
