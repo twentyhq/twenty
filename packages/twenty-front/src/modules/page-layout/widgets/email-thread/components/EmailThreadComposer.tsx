@@ -5,10 +5,10 @@ import { useEmailComposerState } from '@/activities/emails/hooks/useEmailCompose
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
-import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
+import { type WidgetCommandMenuItem } from '@/command-menu-item/types/WidgetCommandMenuItem';
+import { EmailThreadComposerCommandMenuItemsEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerCommandMenuItemsEffect';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -81,66 +81,64 @@ export const EmailThreadComposer = ({
 
   const canSendReply = canSend && !isUploadingAttachments;
 
-  const footerCommandMenuItems =
-    useMemo((): SidePanelFooterCommandMenuItem[] => {
-      if (!isComposerOpen) {
-        return [
-          {
-            id: 'reply',
-            label: t`Reply`,
-            Icon: IconArrowBackUp,
-            isPrimaryCTA: true,
-            onClick: () => setIsComposerOpen(true),
-            replacedEngineComponentKey:
-              EngineComponentKey.REPLY_TO_EMAIL_THREAD,
-          },
-        ];
-      }
-
-      const cancelReplyCommandMenuItem: SidePanelFooterCommandMenuItem = {
-        id: 'cancel-reply',
-        label: t`Cancel reply`,
-        Icon: IconX,
-        isPinned: !isInSidePanel,
-        onClick: () => setIsComposerOpen(false),
-        replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
-      };
-
-      const sendCommandMenuItem: SidePanelFooterCommandMenuItem = {
-        id: 'send',
-        label: t`Send`,
-        Icon: IconSend,
-        isPrimaryCTA: true,
-        shortcut: ['Mod', 'Enter'],
-        onClick: handleSend,
-        disabled: !canSendReply,
-        replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
-      };
-
-      if (!isInSidePanel) {
-        return [cancelReplyCommandMenuItem, sendCommandMenuItem];
-      }
-
+  const widgetCommandMenuItems = useMemo((): WidgetCommandMenuItem[] => {
+    if (!isComposerOpen) {
       return [
-        cancelReplyCommandMenuItem,
         {
-          id: 'attach-files',
-          label: t`Attach files`,
-          Icon: IconPaperclip,
-          isPinned: false,
-          onClick: openAttachmentPicker,
+          id: 'reply',
+          label: t`Reply`,
+          Icon: IconArrowBackUp,
+          isPrimaryCTA: true,
+          onClick: () => setIsComposerOpen(true),
+          replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
         },
-        sendCommandMenuItem,
       ];
-    }, [
-      isComposerOpen,
-      isInSidePanel,
-      handleSend,
-      canSendReply,
-      setIsComposerOpen,
-      openAttachmentPicker,
-      t,
-    ]);
+    }
+
+    const cancelReplyCommandMenuItem: WidgetCommandMenuItem = {
+      id: 'cancel-reply',
+      label: t`Cancel reply`,
+      Icon: IconX,
+      isPinned: !isInSidePanel,
+      onClick: () => setIsComposerOpen(false),
+      replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
+    };
+
+    const sendCommandMenuItem: WidgetCommandMenuItem = {
+      id: 'send',
+      label: t`Send`,
+      Icon: IconSend,
+      isPrimaryCTA: true,
+      shortcut: ['Mod', 'Enter'],
+      onClick: handleSend,
+      disabled: !canSendReply,
+      replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
+    };
+
+    if (!isInSidePanel) {
+      return [cancelReplyCommandMenuItem, sendCommandMenuItem];
+    }
+
+    return [
+      cancelReplyCommandMenuItem,
+      {
+        id: 'attach-files',
+        label: t`Attach files`,
+        Icon: IconPaperclip,
+        isPinned: false,
+        onClick: openAttachmentPicker,
+      },
+      sendCommandMenuItem,
+    ];
+  }, [
+    isComposerOpen,
+    isInSidePanel,
+    handleSend,
+    canSendReply,
+    setIsComposerOpen,
+    openAttachmentPicker,
+    t,
+  ]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && canSendReply) {
@@ -157,8 +155,8 @@ export const EmailThreadComposer = ({
 
   return (
     <>
-      <EmailThreadComposerFooterEffect
-        footerCommandMenuItems={footerCommandMenuItems}
+      <EmailThreadComposerCommandMenuItemsEffect
+        commandMenuItems={widgetCommandMenuItems}
         isInSidePanel={isInSidePanel}
       />
       {isComposerOpen && (

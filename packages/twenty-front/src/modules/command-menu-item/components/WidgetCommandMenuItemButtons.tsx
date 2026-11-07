@@ -1,9 +1,9 @@
-import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
+import { type WidgetCommandMenuItem } from '@/command-menu-item/types/WidgetCommandMenuItem';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
 type WidgetCommandMenuItemButtonsProps = {
-  commandMenuItems: SidePanelFooterCommandMenuItem[];
+  commandMenuItems: WidgetCommandMenuItem[];
 };
 
 export const WidgetCommandMenuItemButtons = ({

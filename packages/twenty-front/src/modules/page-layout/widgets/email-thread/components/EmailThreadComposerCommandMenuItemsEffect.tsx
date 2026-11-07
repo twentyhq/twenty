@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
 
 import { recordShowPageWidgetHeaderCommandMenuItemsState } from '@/command-menu-item/states/recordShowPageWidgetHeaderCommandMenuItemsState';
+import { type WidgetCommandMenuItem } from '@/command-menu-item/types/WidgetCommandMenuItem';
 import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
-import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-type EmailThreadComposerFooterEffectProps = {
-  footerCommandMenuItems: SidePanelFooterCommandMenuItem[];
+type EmailThreadComposerCommandMenuItemsEffectProps = {
+  commandMenuItems: WidgetCommandMenuItem[];
   isInSidePanel: boolean;
 };
 
-export const EmailThreadComposerFooterEffect = ({
-  footerCommandMenuItems,
+export const EmailThreadComposerCommandMenuItemsEffect = ({
+  commandMenuItems,
   isInSidePanel,
-}: EmailThreadComposerFooterEffectProps) => {
+}: EmailThreadComposerCommandMenuItemsEffectProps) => {
   const setWidgetCommandMenuItems = useSetAtomState(
     isInSidePanel
       ? sidePanelWidgetFooterCommandMenuItemsState
@@ -21,10 +21,10 @@ export const EmailThreadComposerFooterEffect = ({
   );
 
   useEffect(() => {
-    setWidgetCommandMenuItems(footerCommandMenuItems);
+    setWidgetCommandMenuItems(commandMenuItems);
 
     return () => setWidgetCommandMenuItems([]);
-  }, [footerCommandMenuItems, setWidgetCommandMenuItems]);
+  }, [commandMenuItems, setWidgetCommandMenuItems]);
 
   return <></>;
 };
