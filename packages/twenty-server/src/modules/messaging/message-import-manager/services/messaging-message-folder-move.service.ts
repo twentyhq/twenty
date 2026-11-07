@@ -17,8 +17,7 @@ export class MessagingMessageFolderMoveService {
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
   ) {}
 
-  // A fetched message lists all its folders, so stored links missing from it are stale.
-  // Returns what still needs saving: a plain move only changes folder links.
+  // Returns what still needs saving: a sent draft has more to refresh, a plain move doesn't.
   async relinkMovedMessages({
     messages,
     messageChannelId,
@@ -66,10 +65,8 @@ export class MessagingMessageFolderMoveService {
           const association = associations.find(
             ({ messageExternalId }) => messageExternalId === message.externalId,
           );
-          const isSentDraft =
-            association?.message?.isDraft === true && !message.isDraft;
 
-          if (!isDefined(association) || isSentDraft) {
+          if (!isDefined(association)) {
             return [];
           }
 
@@ -89,6 +86,8 @@ export class MessagingMessageFolderMoveService {
                   messageChannelMessageAssociationId: association.id,
                   messageFolderIds: message.messageFolderIds ?? [],
                   externalId: message.externalId,
+                  isSentDraft:
+                    association.message?.isDraft === true && !message.isDraft,
                 },
               ]
             : [];
@@ -113,12 +112,14 @@ export class MessagingMessageFolderMoveService {
           transactionScope,
         );
 
-        const movedExternalIds = new Set(
-          movedMessages.map(({ externalId }) => externalId),
+        const plainMoveExternalIds = new Set(
+          movedMessages
+            .filter(({ isSentDraft }) => !isSentDraft)
+            .map(({ externalId }) => externalId),
         );
 
         return messages.filter(
-          ({ externalId }) => !movedExternalIds.has(externalId),
+          ({ externalId }) => !plainMoveExternalIds.has(externalId),
         );
       },
       buildSystemAuthContext(workspaceId),

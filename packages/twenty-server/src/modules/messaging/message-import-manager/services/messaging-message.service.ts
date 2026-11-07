@@ -2,14 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -73,7 +72,6 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
-    const messageChannelMessageAssociationIdsToRelink: string[] = [];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -214,12 +212,6 @@ export class MessagingMessageService {
               text: message.text,
               isDraft: message.isDraft,
             };
-
-            if (isNonEmptyArray(message.messageFolderIds)) {
-              messageChannelMessageAssociationIdsToRelink.push(
-                existingAssociation.id,
-              );
-            }
           }
 
           if (!isDefined(existingAssociation)) {
@@ -313,11 +305,6 @@ export class MessagingMessageService {
           .filter(isDefined);
 
         await this.refreshSentDrafts(sentDraftsToRefresh, transactionScope);
-
-        await this.deleteFolderLinks(
-          messageChannelMessageAssociationIdsToRelink,
-          transactionScope,
-        );
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
@@ -418,26 +405,6 @@ export class MessagingMessageService {
     await messageParticipantRepository.delete({
       messageId: In(sentDrafts.map(({ id }) => id)),
     });
-  }
-
-  private async deleteFolderLinks(
-    messageChannelMessageAssociationIds: string[],
-    transactionScope: WorkspaceTransactionScope,
-  ) {
-    if (messageChannelMessageAssociationIds.length === 0) {
-      return;
-    }
-
-    await transactionScope
-      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-        'messageChannelMessageAssociationMessageFolder',
-        { shouldSkipEventEmission: true },
-      )
-      .delete({
-        messageChannelMessageAssociationId: In(
-          messageChannelMessageAssociationIds,
-        ),
-      });
   }
 
   private async enrichMessageAccumulatorWithExistingMessages(

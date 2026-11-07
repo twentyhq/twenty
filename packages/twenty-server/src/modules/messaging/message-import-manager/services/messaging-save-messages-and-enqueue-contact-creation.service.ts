@@ -26,8 +26,10 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
+import { MessagingMessageFolderMoveService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-move.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
+import { type MessageFolderLinkUpdate } from 'src/modules/messaging/message-import-manager/types/message-folder-link-update.type';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
@@ -43,21 +45,24 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
+    private readonly messageFolderMoveService: MessagingMessageFolderMoveService,
     private readonly messageAttachmentService: MessagingMessageAttachmentService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation({
-    messagesToSave,
+    messagesToSave: receivedMessages,
     messageChannel,
     connectedAccount,
     workspaceId,
+    folderLinkUpdate,
     personHandleField,
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
+    folderLinkUpdate: MessageFolderLinkUpdate;
     personHandleField?: PersonHandleField;
   }): Promise<
     | {
@@ -68,6 +73,22 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   > {
     const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
+
+    const messagesToSave =
+      folderLinkUpdate === 'replace'
+        ? await this.messageFolderMoveService.relinkMovedMessages({
+            messages: receivedMessages,
+            messageChannelId: messageChannel.id,
+            workspaceId,
+          })
+        : receivedMessages;
+
+    if (messagesToSave.length === 0) {
+      return {
+        messageExternalIdsAndIdsMap: new Map(),
+        messageExternalIdToMessageThreadIdMap: new Map(),
+      };
+    }
 
     const savedMessagesResult =
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
