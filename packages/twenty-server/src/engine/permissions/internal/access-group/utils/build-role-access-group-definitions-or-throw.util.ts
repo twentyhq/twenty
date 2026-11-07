@@ -75,7 +75,6 @@ export const buildRoleAccessGroupDefinitionsOrThrow = ({
   }
 
   const { predicates, predicateGroups } = rowLevelRecordsPermissions;
-  // The RLS filter reads one root group and ANDs ungrouped predicates onto it, so a role has one rule per object
   const rowLevelPermissionPredicateGroupId =
     predicateGroups.find(
       ({ parentRowLevelPermissionPredicateGroupId }) =>
