@@ -31,7 +31,7 @@ export const insertStep = ({
   updatedInsertedStep: WorkflowAction;
   updatedTrigger: WorkflowTrigger | null;
 } => {
-  let { updatedSteps, updatedTrigger } = isDefined(parentStepId)
+  const { updatedSteps, updatedTrigger } = isDefined(parentStepId)
     ? updateParentStep({
         trigger: existingTrigger,
         steps: existingSteps,

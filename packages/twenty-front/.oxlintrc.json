@@ -20,6 +20,7 @@
     "storybook-static"
   ],
   "rules": {
+    "prefer-const": ["error", { "ignoreReadBeforeAssign": true }],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": [
       "warn",
