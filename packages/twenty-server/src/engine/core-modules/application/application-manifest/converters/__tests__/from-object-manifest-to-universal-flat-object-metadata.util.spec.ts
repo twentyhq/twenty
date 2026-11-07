@@ -81,6 +81,21 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
       },
     );
 
+    it('disables create along with update', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          disabledObjectPermissionActions: ['canUpdateObjectRecords'],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.disabledObjectPermissionActions).toEqual([
+        'canUpdateObjectRecords',
+        'canCreateObjectRecords',
+      ]);
+    });
+
     it('is null when omitted', () => {
       const result = fromObjectManifestToUniversalFlatObjectMetadata({
         objectManifest: buildObjectManifest({}),

@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  appendCopySuffix,
-  canReachSomeRecords,
-  isDefined,
-} from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -14,8 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -36,8 +32,8 @@ const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -59,15 +55,13 @@ export class MessageListDuplicationService {
     });
 
     // One transaction so a failed member insert never leaves a list copy without its members
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
-          this.duplicateInTransaction({
-            messageListId,
-            authContext,
-            transactionScope,
-          }),
-        ),
+    return this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+      (transactionScope) =>
+        this.duplicateInTransaction({
+          messageListId,
+          authContext,
+          transactionScope,
+        }),
       authContext,
     );
   }
@@ -80,39 +74,44 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
-      await Promise.all([
-        this.permissionsService.getUserWorkspacePermissions({
-          workspaceId,
-          userWorkspaceId,
-        }),
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]),
-      ]);
+    const [principals, { flatObjectMetadataMaps }] = await Promise.all([
+      this.principalPermissionsService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
+        { workspaceId, userWorkspaceId },
+      ),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]),
+    ]);
 
-    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
-      const objectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectRecordsPermissions = isDefined(objectMetadata)
-        ? recordsPermissions.objects[objectMetadata.id]
-        : undefined;
+    const duplicatedObjects = DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+      (objectUniversalIdentifier) =>
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
+    );
 
-      if (
-        !canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'select',
-        }) ||
-        !canReachSomeRecords({
-          objectRecordsPermissions,
-          operationType: 'update',
-        })
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    const canReadAndCreateDuplicatedObjects =
+      duplicatedObjects.every(isDefined) &&
+      (
+        await Promise.all(
+          duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
+            this.recordPermissionsService.canRoleAccessSomeRecords({
+              operationType: 'read',
+              principals,
+              objectMetadataId,
+            }),
+            this.recordPermissionsService.canRoleAccessSomeRecords({
+              operationType: 'create',
+              principals,
+              objectMetadataId,
+            }),
+          ]),
+        )
+      ).every((isGranted) => isGranted);
+
+    if (!canReadAndCreateDuplicatedObjects) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 

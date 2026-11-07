@@ -14,6 +14,7 @@ const buildContext = (
   numberOfSelectedRecords: 0,
   objectPermissions: {
     objectMetadataId: '',
+    canCreateObjectRecords: true,
     canReadObjectRecords: true,
     canUpdateObjectRecords: true,
     canSoftDeleteObjectRecords: true,
@@ -32,6 +33,7 @@ const buildContext = (
   objectMetadataItem: {},
   objectMetadataLabel: '',
   coreObjectName: null,
+  currentView: null,
   ...overrides,
 });
 
@@ -46,6 +48,39 @@ describe('evaluateConditionalAvailabilityExpression', () => {
           buildContext({ coreObjectName: 'workflow' }),
         ),
       ).toBe(true);
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+      ).toBe(false);
+    });
+  });
+
+  describe('currentView', () => {
+    const expression =
+      "currentView.universalIdentifier == '20202020-0000-4000-8000-000000000001'";
+
+    it('should match the view on screen', () => {
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({
+            currentView: {
+              id: 'view-id',
+              universalIdentifier: '20202020-0000-4000-8000-000000000001',
+            },
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it('should not match another view or no view', () => {
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({
+            currentView: { id: 'view-id', universalIdentifier: null },
+          }),
+        ),
+      ).toBe(false);
       expect(
         evaluateConditionalAvailabilityExpression(expression, buildContext()),
       ).toBe(false);
@@ -365,6 +400,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
         objectPermissions: {
           objectMetadataId: '',
+          canCreateObjectRecords: true,
           canReadObjectRecords: true,
           canUpdateObjectRecords: true,
           canSoftDeleteObjectRecords: true,

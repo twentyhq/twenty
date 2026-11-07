@@ -12,7 +12,13 @@ describe('computeLineChartGroupedLabels', () => {
     const { data: dataOverrides, ...restOverrides } = overrides;
     return {
       id: 'point1',
+      indexInSeries: 0,
+      absIndex: 0,
+      seriesIndex: 0,
       seriesId: 'series1',
+      seriesColor: '#color',
+      color: '#color',
+      borderColor: '#color',
       x: 100,
       y: 50,
       data: {
@@ -23,7 +29,7 @@ describe('computeLineChartGroupedLabels', () => {
         ...dataOverrides,
       },
       ...restOverrides,
-    } as unknown as Point<LineSeries>;
+    };
   };
 
   describe('basic label computation', () => {
@@ -105,9 +111,7 @@ describe('computeLineChartGroupedLabels', () => {
     });
 
     it('should handle string y values by converting to number', () => {
-      const points = [
-        createMockPoint({ data: { x: 'Jan', y: '123' as unknown as number } }),
-      ];
+      const points = [createMockPoint({ data: { x: 'Jan', y: '123' } })];
 
       const result = computeLineChartGroupedLabels(points);
 

@@ -227,6 +227,15 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
           return;
         }
 
+        // jsonb rejects NUL, and one such source would fail the whole workspace
+        if (source.includes('\0')) {
+          this.logger.warn(
+            `Workspace ${workspaceId}: the source of function ${id} contains a NUL character, its code steps keep running from the function`,
+          );
+
+          return;
+        }
+
         sourceByLogicFunctionId.set(id, source);
       });
     }

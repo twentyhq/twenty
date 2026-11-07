@@ -140,7 +140,9 @@ export class PublicDomainService {
         },
       ));
 
-    if (!publicDomainWithRecords) return;
+    if (!publicDomainWithRecords) {
+      return;
+    }
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {

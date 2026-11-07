@@ -49,7 +49,10 @@ export type LearnToolsOptions = {
 };
 
 export const createLearnToolsTool = (
-  toolRegistry: ToolRegistryService,
+  toolRegistry: Pick<
+    ToolRegistryService,
+    'getToolInfo' | 'suggestSimilarToolNames' | 'spillToolOutputIfTooLarge'
+  >,
   context: ToolContext,
   options?: LearnToolsOptions,
 ) => ({
@@ -71,7 +74,6 @@ export const createLearnToolsTool = (
     );
 
     const foundNames = new Set(toolInfos.map((toolInfo) => toolInfo.name));
-    // Includes names isToolAllowed rejects: a silently dropped name reads to the agent as a missing permission.
     const notFound = toolNames.filter((name) => !foundNames.has(name));
 
     const suggestions: Record<string, string[]> =

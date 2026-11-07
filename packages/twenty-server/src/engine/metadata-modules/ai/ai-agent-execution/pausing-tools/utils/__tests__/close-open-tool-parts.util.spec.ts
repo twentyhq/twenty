@@ -4,7 +4,6 @@ import {
 } from 'twenty-shared/ai';
 
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
-import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
 const PROPOSAL = {
@@ -49,7 +48,7 @@ const closeParts = async (
         },
       }),
     ),
-  } as unknown as AgentHistoryRepository<AgentMessagePartWorkspaceEntity>;
+  };
 
   await closeOpenToolParts({
     messagePartRepository,

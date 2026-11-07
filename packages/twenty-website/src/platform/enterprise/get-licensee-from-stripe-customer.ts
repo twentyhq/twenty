@@ -2,8 +2,8 @@ import type Stripe from 'stripe';
 
 type StripeCustomerField =
   | string
-  | Stripe.Customer
-  | Stripe.DeletedCustomer
+  | Pick<Stripe.Customer, 'deleted' | 'name' | 'email'>
+  | Pick<Stripe.DeletedCustomer, 'deleted'>
   | null;
 
 export function getLicenseeFromStripeCustomer(

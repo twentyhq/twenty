@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { type Job, PRIORITY_LIMIT } from 'bullmq';
+import { PRIORITY_LIMIT } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,7 +57,7 @@ type BullMQDouble = {
   jobs: StoredJob[];
   schedulers: SchedulerTemplate[];
   nextInsertionIndex: number;
-  processor: ((job: Job) => Promise<void>) | undefined;
+  processor: ((job: object) => Promise<void>) | undefined;
   client: RedisClientDouble | undefined;
   redis: Redis | undefined;
   store: (jobToStore: JobToStore) => Promise<{ id: string }>;
@@ -252,7 +252,7 @@ jest.mock('bullmq', () => ({
   Worker: jest
     .fn()
     .mockImplementation(
-      (_queueName: string, processor: (job: Job) => Promise<void>) => {
+      (_queueName: string, processor: (job: object) => Promise<void>) => {
         mockBullMQ.processor = processor;
 
         return { on: () => undefined };
@@ -382,7 +382,7 @@ export const createFairnessHarness = async () => {
         attemptsStarted: job.attemptsMade + 1,
         updateData: jest.fn(),
         updateProgress: jest.fn(),
-      } as unknown as Job);
+      });
     } catch {
       if (job.attemptsMade + 1 < (job.options.attempts ?? 1)) {
         await flushAsyncWork();

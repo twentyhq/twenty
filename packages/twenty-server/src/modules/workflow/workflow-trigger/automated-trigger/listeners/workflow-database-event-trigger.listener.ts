@@ -25,7 +25,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -75,7 +75,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordEventPermissionsService: RecordEventPermissionsService,
     private readonly applicationService: ApplicationService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
@@ -388,7 +388,7 @@ export class WorkflowDatabaseEventTriggerListener {
       ? await this.buildEnrichedPayload({ payload, enrichPayload })
       : payload;
 
-    const admittedEventsByApplicationId = new Map<
+    const readableEventsByApplicationId = new Map<
       string,
       ObjectRecordEvent[]
     >();
@@ -396,10 +396,10 @@ export class WorkflowDatabaseEventTriggerListener {
     for (const eventListener of eventListeners) {
       const { applicationId } = eventListener;
 
-      if (!admittedEventsByApplicationId.has(applicationId)) {
-        admittedEventsByApplicationId.set(
+      if (!readableEventsByApplicationId.has(applicationId)) {
+        readableEventsByApplicationId.set(
           applicationId,
-          await this.resolveAdmittedEvents({
+          await this.resolveReadableEvents({
             workspaceEventBatch: standardAndCustomApplicationIds.has(
               applicationId,
             )
@@ -410,7 +410,7 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      for (const eventPayload of admittedEventsByApplicationId.get(
+      for (const eventPayload of readableEventsByApplicationId.get(
         applicationId,
       ) ?? []) {
         const shouldTriggerJob = this.shouldTriggerJob({
@@ -491,7 +491,7 @@ export class WorkflowDatabaseEventTriggerListener {
     return enrichedPayload;
   }
 
-  private async resolveAdmittedEvents({
+  private async resolveReadableEvents({
     workspaceEventBatch,
     applicationId,
   }: {
@@ -513,7 +513,7 @@ export class WorkflowDatabaseEventTriggerListener {
       return [];
     }
 
-    return this.permissionsService.findReadableEvents({
+    return this.recordEventPermissionsService.filterReadableEvents({
       authContext: {
         type: 'application',
         workspace: { id: workspaceEventBatch.workspaceId },

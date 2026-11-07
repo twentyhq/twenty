@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 
 const updateViewInputSchema = z.object({
   id: z.string().uuid().describe('View ID to update'),

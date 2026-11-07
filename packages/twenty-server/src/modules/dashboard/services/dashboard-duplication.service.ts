@@ -11,6 +11,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
@@ -45,6 +47,7 @@ export class DashboardDuplicationService {
     private readonly pageLayoutService: PageLayoutService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   async duplicateDashboard(
@@ -85,8 +88,17 @@ export class DashboardDuplicationService {
         );
       }
 
+      const { permissionsPrincipals, objectIdByNameSingular } =
+        getWorkspaceContext();
+
       // The layout copy lives outside the dashboard insert, so refuse before creating it
-      if (!dashboardRepository.isObjectOperationPermittedByRole('insert')) {
+      if (
+        !(await this.recordPermissionsService.canRoleAccessSomeRecords({
+          operationType: 'create',
+          principals: permissionsPrincipals,
+          objectMetadataId: objectIdByNameSingular.dashboard,
+        }))
+      ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,

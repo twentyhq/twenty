@@ -18,7 +18,7 @@ import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/g
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
@@ -35,7 +35,8 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -46,7 +47,8 @@ export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
 
   constructor(
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -84,7 +86,7 @@ export class DatabaseToolProvider implements ToolProvider {
       );
 
     const principals = isDefined(context.authContext)
-      ? await this.permissionsService.buildPermissionsPrincipals({
+      ? await this.principalPermissionsService.resolvePermissionsPrincipals({
           authContext: context.authContext,
         })
       : undefined;
@@ -140,21 +142,34 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.permissionsService.canCreateSomeRecords(objectQuestion));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'create',
+        }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.permissionsService.canReadSomeRecords(objectQuestion));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'read',
+        }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.permissionsService.canUpdateSomeRecords(objectQuestion));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'update',
+        }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.permissionsService.canSoftDeleteSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'softDelete',
+        }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.permissionsService.canDestroySomeRecords(objectQuestion));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'destroy',
+        }));
 
       if (
         !canCreateRecords &&
@@ -182,12 +197,8 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.permissionsService.findUnreadableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
-          this.permissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
+          this.recordPermissionsService.findUnreadableFields(objectQuestion),
+          this.recordPermissionsService.findUneditableFields(objectQuestion),
         ]);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,

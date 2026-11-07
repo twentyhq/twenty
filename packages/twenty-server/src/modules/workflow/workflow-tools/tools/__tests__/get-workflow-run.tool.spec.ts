@@ -1,8 +1,6 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
 import { createGetWorkflowRunTool } from '../get-workflow-run.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
@@ -31,10 +29,7 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps({ id: WORKFLOW_RUN_ID, state: {}, stepLogs: {} });
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createGetWorkflowRunTool(deps, context);
 
     await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
@@ -65,7 +60,7 @@ describe('get_workflow_run tool', () => {
           ],
         },
         stepInfos: {
-          'step-1': { status: StepStatus.SUCCESS },
+          'step-1': { status: StepStatus.SUCCESS, result: { total: 3 } },
           'step-2': { status: StepStatus.FAILED, error: 'Email failed' },
         },
       },
@@ -77,10 +72,7 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps(workflowRun);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createGetWorkflowRunTool(deps, context);
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
@@ -93,20 +85,56 @@ describe('get_workflow_run tool', () => {
     expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
     expect(result.workflowRun.error).toBe('Something went wrong');
     expect(result.workflowRun.steps).toHaveLength(2);
+    expect(result.workflowRun.steps[0].output).toEqual({ total: 3 });
     expect(result.workflowRun.steps[1].error).toBe('Email failed');
     expect(result.workflowRun.failedStepLogs).toEqual({
       'step-2': [{ message: 'SMTP error' }],
     });
   });
 
+  it('should return a preview of a step output too large to inline', async () => {
+    const largeOutput = {
+      records: Array.from({ length: 500 }, (_, index) => ({
+        id: `record-${index}`,
+        name: 'x'.repeat(100),
+      })),
+    };
+
+    const tool = createGetWorkflowRunTool(
+      buildDeps({
+        id: WORKFLOW_RUN_ID,
+        state: {
+          flow: {
+            steps: [{ id: 'step-1', name: 'Find', type: 'FIND_RECORDS' }],
+          },
+          stepInfos: {
+            'step-1': { status: StepStatus.SUCCESS, result: largeOutput },
+          },
+        },
+        stepLogs: {},
+      }),
+      buildContext(),
+    );
+
+    const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
+
+    if (!('workflowRun' in result) || result.workflowRun === undefined) {
+      throw new Error('Expected workflowRun to be present in the result');
+    }
+
+    const [step] = result.workflowRun.steps;
+
+    expect(step.isOutputTruncated).toBe(true);
+    expect(JSON.stringify(step.output).length).toBeLessThan(
+      JSON.stringify(largeOutput).length,
+    );
+  });
+
   it('should return error when workflow run is not found', async () => {
     const deps = buildDeps(null);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createGetWorkflowRunTool(deps, context);
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 

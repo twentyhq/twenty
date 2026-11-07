@@ -14,9 +14,7 @@ describe('getUrlFromFetchRequestInput', () => {
   });
 
   it('should return the url property when input is a Request object', () => {
-    const request = {
-      url: 'https://api.twenty.test/graphql',
-    } as unknown as Request;
+    const request = { url: 'https://api.twenty.test/graphql' };
 
     expect(getUrlFromFetchRequestInput(request)).toBe(
       'https://api.twenty.test/graphql',

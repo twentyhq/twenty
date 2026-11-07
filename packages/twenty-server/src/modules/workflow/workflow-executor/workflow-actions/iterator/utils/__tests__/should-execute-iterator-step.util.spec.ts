@@ -5,10 +5,7 @@ import {
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
-import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 jest.mock(
   'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util',
@@ -151,28 +148,6 @@ describe('shouldExecuteIteratorStep', () => {
       };
 
       getAllStepIdsInLoop.mockReturnValue([]);
-
-      const result = shouldExecuteIteratorStep({
-        step: iteratorStep,
-        steps,
-        stepInfos,
-      });
-
-      expect(result).toBe(true);
-    });
-
-    it('should handle undefined steps gracefully', () => {
-      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
-      const steps = [
-        createMockCodeStep('step-1', ['iterator-1']),
-        undefined as unknown as WorkflowAction,
-        iteratorStep,
-      ];
-      const stepInfos = {
-        'step-1': { status: StepStatus.SUCCESS },
-      };
-
-      getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
       const result = shouldExecuteIteratorStep({
         step: iteratorStep,

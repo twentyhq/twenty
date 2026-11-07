@@ -6,6 +6,9 @@ import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-
 @ObjectType('RowLevelRecordsPermissions')
 export class RowLevelRecordsPermissionsDTO {
   @Field(() => Boolean)
+  canCreateRecords: boolean;
+
+  @Field(() => Boolean)
   canReadRecords: boolean;
 
   @Field(() => Boolean)

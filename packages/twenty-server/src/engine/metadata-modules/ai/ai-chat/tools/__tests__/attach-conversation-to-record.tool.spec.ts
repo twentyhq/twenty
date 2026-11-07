@@ -26,7 +26,7 @@ const buildUserAuthContext = (workspaceMemberId: string) =>
     user: { id: `user-of-${workspaceMemberId}` },
     workspaceMemberId,
     workspaceMember: { id: workspaceMemberId },
-  }) as unknown as UserWorkspaceAuthContext;
+  }) as UserWorkspaceAuthContext;
 
 const buildToolContext = (overrides: Partial<ToolContext> = {}) =>
   ({

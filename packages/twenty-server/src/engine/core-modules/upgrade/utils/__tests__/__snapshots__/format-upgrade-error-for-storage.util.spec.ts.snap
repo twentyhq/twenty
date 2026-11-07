@@ -20,20 +20,67 @@ Query: SELECT * FROM "missing_table""
 exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationBuilderException 1`] = `
 "[WorkspaceMigrationBuilderException] Workspace migration builder failed
 Report: {
+  "fieldMetadata": [],
+  "fieldMetadataOption": [],
   "objectMetadata": [
     {
-      "validationErrors": [
-        "name must not be empty"
-      ]
+      "type": "create",
+      "metadataName": "objectMetadata",
+      "errors": [
+        {
+          "code": "INVALID_INPUT",
+          "message": "name must not be empty"
+        }
+      ],
+      "flatEntityMinimalInformation": {}
     }
-  ]
+  ],
+  "view": [],
+  "viewField": [],
+  "viewFieldGroup": [],
+  "viewGroup": [],
+  "viewSort": [],
+  "rowLevelPermissionPredicate": [],
+  "rowLevelPermissionPredicateGroup": [],
+  "viewFilterGroup": [],
+  "index": [],
+  "logicFunction": [],
+  "viewFilter": [],
+  "role": [],
+  "roleTarget": [],
+  "agent": [],
+  "skill": [],
+  "pageLayout": [],
+  "pageLayoutWidget": [],
+  "pageLayoutTab": [],
+  "commandMenuItem": [],
+  "navigationMenuItem": [],
+  "rolePermissionFlag": [],
+  "permissionFlag": [],
+  "objectPermission": [],
+  "fieldPermission": [],
+  "frontComponent": [],
+  "webhook": [],
+  "applicationVariable": [],
+  "connectionProvider": [],
+  "messagingProvider": [],
+  "mcpServer": [],
+  "searchFieldMetadata": [],
+  "timelineActivityType": [],
+  "settingsMenuItem": [],
+  "relatedRecordPath": [],
+  "validationRule": [],
+  "workflow": [],
+  "workflowVersion": [],
+  "agentChatChannel": [],
+  "agentChatChannelRole": []
 }"
 `;
 
 exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED 1`] = `
-"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' (universalIdentifier: test-object-uid) failed: [metadata] column "label" cannot be null; [workspaceSchema] table already exists
+"[WorkspaceMigrationRunnerException] Migration action 'delete' for 'objectMetadata' (universalIdentifier: test-object-uid) failed: [metadata] column "label" cannot be null; [workspaceSchema] table already exists
 Code: EXECUTION_FAILED
-Action: create on objectMetadata
+Action: delete on objectMetadata
 Metadata error:
   [Error] column "label" cannot be null
 Schema error:
@@ -54,9 +101,9 @@ exports[`formatUpgradeErrorForStorage should format a string value 1`] = `"raw s
 exports[`formatUpgradeErrorForStorage should format an undefined value 1`] = `"undefined"`;
 
 exports[`formatUpgradeErrorForStorage should surface driver details of a QueryFailedError nested in an EXECUTION_FAILED 1`] = `
-"[WorkspaceMigrationRunnerException] Migration action 'create' for 'pageLayoutWidget' (universalIdentifier: f473b435-e2d4-4928-8d90-1db0094389f7) failed: [metadata] duplicate key value violates unique constraint "IDX_PAGE_LAYOUT_WIDGET_UNIVERSAL_ID" (pg code: 23505, detail: Key (universalIdentifier)=(f473b435-e2d4-4928-8d90-1db0094389f7) already exists.)
+"[WorkspaceMigrationRunnerException] Migration action 'delete' for 'pageLayoutWidget' (universalIdentifier: f473b435-e2d4-4928-8d90-1db0094389f7) failed: [metadata] duplicate key value violates unique constraint "IDX_PAGE_LAYOUT_WIDGET_UNIVERSAL_ID" (pg code: 23505, detail: Key (universalIdentifier)=(f473b435-e2d4-4928-8d90-1db0094389f7) already exists.)
 Code: EXECUTION_FAILED
-Action: create on pageLayoutWidget
+Action: delete on pageLayoutWidget
 Metadata error:
   [QueryFailedError] duplicate key value violates unique constraint "IDX_PAGE_LAYOUT_WIDGET_UNIVERSAL_ID"
   PostgreSQL code: 23505

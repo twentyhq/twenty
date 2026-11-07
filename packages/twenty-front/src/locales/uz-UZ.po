@@ -346,6 +346,13 @@ msgstr "{0, plural, one {Sizda {fieldsList} maydoniga kirish huquqi yo‘q} othe
 msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
 msgstr "{0, plural, one {Taklifingiz hali yuborilmadi} other {# ta taklifingiz hali yuborilmadi}}"
 
+#. js-lingui-id: 2UOALe
+#. placeholder {0}: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[preset.avatarShape])
+#. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "{0} · {1}"
+msgstr "{0} · {1}"
+
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
@@ -573,6 +580,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} ta API kalit} other {{apiKeyCou
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} quyidagilarni qilishni xohlaydi:"
+
+#. js-lingui-id: y+Uv96
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "{appLabel} installed"
+msgstr "{appLabel} o‘rnatildi"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -822,6 +834,11 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} o‘rnatish} other {{1} o‘rnatish}}"
 
+#. js-lingui-id: XcDI87
+#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
+msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
+msgstr "{invitationCount, plural, one {# ta taklifnoma yuborildi} other {# ta taklifnoma yuborildi}}"
+
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -1009,16 +1026,6 @@ msgstr "Yana {remainingCount} ta"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Bundan keyin boshqa qoralamalar yo‘q} one {Bundan keyin yana # ta qoralama bor} other {Bundan keyin yana # ta qoralama bor}}"
-
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, one {{formattedTrialEnd}gacha # qadamni yakunlang} other {{formattedTrialEnd}gacha # qadamni yakunlang}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, one {# qadamni yakunlang} other {# qadamni yakunlang}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1559,11 +1566,6 @@ msgstr "500 Error - {duration}ms"
 msgid "90 days"
 msgstr "90 kun"
 
-#. js-lingui-id: 81nnG3
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "A CSV or Excel export from any tool"
-msgstr "Istalgan vositadan CSV yoki Excel eksporti."
-
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1722,6 +1724,11 @@ msgstr "Ilovangiz haqida"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Ushbu ish makoni uchun qabul qilingan va imzolangan DPAlar, ularning shablon versiyasi va sanasi bilan."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr ""
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2916,6 +2923,11 @@ msgstr "Agent veb-qidiruvi"
 msgid "Agents"
 msgstr "Agentlar"
 
+#. js-lingui-id: D2ijkj
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Agents that will fail"
+msgstr "Ishlamaydigan agentlar"
+
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.navigation.stories.tsx
@@ -3004,10 +3016,30 @@ msgstr "AI kreditlari"
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI kreditlari {0, plural, one {# kundan keyin} other {# kundan keyin}} yangilanadi."
 
+#. js-lingui-id: MuT/nD
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI data policy and Privacy tab"
+msgstr "Sun’iy intellekt ma’lumotlari siyosati va Maxfiylik yorlig‘i"
+
+#. js-lingui-id: WQyHss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI data processing"
+msgstr "Sun’iy intellekt ma’lumotlarini qayta ishlash"
+
+#. js-lingui-id: zNuqPE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI is paused"
+msgstr "Sun’iy intellekt to‘xtatib qo‘yilgan"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
 msgstr "AI sozlamalari"
+
+#. js-lingui-id: JDoLSS
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "AI shapes your workspace around your data."
+msgstr "Sun’iy intellekt ish joyingizni ma’lumotlaringiz asosida shakllantiradi."
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -3319,11 +3351,6 @@ msgstr "Barcha sozlamalar"
 msgid "All Sources"
 msgstr "Barcha manbalar"
 
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "Barcha qadamlar bajarildi"
-
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -3630,6 +3657,12 @@ msgstr "Va"
 #: src/modules/ai/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "va yana {hiddenCount} ta"
+
+#. js-lingui-id: 2qLe/y
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Animate"
+msgstr "Jonlantirish"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -4039,6 +4072,11 @@ msgstr "Siz dasturchi bo‘lgan ilovalar"
 msgid "Arabic"
 msgstr "Arabcha"
 
+#. js-lingui-id: DzER9P
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Arch"
+msgstr "Arka"
+
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Archive files cannot be previewed. Please download the file to access its contents."
@@ -4226,6 +4264,11 @@ msgstr "AI’dan so‘rash"
 msgid "Ask an admin to raise the limit."
 msgstr "Administratordan limitni oshirishni so‘rang."
 
+#. js-lingui-id: fy+eXl
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Ask an admin with security access to change this"
+msgstr "Buni o‘zgartirish uchun xavfsizlik ruxsatiga ega administratorga murojaat qiling"
+
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
@@ -4331,6 +4374,16 @@ msgstr "Biriktirish"
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "Yordamchi"
+
+#. js-lingui-id: FwlE5m
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Assistant avatar"
+msgstr "Yordamchi avatari"
+
+#. js-lingui-id: iHgLrg
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Assistant name"
+msgstr "Yordamchi nomi"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4480,6 +4533,11 @@ msgstr "Audit jurnallari"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr "Audit jurnallari"
+
+#. js-lingui-id: 7tMFh/
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Audited controls and the agreements that cover your data."
+msgstr "Tekshirilgan nazorat choralari va ma’lumotlaringizni qamrab oluvchi kelishuvlar."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -4652,6 +4710,7 @@ msgstr "Mavjud vaqtlar"
 #. js-lingui-id: kfcRb0
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Avatar"
 msgstr "Avatar"
 
@@ -4696,10 +4755,10 @@ msgstr "{text}ga qaytish"
 msgid "Back to content"
 msgstr "Kontentga qaytish"
 
-#. js-lingui-id: +cSNzs
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "Back to current step"
-msgstr "Joriy qadamga qaytish"
+#. js-lingui-id: K35/lm
+#: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
+msgid "Back to customization"
+msgstr "Moslashtirishga qaytish"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -4941,6 +5000,7 @@ msgstr "Iqtibos bloki"
 #. js-lingui-id: Zn5crm
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Blue"
 msgstr "Ko‘k"
 
@@ -5015,6 +5075,11 @@ msgstr "Ta qaytgan yoki shikoyat qilganlar"
 msgid "Bracket access is not supported, use dot access instead"
 msgstr "Qavs orqali murojaat qilish qo‘llab-quvvatlanmaydi, uning o‘rniga nuqta orqali murojaat qilishdan foydalaning"
 
+#. js-lingui-id: Mh79rW
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Breach notification"
+msgstr "Ma’lumotlar buzilishi haqida bildirishnoma"
+
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
@@ -5059,11 +5124,6 @@ msgstr "Jigarrang"
 msgid "Browse partners"
 msgstr "Hamkorlarni ko‘rish"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Yozuv o‘zgarishlari, xavfsizlik hodisalari, ilova jurnallari va boshqalarni ko‘rib chiqing"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -5093,6 +5153,11 @@ msgstr "Build chek-summasi"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Ko‘pdan-ko‘pga munosabatlarni yaratish"
+
+#. js-lingui-id: yDcuP6
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Built to meet EU data protection rules"
+msgstr "YI ma’lumotlarni himoya qilish qoidalariga mos ravishda yaratilgan"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5142,6 +5207,7 @@ msgstr "{applicationName} bilan birga yetkazib beriladi"
 
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Burst"
 msgstr "Pik"
 
@@ -5765,6 +5831,11 @@ msgstr "Mavzuni yorug‘ga o‘zgartirish"
 msgid "Change theme to system"
 msgstr "Mavzuni tizim mavzusiga o‘zgartirish"
 
+#. js-lingui-id: 3Hphdi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Change where AI providers process requests and what they keep"
+msgstr "AI provayderlari so‘rovlarni qayerda qayta ishlashi va nimalarni saqlashini o‘zgartiring"
+
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -5894,6 +5965,11 @@ msgstr "Tekshiruv ro‘yxati"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "So‘nggi ishga tushirishlarni tekshirish"
+
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Yozuvlarni yaratishda yangilash ruxsati o‘rniga yaratish ruxsatini alohida tekshiring."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6136,6 +6212,11 @@ msgstr "Telefon raqamini bosganingizda nima bo‘lishini tanlang"
 msgid "Choose what happens when you click an email"
 msgstr "Emailni bosganingizda nima bo‘lishini tanlang"
 
+#. js-lingui-id: XDg9PA
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Choose what Twenty can access to support you and improve the product."
+msgstr "Sizni qo‘llab-quvvatlash va mahsulotni yaxshilash uchun Twenty nimalarga kira olishini tanlang."
+
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
@@ -6180,6 +6261,11 @@ msgstr "iframe vidjetlariga joylashtirilgan qaysi veb-saytlar mikrofon yoki kame
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
 msgstr "Administrator tomonidan ish joyingizga o‘rnatilgan ilovalar uchun afzalliklaringizni tanlang"
+
+#. js-lingui-id: 7xMmki
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Circle"
+msgstr "Doira"
 
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6466,10 +6552,20 @@ msgstr "Yon panelni yopish"
 msgid "Close video"
 msgstr "Videoni yopish"
 
+#. js-lingui-id: XLMJ7O
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Cloud"
+msgstr "Bulut"
+
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Cloudflare may expect a name relative to the zone rather than the full hostname; avoid appending the domain twice. Show me the proposed changes and ask for confirmation before saving them."
 msgstr "Cloudflare to‘liq host nomi o‘rniga zona bilan bog‘liq nomni kutishi mumkin; domenni ikki marta qo‘shishdan saqlaning. Saqlashdan oldin taklif qilingan o‘zgarishlarni ko‘rsating va tasdiqlashni so‘rang."
+
+#. js-lingui-id: ExH3eu
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Clover"
+msgstr "Sebarga"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6589,6 +6685,8 @@ msgstr "yig‘iladigan"
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Color"
 msgstr "Rang"
 
@@ -6787,6 +6885,11 @@ msgstr "Yakunlangan ishlar {completedDuration} davomida, muvaffaqiyatsiz ishlar 
 msgid "Complexity"
 msgstr "Murakkablik"
 
+#. js-lingui-id: psC+XF
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Compliance"
+msgstr "Muvofiqlik"
+
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
@@ -6806,6 +6909,11 @@ msgstr "Namunaviy ma’lumotlar bilan komponentning dastlabki ko‘rinishi"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-pochta yozish"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr ""
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -7402,6 +7510,11 @@ msgstr "Ochishingiz mumkin bo‘lgan suhbatlar shu yerda ko‘rinadi."
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Cook"
 msgstr "Cook"
+
+#. js-lingui-id: SB9yVb
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Cookie"
+msgstr "Pechenye"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8074,6 +8187,11 @@ msgstr "Yozuv yarating"
 msgid "Create Record"
 msgstr "Yozuv yaratish"
 
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Yozuvlarni yaratish ruxsati"
+
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -8695,9 +8813,16 @@ msgstr "Moslashtirish"
 
 #. js-lingui-id: srRMnJ
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Customize"
 msgstr "Moslashtirish"
+
+#. js-lingui-id: 9p/HFu
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+msgid "Customize assistant"
+msgstr "Yordamchini moslashtirish"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -8775,6 +8900,11 @@ msgstr "Har kuni"
 msgid "Daily AI Usage"
 msgstr "Kunlik AI bo‘yicha foydalanish"
 
+#. js-lingui-id: /dr6KQ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Daily backups"
+msgstr "Kunlik zaxira nusxalar"
+
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -8839,6 +8969,11 @@ msgstr "Ma’lumot va ko‘rsatish"
 msgid "Data export"
 msgstr "Ma’lumotlarni eksport qilish"
 
+#. js-lingui-id: a4sORy
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
+msgstr "Ma’lumotlar uzatish vaqtida ham, saqlanganda ham shifrlanadi, kalitlar esa muntazam almashtiriladi"
+
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
@@ -8876,7 +9011,13 @@ msgstr "Ma’lumotlar modeli - Sozlamalar"
 msgid "Data on display"
 msgstr "Ekrandagi ma’lumotlar"
 
+#. js-lingui-id: oBChYi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Data processing"
+msgstr "Ma’lumotlarni qayta ishlash"
+
 #. js-lingui-id: /qrjU8
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9104,6 +9245,7 @@ msgstr "Qiymatni kamaytirish"
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/experience/components/UiScalePicker.tsx
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
@@ -10133,6 +10275,7 @@ msgid "Downgrade to monthly"
 msgstr "Oylik tarifga tushirish"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -10241,6 +10384,16 @@ msgstr "Maydonlarni bu yerga tashlang"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
 msgstr "Faylni bu yerga tashlang..."
+
+#. js-lingui-id: 3DHZvz
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop to start your import"
+msgstr "Importni boshlash uchun tashlang"
+
+#. js-lingui-id: kIz73Z
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop your CSV or Excel from any tool"
+msgstr "Istalgan vositadan CSV yoki Excel faylingizni tashlang"
 
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
@@ -10368,6 +10521,11 @@ msgstr "Har bir a’zoga AI limiti beriladi, u ish maydoni kreditlaridan oldin i
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Har bir bo‘lak ifodalaydi"
+
+#. js-lingui-id: Iz+rDD
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Each workspace has its own database schema"
+msgstr "Har bir ish maydoni o‘z ma’lumotlar bazasi sxemasiga ega"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -11011,6 +11169,16 @@ msgstr "Mikrofon va kamerani yoqish"
 msgid "Enable model-specific features"
 msgstr "Modelga xos funksiyalarni yoqish"
 
+#. js-lingui-id: sqO0Ni
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted daily snapshots, kept 30 days"
+msgstr "30 kun saqlanadigan shifrlangan kunlik oniy nusxalar"
+
+#. js-lingui-id: qILKh1
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted everywhere"
+msgstr "Hamma joyda shifrlangan"
+
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Encryption key rotation"
@@ -11127,6 +11295,11 @@ msgstr "JSON obyektini kiriting"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter a JSON value"
 msgstr "JSON qiymatini kiriting"
+
+#. js-lingui-id: 8Yr1fg
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr "Bir qatorda 1 dan {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tagacha belgidan iborat nom kiriting. Kvadrat qavslar juft bo‘lishi va ichma-ich joylashmasligi kerak."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11671,6 +11844,21 @@ msgstr "Asinxron hodisalar bo‘yicha bildirishnomalar uchun Webhook endpointlar
 msgid "Estimate a probability"
 msgstr "Ehtimollikni baholash"
 
+#. js-lingui-id: MzEfu4
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "EU only"
+msgstr "Faqat YI"
+
+#. js-lingui-id: 84VCrZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, standard retention"
+msgstr "Faqat YI, standart saqlash muddati"
+
+#. js-lingui-id: e8+f0R
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, zero data retention"
+msgstr "Faqat YI, ma’lumotlarni umuman saqlamaslik"
+
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "European Union"
@@ -11779,6 +11967,11 @@ msgstr "har kuni"
 msgid "every hour"
 msgstr "har soatda"
 
+#. js-lingui-id: loBt0P
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Every line of code is public, so you can audit it yourself"
+msgstr "Kodning har bir qatori ochiq, shuning uchun uni o‘zingiz tekshirishingiz mumkin"
+
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -11790,6 +11983,11 @@ msgstr "har daqiqada"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
 msgstr "Ushbu ish maydonidagi barcha obyektlar bitta zip fayldagi CSV fayllari sifatida 1 kun saqlanadi. To‘xtatib qo‘yilgan ish maydonlari uchun ham ishlaydi."
+
+#. js-lingui-id: h3QLIe
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Every provider that handles your data"
+msgstr "Ma’lumotlaringizni qayta ishlaydigan har bir provayder"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -12123,11 +12321,6 @@ msgstr "Eksport ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Eksport ({percentageValue}%)"
 
-#. js-lingui-id: YkvQVd
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Export a CSV from"
-msgstr "CSV faylini quyidagidan eksport qilish"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12208,6 +12401,12 @@ msgstr "Juda tez"
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Smart"
 msgstr "Juda aqlli"
+
+#. js-lingui-id: PF860N
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Face"
+msgstr "Yuz"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -13312,6 +13511,11 @@ msgstr "Premium funksiyalaringizni tiklash uchun to‘lovdagi muammoni bartaraf 
 msgid "Flow"
 msgstr "Oqim"
 
+#. js-lingui-id: abEdHK
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Flower"
+msgstr "Gul"
+
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
 #: src/modules/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel.ts
@@ -13427,6 +13631,7 @@ msgid "Formats"
 msgstr "Formatlar"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Sobiq a’zo"
@@ -13669,6 +13874,16 @@ msgstr "Funksiyalar"
 msgid "Functions - Settings"
 msgstr "Funksiyalar - Sozlamalar"
 
+#. js-lingui-id: arkG3W
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "GDPR"
+msgstr "GDPR"
+
+#. js-lingui-id: WFxtuG
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Gem"
+msgstr "Qimmatbaho tosh"
+
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Gemini CLI"
@@ -13720,6 +13935,11 @@ msgstr "2FA tiklash kodini yaratish"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
 msgstr "Tiklash kodini yaratish"
+
+#. js-lingui-id: h9wFH2
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Generate a signed copy in one click"
+msgstr "Bir marta bosish orqali imzolangan nusxa yarating"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -13813,6 +14033,11 @@ msgstr "Boshlash qadamlari"
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (to‘liq matnli qidiruv va JSONB)"
+
+#. js-lingui-id: RkXlPZ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "GitHub"
+msgstr "GitHub"
 
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -13992,6 +14217,7 @@ msgstr "Maysa rang"
 #. js-lingui-id: qS5//Q
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Gray"
 msgstr "Kulrang"
 
@@ -14008,6 +14234,7 @@ msgstr "Yunoncha"
 #. js-lingui-id: VmkjGB
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Green"
 msgstr "Yashil"
 
@@ -14114,6 +14341,16 @@ msgstr "h6"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Handle"
 msgstr "Identifikator (handle)"
+
+#. js-lingui-id: halrRh
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Happy"
+msgstr "Xursand"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Ilovalari bor"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14272,6 +14509,16 @@ msgstr "salom, dunyo"
 msgid "Help center"
 msgstr "Yordam markazi"
 
+#. js-lingui-id: GY8MUv
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Help improve Twenty"
+msgstr "Twenty’ni yaxshilashga yordam bering"
+
+#. js-lingui-id: tIb8bD
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Hexagon"
+msgstr "Olti burchak"
+
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14424,6 +14671,11 @@ msgstr "Gorizontal ajratuvchi chiziq"
 msgid "Host your workspace's customizations and overrides."
 msgstr "Ish joyingizning moslashtirishlari va qayta belgilashlarini joylashtiring."
 
+#. js-lingui-id: fFtUGj
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Hosting"
+msgstr "Xosting"
+
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-trigger/constants/CronTriggerIntervalOptions.ts
@@ -14459,6 +14711,11 @@ msgstr "Ushbu qoida sozlamalarda qanday ko‘rinishi."
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
 msgstr "Jamoa a’zolari va agentlar uchun profilingiz qanday ko‘rinadi."
+
+#. js-lingui-id: iGMucd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "How your data is protected"
+msgstr "Ma’lumotlaringiz qanday himoyalangan"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -14852,10 +15109,10 @@ msgstr "Faqat tanlangan jildlar/yorliqlarni import qilish"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "JetBrains sozlamalaridan MCP konfiguratsiyasini import qiling yoki qo‘shing."
 
-#. js-lingui-id: e2aT+Z
+#. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
-msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr "Biriktirilgan fayllarni Twenty-ga import qiling. Ularda qaysi yozuvlar borligini aniqlang, so‘ng ularni yarating va bir-biriga bog‘lang."
+msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
+msgstr "Biriktirilgan fayllarni Twenty'ga import qiling. Ular qaysi yozuvlarni o‘z ichiga olganini aniqlang va ish joyini ular asosida shakllantiring: mos keladigan obyektlar va maydonlardan qayta foydalaning, yetishmayotganlarini qo‘shing, so‘ng yozuvlarni yarating va ularni bir-biriga bog‘lang."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -14987,6 +15244,11 @@ msgstr "${priceDisplay} gacha oshirish"
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
 msgstr "Qiymatni oshirish"
+
+#. js-lingui-id: dW+3Q4
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Independently audited security controls"
+msgstr "Mustaqil tekshirilgan xavfsizlik nazorat choralari"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15620,6 +15882,11 @@ msgstr "Nisbiy"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
 msgstr "Bugun{timeZoneAbbreviationSuffix}"
+
+#. js-lingui-id: YbqWR4
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Isolated workspace"
+msgstr "Ajratilgan ish maydoni"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16920,11 +17187,6 @@ msgstr "Diagrammani qulflash"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Yangi kelishuvni jurnalga yozing (kompaniya, miqdor, bosqich, kutilayotgan yopilish). Tafsilotlar: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Jurnallar konsoli"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -17064,6 +17326,11 @@ msgstr "tsikl"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a recovery code"
 msgstr "Autentifikatoringizni yo‘qotdingizmi? Tiklash kodidan foydalaning"
+
+#. js-lingui-id: GpMARg
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Love"
+msgstr "Sevgi"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17652,6 +17919,11 @@ msgstr "Xabar"
 msgid "Message {recipientName}"
 msgstr "{recipientName}ga xabar"
 
+#. js-lingui-id: 6H0up8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message attachments"
+msgstr "Xabar qo‘shimchalari"
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -17899,6 +18171,11 @@ msgstr "Twenty bilan chat qilganingizda foydalaniladigan model"
 msgid "Models"
 msgstr "Modellar"
 
+#. js-lingui-id: o4Xn+q
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Models above are limited to the providers your privacy settings allow."
+msgstr "Yuqoridagi modellar maxfiylik sozlamalaringiz ruxsat beradigan provayderlar bilan cheklangan."
+
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models for this provider. Toggle to enable or disable."
@@ -18012,6 +18289,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Murakkab loyihalar uchun ko‘proq kengaytirilgan maydonlar"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -18378,6 +18656,11 @@ msgstr "navigatsiya menyusi elementi"
 msgid "Navigation modes"
 msgstr "Navigatsiya rejimlari"
 
+#. js-lingui-id: hUbvfC
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Need an export? Get one from"
+msgstr "Eksport kerakmi? Uni quyidagidan oling"
+
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
 msgid "Needs a Date field"
@@ -18490,7 +18773,7 @@ msgstr "Yangi kanal"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Yangi chat"
 
@@ -18757,6 +19040,11 @@ msgstr "Keyingi so‘rov"
 msgid "Next screenshot"
 msgstr "Keyingi skrinshot"
 
+#. js-lingui-id: e3GOIZ
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Next step"
+msgstr "Keyingi qadam"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -18872,12 +19160,22 @@ msgstr "Qidiruvingizga mos agentlar topilmadi"
 msgid "No AI consumption recorded for this user."
 msgstr "Bu foydalanuvchi uchun AI sarfi yozilmagan."
 
+#. js-lingui-id: m/JoOZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "No AI model on this workspace meets these settings."
+msgstr "Bu ish maydonida hech bir AI modeli ushbu sozlamalarga mos kelmaydi."
+
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ushbu instance uchun AI provayder sozlanmagan."
+
+#. js-lingui-id: lBnUyA
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No AI provider trains on your data, and neither does Twenty"
+msgstr "Hech bir AI provayderi ma’lumotlaringiz asosida o‘qitilmaydi, Twenty ham o‘qitilmaydi"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19626,6 +19924,11 @@ msgstr "Hech qanday asbob chaqirilmagan"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No topic"
 msgstr "Mavzu yo‘q"
+
+#. js-lingui-id: lNEINd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No training on your data"
+msgstr "Ma’lumotlaringiz asosida o‘qitish yo‘q"
 
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
@@ -20463,6 +20766,11 @@ msgstr "Bu yozuvni faqat yaratuvchisi, unga to‘liq kira oladiganlar va adminis
 msgid "Only the subject is shared"
 msgstr "Faqat mavzu ulashilgan"
 
+#. js-lingui-id: 41eae/
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Only use providers that keep no copy of your prompts and responses"
+msgstr "So‘rovlaringiz va javoblaringiz nusxasini saqlamaydigan provayderlardan foydalaning"
+
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
@@ -20479,7 +20787,7 @@ msgid "Only you"
 msgstr "Faqat siz"
 
 #. js-lingui-id: P5aFS1
-#: src/modules/onboarding/components/import-contacts/OnboardingImportPrivacyNote.tsx
+#: src/pages/onboarding/ImportContacts.tsx
 msgid "Only you will be able to see your emails and events"
 msgstr "Faqat siz elektron pochtalaringiz va hodisalaringizni ko‘rasiz"
 
@@ -20494,6 +20802,12 @@ msgstr "Faqat siz elektron pochtalaringiz va hodisalaringizni ko‘rasiz"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "Ochish"
+
+#. js-lingui-id: awIyH2
+#. placeholder {0}: account.handle
+#: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
+msgid "Open {0} settings"
+msgstr "{0} sozlamalarini ochish"
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20594,11 +20908,6 @@ msgstr "Yon panelda ochish"
 msgid "Open link"
 msgstr "Havolani ochish"
 
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Jurnallar konsolini ochish"
-
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -20663,10 +20972,10 @@ msgstr "Sozlamalarni ochish"
 msgid "Open side panel"
 msgstr "Yon panelni ochish"
 
-#. js-lingui-id: Cq4Ta5
-#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
-msgid "Open the workflow"
-msgstr "Ish jarayonini ochish"
+#. js-lingui-id: v+Wp++
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Open source"
+msgstr "Ochiq manbali"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20837,6 +21146,7 @@ msgstr "Yoki"
 #. js-lingui-id: 4OE5Sf
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Orange"
 msgstr "Toʻq sariq"
 
@@ -21197,8 +21507,16 @@ msgstr "Parametrlar"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 msgid "Partner"
 msgstr "Hamkor"
+
+#. js-lingui-id: gHz5zY
+#: src/utils/title-utils.ts
+msgid "Partner - Settings"
+msgstr "Hamkor - Sozlamalar"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21209,6 +21527,11 @@ msgstr "Hamkor kodi"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner code applied"
 msgstr "Hamkor kodi qo‘llanildi"
+
+#. js-lingui-id: 0w8/Qw
+#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
+msgid "Partner codes can only be added during the free trial."
+msgstr "Hamkor kodlarini faqat bepul sinov muddati davomida qo‘shish mumkin."
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21535,6 +21858,11 @@ msgstr "Sanani tanlang"
 msgid "Pick a send time in the future."
 msgstr "Kelajakdagi yuborish vaqtini tanlang."
 
+#. js-lingui-id: Lu0MSt
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Pick a starting point, then make it yours"
+msgstr "Boshlang'ich variantni tanlang, so'ng uni o'zingizga moslang"
+
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
 msgid "Pick a time in the future"
@@ -21583,6 +21911,11 @@ msgstr "Rasm"
 msgid "Pie Chart"
 msgstr "Aylanali diagramma"
 
+#. js-lingui-id: qoLYkj
+#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+msgid "Pill"
+msgstr "Kapsula"
+
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Pin"
@@ -21596,6 +21929,7 @@ msgstr "Ichki oynani mahkamlash"
 #. js-lingui-id: 2FIjLb
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Pink"
 msgstr "Pushti"
 
@@ -21605,6 +21939,11 @@ msgstr "Pushti"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Mahkamlangan"
+
+#. js-lingui-id: ylGwx6
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Pinned models not in use"
+msgstr "Ishlatilmayotgan mahkamlangan modellar"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -21844,6 +22183,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Bir xil qiymatni turli yozuvlarga biriktirishning oldini olish"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -21926,6 +22266,11 @@ msgstr "Oldingi so‘rov"
 msgid "Previous screenshot"
 msgstr "Oldingi skrinshot"
 
+#. js-lingui-id: VbggDE
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Previous step"
+msgstr "Oldingi qadam"
+
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
@@ -21993,6 +22338,11 @@ msgstr "Ustuvor qo‘llab-quvvatlash"
 msgid "Priority: {0}"
 msgstr "Ustuvorlik: {0}"
 
+#. js-lingui-id: rjGI/Q
+#: src/pages/settings/general/SettingsGeneral.tsx
+msgid "Privacy"
+msgstr "Maxfiylik"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22031,6 +22381,11 @@ msgstr "Qayta ishlanmoqda"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Processing Recording"
 msgstr "Yozuvga ishlov berilmoqda"
+
+#. js-lingui-id: kLAZG6
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Processing region"
+msgstr "Qayta ishlash hududi"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -22169,6 +22524,7 @@ msgstr "Xarid"
 #. js-lingui-id: mF9LxA
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Purple"
 msgstr "Siyohrang"
 
@@ -22793,6 +23149,7 @@ msgstr "Tiklash kodi bekor qilindi."
 #. js-lingui-id: wRTiSD
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Red"
 msgstr "Qizil"
 
@@ -22815,11 +23172,6 @@ msgstr "Yo‘naltirish URL manzili buferga nusxalandi"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirection URI"
 msgstr "Yo‘naltirish URI manzili"
-
-#. js-lingui-id: cfgOip
-#: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
-msgid "Referred by a Twenty partner? Add their code"
-msgstr "Twenty hamkori sizni tavsiya qildimi? Uning kodini qo‘shing"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
@@ -23350,11 +23702,6 @@ msgstr "Replit o‘rnatish havolalari HTTPS MCP URL manzilini talab qiladi."
 msgid "Reply"
 msgstr "Javob berish"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Javob berish..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
@@ -23466,6 +23813,11 @@ msgstr "{daysUntilReset, plural, one {# kun} other {# kun}} ichida qayta tiklana
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
 msgid "Reset record page layout"
 msgstr "Yozuv sahifasi tartibini tiklash"
+
+#. js-lingui-id: Oi+lSL
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Reset to Ada"
+msgstr "Ada holatiga tiklash"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24153,6 +24505,11 @@ msgstr "Avval o‘zgarishlaringizni saqlang"
 msgid "Saved to Workspace app"
 msgstr "Workspace ilovasiga saqlandi"
 
+#. js-lingui-id: LRlHXj
+#: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
+msgid "Saving assistant settings..."
+msgstr "Yordamchi sozlamalari saqlanmoqda..."
+
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
@@ -24764,6 +25121,11 @@ msgstr "Bo‘lim"
 #: src/pages/settings/security/SettingsSecuritySsoIdentifyProvider.tsx
 msgid "Security"
 msgstr "Xavfsizlik"
+
+#. js-lingui-id: OpFwR0
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Security you can verify"
+msgstr "Tekshirishingiz mumkin bo‘lgan xavfsizlik"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -25679,6 +26041,17 @@ msgstr "2FA ni sozlang"
 msgid "Seventh"
 msgstr "Yettinchi"
 
+#. js-lingui-id: WkbAmY
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+msgid "Shape"
+msgstr "Shakl"
+
+#. js-lingui-id: KBYPKo
+#: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
+msgid "Shape, color, face"
+msgstr "Shakl, rang, yuz"
+
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -25691,6 +26064,11 @@ msgstr "Ulashish"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
 msgstr "Taqvim tadbirlarini kanallar bo‘ylab ulashish"
+
+#. js-lingui-id: S1jlER
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Share session replays and AI conversations to help us improve Twenty"
+msgstr "Twenty’ni yaxshilashimizga yordam berish uchun sessiya takrorlari va AI suhbatlarini ulashing"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -25747,6 +26125,11 @@ msgstr "Yozuv ulashilmoqda"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Sharing settings could not be loaded."
 msgstr "Ulashish sozlamalarini yuklab bo‘lmadi."
+
+#. js-lingui-id: K8Q+iX
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Sharing with Twenty"
+msgstr "Twenty bilan ulashish"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -25884,6 +26267,11 @@ msgstr "Faqat xatolari mavjud qatorlarni ko‘rsatish"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
 msgstr "Ishni boshlash sahifasi va yon panel kartasini ko‘rsating hamda sinov muddati davomida bosh sahifaga kirilganda uni oching."
+
+#. js-lingui-id: fTPKt5
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+msgstr "Maxfiylik yorlig‘ini ko‘rsating hamda uning AI ma’lumotlar siyosati va ma’lumotlarni ulashish sozlamalarini majburiy qo‘llang. Buni o‘chirish saqlangan barcha siyosatlarni bekor qiladi. Instansiyani yangilash tugagandan keyin yoqing."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26093,7 +26481,6 @@ msgstr "Skilllar"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "O‘tkazib yuborish"
@@ -26122,8 +26509,14 @@ msgstr "O‘tkazib yuborilgan"
 
 #. js-lingui-id: BIZl8w
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Sky"
 msgstr "Osmoniy"
+
+#. js-lingui-id: u9Z+qJ
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Sleepy"
+msgstr "Uyquchan"
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26236,6 +26629,16 @@ msgstr "Keyinga qoldirilgan"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "{eventTime} gacha keyinga qoldirilgan"
+
+#. js-lingui-id: 01L/Si
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "SOC 2"
+msgstr "SOC 2"
+
+#. js-lingui-id: LBv08V
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
+msgstr "SOC 2 bo‘yicha tekshirilgan nazorat choralari, uzatish va saqlashdagi shifrlash hamda istalgan kishi ko‘rib chiqishi mumkin bo‘lgan kod."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -26457,11 +26860,6 @@ msgstr "Bir nechta qiymatlarni ajratish"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Bo‘lingan ko‘rinish"
-
-#. js-lingui-id: jAoGz1
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Spreadsheet"
-msgstr "Elektron jadval"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26722,6 +27120,11 @@ msgstr "Saqlash joyi"
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Bir xil provayderning bir nechta taqvimi tomonidan sinxronlashtirilgan uchrashuvni har bir taqvim uchun alohida emas, bir marta saqlang."
 
+#. js-lingui-id: YbaJNn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
+msgstr "Xabarlarga biriktirilgan fayllarni saqlang va ko‘rsating. Ish maydoni yangilanishi tugallangandan keyin yoqiladi."
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -26894,6 +27297,11 @@ msgstr "Mavzu, matn va biriktirmalar jamoangiz bilan bo‘lishiladi."
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
 msgid "Submit"
 msgstr "Yuborish"
+
+#. js-lingui-id: amVqRj
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Subprocessors"
+msgstr "Subprotsessorlar"
 
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
@@ -27077,6 +27485,11 @@ msgstr "Qo‘llab-quvvatlanadigan kiritish turlari"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Supports reasoning"
 msgstr "Mantiqiy xulosalarni qo‘llab-quvvatlaydi"
+
+#. js-lingui-id: e0Wwlk
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Surprised"
+msgstr "Hayratlangan"
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -27760,6 +28173,11 @@ msgstr "Aloqa konfiguratsiyasini aniqlab bo‘lmadi."
 msgid "The role attached to this webhook."
 msgstr "Ushbu vebxukka biriktirilgan rol."
 
+#. js-lingui-id: OBY7M0
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "The safeguards behind every Twenty Cloud workspace."
+msgstr "Har bir Twenty Cloud ish maydoni ortidagi himoya choralari."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -27877,6 +28295,16 @@ msgstr "Bu yozuv bilan bog‘liq faoliyat yo‘q."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Parolni yangilashda xatolik yuz berdi."
+
+#. js-lingui-id: hOYgrt
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
+msgstr "Bu agentlar sozlamalaringiz istisno qilgan modeldan foydalanadi, shu sababli ular ishga tushganda muvaffaqiyatsiz tugaydi: {agentLabels}"
+
+#. js-lingui-id: ZSRi5U
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
+msgstr "Bu darajalar ruxsat etilgan modelga qaytadi: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -29065,6 +29493,11 @@ msgctxt "Field type"
 msgid "True/False"
 msgstr "Rost/Yolg‘on"
 
+#. js-lingui-id: tdZpCd
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Trust Center"
+msgstr "Ishonch markazi"
+
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
@@ -29129,6 +29562,7 @@ msgstr "true qiymatini false ga va false qiymatini true ga o‘zgartiradi."
 
 #. js-lingui-id: EdHWDU
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Turquoise"
 msgstr "Firuzarang"
 
@@ -29146,6 +29580,11 @@ msgstr "Twenty maydonlari"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
 msgstr "Twenty har bir darajani talablaringizga javob beradigan eng yaxshi model bilan to‘ldiradi"
+
+#. js-lingui-id: 0mWZoP
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
+msgstr "Twenty o‘z AI modeliga ega emas. So‘rovlaringizni qaysi provayderlar qayta ishlashi mumkinligini tanlang. Qattiqroq sozlamalar kamroq model qoldiradi va ayrimlari qimmatroq turadi."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -30127,7 +30566,6 @@ msgid "Upload a file or an image"
 msgstr "Fayl yoki rasm yuklash"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -30167,6 +30605,11 @@ msgstr "Profil rasmini yuklash"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Ulanish ma’lumotlaringiz bo‘lgan XML faylini yuklang"
+
+#. js-lingui-id: /w70rp
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Upload your CRM export"
+msgstr "CRM eksportingizni yuklang"
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -30368,11 +30811,6 @@ msgstr "Faqat harflar, raqamlar, pastki chiziq, nuqta yoki chiziqchadan foydalan
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Bizning API’dan foydalaning yoki birinchi {objectLabel} ni qo‘lda qo‘shing"
-
-#. js-lingui-id: zwL0lf
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Use the import wizard instead"
-msgstr "Buning o‘rniga import ustasidan foydalaning"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -31133,6 +31571,11 @@ msgstr "Tasdiqlash jarayonida muammo yuz berdi"
 msgid "We match on these fields. If a {0} already exists, we update it. Otherwise, we create a new one."
 msgstr "Biz shu maydonlar bo‘yicha mos kelishini tekshiramiz. Agar {0} allaqachon mavjud bo‘lsa, uni yangilaymiz. Aks holda, yangisini yaratamiz."
 
+#. js-lingui-id: AXVG2Y
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "We notify you within 72 hours, as set out in the DPA"
+msgstr "DPA’da belgilanganidek, sizni 72 soat ichida xabardor qilamiz"
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -31433,6 +31876,11 @@ msgstr "Sinov muddati tugaganda, sizdan {priceLabel} undiriladi."
 msgid "Where"
 msgstr "Qayerda"
 
+#. js-lingui-id: I7dUhW
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Where AI providers process your requests"
+msgstr "AI provayderlari so‘rovlaringizni qayerda qayta ishlaydi"
+
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Where records of this object open"
@@ -31495,6 +31943,11 @@ msgstr "Bu elektron pochta xabarini oladi"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Windsurf / Cascade"
 msgstr "Windsurf / Cascade"
+
+#. js-lingui-id: Z4dSVG
+#: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
+msgid "Wink"
+msgstr "Ko'z qisish"
 
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
@@ -31680,6 +32133,7 @@ msgstr "Ish vaqti boshlanishi"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+#: src/pages/settings/billing/SettingsPartner.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceBlocklist.tsx
@@ -31839,12 +32293,32 @@ msgstr "Ish maydoni ko‘rinishlari uchun \"ko‘rinishlarni boshqarish\" ruxsat
 msgid "Workspaces"
 msgstr "Ish maydonlari"
 
+#. js-lingui-id: yehD4Z
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Workspaces run on AWS in Frankfurt, Germany"
+msgstr "Ish maydonlari Germaniyaning Frankfurt shahridagi AWS’da ishlaydi"
+
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Workspaces status"
 msgstr "Ish maydonlari holati"
+
+#. js-lingui-id: C+gilE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Worldwide"
+msgstr "Butun dunyo bo‘ylab"
+
+#. js-lingui-id: oR3/ss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, standard retention"
+msgstr "Butun dunyo bo‘ylab, standart saqlash muddati"
+
+#. js-lingui-id: iTAMb7
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, zero data retention"
+msgstr "Butun dunyo bo‘ylab, ma’lumotlarni umuman saqlamaslik"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -31891,6 +32365,11 @@ msgstr "Ushbu agent uchun tavsif yozing"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Xabar yozing"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Xabar yozing..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -31968,6 +32447,7 @@ msgstr "yillar"
 #. js-lingui-id: QyCqHT
 #: src/modules/advanced-text-editor/constants/RichTextColorDisplayNames.ts
 #: src/modules/ui/input/hooks/useColorLabels.ts
+#: src/pages/settings/ai/constants/SettingsAiAssistantColorLabels.ts
 msgid "Yellow"
 msgstr "Sariq"
 
@@ -32393,6 +32873,11 @@ msgstr "Ish maydoningiz o‘chirib qo‘yiladi"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2sLNC3
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Zero data retention"
+msgstr "Ma’lumotlarni umuman saqlamaslik"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

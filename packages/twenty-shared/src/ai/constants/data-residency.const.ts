@@ -1,4 +1,4 @@
-export const DATA_RESIDENCY_KEYS = [
+export const DATA_RESIDENCIES = [
   'us',
   'eu',
   'global',
@@ -11,4 +11,4 @@ export const DATA_RESIDENCY_KEYS = [
   'fr',
 ] as const;
 
-export type DataResidency = (typeof DATA_RESIDENCY_KEYS)[number];
+export type DataResidency = (typeof DATA_RESIDENCIES)[number];

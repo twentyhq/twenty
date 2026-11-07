@@ -22,6 +22,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canAccessAllAgentChatChannels:
       roleManifest.canAccessAllAgentChatChannels ?? false,
     canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
+    canCreateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
     canUpdateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
     canSoftDeleteAllObjectRecords:
       roleManifest.canSoftDeleteAllObjectRecords ?? false,

@@ -6,7 +6,7 @@ import { updateCallRecording } from 'src/logic-functions/data/utils/updateCallRe
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/CallRecordingUpdateFields';
 
 export const persistCallRecordingProgress = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   {
     id,
     updateData,

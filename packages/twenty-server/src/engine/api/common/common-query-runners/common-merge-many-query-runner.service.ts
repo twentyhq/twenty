@@ -23,7 +23,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
@@ -119,13 +119,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     context: CommonExtendedQueryRunnerContext,
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
-    const restrictedFields =
-      context.repository.recordsPermissions.objects[
-        context.flatObjectMetadata.id
-      ]?.restrictedFields;
+    const unreadableFieldMetadataIds =
+      await this.recordPermissionsService.findUnreadableFields({
+        principals: context.permissionsPrincipals,
+        objectMetadataId: context.flatObjectMetadata.id,
+      });
 
     const columnsToSelect = getAllSelectableColumnNames({
-      restrictedFields: restrictedFields ?? {},
+      unreadableFieldMetadataIds,
       objectMetadata: {
         objectMetadataMapItem: context.flatObjectMetadata,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
@@ -209,21 +210,18 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const {
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      permissionsPrincipals,
       repository,
       transactionScope,
     } = queryRunnerContext;
 
-    const restrictedFields =
-      repository.recordsPermissions.objects[flatObjectMetadata.id]
-        ?.restrictedFields ?? {};
+    const unreadableFieldMetadataIds =
+      await this.recordPermissionsService.findUnreadableFields({
+        principals: permissionsPrincipals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
-    const unreadableFieldIds = new Set(
-      Object.entries(restrictedFields)
-        .filter(([, fieldPermissions]) => fieldPermissions.canRead === false)
-        .map(([fieldMetadataId]) => fieldMetadataId),
-    );
-
-    if (unreadableFieldIds.size === 0) {
+    if (unreadableFieldMetadataIds.size === 0) {
       return;
     }
 
@@ -237,7 +235,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       ...fieldIdByName,
       ...fieldIdByJoinColumnName,
     })
-      .filter(([, fieldMetadataId]) => unreadableFieldIds.has(fieldMetadataId))
+      .filter(([, fieldMetadataId]) =>
+        unreadableFieldMetadataIds.has(fieldMetadataId),
+      )
       .map(([recordKey]) => recordKey);
 
     const unrestrictedRepository = isDefined(transactionScope)
@@ -251,7 +251,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const fullRecords = await unrestrictedRepository.find({
       where: { id: In(ids) },
       select: getAllSelectableColumnNames({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set(),
         objectMetadata: {
           objectMetadataMapItem: flatObjectMetadata,
           flatFieldMetadataMaps,

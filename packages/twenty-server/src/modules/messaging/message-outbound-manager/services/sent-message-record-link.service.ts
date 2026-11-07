@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getTargetFieldNameForObjectRecord } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type MessageThreadTargetWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-target.workspace-entity';
@@ -36,9 +36,9 @@ export class SentMessageRecordLinkService {
 
     // The link is written in a system context, so the caller's own access to this record, row-level rules included, gates it
     const permissionsByRecordId =
-      await this.recordPermissionsService.getPermissionsForRecords({
+      await this.recordPermissionsService.findRecordsActions({
         authContext,
-        flatObjectMetadata: { nameSingular: objectNameSingular },
+        objectNameSingular,
         recordIds: [recordId],
       });
 

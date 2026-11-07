@@ -1,5 +1,3 @@
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 
 describe('mapUIMessagePartsToDBParts', () => {
@@ -11,7 +9,7 @@ describe('mapUIMessagePartsToDBParts', () => {
           toolCallId: 'call-1',
           state: 'input-available',
           input: { query: 'acme' },
-        } as unknown as ExtendedUIMessagePart,
+        },
       ],
       'message-id',
     );
@@ -33,7 +31,7 @@ describe('mapUIMessagePartsToDBParts', () => {
             type: 'tool-search',
             toolCallId: 'call-1',
             state: 'input-streaming',
-          } as unknown as ExtendedUIMessagePart,
+          },
         ],
         'message-id',
       ),

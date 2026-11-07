@@ -8,6 +8,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
@@ -70,6 +71,7 @@ const flatFieldMetadataMaps = [
 const buildObjectRecordsPermissions = (
   overrides: Partial<ObjectRecordsPermissions>,
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
@@ -113,7 +115,7 @@ const omitRestrictedFields = ({
   omitRestrictedFieldsFromTimelineActivity({
     properties: timelineActivity.properties,
     timelineActivity,
-    recordsPermissions,
+    recordReadRestrictions: buildRecordReadRestrictions({ recordsPermissions }),
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
@@ -212,7 +214,9 @@ describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
     expect(
       omitRestrictedFieldsFromTimelineActivityEvent({
         event,
-        recordsPermissions: PERSON_JOB_TITLE_DENIED,
+        recordReadRestrictions: buildRecordReadRestrictions({
+          recordsPermissions: PERSON_JOB_TITLE_DENIED,
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }).properties,
