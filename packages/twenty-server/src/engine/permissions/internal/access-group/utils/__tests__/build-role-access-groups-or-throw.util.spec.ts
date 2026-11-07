@@ -3,11 +3,13 @@ import {
   type ObjectRecordsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 
 const ROLE_ID = 'role-id';
@@ -16,25 +18,19 @@ const MEMBER_FIELD_ID = 'member-field-id';
 const RULE_ID = 'rule-id';
 const MEMBER_FIELD_KEY = `${MEMBER_FIELD_ID}:`;
 
-const flatFieldMetadataMaps = {
-  byId: {
-    [MEMBER_FIELD_ID]: {
-      id: MEMBER_FIELD_ID,
-      name: 'teams',
-      type: FieldMetadataType.ARRAY,
-    },
-  },
-  idByUniversalIdentifier: {},
-  byUniversalIdentifier: {
-    [MEMBER_FIELD_ID]: {
-      id: MEMBER_FIELD_ID,
-      name: 'teams',
-      type: FieldMetadataType.ARRAY,
-    },
-  },
-  universalIdentifierById: { [MEMBER_FIELD_ID]: MEMBER_FIELD_ID },
-  universalIdentifiersByApplicationId: {},
-} as unknown as FlatEntityMaps<OrmFlatFieldMetadata>;
+const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: getFlatFieldMetadataMock({
+    id: MEMBER_FIELD_ID,
+    universalIdentifier: MEMBER_FIELD_ID,
+    objectMetadataId: 'workspace-member-object-id',
+    type: FieldMetadataType.ARRAY,
+    name: 'teams',
+  }),
+  flatEntityMaps: createEmptyFlatEntityMaps(),
+});
+
+const JANE = { id: 'jane', teams: ['sales', 'support'] };
+const BOB = { id: 'bob', teams: ['sales'] };
 
 const noAccess: ObjectRecordsPermissions = {
   canCreateAllRecords: false,
@@ -45,9 +41,59 @@ const noAccess: ObjectRecordsPermissions = {
   restrictedFields: {},
 };
 
-const buildRowLevelPermissions = (
-  predicates: Partial<RowLevelPermissionPredicate>[],
-): ObjectRecordsPermissions => ({
+const buildPredicate = (
+  overrides: Pick<RowLevelPermissionPredicate, 'id'> &
+    Partial<RowLevelPermissionPredicate>,
+): RowLevelPermissionPredicate => ({
+  fieldMetadataId: 'field-id',
+  objectMetadataId: OBJECT_METADATA_ID,
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  subFieldName: null,
+  rowLevelPermissionPredicateGroupId: RULE_ID,
+  workspaceMemberFieldMetadataId: null,
+  workspaceMemberSubFieldName: null,
+  roleId: ROLE_ID,
+  ...overrides,
+});
+
+const buildPredicateGroup = ({
+  id,
+  parentRowLevelPermissionPredicateGroupId,
+}: Pick<
+  RowLevelPermissionPredicateGroup,
+  'id' | 'parentRowLevelPermissionPredicateGroupId'
+>): RowLevelPermissionPredicateGroup => ({
+  id,
+  parentRowLevelPermissionPredicateGroupId,
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  objectMetadataId: OBJECT_METADATA_ID,
+  positionInRowLevelPermissionPredicateGroup: null,
+  canReadRecords: true,
+  canUpdateRecords: false,
+  canSoftDeleteRecords: false,
+  canDestroyRecords: false,
+  roleId: ROLE_ID,
+});
+
+const ROOT_AND_NESTED_GROUPS = [
+  buildPredicateGroup({
+    id: RULE_ID,
+    parentRowLevelPermissionPredicateGroupId: null,
+  }),
+  buildPredicateGroup({
+    id: 'nested',
+    parentRowLevelPermissionPredicateGroupId: RULE_ID,
+  }),
+];
+
+const buildRowLevelPermissions = ({
+  predicates,
+  predicateGroups = ROOT_AND_NESTED_GROUPS,
+}: {
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups?: RowLevelPermissionPredicateGroup[];
+}): ObjectRecordsPermissions => ({
   ...noAccess,
   rowLevelRecordsPermissions: {
     canCreateRecords: false,
@@ -55,12 +101,19 @@ const buildRowLevelPermissions = (
     canUpdateRecords: false,
     canSoftDeleteRecords: false,
     canDestroyRecords: false,
-    predicates: predicates as RowLevelPermissionPredicate[],
-    predicateGroups: [
-      { id: RULE_ID, parentRowLevelPermissionPredicateGroupId: null },
-      { id: 'nested', parentRowLevelPermissionPredicateGroupId: RULE_ID },
-    ] as RowLevelPermissionPredicateGroup[],
+    predicates,
+    predicateGroups,
   },
+});
+
+const UNGROUPED_RULE_PERMISSIONS = buildRowLevelPermissions({
+  predicates: [
+    buildPredicate({
+      id: 'ungrouped',
+      rowLevelPermissionPredicateGroupId: null,
+    }),
+  ],
+  predicateGroups: [],
 });
 
 const build = (
@@ -117,9 +170,9 @@ describe('buildRoleAccessGroupsOrThrow', () => {
 
   it('should make one group for a root rule without member values', () => {
     const accessGroups = build({
-      objectRecordsPermissions: buildRowLevelPermissions([
-        { id: 'predicate', rowLevelPermissionPredicateGroupId: RULE_ID },
-      ]),
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [buildPredicate({ id: 'predicate' })],
+      }),
     });
 
     expect(accessGroups).toHaveLength(1);
@@ -129,17 +182,15 @@ describe('buildRoleAccessGroupsOrThrow', () => {
 
   it('should make one group per list value, shared by members with the same value', () => {
     const accessGroups = build({
-      objectRecordsPermissions: buildRowLevelPermissions([
-        {
-          id: 'predicate',
-          workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
-          rowLevelPermissionPredicateGroupId: RULE_ID,
-        },
-      ]),
-      workspaceMembers: [
-        { id: 'jane', teams: ['sales', 'support'] },
-        { id: 'bob', teams: ['sales'] },
-      ] as never,
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'predicate',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+        ],
+      }),
+      workspaceMembers: [JANE, BOB],
     });
     const uniqueGroupHashes = new Set(
       accessGroups.map((accessGroup) => accessGroup.groupHash),
@@ -156,23 +207,28 @@ describe('buildRoleAccessGroupsOrThrow', () => {
   });
 
   it('should make one rule per role and object, whatever the predicates hang on', () => {
-    const permissions = buildRowLevelPermissions([
-      {
-        id: 'bound',
-        workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
-        rowLevelPermissionPredicateGroupId: 'nested',
-      },
-      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
-    ]);
-
-    permissions.rowLevelRecordsPermissions?.predicateGroups.push({
-      id: 'other-root',
-      parentRowLevelPermissionPredicateGroupId: null,
-    } as RowLevelPermissionPredicateGroup);
-
     const accessGroups = build({
-      objectRecordsPermissions: permissions,
-      workspaceMembers: [{ id: 'jane', teams: ['sales', 'support'] }] as never,
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'bound',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+            rowLevelPermissionPredicateGroupId: 'nested',
+          }),
+          buildPredicate({
+            id: 'ungrouped',
+            rowLevelPermissionPredicateGroupId: null,
+          }),
+        ],
+        predicateGroups: [
+          ...ROOT_AND_NESTED_GROUPS,
+          buildPredicateGroup({
+            id: 'other-root',
+            parentRowLevelPermissionPredicateGroupId: null,
+          }),
+        ],
+      }),
+      workspaceMembers: [JANE],
     });
 
     expect(
@@ -187,31 +243,17 @@ describe('buildRoleAccessGroupsOrThrow', () => {
   });
 
   it('should make a group for predicates without a predicate group', () => {
-    const permissions = buildRowLevelPermissions([
-      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
-    ]);
-
-    if (isDefined(permissions.rowLevelRecordsPermissions)) {
-      permissions.rowLevelRecordsPermissions.predicateGroups = [];
-    }
-
     expect(
-      build({ objectRecordsPermissions: permissions }).map(
+      build({ objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS }).map(
         (accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId,
       ),
     ).toEqual([null]);
   });
 
   it('should not give predicates without a predicate group the hash of an all records group', () => {
-    const permissions = buildRowLevelPermissions([
-      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
-    ]);
-
-    if (isDefined(permissions.rowLevelRecordsPermissions)) {
-      permissions.rowLevelRecordsPermissions.predicateGroups = [];
-    }
-
-    const [ruleAccessGroup] = build({ objectRecordsPermissions: permissions });
+    const [ruleAccessGroup] = build({
+      objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS,
+    });
     const [allRecordsAccessGroup] = build({
       objectRecordsPermissions: { ...noAccess, canReadAllRecords: true },
     });
@@ -222,13 +264,14 @@ describe('buildRoleAccessGroupsOrThrow', () => {
   it('should make no member group when no member holds the role', () => {
     expect(
       build({
-        objectRecordsPermissions: buildRowLevelPermissions([
-          {
-            id: 'predicate',
-            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
-            rowLevelPermissionPredicateGroupId: RULE_ID,
-          },
-        ]),
+        objectRecordsPermissions: buildRowLevelPermissions({
+          predicates: [
+            buildPredicate({
+              id: 'predicate',
+              workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+            }),
+          ],
+        }),
       }),
     ).toEqual([]);
   });
