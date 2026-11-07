@@ -95,7 +95,9 @@ export const injectCacheBreakpoint = (
   return messages.map((message, index) => {
     const providerOptions = omitBedrockCachePoint(message.providerOptions);
 
-    if (index !== lastIdx) return { ...message, providerOptions };
+    if (index !== lastIdx) {
+      return { ...message, providerOptions };
+    }
 
     return {
       ...message,

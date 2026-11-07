@@ -143,7 +143,7 @@ const buildContext = (): RowAccessEvaluationContext => ({
 
 const findGranted = ({
   principals,
-  featureFlagKeys = [],
+  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
   context = buildContext(),
 }: {
   principals: PermissionsPrincipalsWithRolesContext;

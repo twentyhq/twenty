@@ -1725,6 +1725,11 @@ msgstr "Uygulamanız hakkında"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Bu çalışma alanı için kabul edilmiş ve imzalanmış DPA'lar, şablon sürümleri ve tarihleriyle birlikte."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Erişim grupları"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3979,6 +3984,11 @@ msgstr "Şunun için geçerlidir"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Uygula"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Varsayılan olarak gizli olmayan nesnelere gizli kayıtları uygula. Kayıt paylaşımını ayarlamış çalışma alanları için her zaman açıktır. Bunu kapatmak, bu nesnelerde gizli olarak ayarlanmış kayıtları yeniden görünür hale getirir."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6904,6 +6914,11 @@ msgstr "Örnek verilerle bileşen önizlemesi"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-posta oluştur"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Kayıt listelerinin satır düzeyi izinler için kullanacağı erişim gruplarını hesaplayın. Çalışma alanı yükseltmesi tamamlandıktan sonra etkinleştirin."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22345,6 +22360,11 @@ msgstr "Gizlilik Politikası"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Özel"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Gizli kayıtlar"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

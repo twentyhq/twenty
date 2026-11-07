@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
@@ -38,13 +39,14 @@ export const SettingsRolePermissionsObjectsTableRow = ({
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   const revokedBy = permission.revokedBy;
   const grantedBy = permission.grantedBy;
-  const isRevoked =
-    revokedBy !== undefined && revokedBy !== null && revokedBy > 0;
+  const isRevoked = isDefined(revokedBy) && revokedBy > 0;
   const label = permission.label;
   const isDisabled = !isEditable;
 
   const handleRowClick = () => {
-    if (isDisabled) return;
+    if (isDisabled) {
+      return;
+    }
 
     permission.setValue(!permission.value);
   };

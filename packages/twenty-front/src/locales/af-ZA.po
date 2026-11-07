@@ -1725,6 +1725,11 @@ msgstr "Oor jou toepassing"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Aanvaarde en ondertekende DPA's vir hierdie werksruimte, met hul templaatweergawe en datum."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Toegangsgroepe"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3979,6 +3984,11 @@ msgstr "Van toepassing op"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Pas toe"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Pas private rekords toe op voorwerpe wat nie by verstek privaat is nie. Altyd aan vir werkspasies wat rekorddeling opgestel het. Deur dit af te skakel, word rekords wat op daardie voorwerpe as privaat gestel is, weer sigbaar."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6904,6 +6914,11 @@ msgstr "Komponentvoorskou met voorbeelddata"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Stel e-pos op"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Bereken die toegangsgroepe wat rekordlyste vir toestemmings op ryvlak sal gebruik. Aktiveer nadat die werkruimte-opgradering voltooi is."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22345,6 +22360,11 @@ msgstr "Privaatheidsbeleid"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privaat"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Private rekords"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

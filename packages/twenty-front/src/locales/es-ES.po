@@ -1725,6 +1725,11 @@ msgstr "Acerca de tu aplicación"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "DPA aceptados y firmados para este espacio de trabajo, con su versión de plantilla y fecha."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Grupos de acceso"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3979,6 +3984,11 @@ msgstr "Se aplica a"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Aplicar"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Aplicar registros privados a objetos que no son privados de forma predeterminada. Siempre activado para los espacios de trabajo que han configurado el uso compartido de registros. Desactivar esta opción hace que los registros establecidos como privados en esos objetos vuelvan a ser visibles."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6904,6 +6914,11 @@ msgstr "Vista previa del componente con datos de ejemplo"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Redactar correo electrónico"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Calcula los grupos de acceso que utilizarán los listados de registros para los permisos a nivel de fila. Actívalo cuando se complete la actualización del espacio de trabajo."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22345,6 +22360,11 @@ msgstr "Política de privacidad"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privada"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Registros privados"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

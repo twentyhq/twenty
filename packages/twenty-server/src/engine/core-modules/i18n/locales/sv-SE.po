@@ -9747,6 +9747,7 @@ msgid "Object label is too short"
 msgstr "Objektetiketten är för kort"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9872,6 +9873,12 @@ msgstr "Objekt att ta bort hittades inte"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Objekt att uppdatera hittades inte"
+
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr "Objekt vars poster kan tillhöra gruppen"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -11280,6 +11287,11 @@ msgstr "Posten uppfyller inte säkerhetsbegränsningarna."
 msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "Post-ID"
+
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+msgid "Record not found"
+msgstr "Post hittades inte"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts

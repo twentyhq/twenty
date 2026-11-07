@@ -1725,6 +1725,11 @@ msgstr "אודות היישום שלך"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "DPAs שאושרו ונחתמו עבור סביבת עבודה זו, עם גרסת התבנית והתאריך שלהן."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "קבוצות גישה"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3979,6 +3984,11 @@ msgstr "חל על"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "החל"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "החלת רשומות פרטיות על אובייקטים שאינם פרטיים כברירת מחדל. פעיל תמיד עבור סביבות עבודה שהגדירו שיתוף רשומות. כיבוי אפשרות זו הופך רשומות שהוגדרו כפרטיות באותם אובייקטים לגלויות שוב."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6904,6 +6914,11 @@ msgstr "תצוגה מקדימה של רכיב עם נתונים לדוגמה"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "כתוב דוא\"ל"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "חשב את קבוצות הגישה שבהן ישתמשו רשימות הרשומות להרשאות ברמת שורה. הפעל לאחר השלמת שדרוג סביבת העבודה."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22345,6 +22360,11 @@ msgstr "מדיניות הפרטיות"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "פרטי"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "רשומות פרטיות"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

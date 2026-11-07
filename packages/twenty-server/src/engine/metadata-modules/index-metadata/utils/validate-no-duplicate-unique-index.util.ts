@@ -36,11 +36,21 @@ export const validateNoDuplicateUniqueIndexOrThrow = ({
   const duplicate = Object.values(
     existingFlatIndexMaps.byUniversalIdentifier,
   ).find((flatIndex) => {
-    if (!isDefined(flatIndex)) return false;
-    if (flatIndex.id === ignoreIndexId) return false;
-    if (!flatIndex.isUnique) return false;
-    if (flatIndex.objectMetadataId !== objectMetadataId) return false;
-    if (flatIndex.flatIndexFieldMetadatas.length !== 1) return false;
+    if (!isDefined(flatIndex)) {
+      return false;
+    }
+    if (flatIndex.id === ignoreIndexId) {
+      return false;
+    }
+    if (!flatIndex.isUnique) {
+      return false;
+    }
+    if (flatIndex.objectMetadataId !== objectMetadataId) {
+      return false;
+    }
+    if (flatIndex.flatIndexFieldMetadatas.length !== 1) {
+      return false;
+    }
 
     const existingField = flatIndex.flatIndexFieldMetadatas[0];
 

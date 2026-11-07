@@ -1725,6 +1725,11 @@ msgstr "Informazioni sulla tua app"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "DPA accettati e firmati per questo spazio di lavoro, con la relativa versione del modello e data."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Gruppi di accesso"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3979,6 +3984,11 @@ msgstr "Si applica a"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Applica"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Applica record privati agli oggetti che non sono privati per impostazione predefinita. Sempre attivo per gli spazi di lavoro in cui è stata impostata la condivisione dei record. Disattivando questa opzione, i record impostati come privati su tali oggetti saranno nuovamente visibili."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6904,6 +6914,11 @@ msgstr "Anteprima del componente con dati di esempio"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Componi email"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Calcola i gruppi di accesso che gli elenchi di record utilizzeranno per le autorizzazioni a livello di riga. Abilita dopo il completamento dell'aggiornamento dell'area di lavoro."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22345,6 +22360,11 @@ msgstr "Informativa sulla privacy"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privata"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Record privati"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

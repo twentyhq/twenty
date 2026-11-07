@@ -103,9 +103,15 @@ export class ConfigValueConverterService {
   ): ConfigVariableType {
     const defaultValue = this.configVariables[key];
 
-    if (typeof defaultValue === 'boolean') return ConfigVariableType.BOOLEAN;
-    if (typeof defaultValue === 'number') return ConfigVariableType.NUMBER;
-    if (Array.isArray(defaultValue)) return ConfigVariableType.ARRAY;
+    if (typeof defaultValue === 'boolean') {
+      return ConfigVariableType.BOOLEAN;
+    }
+    if (typeof defaultValue === 'number') {
+      return ConfigVariableType.NUMBER;
+    }
+    if (Array.isArray(defaultValue)) {
+      return ConfigVariableType.ARRAY;
+    }
     if (
       typeof defaultValue === 'object' &&
       defaultValue !== null &&

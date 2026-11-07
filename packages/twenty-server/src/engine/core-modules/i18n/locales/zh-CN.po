@@ -9745,6 +9745,7 @@ msgid "Object label is too short"
 msgstr "对象标签太短"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9870,6 +9871,12 @@ msgstr "未找到要删除的对象"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "未找到要更新的对象"
+
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr "其记录可以属于该组的对象"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -11278,6 +11285,11 @@ msgstr "记录不满足安全约束。"
 msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "记录 ID"
+
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+msgid "Record not found"
+msgstr "未找到记录"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
