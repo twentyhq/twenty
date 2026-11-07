@@ -16,6 +16,8 @@ import {
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
+import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { resolveAccessGroupMemberFieldValue } from 'src/engine/permissions/internal/access-group/utils/resolve-access-group-member-field-value.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -42,6 +44,7 @@ type BuildRecordFilterForRoleArgs = {
   objectMetadata: FlatObjectMetadata;
   roleId: string;
   workspaceMember?: RowLevelPermissionWorkspaceMember;
+  memberFieldValues?: AccessGroupMemberFieldValues;
 };
 
 const resolveWorkspaceMemberBoundPredicateValue = ({
@@ -50,12 +53,14 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
   targetFieldMetadata,
   flatFieldMetadataMaps,
   workspaceMember,
+  memberFieldValues,
 }: {
   predicate: FlatRowLevelPermissionPredicate;
   workspaceMemberFieldMetadataId: string;
   targetFieldMetadata: OrmFlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceMember: RowLevelPermissionWorkspaceMember | undefined;
+  memberFieldValues: AccessGroupMemberFieldValues | undefined;
 }): RowLevelPermissionPredicateValue | null => {
   const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: workspaceMemberFieldMetadataId,
@@ -69,15 +74,19 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
     );
   }
 
-  if (!isDefined(workspaceMember)) {
-    return null;
-  }
-
-  const resolvedWorkspaceMemberValue = resolveWorkspaceMemberPredicateValue({
-    workspaceMember,
-    workspaceMemberFieldMetadata,
-    workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
-  });
+  const resolvedWorkspaceMemberValue = isDefined(memberFieldValues)
+    ? resolveAccessGroupMemberFieldValue({
+        memberFieldValues,
+        predicate,
+        workspaceMemberFieldMetadata,
+      })
+    : isDefined(workspaceMember)
+      ? resolveWorkspaceMemberPredicateValue({
+          workspaceMember,
+          workspaceMemberFieldMetadata,
+          workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+        })
+      : null;
 
   if (!isDefined(resolvedWorkspaceMemberValue)) {
     return null;
@@ -92,7 +101,7 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
   return isPredicateValueCompatible ? resolvedWorkspaceMemberValue : null;
 };
 
-const buildRecordFilterForRole = ({
+export const buildRecordFilterForRole = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
@@ -100,6 +109,7 @@ const buildRecordFilterForRole = ({
   objectMetadata,
   roleId,
   workspaceMember,
+  memberFieldValues,
 }: BuildRecordFilterForRoleArgs): RecordGqlOperationFilter | null => {
   const predicates = Object.values(
     flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
@@ -148,6 +158,7 @@ const buildRecordFilterForRole = ({
           targetFieldMetadata: fieldMetadata,
           flatFieldMetadataMaps,
           workspaceMember,
+          memberFieldValues,
         });
 
       // Dropping an unsatisfiable predicate would lift the restriction, so it becomes a never-matching branch
@@ -312,7 +323,7 @@ const buildRecordFilterForRole = ({
 
 type BuildRowLevelPermissionRecordFilterArgs = Omit<
   BuildRecordFilterForRoleArgs,
-  'roleId'
+  'roleId' | 'memberFieldValues'
 > & {
   roleIds: string[];
 };

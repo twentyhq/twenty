@@ -6,6 +6,12 @@ import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { RECOMPUTE_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-access-group-ids-job-name.constant';
+import { type RecomputeAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-access-group-ids-job-data.type';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
@@ -21,6 +27,8 @@ export class AccessGroupService {
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
+    @InjectMessageQueue(MessageQueue.accessGroupQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
@@ -49,14 +57,26 @@ export class AccessGroupService {
       await this.accessGroupRepository.findGroupHashes(workspaceId),
     );
 
+    const insertedAccessGroups = newAccessGroups.filter(
+      ({ groupHash }) => !existingGroupHashes.has(groupHash),
+    );
+
     await this.accessGroupRepository.insertAccessGroups({
       workspaceId,
-      newAccessGroups: newAccessGroups.filter(
-        ({ groupHash }) => !existingGroupHashes.has(groupHash),
-      ),
+      newAccessGroups: insertedAccessGroups,
     });
 
+    const objectMetadataIdsToRecompute = new Set(
+      insertedAccessGroups.map(({ objectMetadataId }) => objectMetadataId),
+    );
+
     if (hasFailures || newAccessGroups.length === 0) {
+      await this.scheduleAccessGroupIdsRecompute({
+        workspaceId,
+        objectMetadataIdsToRecompute,
+        deletedAccessGroups: [],
+      });
+
       return;
     }
 
@@ -67,11 +87,64 @@ export class AccessGroupService {
       (groupHash) => !newGroupHashes.has(groupHash),
     );
 
-    if (isNonEmptyArray(staleGroupHashes)) {
-      await this.accessGroupRepository.deleteAccessGroups({
+    const deletedAccessGroups = isNonEmptyArray(staleGroupHashes)
+      ? await this.accessGroupRepository.deleteAccessGroups({
+          workspaceId,
+          groupHashes: staleGroupHashes,
+        })
+      : [];
+
+    await this.scheduleAccessGroupIdsRecompute({
+      workspaceId,
+      objectMetadataIdsToRecompute,
+      deletedAccessGroups,
+    });
+  }
+
+  // An object with a new group recomputes every record, which also drops its deleted groups
+  private async scheduleAccessGroupIdsRecompute({
+    workspaceId,
+    objectMetadataIdsToRecompute,
+    deletedAccessGroups,
+  }: {
+    workspaceId: string;
+    objectMetadataIdsToRecompute: Set<string>;
+    deletedAccessGroups: Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[];
+  }): Promise<void> {
+    const deletedCompactIdsByObjectMetadataId = new Map<string, number[]>();
+
+    for (const { compactId, objectMetadataId } of deletedAccessGroups) {
+      if (objectMetadataIdsToRecompute.has(objectMetadataId)) {
+        continue;
+      }
+
+      deletedCompactIdsByObjectMetadataId.set(objectMetadataId, [
+        ...(deletedCompactIdsByObjectMetadataId.get(objectMetadataId) ?? []),
+        compactId,
+      ]);
+    }
+
+    const jobsData: RecomputeAccessGroupIdsJobData[] = [
+      ...[...objectMetadataIdsToRecompute].map((objectMetadataId) => ({
         workspaceId,
-        groupHashes: staleGroupHashes,
-      });
+        objectMetadataId,
+        heldCompactIds: null,
+      })),
+      ...[...deletedCompactIdsByObjectMetadataId].map(
+        ([objectMetadataId, heldCompactIds]) => ({
+          workspaceId,
+          objectMetadataId,
+          heldCompactIds,
+        }),
+      ),
+    ];
+
+    for (const jobData of jobsData) {
+      await this.messageQueueService.add<RecomputeAccessGroupIdsJobData>(
+        RECOMPUTE_ACCESS_GROUP_IDS_JOB_NAME,
+        jobData,
+        { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
+      );
     }
   }
 

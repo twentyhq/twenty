@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import {
+  type AccessGroup,
+  type AccessGroupWithoutCompactId,
+} from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
@@ -31,6 +34,25 @@ export class AccessGroupRepository {
     });
 
     return rows.map(({ groupHash }) => groupHash);
+  }
+
+  async findObjectAccessGroups({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<AccessGroup[]> {
+    return this.recordPermissionQueryService.execute<AccessGroup>({
+      workspaceId,
+      query: {
+        sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
+          FROM ${buildAccessGroupTableExpression(workspaceId)}
+          WHERE "objectMetadataId" = :objectMetadataId
+          ORDER BY "compactId"`,
+        parameters: { objectMetadataId },
+      },
+    });
   }
 
   async findCompactIdsByGroupHashes({
@@ -107,11 +129,14 @@ export class AccessGroupRepository {
   }: {
     workspaceId: string;
     groupHashes: string[];
-  }): Promise<void> {
-    await this.recordPermissionQueryService.execute({
+  }): Promise<Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[]> {
+    return this.recordPermissionQueryService.execute<
+      Pick<AccessGroup, 'compactId' | 'objectMetadataId'>
+    >({
       workspaceId,
       query: {
-        sql: `DELETE FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)`,
+        sql: `DELETE FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)
+          RETURNING "compactId", "objectMetadataId"`,
         parameters: { groupHashes },
       },
     });

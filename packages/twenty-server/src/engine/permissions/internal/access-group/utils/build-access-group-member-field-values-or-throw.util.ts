@@ -15,6 +15,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { buildAccessGroupMemberFieldKey } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-key.util';
 import { resolveWorkspaceMemberPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-workspace-member-predicate-value.util';
 
 const resolveMemberFieldValuesOrThrow = ({
@@ -61,7 +62,7 @@ export const buildAccessGroupMemberFieldValuesOrThrow = ({
   let combinations: AccessGroupMemberFieldValues[] = [{}];
 
   for (const predicate of workspaceMemberBoundPredicates) {
-    const memberFieldKey = `${predicate.workspaceMemberFieldMetadataId}:${predicate.workspaceMemberSubFieldName ?? ''}`;
+    const memberFieldKey = buildAccessGroupMemberFieldKey(predicate);
 
     if (memberFieldKey in combinations[0]) {
       continue;
