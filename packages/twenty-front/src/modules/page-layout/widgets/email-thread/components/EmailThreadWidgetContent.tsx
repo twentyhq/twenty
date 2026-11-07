@@ -107,7 +107,7 @@ export const EmailThreadWidgetContent = ({
           key={lastMessage.id}
           message={lastMessage}
           isExpanded
-          hideBottomBorder={!isComposerOpen}
+          hideBottomBorder
           onDraftClick={handleDraftClick}
         />
         <CustomResolverFetchMoreLoader
