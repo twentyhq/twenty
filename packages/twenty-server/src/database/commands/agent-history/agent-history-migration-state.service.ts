@@ -73,8 +73,9 @@ export class AgentHistoryMigrationStateService {
           );
         }
       }
-      for (const workspaceId of missing)
+      for (const workspaceId of missing) {
         states.set(workspaceId, { storage: 'core' });
+      }
     }
     return states;
   }

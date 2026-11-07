@@ -100,8 +100,12 @@ export const getCursor = (
   args: FindManyResolverArgs<any, any>,
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
-  if (args.after) return decodeCursor(args.after);
-  if (args.before) return decodeCursor(args.before);
+  if (args.after) {
+    return decodeCursor(args.after);
+  }
+  if (args.before) {
+    return decodeCursor(args.before);
+  }
 
   return undefined;
 };

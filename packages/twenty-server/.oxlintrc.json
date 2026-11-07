@@ -23,6 +23,7 @@
     "src/engine/core-modules/upgrade/constants/twenty-next-versions.constant.ts"
   ],
   "rules": {
+    "curly": "error",
     "prefer-const": ["error", { "ignoreReadBeforeAssign": true }],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": [

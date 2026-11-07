@@ -80,15 +80,19 @@ export class RestApiCoreService {
 
     const isSoftDelete = parseSoftDeleteRestRequest(request);
 
-    if (!isSoftDelete && isDefined(recordId))
+    if (!isSoftDelete && isDefined(recordId)) {
       return await this.restApiDestroyOneHandler.handle(request);
-    if (!isSoftDelete && !isDefined(recordId))
+    }
+    if (!isSoftDelete && !isDefined(recordId)) {
       return await this.restApiDestroyManyHandler.handle(request);
+    }
 
-    if (isSoftDelete && isDefined(recordId))
+    if (isSoftDelete && isDefined(recordId)) {
       return await this.restApiDeleteOneHandler.handle(request);
-    if (isSoftDelete && !isDefined(recordId))
+    }
+    if (isSoftDelete && !isDefined(recordId)) {
       return await this.restApiDeleteManyHandler.handle(request);
+    }
   }
 
   async restore(request: AuthenticatedRequest) {
