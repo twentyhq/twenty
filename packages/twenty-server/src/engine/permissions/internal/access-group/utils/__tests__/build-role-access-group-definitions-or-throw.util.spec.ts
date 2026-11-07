@@ -103,7 +103,11 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
   });
 
   it('should make one group for a root rule without member values', () => {
-    const definitions = build(buildRowLevelPermissions([{ id: 'predicate' }]));
+    const definitions = build(
+      buildRowLevelPermissions([
+        { id: 'predicate', rowLevelPermissionPredicateGroupId: RULE_ID },
+      ]),
+    );
 
     expect(definitions).toHaveLength(1);
     expect(definitions[0].rowLevelPermissionPredicateGroupId).toBe(RULE_ID);
@@ -164,6 +168,37 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
       [RULE_ID, { [MEMBER_FIELD_KEY]: 'support' }],
       ['other-root', null],
     ]);
+  });
+
+  it('should make a group for predicates without a predicate group', () => {
+    const permissions = buildRowLevelPermissions([
+      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
+    ]);
+
+    if (permissions.rowLevelRecordsPermissions) {
+      permissions.rowLevelRecordsPermissions.predicateGroups = [];
+    }
+
+    expect(
+      build(permissions).map(
+        (definition) => definition.rowLevelPermissionPredicateGroupId,
+      ),
+    ).toEqual([null]);
+  });
+
+  it('should not loop on a cycle of predicate groups', () => {
+    const permissions = buildRowLevelPermissions([
+      { id: 'looping', rowLevelPermissionPredicateGroupId: 'first' },
+    ]);
+
+    if (permissions.rowLevelRecordsPermissions) {
+      permissions.rowLevelRecordsPermissions.predicateGroups = [
+        { id: 'first', parentRowLevelPermissionPredicateGroupId: 'second' },
+        { id: 'second', parentRowLevelPermissionPredicateGroupId: 'first' },
+      ] as RowLevelPermissionPredicateGroup[];
+    }
+
+    expect(build(permissions)).toHaveLength(1);
   });
 
   it('should make no member group when no member holds the role', () => {

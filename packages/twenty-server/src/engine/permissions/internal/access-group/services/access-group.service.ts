@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AccessGroupOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/access-group-orm.service';
 import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
@@ -121,7 +121,7 @@ export class AccessGroupService {
       objectRecordsPermissions:
         rolesPermissions[mainPrincipal.roleId]?.objects[objectMetadataId],
       operationTypes: [operationType],
-      workspaceMembers: workspaceMember ? [workspaceMember] : [],
+      workspaceMembers: isDefined(workspaceMember) ? [workspaceMember] : [],
       flatFieldMetadataMaps,
     });
 

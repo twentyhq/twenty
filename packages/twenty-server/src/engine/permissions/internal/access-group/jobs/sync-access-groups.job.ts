@@ -7,7 +7,7 @@ import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/acc
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
 
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.accessGroupQueue)
 export class SyncAccessGroupsJob {
   constructor(private readonly accessGroupService: AccessGroupService) {}
 

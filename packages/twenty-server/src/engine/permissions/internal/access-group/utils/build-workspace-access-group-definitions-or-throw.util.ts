@@ -59,7 +59,10 @@ export const buildWorkspaceAccessGroupDefinitionsOrThrow = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   userWorkspaceRoleMap: Record<string, string>;
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatWorkspaceMemberMaps: Pick<
+    FlatWorkspaceMemberMaps,
+    'idByUserWorkspaceId' | 'byId'
+  >;
 }): AccessGroupDefinition[] => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,

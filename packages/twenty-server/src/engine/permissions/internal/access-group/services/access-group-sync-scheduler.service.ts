@@ -14,7 +14,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 @Injectable()
 export class AccessGroupSyncSchedulerService {
   constructor(
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}

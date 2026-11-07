@@ -29,10 +29,13 @@ const findRootPredicateGroupId = ({
 }: {
   predicate: RowLevelPermissionPredicate;
   predicateGroups: RowLevelPermissionPredicateGroup[];
-}): string | null | undefined => {
+}): string | null => {
+  const visitedGroupIds = new Set<string>();
   let groupId = predicate.rowLevelPermissionPredicateGroupId;
 
-  while (isDefined(groupId)) {
+  while (isDefined(groupId) && !visitedGroupIds.has(groupId)) {
+    visitedGroupIds.add(groupId);
+
     const parentGroupId = predicateGroups.find(
       ({ id }) => id === groupId,
     )?.parentRowLevelPermissionPredicateGroupId;
@@ -44,7 +47,7 @@ const findRootPredicateGroupId = ({
     groupId = parentGroupId;
   }
 
-  return groupId;
+  return null;
 };
 
 export const buildRoleAccessGroupDefinitionsOrThrow = ({
@@ -102,39 +105,49 @@ export const buildRoleAccessGroupDefinitionsOrThrow = ({
 
   const { predicates, predicateGroups } = rowLevelRecordsPermissions;
 
-  return predicateGroups
+  const rootPredicateGroupIds = predicateGroups
     .filter(
       ({ parentRowLevelPermissionPredicateGroupId }) =>
         !isDefined(parentRowLevelPermissionPredicateGroupId),
     )
-    .flatMap(({ id: rowLevelPermissionPredicateGroupId }) => {
-      const workspaceMemberBoundPredicates = predicates.filter(
-        (predicate) =>
-          isDefined(predicate.workspaceMemberFieldMetadataId) &&
-          findRootPredicateGroupId({ predicate, predicateGroups }) ===
-            rowLevelPermissionPredicateGroupId,
-      );
+    .map(({ id }) => id);
+  // The API accepts predicates without a group, and the RLS filter still enforces them
+  const hasUngroupedPredicates = predicates.some(
+    (predicate) =>
+      findRootPredicateGroupId({ predicate, predicateGroups }) === null,
+  );
 
-      if (workspaceMemberBoundPredicates.length === 0) {
-        return [
-          buildDefinition({
-            rowLevelPermissionPredicateGroupId,
-            memberFieldValues: null,
-          }),
-        ];
-      }
+  return [
+    ...rootPredicateGroupIds,
+    ...(hasUngroupedPredicates ? [null] : []),
+  ].flatMap((rowLevelPermissionPredicateGroupId) => {
+    const workspaceMemberBoundPredicates = predicates.filter(
+      (predicate) =>
+        isDefined(predicate.workspaceMemberFieldMetadataId) &&
+        findRootPredicateGroupId({ predicate, predicateGroups }) ===
+          rowLevelPermissionPredicateGroupId,
+    );
 
-      return workspaceMembers.flatMap((workspaceMember) =>
-        buildAccessGroupMemberFieldValuesOrThrow({
-          workspaceMemberBoundPredicates,
-          workspaceMember,
-          flatFieldMetadataMaps,
-        }).map((memberFieldValues) =>
-          buildDefinition({
-            rowLevelPermissionPredicateGroupId,
-            memberFieldValues,
-          }),
-        ),
-      );
-    });
+    if (workspaceMemberBoundPredicates.length === 0) {
+      return [
+        buildDefinition({
+          rowLevelPermissionPredicateGroupId,
+          memberFieldValues: null,
+        }),
+      ];
+    }
+
+    return workspaceMembers.flatMap((workspaceMember) =>
+      buildAccessGroupMemberFieldValuesOrThrow({
+        workspaceMemberBoundPredicates,
+        workspaceMember,
+        flatFieldMetadataMaps,
+      }).map((memberFieldValues) =>
+        buildDefinition({
+          rowLevelPermissionPredicateGroupId,
+          memberFieldValues,
+        }),
+      ),
+    );
+  });
 };
