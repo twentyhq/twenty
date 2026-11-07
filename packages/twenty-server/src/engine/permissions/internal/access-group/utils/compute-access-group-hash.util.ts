@@ -2,7 +2,7 @@
 
 import { createHash } from 'crypto';
 
-import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
+import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/new-access-group.type';
 
 export const computeAccessGroupHash = ({
   roleId,

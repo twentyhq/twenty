@@ -9,7 +9,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import {
   type AccessGroupMemberFieldValue,
   type AccessGroupMemberFieldValues,
-} from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
+} from 'src/engine/permissions/internal/access-group/types/new-access-group.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,

@@ -7,8 +7,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
-import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
-import { buildWorkspaceAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions.util';
+import { buildNewRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-new-role-access-groups-or-throw.util';
+import { buildNewWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-new-workspace-access-groups.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -36,7 +36,7 @@ export class AccessGroupService {
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const { definitions, failures } = buildWorkspaceAccessGroupDefinitions(
+    const { newAccessGroups, failures } = buildNewWorkspaceAccessGroups(
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
         'flatObjectMetadataMaps',
@@ -58,26 +58,26 @@ export class AccessGroupService {
 
     await this.accessGroupRepository.insertAccessGroups({
       workspaceId,
-      definitions: definitions.filter(
+      newAccessGroups: newAccessGroups.filter(
         ({ groupHash }) => !existingGroupHashes.has(groupHash),
       ),
     });
 
-    if (definitions.length === 0 && existingGroupHashes.size > 0) {
+    if (newAccessGroups.length === 0 && existingGroupHashes.size > 0) {
       this.logger.error(
         `Kept ${existingGroupHashes.size} access groups in workspace ${workspaceId}: the sync computed none`,
       );
     }
 
-    if (failures.length > 0 || definitions.length === 0) {
+    if (failures.length > 0 || newAccessGroups.length === 0) {
       return;
     }
 
-    const expectedGroupHashes = new Set(
-      definitions.map(({ groupHash }) => groupHash),
+    const newGroupHashes = new Set(
+      newAccessGroups.map(({ groupHash }) => groupHash),
     );
     const staleGroupHashes = [...existingGroupHashes].filter(
-      (groupHash) => !expectedGroupHashes.has(groupHash),
+      (groupHash) => !newGroupHashes.has(groupHash),
     );
 
     if (isNonEmptyArray(staleGroupHashes)) {
@@ -112,7 +112,7 @@ export class AccessGroupService {
     )
       ? flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
       : undefined;
-    const definitions = buildRoleAccessGroupDefinitionsOrThrow({
+    const callerAccessGroups = buildNewRoleAccessGroupsOrThrow({
       roleId: mainPrincipal.roleId,
       objectMetadataId,
       objectRecordsPermissions:
@@ -122,13 +122,13 @@ export class AccessGroupService {
       flatFieldMetadataMaps,
     });
 
-    if (!isNonEmptyArray(definitions)) {
+    if (!isNonEmptyArray(callerAccessGroups)) {
       return [];
     }
 
     return this.accessGroupRepository.findCompactIdsByGroupHashes({
       workspaceId,
-      groupHashes: definitions.map(({ groupHash }) => groupHash),
+      groupHashes: callerAccessGroups.map(({ groupHash }) => groupHash),
     });
   }
 }
