@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-orm/types/record-permission-query.type';
+import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-repository/types/record-permission-query.type';
 
 export const buildFindRecordSharesQuery = ({
   recordShareTableExpression,

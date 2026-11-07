@@ -6,7 +6,7 @@ import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { AccessGroupOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/access-group-orm.service';
+import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
 import { buildWorkspaceAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
@@ -22,7 +22,7 @@ export class AccessGroupService {
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly accessGroupOrmService: AccessGroupOrmService,
+    private readonly accessGroupRepository: AccessGroupRepository,
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
@@ -53,10 +53,10 @@ export class AccessGroupService {
     }
 
     const existingGroupHashes = new Set(
-      await this.accessGroupOrmService.findGroupHashes(workspaceId),
+      await this.accessGroupRepository.findGroupHashes(workspaceId),
     );
 
-    await this.accessGroupOrmService.insertAccessGroups({
+    await this.accessGroupRepository.insertAccessGroups({
       workspaceId,
       definitions: definitions.filter(
         ({ groupHash }) => !existingGroupHashes.has(groupHash),
@@ -81,7 +81,7 @@ export class AccessGroupService {
     );
 
     if (isNonEmptyArray(staleGroupHashes)) {
-      await this.accessGroupOrmService.deleteAccessGroups({
+      await this.accessGroupRepository.deleteAccessGroups({
         workspaceId,
         groupHashes: staleGroupHashes,
       });
@@ -126,7 +126,7 @@ export class AccessGroupService {
       return [];
     }
 
-    return this.accessGroupOrmService.findCompactIdsByGroupHashes({
+    return this.accessGroupRepository.findCompactIdsByGroupHashes({
       workspaceId,
       groupHashes: definitions.map(({ groupHash }) => groupHash),
     });

@@ -9,18 +9,18 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-query.service';
-import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-orm/types/record-share-criteria.type';
-import { buildDeleteRecordSharesQueryOrThrow } from 'src/engine/permissions/internal/record-permission-orm/utils/build-delete-record-shares-query-or-throw.util';
-import { buildInsertRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-orm/utils/build-insert-record-shares-query.util';
-import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-record-share-table-expression.util';
+import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
+import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-repository/types/record-share-criteria.type';
+import { buildDeleteRecordSharesQueryOrThrow } from 'src/engine/permissions/internal/record-permission-repository/utils/build-delete-record-shares-query-or-throw.util';
+import { buildInsertRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-insert-record-shares-query.util';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import {
   compileNamedParameters,
@@ -28,7 +28,7 @@ import {
 } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 @Injectable()
-export class RecordShareWriteOrmService {
+export class RecordShareRepository {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,

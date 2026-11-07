@@ -10,24 +10,24 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
-import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-query.service';
-import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/record-permission-orm/types/private-record-state-row.type';
-import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-private-record-states-query.util';
-import { buildFindRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-record-shares-query.util';
+import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
+import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/record-permission-repository/types/private-record-state-row.type';
+import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-private-record-states-query.util';
+import { buildFindRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-record-shares-query.util';
 import {
   buildFindRuleRecordSharesQuery,
   type RuleRecordSharesScope,
-} from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-rule-record-shares-query.util';
-import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-record-share-table-expression.util';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
-import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/record-permission-orm/utils/index-private-record-states-by-record-id.util';
+} from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/record-permission-repository/utils/index-private-record-states-by-record-id.util';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 @Injectable()
-export class RecordPermissionReadOrmService {
+export class RecordPermissionReadRepository {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}

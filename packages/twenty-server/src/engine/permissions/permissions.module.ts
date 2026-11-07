@@ -11,7 +11,7 @@ import { RolePermissionsService } from 'src/engine/permissions/role-permissions.
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RecordPermissionOrmModule } from 'src/engine/permissions/internal/record-permission-orm/record-permission-orm.module';
+import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -20,7 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AccessGroupModule,
     TypeOrmModule.forFeature([RoleTargetEntity]),
     WorkspaceCacheModule,
-    RecordPermissionOrmModule,
+    RecordPermissionRepositoryModule,
   ],
   providers: [
     SettingPermissionsService,

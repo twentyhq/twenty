@@ -5,11 +5,15 @@ import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-grou
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { RecordPermissionOrmModule } from 'src/engine/permissions/internal/record-permission-orm/record-permission-orm.module';
+import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [CacheLockModule, RecordPermissionOrmModule, WorkspaceCacheModule],
+  imports: [
+    CacheLockModule,
+    RecordPermissionRepositoryModule,
+    WorkspaceCacheModule,
+  ],
   providers: [
     AccessGroupService,
     AccessGroupSyncListener,
