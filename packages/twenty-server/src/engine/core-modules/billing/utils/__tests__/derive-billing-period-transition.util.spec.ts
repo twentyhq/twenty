@@ -26,9 +26,21 @@ describe('deriveBillingPeriodTransition', () => {
     expect(deriveFrom()).toEqual({
       closingPeriodStart: JANUARY,
       closingPeriodEnd: FEBRUARY,
+      closingPeriodInterval: SubscriptionInterval.Month,
       nextPeriodStart: FEBRUARY,
       isFirstPeriodAfterTrial: false,
     });
+  });
+
+  it('reads the closing period interval from its dates after a switch to monthly', () => {
+    const result = deriveFrom({
+      boundary: JANUARY,
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionInterval: SubscriptionInterval.Month,
+      subscriptionPreviousPeriodStart: new Date('2025-01-01T00:00:00.000Z'),
+    });
+
+    expect(result.closingPeriodInterval).toBe(SubscriptionInterval.Year);
   });
 
   it('closes the trial period when the trial just ended', () => {
