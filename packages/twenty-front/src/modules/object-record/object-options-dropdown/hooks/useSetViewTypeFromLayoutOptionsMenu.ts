@@ -9,7 +9,7 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
-import { getKanbanMainGroupByFieldMetadataId } from '@/views/utils/getKanbanMainGroupByFieldMetadataId';
+import { resolveMainGroupByFieldMetadataId } from '@/views/utils/resolveMainGroupByFieldMetadataId';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useStore } from 'jotai';
@@ -62,12 +62,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
       switch (viewType) {
         case ViewType.KANBAN: {
-          const mainGroupByFieldMetadataId =
-            getKanbanMainGroupByFieldMetadataId({
-              availableFieldsForGrouping,
-              currentMainGroupByFieldMetadataId:
-                currentView.mainGroupByFieldMetadataId,
-            });
+          const mainGroupByFieldMetadataId = resolveMainGroupByFieldMetadataId({
+            availableFieldsForGrouping,
+            currentMainGroupByFieldMetadataId:
+              currentView.mainGroupByFieldMetadataId,
+          });
 
           if (!isDefined(mainGroupByFieldMetadataId)) {
             throw new Error(

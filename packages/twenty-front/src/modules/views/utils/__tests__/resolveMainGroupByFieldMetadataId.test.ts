@@ -1,14 +1,14 @@
-import { getKanbanMainGroupByFieldMetadataId } from '@/views/utils/getKanbanMainGroupByFieldMetadataId';
+import { resolveMainGroupByFieldMetadataId } from '@/views/utils/resolveMainGroupByFieldMetadataId';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-describe('getKanbanMainGroupByFieldMetadataId', () => {
+describe('resolveMainGroupByFieldMetadataId', () => {
   const companyField = { id: 'company', type: FieldMetadataType.RELATION };
   const stageField = { id: 'stage', type: FieldMetadataType.SELECT };
   const priorityField = { id: 'priority', type: FieldMetadataType.SELECT };
 
   it('should keep the current grouping field when it can still group records', () => {
     expect(
-      getKanbanMainGroupByFieldMetadataId({
+      resolveMainGroupByFieldMetadataId({
         availableFieldsForGrouping: [companyField, stageField, priorityField],
         currentMainGroupByFieldMetadataId: 'priority',
       }),
@@ -17,7 +17,7 @@ describe('getKanbanMainGroupByFieldMetadataId', () => {
 
   it('should prefer a select field over a relation listed before it', () => {
     expect(
-      getKanbanMainGroupByFieldMetadataId({
+      resolveMainGroupByFieldMetadataId({
         availableFieldsForGrouping: [companyField, stageField],
         currentMainGroupByFieldMetadataId: null,
       }),
@@ -26,7 +26,7 @@ describe('getKanbanMainGroupByFieldMetadataId', () => {
 
   it('should ignore a current grouping field that can no longer group records', () => {
     expect(
-      getKanbanMainGroupByFieldMetadataId({
+      resolveMainGroupByFieldMetadataId({
         availableFieldsForGrouping: [companyField, stageField],
         currentMainGroupByFieldMetadataId: 'deleted-field',
       }),
@@ -35,7 +35,7 @@ describe('getKanbanMainGroupByFieldMetadataId', () => {
 
   it('should fall back to the first field when no select field exists', () => {
     expect(
-      getKanbanMainGroupByFieldMetadataId({
+      resolveMainGroupByFieldMetadataId({
         availableFieldsForGrouping: [companyField],
       }),
     ).toBe('company');
@@ -43,7 +43,7 @@ describe('getKanbanMainGroupByFieldMetadataId', () => {
 
   it('should return undefined when no field can group records', () => {
     expect(
-      getKanbanMainGroupByFieldMetadataId({ availableFieldsForGrouping: [] }),
+      resolveMainGroupByFieldMetadataId({ availableFieldsForGrouping: [] }),
     ).toBeUndefined();
   });
 });
