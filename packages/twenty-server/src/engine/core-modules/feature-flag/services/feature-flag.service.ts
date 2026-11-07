@@ -16,6 +16,12 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+// rolesPermissions is computed from this flag, so it has to follow it
+const getWorkspaceCacheKeysToInvalidate = (keys: FeatureFlagKey[]) =>
+  keys.includes(FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED)
+    ? (['featureFlagsMap', 'rolesPermissions'] as const)
+    : (['featureFlagsMap'] as const);
+
 @Injectable()
 export class FeatureFlagService {
   constructor(
@@ -73,7 +79,7 @@ export class FeatureFlagService {
       );
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'featureFlagsMap',
+        ...getWorkspaceCacheKeysToInvalidate(keys),
       ]);
     }
   }
@@ -123,7 +129,7 @@ export class FeatureFlagService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'featureFlagsMap',
+      ...getWorkspaceCacheKeysToInvalidate([featureFlag]),
     ]);
 
     return result;

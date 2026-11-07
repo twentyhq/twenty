@@ -50,6 +50,51 @@ describe('computePermissionIntersection', () => {
   const objectMetadataId1 = 'object-1';
   const objectMetadataId2 = 'object-2';
 
+  describe('create permission', () => {
+    const buildRole = (
+      objectRecordsPermissions: Partial<ObjectRecordsPermissions>,
+    ) =>
+      buildRoleRecordsPermissions({
+        [objectMetadataId1]: {
+          ...buildAllRecordsPermissions(ALL_GRANTED),
+          ...objectRecordsPermissions,
+        },
+      });
+
+    it('should stay absent when no role sets it', () => {
+      const result = computePermissionIntersection([
+        buildRole({}),
+        buildRole({}),
+      ]);
+
+      expect(result.objects[objectMetadataId1]).not.toHaveProperty(
+        'canCreateAllRecords',
+      );
+    });
+
+    it('should deny when one role denies it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({ canCreateAllRecords: false }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+
+    it('should limit through update for a role that does not set it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({ canUpdateAllRecords: false }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+  });
+
   describe('edge cases', () => {
     it('should return no permissions for empty array', () => {
       const result = computePermissionIntersection([]);

@@ -28,13 +28,15 @@ type RoleDefinitionForRecordsPermissions = Pick<
   | 'canUpdateAllObjectRecords'
   | 'canSoftDeleteAllObjectRecords'
   | 'canDestroyAllObjectRecords'
-> & {
+> &
+  Partial<Pick<FlatRole, 'canCreateAllObjectRecords'>> & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
   // an AI run scope leaves system objects readable but not writable unless it grants them
   areSystemObjectsReadOnlyByDefault?: boolean;
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
+    | 'canCreateObjectRecords'
     | 'canReadObjectRecords'
     | 'canUpdateObjectRecords'
     | 'canSoftDeleteObjectRecords'
@@ -52,6 +54,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
 };
 
 type ObjectRecordsAccess = {
+  canCreate: boolean;
   canRead: boolean;
   canUpdate: boolean;
   canSoftDelete: boolean;
@@ -61,6 +64,7 @@ type ObjectRecordsAccess = {
 const grantAllObjectRecordsAccess = (
   isGranted: boolean,
 ): ObjectRecordsAccess => ({
+  canCreate: isGranted,
   canRead: isGranted,
   canUpdate: isGranted,
   canSoftDelete: isGranted,
@@ -106,6 +110,11 @@ const resolveObjectRecordsAccess = ({
   );
 
   return {
+    canCreate: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canCreateObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords ?? false,
+      isSystemObject: isSystemObjectWritableByDefault,
+    }),
     canRead: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canReadObjectRecords,
       hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
@@ -183,14 +192,19 @@ const buildObjectRecordsPermissions = ({
   restrictedFields,
   predicates,
   predicateGroups,
+  isCreatePermissionEnabled,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
   restrictedFields: RestrictedFieldsPermissions;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  isCreatePermissionEnabled: boolean;
 }): ObjectRecordsPermissions => {
   if (predicates.length === 0) {
     return {
+      ...(isCreatePermissionEnabled && {
+        canCreateAllRecords: objectRecordsAccess.canCreate,
+      }),
       canReadAllRecords: objectRecordsAccess.canRead,
       canUpdateAllRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
@@ -200,12 +214,16 @@ const buildObjectRecordsPermissions = ({
   }
 
   return {
+    ...(isCreatePermissionEnabled && { canCreateAllRecords: false }),
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
     restrictedFields,
     rowLevelRecordsPermissions: {
+      ...(isCreatePermissionEnabled && {
+        canCreateRecords: objectRecordsAccess.canCreate,
+      }),
       canReadRecords: objectRecordsAccess.canRead,
       canUpdateRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,
@@ -220,6 +238,7 @@ export const computeRoleRecordsPermissions = ({
   roleDefinition,
   objectMetadataCollection,
   resolveMorphRelationPermissionFieldIds,
+  isCreatePermissionEnabled = false,
 }: {
   roleDefinition: RoleDefinitionForRecordsPermissions;
   objectMetadataCollection: Pick<
@@ -227,6 +246,7 @@ export const computeRoleRecordsPermissions = ({
     'id' | 'isSystem' | 'universalIdentifier' | 'labelIdentifierFieldMetadataId'
   >[];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
+  isCreatePermissionEnabled?: boolean;
 }): RoleRecordsPermissions => {
   const {
     isPermissionFlagGranted,
@@ -261,12 +281,14 @@ export const computeRoleRecordsPermissions = ({
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectRecordsAccess: {
+        canCreate: objectRecordsAccess.canCreate && hasAiAccess,
         canRead: objectRecordsAccess.canRead && hasAiAccess,
         canUpdate: objectRecordsAccess.canUpdate && hasAiAccess,
         canSoftDelete: objectRecordsAccess.canSoftDelete && hasAiAccess,
         canDestroy: objectRecordsAccess.canDestroy && hasAiAccess,
       },
       restrictedFields,
+      isCreatePermissionEnabled,
       predicates: rowLevelPermissionPredicates.filter(
         (rowLevelPermissionPredicate) =>
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,

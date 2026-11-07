@@ -6,7 +6,7 @@ import {
   type PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -20,6 +20,10 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
+  featureFlag: {
+    columns: ['value'],
+    where: { key: FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED },
+  },
   role: true,
   objectPermission: { columns: true, groupBy: ['roleId'] },
   rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
@@ -60,6 +64,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     typeof ROLES_PERMISSIONS_ROWS_REQUIREMENT
   >): Record<string, RoleRecordsPermissions> {
     const {
+      featureFlag: createPermissionFeatureFlags,
       role: roles,
       objectPermission: objectPermissions,
       rolePermissionFlag: rolePermissionFlags,
@@ -81,6 +86,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       ]),
     );
 
+    const isCreatePermissionEnabled = createPermissionFeatureFlags.some(
+      ({ value }) => value,
+    );
     const permissionsByRoleId: Record<string, RoleRecordsPermissions> = {};
 
     for (const role of roles) {
@@ -99,7 +107,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       });
 
       permissionsByRoleId[role.id] = computeRoleRecordsPermissions({
+        isCreatePermissionEnabled,
         roleDefinition: {
+          canCreateAllObjectRecords: role.canCreateAllObjectRecords,
           canReadAllObjectRecords: role.canReadAllObjectRecords,
           canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
           canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
