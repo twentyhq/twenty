@@ -52,6 +52,11 @@ const buildService = (
     }),
   };
 
+  const workflowThrottlingWorkspaceService = {
+    throttleOrThrowIfHardLimitReached: jest.fn(),
+    increaseWorkflowRunNotStartedCount: jest.fn(),
+  };
+
   const service = new CoreWorkflowRunnerService(
     {
       findCoreWorkflowById: jest
@@ -80,10 +85,7 @@ const buildService = (
     {
       getSubscriptionInactiveReason: jest.fn().mockResolvedValue(undefined),
     } as never,
-    {
-      throttleOrThrowIfHardLimitReached: jest.fn(),
-      increaseWorkflowRunNotStartedCount: jest.fn(),
-    } as never,
+    workflowThrottlingWorkspaceService as never,
     {} as never,
     new WorkflowRunJobScopeWorkspaceService(
       workspaceCacheService as never,
@@ -124,7 +126,12 @@ const buildService = (
     }
   };
 
-  return { runBothWorkflows, messageQueueService, workflowRunWorkspaceService };
+  return {
+    runBothWorkflows,
+    messageQueueService,
+    workflowRunWorkspaceService,
+    workflowThrottlingWorkspaceService,
+  };
 };
 
 describe('CoreWorkflowRunnerService', () => {
@@ -234,6 +241,41 @@ describe('CoreWorkflowRunnerService', () => {
     expect(
       messageQueueService.add.mock.calls.map(([jobName]) => jobName),
     ).toEqual([WorkflowRunEnqueueJob.name, WorkflowRunEnqueueJob.name]);
+  });
+
+  it('keeps the throttled dispatcher for a workspace without the flag when the worker group rate limit is on', async () => {
+    const {
+      runBothWorkflows,
+      messageQueueService,
+      workflowRunWorkspaceService,
+      workflowThrottlingWorkspaceService,
+    } = buildService(WorkflowTriggerType.DATABASE_EVENT, {
+      isFeatureFlagEnabled: false,
+      isWorkerGroupRateLimitEnabled: true,
+    });
+
+    await runBothWorkflows();
+
+    expect(
+      workflowRunWorkspaceService.createCoreWorkflowRun.mock.calls.map(
+        ([{ status }]) => status,
+      ),
+    ).toEqual([WorkflowRunStatus.NOT_STARTED, WorkflowRunStatus.NOT_STARTED]);
+    expect(
+      workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount,
+    ).toHaveBeenCalledTimes(2);
+    expect(messageQueueService.add.mock.calls).toEqual([
+      [
+        WorkflowRunEnqueueJob.name,
+        { workspaceId: WORKSPACE_ID, isCacheMode: true },
+        { workspaceId: WORKSPACE_ID, isWorkspaceJob: true },
+      ],
+      [
+        WorkflowRunEnqueueJob.name,
+        { workspaceId: WORKSPACE_ID, isCacheMode: true },
+        { workspaceId: WORKSPACE_ID, isWorkspaceJob: true },
+      ],
+    ]);
   });
 
   it('never paces manual runs', async () => {
