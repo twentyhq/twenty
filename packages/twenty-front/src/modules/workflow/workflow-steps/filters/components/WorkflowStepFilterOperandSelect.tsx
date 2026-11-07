@@ -14,16 +14,18 @@ import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 
 type WorkflowStepFilterOperandSelectProps = {
   stepFilter: StepFilter;
+  filterType: string;
 };
 
 export const WorkflowStepFilterOperandSelect = ({
   stepFilter,
+  filterType,
 }: WorkflowStepFilterOperandSelectProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
   const operands = getStepFilterOperands({
-    filterType: stepFilter.type,
+    filterType,
     subFieldName: stepFilter.compositeFieldSubFieldName,
   });
 

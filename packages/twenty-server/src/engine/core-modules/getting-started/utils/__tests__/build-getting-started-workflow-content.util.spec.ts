@@ -107,7 +107,18 @@ describe('buildGettingStartedWorkflowContent', () => {
       expect(
         evaluateStepFilters({
           stepFilterGroups: filter?.stepFilterGroups ?? [],
-          stepFilters: filter?.stepFilters ?? [],
+          stepFilters: (filter?.stepFilters ?? []).map(
+            ({ fieldMetadataUniversalIdentifier, ...stepFilter }) => ({
+              ...stepFilter,
+              fieldMetadataId: isDefined(fieldMetadataUniversalIdentifier)
+                ? flatFieldMetadataMaps.byUniversalIdentifier[
+                    fieldMetadataUniversalIdentifier
+                  ]?.id
+                : undefined,
+            }),
+          ),
+          flatFieldMetadataMaps,
+          variableSources: [],
           context: {
             trigger: {
               properties: {

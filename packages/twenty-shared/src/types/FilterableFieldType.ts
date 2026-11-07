@@ -33,3 +33,10 @@ export type FilterableFieldType = PickLiteral<
 >;
 
 export type FilterableAndTSVectorFieldType = FilterableFieldType | 'TS_VECTOR';
+
+export const isFilterableFieldType = (
+  type: string,
+): type is FilterableFieldType =>
+  FILTERABLE_FIELD_TYPES.some(
+    (filterableFieldType) => filterableFieldType === type,
+  );

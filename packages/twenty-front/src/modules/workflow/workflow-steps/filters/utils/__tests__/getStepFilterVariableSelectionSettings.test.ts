@@ -13,12 +13,14 @@ describe('getStepFilterVariableSelectionSettings', () => {
         compositeFieldSubFieldName: undefined,
       }),
     ).toEqual({
-      stepOutputKey: '{{find.totalCount}}',
-      isFullRecord: false,
-      type: 'number',
-      fieldMetadataId: undefined,
-      compositeFieldSubFieldName: undefined,
-      operand: ViewFilterOperand.IS,
+      variableSelectionSettings: {
+        stepOutputKey: '{{find.totalCount}}',
+        isFullRecord: false,
+        fieldMetadataId: undefined,
+        compositeFieldSubFieldName: undefined,
+        operand: ViewFilterOperand.IS,
+      },
+      filterType: 'number',
     });
   });
 
@@ -33,12 +35,14 @@ describe('getStepFilterVariableSelectionSettings', () => {
         compositeFieldSubFieldName: 'currencyCode',
       }),
     ).toEqual({
-      stepOutputKey: '{{trigger.amount.currencyCode}}',
-      isFullRecord: false,
-      type: FieldMetadataType.CURRENCY,
-      fieldMetadataId: 'amount',
-      compositeFieldSubFieldName: 'currencyCode',
-      operand: ViewFilterOperand.IS,
+      variableSelectionSettings: {
+        stepOutputKey: '{{trigger.amount.currencyCode}}',
+        isFullRecord: false,
+        fieldMetadataId: 'amount',
+        compositeFieldSubFieldName: 'currencyCode',
+        operand: ViewFilterOperand.IS,
+      },
+      filterType: FieldMetadataType.CURRENCY,
     });
   });
 
@@ -54,8 +58,10 @@ describe('getStepFilterVariableSelectionSettings', () => {
       }),
     ).toEqual(
       expect.objectContaining({
-        type: FieldMetadataType.RELATION,
-        operand: ViewFilterOperand.IS,
+        variableSelectionSettings: expect.objectContaining({
+          operand: ViewFilterOperand.IS,
+        }),
+        filterType: FieldMetadataType.RELATION,
       }),
     );
   });
@@ -69,16 +75,25 @@ describe('getStepFilterVariableSelectionSettings', () => {
         fieldMetadataId: 'description',
         fieldMetadataType: FieldMetadataType.RICH_TEXT,
         compositeFieldSubFieldName: undefined,
-      }),
-    ).toEqual(
-      expect.objectContaining({
-        type: FieldMetadataType.RICH_TEXT,
-      }),
-    );
+      }).filterType,
+    ).toBe(FieldMetadataType.RICH_TEXT);
   });
 
-  it('retains whole-record selection', () => {
+  it('is unknown when the field cannot be found', () => {
     expect(
+      getStepFilterVariableSelectionSettings({
+        rawVariableName: '{{trigger.deleted}}',
+        isFullRecord: false,
+        variableType: 'string',
+        fieldMetadataId: 'deleted',
+        fieldMetadataType: undefined,
+        compositeFieldSubFieldName: undefined,
+      }).filterType,
+    ).toBe('unknown');
+  });
+
+  it('retains whole-record selection without storing a type', () => {
+    const { variableSelectionSettings } =
       getStepFilterVariableSelectionSettings({
         rawVariableName: '{{find.first.id}}',
         isFullRecord: true,
@@ -86,12 +101,14 @@ describe('getStepFilterVariableSelectionSettings', () => {
         fieldMetadataId: undefined,
         fieldMetadataType: undefined,
         compositeFieldSubFieldName: undefined,
-      }),
-    ).toEqual(
+      });
+
+    expect(variableSelectionSettings).toEqual(
       expect.objectContaining({
         stepOutputKey: '{{find.first.id}}',
         isFullRecord: true,
       }),
     );
+    expect(variableSelectionSettings).not.toHaveProperty('type');
   });
 });

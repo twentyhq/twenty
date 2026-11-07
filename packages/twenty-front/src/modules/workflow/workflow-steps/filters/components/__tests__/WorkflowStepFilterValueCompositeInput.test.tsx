@@ -20,13 +20,13 @@ it('preserves raw micros in workflow conditions', async () => {
       <WorkflowStepFilterValueCompositeInput
         stepFilter={{
           id: 'filter',
-          type: 'CURRENCY',
           stepOutputKey: 'amount',
           operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           value: '3210000',
           stepFilterGroupId: 'group',
           compositeFieldSubFieldName: 'amountMicros',
         }}
+        filterType="CURRENCY"
         onChange={onChange}
         onClear={() => {}}
       />

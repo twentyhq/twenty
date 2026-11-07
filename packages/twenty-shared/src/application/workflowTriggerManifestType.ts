@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import {
   workflowManifestPositionSchema,
-  workflowStepFilterManifestSchema,
+  acceptDeprecatedStepFilterType,
+  workflowStepFilterManifestObjectSchema,
 } from '@/application/workflowStepManifestType';
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
@@ -118,9 +119,11 @@ const workflowTriggerManifestOptions = [
           .strictObject({
             stepFilterGroups: z.array(stepFilterGroupSchema),
             stepFilters: z.array(
-              workflowStepFilterManifestSchema.extend({
-                operand: z.enum(ViewFilterOperand),
-              }),
+              acceptDeprecatedStepFilterType(
+                workflowStepFilterManifestObjectSchema.extend({
+                  operand: z.enum(ViewFilterOperand),
+                }),
+              ),
             ),
           })
           .optional(),

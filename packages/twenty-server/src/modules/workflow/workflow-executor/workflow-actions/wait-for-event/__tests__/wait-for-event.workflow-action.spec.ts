@@ -1,12 +1,14 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WaitForEventWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event.workflow-action';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const NOW = new Date('2026-10-04T10:00:00.000Z');
 
 const executeWithInput = (input: Record<string, unknown>) =>
   new WaitForEventWorkflowAction().execute({
     currentStepId: 'step-id',
+    trigger: createMockManualTrigger(),
     steps: [
       {
         id: 'step-id',

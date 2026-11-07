@@ -13,6 +13,7 @@ import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
@@ -100,6 +101,7 @@ describe('DraftEmailWorkflowAction', () => {
   it('runs the draft email tool and resolves variables in the body', async () => {
     await action.execute({
       currentStepId: 'step-1',
+      trigger: createMockManualTrigger(),
       steps: [
         buildDraftEmailStep({
           connectedAccountId: 'account-1',
@@ -127,6 +129,7 @@ describe('DraftEmailWorkflowAction', () => {
   it('persists a step log tagged with the DRAFT mode', async () => {
     await action.execute({
       currentStepId: 'step-1',
+      trigger: createMockManualTrigger(),
       steps: [
         buildDraftEmailStep({
           connectedAccountId: 'account-1',
@@ -158,6 +161,7 @@ describe('DraftEmailWorkflowAction', () => {
     const executeWithSender = (connectedAccountId: string) =>
       action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           buildDraftEmailStep({
             connectedAccountId,
@@ -221,6 +225,7 @@ describe('DraftEmailWorkflowAction', () => {
     await expect(
       action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           {
             ...buildDraftEmailStep({

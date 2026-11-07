@@ -50,7 +50,6 @@ export const GETTING_STARTED_HANDOVER_WORKFLOW: GettingStartedWorkflow = {
             stepFilters: [
               {
                 id: '3f1ecce3-2db2-4dfc-9246-825a0e64577d',
-                type: 'SELECT',
                 stepOutputKey: '{{trigger.properties.after.stage}}',
                 operand: ViewFilterOperand.IS,
                 value: '["CUSTOMER"]',

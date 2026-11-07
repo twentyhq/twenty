@@ -37,7 +37,6 @@ describe('Database event trigger filter (e2e)', () => {
           stepFilters: [
             {
               id: STEP_FILTER_ID,
-              type: 'TEXT',
               operand: 'CONTAINS',
               value: FILTER_VALUE,
               stepOutputKey: '{{trigger.properties.after.name}}',

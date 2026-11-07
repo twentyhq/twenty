@@ -1,12 +1,15 @@
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
-import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
+import { type FieldMetadataType, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  computeStepFilterType,
+  UNKNOWN_STEP_FILTER_TYPE,
+} from 'twenty-shared/workflow';
 
 type StepFilterVariableSelectionSettings = Pick<
   StepFilter,
   | 'stepOutputKey'
   | 'isFullRecord'
-  | 'type'
   | 'fieldMetadataId'
   | 'compositeFieldSubFieldName'
   | 'operand'
@@ -26,20 +29,14 @@ export const getStepFilterVariableSelectionSettings = ({
   fieldMetadataId: string | undefined;
   fieldMetadataType: FieldMetadataType | undefined;
   compositeFieldSubFieldName: string | undefined;
-}): StepFilterVariableSelectionSettings => {
-  const filterType = (() => {
-    if (!isDefined(fieldMetadataId)) {
-      return variableType ?? 'unknown';
-    }
-
-    if (isDefined(fieldMetadataType)) {
-      return fieldMetadataType === FieldMetadataType.MORPH_RELATION
-        ? FieldMetadataType.RELATION
-        : fieldMetadataType;
-    }
-
-    return 'unknown';
-  })();
+}): {
+  variableSelectionSettings: StepFilterVariableSelectionSettings;
+  filterType: string;
+} => {
+  const filterType =
+    isDefined(fieldMetadataId) && !isDefined(fieldMetadataType)
+      ? UNKNOWN_STEP_FILTER_TYPE
+      : computeStepFilterType({ fieldMetadataType, variableType });
 
   const [defaultOperand] = getStepFilterOperands({
     filterType,
@@ -47,11 +44,13 @@ export const getStepFilterVariableSelectionSettings = ({
   });
 
   return {
-    stepOutputKey: rawVariableName,
-    isFullRecord,
-    type: filterType,
-    fieldMetadataId,
-    compositeFieldSubFieldName,
-    operand: defaultOperand,
+    variableSelectionSettings: {
+      stepOutputKey: rawVariableName,
+      isFullRecord,
+      fieldMetadataId,
+      compositeFieldSubFieldName,
+      operand: defaultOperand,
+    },
+    filterType,
   };
 };

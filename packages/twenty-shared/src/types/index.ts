@@ -149,7 +149,10 @@ export type {
   FilterableFieldType,
   FilterableAndTSVectorFieldType,
 } from './FilterableFieldType';
-export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
+export {
+  FILTERABLE_FIELD_TYPES,
+  isFilterableFieldType,
+} from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';

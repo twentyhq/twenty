@@ -1,14 +1,16 @@
-import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
+import {
+  StepLogicalOperator,
+  type StepFilterGroup,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import {
-  findMatchingBranch,
-  type ResolvedFilter,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
+import { type ResolvedStepFilter } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
+import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
 
 describe('findMatchingBranch', () => {
   const realGroup: StepFilterGroup = {
@@ -19,15 +21,14 @@ describe('findMatchingBranch', () => {
   const matchingFilter = (
     stepFilterGroupId: string,
     matches: boolean,
-  ): ResolvedFilter =>
-    ({
-      id: 'filter-1',
-      type: 'TEXT',
-      operand: 'IS',
-      stepFilterGroupId,
-      rightOperand: 'expected-value',
-      leftOperand: matches ? 'expected-value' : 'something-else',
-    }) as ResolvedFilter;
+  ): ResolvedStepFilter => ({
+    id: 'filter-1',
+    type: 'TEXT',
+    operand: ViewFilterOperand.IS,
+    stepFilterGroupId,
+    rightOperand: 'expected-value',
+    leftOperand: matches ? 'expected-value' : 'something-else',
+  });
 
   it('should return the branch whose filter condition evaluates to true', () => {
     const branches: StepIfElseBranch[] = [

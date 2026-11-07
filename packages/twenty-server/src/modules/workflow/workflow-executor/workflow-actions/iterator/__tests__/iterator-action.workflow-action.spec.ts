@@ -8,6 +8,7 @@ import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workfl
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 describe('IteratorWorkflowAction', () => {
   let service: IteratorWorkflowAction;
@@ -83,6 +84,7 @@ describe('IteratorWorkflowAction', () => {
     it('should throw error if step is not an iterator action', async () => {
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createEmptyAction()],
         context: {},
         runInfo: {
@@ -99,6 +101,7 @@ describe('IteratorWorkflowAction', () => {
     it('should throw error if items is not an array', async () => {
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction('not-an-array')],
         context: {},
         runInfo: {
@@ -113,6 +116,7 @@ describe('IteratorWorkflowAction', () => {
     it('should return early if no items to process', async () => {
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction([])],
         context: {},
         runInfo: {
@@ -136,6 +140,7 @@ describe('IteratorWorkflowAction', () => {
       const items = ['item1', 'item2'];
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction(items)],
         context: {},
         runInfo: {
@@ -166,6 +171,7 @@ describe('IteratorWorkflowAction', () => {
       const items = ['item1', 'item2'];
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction(items)],
         context: {},
         runInfo: {
@@ -217,6 +223,7 @@ describe('IteratorWorkflowAction', () => {
       const items = ['item1'];
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction(items)],
         context: {},
         runInfo: {
@@ -260,6 +267,7 @@ describe('IteratorWorkflowAction', () => {
       const items = Array(10001).fill('item');
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction(items)],
         context: {},
         runInfo: {
@@ -292,6 +300,7 @@ describe('IteratorWorkflowAction', () => {
       const items = JSON.stringify(['item1', 'item2']);
       const input = {
         currentStepId: mockIteratorStepId,
+        trigger: createMockManualTrigger(),
         steps: [createIteratorAction(items)],
         context: {},
         runInfo: {

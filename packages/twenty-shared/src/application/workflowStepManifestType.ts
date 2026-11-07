@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 import { workflowCodeActionInputSchema } from '@/workflow/schemas/code-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
@@ -55,10 +56,28 @@ const fieldReferenceSchema = z.looseObject({
   fieldMetadataId: z.never().optional(),
 });
 
-export const workflowStepFilterManifestSchema = stepFilterSchema
+export const workflowStepFilterManifestObjectSchema = stepFilterSchema
   .omit({ fieldMetadataId: true })
   .extend({ fieldMetadataUniversalIdentifier: z.uuid().optional() })
   .strict();
+
+// Deprecated in 2.57: ignored, the filter type is computed at run time. Remove in 2.60 (twentyhq/core-team-issues#3184)
+export const acceptDeprecatedStepFilterType = <TSchema extends z.ZodType>(
+  schema: TSchema,
+) =>
+  z.preprocess<unknown, TSchema, z.input<TSchema>>(
+    (stepFilter) =>
+      isPlainObject(stepFilter)
+        ? Object.fromEntries(
+            Object.entries(stepFilter).filter(([key]) => key !== 'type'),
+          )
+        : stepFilter,
+    schema,
+  );
+
+export const workflowStepFilterManifestSchema = acceptDeprecatedStepFilterType(
+  workflowStepFilterManifestObjectSchema,
+);
 
 const recordFilterManifestSchema = recordFilterSchema
   .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })

@@ -52,6 +52,7 @@ import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow
 import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { ApplicationWorkflowStepPermissionService } from 'src/modules/workflow/workflow-executor/services/application-workflow-step-permission.service';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
@@ -177,6 +178,7 @@ export class WorkflowExecutorWorkspaceService {
         awaitedActionOutput ??
         (await this.executeStep({
           step: stepToExecute,
+          trigger: workflowRun.state.flow.trigger,
           steps,
           stepInfos,
           workflowRunId,
@@ -574,6 +576,7 @@ export class WorkflowExecutorWorkspaceService {
 
   private async executeStep({
     step,
+    trigger,
     steps,
     stepInfos,
     workflowRunId,
@@ -582,6 +585,7 @@ export class WorkflowExecutorWorkspaceService {
     runApplicationId,
   }: {
     step: WorkflowAction;
+    trigger: WorkflowTrigger;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
@@ -625,6 +629,7 @@ export class WorkflowExecutorWorkspaceService {
 
       return await workflowAction.execute({
         currentStepId: stepId,
+        trigger,
         steps,
         context: getWorkflowRunContext(stepInfos),
         runInfo: {

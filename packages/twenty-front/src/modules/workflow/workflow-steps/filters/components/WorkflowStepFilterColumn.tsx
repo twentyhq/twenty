@@ -4,6 +4,7 @@ import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps
 import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
 import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown';
 import { WorkflowStepFilterValueInput } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput';
+import { useStepFilterType } from '@/workflow/workflow-steps/filters/hooks/useStepFilterType';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -35,6 +36,7 @@ export const WorkflowStepFilterColumn = ({
   preventDeletion = false,
 }: WorkflowStepFilterColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
+  const filterType = useStepFilterType(stepFilter);
 
   const shouldShowDropdown = !readonly && !preventDeletion;
 
@@ -52,8 +54,14 @@ export const WorkflowStepFilterColumn = ({
         )}
       </StyledContainer>
       <WorkflowStepFilterFieldSelect stepFilter={stepFilter} />
-      <WorkflowStepFilterOperandSelect stepFilter={stepFilter} />
-      <WorkflowStepFilterValueInput stepFilter={stepFilter} />
+      <WorkflowStepFilterOperandSelect
+        stepFilter={stepFilter}
+        filterType={filterType}
+      />
+      <WorkflowStepFilterValueInput
+        stepFilter={stepFilter}
+        filterType={filterType}
+      />
     </AdvancedFilterSidePanelColumn>
   );
 };

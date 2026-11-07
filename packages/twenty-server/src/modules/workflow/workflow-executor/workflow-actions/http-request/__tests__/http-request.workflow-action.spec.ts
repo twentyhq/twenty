@@ -6,6 +6,7 @@ import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { createMockManualTrigger } from 'src/modules/workflow/workflow-executor/utils/create-mock-manual-trigger.util';
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
@@ -59,6 +60,7 @@ describe('HttpRequestWorkflowAction', () => {
   it('resolves variables in the request input and forwards them to the HTTP tool', async () => {
     await action.execute({
       currentStepId: 'step-1',
+      trigger: createMockManualTrigger(),
       steps: [
         buildHttpRequestStep({
           url: 'https://api.example.com/users/{{trigger.id}}',
@@ -81,6 +83,7 @@ describe('HttpRequestWorkflowAction', () => {
   it('persists an HTTP_REQUEST step log', async () => {
     await action.execute({
       currentStepId: 'step-1',
+      trigger: createMockManualTrigger(),
       steps: [
         buildHttpRequestStep({
           url: 'https://api.example.com/users',
@@ -108,6 +111,7 @@ describe('HttpRequestWorkflowAction', () => {
     await expect(
       action.execute({
         currentStepId: 'step-1',
+        trigger: createMockManualTrigger(),
         steps: [
           {
             ...buildHttpRequestStep({

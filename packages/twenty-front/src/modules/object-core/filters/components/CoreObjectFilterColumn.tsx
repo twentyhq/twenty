@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { UNKNOWN_STEP_FILTER_TYPE } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreObjectFilterFieldSelect } from '@/object-core/filters/components/CoreObjectFilterFieldSelect';
 import { CoreObjectFilterValueInput } from '@/object-core/filters/components/CoreObjectFilterValueInput';
 import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
+import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
 import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
@@ -33,6 +35,11 @@ export const CoreObjectFilterColumn = ({
   stepFilterIndex,
 }: CoreObjectFilterColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
+  const filterType =
+    findCoreObjectFilterField({
+      filterFields,
+      fieldKey: stepFilter.stepOutputKey,
+    })?.filterType ?? UNKNOWN_STEP_FILTER_TYPE;
 
   return (
     <AdvancedFilterSidePanelColumn>
@@ -49,7 +56,10 @@ export const CoreObjectFilterColumn = ({
         filterFields={filterFields}
         stepFilter={stepFilter}
       />
-      <WorkflowStepFilterOperandSelect stepFilter={stepFilter} />
+      <WorkflowStepFilterOperandSelect
+        stepFilter={stepFilter}
+        filterType={filterType}
+      />
       <CoreObjectFilterValueInput
         filterFields={filterFields}
         stepFilter={stepFilter}

@@ -20,7 +20,6 @@ export const buildNonSystemCoreObjectFilterSettings = (
     stepFilters: [
       {
         id: `${systemFieldKey}-default-rule`,
-        type: 'BOOLEAN',
         stepOutputKey: systemFieldKey,
         operand: ViewFilterOperand.IS,
         value: 'false',

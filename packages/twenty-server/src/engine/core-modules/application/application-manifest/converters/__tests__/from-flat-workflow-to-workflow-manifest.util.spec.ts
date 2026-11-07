@@ -115,7 +115,6 @@ const STEP_FILTERS = {
   stepFilters: [
     {
       id: 'filter',
-      type: 'TEXT',
       stepOutputKey: '{{trigger.properties.after.status}}',
       operand: ViewFilterOperand.IS,
       value: 'open',
@@ -1495,7 +1494,6 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
   it('exports the isFullRecord flag the builder stores on step filters', () => {
     const builderStepFilter = {
       id: 'filter',
-      type: 'SELECT',
       value: '["HIGH"]',
       operand: 'IS',
       isFullRecord: false,

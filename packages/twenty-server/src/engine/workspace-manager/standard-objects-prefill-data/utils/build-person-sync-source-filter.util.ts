@@ -21,7 +21,6 @@ export const buildPersonSyncSourceFilter = ({
   createdByFieldMetadataId: string;
 }): { stepFilterGroups: StepFilterGroup[]; stepFilters: StepFilter[] } => {
   const baseFilter = {
-    type: 'ACTOR',
     operand: ViewFilterOperand.IS_NOT,
     stepOutputKey: '{{trigger.properties.after.createdBy.source}}',
     stepFilterGroupId: PERSON_SYNC_SOURCE_FILTER_GROUP_ID,

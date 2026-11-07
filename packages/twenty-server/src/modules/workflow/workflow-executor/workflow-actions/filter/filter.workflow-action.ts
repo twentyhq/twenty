@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { StepFilterVariableSourcesWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/step-filter-variable-sources.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -14,8 +16,13 @@ import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/work
 
 @Injectable()
 export class FilterWorkflowAction implements WorkflowAction {
+  constructor(
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly stepFilterVariableSourcesWorkspaceService: StepFilterVariableSourcesWorkspaceService,
+  ) {}
+
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const { currentStepId, steps, context } = input;
+    const { currentStepId, trigger, steps, context, runInfo } = input;
 
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -39,10 +46,20 @@ export class FilterWorkflowAction implements WorkflowAction {
       };
     }
 
+    const { flatFieldMetadataMaps } =
+      await this.workflowMetadataReadService.getFlatEntityMaps(
+        runInfo.workspaceId,
+      );
+
     const matchesFilter = evaluateStepFilters({
       stepFilters,
       stepFilterGroups,
       context,
+      flatFieldMetadataMaps,
+      variableSources:
+        await this.stepFilterVariableSourcesWorkspaceService.buildVariableSources(
+          { stepFilters, trigger, steps, workspaceId: runInfo.workspaceId },
+        ),
     });
 
     return {

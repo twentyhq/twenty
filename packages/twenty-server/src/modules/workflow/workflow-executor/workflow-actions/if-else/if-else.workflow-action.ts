@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { StepFilterVariableSourcesWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/step-filter-variable-sources.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -15,8 +17,13 @@ import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workf
 
 @Injectable()
 export class IfElseWorkflowAction implements WorkflowAction {
+  constructor(
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly stepFilterVariableSourcesWorkspaceService: StepFilterVariableSourcesWorkspaceService,
+  ) {}
+
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const { currentStepId, steps, context } = input;
+    const { currentStepId, trigger, steps, context, runInfo } = input;
 
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -46,7 +53,20 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
-    const resolvedFilters = resolveStepFilters({ stepFilters, context });
+    const { flatFieldMetadataMaps } =
+      await this.workflowMetadataReadService.getFlatEntityMaps(
+        runInfo.workspaceId,
+      );
+
+    const resolvedFilters = resolveStepFilters({
+      stepFilters,
+      context,
+      flatFieldMetadataMaps,
+      variableSources:
+        await this.stepFilterVariableSourcesWorkspaceService.buildVariableSources(
+          { stepFilters, trigger, steps, workspaceId: runInfo.workspaceId },
+        ),
+    });
 
     const matchingBranch = findMatchingBranch({
       branches,

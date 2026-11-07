@@ -7,7 +7,6 @@ import {
 import isEqual from 'lodash.isequal';
 import { Temporal } from 'temporal-polyfill';
 import {
-  type StepFilter,
   type StepFilterGroup,
   ViewFilterOperand,
   type ViewFilterOperandDeprecated,
@@ -23,26 +22,18 @@ import {
 } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
+import { type ResolvedStepFilter } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
 import { findDefaultNullEquivalentValue } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/find-default-null-equivalent-value.util';
 import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
 type ResolvedFilterWithPotentiallyDeprecatedOperand = Omit<
-  StepFilter,
-  'value' | 'stepOutputKey' | 'operand'
+  ResolvedStepFilter,
+  'operand'
 > & {
-  rightOperand: unknown;
-  leftOperand: unknown;
   operand: ViewFilterOperand | ViewFilterOperandDeprecated;
 };
 
-type ResolvedFilter = Omit<
-  StepFilter,
-  'value' | 'stepOutputKey' | 'operand'
-> & {
-  rightOperand: unknown;
-  leftOperand: unknown;
-  operand: ViewFilterOperand;
-};
+type ResolvedFilter = ResolvedStepFilter;
 
 function evaluateFilter(
   filter: ResolvedFilterWithPotentiallyDeprecatedOperand,

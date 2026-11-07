@@ -14,6 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
+import { StepFilterVariableSourcesModule } from 'src/modules/workflow/workflow-executor/workspace-services/step-filter-variable-sources.module';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 
 @Module({
@@ -27,6 +28,7 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     PermissionsModule,
     RecordShareModule,
     WorkflowCommonModule,
+    StepFilterVariableSourcesModule,
     WorkspaceCacheModule,
   ],
   providers: [

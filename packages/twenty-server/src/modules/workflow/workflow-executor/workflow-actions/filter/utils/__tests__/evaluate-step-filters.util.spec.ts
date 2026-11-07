@@ -1,11 +1,47 @@
 import {
+  FieldMetadataType,
   type StepFilter,
   type StepFilterGroup,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type StepFilterVariableSource } from 'src/modules/workflow/workflow-executor/utils/compute-step-filter-type-or-throw.util';
+import { evaluateStepFilters as evaluateStepFiltersWithMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
+
+const CREATED_BY_FIELD_ID = 'created-by-field-id';
+
+const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
+  addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: getFlatFieldMetadataMock({
+      id: CREATED_BY_FIELD_ID,
+      universalIdentifier: CREATED_BY_FIELD_ID,
+      objectMetadataId: 'person-object-id',
+      type: FieldMetadataType.ACTOR,
+      name: 'createdBy',
+    }),
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
+
+const evaluateStepFilters = ({
+  variableSources = [
+    { id: 'trigger', type: 'DATABASE_EVENT', outputSchema: {} },
+  ],
+  ...args
+}: Omit<
+  Parameters<typeof evaluateStepFiltersWithMetadata>[0],
+  'flatFieldMetadataMaps' | 'variableSources'
+> & { variableSources?: StepFilterVariableSource[] }) =>
+  evaluateStepFiltersWithMetadata({
+    ...args,
+    flatFieldMetadataMaps,
+    variableSources,
+  });
 
 describe('evaluateStepFilters', () => {
   const context = {
@@ -28,12 +64,12 @@ describe('evaluateStepFilters', () => {
 
   const sourceFilter = (operand: ViewFilterOperand): StepFilter => ({
     id: 'filter-1',
-    type: 'ACTOR',
     operand,
     value: JSON.stringify(['EMAIL']),
     stepOutputKey: '{{trigger.properties.after.createdBy.source}}',
     stepFilterGroupId: group.id,
     compositeFieldSubFieldName: 'source',
+    fieldMetadataId: CREATED_BY_FIELD_ID,
   });
 
   it('returns true when there are no filters', () => {
@@ -84,7 +120,6 @@ describe('evaluateStepFilters', () => {
   it('evaluates IS_NOT_EMPTY against a present field when no value is set', () => {
     const filter: StepFilter = {
       id: 'filter-present',
-      type: 'TEXT',
       operand: ViewFilterOperand.IS_NOT_EMPTY,
       value: '',
       stepOutputKey: '{{trigger.properties.after.name}}',
@@ -103,7 +138,6 @@ describe('evaluateStepFilters', () => {
   it('resolves a missing field path to empty (IS_EMPTY is true)', () => {
     const filter: StepFilter = {
       id: 'filter-missing',
-      type: 'TEXT',
       operand: ViewFilterOperand.IS_EMPTY,
       value: '',
       stepOutputKey: '{{trigger.properties.after.missingField}}',
@@ -122,7 +156,6 @@ describe('evaluateStepFilters', () => {
   it('applies implicit AND across flat filters without groups', () => {
     const nameContains: StepFilter = {
       id: 'name-contains',
-      type: 'TEXT',
       operand: ViewFilterOperand.CONTAINS,
       value: 'Acme',
       stepOutputKey: '{{trigger.properties.after.name}}',
@@ -147,7 +180,6 @@ describe('evaluateStepFilters', () => {
     stepOutputKey: string,
   ): StepFilter => ({
     id: 'filter-company',
-    type: 'TEXT',
     operand,
     value: '{{trigger.properties.after.companyId}}',
     stepOutputKey,
@@ -215,5 +247,37 @@ describe('evaluateStepFilters', () => {
         context,
       }),
     ).toBe(false);
+  });
+
+  it('compares a variable as the output schema of its step declares it', () => {
+    const isPersonalFilter: StepFilter = {
+      id: 'filter-is-personal',
+      operand: ViewFilterOperand.IS,
+      value: 'false',
+      stepOutputKey: '{{code-step.isPersonal}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [isPersonalFilter],
+        context: { 'code-step': { isPersonal: false } },
+        variableSources: [
+          {
+            id: 'code-step',
+            type: 'CODE',
+            outputSchema: {
+              isPersonal: {
+                isLeaf: true,
+                type: 'boolean',
+                label: 'isPersonal',
+                value: true,
+              },
+            },
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 });
