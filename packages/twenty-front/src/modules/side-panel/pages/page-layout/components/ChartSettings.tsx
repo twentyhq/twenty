@@ -4,13 +4,17 @@ import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePane
 import { ChartSettingItem } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingItem';
 import { ChartLimitInfoBanner } from '@/side-panel/pages/page-layout/components/ChartLimitInfoBanner';
 import { ChartTypeSelectionSection } from '@/side-panel/pages/page-layout/components/ChartTypeSelectionSection';
+import { WidgetDashboardFilterBindingsSection } from '@/side-panel/pages/page-layout/components/dashboard/WidgetDashboardFilterBindingsSection';
 import { CHART_SETTINGS_HEADINGS } from '@/side-panel/pages/page-layout/constants/ChartSettingsHeadings';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
+import { useDashboardFiltersForWidgetBindings } from '@/side-panel/pages/page-layout/hooks/useDashboardFiltersForWidgetBindings';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useGetConfigToUpdateAfterGraphTypeChange } from '@/side-panel/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { getDashboardFilterBindingItemId } from '@/side-panel/pages/page-layout/utils/getDashboardFilterBindingItemId';
 import { shouldHideChartSetting } from '@/side-panel/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
@@ -39,6 +43,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { pageLayoutFilters } =
+    useDashboardFiltersForWidgetBindings(pageLayoutId);
 
   assertChartWidgetOrThrow(widget);
 
@@ -105,6 +111,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       .map((item) => item.id),
   );
 
+  const chartFilter: ChartFilters | undefined = configuration.filter;
+
   const isBarOrLineChart =
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
@@ -139,7 +147,14 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   return (
     <StyledSidePanelContainer>
-      <SidePanelList selectableItemIds={visibleItemIds}>
+      <SidePanelList
+        selectableItemIds={[
+          ...visibleItemIds,
+          ...pageLayoutFilters.map(({ id }) =>
+            getDashboardFilterBindingItemId(id),
+          ),
+        ]}
+      >
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
           setCurrentGraphType={handleGraphTypeChange}
@@ -179,6 +194,14 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             </SidePanelGroup>
           );
         })}
+        <WidgetDashboardFilterBindingsSection
+          pageLayoutId={pageLayoutId}
+          pageLayoutFilters={pageLayoutFilters}
+          widget={widget}
+          widgetFilterFieldMetadataIds={(chartFilter?.recordFilters ?? []).map(
+            ({ fieldMetadataId }) => fieldMetadataId,
+          )}
+        />
       </SidePanelList>
     </StyledSidePanelContainer>
   );

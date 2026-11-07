@@ -24,10 +24,13 @@ import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page
 import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { WidgetDashboardFilterBindingsSection } from '@/side-panel/pages/page-layout/components/dashboard/WidgetDashboardFilterBindingsSection';
+import { useDashboardFiltersForWidgetBindings } from '@/side-panel/pages/page-layout/hooks/useDashboardFiltersForWidgetBindings';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { getDashboardFilterBindingItemId } from '@/side-panel/pages/page-layout/utils/getDashboardFilterBindingItemId';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -79,6 +82,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
   );
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
+  const { pageLayoutFilters } =
+    useDashboardFiltersForWidgetBindings(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
   const isRecordTableConfiguration =
@@ -227,6 +232,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             : []),
         ]
       : []),
+    ...pageLayoutFilters.map(({ id }) => getDashboardFilterBindingItemId(id)),
   ];
 
   const handleFilterClick = () => {
@@ -521,6 +527,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
                 </>
               )}
             </SidePanelGroup>
+            <WidgetDashboardFilterBindingsSection
+              pageLayoutId={pageLayoutId}
+              pageLayoutFilters={pageLayoutFilters}
+              widget={widgetInEditMode}
+              widgetFilterFieldMetadataIds={(widgetView?.viewFilters ?? []).map(
+                ({ fieldMetadataId }) => fieldMetadataId,
+              )}
+            />
           </SidePanelList>
         </StyledSettingsContainer>
         <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
