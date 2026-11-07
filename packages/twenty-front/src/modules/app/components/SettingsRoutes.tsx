@@ -556,6 +556,18 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
   ),
 );
 
+const SettingsAiMcpServerNew = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerNew').then((module) => ({
+    default: module.SettingsAiMcpServerNew,
+  })),
+);
+
+const SettingsAiMcpServerDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerDetail').then((module) => ({
+    default: module.SettingsAiMcpServerDetail,
+  })),
+);
+
 const SettingsObjectNewFieldSelect = lazy(() =>
   import('~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect').then(
     (module) => ({
@@ -1201,6 +1213,23 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.WebhookDetail}
         element={<SettingsDevelopersWebhookDetail />}
+      />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          requiredFeatureFlag={FeatureFlagKey.IS_MCP_SERVERS_ENABLED}
+        />
+      }
+    >
+      <Route
+        path={SettingsPath.AiNewMcpServer}
+        element={<SettingsAiMcpServerNew />}
+      />
+      <Route
+        path={SettingsPath.AiMcpServerDetail}
+        element={<SettingsAiMcpServerDetail />}
       />
     </Route>
 
