@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,6 +16,8 @@ import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-workspace-member-update-affecting-access-groups.util';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
 const FLAGS_AFFECTING_ACCESS_GROUPS = [
@@ -62,19 +65,54 @@ export class AccessGroupSyncListener {
     }
   }
 
-  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
-  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DELETED)
-  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
-  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.RESTORED)
-  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPSERTED)
-  async handleWorkspaceMemberEvent({
+  async handleWorkspaceMemberUpdated({
     workspaceId,
-  }: Pick<WorkspaceEventBatch<never>, 'workspaceId'>): Promise<void> {
+    events,
+  }: Pick<
+    WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
+    'workspaceId' | 'events'
+  >): Promise<void> {
     if (!(await this.accessGroupSyncSchedulerService.isEnabled(workspaceId))) {
       return;
     }
 
+    const { flatRowLevelPermissionPredicateMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRowLevelPermissionPredicateMaps',
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (
+      isWorkspaceMemberUpdateAffectingAccessGroups({
+        updatedFields: events.flatMap(
+          ({ properties }) => properties.updatedFields,
+        ),
+        flatRowLevelPermissionPredicateMaps,
+        flatFieldMetadataMaps,
+      })
+    ) {
+      await this.refreshMembersAndScheduleSync(workspaceId);
+    }
+  }
+
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.RESTORED)
+  async handleWorkspaceMemberEvent({
+    workspaceId,
+  }: Pick<WorkspaceEventBatch<never>, 'workspaceId'>): Promise<void> {
+    if (await this.accessGroupSyncSchedulerService.isEnabled(workspaceId)) {
+      await this.refreshMembersAndScheduleSync(workspaceId);
+    }
+  }
+
+  private async refreshMembersAndScheduleSync(
+    workspaceId: string,
+  ): Promise<void> {
     // Listeners run in no set order, and the sync must read the member values this event changed
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatWorkspaceMemberMaps',

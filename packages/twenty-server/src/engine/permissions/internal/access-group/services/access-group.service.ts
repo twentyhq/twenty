@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AccessGroupOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/access-group-orm.service';
 import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
-import { buildWorkspaceAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions-or-throw.util';
+import { buildWorkspaceAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -15,18 +15,36 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class AccessGroupService {
+  private readonly logger = new Logger(AccessGroupService.name);
+
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupOrmService: AccessGroupOrmService,
   ) {}
 
-  // Serialized so an older sync cannot delete the groups of a newer one
   async syncAccessGroups(workspaceId: string): Promise<void> {
+    // Any recompute happens here, so the lock below is not held through it
+    await this.readSyncInputs(workspaceId);
+
+    // Serialized so an older sync cannot delete the groups of a newer one
     await this.accessGroupOrmService.runWithSyncLock({
       workspaceId,
       run: (transactionScope) =>
         this.syncAccessGroupsInTransaction({ workspaceId, transactionScope }),
     });
+  }
+
+  private async readSyncInputs(workspaceId: string) {
+    // This process memoizes reads for seconds, and syncing from stale grants would delete live groups
+    await this.workspaceCacheService.clearMemoizedReads(workspaceId);
+
+    return this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'userWorkspaceRoleMap',
+      'flatWorkspaceMemberMaps',
+    ]);
   }
 
   private async syncAccessGroupsInTransaction({
@@ -36,41 +54,21 @@ export class AccessGroupService {
     workspaceId: string;
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    // This process memoizes reads for seconds, and syncing from stale grants would delete live groups
-    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+    const { definitions, failures } = buildWorkspaceAccessGroupDefinitions(
+      await this.readSyncInputs(workspaceId),
+    );
 
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      userWorkspaceRoleMap,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'rolesPermissions',
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-      'userWorkspaceRoleMap',
-      'flatWorkspaceMemberMaps',
-    ]);
+    for (const { roleId, objectMetadataId, message } of failures) {
+      this.logger.error(
+        `Could not compute access groups of role ${roleId} on object ${objectMetadataId} in workspace ${workspaceId}: ${message}`,
+      );
+    }
 
-    const definitions = buildWorkspaceAccessGroupDefinitionsOrThrow({
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      userWorkspaceRoleMap,
-      flatWorkspaceMemberMaps,
-    });
     const existingGroupHashes = new Set(
       await this.accessGroupOrmService.findGroupHashes({
         workspaceId,
         transactionScope,
       }),
-    );
-    const expectedGroupHashes = new Set(
-      definitions.map(({ groupHash }) => groupHash),
-    );
-    const staleGroupHashes = [...existingGroupHashes].filter(
-      (groupHash) => !expectedGroupHashes.has(groupHash),
     );
 
     await this.accessGroupOrmService.insertAccessGroups({
@@ -80,6 +78,24 @@ export class AccessGroupService {
       ),
       transactionScope,
     });
+
+    // Group ids are never reused, so an incomplete or empty read must not delete anything
+    if (failures.length > 0 || definitions.length === 0) {
+      if (definitions.length === 0 && existingGroupHashes.size > 0) {
+        this.logger.error(
+          `Kept ${existingGroupHashes.size} access groups in workspace ${workspaceId}: the sync computed none`,
+        );
+      }
+
+      return;
+    }
+
+    const expectedGroupHashes = new Set(
+      definitions.map(({ groupHash }) => groupHash),
+    );
+    const staleGroupHashes = [...existingGroupHashes].filter(
+      (groupHash) => !expectedGroupHashes.has(groupHash),
+    );
 
     if (isNonEmptyArray(staleGroupHashes)) {
       await this.accessGroupOrmService.deleteAccessGroups({

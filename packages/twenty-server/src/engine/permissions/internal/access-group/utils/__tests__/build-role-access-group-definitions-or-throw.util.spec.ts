@@ -141,13 +141,14 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
     ]);
   });
 
-  it('should only split a root rule on the member values of its own predicates', () => {
+  it('should make one rule per role and object, whatever the predicates hang on', () => {
     const permissions = buildRowLevelPermissions([
       {
         id: 'bound',
         workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
         rowLevelPermissionPredicateGroupId: 'nested',
       },
+      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
     ]);
 
     permissions.rowLevelRecordsPermissions?.predicateGroups.push({
@@ -167,7 +168,6 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
     ).toEqual([
       [RULE_ID, { [MEMBER_FIELD_KEY]: 'sales' }],
       [RULE_ID, { [MEMBER_FIELD_KEY]: 'support' }],
-      ['other-root', null],
     ]);
   });
 
@@ -185,21 +185,6 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
         (definition) => definition.rowLevelPermissionPredicateGroupId,
       ),
     ).toEqual([null]);
-  });
-
-  it('should not loop on a cycle of predicate groups', () => {
-    const permissions = buildRowLevelPermissions([
-      { id: 'looping', rowLevelPermissionPredicateGroupId: 'first' },
-    ]);
-
-    if (isDefined(permissions.rowLevelRecordsPermissions)) {
-      permissions.rowLevelRecordsPermissions.predicateGroups = [
-        { id: 'first', parentRowLevelPermissionPredicateGroupId: 'second' },
-        { id: 'second', parentRowLevelPermissionPredicateGroupId: 'first' },
-      ] as RowLevelPermissionPredicateGroup[];
-    }
-
-    expect(build(permissions)).toHaveLength(1);
   });
 
   it('should make no member group when no member holds the role', () => {

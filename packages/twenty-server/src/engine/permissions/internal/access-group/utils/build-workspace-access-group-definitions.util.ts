@@ -9,9 +9,16 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AccessGroupDefinition } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
 import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+
+export type AccessGroupDefinitionFailure = {
+  roleId: string;
+  objectMetadataId: string;
+  message: string;
+};
 
 const groupWorkspaceMembersByRoleId = ({
   userWorkspaceRoleMap,
@@ -48,7 +55,7 @@ const groupWorkspaceMembersByRoleId = ({
   return workspaceMembersByRoleId;
 };
 
-export const buildWorkspaceAccessGroupDefinitionsOrThrow = ({
+export const buildWorkspaceAccessGroupDefinitions = ({
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -63,12 +70,16 @@ export const buildWorkspaceAccessGroupDefinitionsOrThrow = ({
     FlatWorkspaceMemberMaps,
     'idByUserWorkspaceId' | 'byId'
   >;
-}): AccessGroupDefinition[] => {
+}): {
+  definitions: AccessGroupDefinition[];
+  failures: AccessGroupDefinitionFailure[];
+} => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
     flatWorkspaceMemberMaps,
   });
   const definitionByGroupHash = new Map<string, AccessGroupDefinition>();
+  const failures: AccessGroupDefinitionFailure[] = [];
 
   for (const [roleId, { objects }] of Object.entries(rolesPermissions)) {
     for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
@@ -86,17 +97,25 @@ export const buildWorkspaceAccessGroupDefinitionsOrThrow = ({
         continue;
       }
 
-      for (const definition of buildRoleAccessGroupDefinitionsOrThrow({
-        roleId,
-        objectMetadataId,
-        objectRecordsPermissions,
-        workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
-        flatFieldMetadataMaps,
-      })) {
-        definitionByGroupHash.set(definition.groupHash, definition);
+      try {
+        for (const definition of buildRoleAccessGroupDefinitionsOrThrow({
+          roleId,
+          objectMetadataId,
+          objectRecordsPermissions,
+          workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
+          flatFieldMetadataMaps,
+        })) {
+          definitionByGroupHash.set(definition.groupHash, definition);
+        }
+      } catch (error) {
+        if (!(error instanceof PermissionsException)) {
+          throw error;
+        }
+
+        failures.push({ roleId, objectMetadataId, message: error.message });
       }
     }
   }
 
-  return [...definitionByGroupHash.values()];
+  return { definitions: [...definitionByGroupHash.values()], failures };
 };
