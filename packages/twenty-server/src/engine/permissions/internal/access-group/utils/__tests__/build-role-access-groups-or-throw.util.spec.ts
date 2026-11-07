@@ -261,6 +261,42 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     expect(ruleAccessGroup.groupHash).not.toBe(allRecordsAccessGroup.groupHash);
   });
 
+  it('should change the hash when the content of a rule changes', () => {
+    const buildHash = (value: string) =>
+      build({
+        objectRecordsPermissions: buildRowLevelPermissions({
+          predicates: [buildPredicate({ id: 'predicate', value })],
+        }),
+      })[0].groupHash;
+
+    expect(buildHash('Paris')).not.toBe(buildHash('London'));
+  });
+
+  it('should keep the hash when ids, order or operation flags change', () => {
+    const firstPredicate = buildPredicate({ id: 'first', value: 'Paris' });
+    const secondPredicate = buildPredicate({ id: 'second', value: 'London' });
+    const [accessGroup] = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [firstPredicate, secondPredicate],
+      }),
+    });
+    const [sameRuleAccessGroup] = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          { ...secondPredicate, id: 'other-second' },
+          { ...firstPredicate, id: 'other-first' },
+        ],
+        predicateGroups: ROOT_AND_NESTED_GROUPS.map((predicateGroup) => ({
+          ...predicateGroup,
+          positionInRowLevelPermissionPredicateGroup: 1,
+          canUpdateRecords: true,
+        })),
+      }),
+    });
+
+    expect(sameRuleAccessGroup.groupHash).toBe(accessGroup.groupHash);
+  });
+
   it('should make no member group when no member holds the role', () => {
     expect(
       build({
