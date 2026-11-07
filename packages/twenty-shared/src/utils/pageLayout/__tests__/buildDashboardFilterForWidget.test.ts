@@ -8,6 +8,7 @@ import {
 import { computeRecordGqlOperationFilter } from '@/utils/filter/computeRecordGqlOperationFilter';
 import { combineFilters } from '@/utils/filter/utils/combineFilters';
 import { buildDashboardFilterForWidget } from '@/utils/pageLayout/buildDashboardFilterForWidget';
+import { InvalidDashboardFilterError } from '@/utils/pageLayout/InvalidDashboardFilterError';
 
 const PERIOD_FILTER_ID = 'period-filter-id';
 const SIGNED_FILTER_ID = 'signed-filter-id';
@@ -295,9 +296,11 @@ describe('buildDashboardFilterForWidget', () => {
     [ViewFilterOperand.IS_AFTER, '2026-01-01[u-ca=hebrew]'],
     [ViewFilterOperand.IS_BEFORE, '+012026-01-01'],
     [ViewFilterOperand.IS_BEFORE, '0000-01-01'],
+    [ViewFilterOperand.IS, '20260101'],
     [ViewFilterOperand.IS, '2026-02-30'],
     [ViewFilterOperand.IS_RELATIVE, 'LAST_MONTH'],
-    [ViewFilterOperand.IS_RELATIVE, 'PAST_999999_YEAR'],
+    [ViewFilterOperand.IS_RELATIVE, 'PAST_5000_YEAR'],
+    [ViewFilterOperand.IS_RELATIVE, 'PAST_1000_SECOND'],
   ])(
     'should throw on %s value %s instead of passing it through',
     (operand, value) => {
@@ -306,7 +309,7 @@ describe('buildDashboardFilterForWidget', () => {
           fieldMetadataId: CLOSE_DATE_FIELD.id,
           conditions: [{ operand, value }],
         }),
-      ).toThrow();
+      ).toThrow(InvalidDashboardFilterError);
     },
   );
 
@@ -322,9 +325,23 @@ describe('buildDashboardFilterForWidget', () => {
           conditions: [{ operand, value }],
           timeZone,
         }),
-      ).toThrow('is out of range');
+      ).toThrow(
+        new InvalidDashboardFilterError(
+          `Dashboard filter date "${value}" is out of range in time zone "${timeZone}"`,
+        ),
+      );
     },
   );
+
+  it('should throw on a time zone Temporal does not know', () => {
+    expect(() =>
+      buildForBinding({
+        fieldMetadataId: CREATED_AT_FIELD.id,
+        conditions: [{ operand: ViewFilterOperand.IS, value: '2026-01-15' }],
+        timeZone: 'Mars/Olympus_Mons',
+      }),
+    ).toThrow(InvalidDashboardFilterError);
+  });
 
   it('should keep an OR-rooted widget filter whole inside the AND', () => {
     const widgetGqlOperationFilter = computeRecordGqlOperationFilter({

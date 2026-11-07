@@ -486,10 +486,14 @@ describe('Chart data with dashboard filters (e2e)', () => {
       ],
     },
     {
-      title: 'a date out of range in the viewer time zone',
+      title: 'a relative date in units shorter than a day',
       conditions: [
-        { operand: ViewFilterOperand.IS_AFTER, value: '+275760-09-13' },
+        { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_1000_SECOND' },
       ],
+    },
+    {
+      title: 'a date out of range in the viewer time zone',
+      conditions: [{ operand: ViewFilterOperand.IS, value: '9999-12-31' }],
       dashboardFilterTimeZone: 'America/Los_Angeles',
     },
     {
@@ -535,6 +539,11 @@ describe('Chart data with dashboard filters (e2e)', () => {
     {
       title: 'two values for the same filter',
       dashboardFilterValues: [...MARCH_2019, ...MARCH_2019],
+      dashboardFilterTimeZone: WIDGET_TIME_ZONE,
+    },
+    {
+      title: 'a value without conditions',
+      dashboardFilterValues: periodValues([]),
       dashboardFilterTimeZone: WIDGET_TIME_ZONE,
     },
   ])(

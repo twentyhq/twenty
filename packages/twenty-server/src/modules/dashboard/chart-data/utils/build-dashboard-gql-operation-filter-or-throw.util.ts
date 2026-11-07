@@ -15,6 +15,7 @@ import {
   buildDashboardFilterForWidget,
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
   getFilterTypeFromFieldType,
+  InvalidDashboardFilterError,
   isDefined,
   isFieldBindableToDashboardFilter,
   isNonEmptyArray,
@@ -59,6 +60,20 @@ const createInvalidDashboardFilterException = (context: string) =>
     ),
     ChartDataExceptionCode.INVALID_DASHBOARD_FILTER,
   );
+
+const buildDashboardFilterForWidgetOrThrow = (
+  input: Parameters<typeof buildDashboardFilterForWidget>[0],
+) => {
+  try {
+    return buildDashboardFilterForWidget(input);
+  } catch (error) {
+    if (error instanceof InvalidDashboardFilterError) {
+      throw createInvalidDashboardFilterException(error.message);
+    }
+
+    throw error;
+  }
+};
 
 const validateConditionOrThrow = ({
   condition: { operand, value },
@@ -192,41 +207,30 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
       }),
     );
 
-  try {
-    const { recordFilters, unresolvedBindings } = buildDashboardFilterForWidget(
-      {
-        values,
-        bindings: dashboardFilterBindings,
-        fields: boundFields,
-        timeZone: dashboardFilterTimeZone,
-        firstDayOfTheWeek:
-          convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
-            firstDayOfTheWeek,
-            FirstDayOfTheWeek.MONDAY,
-          ),
-      },
-    );
-
-    if (isNonEmptyArray(unresolvedBindings)) {
-      throw createInvalidDashboardFilterException(
-        `filters ${unresolvedBindings.map(({ pageLayoutFilterId }) => `"${pageLayoutFilterId}"`).join(', ')} are bound to fields that could not be resolved`,
-      );
-    }
-
-    return convertChartFilterToGqlOperationFilter({
-      filter: { recordFilters },
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      userTimezone: dashboardFilterTimeZone,
-      currentWorkspaceMemberId,
+  const { recordFilters, unresolvedBindings } =
+    buildDashboardFilterForWidgetOrThrow({
+      values,
+      bindings: dashboardFilterBindings,
+      fields: boundFields,
+      timeZone: dashboardFilterTimeZone,
+      firstDayOfTheWeek: convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+        firstDayOfTheWeek,
+        FirstDayOfTheWeek.MONDAY,
+      ),
     });
-  } catch (error) {
-    if (error instanceof ChartDataException) {
-      throw error;
-    }
 
+  if (isNonEmptyArray(unresolvedBindings)) {
     throw createInvalidDashboardFilterException(
-      error instanceof Error ? error.message : String(error),
+      `filters ${unresolvedBindings.map(({ pageLayoutFilterId }) => `"${pageLayoutFilterId}"`).join(', ')} are bound to fields that could not be resolved`,
     );
   }
+
+  return convertChartFilterToGqlOperationFilter({
+    filter: { recordFilters },
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    // IS_TODAY passes through the builder and resolves in this time zone
+    userTimezone: dashboardFilterTimeZone,
+    currentWorkspaceMemberId,
+  });
 };

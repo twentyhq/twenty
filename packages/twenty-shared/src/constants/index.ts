@@ -23,6 +23,7 @@ export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';
 export { CSV_INJECTION_PREVENTION_ZWJ } from './CsvInjectionPreventionZwj';
 export { CurrencyCode } from './CurrencyCode';
 export { CURRENCY_CODE_LABELS } from './CurrencyCodeLabels';
+export { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from './DashboardFilterPlainDateOperands';
 export { DATE_TYPE_FORMAT } from './DateTypeFormat';
 export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';

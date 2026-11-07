@@ -2,7 +2,12 @@ import {
   type FieldMetadataType,
   type PageLayoutFilterCondition,
 } from 'twenty-shared/types';
-import { isDefined, isRecordFilterValueValid } from 'twenty-shared/utils';
+import {
+  getDashboardFilterConditionValueIssue,
+  getFilterTypeFromFieldType,
+  isDefined,
+  isRecordFilterValueValid,
+} from 'twenty-shared/utils';
 
 import {
   type FilterConditionValidationIssue,
@@ -30,7 +35,24 @@ export const getPageLayoutFilterConditionValidationIssue = ({
     return issue;
   }
 
-  return isRecordFilterValueValid({ operand, value })
-    ? undefined
-    : { kind: 'MISSING_VALUE' };
+  if (!isRecordFilterValueValid({ operand, value })) {
+    return { kind: 'MISSING_VALUE' };
+  }
+
+  const dashboardFilterValueIssue = getDashboardFilterConditionValueIssue({
+    operand,
+    value,
+  });
+
+  if (!isDefined(dashboardFilterValueIssue)) {
+    return undefined;
+  }
+
+  return {
+    kind: 'INVALID_VALUE',
+    stringifiedValue: value,
+    operand,
+    filterType: getFilterTypeFromFieldType(valueFormatFieldType),
+    hint: dashboardFilterValueIssue,
+  };
 };

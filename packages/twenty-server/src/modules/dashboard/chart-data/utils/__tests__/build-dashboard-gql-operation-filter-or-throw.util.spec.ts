@@ -11,6 +11,21 @@ import {
 import { buildDashboardGqlOperationFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-dashboard-gql-operation-filter-or-throw.util';
 import { convertChartFilterToGqlOperationFilter } from 'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util';
 
+jest.mock(
+  'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util',
+  () => {
+    const actualModule = jest.requireActual(
+      'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util',
+    );
+
+    return {
+      convertChartFilterToGqlOperationFilter: jest.fn(
+        actualModule.convertChartFilterToGqlOperationFilter,
+      ),
+    };
+  },
+);
+
 const OPPORTUNITY_OBJECT_ID = 'opportunity-object-id';
 const PERIOD_FILTER_ID = '1d5ec6d4-7e43-4a5c-9b1b-2d4f8a0e3c11';
 const UNBOUND_FILTER_ID = '6b2f0c3e-91a7-4f08-8d3e-5a7c2e9b4d22';
@@ -223,31 +238,46 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
     [
       'a relative date too far away for a DATE field',
       CLOSE_DATE_FIELD.id,
-      periodValue(ViewFilterOperand.IS_RELATIVE, 'PAST_999999_YEAR'),
-      'exceeds the maximum amount',
+      periodValue(ViewFilterOperand.IS_RELATIVE, 'PAST_5000_YEAR'),
+      'Expected a relative date amount of at most 1000',
     ],
     [
       'a relative date too far away for a DATE_TIME field',
       CREATED_AT_FIELD.id,
       periodValue(ViewFilterOperand.IS_RELATIVE, 'PAST_999999_YEAR'),
-      'exceeds the maximum amount',
+      'Expected a relative date amount of at most 1000',
     ],
+    ...['PAST_1000_SECOND', 'NEXT_2_MINUTE', 'THIS_1_HOUR'].map(
+      (value): RejectedBindingCase => [
+        `the sub-day relative date ${value} on a DATE field`,
+        CLOSE_DATE_FIELD.id,
+        periodValue(ViewFilterOperand.IS_RELATIVE, value),
+        'Expected a relative date unit of a day or longer',
+      ],
+    ),
     ...[
       '2026-01-01T10:00',
       '2026-01-01[u-ca=hebrew]',
       '+012026-01-01',
       '0000-01-01',
+      '20260101',
     ].map((value): RejectedBindingCase => [
       `the lenient date ${value} on a DATE field`,
       CLOSE_DATE_FIELD.id,
       periodValue(ViewFilterOperand.IS_AFTER, value),
-      'is not a YYYY-MM-DD date',
+      'Expected a YYYY-MM-DD date',
     ]),
     [
       'the lenient date 2026-01-01T10:00 on a DATE_TIME field',
       CREATED_AT_FIELD.id,
       periodValue(ViewFilterOperand.IS_AFTER, '2026-01-01T10:00'),
-      'is not a YYYY-MM-DD date',
+      'Expected a YYYY-MM-DD date',
+    ],
+    [
+      'a date out of range in the viewer time zone',
+      CREATED_AT_FIELD.id,
+      periodValue(ViewFilterOperand.IS_AFTER, '0001-01-01'),
+      'Dashboard filter date "0001-01-01" is out of range',
     ],
   ])(
     'should reject a binding to %s',
@@ -262,6 +292,24 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
       });
     },
   );
+
+  it('should let an unexpected converter failure through instead of blaming the filter', () => {
+    jest
+      .mocked(convertChartFilterToGqlOperationFilter)
+      .mockImplementationOnce(() => {
+        throw new TypeError('Cannot read properties of undefined');
+      });
+
+    expect(() =>
+      buildFilterBoundTo({
+        fieldMetadataId: CREATED_AT_FIELD.id,
+        dashboardFilterValues: periodValue(
+          ViewFilterOperand.IS_AFTER,
+          '2026-01-01',
+        ),
+      }),
+    ).toThrow(TypeError);
+  });
 
   it.each([
     ['no time zone', null],
