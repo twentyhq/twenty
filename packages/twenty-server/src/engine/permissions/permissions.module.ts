@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AccessGroupModule } from 'src/engine/permissions/internal/access-group/access-group.module';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
@@ -16,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    AccessGroupModule,
     TypeOrmModule.forFeature([RoleTargetEntity]),
     WorkspaceCacheModule,
     RecordPermissionOrmModule,
