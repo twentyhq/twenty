@@ -7,6 +7,7 @@ import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkI
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const isRecordGroupTabsDisplayedComponentSelector =
   createAtomComponentSelector<boolean>({
@@ -25,7 +26,7 @@ export const isRecordGroupTabsDisplayedComponentSelector =
           get(recordIndexShouldDisplayGroupsAsTabsComponentState, {
             instanceId,
           }) &&
-          get(recordGroupIdsComponentState, { instanceId }).length > 0 &&
+          isNonEmptyArray(get(recordGroupIdsComponentState, { instanceId })) &&
           isRecordGroupTabsSupportedForViewType(
             get(recordIndexViewTypeState, { instanceId }),
           )

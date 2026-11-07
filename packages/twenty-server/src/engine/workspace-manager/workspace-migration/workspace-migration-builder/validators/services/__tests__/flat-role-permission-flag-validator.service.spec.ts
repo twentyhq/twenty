@@ -20,6 +20,7 @@ const FLAT_ROLE: UniversalFlatRole = {
   canAccessAllTools: false,
   canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: false,
+  canCreateAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,

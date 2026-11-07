@@ -73,14 +73,10 @@ export const RecordTableRecordGroupsBody = () => {
               </RecordGroupContext.Provider>
             </RecordTableBodyContextProvider>
           ))}
-        {!isInitialLoadingDisplayed && (
-          <>
-            {!isRecordGroupTabsDisplayed && (
-              <RecordTableRecordGroupAddNewGroup />
-            )}
-            <RecordIndexGroupAggregatesDataLoader />
-          </>
+        {!isInitialLoadingDisplayed && !isRecordGroupTabsDisplayed && (
+          <RecordTableRecordGroupAddNewGroup />
         )}
+        {!isInitialLoadingDisplayed && <RecordIndexGroupAggregatesDataLoader />}
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>
   );

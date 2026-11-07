@@ -1,6 +1,6 @@
 import {
+  type DisableableObjectPermissionAction,
   type FieldPermissionAction,
-  type ObjectPermissionAction,
 } from 'twenty-shared/application';
 import {
   type ObjectRecordsPermissions,
@@ -29,14 +29,17 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
   disabledObjectPermissionActions,
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
-  disabledObjectPermissionActions: ObjectPermissionAction[];
+  disabledObjectPermissionActions: DisableableObjectPermissionAction[];
 }): ObjectRecordsPermissions => {
-  const isEnabled = (action: ObjectPermissionAction) =>
+  const isEnabled = (action: DisableableObjectPermissionAction) =>
     !disabledObjectPermissionActions.includes(action);
   const { rowLevelRecordsPermissions } = objectRecordsPermissions;
 
   return {
     ...objectRecordsPermissions,
+    canCreateAllRecords:
+      objectRecordsPermissions.canCreateAllRecords &&
+      isEnabled('canCreateObjectRecords'),
     canReadAllRecords:
       objectRecordsPermissions.canReadAllRecords &&
       isEnabled('canReadObjectRecords'),
@@ -52,6 +55,9 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
     ...(isDefined(rowLevelRecordsPermissions) && {
       rowLevelRecordsPermissions: {
         ...rowLevelRecordsPermissions,
+        canCreateRecords:
+          rowLevelRecordsPermissions.canCreateRecords &&
+          isEnabled('canCreateObjectRecords'),
         canReadRecords:
           rowLevelRecordsPermissions.canReadRecords &&
           isEnabled('canReadObjectRecords'),

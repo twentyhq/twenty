@@ -10,6 +10,7 @@ export const canReachAllRecords = ({
   objectRecordsPermissions:
     | Pick<
         ObjectRecordsPermissions,
+        | 'canCreateAllRecords'
         | 'canReadAllRecords'
         | 'canUpdateAllRecords'
         | 'canSoftDeleteAllRecords'
@@ -26,6 +27,11 @@ export const canReachAllRecords = ({
     case 'read':
       return objectRecordsPermissions.canReadAllRecords;
     case 'create':
+      // Entries cached before this key existed lack it until they are recomputed
+      return (
+        objectRecordsPermissions.canCreateAllRecords ??
+        objectRecordsPermissions.canUpdateAllRecords
+      );
     case 'update':
       return objectRecordsPermissions.canUpdateAllRecords;
     case 'destroy':
