@@ -9,6 +9,9 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -17,6 +20,7 @@ import { selectedRecordIdsComponentSelector } from '@/object-record/record-selec
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
@@ -43,6 +47,28 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     hasUserSelectedAllRecordsComponentState,
     recordIndexId,
   );
+
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordIndexId,
+  );
+
+  const isAllRecordGroupsTabActive = useAtomComponentSelectorValue(
+    isAllRecordGroupsTabActiveComponentSelector,
+    recordIndexId,
+  );
+
+  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
+    hiddenRecordGroupIdsComponentSelector,
+    recordIndexId,
+  );
+
+  // The whole-view rule only carries the view filters, so it would also reach
+  // groups hidden behind other tabs or hidden from the view
+  const isWholeViewTargeted =
+    hasUserSelectedAllRecords &&
+    (!isRecordGroupTabsDisplayed ||
+      (isAllRecordGroupsTabActive && !isNonEmptyArray(hiddenRecordGroupIds)));
 
   const recordIndexAllRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -91,7 +117,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
     setIfChanged(
       contextStoreTargetedRecordsRuleAtom,
-      hasUserSelectedAllRecords
+      isWholeViewTargeted
         ? {
             mode: 'exclusion',
             excludedRecordIds: recordIndexAllRecordIds.filter(
@@ -107,7 +133,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         previousRecordIdsInSelectionOrder: store.get(
           contextStoreRecordIdsInSelectionOrderAtom,
         ),
-        selectedRecordIds: hasUserSelectedAllRecords ? [] : selectedRecordIds,
+        selectedRecordIds: isWholeViewTargeted ? [] : selectedRecordIds,
       }),
     );
 
@@ -132,7 +158,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     contextStoreTargetedRecordsRuleAtom,
     currentRecordFilterGroups,
     currentRecordFilters,
-    hasUserSelectedAllRecords,
+    isWholeViewTargeted,
     recordIndexAllRecordIds,
     selectedRecordIds,
     store,

@@ -83,6 +83,7 @@ export type ViewManifest = SyncableEntityOptions & {
   openRecordIn?: ViewOpenRecordIn;
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;
+  shouldDisplayGroupsAsTabs?: boolean;
   groupLoadLimit?: number;
   anyFieldFilterValue?: string | null;
   kanbanColumnWidth?: number | null;

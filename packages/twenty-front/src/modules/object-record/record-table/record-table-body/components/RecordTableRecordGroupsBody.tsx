@@ -1,3 +1,5 @@
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
@@ -30,6 +32,20 @@ export const RecordTableRecordGroupsBody = () => {
     ViewType.TABLE,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
+
+  const activeRecordGroupTabId = useAtomComponentSelectorValue(
+    activeRecordGroupTabIdComponentSelector,
+  );
+
+  const displayedRecordGroupIds = isRecordGroupTabsDisplayed
+    ? visibleRecordGroupIds.filter(
+        (recordGroupId) => recordGroupId === activeRecordGroupTabId,
+      )
+    : visibleRecordGroupIds;
+
   if (isRecordTableInitialLoading && !recordTableHasRecords) {
     return <RecordTableBodyLoading />;
   }
@@ -37,18 +53,20 @@ export const RecordTableRecordGroupsBody = () => {
   return (
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
-        {visibleRecordGroupIds.map((recordGroupId, index) => (
+        {displayedRecordGroupIds.map((recordGroupId, index) => (
           <RecordTableBodyContextProvider key={recordGroupId}>
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBody data-replay-ignore-mutations="true">
-                <RecordTableRecordGroupSection />
+                {!isRecordGroupTabsDisplayed && (
+                  <RecordTableRecordGroupSection />
+                )}
                 <RecordTableRecordGroupRows />
                 {index === 0 && <RecordTableCellPortals />}
               </RecordTableBody>
             </RecordGroupContext.Provider>
           </RecordTableBodyContextProvider>
         ))}
-        <RecordTableRecordGroupAddNewGroup />
+        {!isRecordGroupTabsDisplayed && <RecordTableRecordGroupAddNewGroup />}
         <RecordIndexGroupAggregatesDataLoader />
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>
