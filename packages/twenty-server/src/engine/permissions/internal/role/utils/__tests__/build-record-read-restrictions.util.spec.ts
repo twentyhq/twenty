@@ -5,6 +5,7 @@ import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/rol
 const buildObjectRecordsPermissions = (
   overrides: Partial<ObjectRecordsPermissions>,
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,

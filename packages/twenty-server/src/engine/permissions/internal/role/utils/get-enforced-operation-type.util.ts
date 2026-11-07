@@ -11,6 +11,6 @@ export const getEnforcedOperationType = ({
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectRecordsOperationType =>
   operationType === 'create' &&
-  featureFlagsMap[FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED] !== true
+  !featureFlagsMap[FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]
     ? 'update'
     : operationType;

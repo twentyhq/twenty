@@ -14,6 +14,7 @@ const buildObjectPermissions = (opts: {
   restrictedFields?: RestrictedFields;
 }) => ({
   objectMetadataId: opts.objectMetadataId,
+  canCreateAllRecords: opts.canUpdate ?? true,
   canReadAllRecords: true,
   canUpdateAllRecords: opts.canUpdate ?? true,
   canSoftDeleteAllRecords: true,

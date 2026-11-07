@@ -71,7 +71,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
 
     await this.recordShareSystemWriteService.setRecordsPrivacy({
       workspaceId,
-      flatObjectMetadata: conversationObjectMetadata,
+      objectMetadataId: conversationObjectMetadata.id,
       recordIds: conversationRecordIds,
       isPrivate: true,
       transactionScope,

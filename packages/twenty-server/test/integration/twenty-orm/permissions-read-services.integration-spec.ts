@@ -338,7 +338,7 @@ describe('permissions read services', () => {
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
       const unreadableFieldMetadataIds =
-        await recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow({
+        await recordPermissionsService.findUnreadableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
@@ -346,7 +346,7 @@ describe('permissions read services', () => {
       expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
       expect(
-        await recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow({
+        await recordPermissionsService.findUneditableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         }),
@@ -360,18 +360,14 @@ describe('permissions read services', () => {
         objectMetadataId: personFlatObjectMetadata.id,
       };
       const nonUpdatableFieldMetadataIds =
-        await recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
-          objectQuestion,
-        );
+        await recordPermissionsService.findUneditableFields(objectQuestion);
 
       expect(nonUpdatableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(nonUpdatableFieldMetadataIds).not.toContain(
         jobTitleFieldMetadataId,
       );
       expect(
-        await recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
-          objectQuestion,
-        ),
+        await recordPermissionsService.findUnreadableFields(objectQuestion),
       ).not.toContain(introFieldMetadataId);
     });
   });
