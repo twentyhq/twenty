@@ -20,7 +20,6 @@ export class RecordAccessGroupRepository {
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
-  // Returns the last record id of the batch, or null once no record is left
   async recomputeRecordAccessGroupIdsBatch({
     workspaceId,
     flatObjectMetadata,
@@ -41,7 +40,6 @@ export class RecordAccessGroupRepository {
     const accessGroupIdsColumn = escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME);
     const alias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
 
-    // Rows whose groups did not change are not rewritten
     const rows = await this.recordPermissionQueryService.execute<{
       id: string;
     }>({

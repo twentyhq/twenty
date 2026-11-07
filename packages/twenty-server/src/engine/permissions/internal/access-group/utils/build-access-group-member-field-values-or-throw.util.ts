@@ -24,7 +24,6 @@ const ANY_OF_OPERANDS: RowLevelPermissionPredicateOperand[] = [
   RowLevelPermissionPredicateOperand.CONTAINS,
 ];
 
-// Splitting a list into one group per value only keeps the rule when a single "any of" predicate reads it
 const canSplitMemberFieldValues = ({
   memberFieldKey,
   workspaceMemberBoundPredicates,

@@ -55,7 +55,7 @@ export class AccessGroupService {
       );
 
     const existingAccessGroups =
-      await this.accessGroupRepository.findAccessGroupHashes(workspaceId);
+      await this.accessGroupRepository.findAccessGroups(workspaceId);
     const existingGroupHashes = new Set(
       existingAccessGroups.map(({ groupHash }) => groupHash),
     );

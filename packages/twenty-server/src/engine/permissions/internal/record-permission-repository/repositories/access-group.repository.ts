@@ -22,7 +22,7 @@ export class AccessGroupRepository {
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
-  async findAccessGroupHashes(
+  async findAccessGroups(
     workspaceId: string,
   ): Promise<Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>[]> {
     return this.recordPermissionQueryService.execute<

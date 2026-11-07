@@ -17,7 +17,6 @@ const LIST_MEMBER_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.ARRAY,
 ];
 
-// A single value split from a member's list is wrapped back into the list a member would give
 export const resolveMemberFieldValuesPredicateValue = ({
   memberFieldValues,
   predicate,
