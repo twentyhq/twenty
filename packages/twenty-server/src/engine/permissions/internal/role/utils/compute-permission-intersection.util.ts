@@ -4,7 +4,11 @@ import {
   type RowLevelPermissionPredicate,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canReachAllRecords,
+  canReachSomeRecords,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -77,6 +81,13 @@ const intersectObjectRecordsPermissions = (
     );
 
   const intersectedObjectRecordsPermissions: ObjectRecordsPermissions = {
+    canCreateAllRecords: isGrantedToAllRecordsByEveryRole(
+      (objectRecordsPermissions) =>
+        canReachAllRecords({
+          objectRecordsPermissions,
+          operationType: 'create',
+        }),
+    ),
     canReadAllRecords: isGrantedToAllRecordsByEveryRole(
       ({ canReadAllRecords }) => canReadAllRecords,
     ),
@@ -106,6 +117,7 @@ const intersectObjectRecordsPermissions = (
   return {
     ...intersectedObjectRecordsPermissions,
     rowLevelRecordsPermissions: {
+      canCreateRecords: isReachingSomeRecordsForEveryRole('create'),
       canReadRecords: isReachingSomeRecordsForEveryRole('read'),
       canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
       canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('softDelete'),

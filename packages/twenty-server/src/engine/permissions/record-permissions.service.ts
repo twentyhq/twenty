@@ -33,6 +33,7 @@ import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/intern
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
+import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
@@ -204,9 +205,17 @@ export class RecordPermissionsService {
         { principals },
       );
 
+    const { featureFlagsMap } =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+
     return canReachSomeRecords({
       objectRecordsPermissions: objects[objectMetadataId],
-      operationType,
+      operationType: getEnforcedOperationType({
+        operationType,
+        featureFlagsMap,
+      }),
     });
   }
 

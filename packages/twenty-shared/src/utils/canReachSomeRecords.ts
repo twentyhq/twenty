@@ -19,6 +19,10 @@ const canReachRowLevelRecords = ({
     case 'read':
       return rowLevelRecordsPermissions.canReadRecords;
     case 'create':
+      return (
+        rowLevelRecordsPermissions.canCreateRecords ??
+        rowLevelRecordsPermissions.canUpdateRecords
+      );
     case 'update':
       return rowLevelRecordsPermissions.canUpdateRecords;
     case 'destroy':

@@ -29,6 +29,7 @@ const buildAllRecordsPermissions = ({
 }: AllRecordsGrants & {
   restrictedFields?: RestrictedFieldsPermissions;
 }): ObjectRecordsPermissions => ({
+  canCreateAllRecords: grants.canUpdate,
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
@@ -49,6 +50,78 @@ const buildRoleRecordsPermissions = (
 describe('computePermissionIntersection', () => {
   const objectMetadataId1 = 'object-1';
   const objectMetadataId2 = 'object-2';
+
+  describe('create permission', () => {
+    const buildRole = (
+      objectRecordsPermissions: Partial<ObjectRecordsPermissions>,
+    ) =>
+      buildRoleRecordsPermissions({
+        [objectMetadataId1]: {
+          ...buildAllRecordsPermissions(ALL_GRANTED),
+          ...objectRecordsPermissions,
+        },
+      });
+
+    it('should deny when one role denies it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({ canCreateAllRecords: false }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+
+    it('should limit row-level create through update for a role that does not set it', () => {
+      const rowLevelRecordsPermissions = {
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
+        predicates: [],
+        predicateGroups: [],
+      };
+
+      const result = computePermissionIntersection([
+        buildRole({
+          canCreateAllRecords: false,
+          canUpdateAllRecords: false,
+          rowLevelRecordsPermissions: {
+            ...rowLevelRecordsPermissions,
+            canCreateRecords: true,
+          },
+        }),
+        buildRole({
+          canCreateAllRecords: undefined,
+          canUpdateAllRecords: false,
+          rowLevelRecordsPermissions: {
+            ...rowLevelRecordsPermissions,
+            canUpdateRecords: false,
+          },
+        }),
+      ]);
+
+      expect(
+        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions
+          ?.canCreateRecords,
+      ).toBe(false);
+    });
+
+    it('should limit through update for a role that does not set it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({
+          canCreateAllRecords: undefined,
+          canUpdateAllRecords: false,
+        }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+  });
 
   describe('edge cases', () => {
     it('should return no permissions for empty array', () => {
@@ -415,6 +488,7 @@ describe('computePermissionIntersection', () => {
           canDestroy: false,
         }),
         rowLevelRecordsPermissions: {
+          canCreateRecords: true,
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,
