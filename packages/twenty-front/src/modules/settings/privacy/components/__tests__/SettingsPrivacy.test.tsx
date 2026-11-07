@@ -134,15 +134,12 @@ describe('SettingsPrivacy', () => {
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
     });
 
-    expect(screen.getByText('Security you can verify')).toBeInTheDocument();
     expect(screen.getByText('Data Processing Agreement')).toBeInTheDocument();
     expect(screen.getByText('Processing region')).toBeInTheDocument();
     expect(screen.getByText('Zero data retention')).toBeInTheDocument();
     expect(screen.getByText('Help improve Twenty')).toBeInTheDocument();
     expect(screen.getByText('Allow Support Team Access')).toBeInTheDocument();
-    expect(
-      screen.getByText('Workspaces run on AWS in Frankfurt, Germany'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('AWS, Frankfurt, Germany')).toBeInTheDocument();
     expect(
       screen.queryByText('Your data stays in the EU'),
     ).not.toBeInTheDocument();
@@ -156,7 +153,7 @@ describe('SettingsPrivacy', () => {
 
     expect(screen.getByText('Processing region')).toBeInTheDocument();
     expect(
-      screen.queryByText('Security you can verify'),
+      screen.queryByText('How your data is protected'),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText('Data Processing Agreement'),
