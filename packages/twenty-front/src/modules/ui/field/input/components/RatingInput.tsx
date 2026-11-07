@@ -49,7 +49,9 @@ export const RatingInput = ({
   const canClick = !readonly;
 
   const handleClick = (newValue: FieldRatingValue) => {
-    if (!canClick) return;
+    if (!canClick) {
+      return;
+    }
     if (newValue === value) {
       setHoveredValue(null);
       clearField();

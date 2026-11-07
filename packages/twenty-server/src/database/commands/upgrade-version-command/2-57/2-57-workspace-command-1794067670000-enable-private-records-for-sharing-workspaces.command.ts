@@ -10,7 +10,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-@RegisteredWorkspaceCommand('2.57.0', 1794063407000)
+@RegisteredWorkspaceCommand('2.57.0', 1794067670000)
 @Command({
   name: 'upgrade:2-57:enable-private-records-for-sharing-workspaces',
   description:

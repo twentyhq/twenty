@@ -15,7 +15,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.57.0', 1794063316000)
+@RegisteredWorkspaceCommand('2.57.0', 1794067568000)
 @Command({
   name: 'upgrade:2-57:add-access-group-object-metadata-id',
   description: 'Add objectMetadataId to the accessGroup object',

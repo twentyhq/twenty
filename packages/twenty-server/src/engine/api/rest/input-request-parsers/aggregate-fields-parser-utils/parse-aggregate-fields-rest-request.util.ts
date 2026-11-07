@@ -13,7 +13,9 @@ export const parseAggregateFieldsRestRequest = (
 ): CommonSelectedFields => {
   const aggregateFieldsQuery = request.query.aggregate;
 
-  if (!isDefined(aggregateFieldsQuery)) return {};
+  if (!isDefined(aggregateFieldsQuery)) {
+    return {};
+  }
 
   if (typeof aggregateFieldsQuery !== 'string') {
     throw new RestInputRequestParserException(

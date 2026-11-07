@@ -44,7 +44,9 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   const isDisabled = !isEditable;
 
   const handleRowClick = () => {
-    if (isDisabled) return;
+    if (isDisabled) {
+      return;
+    }
 
     permission.setValue(!permission.value);
   };
