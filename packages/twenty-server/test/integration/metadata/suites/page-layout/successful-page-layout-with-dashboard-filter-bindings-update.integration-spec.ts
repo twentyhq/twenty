@@ -464,10 +464,12 @@ describe('Standard dashboard filter bindings should not block removing a widget 
     filters,
     dashboardFilterBindings,
     isBoundWidgetRemoved = false,
+    tabs = standardDashboardTabs,
   }: {
     filters: PageLayoutFilter[] | null;
     dashboardFilterBindings: DashboardFilterBinding[] | null;
     isBoundWidgetRemoved?: boolean;
+    tabs?: UpdatePageLayoutWithTabsInput['tabs'];
   }) =>
     updateOnePageLayoutWithTabsAndWidgets({
       expectToFail: false,
@@ -478,7 +480,7 @@ describe('Standard dashboard filter bindings should not block removing a widget 
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
         filters,
-        tabs: standardDashboardTabs.map((tab) => ({
+        tabs: tabs.map((tab) => ({
           ...tab,
           widgets: tab.widgets
             .filter(
@@ -602,6 +604,26 @@ describe('Standard dashboard filter bindings should not block removing a widget 
       filters: null,
       dashboardFilterBindings: [periodBinding],
       isBoundWidgetRemoved: true,
+    });
+
+    expect(errors).toBeUndefined();
+  });
+
+  it('should remove a filter still bound by a widget on a removed tab', async () => {
+    const tabs = [{ id: v4(), title: 'Tab 2', position: 1, widgets: [] }];
+
+    const { errors: tabRemovalErrors } = await saveStandardDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: [periodBinding],
+      tabs,
+    });
+
+    expect(tabRemovalErrors).toBeUndefined();
+
+    const { errors } = await saveStandardDashboard({
+      filters: null,
+      dashboardFilterBindings: [periodBinding],
+      tabs,
     });
 
     expect(errors).toBeUndefined();

@@ -10,6 +10,7 @@ import {
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { validatePageLayoutWidgetDashboardFilterBindingsCrossEntity } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-page-layout-widget-dashboard-filter-bindings-cross-entity.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { buildUniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout-tab.test-util';
 import { buildUniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout.test-util';
@@ -22,6 +23,8 @@ const VALID_WIDGET_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-000000000002';
 const OBJECT_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000cc';
 const FIELD_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000dd';
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000ee';
 
 const PERIOD_FILTER: PageLayoutFilter = {
   id: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01',
@@ -73,11 +76,13 @@ const validateCrossEntity = ({
   updatedWidgetUniversalIdentifiers = [],
   failedWidgetUniversalIdentifiers = [],
   isDanglingWidgetActive = true,
+  tabOverrides = null,
 }: {
   updatedPageLayoutUniversalIdentifiers?: string[];
   updatedWidgetUniversalIdentifiers?: string[];
   failedWidgetUniversalIdentifiers?: string[];
   isDanglingWidgetActive?: boolean;
+  tabOverrides?: UniversalFlatPageLayoutTab['overrides'];
 }) =>
   validatePageLayoutWidgetDashboardFilterBindingsCrossEntity({
     optimisticUniversalFlatMaps: {
@@ -102,6 +107,7 @@ const validateCrossEntity = ({
               pageLayoutUniversalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
             }),
             layoutMode: PageLayoutTabLayoutMode.GRID,
+            overrides: tabOverrides,
             widgetUniversalIdentifiers: [
               DANGLING_WIDGET_UNIVERSAL_IDENTIFIER,
               VALID_WIDGET_UNIVERSAL_IDENTIFIER,
@@ -203,6 +209,18 @@ describe('validatePageLayoutWidgetDashboardFilterBindingsCrossEntity', () => {
   it('should skip a deactivated widget still bound to a removed filter', () => {
     const { pageLayoutWidget } = validateCrossEntity({
       isDanglingWidgetActive: false,
+    });
+
+    expect(pageLayoutWidget).toEqual([]);
+  });
+
+  it('should skip widgets on a tab the workspace removed', () => {
+    const { pageLayoutWidget } = validateCrossEntity({
+      tabOverrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          isActive: false,
+        },
+      },
     });
 
     expect(pageLayoutWidget).toEqual([]);

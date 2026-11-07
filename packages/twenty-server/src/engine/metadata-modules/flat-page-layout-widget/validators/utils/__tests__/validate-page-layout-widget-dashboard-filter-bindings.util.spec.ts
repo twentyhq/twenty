@@ -10,13 +10,18 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { validatePageLayoutWidgetDashboardFilterBindings } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-page-layout-widget-dashboard-filter-bindings.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+import { buildUniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout-tab.test-util';
+import { buildUniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout.test-util';
 
 const OWNER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-aaaa-4aaa-8aaa-000000000001';
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-aaaa-4aaa-8aaa-000000000002';
 
+const PAGE_LAYOUT_UNIVERSAL_IDENTIFIER = '20202020-2222-4222-8222-000000000001';
+const TAB_UNIVERSAL_IDENTIFIER = '20202020-2222-4222-8222-000000000002';
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-0000-4000-8000-000000000002';
@@ -97,17 +102,22 @@ const validateBindings = ({
   filters = [PERIOD_FILTER, CLOSE_DATE_FILTER],
   isActive = true,
   universalOverrides = null,
+  pageLayoutTab,
 }: {
   dashboardFilterBindings: UniversalDashboardFilterBinding[] | null;
   pageLayoutType?: PageLayoutType;
   filters?: PageLayoutFilter[] | null;
   isActive?: boolean;
   universalOverrides?: UniversalFlatPageLayoutWidget['universalOverrides'];
+  pageLayoutTab?: Partial<
+    Pick<UniversalFlatPageLayoutTab, 'isActive' | 'overrides'>
+  >;
 }) =>
   validatePageLayoutWidgetDashboardFilterBindings({
     widget: {
       title: 'Deals per month',
       objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      pageLayoutTabUniversalIdentifier: TAB_UNIVERSAL_IDENTIFIER,
       applicationUniversalIdentifier: OWNER_APPLICATION_UNIVERSAL_IDENTIFIER,
       isActive,
       universalOverrides,
@@ -116,8 +126,34 @@ const validateBindings = ({
         dashboardFilterBindings,
       },
     },
-    pageLayout: { type: pageLayoutType, filters },
-    flatFieldMetadataMaps,
+    flatEntityMaps: {
+      flatPageLayoutMaps: {
+        byUniversalIdentifier: {
+          [PAGE_LAYOUT_UNIVERSAL_IDENTIFIER]: {
+            ...buildUniversalFlatPageLayout({
+              universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+            }),
+            type: pageLayoutType,
+            filters,
+            tabUniversalIdentifiers: [TAB_UNIVERSAL_IDENTIFIER],
+            navigationMenuItemUniversalIdentifiers: [],
+          },
+        },
+      },
+      flatPageLayoutTabMaps: {
+        byUniversalIdentifier: {
+          [TAB_UNIVERSAL_IDENTIFIER]: {
+            ...buildUniversalFlatPageLayoutTab({
+              universalIdentifier: TAB_UNIVERSAL_IDENTIFIER,
+              pageLayoutUniversalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+            }),
+            widgetUniversalIdentifiers: [],
+            ...pageLayoutTab,
+          },
+        },
+      },
+      flatFieldMetadataMaps,
+    },
   });
 
 describe('validatePageLayoutWidgetDashboardFilterBindings', () => {
@@ -189,6 +225,19 @@ describe('validatePageLayoutWidgetDashboardFilterBindings', () => {
         universalOverrides: {
           [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
             isActive: false,
+          },
+        },
+      },
+    ],
+    ["its tab's flag", { pageLayoutTab: { isActive: false } }],
+    [
+      'an override on its tab',
+      {
+        pageLayoutTab: {
+          overrides: {
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              isActive: false,
+            },
           },
         },
       },

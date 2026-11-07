@@ -9,12 +9,7 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
 export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
-  optimisticUniversalFlatMaps: {
-    flatPageLayoutMaps,
-    flatPageLayoutTabMaps,
-    flatPageLayoutWidgetMaps,
-    flatFieldMetadataMaps,
-  },
+  optimisticUniversalFlatMaps,
   orchestratorActionsReport,
   orchestratorFailureReport,
 }: {
@@ -34,6 +29,11 @@ export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
     'pageLayoutWidget'
   >;
 }): Pick<OrchestratorFailureReport, 'pageLayoutWidget'> => {
+  const {
+    flatPageLayoutMaps,
+    flatPageLayoutTabMaps,
+    flatPageLayoutWidgetMaps,
+  } = optimisticUniversalFlatMaps;
   const validationErrors: Pick<OrchestratorFailureReport, 'pageLayoutWidget'> =
     {
       pageLayoutWidget: [],
@@ -94,8 +94,7 @@ export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
       failedValidation.errors.push(
         ...validatePageLayoutWidgetDashboardFilterBindings({
           widget,
-          pageLayout,
-          flatFieldMetadataMaps,
+          flatEntityMaps: optimisticUniversalFlatMaps,
         }),
       );
 

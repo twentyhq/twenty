@@ -147,10 +147,9 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...typeSpecificityErrors);
     validationResult.errors.push(
-      ...this.validateDashboardFilterBindings({
+      ...validatePageLayoutWidgetDashboardFilterBindings({
         widget: updatedFlatPageLayoutWidget,
-        pageLayoutTab: referencedPageLayoutTab,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        flatEntityMaps: optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
       }),
     );
 
@@ -284,42 +283,13 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...typeSpecificityErrors);
     validationResult.errors.push(
-      ...this.validateDashboardFilterBindings({
+      ...validatePageLayoutWidgetDashboardFilterBindings({
         widget: flatPageLayoutWidgetToValidate,
-        pageLayoutTab: referencedPageLayoutTab,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        flatEntityMaps: optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
       }),
     );
 
     return validationResult;
-  }
-
-  private validateDashboardFilterBindings({
-    widget,
-    pageLayoutTab,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutMaps,
-      flatFieldMetadataMaps,
-    },
-  }: {
-    widget: UniversalFlatPageLayoutWidget;
-    pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: UniversalFlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.pageLayoutWidget
-    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
-  }): FlatEntityValidationError[] {
-    const pageLayout = isDefined(pageLayoutTab)
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier: pageLayoutTab.pageLayoutUniversalIdentifier,
-          flatEntityMaps: flatPageLayoutMaps,
-        })
-      : undefined;
-
-    return validatePageLayoutWidgetDashboardFilterBindings({
-      widget,
-      pageLayout,
-      flatFieldMetadataMaps,
-    });
   }
 
   private getEffectiveWidget(

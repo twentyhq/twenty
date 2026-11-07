@@ -15,15 +15,17 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { UNIVERSAL_DASHBOARD_FILTER_BINDINGS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/constants/universal-dashboard-filter-bindings-schema.constant';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
-import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 
 type DashboardFilterBindingWidget = Pick<
   UniversalFlatPageLayoutWidget,
   | 'title'
   | 'objectMetadataUniversalIdentifier'
+  | 'pageLayoutTabUniversalIdentifier'
   | 'universalConfiguration'
   | 'isActive'
   | 'applicationUniversalIdentifier'
@@ -125,21 +127,44 @@ const validateDashboardFilterBinding = ({
 
 export const validatePageLayoutWidgetDashboardFilterBindings = ({
   widget,
-  pageLayout,
-  flatFieldMetadataMaps,
+  flatEntityMaps: {
+    flatPageLayoutMaps,
+    flatPageLayoutTabMaps,
+    flatFieldMetadataMaps,
+  },
 }: {
   widget: DashboardFilterBindingWidget;
-  pageLayout: Pick<UniversalFlatPageLayout, 'type' | 'filters'> | undefined;
-  flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+  flatEntityMaps: Pick<
+    AllUniversalFlatEntityMaps,
+    'flatPageLayoutMaps' | 'flatPageLayoutTabMaps' | 'flatFieldMetadataMaps'
+  >;
 }): FlatPageLayoutWidgetValidationError[] => {
   const { title: widgetTitle, universalConfiguration } = widget;
+  const pageLayoutTabUniversalIdentifier =
+    resolveEffectiveUniversalFlatEntityProperty({
+      metadataName: 'pageLayoutWidget',
+      universalFlatEntity: widget,
+      property: 'pageLayoutTabUniversalIdentifier',
+    });
+  const pageLayoutTab = isDefined(pageLayoutTabUniversalIdentifier)
+    ? flatPageLayoutTabMaps.byUniversalIdentifier[
+        pageLayoutTabUniversalIdentifier
+      ]
+    : undefined;
 
   if (
     !resolveEffectiveUniversalFlatEntityProperty({
       metadataName: 'pageLayoutWidget',
       universalFlatEntity: widget,
       property: 'isActive',
-    })
+    }) ||
+    (isDefined(pageLayoutTab) &&
+      // Tab overrides hold no ids, so universal tabs keep them in `overrides`
+      !resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: pageLayoutTab,
+        property: 'isActive',
+      }))
   ) {
     return [];
   }
@@ -175,6 +200,12 @@ export const validatePageLayoutWidgetDashboardFilterBindings = ({
   if (!isNonEmptyArray(bindings)) {
     return [];
   }
+
+  const pageLayout = isDefined(pageLayoutTab)
+    ? flatPageLayoutMaps.byUniversalIdentifier[
+        pageLayoutTab.pageLayoutUniversalIdentifier
+      ]
+    : undefined;
 
   if (pageLayout?.type !== PageLayoutType.DASHBOARD) {
     return [
