@@ -55,7 +55,7 @@ import { type RecordReadRestrictions } from 'src/engine/permissions/types/record
 
 type RecordOperationQuestion = {
   principals: PermissionsPrincipalsWithRolesContext;
-  flatObjectMetadata: FlatObjectMetadata;
+  objectMetadataId: string;
   operationType: ObjectRecordsOperationType;
 };
 
@@ -312,50 +312,49 @@ export class RecordPermissionsService {
     });
   }
 
-  async isOperationDisabled(
-    question: RecordOperationQuestion,
-  ): Promise<boolean> {
-    return isObjectOperationDisabledToPrincipals({
-      ...question,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals: question.principals },
-      ),
-    });
+  async isReadDisabled({
+    principals,
+    objectMetadataId,
+  }: Omit<RecordOperationQuestion, 'operationType'>): Promise<boolean> {
+    return isObjectOperationDisabledToPrincipals(
+      await this.findObjectAccessRequestOrThrow({
+        principals,
+        objectMetadataId,
+        operationType: 'read',
+      }),
+    );
   }
 
-  async assertObjectOperationAccessibleOrThrow(
-    question: RecordOperationQuestion,
-  ): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
-        principals: question.principals,
-      });
+  async assertCanRunOperationOrThrow({
+    principals,
+    objectMetadataId,
+    operationType,
+    selectedColumns,
+    updatedColumns = [],
+  }: RecordOperationQuestion & {
+    selectedColumns: string[];
+    updatedColumns?: string[];
+  }): Promise<void> {
+    const request = await this.findObjectAccessRequestOrThrow({
+      principals,
+      objectMetadataId,
+      operationType,
+    });
+    const { flatObjectMetadata, metadataMaps } = request;
 
-    if (
-      !isObjectOperationDisabledToPrincipals({ ...question, metadataMaps }) &&
-      isObjectOperationDeniedToPrincipals({ ...question, metadataMaps })
-    ) {
+    if (isObjectOperationDisabledToPrincipals(request)) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'read' ? 'readable' : 'writable'} through the API`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    if (isObjectOperationDeniedToPrincipals(request)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
-  }
-
-  async assertColumnsReadableAndUpdatableOrThrow({
-    principals,
-    flatObjectMetadata,
-    operationType,
-    selectedColumns,
-    updatedColumns,
-  }: RecordOperationQuestion & {
-    selectedColumns: string[];
-    updatedColumns: string[];
-  }): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
-        principals,
-      });
 
     validateOperationIsPermittedOrThrow({
       entityName: flatObjectMetadata.nameSingular,
@@ -375,20 +374,15 @@ export class RecordPermissionsService {
   }
 
   async buildRecordsAccessCondition({
-    principals,
-    flatObjectMetadata,
-    operationType,
     tableAlias,
+    ...question
   }: RecordOperationQuestion & {
     tableAlias: string;
   }): Promise<SqlCondition | boolean> {
+    const { principals } = question;
+
     return buildPermissionsCondition({
-      principals,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals },
-      ),
-      flatObjectMetadata,
-      operationType,
+      ...(await this.findObjectAccessRequestOrThrow(question)),
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: principals.workspaceId,
@@ -398,32 +392,37 @@ export class RecordPermissionsService {
 
   async assertCreatedRecordsMatchRowLevelPermissionsOrThrow({
     principals,
-    flatObjectMetadata,
+    objectMetadataId,
     records,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     records: ObjectRecord[];
   }): Promise<void> {
+    const { flatObjectMetadata, metadataMaps } =
+      await this.findObjectAccessRequestOrThrow({
+        principals,
+        objectMetadataId,
+        operationType: 'create',
+      });
+
     validateRLSPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
       principals,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals },
-      ),
+      metadataMaps,
     });
   }
 
   async assertUpdatesKeepRecordAccessOrThrow({
     principals,
-    flatObjectMetadata,
+    objectMetadataId,
     updates,
     formatRecords,
     transactionScope,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     updates: {
       rawRecordBefore: ObjectRecord;
       setColumns: Record<string, unknown>;
@@ -431,9 +430,11 @@ export class RecordPermissionsService {
     formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
+    const { flatObjectMetadata, metadataMaps } =
+      await this.findObjectAccessRequestOrThrow({
         principals,
+        objectMetadataId,
+        operationType: 'update',
       });
 
     if (
@@ -732,6 +733,21 @@ export class RecordPermissionsService {
     }
 
     return { principals, metadataMaps, flatObjectMetadata, operationType };
+  }
+
+  private async findObjectAccessRequestOrThrow(
+    question: RecordOperationQuestion,
+  ): Promise<PermissionsObjectAccessRequest> {
+    const request = await this.findObjectAccessRequest(question);
+
+    if (!isDefined(request)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return request;
   }
 
   private findFlatObjectMetadata({
