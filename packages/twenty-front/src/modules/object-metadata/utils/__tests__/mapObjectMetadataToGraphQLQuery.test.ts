@@ -32,6 +32,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       },
       objectPermissionsByObjectMetadataId: {
         [personObjectMetadataItem.id]: {
+          canCreateAllRecords: true,
           canReadAllRecords: true,
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,
@@ -151,6 +152,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       recordGqlFields: { company: { id: true }, id: true, name: true },
       objectPermissionsByObjectMetadataId: {
         [personObjectMetadataItem.id]: {
+          canCreateAllRecords: true,
           canReadAllRecords: true,
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,

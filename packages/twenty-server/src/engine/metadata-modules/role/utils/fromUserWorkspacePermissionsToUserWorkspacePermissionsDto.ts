@@ -1,10 +1,6 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
-import {
-  canReachAllRecords,
-  canReachSomeRecords,
-  isDefined,
-} from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
@@ -42,24 +38,6 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
 });
 
-const fromObjectRecordsPermissionsToRowLevelRecordsPermissionsDto = (
-  objectRecordsPermissions: ObjectRecordsPermissions,
-): ObjectRecordsPermissionsDTO['rowLevelRecordsPermissions'] => {
-  const { rowLevelRecordsPermissions } = objectRecordsPermissions;
-
-  if (!isDefined(rowLevelRecordsPermissions)) {
-    return rowLevelRecordsPermissions;
-  }
-
-  return {
-    ...rowLevelRecordsPermissions,
-    canCreateRecords: canReachSomeRecords({
-      objectRecordsPermissions,
-      operationType: 'create',
-    }),
-  };
-};
-
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
@@ -76,19 +54,13 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
     objectRecordsPermissions.push({
       objectMetadataId,
-      canCreateAllRecords: canReachAllRecords({
-        objectRecordsPermissions: permissions,
-        operationType: 'create',
-      }),
+      canCreateAllRecords: permissions.canCreateAllRecords,
       canReadAllRecords: permissions.canReadAllRecords,
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
       restrictedFields: permissions.restrictedFields,
-      rowLevelRecordsPermissions:
-        fromObjectRecordsPermissionsToRowLevelRecordsPermissionsDto(
-          permissions,
-        ),
+      rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
     legacyObjectPermissions.push(
       fromObjectRecordsPermissionsToLegacyObjectPermission({

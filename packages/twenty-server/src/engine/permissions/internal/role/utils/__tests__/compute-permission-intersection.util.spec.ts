@@ -72,55 +72,6 @@ describe('computePermissionIntersection', () => {
         false,
       );
     });
-
-    it('should limit row-level create through update for a role that does not set it', () => {
-      const rowLevelRecordsPermissions = {
-        canReadRecords: true,
-        canUpdateRecords: true,
-        canSoftDeleteRecords: true,
-        canDestroyRecords: true,
-        predicates: [],
-        predicateGroups: [],
-      };
-
-      const result = computePermissionIntersection([
-        buildRole({
-          canCreateAllRecords: false,
-          canUpdateAllRecords: false,
-          rowLevelRecordsPermissions: {
-            ...rowLevelRecordsPermissions,
-            canCreateRecords: true,
-          },
-        }),
-        buildRole({
-          canCreateAllRecords: undefined,
-          canUpdateAllRecords: false,
-          rowLevelRecordsPermissions: {
-            ...rowLevelRecordsPermissions,
-            canUpdateRecords: false,
-          },
-        }),
-      ]);
-
-      expect(
-        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions
-          ?.canCreateRecords,
-      ).toBe(false);
-    });
-
-    it('should limit through update for a role that does not set it', () => {
-      const result = computePermissionIntersection([
-        buildRole({ canCreateAllRecords: true }),
-        buildRole({
-          canCreateAllRecords: undefined,
-          canUpdateAllRecords: false,
-        }),
-      ]);
-
-      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
-        false,
-      );
-    });
   });
 
   describe('edge cases', () => {
@@ -387,6 +338,7 @@ describe('computePermissionIntersection', () => {
             canDestroy: false,
           }),
           rowLevelRecordsPermissions: {
+            canCreateRecords: grants.canUpdate,
             canReadRecords: grants.canRead,
             canUpdateRecords: grants.canUpdate,
             canSoftDeleteRecords: grants.canSoftDelete,
@@ -518,6 +470,7 @@ describe('computePermissionIntersection', () => {
         expect(
           result.objects[objectMetadataId1]?.rowLevelRecordsPermissions,
         ).toMatchObject({
+          canCreateRecords: deniedGrant !== 'canUpdate',
           canReadRecords: deniedGrant !== 'canRead',
           canUpdateRecords: deniedGrant !== 'canUpdate',
           canSoftDeleteRecords: deniedGrant !== 'canSoftDelete',

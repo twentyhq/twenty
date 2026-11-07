@@ -23,6 +23,7 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
       getCommandMenuContextApiObjectPermissions({
         objectMetadataId: 'person-object-metadata-id',
         objectRecordsPermissions: {
+          canCreateAllRecords: false,
           canReadAllRecords: false,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
