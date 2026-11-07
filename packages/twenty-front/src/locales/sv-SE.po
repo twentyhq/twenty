@@ -1728,7 +1728,7 @@ msgstr "Accepterade och signerade PUB:er för den här arbetsytan, med deras mal
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "Åtkomstgrupper"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3988,7 +3988,7 @@ msgstr "Verkställ"
 #. js-lingui-id: 2+R4Vf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
-msgstr ""
+msgstr "Tillämpa privata poster på objekt som inte är privata som standard. Alltid aktivt för arbetsytor som har angett postdelning. Om du stänger av detta blir poster som angetts som privata på dessa objekt synliga igen."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6918,7 +6918,7 @@ msgstr "Skriv e-post"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "Beräkna de åtkomstgrupper som postlistor ska använda för behörigheter på radnivå. Aktivera när arbetsyteuppgraderingen har slutförts."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22366,7 +22366,7 @@ msgstr "Privat"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Privata poster"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

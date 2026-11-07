@@ -1728,7 +1728,7 @@ msgstr "DPA-uri acceptate și semnate pentru acest spațiu de lucru, cu versiune
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "Grupuri de acces"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3988,7 +3988,7 @@ msgstr "Aplică"
 #. js-lingui-id: 2+R4Vf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
-msgstr ""
+msgstr "Aplică înregistrări private obiectelor care nu sunt private în mod implicit. Întotdeauna activată pentru spațiile de lucru care au configurată partajarea înregistrărilor. Dezactivarea acesteia face ca înregistrările setate ca private pentru acele obiecte să devină din nou vizibile."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6918,7 +6918,7 @@ msgstr "Compuneți e-mail"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "Calculează grupurile de acces pe care listările de înregistrări le vor utiliza pentru permisiunile la nivel de rând. Activează după finalizarea actualizării spațiului de lucru."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22364,7 +22364,7 @@ msgstr "Privat"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Înregistrări private"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

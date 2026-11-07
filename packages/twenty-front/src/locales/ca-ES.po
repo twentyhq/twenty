@@ -1728,7 +1728,7 @@ msgstr "Acords de tractament de dades acceptats i signats per a aquest espai de 
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "Grups d'accés"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3988,7 +3988,7 @@ msgstr "Aplica"
 #. js-lingui-id: 2+R4Vf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
-msgstr ""
+msgstr "Aplica registres privats als objectes que no són privats de manera predeterminada. Sempre està activat per als espais de treball que han configurat la compartició de registres. En desactivar-ho, els registres configurats com a privats en aquests objectes tornen a ser visibles."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6918,7 +6918,7 @@ msgstr "Redacta correu electrònic"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "Calcula els grups d'accés que utilitzaran els llistats de registres per als permisos de nivell de fila. Activa-ho després que s'hagi completat l'actualització de l'espai de treball."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22364,7 +22364,7 @@ msgstr "Privada"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Registres privats"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

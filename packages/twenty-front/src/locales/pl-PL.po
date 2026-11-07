@@ -1728,7 +1728,7 @@ msgstr "Zaakceptowane i podpisane DPA dla tej przestrzeni roboczej wraz z wersj�
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "Grupy dostępu"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3988,7 +3988,7 @@ msgstr "Zastosuj"
 #. js-lingui-id: 2+R4Vf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
-msgstr ""
+msgstr "Zastosuj prywatne rekordy do obiektów, które domyślnie nie są prywatne. Zawsze włączone w obszarach roboczych, w których ustawiono udostępnianie rekordów. Wyłączenie tej opcji sprawia, że rekordy ustawione jako prywatne w tych obiektach stają się ponownie widoczne."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6918,7 +6918,7 @@ msgstr "Napisz e-mail"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "Oblicz grupy dostępu, których listy rekordów będą używać do uprawnień na poziomie wiersza. Włącz po zakończeniu aktualizacji obszaru roboczego."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22364,7 +22364,7 @@ msgstr "Prywatna"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Prywatne rekordy"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

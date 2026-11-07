@@ -1728,7 +1728,7 @@ msgstr "此工作区已接受并签署的 DPA，包括其模板版本和日期�
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "访问组"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3988,7 +3988,7 @@ msgstr "应用"
 #. js-lingui-id: 2+R4Vf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
-msgstr ""
+msgstr "将私密记录应用于默认不私密的对象。对于已设置记录共享的工作区，此功能始终开启。关闭此功能后，这些对象上设为私密的记录将再次可见。"
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6918,7 +6918,7 @@ msgstr "撰写电子邮件"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "计算记录列表将用于行级权限的访问组。工作区升级完成后启用。"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22364,7 +22364,7 @@ msgstr "私有"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "私密记录"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
