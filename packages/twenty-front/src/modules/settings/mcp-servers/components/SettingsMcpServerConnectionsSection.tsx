@@ -26,8 +26,10 @@ export const SettingsMcpServerConnectionsSection = ({
 }: SettingsMcpServerConnectionsSectionProps) => {
   const { t } = useLingui();
   const { triggerMcpServerOAuth } = useTriggerMcpServerOAuth();
+  // Connections change outside this page, through the sign-in redirect.
   const { data, error } = useQuery(FindManyMcpServerConnectionsDocument, {
     variables: { mcpServerId },
+    fetchPolicy: 'cache-and-network',
   });
 
   const connections = data?.mcpServerConnections ?? [];
