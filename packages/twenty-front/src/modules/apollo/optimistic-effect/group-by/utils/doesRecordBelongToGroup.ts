@@ -26,7 +26,7 @@ export const doesRecordBelongToGroup = (
         continue;
       }
 
-      let recordValue = record[fieldName];
+      const recordValue = record[fieldName];
 
       if (!isDefined(recordValue)) {
         return false;
