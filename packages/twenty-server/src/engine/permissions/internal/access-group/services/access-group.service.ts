@@ -17,6 +17,7 @@ import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissio
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
+import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -43,16 +44,18 @@ export class AccessGroupService {
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
+    const workspaceCache = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      [
+        'rolesPermissions',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'userWorkspaceRoleMap',
+        'flatWorkspaceMemberMaps',
+      ],
+    );
     const { accessGroups: newAccessGroups, hasFailures } =
-      buildWorkspaceAccessGroups(
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'rolesPermissions',
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-          'userWorkspaceRoleMap',
-          'flatWorkspaceMemberMaps',
-        ]),
-      );
+      buildWorkspaceAccessGroups(workspaceCache);
 
     const existingAccessGroups =
       await this.accessGroupRepository.findAccessGroups(workspaceId);
@@ -65,20 +68,25 @@ export class AccessGroupService {
     const insertedAccessGroups = newAccessGroups.filter(
       ({ groupHash }) => !existingGroupHashes.has(groupHash),
     );
-    const staleAccessGroups =
-      hasFailures || newAccessGroups.length === 0
-        ? []
-        : existingAccessGroups.filter(
-            ({ groupHash }) => !newGroupHashes.has(groupHash),
-          );
+    const canDeleteStaleAccessGroups =
+      !hasFailures && newAccessGroups.length > 0;
+    const staleAccessGroups = existingAccessGroups.filter(
+      ({ groupHash }) =>
+        canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
+    );
 
     // Queued before writing, so a sync that fails after its writes cannot lose them
     await this.scheduleRecordAccessGroupIdsRecompute({
       workspaceId,
       objectMetadataIds: new Set(
-        [...insertedAccessGroups, ...staleAccessGroups].map(
-          ({ objectMetadataId }) => objectMetadataId,
-        ),
+        [...insertedAccessGroups, ...staleAccessGroups]
+          .map(({ objectMetadataId }) => objectMetadataId)
+          .filter((objectMetadataId) =>
+            isObjectUsingRecordAccessGroups({
+              rolesPermissions: workspaceCache.rolesPermissions,
+              objectMetadataId,
+            }),
+          ),
       ),
     });
 

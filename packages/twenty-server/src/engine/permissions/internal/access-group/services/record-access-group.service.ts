@@ -15,6 +15,7 @@ import { buildRecordAccessGroupConditionOrThrow } from 'src/engine/permissions/i
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
+import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -42,6 +43,7 @@ export class RecordAccessGroupService {
         'flatFieldMetadataMaps',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
+        'rolesPermissions',
       ],
     );
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -51,7 +53,11 @@ export class RecordAccessGroupService {
 
     if (
       !isDefined(flatObjectMetadata) ||
-      isPermissionStorageObject(flatObjectMetadata)
+      isPermissionStorageObject(flatObjectMetadata) ||
+      !isObjectUsingRecordAccessGroups({
+        rolesPermissions: metadataMaps.rolesPermissions,
+        objectMetadataId,
+      })
     ) {
       return;
     }

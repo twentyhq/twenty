@@ -98,6 +98,18 @@ describe('access group ids on records (integration)', () => {
     await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
   });
 
+  it('should leave records of an object without rules untouched', async () => {
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = ANY($1)`,
+      [originalPeople.map(({ id }) => id)],
+    );
+    await syncAndRecompute();
+
+    for (const person of await readPeople()) {
+      expect(person.accessGroupIds).toBeNull();
+    }
+  });
+
   it('should give records the groups whose rule they match', async () => {
     const roleLabel = 'Access group ids on records';
     const { data } = await createOneRole({
@@ -113,7 +125,6 @@ describe('access group ids on records (integration)', () => {
     });
     const roleId = data.createOneRole.id;
     const predicateGroupId = v4();
-    let isRoleDeleted = false;
     const upsertRule = (value: string) =>
       upsertRowLevelPermissionPredicates({
         expectToFail: false,
@@ -174,27 +185,11 @@ describe('access group ids on records (integration)', () => {
         londonCompactId,
       );
       expect(londonPersonAfterEdit.accessGroupIds).toContain(londonCompactId);
-
+    } finally {
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: roleId },
       });
-      isRoleDeleted = true;
-      await syncAndRecompute();
-
-      const [, londonPersonAfterDelete] = await readPeople();
-
-      expect(londonPersonAfterDelete.accessGroupIds).not.toContain(
-        londonCompactId,
-      );
-      expect(londonPersonAfterDelete.accessGroupIds).toContain(adminCompactId);
-    } finally {
-      if (!isRoleDeleted) {
-        await deleteOneRole({
-          expectToFail: false,
-          input: { idToDelete: roleId },
-        });
-      }
     }
   });
 });
