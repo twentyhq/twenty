@@ -42,7 +42,10 @@ export class AccessGroupSyncListener {
   async handleFeatureFlagEnabled({
     workspaceId,
     events,
-  }: CustomWorkspaceEventBatch<FeatureFlagEnabledEvent>): Promise<void> {
+  }: Pick<
+    CustomWorkspaceEventBatch<FeatureFlagEnabledEvent>,
+    'workspaceId' | 'events'
+  >): Promise<void> {
     if (
       isDefined(workspaceId) &&
       events.some(({ key }) => key === FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED)

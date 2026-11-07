@@ -46,11 +46,7 @@ const resolveMemberFieldValuesOrThrow = ({
 
   const values = Array.isArray(value) ? value : [value];
 
-  return values.length > 0
-    ? values.map((memberFieldValue) =>
-        typeof memberFieldValue === 'object' ? null : memberFieldValue,
-      )
-    : [null];
+  return values.length > 0 ? values : [null];
 };
 
 export const buildAccessGroupMemberFieldValuesOrThrow = ({

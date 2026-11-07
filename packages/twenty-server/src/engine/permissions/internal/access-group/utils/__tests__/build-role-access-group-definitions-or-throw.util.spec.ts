@@ -4,6 +4,7 @@ import {
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -175,7 +176,7 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
       { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
     ]);
 
-    if (permissions.rowLevelRecordsPermissions) {
+    if (isDefined(permissions.rowLevelRecordsPermissions)) {
       permissions.rowLevelRecordsPermissions.predicateGroups = [];
     }
 
@@ -191,7 +192,7 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
       { id: 'looping', rowLevelPermissionPredicateGroupId: 'first' },
     ]);
 
-    if (permissions.rowLevelRecordsPermissions) {
+    if (isDefined(permissions.rowLevelRecordsPermissions)) {
       permissions.rowLevelRecordsPermissions.predicateGroups = [
         { id: 'first', parentRowLevelPermissionPredicateGroupId: 'second' },
         { id: 'second', parentRowLevelPermissionPredicateGroupId: 'first' },

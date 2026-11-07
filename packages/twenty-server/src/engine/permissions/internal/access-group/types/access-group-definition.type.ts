@@ -1,6 +1,11 @@
 /* @license Enterprise */
 
-export type AccessGroupMemberFieldValue = string | number | boolean | null;
+import { type RowLevelPermissionPredicateValue } from 'twenty-shared/types';
+
+export type AccessGroupMemberFieldValue = Exclude<
+  RowLevelPermissionPredicateValue,
+  string[]
+>;
 
 export type AccessGroupMemberFieldValues = Record<
   string,
