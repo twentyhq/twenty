@@ -11,8 +11,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { RecordPrivacyWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-privacy-write-orm.service';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/private-record.repository';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import {
@@ -37,7 +37,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 @Injectable()
 export class PrivateRecordWriteService {
   constructor(
-    private readonly recordPrivacyWriteOrmService: RecordPrivacyWriteOrmService,
+    private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordSharingChangeService: RecordSharingChangeService,
@@ -128,7 +128,7 @@ export class PrivateRecordWriteService {
       );
     }
 
-    return this.recordPrivacyWriteOrmService.setRecordsPrivate({
+    return this.privateRecordRepository.setRecordsPrivate({
       workspaceId,
       flatObjectMetadata,
       recordIds,

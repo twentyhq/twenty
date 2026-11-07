@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
+import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
@@ -12,7 +12,7 @@ import { type RecordSharingArgs } from 'src/engine/permissions/record-share/type
 @Injectable()
 export class RecordSharingPermissionsService {
   constructor(
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly recordSharingReadService: RecordSharingReadService,
   ) {}
 
@@ -36,7 +36,7 @@ export class RecordSharingPermissionsService {
     workspaceMemberId: string;
   }): Promise<boolean> {
     const recordShares =
-      await this.recordPermissionReadOrmService.findRecordShares({
+      await this.recordPermissionReadRepository.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [recordId],

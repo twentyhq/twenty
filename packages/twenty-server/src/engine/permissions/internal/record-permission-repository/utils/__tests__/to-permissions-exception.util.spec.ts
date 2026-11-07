@@ -1,4 +1,4 @@
-import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
