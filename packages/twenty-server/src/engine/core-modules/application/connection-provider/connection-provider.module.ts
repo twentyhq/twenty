@@ -61,6 +61,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
+    AppConnectionAccessService,
     ConnectionProviderService,
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,

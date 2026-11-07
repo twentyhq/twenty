@@ -70,6 +70,7 @@ export class EmailAliasManagerService {
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.APP:
+      case ConnectedAccountProvider.MCP:
         return isDefined(connectedAccount.handleAliases)
           ? connectedAccount.handleAliases
           : [];

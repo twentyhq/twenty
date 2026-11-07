@@ -48,6 +48,7 @@ export class MessagingMessageOutboundService {
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:
+      case ConnectedAccountProvider.MCP:
         throw new Error(
           `Provider ${connectedAccount.provider} does not support sending messages`,
         );
@@ -83,6 +84,7 @@ export class MessagingMessageOutboundService {
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:
+      case ConnectedAccountProvider.MCP:
         throw new Error(
           `Provider ${connectedAccount.provider} does not support creating drafts`,
         );
@@ -122,6 +124,7 @@ export class MessagingMessageOutboundService {
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:
+      case ConnectedAccountProvider.MCP:
         throw new Error(
           `Provider ${connectedAccount.provider} does not support sending drafts`,
         );

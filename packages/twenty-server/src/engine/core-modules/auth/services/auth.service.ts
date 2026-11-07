@@ -1197,6 +1197,7 @@ export class AuthService {
         return [];
       case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.APP:
+      case ConnectedAccountProvider.MCP:
         return [];
       default:
         throw new Error(

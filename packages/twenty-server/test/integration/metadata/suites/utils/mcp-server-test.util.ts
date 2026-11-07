@@ -103,3 +103,42 @@ export const getMcpServer = (id: string) =>
     query: GET_MCP_SERVER_QUERY,
     variables: { id },
   });
+
+const MCP_SERVER_CONNECTION_FIELDS = `
+  id
+  handle
+  scope
+  isOwnedByCurrentUser
+  authFailedAt
+`;
+
+const GET_MCP_SERVER_CONNECTIONS_QUERY = gql`
+  query GetMcpServerConnections($mcpServerId: UUID!) {
+    mcpServerConnections(mcpServerId: $mcpServerId) {
+      ${MCP_SERVER_CONNECTION_FIELDS}
+    }
+  }
+`;
+
+const DELETE_MCP_SERVER_CONNECTION_MUTATION = gql`
+  mutation DeleteMcpServerConnection($id: UUID!) {
+    deleteMcpServerConnection(id: $id) {
+      ${MCP_SERVER_CONNECTION_FIELDS}
+    }
+  }
+`;
+
+export const getMcpServerConnections = (
+  mcpServerId: string,
+  token?: string,
+) =>
+  makeMetadataApiRequest(
+    { query: GET_MCP_SERVER_CONNECTIONS_QUERY, variables: { mcpServerId } },
+    token,
+  );
+
+export const deleteMcpServerConnection = (id: string, token?: string) =>
+  makeMetadataApiRequest(
+    { query: DELETE_MCP_SERVER_CONNECTION_MUTATION, variables: { id } },
+    token,
+  );

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+import {
+  StreamableHTTPClientTransport,
+  StreamableHTTPError,
+} from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import {
   type CallToolResult,
   CallToolResultSchema,
@@ -18,6 +19,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
+import { buildMcpServerFetch } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-fetch.util';
 import {
   McpServerException,
   McpServerExceptionCode,
@@ -31,7 +33,7 @@ const LIST_TOOLS_MAX_PAGES = 10;
 
 type McpServerTarget = Pick<
   FlatMcpServer,
-  'url' | 'connectionProviderId' | 'workspaceId'
+  'id' | 'url' | 'connectionProviderId' | 'workspaceId'
 > & { userWorkspaceId?: string };
 
 @Injectable()
@@ -99,7 +101,11 @@ export class McpServerClientService {
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: this.buildFetch({ workspaceId: target.workspaceId, timeoutMs }),
+      fetch: buildMcpServerFetch({
+        secureHttpClientService: this.secureHttpClientService,
+        workspaceId: target.workspaceId,
+        timeoutMs,
+      }),
       requestInit: isDefined(accessToken)
         ? { headers: { Authorization: `Bearer ${accessToken}` } }
         : undefined,
@@ -109,6 +115,16 @@ export class McpServerClientService {
       await client.connect(transport, { signal });
 
       return await run({ client, signal });
+    } catch (error) {
+      if (error instanceof StreamableHTTPError && error.code === 401) {
+        // Lands in toolsSyncError, which settings show as is.
+        throw new McpServerException(
+          'This MCP server requires signing in. Connect an account to use it.',
+          McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
+        );
+      }
+
+      throw error;
     } finally {
       await client.close().catch(() => undefined);
     }
@@ -148,24 +164,6 @@ export class McpServerClientService {
     return [...page.tools, ...nextPages];
   }
 
-  // The SDK reads SSE from a WHATWG Response, which the axios client yields whatever globalThis.fetch is.
-  private buildFetch({
-    workspaceId,
-    timeoutMs,
-  }: {
-    workspaceId: string;
-    timeoutMs: number;
-  }): FetchLike {
-    const axiosFetch = buildAxiosFetch(
-      this.secureHttpClientService.getHttpClient(
-        { timeout: timeoutMs },
-        { workspaceId, source: 'mcp-server' },
-      ),
-    );
-
-    return (url, init) => axiosFetch(url.toString(), init);
-  }
-
   async canCallerConnect(target: McpServerTarget): Promise<boolean> {
     return (
       !isDefined(target.connectionProviderId) ||
@@ -173,23 +171,23 @@ export class McpServerClientService {
     );
   }
 
+  // Without a connection provider, the accounts come from signing in to the server itself.
   private async findUsableConnectedAccount({
+    id,
     connectionProviderId,
     workspaceId,
     userWorkspaceId,
   }: McpServerTarget): Promise<ConnectedAccountEntity | null> {
-    if (!isDefined(connectionProviderId)) {
-      return null;
-    }
-
     const baseWhere = {
       workspaceId,
-      connectionProviderId,
+      ...(isDefined(connectionProviderId)
+        ? { connectionProviderId }
+        : { mcpServerId: id }),
       archivedAt: IsNull(),
       authFailedAt: IsNull(),
     };
 
-    return this.connectedAccountRepository.findOne({
+    const connectedAccounts = await this.connectedAccountRepository.find({
       where: isDefined(userWorkspaceId)
         ? buildConnectedAccountUsableByCallerWhere({
             baseWhere,
@@ -198,20 +196,28 @@ export class McpServerClientService {
         : { ...baseWhere, scope: 'WORKSPACE' },
       order: { createdAt: 'ASC' },
     });
+
+    return (
+      connectedAccounts.find(
+        (connectedAccount) =>
+          connectedAccount.userWorkspaceId === userWorkspaceId,
+      ) ??
+      connectedAccounts[0] ??
+      null
+    );
   }
 
   private async resolveAccessToken(
     target: McpServerTarget,
   ): Promise<string | null> {
     const { connectionProviderId, workspaceId } = target;
-
-    if (!isDefined(connectionProviderId)) {
-      return null;
-    }
-
     const connectedAccount = await this.findUsableConnectedAccount(target);
 
     if (!isDefined(connectedAccount)) {
+      if (!isDefined(connectionProviderId)) {
+        return null;
+      }
+
       throw new McpServerException(
         `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
         McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,

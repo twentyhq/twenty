@@ -6,4 +6,5 @@ export enum ConnectedAccountProvider {
   SAML = 'saml',
   EMAIL_GROUP = 'email_group',
   APP = 'app',
+  MCP = 'mcp',
 }

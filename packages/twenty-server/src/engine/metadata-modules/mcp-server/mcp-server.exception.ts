@@ -15,6 +15,9 @@ export enum McpServerExceptionCode {
   MCP_SERVER_URL_CHANGE_WHILE_CONNECTED = 'MCP_SERVER_URL_CHANGE_WHILE_CONNECTED',
   MCP_SERVER_TOOL_LIST_TOO_LARGE = 'MCP_SERVER_TOOL_LIST_TOO_LARGE',
   MCP_SERVER_NOT_CONNECTED = 'MCP_SERVER_NOT_CONNECTED',
+  MCP_SERVER_SIGN_IN_NOT_AVAILABLE = 'MCP_SERVER_SIGN_IN_NOT_AVAILABLE',
+  MCP_SERVER_SIGN_IN_FAILED = 'MCP_SERVER_SIGN_IN_FAILED',
+  MCP_SERVER_CONNECTION_NOT_FOUND = 'MCP_SERVER_CONNECTION_NOT_FOUND',
 }
 
 const getMcpServerExceptionUserFriendlyMessage = (
@@ -41,6 +44,12 @@ const getMcpServerExceptionUserFriendlyMessage = (
       return msg`The MCP server exposes too many tools to be synced.`;
     case McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED:
       return msg`Connect an account for this MCP server first.`;
+    case McpServerExceptionCode.MCP_SERVER_SIGN_IN_NOT_AVAILABLE:
+      return msg`This MCP server does not offer a sign-in Twenty can use.`;
+    case McpServerExceptionCode.MCP_SERVER_SIGN_IN_FAILED:
+      return msg`Signing in to the MCP server failed. Please try again.`;
+    case McpServerExceptionCode.MCP_SERVER_CONNECTION_NOT_FOUND:
+      return msg`MCP server connection not found.`;
     default:
       assertUnreachable(code);
   }

@@ -18,6 +18,7 @@ import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/fla
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
+import { McpServerConnectionService } from 'src/engine/metadata-modules/mcp-server/oauth/services/mcp-server-connection.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -30,6 +31,7 @@ export class McpServerService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly mcpServerToolSyncService: McpServerToolSyncService,
+    private readonly mcpServerConnectionService: McpServerConnectionService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -149,6 +151,11 @@ export class McpServerService {
         existingFlatMcpServer.connectionProviderId;
 
     if (hasConnectionChanged) {
+      await this.mcpServerConnectionService.forgetSignIns({
+        mcpServerId: input.id,
+        workspaceId,
+      });
+
       return this.syncTools({
         id: input.id,
         workspaceId,
