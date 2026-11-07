@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CurrencyPicker } from 'twenty-ui/components/input';
 
 import { useCurrencyPickerCurrencies } from '@/ui/input/components/internal/currency/hooks/useCurrencyPickerCurrencies';
+import { isCurrencyCodeSelectable } from '@/ui/input/components/internal/currency/utils/isCurrencyCodeSelectable';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
@@ -44,7 +45,12 @@ export const CurrencyPickerDropdownButton = ({
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <CurrencyPicker.Root
-        currencies={currencyPickerCurrencies}
+        currencies={currencyPickerCurrencies.filter(({ code }) =>
+          isCurrencyCodeSelectable({
+            currencyCode: code,
+            selectedCurrencyCode,
+          }),
+        )}
         value={selectedCurrencyCode}
         onValueChange={handleValueChange}
         disabled={disabled}
