@@ -55,13 +55,6 @@ const SET_PRIVATE = parse(
   `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { ${fields} } }`,
 );
 
-const setPrivateRecordsEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 describe('Access to all records and ownership transfer', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
@@ -310,7 +303,6 @@ describe('Access to all records and ownership transfer', () => {
   });
 
   it('should keep private records private while record sharing is off', async () => {
-    await setPrivateRecordsEnabled(true);
     await setRecordSharingEnabled(false);
 
     try {
@@ -319,7 +311,6 @@ describe('Access to all records and ownership transfer', () => {
       );
     } finally {
       await setRecordSharingEnabled(true);
-      await setPrivateRecordsEnabled(false);
     }
   });
 

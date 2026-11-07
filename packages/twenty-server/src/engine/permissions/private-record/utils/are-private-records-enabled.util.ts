@@ -1,11 +1,12 @@
 /* @license Enterprise */
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 
-// Sharing used to gate private writes, so its workspaces may hold private records until the 2.57 backfill has run everywhere
+// Sharing used to gate private writes, so a workspace that ever set it may hold private records, even with it back off
 export const arePrivateRecordsEnabled = ({
   flatObjectMetadata,
   featureFlagsMap,
@@ -15,4 +16,4 @@ export const arePrivateRecordsEnabled = ({
 }): boolean =>
   isPrivateByDefaultObject(flatObjectMetadata) ||
   (featureFlagsMap[FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED] ?? false) ||
-  (featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false);
+  isDefined(featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]);

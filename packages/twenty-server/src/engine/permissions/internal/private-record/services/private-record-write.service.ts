@@ -96,6 +96,7 @@ export class PrivateRecordWriteService {
     return this.recordSharingChangeService.runChange({
       args,
       write: (change) => this.writeRecordPrivacy({ ...change, args }),
+      isChangeEnabled: ({ canSetRecordPrivacy }) => canSetRecordPrivacy,
     });
   }
 

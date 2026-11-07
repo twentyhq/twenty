@@ -19,13 +19,14 @@ describe('arePrivateRecordsEnabled', () => {
   });
 
   it.each([
-    FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-  ])('should be on with %s', (flag) => {
+    { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
+    { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true },
+    { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false },
+  ])('should be on with %j', (featureFlagsMap) => {
     expect(
       arePrivateRecordsEnabled({
         flatObjectMetadata: ORDINARY_OBJECT,
-        featureFlagsMap: { [flag]: true },
+        featureFlagsMap,
       }),
     ).toBe(true);
   });

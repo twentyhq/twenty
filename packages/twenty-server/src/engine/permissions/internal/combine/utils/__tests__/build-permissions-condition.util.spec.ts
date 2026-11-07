@@ -213,6 +213,24 @@ describe('buildPermissionsCondition', () => {
     ).toMatchObject({ kind: 'gated' });
   });
 
+  it('keeps private conditions without a share block when only private records are on', () => {
+    const policy = buildConditionOutcome({
+      principals: readEverything,
+      metadataMaps,
+      tableAlias: 'company',
+      flatObjectMetadata: buildObject({ id: 'company' }),
+      operationType: 'read',
+    });
+
+    expect(policy).toMatchObject({
+      kind: 'gated',
+      condition: { sql: expect.stringContaining('_isPrivate') },
+    });
+    expect(policy.kind === 'gated' ? policy.condition.sql : '').not.toContain(
+      'recordShare',
+    );
+  });
+
   it('adds nothing for private records and shares with both flags off', () => {
     const company = buildObject({ id: 'company' });
 
