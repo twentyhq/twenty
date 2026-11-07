@@ -72,6 +72,7 @@ const getWrapper =
           objectMetadataItem: {},
           objectMetadataLabel: '',
           coreObjectName: null,
+          currentView: null,
         },
         isInPreviewMode: false,
       }}

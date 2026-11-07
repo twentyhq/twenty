@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/utils/generateCallRecordingSummary';
 
@@ -32,7 +31,7 @@ const mutationMock = vi.fn();
 const CLIENT = {
   query: queryMock,
   mutation: mutationMock,
-} as unknown as CoreApiClient;
+};
 
 const seedCallRecording = (node: object) => {
   queryMock.mockResolvedValue({

@@ -1,5 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
@@ -14,7 +15,11 @@ export const buildRecordInputFromFilter = ({
   timeZone,
 }: {
   currentRecordFilters: RecordFilter[];
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: {
+    fields: (Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'options'> & {
+      relation?: Pick<FieldMetadataItemRelation, 'type'> | null;
+    })[];
+  };
   currentWorkspaceMember?: CurrentWorkspaceMember;
   currentRecordId?: string;
   timeZone: string;

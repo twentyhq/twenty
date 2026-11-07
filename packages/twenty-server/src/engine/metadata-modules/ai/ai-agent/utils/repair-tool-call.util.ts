@@ -29,6 +29,7 @@ type ToolCall = {
 
 type RepairToolCallBillingContext = {
   aiBillingService: AiBillingService;
+  isContentRecordingAllowed: boolean;
   modelId: string;
   workspaceId: string;
   spenders: UsageSpenders;
@@ -90,6 +91,7 @@ export const repairToolCall = async ({
       ].join('\n'),
       ...buildAiTelemetry({
         functionId: 'repair-tool-call',
+        isContentRecordingAllowed: billingContext.isContentRecordingAllowed,
         workspaceId: billingContext.workspaceId,
         userWorkspaceId: billingContext.spenders.userWorkspaceId,
       }),

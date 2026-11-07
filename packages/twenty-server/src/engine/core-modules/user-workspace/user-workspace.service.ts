@@ -39,8 +39,7 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -58,13 +57,12 @@ export class UserWorkspaceService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
@@ -247,7 +245,7 @@ export class UserWorkspaceService {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.userRoleService.assignRoleToManyUserWorkspace({
+    await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
       roleId: resolvedRoleId,
@@ -278,9 +276,10 @@ export class UserWorkspaceService {
       );
     }
 
-    await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-      { roleId: resolvedRoleId, workspaceId: workspace.id },
-    );
+    await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
+      roleId: resolvedRoleId,
+      workspaceId: workspace.id,
+    });
 
     return resolvedRoleId;
   }

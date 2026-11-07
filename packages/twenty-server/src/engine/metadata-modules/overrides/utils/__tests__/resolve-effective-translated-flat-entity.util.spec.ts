@@ -14,7 +14,7 @@ const flatFieldMetadata = {
   description: null,
   icon: 'IconBuilding',
   isActive: true,
-  overrides: null as unknown,
+  overrides: null,
 };
 
 const buildI18nContext = (

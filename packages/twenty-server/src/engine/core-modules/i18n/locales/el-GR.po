@@ -219,11 +219,6 @@ msgstr "Μια συμφωνία κερδίζεται"
 msgid "A DNS manager error occurred."
 msgstr "Παρουσιάστηκε σφάλμα διαχειριστή DNS."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "Εντοπίστηκε διπλότυπη καταχώριση."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "Λείπει απαιτούμενο πεδίο."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Λείπει ένα απαιτούμενο πεδίο. Παρακαλούμε δώστε όλες τις απαιτούμενες τιμές και προσπαθήστε ξανά."
 
@@ -1173,7 +1168,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "Παρουσιάστηκε σφάλμα με τα δεδομένα της ταυτοποίησης δύο παραγόντων."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1197,6 +1192,11 @@ msgstr "Μια εξαγωγή εκτελείται ήδη για αυτό το w
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "Μια εξαγωγή εκτελείται ήδη σε αυτόν τον χώρο εργασίας. Περιμένετε να ολοκληρωθεί."
+
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "Μια εξωτερική υπηρεσία άργησε πολύ να απαντήσει."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1663,6 +1663,7 @@ msgstr "επισύναψε ένα αρχείο"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Επισυνάπτεται σε"
@@ -1710,6 +1711,7 @@ msgid "Attachment record position"
 msgstr "Θέση εγγραφής συνημμένου"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1814,11 +1816,6 @@ msgstr "Η ταυτοποίηση απέτυχε, παρακαλούμε συν�
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Η ταυτοποίηση δεν είναι ενεργοποιημένη με αυτόν τον πάροχο."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "Απαιτείται έλεγχος ταυτότητας για να αποκτήσετε πρόσβαση σε αυτή τη λειτουργία. Παρακαλώ συνδεθείτε και δοκιμάστε ξανά."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -2959,7 +2956,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Επιλέξτε έναν υπάρχοντα τύπο δραστηριότητας χρονολογίου για παράκαμψη."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Επιλέξτε ένα άτομο ή έναν ρόλο για κοινή χρήση."
 
@@ -3018,6 +3015,11 @@ msgstr "Διακριτικό αξίωσης"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "Η δυνατότητα διεκδίκησης δεν έχει ρυθμιστεί σε αυτόν τον διακομιστή. Ζητήστε από έναν διαχειριστή να ρυθμίσει την εφαρμογή GitHub OAuth."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "Η ταξινόμηση δεν είναι διαθέσιμη με τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3343,10 +3345,10 @@ msgstr "Συνδέστε πρώτα έναν λογαριασμό για αυτ�
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Σύνδεση δεν επιτρέπεται για το {connectFieldName} στο {objectMetadataNameSingular}."
 
-#. js-lingui-id: eTJ1jL
+#. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Connect your mailbox"
-msgstr "Συνδέστε το γραμματοκιβώτιό σας"
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr "Συνδέστε το email και το ημερολόγιό σας για να δείτε αμέσως ολόκληρο το δίκτυό σας. Διαρκεί μόνο 30 δευτερόλεπτα."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3822,7 +3824,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Δημιουργήθηκαν μεταδεδομένα πεδίου, δεν βρέθηκαν μεταδεδομένα γονικού αντικειμένου"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Η δημιουργία μιας εγγραφής ιδιωτικού αντικειμένου απαιτεί το όρισμα shareWith"
 
@@ -4057,6 +4059,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "Πίνακες Ελέγχου"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr "Τα δεδομένα εισήχθησαν"
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -4070,6 +4077,7 @@ msgid "Data Model"
 msgstr "Μοντέλο Δεδομένων"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Η δομή δεδομένων δεν είναι έγκυρη."
@@ -4167,6 +4175,11 @@ msgstr "Συμφωνία"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "Συμφωνία"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr "Οι επακόλουθες ενέργειες για συμφωνίες είναι σε καλό δρόμο"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4498,11 +4511,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "Παραδόθηκε στις"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "απορρίφθηκε"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4734,9 +4742,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Κάθε πεδίο διαδρομής σχετικής εγγραφής πρέπει να ανήκει στο αντικείμενο στο οποίο οδηγεί η προηγούμενη σχέση"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Κάθε καταχώριση shareWith πρέπει να στοχεύει ακριβώς ένα από τα workspaceMemberId, roleId ή everyone"
+
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr "Κάθε εβδομάδα, κάθε συμφωνία που πρόκειται να κλείσει λαμβάνει ένα προσχέδιο επακόλουθης ενέργειας."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5064,6 +5077,11 @@ msgstr "Σε ουρά"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Εμπλουτισμός"
+
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Εισαγάγετε ένα όνομα από 1 έως {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} χαρακτήρες και υποστηριζόμενες επιλογές εμφάνισης βοηθού."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5591,6 +5609,23 @@ msgstr "Το όνομα πεδίου δεν είναι συγχρονισμέν�
 msgid "Field not found."
 msgstr "Το πεδίο δεν βρέθηκε."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "Το πεδίο της επιλογής πεδίου δεν βρέθηκε"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "Η επιλογή πεδίου δεν βρέθηκε"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "Η επιλογή πεδίου δεν βρέθηκε."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -5807,6 +5842,7 @@ msgstr "Αρχείο"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Το αρχείο {fileId} είναι ήδη συσχετισμένο με ένα μόνιμο πεδίο αρχείων. Παρακαλούμε μεταφορτώστε ξανά το αρχείο."
 
@@ -5896,6 +5932,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Αρχεία"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr "Αρχεία που επισυνάπτονται στο μήνυμα"
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -5979,11 +6021,6 @@ msgstr "Παρακολούθηση συμφωνιών που κλείνουν"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
 msgstr "Οδηγίες παρακολούθησης"
-
-#. js-lingui-id: xRdoZk
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Follow-up request sent"
-msgstr "Το αίτημα παρακολούθησης στάλθηκε"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6407,6 +6444,11 @@ msgstr "Μη έγκυρο όνομα handler"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "Το handlerName πρέπει να είναι έγκυρο αναγνωριστικό JavaScript ή διακεκομμένη διαδρομή"
 
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr "Έτοιμο για παράδοση"
+
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6592,6 +6634,11 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "Εισαγωγή {objectLabelPlural}"
 
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr "Εισαγωγή των επαφών σας"
+
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
@@ -6604,6 +6651,7 @@ msgid "In progress"
 msgstr "Σε εξέλιξη"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Τα Εισερχόμενα δεν είναι ενεργοποιημένα για αυτόν τον χώρο εργασίας."
@@ -6729,8 +6777,8 @@ msgid "Internal name of the campaign"
 msgstr "Εσωτερικό όνομα της καμπάνιας"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Μη έγκυρο επίπεδο πρόσβασης."
 
@@ -6948,6 +6996,11 @@ msgstr "Μη έγκυρο κλειδί σημαίας λειτουργίας."
 msgid "Invalid field input."
 msgstr "Μη έγκυρα δεδομένα εισόδου πεδίου."
 
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "Μη έγκυρα δεδομένα εισόδου επιλογής πεδίου."
+
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
 msgid "Invalid field selection. Check the requested fields and relation depth."
@@ -6992,7 +7045,7 @@ msgid "Invalid filter parameter."
 msgstr "Μη έγκυρη παράμετρος φίλτρου."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "Μη έγκυρη τιμή φίλτρου"
 
@@ -7104,9 +7157,9 @@ msgid "Invalid input for application registration."
 msgstr "Μη έγκυρα δεδομένα εισόδου για την καταχώριση εφαρμογής."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "Δόθηκαν μη έγκυρα δεδομένα εισόδου."
 
@@ -7443,8 +7496,8 @@ msgstr "Μη έγκυρη μορφή URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Μη έγκυρη μορφή UUID."
 
@@ -7693,6 +7746,11 @@ msgstr "Στάλθηκαν προσκλήσεις"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
 msgstr "Προσκαλέστε την ομάδα σας"
+
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr "Οι προσκλήσεις στάλθηκαν. Προσθέστε περισσότερα άτομα οποιαδήποτε στιγμή."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8329,6 +8387,11 @@ msgstr "Κάντε το ιδιωτικό"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Κάντε τη ροή εργασίας ιδιωτική"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr "Διαχειριστείτε τις εφαρμογές σας στις ρυθμίσεις."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9278,6 +9341,11 @@ msgstr "Η ρύθμιση νέου χώρου εργασίας είναι απε
 msgid "No"
 msgstr "Όχι"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "Κανένα μοντέλο AI δεν πληροί τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9403,6 +9471,11 @@ msgstr "Δεν καθορίστηκαν έγκυροι παραλήπτες"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "No verified sending domain matches this from address."
 msgstr "Κανένα επαληθευμένο όνομα τομέα αποστολής δεν αντιστοιχεί σε αυτή τη διεύθυνση αποστολέα."
+
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Κανένα από τα άτομα που επιλέξατε δεν μπορεί να απαντήσει σε αυτή τη συνομιλία. Προσθέστε τον/την {AGENT_CHAT_ASSISTANT_NAME} ή κάποιον που μπορεί να απαντήσει."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9814,6 +9887,11 @@ msgstr "Το ObjectMetadataId είναι απαραίτητο για τη δημ
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "Το ObjectMetadataId είναι απαραίτητο κατά τη δημιουργία μιας προβολής"
 
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr "Τα αντικείμενα, τα πεδία και οι προβολές προσαρμόζονται στον τρόπο εργασίας της ομάδας σας."
+
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
@@ -10130,6 +10208,12 @@ msgstr "Η ετικέτα επιλογής πρέπει να είναι μια �
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Η τιμή επιλογής \"{sanitizedValue}\" είναι κάτω από 1 χαρακτήρα"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "Η τιμή επιλογής \"{value}\" υπάρχει ήδη σε αυτό το πεδίο"
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10240,12 @@ msgstr "Η τιμή επιλογής πρέπει να είναι μια χορ�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "Απαιτούνται επιλογές για πεδία λίστας"
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "Οι επιλογές μπορούν να ανήκουν μόνο σε πεδία επιλογής, πολλαπλής επιλογής ή αξιολόγησης"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10387,7 +10477,7 @@ msgstr "Συμμετέχοντες"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "Οι κωδικοί συνεργατών ισχύουν μόνο για νέους πελάτες του Twenty."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10901,6 +10991,16 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Τύπος οντότητας"
 
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Οι ρυθμίσεις απορρήτου δεν είναι διαθέσιμες μέχρι να ολοκληρωθεί η αναβάθμιση."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Οι ρυθμίσεις απορρήτου δεν είναι ενεργοποιημένες για αυτόν τον χώρο εργασίας."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11039,11 +11139,6 @@ msgstr "Η εκτέλεση του ερωτήματος απέτυχε."
 msgid "Query failed."
 msgstr "Το ερώτημα απέτυχε."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "Το ερώτημα έληξε λόγω χρονικού ορίου. Δοκιμάστε ξανά."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11174,7 +11269,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "Εγγραφή στην οποία επισυνάπτεται ένα νήμα συνομιλίας πράκτορα"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "Η εγγραφή δεν πληροί τους περιορισμούς ασφαλείας."
 
@@ -12514,11 +12609,6 @@ msgstr "Απαιτείται τίτλος στοιχείου μενού ρυθμ
 msgid "Setup instructions"
 msgstr "Οδηγίες εγκατάστασης"
 
-#. js-lingui-id: gIoyTf
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Setup request sent"
-msgstr "Το αίτημα ρύθμισης στάλθηκε"
-
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
@@ -12574,17 +12664,17 @@ msgid "Shared record"
 msgstr "Κοινόχρηστη εγγραφή"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "Το shareWith ορίζει έναν ρόλο που δεν ανήκει σε αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "Το shareWith ορίζει ένα μέλος χώρου εργασίας που δεν ανήκει σε αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "Το shareWith ορίζει την ίδια οντότητα περισσότερες από μία φορές"
 
@@ -12600,10 +12690,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Σύντομοι σύνδεσμοι"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Συνδεθείτε ως μέλος του χώρου εργασίας ή χρησιμοποιήστε ένα διακριτικό εφαρμογής για να αλλάξετε αυτήν τη συνομιλία."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Συνδεθείτε ως μέλος του χώρου εργασίας ή χρησιμοποιήστε ένα διακριτικό εφαρμογής για να υποβάλετε αυτό το αίτημα."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12707,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Μερικές από τις άδειες που επιλέξατε δεν είναι έγκυρες. Παρακαλώ δοκιμάστε ξανά με έγκυρες ρυθμίσεις άδειας."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
 
@@ -12868,11 +12958,6 @@ msgstr "Κενά και κόμμα"
 msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "Υπολογιστικό φύλλο"
-
-#. js-lingui-id: 73/iLE
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Spreadsheet uploaded"
-msgstr "Το υπολογιστικό φύλλο μεταφορτώθηκε"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -13540,11 +13625,6 @@ msgstr "Ο πράκτορας που πρέπει να εκτελέσει αυτ
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Ο πράκτορας που αναζητάτε δεν βρέθηκε. Μπορεί να έχει διαγραφεί ή μπορεί να μην έχετε πρόσβαση σε αυτόν."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "Το κλειδί API δεν έχει ανατεθεί με έγκυρο ρόλο. Παρακαλώ ελέγξτε τη διαμόρφωση του κλειδιού API σας."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13555,11 +13635,6 @@ msgstr "Το μανιφέστο της εφαρμογής δηλώνει μη έ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Το κανάλι προέλευσης της εφαρμογής δεν αντιστοιχεί στον αναμενόμενο τύπο."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "Δεν έχει ανατεθεί έγκυρος ρόλος στην εφαρμογή. Παρακαλώ ελέγξτε τη διαμόρφωση της εφαρμογής σας."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -13582,6 +13657,11 @@ msgstr "Οι εξαρτήσεις παραγωγής της εφαρμογής �
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Τα δικαιώματα που ζήτησε η εφαρμογή έχουν αλλάξει. Ελέγξτε τα ξανά πριν εγκρίνετε."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Το προφίλ του βοηθού δεν μπορεί να ενημερωθεί πριν ενεργοποιηθεί ο χώρος εργασίας."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14002,7 +14082,7 @@ msgstr "Δεν ήταν δυνατή η πρόσβαση στο μητρώο π�
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "Ο κωδικός συνεργάτη δεν μπορεί πλέον να προστεθεί ή να αλλάξει. Επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14108,6 +14188,11 @@ msgstr "Το δεύτερο μέλος στο σταθερό ζεύγος άμε
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "Το επιλεγμένο μοντέλο έχει απενεργοποιηθεί από τον διαχειριστή."
+
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "Το επιλεγμένο μοντέλο δεν επιτρέπεται από τις ρυθμίσεις απορρήτου αυτού του χώρου εργασίας."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
@@ -14315,12 +14400,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Το μέλος του χώρου εργασίας που πραγματοποίησε την τελευταία ενημέρωση της εγγραφής"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ο ρόλος τους δεν μπορεί να αποκτήσει πρόσβαση σε αυτές τις εγγραφές και αυτό το αντικείμενο κοινοποιείται μόνο σε ρόλους που μπορούν."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ο ρόλος τους δεν μπορεί να δει αυτή την εγγραφή και αυτό το αντικείμενο κοινοποιείται μόνο σε άτομα που μπορούν."
 
@@ -14740,6 +14825,11 @@ msgstr "Αυτό το ευρετήριο δεν υπάρχει ή έχει ήδ�
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Αυτό το στιγμιότυπο δεν ανέφερε αναγνωριστικό διακομιστή. Ορίστε το SERVER_ID σε αυτό το στιγμιότυπο και δοκιμάστε ξανά."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Αυτή η εργασία είναι πολύ μεγάλη για να προστεθεί στην ουρά."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -14865,7 +14955,7 @@ msgid "This operation is not supported."
 msgstr "Αυτή η λειτουργία δεν υποστηρίζεται."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Αυτή η λειτουργία αναφέρεται σε εγγραφή που δεν υπάρχει ή δεν μπορεί να τροποποιηθεί λόγω υπαρχουσών σχέσεων."
 
@@ -14877,7 +14967,7 @@ msgstr "Αυτό το κλειδί Οργανισμού χρησιμοποιεί
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "Αυτός ο κωδικός συνεργάτη δεν είναι έγκυρος."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -14916,12 +15006,12 @@ msgid "This public domain is already registered."
 msgstr "Αυτός ο δημόσιος τομέας έχει ήδη καταχωρηθεί."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Αυτή η εγγραφή υπάρχει ήδη. Παρακαλώ ελέγξτε τα δεδομένα σας και δοκιμάστε ξανά."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Αυτή η εγγραφή δεν μπορεί να διαγραφεί επειδή εξακολουθεί να αναφέρεται από άλλες εγγραφές."
 
@@ -15484,6 +15574,11 @@ msgstr "Βρέθηκαν υπερβολικά πολλοί υποψήφιοι δ
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Πάρα πολλοί συμμετέχοντες: {attendeeCount}. Το μέγιστο επιτρεπόμενο είναι {MAX_EMAIL_RECIPIENTS}."
 
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Πάρα πολλές εργασίες βρίσκονται σε αναμονή. Δοκιμάστε ξανά αργότερα."
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
@@ -15700,6 +15795,11 @@ msgstr "Στροφή"
 msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "Στροφή"
+
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr "Ενεργοποιήστε το και οι κερδισμένες συμφωνίες μετακινούνται μόνες τους στην παράδοση."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16838,8 +16938,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "Τα παρακολουθούμενα πεδία ισχύουν μόνο για ενεργοποιήσεις συμβάντος βάσης δεδομένων \"updated\""
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Αντιμετωπίζουμε προσωρινό πρόβλημα με τη βάση δεδομένων μας. Παρακαλούμε προσπαθήστε ξανά αργότερα."
 
@@ -17212,11 +17312,6 @@ msgstr "Η αντιγραφή της ροής εργασίας απέτυχε, �
 msgid "Workflow edge not found."
 msgstr "Η ακμή ροής εργασίας δεν βρέθηκε."
 
-#. js-lingui-id: 5ENQ3i
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Workflow enabled"
-msgstr "Η ροή εργασίας ενεργοποιήθηκε"
-
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
@@ -17552,6 +17647,11 @@ msgstr "Σπορά δεδομένων επίδειξης χώρου εργασί
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
 msgstr "Ο χώρος εργασίας δεν υπάρχει."
+
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr "Χώρος εργασίας προσαρμοσμένος στη διαδικασία σας"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -17893,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για τον εαυτό σας. Αντ' αυτού, επαναφέρετε τον έλεγχο ταυτότητας δύο παραγόντων από το προφίλ σας."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Δεν μπορείτε να αλλάξετε το δικό σας ρόλο. Παρακαλώ ζητήστε από άλλον διαχειριστή να ενημερώσει το ρόλο σας."
 
@@ -17914,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Δεν μπορείτε να αφαιρέσετε την πρόσβαση στις ρυθμίσεις από τον δικό σας ρόλο. Ζητήστε από έναν άλλο διαχειριστή να κάνει αυτή την αλλαγή."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο διαχειριστή από τον τελευταίο διαχειριστή. Παρακαλώ αναθέστε έναν άλλο διαχειριστή πρώτα."
 
@@ -18036,6 +18136,11 @@ msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν 
 msgid "You do not have permission to perform this workflow action."
 msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν την ενέργεια ροής εργασίας."
 
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Δεν έχετε άδεια να ενημερώσετε το προφίλ του βοηθού. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
+
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
@@ -18149,14 +18254,19 @@ msgstr "Η μέθοδος πληρωμής σας απορρίφθηκε. Ενη
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Δεν ήταν δυνατή η προσθήκη των πιστώσεων που αγοράσατε. Επικοινωνήστε με την υποστήριξη."
 
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr "Οι εγγραφές σας έχουν εισαχθεί και είναι οργανωμένες γύρω από τον τρόπο που εργάζεστε."
+
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ο ρόλος σας δεν μπορεί να διαγράψει ορισμένες από αυτές τις εγγραφές, επομένως δεν μπορούν να συγχωνευτούν."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ο ρόλος σας σε αυτό το workspace δεν μπορεί να βρεθεί. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 

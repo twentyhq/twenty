@@ -1,6 +1,8 @@
 import { installLocalStyleOnBaseElements } from '../installLocalStyleOnBaseElements';
 
-class FakeElement {}
+class FakeElement {
+  declare style: CSSStyleDeclaration;
+}
 class FakeRemoteElement extends FakeElement {}
 
 describe('installLocalStyleOnBaseElements', () => {
@@ -9,7 +11,7 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should make Object.assign onto element style succeed', () => {
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = new FakeElement();
 
     expect(() =>
       Object.assign(element.style, { position: 'absolute', fontSize: '14px' }),
@@ -18,7 +20,7 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should round trip values through getPropertyValue', () => {
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = new FakeElement();
 
     element.style.fontFamily = 'Inter';
 
@@ -26,8 +28,8 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should return a distinct declaration per element', () => {
-    const first = new FakeElement() as unknown as HTMLElement;
-    const second = new FakeElement() as unknown as HTMLElement;
+    const first = new FakeElement();
+    const second = new FakeElement();
 
     first.style.color = 'red';
 
@@ -35,7 +37,7 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should keep semicolons inside quoted values and urls in cssText', () => {
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = new FakeElement();
 
     element.style.cssText =
       'content: "a;b"; background: url(data:image/png;base64,abc)';
@@ -47,7 +49,7 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should populate declarations from a cssText assignment', () => {
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = new FakeElement();
 
     element.style.color = 'red';
     element.style.cssText = 'font-size: 14px; font-weight: 700';
@@ -59,7 +61,7 @@ describe('installLocalStyleOnBaseElements', () => {
   });
 
   it('should return the same declaration across reads of one element', () => {
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = new FakeElement();
 
     expect(element.style).toBe(element.style);
   });
@@ -71,8 +73,8 @@ describe('installLocalStyleOnBaseElements', () => {
       configurable: true,
     });
 
-    const element = new FakeRemoteElement() as unknown as HTMLElement;
+    const element = new FakeRemoteElement();
 
-    expect(element.style).toBe(subclassStyle as unknown as CSSStyleDeclaration);
+    expect(element.style).toBe(subclassStyle);
   });
 });

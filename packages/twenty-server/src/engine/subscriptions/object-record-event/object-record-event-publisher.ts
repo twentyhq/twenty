@@ -23,9 +23,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
+import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -34,11 +32,10 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
@@ -61,7 +58,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordEventPermissionsService: RecordEventPermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
@@ -90,9 +87,6 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate(eventBatch);
-
     const streamIdsToRemove: string[] = [];
     const subscriberAuthContexts = new Map<
       string,
@@ -115,7 +109,6 @@ export class ObjectRecordEventPublisher {
         workspaceEventBatch: eventBatch,
         permissionsContext,
         workspaceMemberIdByUserId,
-        eventRecordAccessGate,
         subscriberAuthContexts,
       });
     }
@@ -142,7 +135,6 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch,
     permissionsContext,
     workspaceMemberIdByUserId,
-    eventRecordAccessGate,
     subscriberAuthContexts,
   }: {
     streamChannelId: string;
@@ -150,7 +142,6 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
     workspaceMemberIdByUserId: Map<string, string>;
-    eventRecordAccessGate: EventRecordAccessGate;
     subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
   }): Promise<void> {
     const subscriberAuthContext: SerializableAuthContext = {
@@ -188,60 +179,25 @@ export class ObjectRecordEventPublisher {
         : {}),
     };
 
-    const recordsPermissions =
-      await this.recordAccessPolicyService.findRecordsPermissions(
-        permissionsAuthContext,
-      );
-
-    if (!isDefined(recordsPermissions)) {
-      return;
-    }
-
     const matchedEvents: {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
-    const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(
-        permissionsAuthContext,
-      );
+    const readableEvents =
+      await this.recordEventPermissionsService.filterReadableEvents({
+        authContext: permissionsAuthContext,
+        eventBatch: workspaceEventBatch,
+      });
 
-    if (admittedRecordIds.size === 0) {
-      return;
-    }
-
-    for (const event of workspaceEventBatch.events) {
+    for (const event of readableEvents) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
-      const eventWithObjectName: ObjectRecordSubscriptionEvent = {
+      const filteredEvent: ObjectRecordSubscriptionEvent = {
         action,
         objectNameSingular,
         ...event,
       };
-
-      const filteredEvent = omitRestrictedFieldsFromEvent({
-        event: eventWithObjectName,
-        objectMetadata: workspaceEventBatch.objectMetadata,
-        recordsPermissions,
-        flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-      });
-
-      const filteredProperties = filteredEvent.properties as {
-        updatedFields?: string[];
-      };
-
-      if (
-        isDefined(filteredProperties.updatedFields) &&
-        filteredProperties.updatedFields.length === 0
-      ) {
-        continue;
-      }
-
-      if (!admittedRecordIds.has(filteredEvent.recordId)) {
-        continue;
-      }
 
       const matchedQueryIds = this.getMatchingObjectRecordQueryIds({
         queries: streamData.queries,
@@ -275,7 +231,6 @@ export class ObjectRecordEventPublisher {
             applicationId: subscriberAuthContext.applicationId,
           }),
           permissionsAuthContext,
-          recordsPermissions,
         });
       } catch (error) {
         this.logger.warn(
@@ -305,14 +260,12 @@ export class ObjectRecordEventPublisher {
     workspaceId,
     subscriberAuthContext,
     permissionsAuthContext,
-    recordsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
     subscriberAuthContext: Promise<WorkspaceAuthContext>;
     permissionsAuthContext: PermissionsAuthContext;
-    recordsPermissions: RoleRecordsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -342,17 +295,23 @@ export class ObjectRecordEventPublisher {
       }
     }
 
-    const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
-      readableObjectMetadataIds:
-        await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
           authContext: permissionsAuthContext,
+          objectMetadataId: objectMetadata.id,
           flatObjectMetadataMaps,
-        }),
+          shouldIncludeRelationTargets: true,
+        },
+      );
+
+    const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
+      readableObjectMetadataIds,
+      unreadableFieldMetadataIds,
       depth: 1,
       flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      recordsPermissions,
       onlyUseLabelIdentifierFieldsInRelations: true,
       recurseIntoJunctionTableRelations: true,
     });
@@ -537,7 +496,7 @@ export class ObjectRecordEventPublisher {
         : [deliveredRecord];
 
     return candidateRecords.some((record) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingFilter({
         record,
         filter: queryFilter,
         flatObjectMetadata: objectMetadata,

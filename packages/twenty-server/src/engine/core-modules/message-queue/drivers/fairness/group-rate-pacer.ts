@@ -4,7 +4,7 @@ import { type RedisClient } from 'bullmq';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GROUP_RATE_PACE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pace-script.constant';
-import { runRedisScript } from 'src/engine/core-modules/message-queue/drivers/fairness/run-redis-script';
+import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';

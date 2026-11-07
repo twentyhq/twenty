@@ -1,17 +1,17 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { DataSource } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-
-type WorkspaceRepositoryOptions = ConstructorParameters<
-  typeof WorkspaceRepository
->[0];
 
 const OBJECT_METADATA_ID = 'delivery-object-id';
 
@@ -78,11 +78,13 @@ const tableShape: WorkspaceTableShape = {
   hasDeletedAtColumn: true,
 };
 
-const EMPTY_FLAT_ENTITY_MAPS = {
-  byUniversalIdentifier: {},
-  universalIdentifierById: {},
-  universalIdentifiersByApplicationId: {},
-};
+const DISABLED_FEATURE_FLAGS_MAP = Object.values(FeatureFlagKey).reduce<
+  Record<string, boolean>
+>((featureFlagsMap, featureFlagKey) => {
+  featureFlagsMap[featureFlagKey] = false;
+
+  return featureFlagsMap;
+}, {});
 const API_KEY_ID = 'api-key-id';
 const ROLE_ID = 'role-id';
 
@@ -100,41 +102,34 @@ const buildRepository = ({
     flatObjectMetadata,
     internalContext: {
       workspaceId: 'workspace-id',
-      featureFlagsMap: {},
+      featureFlagsMap: DISABLED_FEATURE_FLAGS_MAP,
+      billingEntitlements: {},
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps: createEmptyFlatEntityMaps(),
+      permissionsPrincipals: undefined,
+      recordPermissions: {
+        isReadDisabled: jest.fn().mockResolvedValue(false),
+        assertCanRunOperationOrThrow: jest.fn(),
+        buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+        assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
+        assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
+      },
+      recordStock: {
+        assertRecordStockAvailable: jest.fn(),
+        acquireRecordStock: jest.fn(),
+        releaseRecordStock: jest.fn(),
+      },
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
-      coreDataSource: { getRepository: () => ({}) },
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
-      roleIdsWithAllRecordsAccess: [ROLE_ID],
-      rolesPermissions: {
-        [ROLE_ID]: {
-          canReadAllRecords: true,
-          canUpdateAllRecords: true,
-          canSoftDeleteAllRecords: true,
-          canDestroyAllRecords: true,
-          objects: {
-            [OBJECT_METADATA_ID]: {
-              canReadAllRecords: true,
-              canUpdateAllRecords: true,
-              canSoftDeleteAllRecords: true,
-              canDestroyAllRecords: true,
-              restrictedFields: {},
-            },
-          },
-        },
-      },
-      flatApplicationMaps: { byId: {} },
-      flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
-      flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
+      coreDataSource: new DataSource({ type: 'postgres' }),
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     },
     authContext: {
       type: 'apiKey',
       apiKey: { id: API_KEY_ID },
       workspace: { id: 'workspace-id' },
-    },
+    } as WorkspaceAuthContext,
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
@@ -154,7 +149,11 @@ const buildRepository = ({
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,
-  } as unknown as WorkspaceRepositoryOptions);
+    flatObjectMetadataByObjectMetadataId: () => flatObjectMetadata,
+    getRepositoryForObjectMetadataId: jest.fn(),
+    isTransactional: false,
+    runInNewTransaction: jest.fn(),
+  });
 
   const getExecutedStatementKinds = () =>
     executedStatements.map((statement) => statement.text.split(' ')[0]);

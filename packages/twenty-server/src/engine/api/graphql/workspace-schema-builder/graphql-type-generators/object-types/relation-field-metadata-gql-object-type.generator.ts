@@ -8,7 +8,7 @@ import {
   type OutputTypeOptions,
   applyTypeOptionsForOutputType,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-output-type.util';
-import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
+import { extractGraphQLRelationFieldNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-graphql-relation-field-names.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 @Injectable()

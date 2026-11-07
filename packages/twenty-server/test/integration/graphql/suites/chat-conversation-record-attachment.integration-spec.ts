@@ -75,7 +75,9 @@ describe('Attaching a conversation to a record from a chat turn', () => {
   });
 
   const buildTool = async () => {
-    const { authorization } = await actors.authorizeJob({
+    const {
+      authorizedConversation: { authContext },
+    } = await actors.authorizeJob({
       workspaceId,
       threadId,
       messageId: message.id,
@@ -89,7 +91,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
         workspaceId,
         threadId,
         userWorkspaceId,
-        ...authorization,
+        authContext,
       },
     });
   };

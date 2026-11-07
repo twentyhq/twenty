@@ -20,13 +20,11 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
-import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import {
   WorkflowRunEnqueueJob,
   type WorkflowRunEnqueueJobData,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
+import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -44,6 +42,7 @@ export class CoreWorkflowRunnerService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
+    private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -152,20 +151,20 @@ export class CoreWorkflowRunnerService {
     }
 
     if (isEnqueuedImmediately) {
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RunWorkflowJob.name,
-        { workspaceId, workflowRunId: createdWorkflowRunId },
-        buildRunWorkflowJobOptions({
-          workflowRunId: createdWorkflowRunId,
-          scope:
-            await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
-              { workspaceId, applicationId: workflow.applicationId },
-            ),
-          groupKeys: isPacedByGroupRateLimit
-            ? [buildWorkflowRunGroupKey(workspaceId)]
-            : undefined,
-        }),
-      );
+      const scope =
+        await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+          workspaceId,
+          applicationId: workflow.applicationId,
+        });
+
+      await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({
+        workspaceId,
+        workflowRunId: createdWorkflowRunId,
+        scope,
+        groupKeys: isPacedByGroupRateLimit
+          ? [buildWorkflowRunGroupKey(workspaceId)]
+          : undefined,
+      });
     } else {
       await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
         workspaceId,

@@ -26,6 +26,7 @@ import {
   GETTING_STARTED_SELECTED_STEP_USER_VARIABLE_KEY,
   GETTING_STARTED_SNOOZED_UNTIL_USER_VARIABLE_KEY,
   GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
+  GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
@@ -37,7 +38,7 @@ import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-val
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -59,7 +60,7 @@ export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly keyValuePairService: KeyValuePairService<WorkspaceEnrichmentKeyValueTypeMap>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -81,7 +82,7 @@ export class GettingStartedService {
       featuredApps,
     ] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
-      this.permissionsService.getUserWorkspacePermissions({
+      this.settingPermissionsService.getUserWorkspacePermissions({
         userWorkspaceId,
         workspaceId,
       }),
@@ -125,12 +126,13 @@ export class GettingStartedService {
       hasFeaturedApp: isNonEmptyArray(featuredApps),
     });
 
-    const isSavedAsCompleted = (stepActionKey: GettingStartedStepActionKey) =>
-      isDefined(
-        userVars.get(
-          `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
-        ),
+    const getSavedCompletion = (stepActionKey: GettingStartedStepActionKey) =>
+      userVars.get(
+        `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
       );
+
+    const isSavedAsCompleted = (stepActionKey: GettingStartedStepActionKey) =>
+      isDefined(getSavedCompletion(stepActionKey));
 
     const alreadyDoneStepActionKeys = await this.findAlreadyDoneStepActionKeys({
       workspaceId,
@@ -159,9 +161,33 @@ export class GettingStartedService {
       GETTING_STARTED_SNOOZED_UNTIL_USER_VARIABLE_KEY,
     );
 
+    const chatThreadIdByStepActionKey = Object.fromEntries(
+      completedStepActionKeys.map(
+        (stepActionKey) =>
+          [
+            stepActionKey,
+            getSavedCompletion(stepActionKey)?.chatThreadId,
+          ] as const,
+      ),
+    );
+
+    const workflowIdByStepActionKey = Object.fromEntries(
+      completedStepActionKeys.map(
+        (stepActionKey) =>
+          [
+            stepActionKey,
+            userVars.get(
+              `${GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
+            )?.workflowId,
+          ] as const,
+      ),
+    );
+
     return {
       stepActionKeys,
       companyEnrichment,
+      chatThreadIdByStepActionKey,
+      workflowIdByStepActionKey,
       completedStepActionKeys,
       selectedStepActionKey:
         stepActionKeys.find(
@@ -213,6 +239,7 @@ export class GettingStartedService {
         userId,
         workspaceId,
         stepActionKey: input.completedStepActionKey,
+        chatThreadId: input.completedStepChatThreadId,
       });
     }
 
@@ -228,16 +255,21 @@ export class GettingStartedService {
     userId,
     workspaceId,
     stepActionKey,
+    chatThreadId,
   }: {
     userId: string;
     workspaceId: string;
     stepActionKey: GettingStartedStepActionKey;
+    chatThreadId?: string | null;
   }): Promise<void> {
     await this.userVarsService.setIfNotExists({
       userId,
       workspaceId,
       key: `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
-      value: { completedAt: new Date().toISOString() },
+      value: {
+        completedAt: new Date().toISOString(),
+        ...(isDefined(chatThreadId) ? { chatThreadId } : {}),
+      },
     });
   }
 

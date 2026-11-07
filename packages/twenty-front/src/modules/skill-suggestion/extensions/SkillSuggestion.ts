@@ -11,6 +11,12 @@ type SkillSuggestionOptions = {
   searchSkills: (query: string) => Promise<SkillSuggestionItem[]>;
 };
 
+declare module '@tiptap/core' {
+  interface Storage {
+    'skill-suggestion': SkillSuggestionOptions;
+  }
+}
+
 export const SkillSuggestion = Extension.create<SkillSuggestionOptions>({
   name: 'skill-suggestion',
 

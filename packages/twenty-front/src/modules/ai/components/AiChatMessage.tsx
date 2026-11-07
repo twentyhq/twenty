@@ -2,6 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -249,6 +251,11 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread,
+  );
 
   if (
     !isDefined(agentChatMessage) ||
@@ -358,7 +365,7 @@ export const AiChatMessage = ({
             isSpreadOut={!isAiChatInboxEnabled}
             isRightAligned={shouldMirrorMessageActions}
           >
-            {isAiChatInboxEnabled && (
+            {isAiChatInboxEnabled && !isDirectMessage && (
               <AiChatMessageReactions messageId={messageId} />
             )}
             {!hasHeader && (
@@ -370,9 +377,11 @@ export const AiChatMessage = ({
               className="message-actions"
               isRightAligned={shouldMirrorMessageActions}
             >
-              {isAiChatInboxEnabled && !isLastMessageStreaming && (
-                <AiChatMessageReactionPicker messageId={messageId} />
-              )}
+              {isAiChatInboxEnabled &&
+                !isDirectMessage &&
+                !isLastMessageStreaming && (
+                  <AiChatMessageReactionPicker messageId={messageId} />
+                )}
               <LightCopyIconButton copyText={messageText} />
             </StyledMessageActions>
           </StyledMessageFooter>

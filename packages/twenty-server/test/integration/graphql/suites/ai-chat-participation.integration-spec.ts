@@ -3,7 +3,10 @@ import { randomUUID } from 'node:crypto';
 
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { retryChatMessageOperationFactory } from 'test/integration/graphql/utils/retry-chat-message-operation-factory.util';
+import { saveDirectMessageAssistantModeOperationFactory } from 'test/integration/graphql/utils/save-direct-message-assistant-mode-operation-factory.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
@@ -11,6 +14,10 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -51,126 +58,183 @@ describe('Chat participation through the authenticated API', () => {
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
       reason: AgentChatInboxDeliveryReason.RECIPIENT,
     });
-  const createDirectMessage = async (isAssistantParticipant = true) => {
-    const threadId = await context.createThread(isAssistantParticipant);
-
-    await context.setConversationType({
-      threadId,
-      conversationType: 'DIRECT_MESSAGE',
-    });
-    await addJonyAsParticipant(threadId);
-
-    return threadId;
-  };
-
-  it('keeps a canonical DM mention-only after Ada first joins', async () => {
-    models.enableEvaluation();
-    const threadId = await createDirectMessage();
-    const excluded = await sendChatParticipationMessage({
-      threadId,
-      isAssistantParticipant: true,
-    });
-
-    expect(excluded.body.errors).toBeUndefined();
-    expect(excluded.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
+  const createDirectMessage = async () =>
+    context.registerThread(
+      await getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
+        'AgentChatDirectMessageIdentityService',
+      ).open({
+        workspaceId: context.workspaceId,
+        firstWorkspaceMemberId: context.workspaceMemberId,
+        secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     );
 
-    const mentioned = await sendChatParticipationMessage({
+  it.each([
+    {
+      mode: AiChatAssistantMode.NEVER,
+      isAssistantMentioned: true,
+      shouldReply: false,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      isAssistantMentioned: false,
+      shouldReply: false,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      isAssistantMentioned: true,
+      shouldReply: true,
+      evaluationCalls: 0,
+    },
+    {
+      mode: AiChatAssistantMode.AUTOMATIC,
+      isAssistantMentioned: false,
+      shouldReply: true,
+      evaluationCalls: 1,
+    },
+  ])(
+    'applies saved DM mode $mode when Ada mention is $isAssistantMentioned',
+    async ({ mode, isAssistantMentioned, shouldReply, evaluationCalls }) => {
+      models.enableEvaluation();
+      const saved = await makeMetadataApiRequest(
+        saveDirectMessageAssistantModeOperationFactory(mode),
+      );
+
+      expect(saved.body.errors).toBeUndefined();
+      expect(
+        saved.body.data.updateWorkspace.aiChatDirectMessageAssistantMode,
+      ).toBe(mode);
+
+      const threadId = await createDirectMessage();
+      const response = await sendChatParticipationMessage({
+        threadId,
+        isAssistantMentioned,
+        isAssistantParticipant: false,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(isDefined(response.body.data.sendChatMessage.streamId)).toBe(
+        shouldReply,
+      );
+      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+        shouldReply,
+      );
+
+      if (shouldReply) {
+        await waitForAllJobsToFinish();
+      }
+
+      expect(models.evaluate).toHaveBeenCalledTimes(evaluationCalls);
+
+      if (!shouldReply) {
+        return;
+      }
+
+      const assistantRecords = await global.testDataSource
+        .createQueryBuilder()
+        .select('message.id', 'messageId')
+        .addSelect(`message."${IS_PRIVATE_COLUMN_NAME}"`, 'messageIsPrivate')
+        .addSelect('part.id', 'partId')
+        .addSelect(`part."${IS_PRIVATE_COLUMN_NAME}"`, 'partIsPrivate')
+        .from(`${context.schema}.agentMessage`, 'message')
+        .leftJoin(
+          (queryBuilder) =>
+            queryBuilder
+              .select('*')
+              .from(`${context.schema}.agentMessagePart`, 'messagePart'),
+          'part',
+          'part."messageId" = message.id',
+        )
+        .where('message."threadId" = :threadId', { threadId })
+        .andWhere('message.role = :role', { role: AgentMessageRole.ASSISTANT })
+        .getRawMany<{
+          messageId: string;
+          messageIsPrivate: boolean;
+          partId: string | null;
+          partIsPrivate: boolean | null;
+        }>();
+
+      expect(assistantRecords).not.toHaveLength(0);
+
+      const recordShares = await global.testDataSource
+        .createQueryBuilder()
+        .select('share."recordId"', 'recordId')
+        .addSelect('share."principalId"', 'principalId')
+        .from(`${context.schema}.recordShare`, 'share')
+        .where('share."recordId" IN (:...recordIds)', {
+          recordIds: assistantRecords
+            .flatMap(({ messageId, partId }) => [messageId, partId])
+            .filter(isDefined),
+        })
+        .orderBy('share."principalId"', 'ASC')
+        .getRawMany<{ recordId: string; principalId: string }>();
+
+      for (const record of assistantRecords) {
+        expect(record.messageIsPrivate).toBe(true);
+        expect(record.partIsPrivate).toBe(true);
+        for (const recordId of [record.messageId, record.partId]) {
+          expect(
+            recordShares
+              .filter((share) => share.recordId === recordId)
+              .map(({ principalId }) => principalId),
+          ).toEqual(
+            [
+              context.workspaceMemberId,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            ].sort(),
+          );
+        }
+      }
+    },
+  );
+
+  it('retries a failed direct message assistant turn', async () => {
+    const threadId = await createDirectMessage();
+    const sent = await sendChatParticipationMessage({
       threadId,
       isAssistantMentioned: true,
-      text: '@Ada please help',
     });
 
-    expect(mentioned.body.errors).toBeUndefined();
-    expect(mentioned.body.data.sendChatMessage.streamId).toEqual(
-      expect.any(String),
+    expect(sent.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
+    const { messageId } = sent.body.data.sendChatMessage;
+
+    const message = await global.testDataSource
+      .createQueryBuilder()
+      .select('message."turnId"', 'turnId')
+      .from(`${context.schema}.agentMessage`, 'message')
+      .where('message.id = :messageId', { messageId })
+      .getRawOne<{ turnId: string }>();
+
+    assertIsDefinedOrThrow(message);
+    await global.testDataSource
+      .createQueryBuilder()
+      .update(`${context.schema}.agentTurn`)
+      .set({ status: AgentTurnStatus.FAILED })
+      .where('id = :turnId', { turnId: message.turnId })
+      .execute();
+
+    const retried = await makeMetadataApiRequest(
+      retryChatMessageOperationFactory(threadId),
     );
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      true,
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.retryChatMessage.streamId).toEqual(
+      expect.any(String),
     );
     await waitForAllJobsToFinish();
 
-    const following = await sendChatParticipationMessage({ threadId });
+    const turn = await global.testDataSource
+      .createQueryBuilder()
+      .select('turn.status', 'status')
+      .from(`${context.schema}.agentTurn`, 'turn')
+      .where('turn.id = :turnId', { turnId: message.turnId })
+      .getRawOne<{ status: AgentTurnStatus }>();
 
-    expect(following.body.errors).toBeUndefined();
-    expect(following.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      true,
-    );
-    expect(models.evaluate).not.toHaveBeenCalled();
-  });
-
-  it('blocks initial Ada additions and mentions in a canonical DM under Never', async () => {
-    models.enableEvaluation();
-    await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
-    });
-    const threadId = await createDirectMessage();
-    const response = await sendChatParticipationMessage({
-      threadId,
-      isAssistantParticipant: true,
-      isAssistantMentioned: true,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
-    expect(models.evaluate).not.toHaveBeenCalled();
-  });
-
-  it('includes Ada on the first automatic DM message without replying while the client cannot run her', async () => {
-    models.enableEvaluation();
-    await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
-      aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
-    });
-    const threadId = await createDirectMessage(false);
-    const response = await sendChatParticipationMessage({
-      threadId,
-      isAssistantParticipant: false,
-      shouldAssistantReply: false,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      true,
-    );
-    expect(models.evaluate).not.toHaveBeenCalled();
-  });
-
-  it('stops replies in an existing DM after the workspace changes to Never', async () => {
-    models.enableEvaluation();
-    await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
-    });
-    const threadId = await createDirectMessage();
-    const first = await sendChatParticipationMessage({ threadId });
-
-    expect(first.body.errors).toBeUndefined();
-    expect(first.body.data.sendChatMessage.streamId).toEqual(
-      expect.any(String),
-    );
-    await waitForAllJobsToFinish();
-    await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
-    });
-    models.evaluate.mockClear();
-    const following = await sendChatParticipationMessage({
-      threadId,
-      isAssistantMentioned: true,
-    });
-
-    expect(following.body.errors).toBeUndefined();
-    expect(following.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
-    expect(models.evaluate).not.toHaveBeenCalled();
+    expect(turn).toEqual({ status: AgentTurnStatus.COMPLETED });
   });
 
   it('answers an Ada-only chat despite both Never settings and client opt-outs', async () => {
@@ -201,6 +265,7 @@ describe('Chat participation through the authenticated API', () => {
     const foreignMemberId = randomUUID();
     const response = await sendChatParticipationMessage({
       threadId,
+      isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [
         recipientId,
         recipientId,
@@ -235,6 +300,99 @@ describe('Chat participation through the authenticated API', () => {
     );
   });
 
+  it.each([
+    {
+      threadState: 'new',
+      hasExistingThread: false,
+      isRecordSharingEnabled: true,
+      recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
+    },
+    {
+      threadState: 'pre-created empty',
+      hasExistingThread: true,
+      isRecordSharingEnabled: true,
+      recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
+    },
+    {
+      threadState: 'new with record sharing disabled',
+      hasExistingThread: false,
+      isRecordSharingEnabled: false,
+      recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    },
+  ])(
+    'refuses a first send without Ada in a $threadState thread when no picked person can reply',
+    async ({
+      hasExistingThread,
+      isRecordSharingEnabled,
+      recipientWorkspaceMemberId,
+    }) => {
+      await context.featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId: context.workspaceId,
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: isRecordSharingEnabled,
+      });
+      const threadId = hasExistingThread
+        ? await context.createThread()
+        : context.registerThread();
+      const threadBefore = await context.readThread(threadId);
+      const emitter = getAppProviderByClassName<WorkspaceEventEmitter>(
+        'WorkspaceEventEmitter',
+      );
+      const emit = jest.spyOn(emitter, 'emitDatabaseBatchEvent');
+      const response = await sendChatParticipationMessage({
+        threadId,
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [recipientWorkspaceMemberId],
+      });
+
+      expect(response.body.errors[0].extensions).toMatchObject({
+        code: 'BAD_USER_INPUT',
+        subCode: 'CHAT_RECIPIENTS_CANNOT_REPLY',
+        userFriendlyMessage: expect.stringContaining(
+          'None of the people you picked can reply',
+        ),
+      });
+      expect(await context.readThread(threadId)).toEqual(threadBefore);
+      expect(
+        await context.chatService.hasMessages({
+          workspaceId: context.workspaceId,
+          threadId,
+        }),
+      ).toBe(false);
+      const hasCreatedThreadEvent = emit.mock.calls.some(
+        ([event]) =>
+          isDefined(event) &&
+          event.objectMetadataNameSingular === 'agentChatThread' &&
+          event.action === DatabaseEventAction.CREATED &&
+          event.events.some(({ recordId }) => recordId === threadId),
+      );
+
+      expect(hasCreatedThreadEvent).toBe(false);
+
+      if (isRecordSharingEnabled) {
+        return;
+      }
+
+      const retried = await sendChatParticipationMessage({
+        threadId,
+        isAssistantParticipant: true,
+        recipientWorkspaceMemberIds: [recipientWorkspaceMemberId],
+      });
+
+      expect(retried.body.errors).toBeUndefined();
+      expect(retried.body.data.sendChatMessage.streamId).toEqual(
+        expect.any(String),
+      );
+      expect(
+        retried.body.data.sendChatMessage
+          .recipientParticipantWorkspaceMemberIds,
+      ).toEqual([]);
+      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+        true,
+      );
+    },
+  );
+
   it('delivers a member selected and mentioned once while acknowledging both selections', async () => {
     const threadId = await context.createThread(false);
     const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JONY;
@@ -255,11 +413,15 @@ describe('Chat participation through the authenticated API', () => {
       mentionedParticipantWorkspaceMemberIds: [workspaceMemberId],
       recipientParticipantWorkspaceMemberIds: [workspaceMemberId],
     });
-    const [participant] = await global.testDataSource.query<{ id: string }[]>(
-      `SELECT id FROM "${context.schema}"."agentChatThreadParticipant"
-       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-      [threadId, workspaceMemberId],
-    );
+    const participant = await global.testDataSource
+      .createQueryBuilder()
+      .select('participant.id', 'id')
+      .from(`${context.schema}.agentChatThreadParticipant`, 'participant')
+      .where('participant."threadId" = :threadId', { threadId })
+      .andWhere('participant."workspaceMemberId" = :workspaceMemberId', {
+        workspaceMemberId,
+      })
+      .getRawOne<{ id: string }>();
 
     assertIsDefinedOrThrow(participant);
     const actions = emit.mock.calls

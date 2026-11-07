@@ -6,13 +6,11 @@ describe('hasJunctionTargetFieldId', () => {
   });
 
   it('should return false for null settings', () => {
-    expect(hasJunctionTargetFieldId(null as unknown as undefined)).toBe(false);
+    expect(hasJunctionTargetFieldId(null)).toBe(false);
   });
 
   it('should return false for non-object settings', () => {
-    expect(hasJunctionTargetFieldId('string' as unknown as undefined)).toBe(
-      false,
-    );
+    expect(hasJunctionTargetFieldId('string')).toBe(false);
   });
 
   it('should return false for settings without junctionTargetFieldId', () => {

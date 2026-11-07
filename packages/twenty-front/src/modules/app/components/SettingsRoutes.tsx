@@ -514,6 +514,12 @@ const SettingsBillingNewLimit = lazy(() =>
   })),
 );
 
+const SettingsPartner = lazy(() =>
+  import('~/pages/settings/billing/SettingsPartner').then((module) => ({
+    default: module.SettingsPartner,
+  })),
+);
+
 const SettingsBillingLimitEdit = lazy(() =>
   import('~/pages/settings/billing/SettingsBillingLimitEdit').then(
     (module) => ({
@@ -951,6 +957,7 @@ const createSettingsRouteElements = ({
         path={SettingsPath.BillingLimitEdit}
         element={<SettingsBillingLimitEdit />}
       />
+      <Route path={SettingsPath.Partner} element={<SettingsPartner />} />
       <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}

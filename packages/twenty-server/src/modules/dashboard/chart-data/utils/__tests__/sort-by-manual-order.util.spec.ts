@@ -50,9 +50,9 @@ describe('sortByManualOrder', () => {
   });
 
   it('should handle items with null raw values', () => {
-    const dataWithNull = [
+    const dataWithNull: { label: string | null }[] = [
       { label: 'Alpha' },
-      { label: null as unknown as string },
+      { label: null },
       { label: 'Beta' },
     ];
 

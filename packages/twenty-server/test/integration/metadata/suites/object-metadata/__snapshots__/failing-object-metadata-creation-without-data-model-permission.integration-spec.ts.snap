@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata creation without DATA_MODEL should fail should refuse creating an object through GraphQL 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Object metadata creation without DATA_MODEL should fail should refuse creating an object through REST 1`] = `
+{
+  "body": {
+    "code": "PERMISSION_DENIED",
+    "error": "Error",
+    "messages": [
+      "Entity performing the request does not have permission",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;

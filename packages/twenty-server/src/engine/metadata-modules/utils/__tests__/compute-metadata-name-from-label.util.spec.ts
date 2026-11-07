@@ -7,7 +7,7 @@ import {
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 type ComputeMetadataNameFromLabelTestCase = EachTestingContext<{
-  input: string;
+  input: string | undefined;
   expected?: string;
   expectToThrow?: {
     error: InvalidMetadataException;
@@ -120,7 +120,7 @@ describe('computeMetadataNameFromLabel', () => {
     {
       title: 'should throw when label is undefined',
       context: {
-        input: undefined as unknown as string,
+        input: undefined,
         expectToThrow: {
           error: new InvalidMetadataException(
             'Label is required',
