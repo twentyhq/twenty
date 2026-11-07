@@ -2,8 +2,14 @@ import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application
 
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 
+type WithoutVisibility<TConnection> = TConnection extends unknown
+  ? Omit<TConnection, 'visibility'>
+  : never;
+
+export type AppConnectionWithoutVisibility = WithoutVisibility<AppConnection>;
+
 export const withLegacyConnectionVisibility = (
-  connection: Omit<AppConnection, 'visibility'>,
+  connection: AppConnectionWithoutVisibility,
 ): AppConnection => ({
   ...connection,
   visibility: LEGACY_CONNECTION_VISIBILITY_BY_SCOPE[connection.scope],

@@ -3,6 +3,8 @@ title: Impostazioni del profilo
 description: Gestisci il tuo profilo personale e le impostazioni di sicurezza.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Informazioni Personali
 
 ### Nome e Email
@@ -21,6 +23,16 @@ Abilita 2FA per aggiungere un livello extra di sicurezza al tuo account:
 2. Fai clic su **App di autenticazione**
 3. Scansiona il codice QR con la tua app di autenticazione
 4. Inserisci il codice di verifica per confermare
+
+### Hai perso l'autenticatore?
+
+Se non riesci ad accedere alla tua app di autenticazione, chiedi un codice di recupero a un amministratore dello spazio di lavoro. Il codice funziona una sola volta e, per impostazione predefinita, scade dopo 1 ora. Poi:
+
+1. Accedi con la tua email e password
+2. Nella schermata di verifica, fai clic su **Hai perso il tuo autenticatore? Usa un codice di recupero**
+3. Inserisci il codice di recupero e fai clic su **Continua**
+
+L'autenticatore attuale per quello spazio di lavoro viene rimosso e le altre sessioni vengono disconnesse. Configura di nuovo l'autenticazione a due fattori da **Impostazioni → Profilo**.
 
 ### Gestione delle Password
 
@@ -41,3 +53,5 @@ Per eliminare il tuo account:
 2. Scorri fino a **Zona di Pericolo**
 3. Clicca **Elimina Account**
 4. Conferma digitando il tuo indirizzo email
+
+<PageBanner illustration="page-cover-profile" />

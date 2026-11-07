@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -29,7 +29,9 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -56,6 +58,7 @@ const StyledSidePanelContainer = styled.div`
 
 export const SidePanelRecordPageFieldSettings = () => {
   const { t } = useLingui();
+  const { openDropdown } = useOpenDropdown();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { placementSelectableItemIds, widgetSettingsPlacement } =
@@ -205,37 +208,51 @@ export const SidePanelRecordPageFieldSettings = () => {
       <StyledSidePanelContainer>
         <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
-            <SelectableListItem itemId="field">
-              <CommandMenuItemDropdown
-                id="field"
-                label={t`Field`}
-                Icon={IconListDetails}
-                dropdownId="field"
-                dropdownComponents={
-                  <LegacyDropdownContent>
-                    <FieldWidgetFieldDropdownContent />
-                  </LegacyDropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={fieldLabel}
-                contextualTextPosition="right"
-              />
+            <SelectableListItem
+              itemId="field"
+              onEnter={() =>
+                openDropdown({ dropdownComponentInstanceIdFromProps: 'field' })
+              }
+            >
+              <DropdownRoot dropdownId="field" type="picker">
+                <CommandMenuItemDropdownTrigger
+                  id="field"
+                  label={t`Field`}
+                  Icon={IconListDetails}
+                  description={fieldLabel}
+                  contextualTextPosition="right"
+                />
+                <DropdownContent
+                  side="bottom"
+                  align="end"
+                  collisionPadding={{ left: 0, right: 0 }}
+                >
+                  <FieldWidgetFieldDropdownContent />
+                </DropdownContent>
+              </DropdownRoot>
             </SelectableListItem>
-            <SelectableListItem itemId="layout">
-              <CommandMenuItemDropdown
-                id="layout"
-                label={t`Layout`}
-                Icon={layoutRowIcon}
-                dropdownId="layout"
-                dropdownComponents={
-                  <LegacyDropdownContent>
-                    <FieldWidgetLayoutDropdownContent />
-                  </LegacyDropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={layoutLabel}
-                contextualTextPosition="right"
-              />
+            <SelectableListItem
+              itemId="layout"
+              onEnter={() =>
+                openDropdown({ dropdownComponentInstanceIdFromProps: 'layout' })
+              }
+            >
+              <DropdownRoot dropdownId="layout" type="picker">
+                <CommandMenuItemDropdownTrigger
+                  id="layout"
+                  label={t`Layout`}
+                  Icon={layoutRowIcon}
+                  description={layoutLabel}
+                  contextualTextPosition="right"
+                />
+                <DropdownContent
+                  side="bottom"
+                  align="end"
+                  collisionPadding={{ left: 0, right: 0 }}
+                >
+                  <FieldWidgetLayoutDropdownContent />
+                </DropdownContent>
+              </DropdownRoot>
             </SelectableListItem>
             {isTableDisplayMode &&
               isDefined(targetObjectMetadataId) &&

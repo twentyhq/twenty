@@ -59,6 +59,12 @@ const createCommandMenuItem = (
     Pick<CommandMenuItemFieldsFragment, 'id' | 'label'>,
 ): CommandMenuItemFieldsFragment => ({
   __typename: 'CommandMenuItem',
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
   isActive: true,
   workflowVersionId: null,
   frontComponentId: null,
@@ -72,6 +78,7 @@ const createCommandMenuItem = (
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   ...overrides,
 });
@@ -187,7 +194,7 @@ const createDecorator = ({
   permissionFlags,
 }: CreateDecoratorParams): Decorator => {
   const currentUserWorkspace = isDefined(permissionFlags)
-    ? { permissionFlags, objectsPermissions: [] }
+    ? { permissionFlags, objectRecordsPermissions: [] }
     : null;
 
   return (Story) => {

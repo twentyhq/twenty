@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Input } from '../Input';
 import styles from '../Input.module.scss';
@@ -127,5 +127,69 @@ export const FieldStates: Story = {
 
     await expect(input).toHaveValue('');
     await expect(args.onValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const PlainAppearance: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: () => (
+    <div>
+      <Input variant="plain" aria-label="Plain name" placeholder="Name" />
+      <Field.Root invalid>
+        <Input variant="plain" aria-label="Invalid name" />
+        <Field.Error match>Choose another name</Field.Error>
+      </Field.Root>
+      <Input variant="plain" aria-label="Disabled name" disabled />
+      <Input variant="plain" hasFocusRing={false} aria-label="Header search" />
+      <Input aria-label="Framed name" />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const plainInput = canvas.getByRole('textbox', { name: 'Plain name' });
+    const invalidInput = canvas.getByRole('textbox', { name: 'Invalid name' });
+    const disabledInput = canvas.getByRole('textbox', {
+      name: 'Disabled name',
+    });
+    const framedInput = canvas.getByRole('textbox', { name: 'Framed name' });
+    const headerInput = canvas.getByRole('textbox', { name: 'Header search' });
+
+    await expect(plainInput).toHaveAttribute('data-variant', 'plain');
+    await expect(getComputedStyle(plainInput).borderWidth).toBe('0px');
+    await expect(getComputedStyle(plainInput).padding).toBe('0px');
+    await expect(getComputedStyle(plainInput).borderRadius).toBe('0px');
+    await expect(plainInput.clientHeight).toBeLessThan(
+      framedInput.clientHeight,
+    );
+
+    await userEvent.tab();
+    await expect(plainInput).toHaveFocus();
+    await expect(getComputedStyle(plainInput).outlineWidth).toBe('2px');
+    await expect(getComputedStyle(plainInput).outlineStyle).toBe('solid');
+    const plainFocusOutlineColor = getComputedStyle(plainInput).outlineColor;
+    await userEvent.type(plainInput, 'Alice');
+    await expect(plainInput).toHaveValue('Alice');
+
+    await expect(invalidInput).toHaveAttribute('aria-invalid', 'true');
+    await expect(invalidInput).toHaveAccessibleDescription(
+      'Choose another name',
+    );
+    await expect(getComputedStyle(invalidInput).outlineWidth).toBe('2px');
+    await expect(getComputedStyle(invalidInput).outlineColor).not.toBe(
+      getComputedStyle(plainInput).outlineColor,
+    );
+    await expect(disabledInput).toBeDisabled();
+    await expect(getComputedStyle(disabledInput).cursor).toBe('not-allowed');
+
+    await userEvent.tab();
+    await expect(invalidInput).toHaveFocus();
+    await expect(getComputedStyle(invalidInput).outlineColor).not.toBe(
+      plainFocusOutlineColor,
+    );
+    await userEvent.tab();
+    await expect(headerInput).toHaveFocus();
+    await expect(getComputedStyle(headerInput).outlineStyle).toBe('none');
+    await userEvent.type(headerInput, 'Chat');
+    await expect(headerInput).toHaveValue('Chat');
   },
 };

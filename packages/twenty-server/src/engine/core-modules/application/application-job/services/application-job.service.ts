@@ -8,6 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
@@ -87,15 +88,28 @@ export class ApplicationJobService {
 
     const jobItems = this.getJobItems(input);
 
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
+        'flatApplicationMaps',
       ]);
 
     const flatLogicFunction = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatLogicFunctionMaps,
       universalIdentifier: logicFunctionUniversalIdentifier,
     });
+
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application ${applicationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     if (
       !isDefined(flatLogicFunction) ||
@@ -110,24 +124,31 @@ export class ApplicationJobService {
 
     const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
 
-    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      jobItems.map((jobItem, index) => ({
-        data: {
-          logicFunctionId: flatLogicFunction.id,
+    const { jobs, availableBytes } =
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        jobItems.map((jobItem, index) => ({
+          data: {
+            logicFunctionId: flatLogicFunction.id,
+            workspaceId,
+            payload: jobItem.payload ?? {},
+            ...(isDefined(userId) ? { userId } : {}),
+            ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+          },
+          jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
           workspaceId,
-          payload: jobItem.payload ?? {},
-          ...(isDefined(userId) ? { userId } : {}),
-          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+          applicationUniversalIdentifier: application.universalIdentifier,
+        })),
+        {
+          retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          priority: ENQUEUE_JOB_PRIORITY,
+          ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
         },
-        jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
-      })),
-      {
-        retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        priority: ENQUEUE_JOB_PRIORITY,
-        ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
-      },
+      );
+
+    const sizeBytesByQueueJobId = new Map(
+      jobs.map(({ jobId, sizeBytes }) => [jobId, sizeBytes]),
     );
 
     return {
@@ -135,6 +156,14 @@ export class ApplicationJobService {
       logicFunctionUniversalIdentifier,
       enqueuedJobsCount: jobItems.length,
       jobIds,
+      jobs: jobIds.flatMap((jobId) => {
+        const sizeBytes = sizeBytesByQueueJobId.get(
+          buildQueueJobId({ workspaceId, jobId }),
+        );
+
+        return isDefined(sizeBytes) ? [{ jobId, sizeBytes }] : [];
+      }),
+      availableBytes,
     };
   }
 

@@ -1,6 +1,11 @@
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
+import {
+  type EffectiveObjectPermissions,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
+import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
@@ -13,7 +18,7 @@ import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/g
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
@@ -23,14 +28,15 @@ import { DELETE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/js
 import { FIND_ONE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/find-one-tool.json-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/find-tool.json-schema';
 import { generateGroupByToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
+import { MERGE_MANY_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/merge-many-tool.json-schema';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
-import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -41,7 +47,8 @@ export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
 
   constructor(
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -70,45 +77,6 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps } =
-      await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
-        'rolesPermissions',
-        'flatObjectPermissionMaps',
-      ]);
-
-    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
-      rolesPermissions,
-      rolePermissionConfig: context.rolePermissionConfig,
-    });
-
-    if (Object.keys(objectPermissions).length === 0) {
-      return descriptors;
-    }
-
-    const { explicitObjectGrantsRoleId } = context;
-    const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
-
-    const explicitPermissionByObjectId = new Map<
-      string,
-      FlatObjectPermission
-    >();
-
-    if (requireExplicitObjectGrants) {
-      for (const flatObjectPermission of Object.values(
-        flatObjectPermissionMaps.byUniversalIdentifier,
-      )) {
-        if (
-          isDefined(flatObjectPermission) &&
-          flatObjectPermission.roleId === explicitObjectGrantsRoleId
-        ) {
-          explicitPermissionByObjectId.set(
-            flatObjectPermission.objectMetadataId,
-            flatObjectPermission,
-          );
-        }
-      }
-    }
-
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -116,6 +84,31 @@ export class DatabaseToolProvider implements ToolProvider {
           flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
+
+    const principals = isDefined(context.authContext)
+      ? await this.principalPermissionsService.resolvePermissionsPrincipals({
+          authContext: context.authContext,
+        })
+      : undefined;
+    if (!isDefined(principals)) {
+      return descriptors;
+    }
+
+    const { explicitObjectGrants } = context;
+    const requireExplicitObjectGrants = isDefined(explicitObjectGrants);
+    const explicitPermissionByObjectId = requireExplicitObjectGrants
+      ? buildExplicitObjectPermissionByObjectId({
+          explicitObjectGrants,
+          flatObjectMetadataMaps,
+        })
+      : new Map<string, EffectiveObjectPermissions>();
+
+    if (
+      requireExplicitObjectGrants &&
+      explicitPermissionByObjectId.size === 0
+    ) {
+      return descriptors;
+    }
 
     const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
@@ -134,30 +127,59 @@ export class DatabaseToolProvider implements ToolProvider {
       : () => [];
 
     for (const flatObject of allFlatObjects) {
-      const permission = objectPermissions[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
         flatObject.id,
       );
 
-      if (
-        !permission ||
-        (requireExplicitObjectGrants && !isDefined(explicitPermission))
-      ) {
+      if (requireExplicitObjectGrants && !isDefined(explicitPermission)) {
         continue;
       }
 
+      const isExplicitlyGranted = (objectPermission: ObjectPermissionAction) =>
+        !requireExplicitObjectGrants ||
+        (explicitPermission?.[objectPermission] ?? false);
+      const objectQuestion = { principals, objectMetadataId: flatObject.id };
+
+      const canCreateRecords =
+        isExplicitlyGranted('canUpdateObjectRecords') &&
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'create',
+        }));
       const canReadRecords =
-        permission.canReadObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canReadObjectRecords === true);
+        isExplicitlyGranted('canReadObjectRecords') &&
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'read',
+        }));
       const canUpdateRecords =
-        permission.canUpdateObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canUpdateObjectRecords === true);
+        isExplicitlyGranted('canUpdateObjectRecords') &&
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'update',
+        }));
       const canSoftDeleteRecords =
-        permission.canSoftDeleteObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canSoftDeleteObjectRecords === true);
+        isExplicitlyGranted('canSoftDeleteObjectRecords') &&
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'softDelete',
+        }));
+      const canDestroyRecords =
+        isExplicitlyGranted('canDestroyObjectRecords') &&
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'destroy',
+        }));
+
+      if (
+        !canCreateRecords &&
+        !canReadRecords &&
+        !canUpdateRecords &&
+        !canSoftDeleteRecords &&
+        !canDestroyRecords
+      ) {
+        continue;
+      }
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
@@ -173,7 +195,11 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const restrictedFields = permission.restrictedFields;
+      const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
+        await Promise.all([
+          this.recordPermissionsService.findUnreadableFields(objectQuestion),
+          this.recordPermissionsService.findUneditableFields(objectQuestion),
+        ]);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });
@@ -195,7 +221,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: generateFindToolInputSchema({
               objectMetadata,
-              restrictedFields,
+              unreadableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -234,7 +260,10 @@ export class DatabaseToolProvider implements ToolProvider {
         const groupByName = `group_by_${snakePlural}`;
         const shouldIncludeGroupBySchema = shouldIncludeSchema(groupByName);
         const groupBySchema = shouldIncludeGroupBySchema
-          ? generateGroupByToolInputSchema({ objectMetadata, restrictedFields })
+          ? generateGroupByToolInputSchema({
+              objectMetadata,
+              unreadableFieldMetadataIds,
+            })
           : null;
 
         if (!shouldIncludeGroupBySchema || isDefined(groupBySchema)) {
@@ -261,7 +290,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (canUpdateRecords && canBeManagedByAutomation) {
+      if (canCreateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -275,7 +304,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
             inputSchema: generateCreateRecordInputSchema({
               objectMetadata,
-              restrictedFields,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -302,7 +331,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
             inputSchema: generateCreateManyRecordInputSchema({
               objectMetadata,
-              restrictedFields,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -314,7 +343,9 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'create_many',
         });
+      }
 
+      if (canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `update_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -328,7 +359,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
             inputSchema: generateUpdateRecordInputSchema({
               objectMetadata,
-              restrictedFields,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -355,7 +386,8 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
             inputSchema: generateUpdateManyRecordInputSchema({
               objectMetadata,
-              restrictedFields,
+              unreadableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -367,7 +399,9 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
+      }
 
+      if (canCreateRecords && canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `upsert_many_${snakePlural}`,
           ...getCrudToolLabels(
@@ -381,7 +415,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
             inputSchema: generateCreateManyRecordInputSchema({
               objectMetadata,
-              restrictedFields,
+              nonUpdatableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -433,7 +467,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`delete_many_${snakePlural}`) && {
             inputSchema: generateBulkDeleteToolInputSchema({
               objectMetadata,
-              restrictedFields,
+              unreadableFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -444,6 +478,36 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_many',
+        });
+      }
+
+      if (
+        canUpdateRecords &&
+        canDestroyRecords &&
+        canBeManagedByAutomation &&
+        !flatObject.isSystem
+      ) {
+        descriptors.push({
+          name: `merge_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'merge_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Merge 2 to ${MUTATION_MAX_MERGE_RECORDS} duplicate ${objectMetadata.labelPlural} records into one, like the Merge action in the app. The record at conflictPriorityIndex is kept: its empty fields are filled from the other records, its values win on conflicting values, multi-value fields (emails, phones, links, arrays) are combined, and every record linked to the other records (notes, tasks, related records) is moved to it. The other records are then permanently deleted, which cannot be undone. Use this instead of copying fields and deleting a record, which loses the linked records. Call it with dryRun: true first to preview the merged record.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(shouldIncludeSchema(`merge_many_${snakePlural}`) && {
+            inputSchema: MERGE_MANY_TOOL_INPUT_SCHEMA,
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'merge_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'merge_many',
         });
       }
     }
@@ -503,7 +567,8 @@ export class DatabaseToolProvider implements ToolProvider {
       toolNames.has(`update_many_${snakePlural}`) ||
       toolNames.has(`delete_one_${snakeSingular}`) ||
       toolNames.has(`delete_many_${snakePlural}`) ||
-      toolNames.has(`upsert_many_${snakePlural}`)
+      toolNames.has(`upsert_many_${snakePlural}`) ||
+      toolNames.has(`merge_many_${snakePlural}`)
     );
   }
 }

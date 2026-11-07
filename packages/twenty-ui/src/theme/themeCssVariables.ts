@@ -142,6 +142,7 @@ export const themeCssVariables = {
     invertedPrimary: 'var(--t-background-inverted-primary)',
     invertedSecondary: 'var(--t-background-inverted-secondary)',
     danger: 'var(--t-background-danger)',
+    dangerSolid: 'var(--t-background-danger-solid)',
     transparent: {
       primary: 'var(--t-background-transparent-primary)',
       secondary: 'var(--t-background-transparent-secondary)',
@@ -184,6 +185,7 @@ export const themeCssVariables = {
       md: 'var(--t-border-radius-md)',
       smRound: 'var(--t-border-radius-sm-round)',
       mdRound: 'var(--t-border-radius-md-round)',
+      lgRound: 'var(--t-border-radius-lg-round)',
       lg: 'var(--t-border-radius-lg)',
       xl: 'var(--t-border-radius-xl)',
       xxl: 'var(--t-border-radius-xxl)',

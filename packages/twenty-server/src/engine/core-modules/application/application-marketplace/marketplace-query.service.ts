@@ -14,6 +14,7 @@ import { MarketplaceAppDTO } from 'src/engine/core-modules/application/applicati
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -36,10 +37,10 @@ export class MarketplaceQueryService {
 
   async findManyMarketplaceApps({
     universalIdentifiers,
-    isVetted,
+    isListed,
   }: {
     universalIdentifiers?: string[];
-    isVetted?: boolean;
+    isListed?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -56,11 +57,11 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    if (!isDefined(isVetted)) {
+    if (!isDefined(isListed)) {
       return apps;
     }
 
-    return apps.filter((app) => app.isVetted === isVetted);
+    return apps.filter((app) => app.isListed === isListed);
   }
 
   async findMarketplaceAppDetail(
@@ -113,7 +114,6 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
-      isVetted: registration.isVetted,
       description:
         registration.description ??
         registration.manifest?.application?.description ??
@@ -178,6 +178,9 @@ export class MarketplaceQueryService {
       ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
+      ),
+      requestedIframeMediaPermissions: toRequestedIframeMediaPermissionsOrThrow(
+        manifest?.application?.requestedIframeMediaPermissions,
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
       manifest: registration.manifest ?? undefined,

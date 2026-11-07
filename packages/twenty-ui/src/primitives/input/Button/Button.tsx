@@ -7,6 +7,7 @@ import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 import styles from './Button.module.scss';
 import { type ButtonProps } from './types/ButtonProps';
@@ -35,6 +36,15 @@ export const Button = ({
   const buttonGroup = useContext(ButtonGroupContext);
   const resolvedVariant = variant ?? buttonGroup?.variant ?? 'outline';
   const resolvedColor = color ?? buttonGroup?.color ?? 'neutral';
+
+  if (resolvedVariant === 'solid' && resolvedColor === 'inherit') {
+    throw new Error(
+      doNotTranslate(
+        'Button color="inherit" does not support variant="solid". Use outline, ghost, soft, or link.',
+      ),
+    );
+  }
+
   const resolvedSize = size ?? buttonGroup?.size ?? 'md';
   const isAutomaticLink =
     isDefined(href) && !isDefined(render) && nativeButton !== true;

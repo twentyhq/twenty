@@ -25,7 +25,7 @@ import {
 } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.util';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -126,18 +126,12 @@ export class FileUploadCompletionService {
       metadata,
     });
 
-    // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
-    await this.fileStorageService.move({
+    const { affected } = await this.fileStorageService.promotePendingFile({
+      workspaceId,
+      file,
       from: pendingLocation,
       to: storageLocation,
       ifMatchChecksum: checksum,
-    });
-
-    const { affected } = await this.fileStorageService.markFileUploaded({
-      workspaceId,
-      applicationId: file.applicationId,
-      fileId: file.id,
-      chargedSize: declaredSize,
       size,
       mimeType,
     });

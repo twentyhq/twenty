@@ -70,6 +70,7 @@ export class GateWorkflowCommandsOnRecordUpdatePermissionCommand extends Provisi
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

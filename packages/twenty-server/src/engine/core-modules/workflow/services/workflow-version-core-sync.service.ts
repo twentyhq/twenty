@@ -155,7 +155,7 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId },
       );
 
-    const { flatWorkflowVersionMaps } =
+    let { flatWorkflowVersionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
@@ -169,6 +169,28 @@ export class WorkflowVersionCoreSyncService {
         })
       ).map(({ id }) => id),
     );
+
+    if (
+      coreRows.some(
+        ({ id }) =>
+          persistedCoreVersionIds.has(id) &&
+          !isDefined(
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: id,
+              flatEntityMaps: flatWorkflowVersionMaps,
+            }),
+          ),
+      )
+    ) {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatWorkflowVersionMaps'],
+      });
+      ({ flatWorkflowVersionMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+        ));
+    }
 
     const timestamp = new Date().toISOString();
     const flatVersionsToCreate: (UniversalFlatWorkflowVersion & {
@@ -200,6 +222,14 @@ export class WorkflowVersionCoreSyncService {
         id: string;
       } = {
         ...coreRow,
+        // Non-comparable, so an update must carry the stored values or the builder rejects it
+        ...(isDefined(existingFlatWorkflowVersion)
+          ? {
+              workflowId: existingFlatWorkflowVersion.workflowId,
+              workspaceWorkflowVersionId:
+                existingFlatWorkflowVersion.workspaceWorkflowVersionId,
+            }
+          : {}),
         isSystemSideEffect: false,
         coreWorkflowId:
           coreRow.coreWorkflowId ??
@@ -307,9 +337,9 @@ export class WorkflowVersionCoreSyncService {
     const linkedCoreVersionId =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowVersion = await this.workspaceOrmManager
-          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-            shouldBypassPermissionChecks: true,
-          })
+          .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+          )
           .findOne({
             where: { id: workspaceWorkflowVersionId },
             select: { coreWorkflowVersionId: true },
@@ -339,9 +369,9 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<string | null> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersion = await this.workspaceOrmManager
-        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-          shouldBypassPermissionChecks: true,
-        })
+        .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+        )
         .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
 
       return workflowVersion?.id ?? null;
@@ -361,9 +391,8 @@ export class WorkflowVersionCoreSyncService {
     const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>(
             'workflow',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workflowRepository.find({
@@ -425,9 +454,8 @@ export class WorkflowVersionCoreSyncService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
-          { shouldBypassPermissionChecks: true },
         );
 
       for (const [

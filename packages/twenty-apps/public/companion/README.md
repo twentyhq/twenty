@@ -16,7 +16,7 @@ The integration has its own application registration, default role, custom field
 
 Desktop requests run as the signed-in user. Processing jobs only accept recordings with a valid `companionSession`; webhook events additionally require Recall metadata `twentyRecordingSource: companion`. An installed calendar bot can coexist: Desktop Recorder checks standard scheduled/active recording state to avoid recording that event twice. It does not read Call Recorder's custom fields or invoke its functions.
 
-The desktop uses the existing CLI OAuth client and PKCE flow from `twenty remote:add`. After sign-in it checks whether the Desktop Recorder backend is available and offers installation if needed. The app's Settings tab provides the macOS download and configuration without a dedicated page in Twenty core.
+The desktop uses the existing CLI OAuth client and PKCE flow from `twenty auth login`. After sign-in it checks whether the Desktop Recorder backend is available and offers installation if needed. The app's Settings tab provides the macOS download and configuration without a dedicated page in Twenty core.
 
 ## Recording processing and credits
 

@@ -67,7 +67,10 @@ export class ApplicationConnectionAuthFailureService {
           ? account.lastCredentialsRefreshedAt
           : IsNull(),
       },
-      { authFailedAt: new Date(), authFailedReason: reason },
+      {
+        authFailedAt: () => 'COALESCE("authFailedAt", NOW())',
+        authFailedReason: reason,
+      },
     );
 
     if (updateResult.affected === 0) {

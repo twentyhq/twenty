@@ -22,11 +22,10 @@ export const DateTimeFieldInput = () => {
   const getDateToPersist = (newInstant: Nullable<Temporal.Instant>) => {
     if (!newInstant) {
       return null;
-    } else {
-      const newDateISO = newInstant?.toString();
-
-      return newDateISO;
     }
+    const newDateISO = newInstant?.toString();
+
+    return newDateISO;
   };
 
   const handleEnter = (newDate: Nullable<Temporal.Instant>) => {

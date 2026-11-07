@@ -7,7 +7,7 @@ import { ApiPath } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constants';
+import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constant';
 import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { isMicrosoftOAuthTransientError } from 'src/engine/core-modules/auth/utils/is-microsoft-oauth-transient-error.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';

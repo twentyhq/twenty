@@ -136,11 +136,13 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               })
             }
           >
-            <WorkflowDiagramEdgeButtonGroup selected={nodeCreationStarted}>
+            <WorkflowDiagramEdgeButtonGroup>
               <LightIconButton
                 size="xs"
                 emphasis="subtle"
                 aria-label={t`Insert action`}
+                color={nodeCreationStarted ? 'accent' : 'neutral'}
+                aria-pressed={nodeCreationStarted}
                 onClick={handleNodeButtonClick}
               >
                 <IconPlus />

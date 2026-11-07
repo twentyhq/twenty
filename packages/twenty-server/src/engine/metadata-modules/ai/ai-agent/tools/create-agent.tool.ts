@@ -1,13 +1,23 @@
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  ToolCategory,
+} from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
 import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/tools/schemas/agent-trigger.schema';
-import { type AgentToolContext } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-context.type';
-import { type AgentToolDependencies } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-dependencies.type';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
-const createAgentSchema = z.object({
+const createAgentInputSchema = z.object({
   label: z.string().min(1).describe('Display name of the agent'),
   prompt: z
     .string()
@@ -35,32 +45,54 @@ const createAgentSchema = z.object({
   triggers: agentTriggersSchema.optional(),
 });
 
-type CreateAgentParams = z.infer<typeof createAgentSchema>;
-
-export const createCreateAgentTool = (
-  deps: AgentToolDependencies,
-  context: AgentToolContext,
-) => ({
-  name: 'create_agent' as const,
+@DefineTool({
+  name: 'create_agent',
+  category: ToolCategory.AGENT,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Create an AI agent that works on its own: it wakes up on its triggers (record events or a schedule) and acts with the tools its role allows, for example posting a note, updating records or sending a summary.
 
 Before creating it, present the plan to the user (prompt, role, triggers) and get their confirmation, since the agent keeps running after this conversation.
 Give the agent a role with the least access it needs (use list_roles to find one); without a role it cannot read or write records.
 Write the prompt as standing instructions for every run, and put what to do for a specific trigger in that trigger's instructions.`,
-  inputSchema: createAgentSchema,
-  execute: async ({ triggers, ...parameters }: CreateAgentParams) => {
+})
+export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
+  readonly inputSchema = createAgentInputSchema;
+
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: { triggers, ...parameters },
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof createAgentInputSchema>): Promise<ToolOutput> {
     const modelId =
       parameters.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
 
-    deps.aiModelRegistryService.validateModelAvailability(modelId);
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+        workspaceId,
+      );
 
-    const agent = await deps.agentService.createOneAgent(
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId,
+      aiDataPolicy,
+    });
+
+    const agent = await this.agentService.createOneAgent(
       {
         ...parameters,
         modelId,
         triggers: toAgentTriggers(triggers ?? []),
       },
-      context.workspaceId,
+      workspaceId,
     );
 
     return {
@@ -68,5 +100,5 @@ Write the prompt as standing instructions for every run, and put what to do for 
       message: `Agent "${agent.label}" created`,
       result: toAgentSummary(agent),
     };
-  },
-});
+  }
+}

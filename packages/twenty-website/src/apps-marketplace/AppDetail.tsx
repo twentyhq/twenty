@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
@@ -14,6 +15,7 @@ import {
 import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
 import { AppLogo } from './AppLogo';
+import { AppReadme } from './AppReadme';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppDetail } from './marketplace-app';
 
@@ -53,21 +55,6 @@ const HeroActions = styled.div`
   flex-wrap: wrap;
   gap: ${spacing(4)};
   margin-top: ${spacing(2)};
-`;
-
-const VettedBadge = styled.span`
-  align-items: center;
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(4)};
-  color: ${semanticColor.inkMuted};
-  display: inline-flex;
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(2)};
-  font-weight: ${FONT_WEIGHT.medium};
-  gap: ${spacing(2)};
-  letter-spacing: 0.06em;
-  padding: ${spacing(1)} ${spacing(3)};
-  text-transform: uppercase;
 `;
 
 const ContentGrid = styled.div`
@@ -185,7 +172,6 @@ export function AppDetail({ app }: AppDetailProps) {
                 label={i18n._(msg`Install`)}
                 variant="filled"
               />
-              <VettedBadge>{i18n._(msg`Vetted by Twenty`)}</VettedBadge>
             </HeroActions>
           </HeroText>
         </HeroRow>
@@ -205,6 +191,9 @@ export function AppDetail({ app }: AppDetailProps) {
                   />
                 ))}
               </ScreenshotList>
+            )}
+            {isDefined(app.aboutDescription) && (
+              <AppReadme markdown={app.aboutDescription} />
             )}
           </MainColumn>
 

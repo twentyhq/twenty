@@ -1,5 +1,7 @@
 import '@/remote/generated/remote-elements';
 
+import { serializeRemoteNode } from '@remote-dom/core/elements';
+
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
@@ -348,6 +350,26 @@ describe('patchRemoteElementAttributes', () => {
 
       button.disabled = false;
       expect(button.hasAttribute('disabled')).toBe(false);
+    });
+
+    it('should forward inert property changes and reflect their boolean state', () => {
+      const element = createHtmlDivElement();
+
+      element.inert = true;
+
+      expect(serializeRemoteNode(element)).toMatchObject({
+        properties: { inert: true },
+      });
+      expect(element.getAttribute('inert')).toBe('');
+      expect(element.hasAttribute('inert')).toBe(true);
+
+      element.inert = false;
+
+      expect(serializeRemoteNode(element)).toMatchObject({
+        properties: { inert: false },
+      });
+      expect(element.getAttribute('inert')).toBeNull();
+      expect(element.hasAttribute('inert')).toBe(false);
     });
 
     it('should report the live property instead of the attribute it replaced', () => {

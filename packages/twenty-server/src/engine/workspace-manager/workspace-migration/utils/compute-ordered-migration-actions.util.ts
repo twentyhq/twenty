@@ -10,12 +10,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
 
     ...aggregatedOrchestratorActionsReport.index.delete,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.create,
     ...aggregatedOrchestratorActionsReport.objectMetadata.update,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.create,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.create,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
 
@@ -46,23 +49,29 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.workflow.delete,
     ...aggregatedOrchestratorActionsReport.workflow.create,
     ...aggregatedOrchestratorActionsReport.workflow.update,
-    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
+    // At most one version per workflow is ACTIVE (unique index), so the published one is archived before its successor is created
     ...aggregatedOrchestratorActionsReport.workflowVersion.update,
+    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
 
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
 
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.delete,
     ...aggregatedOrchestratorActionsReport.role.delete,
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
 
-    // Role targets delete before agents (roleTarget may FK to agent)
+    // Role targets delete before agents and webhooks (roleTarget may FK to either)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
 
     ...aggregatedOrchestratorActionsReport.agent.delete,
     ...aggregatedOrchestratorActionsReport.agent.create,
     ...aggregatedOrchestratorActionsReport.agent.update,
+
+    ...aggregatedOrchestratorActionsReport.webhook.delete,
+    ...aggregatedOrchestratorActionsReport.webhook.create,
+    ...aggregatedOrchestratorActionsReport.webhook.update,
 
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
@@ -85,6 +94,12 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.delete,
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
+
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.delete,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.update,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.update,
 
     // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
     // dropped items go first, then new components, then item repoints, and unreferenced components last
@@ -136,9 +151,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
 
-    ...aggregatedOrchestratorActionsReport.webhook.delete,
-    ...aggregatedOrchestratorActionsReport.webhook.create,
-    ...aggregatedOrchestratorActionsReport.webhook.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.delete,
 
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
@@ -147,11 +160,19 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.delete,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.create,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.create,
+    ...aggregatedOrchestratorActionsReport.mcpServer.update,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.create,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.update,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
   ];
 };

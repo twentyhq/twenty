@@ -2,8 +2,7 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
-
+import { workflowCodeActionInputSchema } from '@/workflow/schemas/code-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
@@ -19,16 +18,27 @@ import { workflowFindRecordsActionSettingsSchema } from '@/workflow/schemas/find
 import { workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
 import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-action-settings-schema';
 import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
+import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
+import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
+import { workflowAiAgentActionSettingsSchema } from '@/workflow/schemas/ai-agent-action-settings-schema';
+import { workflowSendChatMessageActionSettingsSchema } from '@/workflow/schemas/send-chat-message-action-settings-schema';
 import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
+import { getWorkflowAiAgentStepConfigIssues } from '@/workflow/utils/getWorkflowAiAgentStepConfigIssues';
+
+export const workflowManifestPositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
 
 const baseStepShape = {
   universalIdentifier: z.uuid(),
   name: z.string().min(1),
   nextStepIds: z.array(z.uuid()),
-  position: z.object({ x: z.number(), y: z.number() }).optional(),
+  position: workflowManifestPositionSchema.nullable().optional(),
   outputSchema: z.record(z.string(), z.unknown()).optional(),
   expectedOutputSchema: z.record(z.string(), z.unknown()).optional(),
   errorHandlingOptions:
@@ -57,6 +67,34 @@ const recordFilterManifestSchema = recordFilterSchema
 
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
 
+// Connected account ids are local to a workspace; sync resolves a handle to one
+const connectedAccountReferenceShape = {
+  connectedAccountId: z.string().optional(),
+  connectedAccountHandle: z.string().trim().min(1).optional(),
+};
+
+const refineConnectedAccountReference = (
+  input: z.infer<z.ZodObject<typeof connectedAccountReferenceShape>>,
+  context: z.RefinementCtx,
+) => {
+  if (
+    isDefined(input.connectedAccountId) ===
+    isDefined(input.connectedAccountHandle)
+  ) {
+    context.addIssue({
+      code: 'custom',
+      path: ['connectedAccountHandle'],
+      message:
+        'Set exactly one of connectedAccountId and connectedAccountHandle',
+    });
+  }
+};
+
+const emailStepInputManifestSchema =
+  workflowSendEmailActionSettingsSchema.shape.input
+    .extend(connectedAccountReferenceShape)
+    .superRefine(refineConnectedAccountReference);
+
 const workflowStepManifestOptions = [
   z.strictObject({
     ...baseStepShape,
@@ -64,6 +102,15 @@ const workflowStepManifestOptions = [
     logicFunctionUniversalIdentifier: z.uuid(),
     input: z.record(z.string(), z.unknown()),
   }),
+  stepSchema(
+    'CODE',
+    workflowCodeActionInputSchema
+      .omit({ logicFunctionId: true })
+      .extend({
+        code: workflowCodeActionInputSchema.shape.code.unwrap().min(1),
+      })
+      .strict(),
+  ),
   stepSchema(
     'HTTP_REQUEST',
     workflowHttpRequestActionSettingsSchema.shape.input,
@@ -188,16 +235,53 @@ const workflowStepManifestOptions = [
                 'Record picker fields require an object universal identifier',
             });
           }
+          if (
+            (field.type === 'SELECT' || field.type === 'MULTI_SELECT') &&
+            !z
+              .uuid()
+              .safeParse(field.settings?.selectedFieldUniversalIdentifier)
+              .success
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: ['settings', 'selectedFieldUniversalIdentifier'],
+              message:
+                'Select fields require the universal identifier of the field whose options they offer',
+            });
+          }
         }),
     ),
   ),
+  stepSchema('SEND_EMAIL', emailStepInputManifestSchema),
+  stepSchema('DRAFT_EMAIL', emailStepInputManifestSchema),
+  stepSchema(
+    'CREATE_CALENDAR_EVENT',
+    workflowCreateCalendarEventActionSettingsSchema.shape.input
+      .extend(connectedAccountReferenceShape)
+      .superRefine(refineConnectedAccountReference),
+  ),
+  stepSchema(
+    'SEND_CHAT_MESSAGE',
+    workflowSendChatMessageActionSettingsSchema.shape.input,
+  ),
   stepSchema(
     'AI_AGENT',
-    z.strictObject({
-      agentUniversalIdentifier: z.uuid(),
-      prompt: z.string(),
-      responseFormat: agentResponseFormatSchema.optional(),
-    }),
+    workflowAiAgentActionSettingsSchema.shape.input
+      .omit({ agentId: true })
+      .extend({ agentUniversalIdentifier: z.uuid().optional() })
+      .strict()
+      .superRefine((input, context) => {
+        for (const issueCode of getWorkflowAiAgentStepConfigIssues({
+          ...input,
+          agentId: input.agentUniversalIdentifier,
+        })) {
+          context.addIssue({
+            code: 'custom',
+            path: ['agentUniversalIdentifier'],
+            message: WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
+          });
+        }
+      }),
   ),
 ] as const;
 

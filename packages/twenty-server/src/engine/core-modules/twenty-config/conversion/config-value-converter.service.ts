@@ -76,8 +76,7 @@ export class ConfigValueConverterService {
         return appValue;
       }
 
-      // oxlint-disable-next-line typescript/no-explicit-any
-      return transformer.toStorage(appValue as any, options);
+      return transformer.toStorage(appValue, options);
     } catch (error) {
       if (error instanceof ConfigVariableException) {
         throw error;
@@ -104,9 +103,15 @@ export class ConfigValueConverterService {
   ): ConfigVariableType {
     const defaultValue = this.configVariables[key];
 
-    if (typeof defaultValue === 'boolean') return ConfigVariableType.BOOLEAN;
-    if (typeof defaultValue === 'number') return ConfigVariableType.NUMBER;
-    if (Array.isArray(defaultValue)) return ConfigVariableType.ARRAY;
+    if (typeof defaultValue === 'boolean') {
+      return ConfigVariableType.BOOLEAN;
+    }
+    if (typeof defaultValue === 'number') {
+      return ConfigVariableType.NUMBER;
+    }
+    if (Array.isArray(defaultValue)) {
+      return ConfigVariableType.ARRAY;
+    }
     if (
       typeof defaultValue === 'object' &&
       defaultValue !== null &&

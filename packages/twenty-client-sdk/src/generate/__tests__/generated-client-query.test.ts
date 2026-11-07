@@ -27,6 +27,7 @@ type Query {
 
 type Mutation {
   createPerson(name: String!): Person
+  echoJson(value: JSON): JSON
   createCallRecording(data: CallRecordingCreateInput!): String
 }
 
@@ -116,13 +117,14 @@ const inputs = [
   });
 
   it('builds a GraphQL query from a selection and returns parsed data', async () => {
-    const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) =>
-      jsonResponse({ data: { person: { id: '1', name: 'Ada' } } }),
+    const fetchMock = vi.fn<typeof globalThis.fetch>(
+      async (_url: RequestInfo | URL, _init?: RequestInit) =>
+        jsonResponse({ data: { person: { id: '1', name: 'Ada' } } }),
     );
 
     const client = createClient({
       url: 'https://example.test/graphql',
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      fetch: fetchMock,
     });
 
     const result = await client.query({
@@ -145,13 +147,14 @@ const inputs = [
   });
 
   it('builds a mutation operation', async () => {
-    const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) =>
-      jsonResponse({ data: { createPerson: { id: '2', name: 'Lin' } } }),
+    const fetchMock = vi.fn<typeof globalThis.fetch>(
+      async (_url: RequestInfo | URL, _init?: RequestInit) =>
+        jsonResponse({ data: { createPerson: { id: '2', name: 'Lin' } } }),
     );
 
     const client = createClient({
       url: 'https://example.test/graphql',
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      fetch: fetchMock,
     });
 
     const result = await client.mutation({
@@ -164,14 +167,32 @@ const inputs = [
     expect(body.query).toMatch(/createPerson/);
   });
 
+  it('preserves JSON array payloads', async () => {
+    const transcript = [
+      { participant: { name: 'Ada' }, words: [{ text: 'Hello' }] },
+    ];
+    const fetchMock = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({ data: { echoJson: transcript } }),
+    );
+    const client = createClient({
+      url: 'https://example.test/graphql',
+      fetch: fetchMock,
+    });
+    expect(
+      await client.mutation({ echoJson: { __args: { value: transcript } } }),
+    ).toEqual({ echoJson: transcript });
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+    expect(Object.values(body.variables)).toContainEqual(transcript);
+  });
+
   it('throws when the API responds with GraphQL errors', async () => {
-    const fetchMock = vi.fn(async () =>
+    const fetchMock = vi.fn<typeof globalThis.fetch>(async () =>
       jsonResponse({ errors: [{ message: 'Not authorized' }], data: null }),
     );
 
     const client = createClient({
       url: 'https://example.test/graphql',
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      fetch: fetchMock,
     });
 
     await expect(
@@ -180,13 +201,13 @@ const inputs = [
   });
 
   it('rejects (does not hang) when a batched request fails', async () => {
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn<typeof globalThis.fetch>(async () => {
       throw new Error('network down');
     });
 
     const client = createClient({
       url: 'https://example.test/graphql',
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      fetch: fetchMock,
       // batch is the path where the runtime previously swallowed fetch errors,
       // leaving the caller's promise unsettled.
       batch: true,

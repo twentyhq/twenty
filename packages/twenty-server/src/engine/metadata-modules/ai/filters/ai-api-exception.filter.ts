@@ -40,6 +40,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           503, // the AI service is not configured
         );
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+      case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
@@ -50,6 +51,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.AGENT_IS_STANDARD:
+      case AiExceptionCode.AGENT_IS_INACTIVE:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

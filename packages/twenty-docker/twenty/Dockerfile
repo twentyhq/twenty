@@ -1,8 +1,19 @@
 # ===========================================================================
+# Base image
+# ===========================================================================
+
+FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base
+
+# Node 26 images no longer bundle Yarn; run the release pinned in .yarnrc.yml.
+RUN printf '%s\n' '#!/bin/sh' 'exec node "/app/$(sed -n "s/^yarnPath: //p" /app/.yarnrc.yml)" "$@"' \
+      > /usr/local/bin/yarn && \
+    chmod +x /usr/local/bin/yarn
+
+# ===========================================================================
 # Dependency stages
 # ===========================================================================
 
-FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS front-deps
+FROM node-base AS front-deps
 
 WORKDIR /app
 
@@ -20,7 +31,7 @@ COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 RUN yarn workspaces focus twenty-monorepo twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS server-deps
+FROM node-base AS server-deps
 
 WORKDIR /app
 
@@ -85,7 +96,7 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-server
+FROM node-base AS twenty-server
 
 # Force the patched Alpine OpenSSL libs to the fixed release (3.5.8-r0 clears
 # CVE-2026-14456/14457/18798/54874/63072/63075/63076). Node bundles its own
@@ -137,7 +148,7 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 # Remove unused, unpatchable components the scanner flags (none are executed at
 # runtime, and none can be fixed by upgrading our deps or Node):
-#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#  - the bundled npm CLI: the app uses yarn (see node-base) and never invokes npm,
 #    and npm's bundled ip-address has no patched release;
 #  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
 #    example/login ships a package-lock.json for an old Express demo
@@ -145,13 +156,6 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - the Node dev headers: only node-gyp needs them and native addons are
 #    compiled in the build stages; their vendored openssl/opensslv.h is what
 #    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
-# The pinned node:24.19.0-alpine base carries the July 2026 security fixes
-# (CVE-2026-56846/56848/58043, all fixed in 24.18.1) plus the 24.18.0 fix for
-# the http.Agent keep-alive regression (nodejs/node#64004) that flooded prod
-# with false "Premature close" fetch failures on 24.17.0 (see #22671/#22673).
-# Do not pin below 24.18.0 again.
-# Keep the base current when Node ships 24.x security releases — the scanner
-# flags the statically-linked node binary itself.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
       /usr/local/include/node && \
     find /app/node_modules -type d -name example -prune -exec rm -rf {} +
@@ -228,7 +232,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
 
 FROM clickhouse/clickhouse-server:25.8.8-alpine@sha256:68b9d9eb4cb949a03d1f90b76fd8d396a5999dd57ba1ee914ea36c77716ce937 AS clickhouse
 
-FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-app-dev
+FROM node-base AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/

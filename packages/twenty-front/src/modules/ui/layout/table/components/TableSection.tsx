@@ -53,7 +53,9 @@ export const TableSection = ({
         isExpanded={isExpanded}
         onClick={handleToggleSection}
       >
-        <StyledDisplayLabel>{title}</StyledDisplayLabel>
+        <Text size="xs" weight="semibold" color="light">
+          {title}
+        </Text>
         {isExpanded ? (
           <IconChevronUp
             size={theme.icon.size.md}
@@ -76,9 +78,3 @@ export const TableSection = ({
     </>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

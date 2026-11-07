@@ -1,7 +1,6 @@
 ---
 title: 安装钩子
 description: 在安装、升级或卸载生命周期中运行逻辑——预置数据、备份记录、验证升级、清理外部资源。
-icon: wrench
 ---
 
 安装钩子是在安装、升级或卸载生命周期期间运行的特殊逻辑函数。 它们与常规的[逻辑函数](/zh/developers/extend/apps/logic/logic-functions)共享相同的处理程序运行时，但使用自己的定义函数声明，并且存在于普通触发模型（HTTP、cron、数据库事件）之外。 安装钩子接收一个 `InstallPayload`（`{ previousVersion?: string; newVersion: string }`——在全新安装时 `previousVersion` 为 `undefined`）；卸载钩子接收一个 `UninstallPayload`（`{ version?: string }`——要被移除的版本）。

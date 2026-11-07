@@ -13,6 +13,11 @@ export type IngestMessageParticipant = {
   workspaceMemberId?: string;
 };
 
+export type IngestMessageAttachment = {
+  fileId: string;
+  label: string;
+};
+
 export type IngestMessage = {
   // Ingesting it twice is a no-op, so redelivered webhooks are safe to replay
   externalId: string;
@@ -23,6 +28,8 @@ export type IngestMessage = {
   text: string;
   receivedAt: Date;
   participants: IngestMessageParticipant[];
+  folderExternalIds?: string[];
+  attachments?: IngestMessageAttachment[];
 };
 
 export type IngestedMessage = {
@@ -30,4 +37,5 @@ export type IngestedMessage = {
   // Stable across re-ingestion, so safe to hang timeline activities or your own records off
   messageId: string;
   messageThreadId: string;
+  hasAttachments: boolean;
 };

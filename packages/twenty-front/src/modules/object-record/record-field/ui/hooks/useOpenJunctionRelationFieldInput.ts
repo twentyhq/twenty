@@ -72,7 +72,7 @@ export const useOpenJunctionRelationFieldInput = () => {
       openJunctionRelationPicker({
         recordPickerInstanceId: resolvedRecordPickerInstanceId,
         junctionRecords,
-        targetFields: junctionConfig.targetFields,
+        junctionConfig,
       });
 
       pushFocusItemToFocusStack({

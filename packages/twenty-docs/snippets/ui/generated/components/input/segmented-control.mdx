@@ -39,6 +39,10 @@
   Useful when the radio group is rendered outside the form.
 </ParamField>
 
+<ParamField body="fullWidth" type="boolean" default="false">
+  Stretch the control to the width of its container.
+</ParamField>
+
 <ParamField body="inputRef" type="Ref&lt;HTMLInputElement&gt;">
   A ref to access the hidden input element.
 </ParamField>
@@ -87,4 +91,8 @@
   The controlled value of the radio item that should be currently selected.
 
   To render an uncontrolled radio group, use the `defaultValue` prop instead.
+</ParamField>
+
+<ParamField body="variant" type="&quot;rectangle&quot; | &quot;round&quot;" default="round">
+  Shape: `round` is a pill, `rectangle` fills its container with form-field corners.
 </ParamField>

@@ -7,7 +7,7 @@ import {
 } from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
 import { deleteBlocklistEntryThroughMcp } from 'test/integration/graphql/suites/application-role-intersection/utils/delete-blocklist-entry-through-mcp.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   cleanupDelegatedApplications,
   type DelegatedApplications,
@@ -34,6 +34,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -86,7 +87,7 @@ const testCases: EachTestingContext<TestContext>[] = [
     context: {
       attempt: (token) =>
         checkoutSession({
-          input: { recurringInterval: 'Month' },
+          input: { recurringInterval: 'Month', plan: BillingPlanKey.PRO },
           token,
           expectToFail: true,
         }),

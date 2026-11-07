@@ -3,9 +3,13 @@ title: ResizeHandle
 description: Resize a panel with pointer dragging or keyboard controls.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## Overview
 
 `ResizeHandle` manages a numeric size and exposes a focusable separator. The application applies that size to the panel; the handle does not resize another element automatically.
 
@@ -217,3 +221,5 @@ Native handlers run before the handle's interaction. Calling `preventDefault()` 
 ## Props
 
 <ResizeHandleReference />
+
+<PageBanner illustration="layout" />

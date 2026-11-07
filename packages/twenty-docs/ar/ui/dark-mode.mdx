@@ -1,0 +1,63 @@
+---
+title: الوضع الداكن
+description: حمّل لوحتي ألوان Twenty وبدّل مخطط الألوان النشط.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+حمّل ورقتي الأنماط لكل مخططي الألوان عندما يتمكن تطبيقك من تبديل المخططات. يحدد `ThemeProvider` لوحة ألوان عبر تطبيق الفئة `light` أو `dark`.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+يقبل الموفّر مخطط ألوان صريحًا. يتولى تطبيقك حفظ التفضيلات وأي معالجة لتفضيلات النظام. إذا كنت تعرض المحتوى على الخادم، فاستخدم مخطط الألوان الأولي نفسه على الخادم والعميل لتجنب عدم تطابق لوحة الألوان الأولي.
+
+## امزج لوحات الألوان
+
+عيّن `applyToRoot={false}` على موفّر متداخل لمنح شجرة فرعية لوحة ألوان مختلفة. يجب تحميل ورقتي الأنماط كلتيهما:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+استخدم `useThemeColorScheme()` من `twenty-ui/theme` لقراءة النمط النشط للموفّر. في مكوّن واجهة أمامية في Twenty، استخدم `useColorScheme()` من `twenty-sdk/front-component` لقراءة مخطط الألوان لمساحة العمل الذي يوفره المضيف.
+
+<PageBanner illustration="page-cover-palette" />

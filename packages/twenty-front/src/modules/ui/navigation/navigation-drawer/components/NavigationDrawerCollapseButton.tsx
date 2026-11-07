@@ -4,29 +4,16 @@ import { useToggleNavigationDrawer } from '@/ui/navigation/navigation-drawer/hoo
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useNavigationDrawerExpandButtonFocusHandOff } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpandButtonFocusHandOff';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { styled } from '@linaria/react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledCollapseButton = styled.div`
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.light};
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  user-select: none;
-`;
 
 type NavigationDrawerCollapseButtonProps = {
-  className?: string;
   direction?: 'left' | 'right';
+  size?: 'sm' | 'md';
 };
 
 export const NavigationDrawerCollapseButton = ({
-  className,
   direction = 'left',
+  size,
 }: NavigationDrawerCollapseButtonProps) => {
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -43,23 +30,18 @@ export const NavigationDrawerCollapseButton = ({
   }
 
   return (
-    <Tooltip
-      content={label}
-      delay={TooltipDelay.longDelay}
-      side="bottom"
-      sideOffset={5}
+    <LightIconButton
+      ref={direction === 'right' ? expandButtonFocusHandOffRef : undefined}
+      emphasis="standard"
+      size={size ?? (isMobile ? 'md' : 'sm')}
+      onClick={toggleNavigationDrawer}
+      aria-label={label}
+      tooltip={label}
+      tooltipDelay={TooltipDelay.longDelay}
+      tooltipPlace="bottom"
+      tooltipOffset={5}
     >
-      <StyledCollapseButton className={className}>
-        <LightIconButton
-          ref={direction === 'right' ? expandButtonFocusHandOffRef : undefined}
-          emphasis="standard"
-          size="sm"
-          onClick={toggleNavigationDrawer}
-          aria-label={label}
-        >
-          <Icon />
-        </LightIconButton>
-      </StyledCollapseButton>
-    </Tooltip>
+      <Icon />
+    </LightIconButton>
   );
 };

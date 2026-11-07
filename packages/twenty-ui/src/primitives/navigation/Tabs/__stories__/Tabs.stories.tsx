@@ -118,6 +118,68 @@ export const Default: Story = {
   },
 };
 
+export const Compact: Story = {
+  ...Display,
+  args: { size: 'compact' },
+  render: ({ size }) => (
+    <Tabs.Root defaultValue="output">
+      <Tabs.List aria-label="Tool call details">
+        <Tabs.Tab value="output" size={size}>
+          Output
+        </Tabs.Tab>
+        <Tabs.Tab value="input" size={size}>
+          Input
+        </Tabs.Tab>
+        <Tabs.Indicator data-testid="compact-indicator" />
+      </Tabs.List>
+      <Tabs.Panel value="output">Saved output</Tabs.Panel>
+      <Tabs.Panel value="input">Saved input</Tabs.Panel>
+    </Tabs.Root>
+  ),
+};
+
+export const CompactInteractions: Story = {
+  ...Compact,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const output = canvas.getByRole('tab', { name: 'Output' });
+    const input = canvas.getByRole('tab', { name: 'Input' });
+    const indicator = canvas.getByTestId('compact-indicator');
+
+    for (const tab of [output, input]) {
+      await expect(tab).toHaveAttribute('data-size', 'compact');
+      await expect(getComputedStyle(tab).minBlockSize).toBe('24px');
+      await expect(tab.getBoundingClientRect().height).toBeGreaterThanOrEqual(
+        24,
+      );
+      await expect(tab.getBoundingClientRect().height).toBeLessThan(40);
+      await expect(tab.firstElementChild).toHaveStyle({ padding: '4px' });
+    }
+    await userEvent.click(output);
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(input).toHaveFocus();
+    await expect(output).toHaveAttribute('aria-selected', 'true');
+    await expect(
+      canvas.getByRole('tabpanel', { name: 'Output' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-selected', 'true');
+      expect(canvas.getByRole('tabpanel', { name: 'Input' })).toHaveTextContent(
+        'Saved input',
+      );
+      expect(indicator.getBoundingClientRect().width).toBeCloseTo(
+        input.getBoundingClientRect().width,
+        0,
+      );
+      expect(indicator.getBoundingClientRect().left).toBeCloseTo(
+        input.getBoundingClientRect().left,
+        0,
+      );
+    });
+  },
+};
+
 export const Controlled: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
@@ -328,7 +390,7 @@ export const Catalog: CatalogStory<Story, typeof Tabs.Tab> = {
       dimensions: [
         {
           name: 'size',
-          values: ['sm', 'md'] satisfies TabsSize[],
+          values: ['compact', 'sm', 'md'] satisfies TabsSize[],
           props: (size: TabsSize) => ({ size }),
         },
         {

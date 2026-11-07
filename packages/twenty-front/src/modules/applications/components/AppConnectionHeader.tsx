@@ -79,7 +79,12 @@ export const AppConnectionHeader = ({
             onError={() => setHasAppLogoError(true)}
           />
         ) : (
-          <Avatar size="xl" name={appName} colorSeed={appName} shape="square" />
+          <Avatar
+            size="xxl"
+            name={appName}
+            colorSeed={appName}
+            shape="square"
+          />
         )}
       </StyledAppLogoTile>
     </StyledContainer>

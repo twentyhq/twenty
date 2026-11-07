@@ -8,7 +8,6 @@ export const SKILL_FRAGMENT = gql`
     description
     icon
     content
-    isCustom
     isSystem
     isActive
     applicationId

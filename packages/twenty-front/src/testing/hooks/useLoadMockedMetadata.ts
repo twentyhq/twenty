@@ -33,7 +33,17 @@ export const useLoadMockedMetadata = () => {
         data.flatIndexes,
         MOCKED_COLLECTION_HASH,
       );
-      replaceDraft('views', data.flatViews, MOCKED_COLLECTION_HASH);
+      const mockedObjectMetadataIds = new Set(
+        data.flatObjects.map((flatObject) => flatObject.id),
+      );
+
+      replaceDraft(
+        'views',
+        data.flatViews.filter((flatView) =>
+          mockedObjectMetadataIds.has(flatView.objectMetadataId),
+        ),
+        MOCKED_COLLECTION_HASH,
+      );
       replaceDraft('viewFields', data.flatViewFields, MOCKED_COLLECTION_HASH);
       replaceDraft('viewFilters', data.flatViewFilters, MOCKED_COLLECTION_HASH);
       replaceDraft('viewSorts', data.flatViewSorts, MOCKED_COLLECTION_HASH);

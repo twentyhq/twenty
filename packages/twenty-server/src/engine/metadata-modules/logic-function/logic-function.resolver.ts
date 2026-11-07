@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -28,9 +33,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -52,9 +54,12 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const LOGIC_FUNCTION_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -64,9 +69,41 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
-  NoPermissionGuard,
-)
+  },
+  requiredPermissionFlags: [],
+};
+
+const LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+const LOGIC_FUNCTION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => LogicFunctionDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -85,7 +122,10 @@ export class LogicFunctionResolver {
   ) {}
 
   @Query(() => LogicFunctionDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard(LOGIC_FUNCTION_READ_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async findOneLogicFunction(
     @ApplicationTargetArg<LogicFunctionIdInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -117,9 +157,11 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => [LogicFunctionDTO])
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
@@ -140,6 +182,8 @@ export class LogicFunctionResolver {
             canCallerReachApplication({
               callingApplication,
               applicationId: flatLogicFunction.applicationId,
+              operation: 'read',
+              workspaceCustomApplicationId,
             }),
         )
         .map((flatLogicFunction) =>
@@ -165,7 +209,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY))
   async getAvailablePackages(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -204,20 +248,7 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WRITE_ACCESS_POLICY))
   async deleteOneLogicFunction(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -237,20 +268,7 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WRITE_ACCESS_POLICY))
   async createOneLogicFunction(
     @Args('input') input: CreateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -267,7 +285,7 @@ export class LogicFunctionResolver {
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async executeOneLogicFunction(
@@ -297,7 +315,7 @@ export class LogicFunctionResolver {
 
   @Query(() => String, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async getLogicFunctionSourceCode(
@@ -322,7 +340,7 @@ export class LogicFunctionResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async updateOneLogicFunction(
@@ -381,7 +399,7 @@ export class LogicFunctionResolver {
       );
     },
   })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY))
   async logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -403,6 +421,8 @@ export class LogicFunctionResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: payload.logicFunctionLogs.applicationId,
+          operation: 'read',
+          workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
         })
           ? payload
           : undefined,

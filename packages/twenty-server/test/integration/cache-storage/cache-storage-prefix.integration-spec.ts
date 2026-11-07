@@ -1,11 +1,10 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CACHE_MANAGER, type Cache, CacheModule } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { caching } from 'cache-manager';
-import { type RedisCache, redisStore } from 'cache-manager-redis-yet';
 import { randomUUID } from 'crypto';
 
+import { cacheStorageModuleFactory } from 'src/engine/core-modules/cache-storage/cache-storage.module-factory';
 import { FlushCacheCommand } from 'src/engine/core-modules/cache-storage/commands/flush-cache.command';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -15,13 +14,37 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('Cache storage prefix', () => {
-  let cache: RedisCache;
+  let cacheModule: TestingModule;
+  let cache: Cache;
   let entriesToClean: { storage: CacheStorageService; key: string }[];
 
   beforeAll(async () => {
-    cache = await caching(
-      await redisStore({ url: process.env.REDIS_URL, ttl: 60_000 }),
-    );
+    cacheModule = await Test.createTestingModule({
+      imports: [
+        CacheModule.registerAsync({
+          useFactory: cacheStorageModuleFactory,
+          inject: [TwentyConfigService],
+          extraProviders: [
+            {
+              provide: ConfigService,
+              useValue: new ConfigService({
+                REDIS_URL: process.env.REDIS_URL,
+                CACHE_STORAGE_TTL: 60,
+                IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
+              }),
+            },
+            {
+              provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+              useValue: new ConfigVariables(),
+            },
+            EnvironmentConfigDriver,
+            TwentyConfigService,
+          ],
+        }),
+      ],
+    }).compile();
+
+    cache = cacheModule.get<Cache>(CACHE_MANAGER);
   });
 
   beforeEach(() => {
@@ -35,7 +58,7 @@ describe('Cache storage prefix', () => {
   });
 
   afterAll(async () => {
-    await cache.store.client.quit();
+    await cacheModule.close();
   });
 
   describe.each([

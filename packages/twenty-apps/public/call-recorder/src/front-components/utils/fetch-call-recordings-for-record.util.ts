@@ -1,5 +1,6 @@
 import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-target-pages.constant';
 import { CALL_RECORDINGS_WIDGET_MAX_CALL_RECORDINGS_PER_BATCH } from 'src/front-components/constants/call-recordings-widget-max-call-recordings-per-batch.constant';
@@ -8,6 +9,7 @@ import { type CalendarEventTargetFieldName } from 'src/front-components/types/ca
 import { type CallRecordingNode } from 'src/front-components/types/call-recording-node.type';
 import { getMostRecentCallRecordings } from 'src/front-components/utils/get-most-recent-call-recordings.util';
 import { isPermissionDeniedError } from 'src/front-components/utils/is-permission-denied-error.util';
+import { RESTRICTED_FIELD_PLACEHOLDER } from 'src/logic-functions/constants/restricted-field-placeholder';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
   fetchAllNodes,
@@ -19,6 +21,11 @@ type QueryClient = Pick<CoreApiClient, 'query'>;
 type CalendarEventTargetNode = {
   id: string;
   calendarEventId?: string | null;
+};
+
+type CalendarEventTitleNode = {
+  id: string;
+  title?: string | null;
 };
 
 type CalendarEventTargetOrderBy = Array<Record<string, unknown>>;
@@ -138,6 +145,87 @@ const fetchListedCallRecordingsForCalendarEventIds = async ({
   );
 };
 
+// Unlike the nested relation, top-level calendarEvents apply the visibility restrictions.
+const fetchVisibleCalendarEventTitles = async ({
+  client,
+  calendarEventIds,
+}: {
+  client: QueryClient;
+  calendarEventIds: string[];
+}): Promise<CalendarEventTitleNode[]> =>
+  fetchAllNodes<CalendarEventTitleNode>(async (afterCursor) => {
+    const queryResult = await client.query({
+      calendarEvents: {
+        __args: {
+          filter: { id: { in: calendarEventIds } },
+          first: TWENTY_PAGE_SIZE,
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+        },
+        pageInfo: {
+          hasNextPage: true,
+          endCursor: true,
+        },
+        edges: {
+          node: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    return queryResult.calendarEvents as
+      | ConnectionPage<CalendarEventTitleNode>
+      | undefined;
+  });
+
+const markSharedCalendarEvents = async ({
+  client,
+  callRecordings,
+}: {
+  client: QueryClient;
+  callRecordings: CallRecordingNode[];
+}): Promise<CallRecordingNode[]> => {
+  const calendarEventIds = [
+    ...new Set(
+      callRecordings
+        .map((callRecording) => callRecording.calendarEvent?.id)
+        .filter(isNonEmptyString),
+    ),
+  ];
+
+  if (calendarEventIds.length === 0) {
+    return callRecordings;
+  }
+
+  const visibleCalendarEventTitleById = new Map(
+    (await fetchVisibleCalendarEventTitles({ client, calendarEventIds })).map(
+      (calendarEvent) => [calendarEvent.id, calendarEvent.title],
+    ),
+  );
+
+  return callRecordings.map((callRecording) => {
+    if (!isDefined(callRecording.calendarEvent)) {
+      return callRecording;
+    }
+
+    const visibleTitle = visibleCalendarEventTitleById.get(
+      callRecording.calendarEvent.id,
+    );
+
+    return {
+      ...callRecording,
+      calendarEvent: {
+        ...callRecording.calendarEvent,
+        title: visibleTitle,
+        isShared:
+          visibleCalendarEventTitleById.has(callRecording.calendarEvent.id) &&
+          visibleTitle !== RESTRICTED_FIELD_PLACEHOLDER,
+      },
+    };
+  });
+};
+
 // A record's newest meetings are often upcoming ones without a recording yet.
 export const fetchCallRecordingsForRecord = async ({
   client,
@@ -176,7 +264,9 @@ export const fetchCallRecordingsForRecord = async ({
 
   // Target creation order is not meeting order, so the fallback reads every page.
   const hasEnoughCallRecordings = () =>
-    orderBy === BY_MEETING_DATE_ORDER_BY && callRecordings.length >= maxCount;
+    orderBy === BY_MEETING_DATE_ORDER_BY &&
+    getMostRecentCallRecordings({ callRecordings, maxCount }).length >=
+      maxCount;
 
   while (
     hasNextPage &&
@@ -235,5 +325,15 @@ export const fetchCallRecordingsForRecord = async ({
     afterCursor = isString(endCursor) ? endCursor : undefined;
   }
 
-  return getMostRecentCallRecordings({ callRecordings, maxCount });
+  const mostRecentCallRecordings = getMostRecentCallRecordings({
+    callRecordings,
+    maxCount,
+  });
+
+  return isCalendarEventLoaded
+    ? markSharedCalendarEvents({
+        client,
+        callRecordings: mostRecentCallRecordings,
+      })
+    : mostRecentCallRecordings;
 };

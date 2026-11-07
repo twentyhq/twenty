@@ -1,5 +1,5 @@
 import { useLogicFunctionUpdateFormState } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 jest.mock('@/logic-functions/hooks/useGetOneLogicFunction', () => ({
   useGetOneLogicFunction: jest.fn(),
@@ -47,5 +47,69 @@ describe('useLogicFunctionUpdateFormState', () => {
       toolTriggerSettings: null,
       workflowActionTriggerSettings: null,
     });
+  });
+
+  test('applies the loaded source when no code is waiting to be saved', () => {
+    jest
+      .requireMock('@/logic-functions/hooks/useGetOneLogicFunction')
+      .useGetOneLogicFunction.mockReturnValue({
+        logicFunction: null,
+        loading: false,
+      });
+    jest
+      .requireMock('@/logic-functions/hooks/useGetLogicFunctionSourceCode')
+      .useGetLogicFunctionSourceCode.mockReturnValue({
+        sourceHandlerCode: mockCode,
+        loading: false,
+      });
+
+    const { result } = renderHook(() =>
+      useLogicFunctionUpdateFormState({ logicFunctionId: 'logicFunctionId' }),
+    );
+
+    expect(result.current.formValues.sourceHandlerCode).toBe(mockCode);
+  });
+
+  test('keeps code waiting to be saved over a source loaded meanwhile', () => {
+    jest
+      .requireMock('@/logic-functions/hooks/useGetOneLogicFunction')
+      .useGetOneLogicFunction.mockReturnValue({
+        logicFunction: null,
+        loading: false,
+      });
+    const useGetLogicFunctionSourceCodeMock = jest.requireMock(
+      '@/logic-functions/hooks/useGetLogicFunctionSourceCode',
+    ).useGetLogicFunctionSourceCode;
+
+    useGetLogicFunctionSourceCodeMock.mockReturnValue({
+      sourceHandlerCode: mockCode,
+      loading: false,
+    });
+
+    const { result, rerender } = renderHook(
+      ({ shouldKeepSourceHandlerCode }) =>
+        useLogicFunctionUpdateFormState({
+          logicFunctionId: 'logicFunctionId',
+          shouldKeepSourceHandlerCode,
+        }),
+      { initialProps: { shouldKeepSourceHandlerCode: false } },
+    );
+
+    act(() => {
+      result.current.setFormValues((previousFormValues) => ({
+        ...previousFormValues,
+        sourceHandlerCode: 'typed code',
+      }));
+    });
+
+    useGetLogicFunctionSourceCodeMock.mockReturnValue({
+      sourceHandlerCode: 'outdated code',
+      loading: false,
+    });
+
+    rerender({ shouldKeepSourceHandlerCode: true });
+    rerender({ shouldKeepSourceHandlerCode: false });
+
+    expect(result.current.formValues.sourceHandlerCode).toBe('typed code');
   });
 });

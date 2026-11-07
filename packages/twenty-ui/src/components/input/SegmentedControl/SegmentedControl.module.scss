@@ -16,6 +16,35 @@
   &[data-item-width='content'] {
     grid-auto-columns: max-content;
   }
+
+  &[data-variant='rectangle'] {
+    border-radius: var(--t-border-radius-md);
+    corner-shape: var(--t-corner-shape, superellipse(2.2));
+    display: grid;
+
+    &:has(.item:focus-visible) {
+      border-color: var(--t-color-blue);
+    }
+
+    .item {
+      border-radius: calc(
+        var(--t-border-radius-md) - var(--tw-segmented-control-padding) - 1px
+      );
+      corner-shape: var(--t-corner-shape, superellipse(2.2));
+
+      &:focus-visible {
+        outline: none;
+      }
+
+      &:focus-visible:not([data-checked]) {
+        background: var(--t-background-transparent-lighter);
+      }
+    }
+  }
+}
+
+.fullWidth {
+  inline-size: 100%;
 }
 
 .sm {

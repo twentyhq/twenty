@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { SCROLL_BRIDGE_PROPERTIES } from '@/constants/ScrollBridgeProperties';
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
@@ -17,6 +18,7 @@ import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElem
 import { preventDefaultThenForwardToRemote } from '@/host/events/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/elements/utils/sanitizeIframeSandbox';
 import { useRetryPendingHostFocus } from '@/host/focus/hooks/useRetryPendingHostFocus';
+import { useHostScrollCommands } from '@/host/scroll/hooks/useHostScrollCommands';
 
 type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
@@ -38,12 +40,18 @@ export const useHtmlHostElementProps = ({
     FrontComponentPointerCaptureControllerContext,
   );
 
-  const remoteElementId = getRemoteElementIdFromProps(props);
+  const {
+    [SCROLL_BRIDGE_PROPERTIES.request]: scrollCommands,
+    [SCROLL_BRIDGE_PROPERTIES.update]: onScrollUpdate,
+    ...remoteProps
+  } = props;
+
+  const remoteElementId = getRemoteElementIdFromProps(remoteProps);
 
   const { reactUnsupportedEventHandlers, reactBindableProps } =
     extractReactUnsupportedEventHandlers(
       buildHostReactPropsFromRemoteProps({
-        remoteProps: props,
+        remoteProps,
         htmlTag,
         findRemoteElementIdContainingNode:
           geometryTracker?.findRemoteElementIdContainingNode,
@@ -59,6 +67,8 @@ export const useHtmlHostElementProps = ({
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
 
   useRetryPendingHostFocus();
+
+  useHostScrollCommands({ remoteElementId, scrollCommands, onScrollUpdate });
 
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,

@@ -9,7 +9,11 @@ export const SEND_CHAT_MESSAGE = gql`
     $modelId: String
     $fileAttachments: [FileAttachmentInput!]
     $mentionedWorkspaceMemberIds: [UUID!]
+    $channelId: UUID
     $shouldAssistantReply: Boolean
+    $isAssistantParticipant: Boolean
+    $isAssistantMentioned: Boolean
+    $recipientWorkspaceMemberIds: [UUID!]
   ) {
     sendChatMessage(
       threadId: $threadId
@@ -19,12 +23,17 @@ export const SEND_CHAT_MESSAGE = gql`
       modelId: $modelId
       fileAttachments: $fileAttachments
       mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
+      channelId: $channelId
       shouldAssistantReply: $shouldAssistantReply
+      isAssistantParticipant: $isAssistantParticipant
+      isAssistantMentioned: $isAssistantMentioned
+      recipientWorkspaceMemberIds: $recipientWorkspaceMemberIds
     ) {
       messageId
       queued
       streamId
       mentionedParticipantWorkspaceMemberIds
+      recipientParticipantWorkspaceMemberIds
     }
   }
 `;

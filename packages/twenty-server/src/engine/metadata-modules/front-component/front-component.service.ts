@@ -7,7 +7,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
-import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -16,7 +16,7 @@ import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-
 import { fromCreateFrontComponentInputToFlatFrontComponentToCreate } from 'src/engine/metadata-modules/flat-front-component/utils/from-create-front-component-input-to-flat-front-component-to-create.util';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { fromUpdateFrontComponentInputToFlatFrontComponentToUpdateOrThrow } from 'src/engine/metadata-modules/flat-front-component/utils/from-update-front-component-input-to-flat-front-component-to-update-or-throw.util';
-import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { type CreateFrontComponentArgs } from 'src/engine/metadata-modules/front-component/types/create-front-component-args.type';
 import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { type UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import {
@@ -80,7 +80,7 @@ export class FrontComponentService {
     workspaceId,
     ownerFlatApplication,
   }: {
-    input: Omit<CreateFrontComponentInput, 'applicationId'>;
+    input: CreateFrontComponentArgs;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatFrontComponent> {

@@ -1,0 +1,124 @@
+---
+title: مُنتقي بلد الهاتف
+description: منتقي كامل لبلد الهاتف وأجزاء قابلة للتركيب تشترك في بيانات البلد والاختيار.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PhoneCountryPickerReference from '/snippets/ui/generated/components/input/phone-country-picker.mdx';
+
+## نظرة عامة
+
+يجمع `PhoneCountryPicker` بين مشغّل علم البلد ونافذة منبثقة وخيارات البحث ورمز الاتصال. استخدم المكوّن الكامل للاختيار العادي، أو ركّب `Root` و`Trigger` و`Options` مع [Dropdown](/ar/ui/components/navigation/dropdown) عندما تحتاج إلى نافذة منبثقة مخصّصة. يشترك الشكلان في البلدان المُعَدّة نفسها والاختيار نفسه.
+
+<StoryEmbed storyId="ui-input-phonecountrypicker--display" title="اختيار بلد الهاتف" height={260} />
+
+## استخدام
+
+وفّر بيانات بلدك الخاصة واسمًا متاحًا للمشغّل. استخدم `value` مع `onValueChange` للاختيار المتحكَّم به، أو `defaultValue` للاختيار غير المتحكَّم به. تمثّل `null` عدم اختيار أي بلد.
+
+```tsx
+import { useState } from 'react';
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+  { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
+];
+
+export const PhoneCountryExample = () => {
+  const [value, setValue] = useState<string | null>('FR');
+
+  return (
+    <PhoneCountryPicker
+      aria-label="Phone country"
+      countries={COUNTRIES}
+      value={value}
+      onValueChange={setValue}
+      contentProps={{ width: 280 }}
+      optionsProps={{
+        searchLabel: 'Search countries',
+        listLabel: 'Phone countries',
+        emptyLabel: 'No countries found',
+      }}
+    />
+  );
+};
+```
+
+يحتوي كل `PhoneCountryOption` على `value` فريد وثابت، و`label` محلي للبلد، و`callingCode` مؤلف من أرقام فقط من دون علامة الجمع البادئة، وعقدة `flag` زخرفية. قد يكون أيضًا `disabled`. القيم هي معرّفات يملكها المستدعي، مثل رموز بلدان ISO، وتُعاد دون تغيير. التسميات والأعلام ورموز الاتصال هي بيانات عرض ولا تصبح المعرّف المحدد.
+
+يضيف المنتقي علامة الجمع ويعزل رموز الاتصال من اليسار إلى اليمين في صفوف الخيارات وتلميحات الأدوات الفائضة، بما في ذلك الواجهات من اليمين إلى اليسار. وفّر البلدان بالترتيب الذي تريد عرضه. يظهر البلد المحدد أولًا ما دام يطابق الاستعلام؛ وتحتفظ التطابقات المتبقية بالترتيب الذي وفّرته.
+
+## التركيب المركب
+
+هذا تغيير واجهة برمجة تطبيقات غير متوافق مع الإصدارات السابقة للمستدعين المركبين الحاليين. أضف `PhoneCountryPicker.Root` حول `Dropdown.Root`، وانقل `countries` و`value` و`onValueChange` من `Options` إلى `Root`، وأزل `Trigger.country`. يتطلب الجزآن الآن `Root` ويستمدان البلد المحدد منه.
+
+يملك `Root` البلدان والاختيار المتحكَّم به أو غير المتحكَّم به. ضع `Dropdown.Root` المشترك داخله وركّب المشغّل والمحتوى والخيارات. يستمد `Trigger` علمه المحدد ووصفه المتاح من `Root`؛ ويقرأ `Options` البيانات والاختيار نفسيهما. لا توفّر بلدًا آخر أو قيمة محددة إلى تلك الأجزاء.
+
+```tsx
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+];
+
+<PhoneCountryPicker.Root countries={COUNTRIES} defaultValue="FR">
+  <Dropdown.Root type="picker">
+    <PhoneCountryPicker.Trigger
+      aria-label="Phone country"
+      render={<Button variant="outline" />}
+    />
+    <Dropdown.Content width={320}>
+      <PhoneCountryPicker.Options
+        searchLabel="Search countries"
+        listLabel="Phone countries"
+        emptyLabel="No countries found"
+      />
+    </Dropdown.Content>
+  </Dropdown.Root>
+</PhoneCountryPicker.Root>;
+```
+
+احتفظ بجذر واحد لكل منتقٍ. يتولى Dropdown المشترك الفتح وموضع النافذة المنبثقة والصفحات والتركيز والتنقل في البحث. استخدم `dropdownProps` و`contentProps` في المنتقي الكامل، أو هيّئ أجزاء Dropdown مباشرةً في الاستخدام المركب.
+
+## البحث والاختيار
+
+يطابق البحث السلاسل الفرعية لتسميات البلدان الموفّرة والمعرّفات الثابتة ورموز الاتصال. تستخدم التسميات والمعرّفات تسوية `normalizeSearchText` المشتركة: نص بأحرف صغيرة، وتحليل Unicode NFD، ومعالجة اللكنات المراعية للنص. على سبيل المثال، يطابق `reunion` القيمة `Réunion` ويطابق `gb` معرّف `GB`. تُحفظ الفروق ذات المعنى في النصوص وفقًا لتلك الدالة المساعدة. تُزال المسافات البيضاء المحيطة بالاستعلام؛ وتُحفظ المسافات البيضاء الداخلية. للبحث برمز الاتصال، تكون علامة جمع واحدة بادئة اختيارية، لذا تطابق `44` و`+44` و`" +44 "` رمز الاتصال الموفّر `44`. لا يحلل البحث رقم هاتف كاملًا ولا يستنتج بلدًا منه.
+
+يتلقى `onValueChange(value, eventDetails)` المعرّف المطلوب وتفاصيل `Dropdown.SelectionGroup` المشتركة: `reason` و`event` الأصلي و`trigger` للخيار المحدد و`cancel()` و`isCanceled`. استدعِ `cancel()` قبل تحديث الحالة المتحكَّم بها لرفض الطلب. يحافظ الطلب الملغى على الاختيار غير المتحكَّم به ويترك النافذة المنبثقة مفتوحة. اضبط `closeOnSelect={false}` لإبقائها مفتوحة بعد اختيار مقبول. لا تعدّل تغييرات الاختيار أي قيمة لإدخال الهاتف.
+
+اضبط `disabled` على المنتقي الكامل أو `Root` لتعطيل مشغّله وبحثه واختياره. يبقى البلد المعطل مرئيًا ولا يمكن اختياره. يمكن لـ `Trigger.disabled` و`Options.disabled` أيضًا تعطيل هذين الجزأين على حدة.
+
+## الأهداف والتسميات الأصلية
+
+تستهدف السمات الأصلية للمنتقي الكامل ومعالجات الأحداث و`className` و`style` و`ref` و`render` و`children` الاختياري مشغّله. يستبدل `children` العلم الافتراضي أو أيقونة العالم والشيفرون. يستهدف `contentProps` ‏`Dropdown.Content`؛ ويستهدف `optionsProps` عنصر div الجذر للخيارات ويوفّر `searchLabel` و`listLabel` و`emptyLabel`. في الاستخدام المركب، تستهدف الخصائص الأصلية والمراجع وتركيب العرض زر `Trigger` أو عنصر div الخاص بـ `Options` المقابل. لا يعرض `Root` أي عقدة DOM.
+
+وفّر تسميات محلية للبلدان و`aria-label` المطلوب للمشغّل. تصف تسمية البلد المحدد المشغّل، بينما علمه والشيفرون زخرفيان. يعرض الاختيار الفارغ أيقونة عالم. تأخذ النافذة المنبثقة اسم المشغّل ما لم يسمّها `Dropdown.Title` أو تسمية محتوى صريحة. القيمة الافتراضية لـ`searchLabel` هي `Search`، وهي تسمّي حقل البحث وعنصره النائب كليهما. تكون القيمة الافتراضية لـ `listLabel` هي `Countries` وتسمّي مربع القائمة بشكل مستقل. القيمة الافتراضية لـ`emptyLabel` هي `No results`.
+
+## تكامل إدخال الهاتف
+
+يأتي المنتقي دون كتالوج للبلدان أو حزمة أصول للأعلام أو وقت تشغيل لإدخال الهاتف. يمتلك محوّل الواجهة الأمامية تحليل الهاتف والتحقق من صحته وتنسيقه ومسودات التحرير والاستمرارية. اربط البلد المحدد في مكتبة الهاتف بـ `Root.value` أو `value` للمنتقي الكامل، واربط تغييرات البلد مرة أخرى عبر دالة رد واحدة. احتفظ بنص الهاتف في مالكه الحالي عند تغيير بلد أو مسحه، أو عند تطبيق تحديث خارجي للبلد المحدد.
+
+يُؤجَّل تقديم النموذج الأصلي وإعادة التعيين وrequired والقراءة فقط وتكامل Field لهذا المنتقي المخصص. يمرر المنتقي الكامل سمات المشغّل الأصلية وفقًا لعقد زر Dropdown.
+
+## عارض مكوّن الواجهة الأمامية
+
+تتضمن تجهيزات معرض React وPreact المنتقي الكامل والتركيب المركب. ينتمي موضع البوابة والهندسة والتمرير والرفض والتركيز إلى Dropdown المشترك وتكامل العارض. لا يقدّم المنتقي وقت تشغيل منفصلًا للعارض.
+
+## الخصائص
+
+<PhoneCountryPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

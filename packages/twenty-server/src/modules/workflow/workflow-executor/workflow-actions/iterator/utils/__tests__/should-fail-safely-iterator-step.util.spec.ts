@@ -2,6 +2,7 @@ import { StepStatus } from 'twenty-shared/workflow';
 
 import {
   createMockCodeStep,
+  createMockIfElseStep,
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldFailSafelyIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-fail-safely-iterator-step.util';
@@ -146,5 +147,47 @@ describe('shouldFailSafelyIteratorStep', () => {
 
       expect(result).toBe(false);
     });
+  });
+  describe('iterator already failed safely', () => {
+    it.each([true, false])(
+      'should return false when its loop comes back to it (flag: %s)',
+      (shouldContinueOnIterationFailure) => {
+        const findStep = createMockCodeStep('find', ['iterator1'], {
+          continueOnFailure: true,
+        });
+        const iterator = createMockIteratorStep(
+          'iterator1',
+          [],
+          ['ifElseA'],
+          shouldContinueOnIterationFailure,
+        );
+        const ifElseA = createMockIfElseStep('ifElseA', [
+          { id: 'branchA1', nextStepIds: ['updateA'] },
+          { id: 'branchA2', nextStepIds: ['ifElseB'] },
+        ]);
+        const updateA = createMockCodeStep('updateA', ['iterator1']);
+        const ifElseB = createMockIfElseStep('ifElseB', [
+          { id: 'branchB1', nextStepIds: ['updateB'] },
+          { id: 'branchB2', nextStepIds: ['iterator1'] },
+        ]);
+        const updateB = createMockCodeStep('updateB', ['iterator1']);
+        const steps = [findStep, iterator, ifElseA, updateA, ifElseB, updateB];
+
+        const result = shouldFailSafelyIteratorStep({
+          step: iterator,
+          steps,
+          stepInfos: {
+            find: { status: StepStatus.FAILED_SAFELY, error: 'Invalid filter' },
+            iterator1: { status: StepStatus.FAILED_SAFELY },
+            ifElseA: { status: StepStatus.FAILED_SAFELY },
+            updateA: { status: StepStatus.FAILED_SAFELY },
+            ifElseB: { status: StepStatus.FAILED_SAFELY },
+            updateB: { status: StepStatus.FAILED_SAFELY },
+          },
+        });
+
+        expect(result).toBe(false);
+      },
+    );
   });
 });

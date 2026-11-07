@@ -7,6 +7,12 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
+import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
+import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
+import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
+import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
+import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
   type WorkflowAction,
@@ -20,6 +26,7 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
+import { logError } from '~/utils/logError';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = () => {
@@ -55,9 +62,25 @@ export const WorkflowDiagramEffect = () => {
       workflowVisualizerWorkflowId ?? '',
     );
 
-  const [seededVersionId, setSeededVersionId] = useState<string>();
+  const [shouldSeedFlowFromServer, setShouldSeedFlowFromServer] =
+    useState(false);
+  const [lastCurrentVersionId, setLastCurrentVersionId] = useState<string>();
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
     useState<string>();
+
+  const pendingFlowKeys = useAtomComponentStateCallbackState(
+    workflowPendingFlowKeysComponentState,
+  );
+  const flowSaveInProgress = useAtomComponentStateCallbackState(
+    workflowFlowSaveInProgressComponentState,
+  );
+  const failedFlowKeys = useAtomComponentStateCallbackState(
+    workflowFailedFlowKeysComponentState,
+  );
+  const saveDraftVersionId = useAtomComponentStateCallbackState(
+    workflowFlowSaveDraftVersionIdComponentState,
+  );
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
     useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
@@ -116,16 +139,18 @@ export const WorkflowDiagramEffect = () => {
 
     setShouldWorkflowRefetchRequest(false);
 
-    void refetchContent()
+    void savePendingWorkflowFlow()
+      .then(() => refetchContent())
       .then(() => {
-        setSeededVersionId(undefined);
+        setShouldSeedFlowFromServer(true);
       })
-      .catch(() => {});
+      .catch(logError);
   }, [
     currentVersion?.id,
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
+    savePendingWorkflowFlow,
   ]);
 
   useEffect(() => {
@@ -137,9 +162,28 @@ export const WorkflowDiagramEffect = () => {
       return;
     }
 
+    const isDraftVersion = currentVersion.status === 'DRAFT';
+
     if (
-      seededVersionId === currentVersion.id &&
-      seededVersionUpdatedAt === contentUpdatedAt
+      !isDraftVersion &&
+      store.get(saveDraftVersionId) === currentVersion.id
+    ) {
+      store.set(saveDraftVersionId, undefined);
+    }
+
+    const hasCurrentVersionChanged = lastCurrentVersionId !== currentVersion.id;
+
+    if (!hasCurrentVersionChanged && !shouldSeedFlowFromServer) {
+      return;
+    }
+
+    setLastCurrentVersionId(currentVersion.id);
+    setShouldSeedFlowFromServer(false);
+
+    if (
+      isDefined(lastCurrentVersionId) &&
+      flow?.workflowVersionId === currentVersion.id &&
+      !shouldSeedFlowFromServer
     ) {
       return;
     }
@@ -153,22 +197,48 @@ export const WorkflowDiagramEffect = () => {
         ],
       });
     }
-    setSeededVersionId(currentVersion.id);
     setSeededVersionUpdatedAt(contentUpdatedAt);
 
-    setFlow({
-      workflowVersionId: currentVersion.id,
-      trigger: content.trigger,
-      steps: content.steps,
-    });
+    if (!isDraftVersion) {
+      store.set(pendingFlowKeys, []);
+      store.set(failedFlowKeys, []);
+    }
+
+    const flowSaveInProgressKeys = isDraftVersion
+      ? (store.get(flowSaveInProgress)?.flowKeys ?? [])
+      : [];
+
+    const localFlowKeys = [
+      ...store.get(pendingFlowKeys),
+      ...store.get(failedFlowKeys),
+      ...flowSaveInProgressKeys,
+    ];
+
+    setFlow((localFlow) =>
+      buildFlowWithLocalEdits({
+        serverFlow: {
+          workflowVersionId: currentVersion.id,
+          trigger: content.trigger,
+          steps: content.steps,
+        },
+        localFlow,
+        localFlowKeys,
+      }),
+    );
   }, [
     content,
     currentVersion,
-    seededVersionId,
-    seededVersionUpdatedAt,
+    flow?.workflowVersionId,
+    lastCurrentVersionId,
+    shouldSeedFlowFromServer,
     contentUpdatedAt,
     setFlow,
     deleteStepsOutputSchema,
+    store,
+    saveDraftVersionId,
+    pendingFlowKeys,
+    failedFlowKeys,
+    flowSaveInProgress,
   ]);
 
   useEffect(() => {

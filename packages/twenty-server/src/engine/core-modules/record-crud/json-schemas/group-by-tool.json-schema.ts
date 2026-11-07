@@ -4,7 +4,6 @@ import {
   AggregateOperations,
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
-  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
   isFieldMetadataArrayKind,
@@ -70,17 +69,17 @@ const buildSingleKeyObject = ({
 
 const buildGroupByEntries = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
   definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
 }): { schema: JSONSchema7; label: string }[] =>
   objectMetadata.fields
     .filter(
       (field) =>
-        restrictedFields?.[field.id]?.canRead !== false &&
+        !unreadableFieldMetadataIds?.has(field.id) &&
         isFieldMetadataSupportedInGroupBy(field),
     )
     .flatMap((field) => {
@@ -121,18 +120,20 @@ const buildGroupByEntries = ({
       }
 
       if (isCompositeFieldMetadataType(field.type)) {
-        return (getGroupableSubFieldsForCompositeType(field.type) ?? []).map(
-          (subField) => ({
-            schema: buildSingleKeyObject({
-              key: field.name,
-              value: buildSingleKeyObject({
-                key: subField,
-                value: TRUE_JSON_SCHEMA,
-              }),
+        return (
+          getGroupableSubFieldsForCompositeType(field.type, {
+            excludeDeprecated: true,
+          }) ?? []
+        ).map((subField) => ({
+          schema: buildSingleKeyObject({
+            key: field.name,
+            value: buildSingleKeyObject({
+              key: subField,
+              value: TRUE_JSON_SCHEMA,
             }),
-            label: `${field.name}.${subField}`,
           }),
-        );
+          label: `${field.name}.${subField}`,
+        }));
       }
 
       if (isFieldMetadataArrayKind(field.type)) {
@@ -168,16 +169,16 @@ const buildGroupByEntries = ({
 
 export const generateGroupByToolInputSchema = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 | null => {
   const definitions: JsonSchemaDefinitions = {};
 
   const groupByEntries = buildGroupByEntries({
     objectMetadata,
-    restrictedFields,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
@@ -187,13 +188,13 @@ export const generateGroupByToolInputSchema = ({
 
   const { properties: filterProperties } = generateRecordFilterJsonSchema({
     objectMetadata,
-    restrictedFields,
+    unreadableFieldMetadataIds,
     definitions,
   });
 
   const availableAggregations = getAvailableAggregationsFromObjectFields(
     objectMetadata.fields.filter(
-      (field) => restrictedFields?.[field.id]?.canRead !== false,
+      (field) => !unreadableFieldMetadataIds?.has(field.id),
     ),
   );
 

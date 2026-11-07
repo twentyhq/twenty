@@ -3,11 +3,14 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+import { type RequiredFieldOption } from 'src/types/required-field-option';
 
 export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
   objectNameSingular: string;
   noIdentifierMessage: string;
-  costPerMatchDollars: number;
+  pricePerMatchDollars: number;
+  requiredFieldsEnvVarName: string;
+  requiredFieldOptions: RequiredFieldOption[];
   minLikelihoodEnvVarName: string;
   weakIdentifierMinLikelihoodEnvVarName: string;
   readRecords: (args: {
@@ -18,6 +21,7 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
   extractParams: (args: {
     node: TNode;
     minLikelihoods: MinLikelihoods;
+    required?: string;
   }) => TParams | undefined;
   enrichBatch: (params: TParams[]) => Promise<PdlEnrichResult<TData>[]>;
   buildMatchedData: (args: {

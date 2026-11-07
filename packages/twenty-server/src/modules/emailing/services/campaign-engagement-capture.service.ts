@@ -84,6 +84,8 @@ export class CampaignEngagementCaptureService {
             initialDelayMilliseconds: 5_000,
             jitter: 0.5,
           },
+          workspaceId: observation.workspaceId,
+          isWorkspaceJob: true,
         },
       );
     } catch (error) {

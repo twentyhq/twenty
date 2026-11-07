@@ -49,6 +49,7 @@ export const signUp = async ({
             id
             displayName
             logo
+            personalInviteToken
             workspaceUrls {
               customUrl
               subdomainUrl

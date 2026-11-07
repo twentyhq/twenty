@@ -35,7 +35,8 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   isSystem: entity.isSystem,
   isUIEditable: entity.isUIEditable,
   isUIReadOnly: !entity.isUIEditable,
-  writability: entity.writability,
+  isSystemSideEffect: entity.isSystemSideEffect,
+  disabledFieldPermissionActions: entity.disabledFieldPermissionActions,
   isNullable: entity.isNullable ?? false,
   isUnique:
     derivedFieldMetadataIds?.uniqueFieldMetadataIds.has(entity.id) ?? false,

@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="active" type="boolean">
+  Marks the open or current item independently of selection and focus. The caller supplies accessible state.
+</ParamField>
+
 <ParamField body="color" type="&quot;danger&quot; | &quot;neutral&quot;">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
@@ -19,9 +23,8 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;">
-  Where the description renders: inline after the content or at the end of
-  the row.
+<ParamField body="descriptionPlacement" type="&quot;below&quot; | &quot;end&quot; | &quot;inline&quot;">
+  Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
@@ -55,6 +58,10 @@
 
 <ParamField body="selected" type="boolean">
   Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.
+</ParamField>
+
+<ParamField body="selectionAppearance" type="&quot;accent&quot; | &quot;default&quot;">
+  Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.
 </ParamField>
 
 <ParamField body="shortcut" type="ShortcutDefinition">

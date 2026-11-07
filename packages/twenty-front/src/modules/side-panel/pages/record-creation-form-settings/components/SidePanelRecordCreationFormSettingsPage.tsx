@@ -1,3 +1,4 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { type RecordFormField } from '@/object-record/record-form/types/RecordFormField';
@@ -22,8 +23,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
-import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -177,6 +178,7 @@ const SidePanelRecordCreationFormSettings = ({
             draggableItems={orderedConfigurableRecordFormFields.map(
               (recordFormField, index) => {
                 const { fieldMetadataItem } = recordFormField;
+                const FieldIcon = getIcon(fieldMetadataItem.icon);
                 const isVisible = isRecordFormFieldVisible(recordFormField);
 
                 return (
@@ -186,11 +188,10 @@ const SidePanelRecordCreationFormSettings = ({
                     index={index}
                     isDragDisabled={isSaving}
                     itemComponent={
-                      <MenuItemDraggable
-                        LeftIcon={getIcon(fieldMetadataItem.icon)}
-                        withIconContainer
-                        text={fieldMetadataItem.label}
-                        contextualText={
+                      <DraggableListRow
+                        startIcon={<FieldIcon />}
+                        hasIconBackground
+                        description={
                           isFieldTypeSupportedInSettings(fieldMetadataItem.type)
                             ? i18n._(
                                 getSettingsFieldTypeConfig(
@@ -199,11 +200,14 @@ const SidePanelRecordCreationFormSettings = ({
                               )
                             : undefined
                         }
-                        isIconDisplayedOnHoverOnly={false}
-                        gripMode="onHover"
-                        onClick={() => handleToggleVisibility(recordFormField)}
-                        iconButtons={
+                        actionsVisibility="always"
+                        dragHandleVisibility="hover"
+                        isDragDisabled={isSaving}
+                        onAction={() => handleToggleVisibility(recordFormField)}
+                        isActionDisabled={isSaving}
+                        actions={
                           <LightIconButton
+                            disabled={isSaving}
                             aria-label={
                               isVisible
                                 ? t`Hide ${fieldMetadataItem.label}`
@@ -217,7 +221,9 @@ const SidePanelRecordCreationFormSettings = ({
                             {isVisible ? <IconEye /> : <IconEyeOff />}
                           </LightIconButton>
                         }
-                      />
+                      >
+                        {fieldMetadataItem.label}
+                      </DraggableListRow>
                     }
                   />
                 );

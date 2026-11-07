@@ -1,0 +1,75 @@
+---
+title: Секция
+description: Сгруппируйте содержимое с заголовком, дополнительным описанием и необязательным действием.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Обзор
+
+`Section.Root` группирует связанное содержимое. `Section.Header` объединяет [Заголовок](/ru/ui/primitives/typography/heading) с описанием и необязательным содержимым `actions`. Описания — это обычный текст, связанный с заголовком, поэтому они не добавляют уровни в структуру документа.
+
+<StoryEmbed storyId="ui-components-section--display" title="Пример раздела" height={150} />
+
+## Использование
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+## Добавьте описание и действие
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      actions={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+`Section.Root` по умолчанию представляет собой `div` на всю ширину с выравниванием по левому краю и основным цветом текста. Используйте `align`, `color` и `fullWidth`, чтобы настроить обёртку содержимого.
+
+`Section.Header` также можно использовать отдельно. Его `level`, `size` и `color` настраивают заголовок и по умолчанию имеют значения `2`, `md` и `primary`. После заголовка есть один отступ spacing-4. Используйте нативные `style` или `className`, чтобы настроить этот отступ.
+
+## Переполнение описания
+
+Описания строк отображаются не более чем в пяти строках. Установите для `descriptionLineClamp` положительное целое число, чтобы выбрать другое ограничение, или `false`, чтобы отобразить полное описание без всплывающей подсказки при переполнении. При наведении отображается текст, не помещающийся в строке. Описания по умолчанию не добавляют точку остановки Tab; установите `isDescriptionFocusable`, чтобы включить доступ к всплывающей подсказке с помощью фокуса. Клавиша Escape закрывает всплывающую подсказку.
+
+Заголовок поддерживает содержимое узла. Выбирайте `level` для структуры документа независимо от визуальных `size` и `color`. Явно компонуйте ссылки и другое форматированное содержимое в описании узла.
+
+Передайте узел React для более насыщенного дополнительного содержимого. Расширенные описания отображаются в переданном виде, без автоматического усечения или всплывающих подсказок.
+
+## Композиция
+
+Обе части передают нативные атрибуты, refs, имена классов, стили и `render` своему внешнему элементу. Например, `Section.Root render={<section aria-label="Workspace settings" />}` предоставляет именованный раздел, а `Section.Header render={<header />}` использует контейнер заголовка.
+
+При миграции замените `adornment` на `actions`. При необходимости включайте фокусировку описания с помощью `isDescriptionFocusable`. `SectionRootProps` и `SectionHeaderProps` экспортируются из `twenty-ui/components/layout`.
+
+## Свойства
+
+<SectionReference />
+
+<PageBanner illustration="layout" />

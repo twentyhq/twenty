@@ -2,9 +2,13 @@ import {
   ALL_METADATA_NAME,
   type AllMetadataName,
 } from 'twenty-shared/metadata';
+import { ViewSortDirection } from 'twenty-shared/types';
 
+import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
+import { buildUniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout.test-util';
+import { buildUniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout-tab.test-util';
 import { computeOrderedMigrationActions } from 'src/engine/workspace-manager/workspace-migration/utils/compute-ordered-migration-actions.util';
 import {
   type UniversalCreateFrontComponentAction,
@@ -20,6 +24,10 @@ import {
   type UniversalUpdateSettingsMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/types/workspace-migration-settings-menu-item-action.type';
 import { type UniversalCreateViewSortAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
+import {
+  type UniversalCreateWorkflowVersionAction,
+  type UniversalUpdateWorkflowVersionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/types/workspace-migration-workflow-version-action.type';
 
 describe('computeOrderedMigrationActions', () => {
   it('should remove a replaced view sort before creating its replacement', () => {
@@ -29,15 +37,19 @@ describe('computeOrderedMigrationActions', () => {
       metadataName: 'viewSort',
       universalIdentifier: 'old-sort',
     } as const;
-    const replacementSortCreateAction = {
+    const replacementSortCreateAction: UniversalCreateViewSortAction = {
       type: 'create',
       metadataName: 'viewSort',
       flatEntity: {
         universalIdentifier: 'replacement-sort',
         viewUniversalIdentifier: 'view',
         fieldMetadataUniversalIdentifier: 'field',
+        applicationUniversalIdentifier: 'application',
+        direction: ViewSortDirection.ASC,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
       },
-    } as unknown as UniversalCreateViewSortAction;
+    };
 
     orchestratorActionsReport.viewSort.delete.push(oldSortDeleteAction);
     orchestratorActionsReport.viewSort.create.push(replacementSortCreateAction);
@@ -52,22 +64,22 @@ describe('computeOrderedMigrationActions', () => {
   });
 
   it('should run pageLayout updates after pageLayoutTab creates so defaultTabToFocusOnMobileAndSidePanel can reference a tab created in the same migration', () => {
-    const pageLayoutUpdateAction = {
+    const pageLayoutUpdateAction: UniversalUpdatePageLayoutAction = {
       type: 'update',
       metadataName: 'pageLayout',
       universalIdentifier: 'layout',
       update: {
         defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: 'tab',
       },
-    } as unknown as UniversalUpdatePageLayoutAction;
-    const pageLayoutTabCreateAction = {
+    };
+    const pageLayoutTabCreateAction: UniversalCreatePageLayoutTabAction = {
       type: 'create',
       metadataName: 'pageLayoutTab',
-      flatEntity: {
+      flatEntity: buildUniversalFlatPageLayoutTab({
         universalIdentifier: 'tab',
         pageLayoutUniversalIdentifier: 'layout',
-      },
-    } as unknown as UniversalCreatePageLayoutTabAction;
+      }),
+    };
 
     const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
 
@@ -89,27 +101,41 @@ describe('computeOrderedMigrationActions', () => {
   // an item onto a new component while dropping the old one loses the row unless the
   // update lands first — the update would then match nothing and still report success.
   it('should repoint settings menu items and delete removed ones around the front component delete', () => {
-    const oldFrontComponentDeleteAction = {
+    const oldFrontComponentDeleteAction: UniversalDeleteFrontComponentAction = {
       type: 'delete',
       metadataName: 'frontComponent',
       universalIdentifier: 'component-a',
-    } as unknown as UniversalDeleteFrontComponentAction;
-    const newFrontComponentCreateAction = {
+    };
+    const newFrontComponentCreateAction: UniversalCreateFrontComponentAction = {
       type: 'create',
       metadataName: 'frontComponent',
-      flatEntity: { universalIdentifier: 'component-b' },
-    } as unknown as UniversalCreateFrontComponentAction;
-    const retainedItemUpdateAction = {
+      flatEntity: {
+        universalIdentifier: 'component-b',
+        applicationUniversalIdentifier: 'application',
+        name: 'Component',
+        description: null,
+        sourceComponentPath: 'component.tsx',
+        builtComponentPath: 'component.js',
+        componentName: 'Component',
+        builtComponentChecksum: 'checksum',
+        isHeadless: false,
+        usesSdkClient: false,
+        universalWidgetAvailability: [],
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    };
+    const retainedItemUpdateAction: UniversalUpdateSettingsMenuItemAction = {
       type: 'update',
       metadataName: 'settingsMenuItem',
       universalIdentifier: 'item-kept',
       update: { frontComponentUniversalIdentifier: 'component-b' },
-    } as unknown as UniversalUpdateSettingsMenuItemAction;
-    const droppedItemDeleteAction = {
+    };
+    const droppedItemDeleteAction: UniversalDeleteSettingsMenuItemAction = {
       type: 'delete',
       metadataName: 'settingsMenuItem',
       universalIdentifier: 'item-dropped',
-    } as unknown as UniversalDeleteSettingsMenuItemAction;
+    };
 
     const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
 
@@ -145,20 +171,60 @@ describe('computeOrderedMigrationActions', () => {
     );
   });
 
+  it('should archive the active workflow version before creating the one that replaces it', () => {
+    const archiveAction: UniversalUpdateWorkflowVersionAction = {
+      type: 'update',
+      metadataName: 'workflowVersion',
+      universalIdentifier: 'published-version',
+      update: { status: WorkflowVersionStatus.ARCHIVED },
+    };
+    const publishAction: UniversalCreateWorkflowVersionAction = {
+      type: 'create',
+      metadataName: 'workflowVersion',
+      flatEntity: {
+        universalIdentifier: 'new-version',
+        applicationUniversalIdentifier: 'application',
+        status: WorkflowVersionStatus.ACTIVE,
+        isSystemSideEffect: false,
+        triggers: null,
+        steps: null,
+        workflowId: null,
+        coreWorkflowId: null,
+        workspaceWorkflowVersionId: null,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    };
+    const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
+
+    orchestratorActionsReport.workflowVersion.create.push(publishAction);
+    orchestratorActionsReport.workflowVersion.update.push(archiveAction);
+
+    const orderedActions = computeOrderedMigrationActions(
+      orchestratorActionsReport,
+    );
+
+    expect(orderedActions.indexOf(archiveAction)).toBeLessThan(
+      orderedActions.indexOf(publishAction),
+    );
+  });
+
   it('should run pageLayout creates before pageLayoutTab creates', () => {
-    const pageLayoutCreateAction = {
+    const pageLayoutCreateAction: UniversalCreatePageLayoutAction = {
       type: 'create',
       metadataName: 'pageLayout',
-      flatEntity: { universalIdentifier: 'layout' },
-    } as unknown as UniversalCreatePageLayoutAction;
-    const pageLayoutTabCreateAction = {
+      flatEntity: buildUniversalFlatPageLayout({
+        universalIdentifier: 'layout',
+      }),
+    };
+    const pageLayoutTabCreateAction: UniversalCreatePageLayoutTabAction = {
       type: 'create',
       metadataName: 'pageLayoutTab',
-      flatEntity: {
+      flatEntity: buildUniversalFlatPageLayoutTab({
         universalIdentifier: 'tab',
         pageLayoutUniversalIdentifier: 'layout',
-      },
-    } as unknown as UniversalCreatePageLayoutTabAction;
+      }),
+    };
 
     const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
 

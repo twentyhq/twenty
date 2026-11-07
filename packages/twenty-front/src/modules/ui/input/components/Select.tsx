@@ -3,8 +3,8 @@ import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -18,9 +18,14 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+`;
+
+const StyledSelectTrigger = styled.div<{ hasOutline: boolean }>`
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
 `;
 
 const StyledLabel = styled.span`
@@ -62,9 +67,11 @@ export const Select = <TValue extends SelectValue>({
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<TValue>) => {
+  const { t } = useLingui();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [isTriggerFocused, setIsTriggerFocused] = useState(false);
 
   const selectedOption = useMemo(() => {
     if (isDefined(pinnedOption) && pinnedOption.value === value) {
@@ -180,7 +187,23 @@ export const Select = <TValue extends SelectValue>({
             }
           }}
         >
-          <Dropdown.Trigger render={<div />} nativeButton={false}>
+          <Dropdown.Trigger
+            render={
+              <StyledSelectTrigger
+                hasOutline={
+                  !hasFullFormFieldBorder({ hasRightElement, variant })
+                }
+              />
+            }
+            nativeButton={false}
+            onFocus={(event) =>
+              setIsTriggerFocused(
+                event.target === event.currentTarget &&
+                  event.currentTarget.matches(':focus-visible'),
+              )
+            }
+            onBlur={() => setIsTriggerFocused(false)}
+          >
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
@@ -188,6 +211,7 @@ export const Select = <TValue extends SelectValue>({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
+              isFocused={isTriggerFocused}
               variant={variant}
             />
           </Dropdown.Trigger>

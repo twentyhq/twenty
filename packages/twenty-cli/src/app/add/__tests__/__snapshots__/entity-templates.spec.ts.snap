@@ -1,0 +1,639 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`app add templates > preserves runtime templates and filename normalization for HTTPClient2 1`] = `"http-client-2"`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for HTTPClient2 2`] = `
+"import { defineLogicFunction } from 'twenty-sdk/define';
+
+// Logic function handler - rename and implement your logic
+const handler = async (params: {
+  a: string;
+  b: number;
+}): Promise<{ message: string }> => {
+  const { a, b } = params;
+
+  // Replace with your own logic
+  const message = \`Hello, input: \${a} and \${b}\`;
+
+  return { message };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'UUID_0',
+  name: 'http-client-2',
+  description: 'Add a description for your logic function',
+  timeoutSeconds: 5,
+  handler,
+    // Add your trigger here
+    // Route trigger example:
+    // httpRouteTriggerSettings: {
+    //   path: '/http-client-2',
+    //   httpMethod: 'POST',
+    //   isAuthRequired: true,
+    // },
+    // Cron trigger example:
+    // cronTriggerSettings: {
+    //   pattern: '0 0 * * *', // Daily at midnight
+    // },
+    // Database event trigger example:
+    // databaseEventTriggerSettings: {
+    //   eventName: 'objectName.created',
+    //   // Optional: receive one call per batch of events instead of one per event,
+    //   // the handler payload then becomes { ...eventInfo, events: [...] }
+    //   batchMode: true,
+    // },
+});
+"
+`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for HTTPClient2 3`] = `
+"import { defineFrontComponent } from 'twenty-sdk/define';
+
+// React component - implement your UI here
+const Component = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My new component!</h1>
+      <p>This is your front component: http-client-2</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'UUID_0',
+  name: 'http-client-2',
+  description: 'Add a description for your front component',
+  component: Component,
+});
+"
+`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for SendInvoice 1`] = `"send-invoice"`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for SendInvoice 2`] = `
+"import { defineLogicFunction } from 'twenty-sdk/define';
+
+// Logic function handler - rename and implement your logic
+const handler = async (params: {
+  a: string;
+  b: number;
+}): Promise<{ message: string }> => {
+  const { a, b } = params;
+
+  // Replace with your own logic
+  const message = \`Hello, input: \${a} and \${b}\`;
+
+  return { message };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'UUID_0',
+  name: 'send-invoice',
+  description: 'Add a description for your logic function',
+  timeoutSeconds: 5,
+  handler,
+    // Add your trigger here
+    // Route trigger example:
+    // httpRouteTriggerSettings: {
+    //   path: '/send-invoice',
+    //   httpMethod: 'POST',
+    //   isAuthRequired: true,
+    // },
+    // Cron trigger example:
+    // cronTriggerSettings: {
+    //   pattern: '0 0 * * *', // Daily at midnight
+    // },
+    // Database event trigger example:
+    // databaseEventTriggerSettings: {
+    //   eventName: 'objectName.created',
+    //   // Optional: receive one call per batch of events instead of one per event,
+    //   // the handler payload then becomes { ...eventInfo, events: [...] }
+    //   batchMode: true,
+    // },
+});
+"
+`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for SendInvoice 3`] = `
+"import { defineFrontComponent } from 'twenty-sdk/define';
+
+// React component - implement your UI here
+const Component = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My new component!</h1>
+      <p>This is your front component: send-invoice</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'UUID_0',
+  name: 'send-invoice',
+  description: 'Add a description for your front component',
+  component: Component,
+});
+"
+`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for hello world 1`] = `"hello-world"`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for hello world 2`] = `
+"import { defineLogicFunction } from 'twenty-sdk/define';
+
+// Logic function handler - rename and implement your logic
+const handler = async (params: {
+  a: string;
+  b: number;
+}): Promise<{ message: string }> => {
+  const { a, b } = params;
+
+  // Replace with your own logic
+  const message = \`Hello, input: \${a} and \${b}\`;
+
+  return { message };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'UUID_0',
+  name: 'hello-world',
+  description: 'Add a description for your logic function',
+  timeoutSeconds: 5,
+  handler,
+    // Add your trigger here
+    // Route trigger example:
+    // httpRouteTriggerSettings: {
+    //   path: '/hello-world',
+    //   httpMethod: 'POST',
+    //   isAuthRequired: true,
+    // },
+    // Cron trigger example:
+    // cronTriggerSettings: {
+    //   pattern: '0 0 * * *', // Daily at midnight
+    // },
+    // Database event trigger example:
+    // databaseEventTriggerSettings: {
+    //   eventName: 'objectName.created',
+    //   // Optional: receive one call per batch of events instead of one per event,
+    //   // the handler payload then becomes { ...eventInfo, events: [...] }
+    //   batchMode: true,
+    // },
+});
+"
+`;
+
+exports[`app add templates > preserves runtime templates and filename normalization for hello world 3`] = `
+"import { defineFrontComponent } from 'twenty-sdk/define';
+
+// React component - implement your UI here
+const Component = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My new component!</h1>
+      <p>This is your front component: hello-world</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'UUID_0',
+  name: 'hello-world',
+  description: 'Add a description for your front component',
+  component: Component,
+});
+"
+`;
+
+exports[`app add templates > preserves the ACTOR field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.ACTOR,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the ADDRESS field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.ADDRESS,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the ARRAY field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.ARRAY,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the BOOLEAN field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.BOOLEAN,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the CURRENCY field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.CURRENCY,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the DATE field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.DATE,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the DATE_TIME field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.DATE_TIME,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the EMAILS field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.EMAILS,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the FILES field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.FILES,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the FULL_NAME field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.FULL_NAME,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the LINKS field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.LINKS,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the MORPH_RELATION field template 1`] = `
+"import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.MORPH_RELATION,
+  objectUniversalIdentifier: 'UUID_1',
+  relationTargetObjectMetadataUniversalIdentifier: 'UUID_2',
+  relationTargetFieldMetadataUniversalIdentifier: 'UUID_3',
+  universalSettings: { relationType: RelationType.ONE_TO_MANY, onDelete: OnDeleteAction.CASCADE },
+  morphId: 'UUID_4',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the MULTI_SELECT field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.MULTI_SELECT,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the NUMBER field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.NUMBER,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the NUMERIC field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.NUMERIC,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the PHONES field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.PHONES,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the POSITION field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.POSITION,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the RATING field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.RATING,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the RAW_JSON field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.RAW_JSON,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the RELATION field template 1`] = `
+"import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.RELATION,
+  objectUniversalIdentifier: 'UUID_1',
+  relationTargetObjectMetadataUniversalIdentifier: 'UUID_2',
+  relationTargetFieldMetadataUniversalIdentifier: 'UUID_3',
+  universalSettings: { relationType: RelationType.ONE_TO_MANY, onDelete: OnDeleteAction.CASCADE },
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the RICH_TEXT field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.RICH_TEXT,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the SELECT field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.SELECT,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the TEXT field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.TEXT,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the TS_VECTOR field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.TS_VECTOR,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the UUID field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.UUID,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
+exports[`app add templates > preserves the object template and its shared name-field identifier 1`] = `
+"import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  'UUID_0';
+
+export default defineObject({
+  universalIdentifier: 'UUID_1',
+  nameSingular: 'invoice',
+  namePlural: 'invoices',
+  labelSingular: 'Invoice',
+  labelPlural: 'Invoices',
+  icon: 'IconBox',
+  labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      description: 'Name of the invoice',
+      icon: 'IconAbc',
+    },
+  ],
+});
+"
+`;
+
+exports[`app add templates > preserves the record page layout and its fields view reference 1`] = `
+"import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: 'UUID_0',
+  name: 'Default Invoice Layout',
+  type: PageLayoutType.RECORD_PAGE,
+  objectUniversalIdentifier: 'UUID_1',
+  tabs: [
+    {
+      universalIdentifier: 'UUID_2',
+      title: 'Home',
+      position: 10,
+      icon: 'IconHome',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'UUID_3',
+          title: 'Fields',
+          type: 'FIELDS',
+          configuration: {
+            configurationType: 'FIELDS',
+            viewUniversalIdentifier: 'UUID_4',
+          },
+        },
+      ],
+    },
+    {
+      universalIdentifier: 'UUID_5',
+      title: 'Timeline',
+      position: 20,
+      icon: 'IconTimelineEvent',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'UUID_6',
+          title: 'Timeline',
+          type: 'TIMELINE',
+          configuration: {
+            configurationType: 'TIMELINE',
+          },
+        },
+      ],
+    },
+  ],
+});
+"
+`;

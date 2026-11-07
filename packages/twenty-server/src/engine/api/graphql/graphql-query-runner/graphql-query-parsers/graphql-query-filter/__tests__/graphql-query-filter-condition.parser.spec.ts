@@ -2,13 +2,18 @@ import {
   createWhereExpressionRecorder,
   type RecordedWhereCall,
 } from 'test/utils/create-where-expression-recorder.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { type ParentFilterScope } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -35,7 +40,55 @@ const employeesField = createFlatFieldMetadata({
   universalIdentifier: 'employees-field-universal-id',
 });
 
-const companyFields = [nameField, employeesField];
+const createdAtField = createFlatFieldMetadata({
+  id: 'created-at-field-id',
+  name: 'createdAt',
+  type: FieldMetadataType.DATE_TIME,
+  universalIdentifier: 'created-at-field-universal-id',
+});
+
+const lastContactAtField = createFlatFieldMetadata({
+  id: 'last-contact-at-field-id',
+  name: 'lastContactAt',
+  type: FieldMetadataType.DATE_TIME,
+  universalIdentifier: 'last-contact-at-field-universal-id',
+});
+
+const companyPeopleField = createFlatFieldMetadata({
+  id: 'company-people-field-id',
+  name: 'people',
+  type: FieldMetadataType.RELATION,
+  relationTargetFieldMetadataId: 'person-company-field-id',
+  settings: { relationType: RelationType.ONE_TO_MANY },
+  universalIdentifier: 'company-people-field-universal-id',
+});
+
+const companyAccountOwnerField = createFlatFieldMetadata({
+  id: 'company-account-owner-field-id',
+  name: 'accountOwner',
+  type: FieldMetadataType.RELATION,
+  relationTargetFieldMetadataId: 'workspace-member-companies-field-id',
+  settings: { relationType: RelationType.MANY_TO_ONE },
+  universalIdentifier: 'company-account-owner-field-universal-id',
+});
+
+const companyFields = [
+  nameField,
+  employeesField,
+  createdAtField,
+  lastContactAtField,
+  companyPeopleField,
+  companyAccountOwnerField,
+];
+
+const personUpdatedAtField = createFlatFieldMetadata({
+  id: 'person-updated-at-field-id',
+  name: 'updatedAt',
+  type: FieldMetadataType.DATE_TIME,
+  universalIdentifier: 'person-updated-at-field-universal-id',
+});
+
+const personFields = [personUpdatedAtField];
 
 const companyObjectMetadata = {
   id: 'company-object-id',
@@ -45,30 +98,45 @@ const companyObjectMetadata = {
   universalIdentifier: 'company-object-universal-id',
 } as FlatObjectMetadata;
 
+const personObjectMetadata = {
+  id: 'person-object-id',
+  nameSingular: 'person',
+  namePlural: 'people',
+  fieldIds: personFields.map((field) => field.id),
+  universalIdentifier: 'person-object-universal-id',
+} as FlatObjectMetadata;
+
+const allFields = [...companyFields, ...personFields];
+
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: Object.fromEntries(
-    companyFields.map((field) => [field.universalIdentifier, field]),
+    allFields.map((field) => [field.universalIdentifier, field]),
   ),
   universalIdentifierById: Object.fromEntries(
-    companyFields.map((field) => [field.id, field.universalIdentifier]),
+    allFields.map((field) => [field.id, field.universalIdentifier]),
   ),
   universalIdentifiersByApplicationId: {},
 };
 
-const outerQueryBuilder = {
-  objectRecordsPermissions: {},
-} as unknown as WorkspaceSelectQueryBuilder;
+const { queryBuilder: outerQueryBuilder } = buildQueryBuilder();
 
-const recordFilterEntries = (filter: Record<string, unknown>) => {
+const recordFilterEntries = (
+  filter: Record<string, unknown>,
+  parentFilterScope?: ParentFilterScope,
+  queryBuilder: WorkspaceSelectQueryBuilder = outerQueryBuilder,
+) => {
   const recorder = createWhereExpressionRecorder();
   const parser = new GraphqlQueryFilterConditionParser(
     companyObjectMetadata,
     flatFieldMetadataMaps,
+    undefined,
+    isDefined(parentFilterScope) ? 1 : 0,
+    parentFilterScope,
   );
 
   parser.applyFilterEntriesToWhereBrackets(
     recorder.whereExpression,
-    outerQueryBuilder,
+    queryBuilder,
     'company',
     filter,
   );
@@ -312,6 +380,88 @@ describe('GraphqlQueryFilterConditionParser', () => {
 
     it('emits nothing for an empty filter', () => {
       expect(recordFilterEntries({})).toEqual([]);
+    });
+  });
+
+  describe('field references', () => {
+    const getSql = (calls: RecordedWhereCall[]) => {
+      const node = calls[0]?.node;
+
+      if (node?.kind !== 'sql') {
+        throw new Error('Expected a sql node');
+      }
+
+      return node;
+    };
+
+    it('compares two columns of the same record without parameters', () => {
+      const node = getSql(
+        recordFilterEntries({ lastContactAt: { gtField: 'createdAt' } }),
+      );
+
+      expect(node.sql).toBe(
+        '"company"."lastContactAt" > "company"."createdAt"',
+      );
+      expect(node.parameters ?? {}).toEqual({});
+    });
+
+    const personParentFilterScope: ParentFilterScope = {
+      flatObjectMetadata: personObjectMetadata,
+      alias: 'person',
+      relationFieldMetadataId: 'person-company-field-id',
+    };
+
+    it('compares with a column of the record the relation filter starts from', () => {
+      const node = getSql(
+        recordFilterEntries(
+          { lastContactAt: { lteField: 'people.updatedAt' } },
+          personParentFilterScope,
+        ),
+      );
+
+      expect(node.sql).toBe(
+        '"company"."lastContactAt" <= "person"."updatedAt"',
+      );
+    });
+
+    it('rejects a relation reference outside a relation filter', () => {
+      expect(() =>
+        recordFilterEntries({ lastContactAt: { ltField: 'people.updatedAt' } }),
+      ).toThrow('leads back to the record the relation filter starts from');
+    });
+
+    it('rejects a relation that does not lead back to the parent record', () => {
+      expect(() =>
+        recordFilterEntries(
+          { lastContactAt: { ltField: 'accountOwner.updatedAt' } },
+          personParentFilterScope,
+        ),
+      ).toThrow('leads back to the record the relation filter starts from');
+    });
+
+    it('rejects a field that does not exist rather than writing it into the query', () => {
+      expect(() =>
+        recordFilterEntries({
+          lastContactAt: { gtField: 'createdAt"; DROP TABLE company; --' },
+        }),
+      ).toThrow('was not found');
+    });
+
+    it('rejects a referenced field the role cannot read', () => {
+      const { queryBuilder: restrictedQueryBuilder } = buildQueryBuilder({
+        recordReadRestrictions: {
+          ...NO_RECORD_READ_RESTRICTIONS,
+          unreadableFieldMetadataIds: new Set([createdAtField.id]),
+        },
+      });
+
+      expect(() =>
+        recordFilterEntries(
+          { lastContactAt: { gtField: 'createdAt' } },
+          undefined,
+          restrictedQueryBuilder,
+        ),
+      ).toThrow(PermissionsException);
     });
   });
 });

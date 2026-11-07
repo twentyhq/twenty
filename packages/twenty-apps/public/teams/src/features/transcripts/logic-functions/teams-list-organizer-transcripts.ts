@@ -6,8 +6,6 @@ import {
   jsonSchemaToInputSchema,
 } from 'twenty-sdk/logic-function';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
@@ -15,8 +13,9 @@ import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
 import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 const teamsListOrganizerTranscriptsInputSchema: InputJsonSchema = {
   type: 'object',
@@ -66,12 +65,7 @@ export const teamsListOrganizerTranscriptsHandler = async (
   },
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<TeamsListOrganizerTranscriptsResult> => {
-  if (
-    !isFeatureEnabled({
-      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
-      settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-    })
-  ) {
+  if (!isTeamsTranscriptImportEnabled()) {
     return { success: false, error: 'Teams transcripts are not enabled.' };
   }
 
@@ -80,12 +74,13 @@ export const teamsListOrganizerTranscriptsHandler = async (
       ? resolveTeamsCalendarNextPageUrlOrThrow(parameters.nextPageUrl)
       : buildTeamsCalendarViewUrl(resolveTeamsMeetingWindowOrThrow(parameters));
     const connection = await getTeamsConnectionForRequestOrThrow(context);
+    const accessToken = getConnectionAccessTokenOrThrow(connection);
     const page = await listTeamsCalendarPage({
-      accessToken: connection.accessToken,
+      accessToken,
       url: calendarPageUrl,
     });
     const { transcripts } = await listTeamsOccurrenceTranscripts({
-      accessToken: connection.accessToken,
+      accessToken,
       occurrences: page.occurrences,
     });
 

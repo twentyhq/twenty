@@ -8,6 +8,7 @@ import { installFilesResetOnValueClear } from '@/remote/elements/utils/installFi
 import { isNativeEditAcknowledged } from '@/remote/elements/utils/isNativeEditAcknowledged';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
+import { workerScrollStore } from '@/polyfills/scroll/states/workerScrollStore';
 import { readInputSelectionState } from '@/utils/readInputSelectionState';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -49,6 +50,8 @@ export const applySerializedEventTargetProperties = ({
   if (isDefined(selectionState)) {
     workerInputSelectionStore.applySnapshot({ element, state: selectionState });
   }
+
+  workerScrollStore.observeEventTarget({ element, eventData });
 
   if (eventData.checked) {
     uncheckOtherRadioButtons(element);

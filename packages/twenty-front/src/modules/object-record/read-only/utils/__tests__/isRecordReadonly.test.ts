@@ -1,17 +1,14 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
-import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('isRecordReadOnly', () => {
   it('should return false if record is not deleted, has update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
-        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -21,13 +18,13 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is not deleted but lacks update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: false,
+        ...getDefaultObjectPermissions(),
+        canUpdateAllRecords: false,
       },
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
-        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -36,14 +33,11 @@ describe('isRecordReadOnly', () => {
 
   it('should return true if record is deleted even with update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       isRecordDeleted: true,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
-        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -53,13 +47,13 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is not deleted and has update permissions but object metadata is UI read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: false,
+        ...getDefaultObjectPermissions(),
+        canUpdateAllRecords: false,
       },
       isRecordDeleted: true,
       objectMetadataItem: {
         isUIEditable: false,
         isRemote: false,
-        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -68,14 +62,11 @@ describe('isRecordReadOnly', () => {
 
   it('should return true if record is not deleted and has update permissions but object metadata is remote', () => {
     const result = isRecordReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: true,
-        writability: MetadataWritability.OPEN,
       },
     });
 

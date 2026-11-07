@@ -1,4 +1,6 @@
-import { COMPANY_MATCH_COST_DOLLARS } from 'src/constants/company-match-cost-dollars';
+import { PDL_COMPANY_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-company-required-field-options';
+import { PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-company-required-fields-env-var-name';
+import { COMPANY_MATCH_PRICE_DOLLARS } from 'src/constants/company-match-price-dollars';
 import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
 import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { buildCompanyMatchedData } from 'src/logic-functions/utils/build-company-matched-data';
@@ -20,10 +22,12 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   objectNameSingular: 'Company',
   noIdentifierMessage:
     'No usable identifier (domain, LinkedIn, or name) to match against PDL.',
-  costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
+  pricePerMatchDollars: COMPANY_MATCH_PRICE_DOLLARS,
   minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
   weakIdentifierMinLikelihoodEnvVarName:
     PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+  requiredFieldsEnvVarName: PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME,
+  requiredFieldOptions: PDL_COMPANY_REQUIRED_FIELD_OPTIONS,
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   extractParams: extractCompanyMatchParams,

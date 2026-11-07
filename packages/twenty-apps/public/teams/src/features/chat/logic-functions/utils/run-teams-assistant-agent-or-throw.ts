@@ -1,17 +1,24 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { runAgent } from 'twenty-sdk/logic-function';
+import { type RunAgentInput, runAgent } from 'twenty-sdk/logic-function';
 
 import { TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
+
+type TeamsAssistantAgentMessage = NonNullable<
+  RunAgentInput['messages']
+>[number];
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && typeof result.response === 'string';
 
 export const runTeamsAssistantAgentOrThrow = async ({
   requestText,
+  history,
   workspaceMemberId,
   deadlineAtMs,
 }: {
   requestText: string;
+  history: TeamsAssistantTurn[];
   workspaceMemberId: string;
   deadlineAtMs: number;
 }): Promise<string> => {
@@ -35,6 +42,10 @@ export const runTeamsAssistantAgentOrThrow = async ({
         agentUniversalIdentifier: TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId: workspaceMemberId,
         messages: [
+          ...history.flatMap((turn): TeamsAssistantAgentMessage[] => [
+            { role: 'user', content: turn.requestText },
+            { role: 'assistant', content: turn.responseText },
+          ]),
           {
             role: 'user',
             content: `You are acting as workspace member ${workspaceMemberId}, with that member's own permissions. "Me", "my" and "mine" refer to that member.\n\nRequest from Teams:\n${requestText}`,

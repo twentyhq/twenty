@@ -46,6 +46,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
         objectPermissionIds: [],
         rolePermissionFlagIds: [],
         fieldPermissionIds: [],
+        agentChatChannelRoleIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };

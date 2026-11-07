@@ -3,5 +3,6 @@ import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 export type SettingsBillingComparedPlan = {
   action: SettingsBillingPlanAction;
+  isLegacy?: boolean;
   planKey: BillingPlanKey;
 };

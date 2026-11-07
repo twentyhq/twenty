@@ -8,13 +8,13 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
-import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
@@ -34,7 +34,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
   imports: [
     ApplicationModule,
     CoreWorkflowAccessModule,
-    WorkflowRunRecordShareModule,
     TypeOrmModule.forFeature([WorkflowVersionEntity]),
     TypeORMModule,
     AutomatedTriggerModule,
@@ -59,6 +58,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
+    CoreWorkflowVersionRunService,
     CoreWorkflowVersionWriteService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),
@@ -69,6 +69,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
+    CoreWorkflowVersionRunService,
     CoreWorkflowVersionWriteService,
   ],
 })

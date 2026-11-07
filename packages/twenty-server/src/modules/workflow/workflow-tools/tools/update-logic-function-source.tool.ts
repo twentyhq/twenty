@@ -24,9 +24,9 @@ export const createUpdateLogicFunctionSourceTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'update_logic_function_source' as const,
-  description: `Update the TypeScript source code of a logic function used in a workflow code step.
+  description: `Update the TypeScript source code of a logic function used in a legacy workflow CODE step.
 
-Use this tool to modify the actual code that runs when a CODE step executes.
+Only for CODE steps that have settings.input.logicFunctionId and no settings.input.code. For other CODE steps, set settings.input.code with update_workflow_version_step instead.
 
 The code must:
 - Export a 'main' function as the entry point
@@ -43,7 +43,9 @@ export const main = async (params: { url: string }) => {
 };
 \`\`\`
 
-To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
+To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.
+
+Only code steps of a DRAFT workflow version can be edited. For an active or past version, call create_draft_from_workflow_version first, then use the logicFunctionId of the same step in the new draft: the draft copies each code step onto a new logic function.`,
   inputSchema: updateLogicFunctionSourceSchema,
   execute: async (parameters: { logicFunctionId: string; code: string }) => {
     try {

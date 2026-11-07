@@ -17,7 +17,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
@@ -149,8 +149,14 @@ export class ObjectPermissionService {
             ? desired.canDestroyObjectRecords
             : current.canDestroyObjectRecords;
 
+        const effectiveCanCreate =
+          desired.canUpdateObjectRecords !== undefined
+            ? desired.canUpdateObjectRecords
+            : current.canCreateObjectRecords;
+
         const canChanged =
           effectiveCanRead !== current.canReadObjectRecords ||
+          effectiveCanCreate !== current.canCreateObjectRecords ||
           effectiveCanUpdate !== current.canUpdateObjectRecords ||
           effectiveCanSoftDelete !== current.canSoftDeleteObjectRecords ||
           effectiveCanDestroy !== current.canDestroyObjectRecords;
@@ -165,6 +171,7 @@ export class ObjectPermissionService {
             objectMetadataUniversalIdentifier:
               current.objectMetadataUniversalIdentifier,
             canReadObjectRecords: effectiveCanRead,
+            canCreateObjectRecords: effectiveCanCreate,
             canUpdateObjectRecords: effectiveCanUpdate,
             canSoftDeleteObjectRecords: effectiveCanSoftDelete,
             canDestroyObjectRecords: effectiveCanDestroy,
@@ -185,6 +192,7 @@ export class ObjectPermissionService {
           objectMetadataUniversalIdentifier:
             current.objectMetadataUniversalIdentifier,
           canReadObjectRecords: current.canReadObjectRecords,
+          canCreateObjectRecords: current.canCreateObjectRecords,
           canUpdateObjectRecords: current.canUpdateObjectRecords,
           canSoftDeleteObjectRecords: current.canSoftDeleteObjectRecords,
           canDestroyObjectRecords: current.canDestroyObjectRecords,

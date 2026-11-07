@@ -32,15 +32,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       b: null,
                     },
                   },
-                  outputSchema: {
-                    link: {
-                      tab: 'test',
-                      icon: 'IconVariable',
-                      label: 'Generate Function Output',
-                      isLeaf: true,
-                    },
-                    _outputSchemaType: 'LINK',
-                  },
+                  outputSchema: {},
                   errorHandlingOptions: {
                     retryOnFailure: {
                       value: 0,
@@ -96,15 +88,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       b: null,
                     },
                   },
-                  outputSchema: {
-                    link: {
-                      tab: 'test',
-                      icon: 'IconVariable',
-                      label: 'Generate Function Output',
-                      isLeaf: true,
-                    },
-                    _outputSchemaType: 'LINK',
-                  },
+                  outputSchema: {},
                   errorHandlingOptions: {
                     retryOnFailure: {
                       value: 0,
@@ -161,15 +145,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       b: null,
                     },
                   },
-                  outputSchema: {
-                    link: {
-                      tab: 'test',
-                      icon: 'IconVariable',
-                      label: 'Generate Function Output',
-                      isLeaf: true,
-                    },
-                    _outputSchemaType: 'LINK',
-                  },
+                  outputSchema: {},
                   errorHandlingOptions: {
                     retryOnFailure: {
                       value: 0,
@@ -193,15 +169,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       b: null,
                     },
                   },
-                  outputSchema: {
-                    link: {
-                      tab: 'test',
-                      icon: 'IconVariable',
-                      label: 'Generate Function Output',
-                      isLeaf: true,
-                    },
-                    _outputSchemaType: 'LINK',
-                  },
+                  outputSchema: {},
                   errorHandlingOptions: {
                     retryOnFailure: {
                       value: 0,

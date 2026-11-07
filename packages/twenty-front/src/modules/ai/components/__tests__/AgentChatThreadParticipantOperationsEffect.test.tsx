@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -14,7 +14,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 const PARTICIPANT_OBJECT_METADATA_ITEM = {
   id: 'participant-object-metadata-id',
-  nameSingular: CoreObjectNameSingular.AgentChatThreadParticipant,
+  nameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
 };
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
@@ -42,7 +42,9 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
+  __typename: 'AgentChatThreadParticipant',
 };
 
 const renderEffect = (

@@ -1,7 +1,11 @@
 export const AVATAR_PROPERTIES_BY_SIZE = {
-  xl: {
+  xxl: {
     fontSize: '16px',
     width: '40px',
+  },
+  xl: {
+    fontSize: '16px',
+    width: '32px',
   },
   lg: {
     fontSize: '13px',

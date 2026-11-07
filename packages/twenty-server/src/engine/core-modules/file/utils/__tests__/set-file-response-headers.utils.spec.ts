@@ -1,7 +1,7 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
-import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.util';
 
 const createMockResponse = () => ({
   setHeader: jest.fn(),

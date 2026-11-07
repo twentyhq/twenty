@@ -48,8 +48,32 @@ const objectMetadataInfo = {
 const paragraph = (content: unknown[]) =>
   JSON.stringify([{ type: 'paragraph', content }]);
 
+const tipTapDocument = (content: unknown[]) =>
+  JSON.stringify({
+    type: 'doc',
+    attrs: { schemaVersion: 1 },
+    content: [{ type: 'paragraph', content }],
+  });
+
 describe('convertStepObjectRecordTipTapToMarkdown', () => {
   it('converts a TipTap body into markdown, keeping its variables', () => {
+    const tipTapBody = tipTapDocument([
+      { type: 'text', text: 'Amount', marks: [{ type: 'bold' }] },
+      { type: 'text', text: ': ' },
+      { type: 'variableTag', attrs: { variable: '{{trigger.body.amount}}' } },
+    ]);
+
+    const converted = convertStepObjectRecordTipTapToMarkdown(
+      { body: { tiptap: tipTapBody, markdown: null } },
+      objectMetadataInfo,
+    );
+
+    expect(converted.body).toEqual({
+      markdown: '**Amount**: {{trigger.body.amount}}',
+    });
+  });
+
+  it('still converts TipTap blocks a step saved under the blocknote key before its upgrade', () => {
     const tipTapBody = paragraph([
       { type: 'text', text: 'Amount', marks: [{ type: 'bold' }] },
       { type: 'text', text: ': ' },
@@ -67,7 +91,7 @@ describe('convertStepObjectRecordTipTapToMarkdown', () => {
   });
 
   it('keeps a variable used as a link destination', () => {
-    const tipTapBody = paragraph([
+    const tipTapBody = tipTapDocument([
       {
         type: 'text',
         text: 'Website',
@@ -76,7 +100,7 @@ describe('convertStepObjectRecordTipTapToMarkdown', () => {
     ]);
 
     const converted = convertStepObjectRecordTipTapToMarkdown(
-      { body: { blocknote: tipTapBody, markdown: null } },
+      { body: { tiptap: tipTapBody, markdown: null } },
       objectMetadataInfo,
     );
 
@@ -87,6 +111,10 @@ describe('convertStepObjectRecordTipTapToMarkdown', () => {
     {
       name: 'a markdown only value',
       value: { blocknote: null, markdown: '{{trigger.body.amount}}' },
+    },
+    {
+      name: 'a tiptap variable',
+      value: { tiptap: '{{codeStep.report.tiptap}}', markdown: null },
     },
     {
       name: 'a blocknote variable',

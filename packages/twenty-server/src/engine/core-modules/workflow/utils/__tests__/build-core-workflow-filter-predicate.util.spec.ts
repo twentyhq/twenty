@@ -126,22 +126,50 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       });
     });
 
-    it('should reject IS and IS_NOT, which the builder does not offer on NAME', () => {
-      for (const operand of [
-        CoreWorkflowFilterOperand.IS,
-        CoreWorkflowFilterOperand.IS_NOT,
-      ]) {
-        expect(() =>
+    it('should build a case-sensitive equality predicate for IS', () => {
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.NAME,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: 'Send invoice',
+          },
+        ]),
+      ).toEqual({
+        predicate: `(c.name = $2)`,
+        parameters: ['Send invoice'],
+      });
+    });
+
+    it('should let an unnamed workflow match IS_NOT', () => {
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.NAME,
+            operand: CoreWorkflowFilterOperand.IS_NOT,
+            value: 'Send invoice',
+          },
+        ]),
+      ).toEqual({
+        predicate: `((c.name IS NULL OR c.name <> $2))`,
+        parameters: ['Send invoice'],
+      });
+    });
+
+    it.each([CoreWorkflowFilterOperand.IS, CoreWorkflowFilterOperand.IS_NOT])(
+      'should keep surrounding whitespace in the %s value',
+      (operand) => {
+        expect(
           buildPredicate([
             {
               fieldKey: CoreWorkflowFilterFieldKey.NAME,
               operand,
-              value: 'Send invoice',
+              value: ' Send invoice ',
             },
-          ]),
-        ).toThrow(UserInputError);
-      }
-    });
+          ]).parameters,
+        ).toEqual([' Send invoice ']);
+      },
+    );
 
     it('should treat a blank name as empty', () => {
       expect(
@@ -172,6 +200,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     it.each([
       CoreWorkflowFilterOperand.CONTAINS,
       CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
+      CoreWorkflowFilterOperand.IS,
+      CoreWorkflowFilterOperand.IS_NOT,
     ])('should reject %s without a value', (operand) => {
       expect(() =>
         buildPredicate([
@@ -525,6 +555,35 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     });
   });
 
+  describe('IS_SYSTEM rules', () => {
+    it('should bind the requested system flag', () => {
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.IS_SYSTEM,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: 'false',
+          },
+        ]),
+      ).toEqual({
+        predicate: `(c."isSystem" = $2::boolean)`,
+        parameters: [false],
+      });
+    });
+
+    it('should reject a value that is not a boolean', () => {
+      expect(() =>
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.IS_SYSTEM,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: 'maybe',
+          },
+        ]),
+      ).toThrow(UserInputError);
+    });
+  });
+
   describe('supported operands', () => {
     const VALUE_BY_FIELD_KEY: Record<CoreWorkflowFilterFieldKey, string> = {
       [CoreWorkflowFilterFieldKey.NAME]: 'invoice',
@@ -534,6 +593,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       [CoreWorkflowFilterFieldKey.UPDATED_AT]: JSON.stringify(
         '2026-08-31T13:45:00.000Z',
       ),
+      [CoreWorkflowFilterFieldKey.IS_SYSTEM]: 'false',
     };
 
     const SUPPORTED_OPERANDS_BY_FIELD_KEY: Record<
@@ -543,6 +603,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       [CoreWorkflowFilterFieldKey.NAME]: [
         CoreWorkflowFilterOperand.CONTAINS,
         CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
+        CoreWorkflowFilterOperand.IS,
+        CoreWorkflowFilterOperand.IS_NOT,
         CoreWorkflowFilterOperand.IS_EMPTY,
         CoreWorkflowFilterOperand.IS_NOT_EMPTY,
       ],
@@ -563,6 +625,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         CoreWorkflowFilterOperand.IS_EMPTY,
         CoreWorkflowFilterOperand.IS_NOT_EMPTY,
       ],
+      [CoreWorkflowFilterFieldKey.IS_SYSTEM]: [CoreWorkflowFilterOperand.IS],
     };
 
     const fieldOperandPairs = Object.values(CoreWorkflowFilterFieldKey).flatMap(

@@ -151,10 +151,13 @@ export class MessagingMessageListFetchService {
           );
 
           const messageChannelMessageAssociationRepository =
-            this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
-              { shouldBypassPermissionChecks: true },
             );
+
+          const messageExternalIdsRemovedFromAFolder = new Set(
+            messageExternalIdsToDelete,
+          );
 
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
@@ -180,7 +183,8 @@ export class MessagingMessageListFetchService {
               (messageExternalId) =>
                 !existingMessageChannelMessageAssociationsExternalIds.includes(
                   messageExternalId,
-                ),
+                ) ||
+                messageExternalIdsRemovedFromAFolder.has(messageExternalId),
             );
 
             if (messageExternalIdsToImport.length) {
@@ -363,9 +367,8 @@ export class MessagingMessageListFetchService {
     messageExternalIds: string[],
   ) {
     const messageChannelMessageAssociationRepository =
-      this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
-        { shouldBypassPermissionChecks: true },
       );
 
     const fullSyncMessageChannelMessageAssociationsToDelete = [];

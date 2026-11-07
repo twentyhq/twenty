@@ -1,15 +1,18 @@
 ---
 title: Workflows
 description: Automate your business processes with Twenty's visual workflow builder.
-icon: "bolt"
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Overview
 
 Workflows let you automate repetitive tasks and connect Twenty to external tools — without writing code (though you can if you want to).
 
 <VimeoEmbed videoId="1185511711" title="Workflow" />
-
 
 ## How workflows work
 
@@ -51,6 +54,11 @@ Workflows can chain any combination of:
 - Generate PDFs or invoices from record data
 - Auto-reply to inbound emails matching certain criteria
 
-<Card title="Full Workflows guide" icon="arrow-right" href="/user-guide/workflows/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+  <CardTitle>Full Workflows guide</CardTitle>
   Detailed reference on triggers, actions, variables, and real-world automation recipes.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-workflows" />

@@ -7,6 +7,7 @@ import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const StyledEmptyStateScrollContainer = styled.div`
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
 `;

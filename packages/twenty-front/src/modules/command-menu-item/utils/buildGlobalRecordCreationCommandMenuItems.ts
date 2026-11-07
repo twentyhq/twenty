@@ -2,9 +2,9 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { canReachSomeRecords, capitalize } from 'twenty-shared/utils';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type BuildGlobalRecordCreationCommandMenuItemsParams = {
   activeObjectMetadataItems: Pick<
@@ -15,12 +15,8 @@ type BuildGlobalRecordCreationCommandMenuItemsParams = {
     | 'isUICreatable'
     | 'isUIEditable'
     | 'isRemote'
-    | 'writability'
   >[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   createRecordCommand: CommandMenuItemDefinition;
   getLabel: (objectLabelSingular: string) => string;
 };
@@ -39,7 +35,10 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
       );
 
       return (
-        permissions.canReadObjectRecords &&
+        canReachSomeRecords({
+          objectRecordsPermissions: permissions,
+          operationType: 'read',
+        }) &&
         canCreateRecordsForObjectMetadataItem({
           objectMetadataItem,
           objectPermissions: permissions,
@@ -53,7 +52,7 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
         ...createRecordCommand,
         id: `${createRecordCommand.id}-${objectMetadataItem.id}`,
         label: getLabel(objectLabelSingular),
-        icon: objectMetadataItem.icon,
+        icon: objectMetadataItem.icon ?? null,
         shortLabel: null,
         isPinned: false,
         hotKeys: null,

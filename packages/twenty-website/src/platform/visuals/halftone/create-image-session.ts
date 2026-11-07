@@ -327,8 +327,8 @@ export function createImageSession({
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
       tile: { value: settings.halftone.scale },
-      s_3: { value: settings.halftone.power },
-      s_4: { value: settings.halftone.width },
+      halftonePower: { value: settings.halftone.power },
+      halftoneWidth: { value: settings.halftone.width },
       applyToDarkAreas: { value: settings.applyToDarkAreas ? 1 : 0 },
       hoverLightVerticalFade: {
         value: settings.hover.lightVerticalFade ?? 0,

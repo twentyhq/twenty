@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   SETTINGS_SELECT_MENU_BACKDROP_Z_INDEX,

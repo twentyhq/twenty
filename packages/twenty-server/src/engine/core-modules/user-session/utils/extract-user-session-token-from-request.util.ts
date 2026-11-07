@@ -30,7 +30,7 @@ const readCookieValue = (
 
 // Plain name only on plain http: on https a sibling subdomain could plant one and fixate the visitor.
 export const extractUserSessionTokenFromRequestCookie = (
-  request: Request,
+  request: Pick<Request, 'headers'>,
   {
     secureCookieName,
     insecureCookieName,

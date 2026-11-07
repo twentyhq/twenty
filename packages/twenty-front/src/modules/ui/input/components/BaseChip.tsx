@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactNode } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledChip = styled.div<{
   deletable: boolean;
@@ -74,7 +74,7 @@ const StyledLabel = styled.span<{ maxWidth?: number }>`
   text-overflow: ellipsis;
 `;
 
-const StyledDelete = styled.button<{ danger: boolean }>`
+const StyledDelete = styled.button`
   align-items: center;
   background: none;
   border: none;
@@ -92,11 +92,6 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   padding: 0;
   user-select: none;
   width: 20px;
-
-  &:hover {
-    background-color: ${({ danger }) =>
-      danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
-  }
 `;
 
 type BaseChipProps = {
@@ -126,6 +121,7 @@ export const BaseChip = ({
   maxWidth,
   leftIcon,
 }: BaseChipProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const isDeletable = onRemove !== undefined;
 
@@ -149,7 +145,6 @@ export const BaseChip = ({
           type="button"
           onClick={onRemove}
           aria-label={removeAriaLabel ?? t`Remove`}
-          danger={danger}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>

@@ -5,6 +5,8 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
+import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -126,6 +128,26 @@ describe('CommandMenuItem update should fail', () => {
       });
     },
   );
+
+  it('when changing the page layout', async () => {
+    const { data: layoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: { name: 'Test Page Layout For Command Menu Item' },
+    });
+    const pageLayoutId = layoutData.createPageLayout.id;
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id: testCommandMenuItemId, pageLayoutId },
+    });
+
+    await destroyOnePageLayout({
+      expectToFail: false,
+      input: { id: pageLayoutId },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
 
   it('when the caller lacks the LAYOUTS permission', async () => {
     const { errors } = await updateCommandMenuItem({

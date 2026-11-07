@@ -2,7 +2,6 @@
 
 import { styled } from '@linaria/react';
 
-import { HALFTONE_STUDIO_DEFAULTS } from '../../engine/studio-settings-defaults';
 import type {
   HalftoneBackgroundSettings,
   HalftoneSourceMode,
@@ -14,6 +13,7 @@ import { CONTROLS_PANEL_SHELL } from './controls-panel-shell';
 import { CONTROLS_SECTION } from './ControlsSection';
 import { CONTROLS_TABS } from './controls-tabs';
 import { HALFTONE_FORMATTERS } from './formatters';
+import { MaterialControls } from './MaterialControls';
 import { SegmentedControl } from './SegmentedControl';
 import { SelectInput } from './select-input';
 import { SliderControl } from './SliderControl';
@@ -79,15 +79,6 @@ type DesignTabProps = {
   shapeOptions: Array<{ label: string; value: string }>;
 };
 
-function matchesSettings<TSettings extends object>(
-  value: TSettings,
-  target: TSettings,
-) {
-  return (Object.keys(target) as Array<keyof TSettings>).every(
-    (key) => value[key] === target[key],
-  );
-}
-
 export function DesignTab({
   onAnimationSettingsChange,
   imageFileName,
@@ -112,53 +103,6 @@ export function DesignTab({
     imageFileName === null || imageFileName === DEFAULT_IMAGE_FILE_NAME
       ? DEFAULT_IMAGE_OPTION_LABEL
       : imageFileName;
-
-  const handleSurfaceChange = (surface: 'glass' | 'solid') => {
-    const switchingToGlass = surface === 'glass';
-
-    onMaterialChange(
-      switchingToGlass
-        ? HALFTONE_STUDIO_DEFAULTS.glassMaterial
-        : HALFTONE_STUDIO_DEFAULTS.solidMaterial,
-    );
-
-    if (switchingToGlass) {
-      if (
-        matchesSettings(
-          settings.lighting,
-          HALFTONE_STUDIO_DEFAULTS.solidLighting,
-        )
-      ) {
-        onLightingChange(HALFTONE_STUDIO_DEFAULTS.glassLighting);
-      }
-
-      if (
-        matchesSettings(
-          settings.animation,
-          HALFTONE_STUDIO_DEFAULTS.solidAnimation,
-        )
-      ) {
-        onAnimationSettingsChange(HALFTONE_STUDIO_DEFAULTS.glassAnimation);
-      }
-
-      return;
-    }
-
-    if (
-      matchesSettings(settings.lighting, HALFTONE_STUDIO_DEFAULTS.glassLighting)
-    ) {
-      onLightingChange(HALFTONE_STUDIO_DEFAULTS.solidLighting);
-    }
-
-    if (
-      matchesSettings(
-        settings.animation,
-        HALFTONE_STUDIO_DEFAULTS.glassAnimation,
-      )
-    ) {
-      onAnimationSettingsChange(HALFTONE_STUDIO_DEFAULTS.solidAnimation);
-    }
-  };
 
   const handleSwapColors = () => {
     const nextDashColor = settings.background.color;
@@ -349,105 +293,12 @@ export function DesignTab({
             </CONTROLS_PANEL_SHELL.ControlGrid>
           </CONTROLS_SECTION.Section>
 
-          <CONTROLS_SECTION.Section>
-            <CONTROLS_SECTION.Title>Material</CONTROLS_SECTION.Title>
-            <CONTROLS_PANEL_SHELL.ControlGrid>
-              <SegmentedControl
-                onChange={(value) =>
-                  handleSurfaceChange(value === 'glass' ? 'glass' : 'solid')
-                }
-                options={[
-                  { label: 'Solid', value: 'solid' },
-                  { label: 'Glass', value: 'glass' },
-                ]}
-                value={settings.material.surface}
-              >
-                Surface
-              </SegmentedControl>
-              <SliderControl
-                max={1}
-                min={0}
-                onChange={(event) =>
-                  onMaterialChange({ roughness: Number(event.target.value) })
-                }
-                step={0.01}
-                value={settings.material.roughness}
-                valueLabel={HALFTONE_FORMATTERS.decimal(
-                  settings.material.roughness,
-                )}
-              >
-                Roughness
-              </SliderControl>
-              <SliderControl
-                max={1}
-                min={0}
-                onChange={(event) =>
-                  onMaterialChange({ metalness: Number(event.target.value) })
-                }
-                step={0.01}
-                value={settings.material.metalness}
-                valueLabel={HALFTONE_FORMATTERS.decimal(
-                  settings.material.metalness,
-                )}
-              >
-                Metalness
-              </SliderControl>
-              {settings.material.surface === 'glass' ? (
-                <>
-                  <SliderControl
-                    max={20}
-                    min={1.1}
-                    onChange={(event) =>
-                      onMaterialChange({
-                        thickness: Number(event.target.value),
-                      })
-                    }
-                    step={0.1}
-                    value={settings.material.thickness}
-                    valueLabel={HALFTONE_FORMATTERS.decimal(
-                      settings.material.thickness,
-                      0,
-                    )}
-                  >
-                    Thickness
-                  </SliderControl>
-                  <SliderControl
-                    max={3}
-                    min={1.1}
-                    onChange={(event) =>
-                      onMaterialChange({
-                        refraction: Number(event.target.value),
-                      })
-                    }
-                    step={0.01}
-                    value={settings.material.refraction}
-                    valueLabel={HALFTONE_FORMATTERS.decimal(
-                      settings.material.refraction,
-                    )}
-                  >
-                    Refraction
-                  </SliderControl>
-                  <SliderControl
-                    max={5}
-                    min={0}
-                    onChange={(event) =>
-                      onMaterialChange({
-                        environmentPower: Number(event.target.value),
-                      })
-                    }
-                    step={0.01}
-                    value={settings.material.environmentPower}
-                    valueLabel={HALFTONE_FORMATTERS.decimal(
-                      settings.material.environmentPower,
-                      2,
-                    )}
-                  >
-                    Power
-                  </SliderControl>
-                </>
-              ) : null}
-            </CONTROLS_PANEL_SHELL.ControlGrid>
-          </CONTROLS_SECTION.Section>
+          <MaterialControls
+            onAnimationSettingsChange={onAnimationSettingsChange}
+            onLightingChange={onLightingChange}
+            onMaterialChange={onMaterialChange}
+            settings={settings}
+          />
         </>
       )}
 

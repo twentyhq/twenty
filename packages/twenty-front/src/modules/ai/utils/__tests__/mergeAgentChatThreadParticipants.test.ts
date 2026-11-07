@@ -1,6 +1,7 @@
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 
 const READ_PARTICIPANT = {
+  __typename: 'AgentChatThreadParticipant' as const,
   id: 'participant',
   threadId: 'thread',
   lastReadAt: '2026-10-01T10:00:00.000Z',
@@ -8,6 +9,7 @@ const READ_PARTICIPANT = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
 

@@ -19,7 +19,7 @@ export type LogConsoleSource = {
   id: LogConsoleSourceId;
   label: MessageDescriptor;
   Icon: IconComponent;
-  DetailIcon?: IconComponent;
+  getDetailIcon?: (entry: EventLogRecord) => IconComponent;
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];
   filterFields?: LogConsoleFilterField[];

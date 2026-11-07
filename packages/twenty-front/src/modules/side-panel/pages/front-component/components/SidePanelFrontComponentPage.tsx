@@ -32,6 +32,9 @@ export const SidePanelFrontComponentPage = () => {
         selectedRecordIds={
           viewableFrontComponentRecordContext?.selectedRecordIds
         }
+        selectedRecordsFilter={
+          viewableFrontComponentRecordContext?.selectedRecordsFilter
+        }
         objectNameSingular={
           viewableFrontComponentRecordContext?.objectNameSingular
         }

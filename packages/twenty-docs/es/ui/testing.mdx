@@ -1,0 +1,157 @@
+---
+title: Ayudantes de Storybook.
+description: Presenta vistas previas de componentes y catálogos de variantes con twenty-ui/testing.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## Resumen
+
+`twenty-ui/testing` expone decoradores de Storybook, asistentes de diseño de vista previa y anulaciones de consultas de medios. Configura estilos y un [ThemeProvider](/es/ui/theming) en tu vista previa de Storybook antes de renderizar componentes con tema.
+
+## Roles de las historias
+
+Comienza cada guía de componentes con una historia `Display` que muestre un ejemplo representativo y utilizable. Continúa con código de uso que reproduzca la vista previa mediante importaciones públicas. Los componentes compuestos demuestran sus partes en conjunto. Los proveedores y las ayudas de accesibilidad demuestran su efecto en contexto.
+
+Añade un `Catalog` cuando una comparación con etiquetas ayude a los lectores a elegir entre opciones visuales. Agrupa las variantes, los tamaños, los colores y los estados por separado; usa una matriz solo cuando sea útil comparar dos dimensiones en conjunto. Un componente simple puede usar un ejemplo alternativo. Los diálogos, los menús y otros componentes interactivos suelen necesitar ejemplos específicos para cada flujo de trabajo.
+
+Conserva una cobertura exhaustiva de capturas de pantalla en historias `VisualRegression` independientes, incluidos los temas oscuros y las matrices de variantes. Etiqueta esas historias con `!autodocs` y mantenlas fuera de las guías de componentes.
+
+Nombra otras historias según lo que demuestran, como `Controlled`, `WithValidation` o `MultipleSelection`. Mantén las comprobaciones de interacción en historias independientes con funciones `play`. La visualización y las demás vistas previas de la documentación siguen siendo utilizables por el lector sin acciones automatizadas.
+
+## ComponentDecorator
+
+`ComponentDecorator` envuelve una historia en `ComponentStorybookLayout`. Establece `parameters.container.width` y `parameters.container.height` en píxeles. También lee los argumentos `inverted` y `accent` de la historia para elegir un fondo opcional.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Display = { args: { children: 'Save changes' } };
+```
+
+## Catálogo agrupado
+
+`GroupedCatalog` proporciona a los catálogos seleccionados un diseño compartido para encabezados, filas ajustadas y espaciado. Cada grupo tiene un `label` y un array `examples`. Cada ejemplo necesita un `label` único dentro de su grupo; puede incluir cualquier otro dato utilizado por `renderExample`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { GroupedCatalog } from 'twenty-ui/testing';
+
+const groups = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', variant: 'solid' as const },
+      { label: 'Outline', variant: 'outline' as const },
+    ],
+  },
+];
+
+export const ButtonCatalog = () => (
+  <GroupedCatalog
+    groups={groups}
+    renderExample={({ label, variant }) => (
+      <>
+        <Text>{label}</Text>
+        <Button variant={variant}>Save changes</Button>
+      </>
+    )}
+  />
+);
+```
+
+<GroupedCatalogReference />
+
+## CatalogDecorator
+
+`CatalogDecorator` renderiza combinaciones de hasta cuatro dimensiones de `parameters.catalog.dimensions`. Cada dimensión tiene un `name`, `values`, un mapeador `props(value)` y un formateador opcional `labels(value)`. El mapeador devuelve las props para esa celda. `parameters.catalog.options.elementContainer` acepta `width`, `style` y `className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const VisualRegression = {
+  tags: ['!autodocs'],
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+Usa el diseño directamente al componer una vista previa fuera de un decorador. Acepta un elemento hijo.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## Anulaciones de consultas de medios
+
+Usa `overrideMediaQueryMatches` en el `beforeEach` de una historia para forzar los resultados de los hooks responsivos. Devuelve su función de limpieza para restaurar `window.matchMedia` después de la historia:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+Las consultas omitidas de la anulación conservan su comportamiento nativo. Anula `TOUCH_DEVICE_MEDIA_QUERY` por separado cuando un ejemplo dependa de la entrada táctil. Estas anulaciones controlan los resultados de `matchMedia`; usa una ventana gráfica de Storybook para cambiar las consultas de medios de CSS y el ancho de la vista previa.
+
+## Vistas previas de la documentación
+
+Las historias incorporadas en la documentación deben ser de presentación y no tener una función `play`. Mantén las pruebas de interacción en historias separadas. Comparte explícitamente `args`, `render`, `decorators` y `parameters` cuando sea necesario, en lugar de propagar una historia de interacción en una vista previa. La comprobación de incorporaciones de documentación rechaza las historias marcadas con la etiqueta `play-fn` de Storybook, incluidas las funciones play heredadas.
+
+La primera incrustación de cada guía de componentes debe hacer referencia a una historia exportada como `Display`. Asigna a cada incrustación un título descriptivo para su iframe y suficiente altura para mostrar el ejemplo. La vista previa compartida ofrece pestañas claras y oscuras, además de un enlace a Storybook, donde los lectores pueden usar controles para explorar props.
+
+Ejecuta `npx nx check:ui-stories twenty-docs` para comprobar la visualización requerida, los títulos de las vistas previas, las referencias y las reglas de presentación. Ejecuta `npx nx check:ui twenty-docs` para validar las referencias de API generadas y verificar los tipos de los ejemplos que se pueden copiar.
+
+<PageBanner illustration="card-page-testing" />

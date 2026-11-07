@@ -1,0 +1,142 @@
+---
+title: RadioGroup
+description: Gestionează o singură selecție într-un set de opțiuni radio.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+## Prezentare generală
+
+`RadioGroup` coordonează valoarea, navigarea cu tastatura și trimiterea formularului pentru elementele sale fiice [Radio](/ro/ui/primitives/input/radio).
+
+<StoryEmbed storyId="ui-input-radiogroup--display" title="Exemplu RadioGroup" height={110} />
+
+## Utilizare
+
+### Stare necontrolată.
+
+Utilizează `defaultValue` pentru a seta frecvența inițială de facturare. Grupul gestionează modificările ulterioare.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+`name` al grupului identifică valoarea selectată la trimiterea formularului. Oferă grupului un nume accesibil, precum și o etichetă fiecărui buton radio.
+
+### Dispunere orizontală
+
+Grupurile folosesc implicit o coloană verticală. Setați `orientation="horizontal"` pentru un rând. Proprietatea controlează dispunerea vizuală prin `data-orientation`; nu setează `aria-orientation` și nu modifică navigarea cu tastatura. Atât tastele săgeată orizontale, cât și cele verticale păstrează comportamentul existent al Base UI, inclusiv navigarea de la dreapta la stânga prin [DirectionProvider](/ro/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-radiogroup--horizontal" title="RadioGroup orizontal" height={80} />
+
+Spațiul implicit rămâne același în ambele direcții.
+
+## Anatomie
+
+Plasați fiecare `Radio` sau `Radio.Root` în interiorul grupului și asociați-l cu o etichetă. Utilizați `Radio.Indicator` pentru a compune un indicator personalizat. `RadioGroup` și `Radio` sunt exporturi separate.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| Parte                | Cerință                           | Scop                                                                         |
+| -------------------- | --------------------------------- | ---------------------------------------------------------------------------- |
+| `RadioGroup`         | Obligatoriu                       | Gestionează selecția, navigarea cu tastatura și integrarea cu formularul.    |
+| `Radio`              | Câte unul pentru fiecare opțiune  | Furnizează unei opțiuni o `value` distinctă.                                 |
+| `label`              | Recomandat pentru fiecare opțiune | Oferă un nume vizibil, pe care se poate face clic, pentru butonul său radio. |
+| `fieldset`, `legend` | Grupare opțională                 | Grupează controalele asociate sub un titlu vizibil.                          |
+
+Oferă grupului propriul nume accesibil folosind `aria-label` sau `aria-labelledby`. În exemplele de mai jos, `aria-labelledby` conectează grupul la legendă. Fiecare buton radio are nevoie și de propriul nume. Pune props-urile de selecție pe `RadioGroup` și valorile opțiunilor pe `Radio`.
+
+## Stare controlată
+
+Transmite `value` și actualizează-l cu `onValueChange` pentru a gestiona aceeași frecvență de facturare în starea React. Selecția aparține grupului, nu controalelor radio individuale.
+
+```tsx
+import { useId, useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+`onValueChange` primește următoarea valoare și detaliile evenimentului. Tipul de valoare generic este dedus din props. Utilizează `disabled` pe grup pentru a dezactiva fiecare opțiune sau pe un buton radio individual pentru a dezactiva o alegere. Tastele săgeată navighează și selectează opțiunile activate; Tab mută în afara grupului. Versiunea Base UI instalată acceptă tastele săgeată atât pe orizontală, cât și pe verticală. RadioGroup adaugă proprietatea `orientation` doar pentru aspectul vizual, fără a modifica acel comportament al tastaturii.
+
+## Integrare nativă și detalii despre evenimente
+
+`RadioGroup` redă implicit un div. Proprietățile native și `ref` vizează acel element; `render` compune un alt element și modifică ținta reală a lui ref. `inputRef` vizează input-ul ascuns reprezentativ al unui radio copil, utilizând opțiunea activată selectată sau o opțiune activată de rezervă. Tipurile publice includ `RadioGroupProps`, `RadioGroupState`, `RadioGroupChangeEventReason` și `RadioGroupChangeEventDetails` generice.
+
+Callback-ul primește detaliile evenimentului original, inclusiv `event`, `reason`, `cancel()` și `allowPropagation()` native. Anulați o modificare propusă înainte de actualizarea stării controlate atunci când alegerea trebuie respinsă.
+
+Păstrați `name`, `form`, `required`, `disabled` și `readOnly` în grup pentru contractul existent al formularului Base UI. Valoarea selectată este trimisă sub `name`; grupurile dezactivate sunt excluse, iar grupurile doar în citire își păstrează selecția. `form` acceptă un grup în afara formularului său proprietar. Versiunea instalată nu restaurează automat starea grupului la resetarea nativă a formularului. Resetați starea controlată din handlerul `onReset` al formularului atunci când fluxul dvs. de lucru o necesită.
+
+În componentele front izolate, plasați grupul în interiorul formularului său proprietar. Rendererul redirecționează validarea `required` și blochează referințele explicite la `form`, care altfel sunt rezolvate în documentul gazdă.
+
+[SegmentedControl](/ro/ui/components/input/segmented-control) este o presetare convenabilă alcătuită din aceste primitive pentru o alegere exclusivă scurtă. Folosește semantica radio și necesită un nume de grup accesibil. Filele și navigarea prin panouri de file sunt controale separate.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentelor. Atributele native, inclusiv numele accesibile și gestionarii de evenimente, sunt acceptate și pentru părțile care redau elemente.
+
+<RadioGroupReference />
+
+<PageBanner illustration="page-cover-switch" />

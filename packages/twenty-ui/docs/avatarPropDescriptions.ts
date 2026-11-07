@@ -4,7 +4,7 @@ export const AVATAR_PROP_DESCRIPTIONS = {
   src: 'Image URL. A missing or failed image shows the fallback. `imageProps.src` overrides this value.',
   name: 'Name used for the first-letter fallback and fallback colors. Does not add an accessible label.',
   colorSeed: 'Stable value used to choose fallback colors. Defaults to `name`.',
-  size: 'Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px).',
+  size: 'Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), or `xxl` (40px).',
   shape: 'Shape of the avatar and its fallback.',
   variant: 'Visual treatment of the fallback.',
   icon: 'Decorative icon rendered instead of the image and first-letter fallback. Give the root an accessible label when the icon conveys information.',

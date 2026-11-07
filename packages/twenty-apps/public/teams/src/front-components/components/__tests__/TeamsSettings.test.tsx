@@ -16,7 +16,6 @@ const { releaseFlags, variables, queryMock, mutationMock, restGetMock } =
     return {
       releaseFlags: {
         IS_CHAT_ASSISTANT_RELEASED: false,
-        IS_TRANSCRIPT_IMPORT_RELEASED: false,
         IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
       },
       variables,
@@ -69,7 +68,6 @@ describe('TeamsSettings', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
-    releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = false;
     releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED = false;
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
     variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
@@ -82,10 +80,9 @@ describe('TeamsSettings', () => {
 
   afterEach(cleanup);
 
-  it('hides chat and keeps transcript summaries inactive before their release', async () => {
+  it('hides chat before its release and keeps transcript summaries available', async () => {
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-    const user = userEvent.setup();
 
     render(<TeamsSettings />);
 
@@ -95,65 +92,23 @@ describe('TeamsSettings', () => {
       name: 'Enable transcript summaries',
     });
 
-    expect(summaries.getAttribute('aria-checked')).toBe('false');
-    expect(summaries.hasAttribute('disabled')).toBe(true);
-    await user.click(summaries);
-
-    expect(
-      screen.getAllByText('Not available in this version yet.'),
-    ).toHaveLength(1);
+    expect(summaries.getAttribute('aria-checked')).toBe('true');
+    expect(summaries.hasAttribute('disabled')).toBe(false);
+    expect(screen.queryByText('Not available in this version yet.')).toBeNull();
     expect(queryMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [false, false],
-    [true, false],
-    [false, true],
-    [true, true],
-  ])(
-    'supports independent chat (%s) and transcript (%s) releases',
-    (isChatAvailable, isTranscriptsAvailable) => {
-      releaseFlags.IS_CHAT_ASSISTANT_RELEASED = isChatAvailable;
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = isTranscriptsAvailable;
-      variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-      variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-
-      render(<TeamsSettings />);
-
-      const chat = screen.queryByRole('switch', { name: 'Enable chat' });
-      const summaries = screen.getByRole('switch', {
-        name: 'Enable transcript summaries',
-      });
-
-      expect(chat?.getAttribute('aria-checked')).toBe(
-        isChatAvailable ? 'true' : undefined,
-      );
-      expect(summaries.hasAttribute('disabled')).toBe(!isTranscriptsAvailable);
-      expect(summaries.getAttribute('aria-checked')).toBe(
-        String(isTranscriptsAvailable),
-      );
-      expect(queryMock).not.toHaveBeenCalled();
-      expect(mutationMock).not.toHaveBeenCalled();
-    },
-  );
-
-  it.each([
-    [false, false],
-    [true, false],
-    [false, true],
-    [true, true],
-  ])(
-    'shows Import history only when transcripts (%s) and history import (%s) are released',
-    (isTranscriptsAvailable, isHistoryImportAvailable) => {
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = isTranscriptsAvailable;
+  it.each([false, true])(
+    'shows Import history only when history import is released (%s)',
+    (isHistoryImportAvailable) => {
       releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED =
         isHistoryImportAvailable;
 
       render(<TeamsSettings />);
 
       expect(screen.queryByText('Import history') !== null).toBe(
-        isTranscriptsAvailable && isHistoryImportAvailable,
+        isHistoryImportAvailable,
       );
     },
   );
@@ -162,7 +117,6 @@ describe('TeamsSettings', () => {
     'keeps available features off for workspace value %s',
     (value) => {
       releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = true;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = value;
       variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = value;
 
@@ -195,7 +149,6 @@ describe('TeamsSettings', () => {
 
   it('saves the selected feature without changing the other preference', async () => {
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
-    releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);

@@ -1,5 +1,6 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
+import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
@@ -14,6 +15,7 @@ import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-ca
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
+import { SidePanelRecordUpdateFormPage } from '@/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage';
 import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
@@ -30,9 +32,11 @@ import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/page
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
 import { SidePanelPageLayoutWidgetSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetSettings';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
+import { SidePanelMergeWithRecordPage } from '@/side-panel/pages/merge-with-record/components/SidePanelMergeWithRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
+import { SidePanelSearchAiChatsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
 import { SidePanelWorkflowStepSettings } from '@/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettings';
@@ -49,6 +53,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
 >([
   [SidePanelPages.CommandMenuDisplay, <SidePanelCommandMenuItemDisplayPage />],
   [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
+  [SidePanelPages.MergeWithRecord, <SidePanelMergeWithRecordPage />],
   [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
   [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
   [
@@ -62,6 +67,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
   [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
   [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
+  [SidePanelPages.SearchAiChats, <SidePanelSearchAiChatsPage />],
   [SidePanelPages.AskAI, <SidePanelAskAiPage />],
   [
     SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
@@ -103,6 +109,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     SidePanelPages.RecordCreationFormSettings,
     <SidePanelRecordCreationFormSettingsPage />,
   ],
+  [SidePanelPages.RecordUpdateForm, <SidePanelRecordUpdateFormPage />],
   [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.AddToMessageList, <SidePanelAddToMessageListPage />],
@@ -111,6 +118,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
+  [SidePanelPages.AgentCoreFilters, <SidePanelCoreAgentFiltersPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],

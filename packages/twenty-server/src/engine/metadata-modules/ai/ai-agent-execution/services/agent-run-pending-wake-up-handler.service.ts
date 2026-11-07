@@ -1,12 +1,14 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 
@@ -19,14 +21,11 @@ export class AgentRunPendingWakeUpHandlerService
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
+    private readonly agentRunPersonaService: AgentRunPersonaService,
   ) {}
 
   onModuleInit(): void {
     this.pendingWakeUpOwnerHandlerRegistryService.register('AGENT_RUN', this);
-  }
-
-  buildResumeJobOptions(): QueueJobOptions {
-    return {};
   }
 
   async getOwnerState({
@@ -43,17 +42,31 @@ export class AgentRunPendingWakeUpHandlerService
     return status === 'NOT_READY' ? { status } : { status, owner: suspension };
   }
 
-  // the run reads what its caller lets it read
+  // the run reads what it acts with, so an event never shows it a record its tools could not read
   async getReadPermissions({
     wakeUp: { workspaceId },
-    owner: { caller },
+    owner: { caller, runSpec },
   }: {
     wakeUp: PendingWakeUpEntity;
     owner: AgentRunSuspension;
   }) {
-    return this.callerHandlerRegistry
-      .getHandlerOrThrow(caller.type)
-      .buildExecutionContext({ workspaceId, caller });
+    const [{ authContext }, persona] = await Promise.all([
+      this.callerHandlerRegistry
+        .getHandlerOrThrow(caller.type)
+        .buildExecutionContext({ workspaceId, caller }),
+      this.agentRunPersonaService.resolveOrThrow({
+        workspaceId,
+        spec: runSpec,
+      }),
+    ]);
+    const runAuthContext =
+      await this.agentRunPersonaService.resolveRunAuthContext({
+        workspaceId,
+        persona,
+        authContext,
+      });
+
+    return isDefined(runAuthContext) ? { authContext: runAuthContext } : null;
   }
 
   // the run removes its wake-up once it went on, so the conversation waits until then

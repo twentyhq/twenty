@@ -3,12 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
+import { userCanServerImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-server-impersonate-target.util';
+import { userCanWorkspaceImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-workspace-impersonate-target.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 export type ImpersonationLevel = 'server' | 'workspace';
 
@@ -30,7 +31,7 @@ export type ImpersonationAuthorizationResult =
 @Injectable()
 export class ImpersonationAuthorizationService {
   constructor(
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -72,16 +73,23 @@ export class ImpersonationAuthorizationService {
         }
       }
 
+      if (
+        !userCanServerImpersonateTarget({
+          impersonatorUser: impersonatorUserWorkspace.user,
+          targetUser: targetUserWorkspace.user,
+        })
+      ) {
+        return { allowed: false, level, reason: 'TARGET_HAS_ADMIN_PRIVILEGES' };
+      }
+
       return { allowed: true, level };
     }
 
     const hasWorkspaceLevelImpersonatePermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: impersonatorUserWorkspace.id,
-        setting: PermissionFlagType.IMPERSONATE,
+      await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId: targetUserWorkspace.workspace.id,
-        applicationId: undefined,
-        agentId: undefined,
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        permissionFlag: PermissionFlagType.IMPERSONATE,
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
@@ -89,8 +97,10 @@ export class ImpersonationAuthorizationService {
     }
 
     if (
-      userHasAdminPrivileges(targetUserWorkspace.user) &&
-      !userHasAdminPrivileges(impersonatorUserWorkspace.user)
+      !userCanWorkspaceImpersonateTarget({
+        impersonatorUser: impersonatorUserWorkspace.user,
+        targetUser: targetUserWorkspace.user,
+      })
     ) {
       return { allowed: false, level, reason: 'TARGET_HAS_ADMIN_PRIVILEGES' };
     }

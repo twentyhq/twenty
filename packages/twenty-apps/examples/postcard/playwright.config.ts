@@ -22,6 +22,8 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   use: {
     baseURL: FRONT_BASE_URL,
+    // The prod-parity job serves the app through a self-signed local TLS proxy.
+    ignoreHTTPSErrors: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     headless: true,

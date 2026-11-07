@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { TimelineCalendarEventResolver } from 'src/engine/core-modules/calendar/timeline-calendar-event.resolver';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RelatedPersonIdsModule } from 'src/engine/core-modules/related-person-ids/related-person-ids.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -15,11 +14,7 @@ import { TargetModule } from 'src/engine/core-modules/target/target.module';
     FileUrlModule,
     RelatedPersonIdsModule,
     TargetModule,
-    TypeOrmModule.forFeature([
-      CalendarChannelEntity,
-      ConnectedAccountEntity,
-      UserWorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([CalendarChannelEntity, ConnectedAccountEntity]),
   ],
   exports: [],
   providers: [TimelineCalendarEventResolver, TimelineCalendarEventService],

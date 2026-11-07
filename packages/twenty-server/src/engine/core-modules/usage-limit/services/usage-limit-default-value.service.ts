@@ -38,16 +38,17 @@ export class UsageLimitDefaultValueService {
       return instanceValue;
     }
 
-    const planKey =
-      await this.billingCreditAllowanceService.getPlanKey(workspaceId);
+    const subscriptionPlan =
+      await this.billingCreditAllowanceService.getSubscriptionPlan(workspaceId);
 
-    if (!isDefined(planKey)) {
+    if (!isDefined(subscriptionPlan)) {
       return instanceValue;
     }
 
     return getPlanLimitDefaultValue({
       usageLimitDefaultsByPlan,
-      planKey,
+      planKey: subscriptionPlan.planKey,
+      isTrialing: subscriptionPlan.isTrialing,
       limitValueConfigVariable,
       instanceValue,
     });

@@ -3,6 +3,10 @@ title: Mostrar datos de registros relacionados
 description: Muestra datos de registros relacionados (p. ej., información de la empresa en Oportunidades) usando flujos de trabajo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Muestra datos de registros relacionados directamente en tus registros — por ejemplo, muestra el recuento de empleados de una Empresa en sus Oportunidades. Esta solución provisional con flujos de trabajo es útil hasta que los campos anidados estén disponibles de forma nativa.
 
 ## Casos de Uso Comunes
@@ -34,11 +38,11 @@ Crea los campos de destino en **Configuración → Modelo de datos → Oportunid
 
 3. **Buscar registros**: Encuentra a la persona vinculada
    * Objeto: Personas
-   * Filtro: ID igual a `{{trigger.object.pointOfContact.id}}`
+   * Filtro: ID igual a `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Actualizar registro**:
    * Objeto: Oportunidades
-   * Registro: `{{trigger.object.id}}`
+   * Registro: `{{trigger.properties.after.id}}`
    * Correo electrónico del contacto: `{{searchRecords[0].email}}`
    * Teléfono del contacto: `{{searchRecords[0].phone}}`
 
@@ -55,16 +59,16 @@ Crea los campos de destino en **Configuración → Modelo de datos → Oportunid
 
 2. **Buscar registros**: Encuentra todas las oportunidades de esta empresa
    * Objeto: Oportunidades
-   * Filtro: ID de empresa igual a `{{trigger.object.id}}`
+   * Filtro: ID de empresa igual a `{{trigger.properties.after.id}}`
 
 3. **Iterator**: Recorre cada oportunidad
 
 4. **Actualizar registro** (dentro del Iterator):
    * Objeto: Oportunidades
    * Registro: `{{iterator.currentItem.id}}`
-   * Industria de la empresa: `{{trigger.object.industry}}`
-   * Tamaño de la empresa: `{{trigger.object.companySize}}`
-   * ARR de la empresa: `{{trigger.object.annualRevenue}}`
+   * Industria de la empresa: `{{trigger.properties.after.industry}}`
+   * Tamaño de la empresa: `{{trigger.properties.after.companySize}}`
+   * ARR de la empresa: `{{trigger.properties.after.annualRevenue}}`
 
 ## Copiar al crear el registro
 
@@ -86,11 +90,11 @@ Crea los campos de destino en **Configuración → Modelo de datos → Oportunid
 
 2. **Buscar registros**: Obtén los detalles de la empresa vinculada
    * Objeto: Empresas
-   * Filtro: ID igual a `{{trigger.object.company.id}}`
+   * Filtro: ID igual a `{{trigger.properties.after.companyId}}`
 
 3. **Actualizar registro**:
    * Objeto: Oportunidades
-   * Registro: `{{trigger.object.id}}`
+   * Registro: `{{trigger.properties.after.id}}`
    * Industria de la empresa: `{{searchRecords[0].industry}}`
    * Tamaño de la empresa: `{{searchRecords[0].employees}}`
 
@@ -168,3 +172,5 @@ export const main = async (params) => {
 
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
 * [Disparadores de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-triggers)
+
+<PageBanner illustration="card-page-relations" />

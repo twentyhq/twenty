@@ -52,7 +52,7 @@ const OBJECT_METADATA_ITEMS_QUERY = gql`
             indexWhereClause
             indexType
             isUnique
-            isCustom
+            isSystemSideEffect
             indexFieldMetadataList {
               id
               fieldMetadataId

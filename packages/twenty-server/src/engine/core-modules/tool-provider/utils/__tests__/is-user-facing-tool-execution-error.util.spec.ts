@@ -29,7 +29,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import {
   RowLevelPermissionPredicateException,
   RowLevelPermissionPredicateExceptionCode,
@@ -94,6 +94,14 @@ describe('isUserFacingToolExecutionError', () => {
       new TwentyOrmException(
         'Unknown column',
         TwentyOrmExceptionCode.UNKNOWN_COLUMN,
+      ),
+      true,
+    ],
+    [
+      'a duplicate entry',
+      new TwentyOrmException(
+        'Duplicate entry',
+        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
       ),
       true,
     ],

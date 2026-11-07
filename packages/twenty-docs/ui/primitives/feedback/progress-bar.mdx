@@ -3,8 +3,12 @@ title: ProgressBar
 description: Show measured or indeterminate progress with a horizontal bar.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Overview
 
 `ProgressBar` supplies a horizontal appearance for [Progress](/ui/primitives/feedback/progress). It preserves the complete root contract, including native attributes, refs, render composition, formatting, custom ranges, and indeterminate progress. Give it an `aria-label` that identifies the operation.
 
@@ -52,7 +56,7 @@ Use [Toast](/ui/components/feedback/toast) for notifications with a dismiss coun
 
 ## Appearance and composition
 
-`size` selects a 6px or 8px track. `barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `withMinimumFillWidth` keeps a small cosmetic fill only between the minimum and completion. This minimum is at most 12px and half the track width, so a narrow track still distinguishes incomplete progress from completion. It does not fill an empty bar or change semantic values.
+`size` selects a 4px, 6px or 8px track. `barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `withMinimumFillWidth` keeps a small cosmetic fill only between the minimum and completion. This minimum is at most 12px and half the track width, so a narrow track still distinguishes incomplete progress from completion. It does not fill an empty bar or change semantic values.
 
 Native attributes, `className`, `style`, and `ref` target the root. `className` and `style` can receive the progress state. `render` can replace the root while preserving its semantics. Indeterminate progress has its own appearance without reporting a numeric percentage. Reduced-motion preferences disable fill transitions and indeterminate motion.
 
@@ -65,3 +69,5 @@ Replace `ariaLabel` with native `aria-label`. The `withGrowIn`, `withGlint`, `wi
 ## Props
 
 <ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

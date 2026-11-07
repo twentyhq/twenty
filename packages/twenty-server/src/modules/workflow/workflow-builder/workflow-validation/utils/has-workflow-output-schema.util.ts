@@ -17,12 +17,5 @@ export const hasWorkflowOutputSchema = (
 
   const outputSchema = settings?.outputSchema;
 
-  return (
-    isObject(outputSchema) &&
-    Object.keys(outputSchema).length > 0 &&
-    !(
-      '_outputSchemaType' in outputSchema &&
-      outputSchema._outputSchemaType === 'LINK'
-    )
-  );
+  return isObject(outputSchema) && Object.keys(outputSchema).length > 0;
 };

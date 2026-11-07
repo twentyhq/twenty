@@ -35,12 +35,24 @@
   A ref to access the hidden input element.
 </ParamField>
 
+<ParamField body="layout" type="&quot;grid&quot; | &quot;list&quot;" default="list">
+  list arranges options in the orientation direction. grid fills the available width with responsive columns.
+</ParamField>
+
+<ParamField body="minColumnWidth" type="number" default="148">
+  Minimum grid column width in pixels. Columns can shrink below this width when the container is narrower.
+</ParamField>
+
 <ParamField body="name" type="string">
   Identifies the field when a form is submitted.
 </ParamField>
 
 <ParamField body="onValueChange" type="((value: TValue, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
   Callback fired when the value changes.
+</ParamField>
+
+<ParamField body="orientation" type="&quot;horizontal&quot; | &quot;vertical&quot;" default="vertical">
+  Visual layout direction, reflected in data-orientation. Does not change arrow-key navigation or set aria-orientation.
 </ParamField>
 
 <ParamField body="readOnly" type="boolean" default="false">

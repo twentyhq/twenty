@@ -91,7 +91,7 @@ export const DatePickerInput = ({
     ? (parsePlainDateToDateInputString(internalDate) ?? undefined)
     : undefined;
 
-  const { ref, setValue, value } = useIMask(
+  const { ref, setValue, value } = useIMask<HTMLInputElement>(
     {
       mask: Date,
       pattern,
@@ -132,7 +132,7 @@ export const DatePickerInput = ({
         type="text"
         aria-label={t`Date`}
         disabled={readonly}
-        ref={ref as any}
+        ref={ref}
         value={value}
         onChange={() => {}} // Prevent React warning
       />

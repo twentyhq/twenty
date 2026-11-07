@@ -49,7 +49,6 @@ const meta: Meta<typeof SettingsAdminApps> = {
                     sourcePackage: 'acme-app',
                     latestAvailableVersion: '1.0.0',
                     isListed: true,
-                    isVetted: true,
                     isPreInstalled: false,
                     isConfigured: true,
                     ownerWorkspaceId: null,

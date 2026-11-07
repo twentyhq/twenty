@@ -1,4 +1,4 @@
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 
 import { StyledChipButton } from 'src/front-components/components/StyledChipButton';
 import { type CallParticipantDisplayItem } from 'src/front-components/types/call-participant-display-item.type';
@@ -23,46 +23,46 @@ export const CallParticipantChip = ({
       return (
         <StyledChipButton type="button" onClick={handleClick}>
           <Chip
-            label={participant.label}
             clickable
-            variant={ChipVariant.Highlighted}
-            leftComponent={
+            variant="soft"
+            startElement={
               <Avatar
-                avatarUrl={participant.avatarUrl}
-                placeholder={participant.label}
-                placeholderColorSeed={participant.personId}
-                type="rounded"
+                src={participant.avatarUrl}
+                name={participant.label}
+                colorSeed={participant.personId}
+                shape="circle"
                 size="sm"
               />
             }
-          />
+          >
+            {participant.label}
+          </Chip>
         </StyledChipButton>
       );
     }
     case 'workspaceMember':
       return (
         <Chip
-          label={participant.label}
           clickable={false}
-          variant={ChipVariant.Transparent}
-          leftComponent={
+          variant="plain"
+          startElement={
             <Avatar
-              avatarUrl={participant.avatarUrl}
-              placeholder={participant.label}
-              placeholderColorSeed={participant.workspaceMemberId}
-              type="rounded"
+              src={participant.avatarUrl}
+              name={participant.label}
+              colorSeed={participant.workspaceMemberId}
+              shape="circle"
               size="sm"
             />
           }
-        />
+        >
+          {participant.label}
+        </Chip>
       );
     case 'unmatched':
       return (
-        <Chip
-          label={participant.label}
-          clickable={false}
-          variant={ChipVariant.Transparent}
-        />
+        <Chip clickable={false} variant="plain">
+          {participant.label}
+        </Chip>
       );
   }
 };

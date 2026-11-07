@@ -1,39 +1,54 @@
-import { useCallback } from 'react';
-
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { useCallback, useState } from 'react';
 
 import styles from '../Dropdown.module.scss';
 import { type DropdownPageProps } from '../types/DropdownPageProps';
 import { DropdownContext } from './DropdownContext';
+import { DropdownPageEffect } from './DropdownPageEffect';
 import { useDropdownContext } from './useDropdownContext';
 
 export const DropdownPage = ({ id, type, children }: DropdownPageProps) => {
   const context = useDropdownContext();
-  const { registerPage } = context;
-  const registerPageType = useCallback(
-    (element: HTMLDivElement | null) => {
-      if (isDefined(element)) {
-        registerPage({ id, type });
+  const { registerTitle: registerContextTitle } = context;
+  const [visitedId, setVisitedId] = useState<string>();
+  const isActive = context.isPageActive && context.pageId === id;
+  const shouldVisit = isActive && context.open;
+  const registerTitle = useCallback(
+    (titleId: string) => {
+      if (!isActive) {
+        return () => undefined;
       }
+
+      return registerContextTitle(titleId);
     },
-    [id, type, registerPage],
+    [isActive, registerContextTitle],
   );
 
-  if (context.pageId !== id) {
+  if (shouldVisit && visitedId !== id) {
+    setVisitedId(id);
+  }
+
+  if (visitedId !== id && !shouldVisit) {
     return null;
   }
 
   return (
     <DropdownContext.Provider
-      value={{ ...context, type: type ?? context.rootType }}
+      value={{
+        ...context,
+        type: type ?? context.rootType,
+        isPageActive: isActive,
+        registerTitle,
+      }}
     >
       <div
-        ref={registerPageType}
+        hidden={!isActive}
+        inert={!isActive}
         className={styles.page}
         data-dropdown-page-type={type ?? context.rootType}
       >
         {children}
       </div>
+      <DropdownPageEffect id={id} type={type} isActive={isActive} />
     </DropdownContext.Provider>
   );
 };

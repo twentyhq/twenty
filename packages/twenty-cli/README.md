@@ -5,7 +5,8 @@ inspect metadata and records, send API requests, and develop applications.
 
 ## Install
 
-The CLI needs Node.js 24.5 or later.
+The CLI needs Node.js 24.5 or later. Building apps is officially supported on
+Unix systems (macOS and Linux) only; on Windows, work inside WSL 2.
 
 ```bash
 npm install -g twenty
@@ -52,8 +53,8 @@ app, uploads its build and synchronizes its metadata. Once registered, inspect
 changes with `twenty app plan` before applying them. `app dev` watches inputs and
 syncs successful builds.
 
-Missing definitions imply remote deletions by default. Pass `--no-delete` to
-preserve them. Object and field deletions require confirmation because they
+Missing definitions imply remote deletions by default. Pass `--no-prune` to
+preserve them. The workspace custom application only deletes them with `--prune`. Object and field deletions require confirmation because they
 also delete stored data. Pull can overwrite local edits; read its
 [reconciliation rules](docs/commands.md#pull-an-app) before using it.
 
@@ -85,5 +86,3 @@ for supported SDK exports and compiler configuration.
 
 Run `twenty commands` for the command inventory or `twenty <command> --help` for
 its arguments and options.
-
-Generated next-step commands use PowerShell on Windows and POSIX shell syntax on macOS/Linux.

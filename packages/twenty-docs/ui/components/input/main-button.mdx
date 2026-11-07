@@ -3,9 +3,13 @@ title: MainButton
 description: Present prominent actions with shared design defaults.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## Overview
 
 Use the shared `MainButton` component for a prominent action. It composes
 [Button](/ui/primitives/input/button) with a solid surface, elevation, semibold
@@ -54,6 +58,9 @@ export const SaveProfile = () => (
 Width follows the content unless you set `fullWidth` or provide application
 layout styling. Override `variant`, `color`, `size`, and `elevated` as needed;
 for example, use `variant="outline"` and `elevated={false}` for an outlined action.
+
+With `color="inherit"`, choose a non-solid variant explicitly or inherit one from ButtonGroup. The standalone solid default with inherited color throws a runtime error.
+
 Keep page layout in your application's styling.
 
 ## Interaction
@@ -74,3 +81,5 @@ to the root.
 ## Props
 
 <MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

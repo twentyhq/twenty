@@ -1,0 +1,80 @@
+import { isDefined } from '@/utils/validation/isDefined';
+
+const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
+  /import\s*\{\s*define(?:Settings)?FrontComponent\s*(?:,\s*)?\}\s*from\s*['"][^'"]+['"];?\n?/g;
+
+const DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN =
+  /export\s+default\s+define(?:Settings)?FrontComponent\s*\(/;
+
+const IDENTIFIER_COMPONENT_VALUE_PATTERN =
+  /component\s*:\s*([A-Za-z_$][\w$]*)\s*[,}]/;
+
+const FRONT_COMPONENT_DEFINITION_NAME = '__frontComponentDefinition';
+
+export const unwrapDefineFrontComponentToDirectExport = (
+  sourceCode: string,
+): string => {
+  if (!DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN.test(sourceCode)) {
+    return sourceCode;
+  }
+
+  let transformedSource = sourceCode.replace(
+    DEFINE_FRONT_COMPONENT_IMPORT_PATTERN,
+    '',
+  );
+
+  transformedSource = transformedSource.replace(
+    DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN,
+    `const ${FRONT_COMPONENT_DEFINITION_NAME} = (`,
+  );
+
+  const identifierComponentMatch = transformedSource.match(
+    IDENTIFIER_COMPONENT_VALUE_PATTERN,
+  );
+
+  if (isDefined(identifierComponentMatch)) {
+    const wrappedComponentName = identifierComponentMatch[1];
+
+    transformedSource = transformedSource.replace(
+      new RegExp(`export\\s+(const|function)\\s+${wrappedComponentName}\\b`),
+      `$1 ${wrappedComponentName}`,
+    );
+  }
+
+  return (
+    `import { createRoot as __createRoot } from 'react-dom/client';\n` +
+    `import { useEffect as __useEffect } from 'react';\n` +
+    `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';\n` +
+    transformedSource +
+    `\nexport default function __renderFrontComponent(__container, __props = {}) {
+      return new Promise((resolve, reject) => {
+        let hasSettled = false;
+        const timeout = setTimeout(() => {
+          settle(reject, new Error('Front component initial render timed out.'));
+        }, 30000);
+        function settle(callback, value) {
+          hasSettled = true;
+          clearTimeout(timeout);
+          callback(value);
+        }
+        function FrontComponentReadyEffect() {
+          __useEffect(() => {
+            settle(resolve);
+          }, []);
+          return __frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, __props);
+        }
+        try {
+          __createRoot(__container, { onUncaughtError(error) {
+            if (hasSettled) {
+              queueMicrotask(() => { throw error; });
+              return;
+            }
+            settle(reject, error);
+          } }).render(__frontComponentJsx(FrontComponentReadyEffect, {}));
+        } catch (error) {
+          settle(reject, error);
+        }
+      });
+    }\n`
+  );
+};

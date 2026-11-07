@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -31,6 +32,9 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
+import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
+import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
+import { isUuidShaped } from 'src/engine/core-modules/server-route-trigger/utils/is-uuid-shaped.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -45,12 +49,12 @@ const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 export type ServerRouteTriggerResult = {
   response: RouteTriggerResponse;
-  isResolvedThroughLegacyIdentifier: boolean;
+  isResolvedThroughDeprecatedRoute: boolean;
 };
 
 type ResolvedServerRouteResolver = {
   resolver: LogicFunctionEntity;
-  isResolvedThroughLegacyIdentifier: boolean;
+  isResolvedThroughDeprecatedRoute: boolean;
 };
 
 @Injectable()
@@ -64,37 +68,26 @@ export class ServerRouteTriggerService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
+    private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
   ) {}
 
   async handle({
     request,
     resolverLogicFunctionIdentifier,
+    resolverApplicationRegistrationId,
   }: {
     request: Request;
     resolverLogicFunctionIdentifier: string;
+    resolverApplicationRegistrationId?: string;
   }): Promise<ServerRouteTriggerResult> {
-    const { resolver, isResolvedThroughLegacyIdentifier } =
-      await this.findResolverOrThrow(resolverLogicFunctionIdentifier);
-
-    const allowedHttpMethods =
-      resolver.serverRouteTriggerSettings?.httpMethods ??
-      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
-
-    if (
-      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
-    ) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${resolverLogicFunctionIdentifier} does not accept ${request.method} requests`,
-        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${resolverLogicFunctionIdentifier} requires authentication and cannot be dispatched through the public server route`,
-        ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
-      );
-    }
+    const { resolver, isResolvedThroughDeprecatedRoute } = isDefined(
+      resolverApplicationRegistrationId,
+    )
+      ? await this.findRegistrationResolverOrThrow({
+          applicationRegistrationId: resolverApplicationRegistrationId,
+          logicFunctionUniversalIdentifier: resolverLogicFunctionIdentifier,
+        })
+      : await this.findResolverOrThrow(resolverLogicFunctionIdentifier);
 
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
@@ -106,63 +99,126 @@ export class ServerRouteTriggerService {
       );
     }
 
-    const forwardedRequestHeaders =
-      resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
+    try {
+      const allowedHttpMethods =
+        resolver.serverRouteTriggerSettings?.httpMethods ??
+        DEFAULT_SERVER_ROUTE_HTTP_METHODS;
 
-    const isAuthorizationHeaderForwardable =
-      forwardedRequestHeaders.some(
-        (headerName) =>
-          headerName.toLowerCase() ===
-          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
-      ) &&
-      (await this.serverRouteAuthorizationHeaderService.isForwardable(
-        request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
-      ));
+      if (
+        !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
+      ) {
+        throw new ServerRouteTriggerException(
+          `Server resolver function ${resolverLogicFunctionIdentifier} does not accept ${request.method} requests`,
+          ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
+        );
+      }
 
-    const event = buildLogicFunctionEvent({
-      request,
-      pathParameters: {},
-      forwardedRequestHeaders,
-      forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
-        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
-        : undefined,
-      userWorkspaceId: null,
-    });
+      if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
+        throw new ServerRouteTriggerException(
+          `Server resolver function ${resolverLogicFunctionIdentifier} requires authentication and cannot be dispatched through the public server route`,
+          ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+        );
+      }
 
-    const resolverResult = await this.runFunction({
-      logicFunctionUniversalIdentifier: resolver.universalIdentifier,
-      workspaceId: resolver.workspaceId,
-      payload: event,
-    });
+      const forwardedRequestHeaders =
+        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
 
-    if (isDefined(resolverResult.error)) {
-      throw new ServerRouteTriggerException(
-        resolverResult.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+      const isAuthorizationHeaderForwardable =
+        forwardedRequestHeaders.some(
+          (headerName) =>
+            headerName.toLowerCase() ===
+            SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
+        ) &&
+        (await this.serverRouteAuthorizationHeaderService.isForwardable(
+          request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
+        ));
+
+      const event = buildLogicFunctionEvent({
+        request,
+        pathParameters: {},
+        forwardedRequestHeaders,
+        forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
+          ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
+          : undefined,
+        userWorkspaceId: null,
+      });
+
+      const resolverResult = await this.runFunction({
+        logicFunctionUniversalIdentifier: resolver.universalIdentifier,
+        workspaceId: resolver.workspaceId,
+        payload: event,
+      });
+
+      if (isDefined(resolverResult.error)) {
+        throw new ServerRouteTriggerException(
+          resolverResult.error.errorMessage,
+          ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+        );
+      }
+
+      if (isLogicFunctionHttpResponse(resolverResult.data)) {
+        return {
+          response: buildRouteTriggerResponse(resolverResult.data),
+          isResolvedThroughDeprecatedRoute,
+        };
+      }
+
+      const dispatchResult = parseResolverDispatchResultOrThrow(
+        resolverResult.data,
+      );
+
+      return {
+        response: await this.enqueueTargetFunction({
+          logicFunctionUniversalIdentifier:
+            dispatchResult.targetLogicFunctionUniversalIdentifier,
+          workspaceId: dispatchResult.workspaceId,
+          payload: dispatchResult.payload ?? event,
+          applicationRegistrationId,
+        }),
+        isResolvedThroughDeprecatedRoute,
+      };
+    } catch (error) {
+      this.recordServerRouteFailure({
+        resolver,
+        applicationRegistrationId,
+        error,
+      });
+
+      throw error;
+    }
+  }
+
+  private recordServerRouteFailure({
+    resolver,
+    applicationRegistrationId,
+    error,
+  }: {
+    resolver: LogicFunctionEntity;
+    applicationRegistrationId: string;
+    error: unknown;
+  }) {
+    if (
+      error instanceof ServerRouteTriggerException &&
+      error.code ===
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR
+    ) {
+      return;
+    }
+
+    if (!isAppFacingServerRouteError(error)) {
+      this.logger.error(
+        `Server route ${resolver.id} failed with a platform error`,
+        error,
       );
     }
 
-    if (isLogicFunctionHttpResponse(resolverResult.data)) {
-      return {
-        response: buildRouteTriggerResponse(resolverResult.data),
-        isResolvedThroughLegacyIdentifier,
-      };
-    }
-
-    const dispatchResult = parseResolverDispatchResultOrThrow(
-      resolverResult.data,
-    );
-
-    return {
-      response: await this.enqueueTargetFunction({
-        logicFunctionUniversalIdentifier:
-          dispatchResult.targetLogicFunctionUniversalIdentifier,
-        workspaceId: dispatchResult.workspaceId,
-        payload: dispatchResult.payload ?? event,
+    this.applicationRepeatedEventRecorderService.record({
+      entry: buildServerRouteFailureLogEntry({
+        resolver,
         applicationRegistrationId,
+        error,
       }),
-      isResolvedThroughLegacyIdentifier,
-    };
+    });
   }
 
   private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {
@@ -179,6 +235,44 @@ export class ServerRouteTriggerService {
       );
   }
 
+  private async findRegistrationResolverOrThrow({
+    applicationRegistrationId,
+    logicFunctionUniversalIdentifier,
+  }: {
+    applicationRegistrationId: string;
+    logicFunctionUniversalIdentifier: string;
+  }): Promise<ResolvedServerRouteResolver> {
+    const buildNotFoundException = () =>
+      new ServerRouteTriggerException(
+        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+
+    if (
+      !isUuidShaped(applicationRegistrationId) ||
+      !isUuidShaped(logicFunctionUniversalIdentifier)
+    ) {
+      throw buildNotFoundException();
+    }
+
+    const resolver = await this.createResolverQueryBuilder()
+      .andWhere('applicationRegistration.id = :applicationRegistrationId', {
+        applicationRegistrationId,
+      })
+      .andWhere(
+        'logicFunction.universalIdentifier = :logicFunctionUniversalIdentifier',
+        { logicFunctionUniversalIdentifier },
+      )
+      .getOne();
+
+    if (!isDefined(resolver)) {
+      throw buildNotFoundException();
+    }
+
+    return { resolver, isResolvedThroughDeprecatedRoute: false };
+  }
+
+  // TODO(@charlesBochet): drop the single-identifier routes (id and universalIdentifier) after 2026-11-29.
   private async findResolverOrThrow(
     identifier: string,
   ): Promise<ResolvedServerRouteResolver> {
@@ -187,9 +281,13 @@ export class ServerRouteTriggerService {
       .getOne();
 
     if (isDefined(resolverById)) {
+      this.logger.warn(
+        `Server route ${identifier} resolved through the deprecated logic function id form; the registered URL should move to /webhooks/server/${resolverById.application?.applicationRegistration?.id}/${resolverById.universalIdentifier}`,
+      );
+
       return {
         resolver: resolverById,
-        isResolvedThroughLegacyIdentifier: false,
+        isResolvedThroughDeprecatedRoute: true,
       };
     }
 
@@ -202,14 +300,18 @@ export class ServerRouteTriggerService {
 
     if (legacyCandidates.length > 1) {
       this.logger.error(
-        `Server route ${identifier} is claimed by ${legacyCandidates.length} application registrations (owner workspaces: ${legacyCandidates
+        `Server route ${identifier} is claimed by several application registrations (owner workspaces: ${legacyCandidates
           .map((candidate) => candidate.workspaceId)
           .join(', ')}); refusing to dispatch`,
       );
+
+      throw new ServerRouteTriggerException(
+        `Server route ${identifier} is claimed by several application registrations`,
+        ServerRouteTriggerExceptionCode.AMBIGUOUS_SERVER_ROUTE,
+      );
     }
 
-    const legacyResolver =
-      legacyCandidates.length === 1 ? legacyCandidates[0] : undefined;
+    const [legacyResolver] = legacyCandidates;
 
     if (!isDefined(legacyResolver)) {
       throw new ServerRouteTriggerException(
@@ -219,12 +321,12 @@ export class ServerRouteTriggerService {
     }
 
     this.logger.warn(
-      `Server route ${identifier} resolved through the deprecated universalIdentifier form (application registration ${legacyResolver.application?.applicationRegistration?.universalIdentifier}, owner workspace ${legacyResolver.workspaceId}); the registered URL should move to /webhooks/server/${legacyResolver.id}`,
+      `Server route ${identifier} resolved through the deprecated universalIdentifier form (application registration ${legacyResolver.application?.applicationRegistration?.universalIdentifier}, owner workspace ${legacyResolver.workspaceId}); the registered URL should move to /webhooks/server/${legacyResolver.application?.applicationRegistration?.id}/${legacyResolver.universalIdentifier}`,
     );
 
     return {
       resolver: legacyResolver,
-      isResolvedThroughLegacyIdentifier: true,
+      isResolvedThroughDeprecatedRoute: true,
     };
   }
 
@@ -256,6 +358,9 @@ export class ServerRouteTriggerService {
         retryLimit: QUEUED_TARGET_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
         priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+        workspaceId,
+        applicationUniversalIdentifier:
+          logicFunction.application.universalIdentifier,
       },
     );
 

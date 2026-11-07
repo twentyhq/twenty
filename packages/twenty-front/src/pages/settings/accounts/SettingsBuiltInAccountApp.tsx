@@ -1,0 +1,209 @@
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { AppChip } from '@/applications/components/AppChip';
+import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
+import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
+import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
+import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
+import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
+import { SETTINGS_BUILT_IN_ACCOUNT_APP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppTabListComponentId';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
+import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
+import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
+import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
+import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
+import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
+
+export const SettingsBuiltInAccountApp = () => {
+  const { t } = useLingui();
+  const { applicationId: builtInAccountAppId } = useParams<{
+    applicationId: string;
+  }>();
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
+  const app = enabledBuiltInAccountApps.find(
+    (enabledApp) => enabledApp.id === builtInAccountAppId,
+  );
+  const { groups, loading } = useMyAccountGroups();
+  const [selectedAccountId, setSelectedAccountId] = useState<string>();
+
+  const tabListComponentInstanceId = `${SETTINGS_BUILT_IN_ACCOUNT_APP_TAB_LIST_COMPONENT_ID}-${builtInAccountAppId}`;
+
+  const providerAccounts = groups
+    .map((group) => group.builtInAccount)
+    .filter(isDefined)
+    .filter((account) => account.provider === app?.provider);
+  const emailAccounts = app?.hasEmails
+    ? providerAccounts.filter((account) =>
+        isDefined(getConnectedAccountSettingsChannels(account).messageChannel),
+      )
+    : [];
+  const calendarAccounts = app?.hasCalendar
+    ? providerAccounts.filter((account) =>
+        isDefined(getConnectedAccountSettingsChannels(account).calendarChannel),
+      )
+    : [];
+  const { isEmailsTabVisible, isCalendarTabVisible } =
+    getBuiltInAccountAppChannelTabsVisibility({
+      app,
+      accounts: providerAccounts,
+      isLoading: loading,
+    });
+
+  const tabs = [
+    { id: 'general', title: t`General`, Icon: IconSettings },
+    isEmailsTabVisible
+      ? { id: 'emails', title: t`Emails`, Icon: IconMail }
+      : undefined,
+    isCalendarTabVisible
+      ? { id: 'calendar', title: t`Calendar`, Icon: IconCalendarEvent }
+      : undefined,
+  ].filter(isDefined);
+
+  const activeTabId = useSettingsActiveTabId(
+    tabListComponentInstanceId,
+    tabs.map((tab) => tab.id),
+  );
+
+  if (!isDefined(app)) {
+    return (
+      <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
+    );
+  }
+
+  const appName = t(app.name);
+  const logoUrl = getBuiltInAccountAppLogoUrl(app);
+
+  const getSelectedAccount = (
+    accounts: ConnectedAccount[],
+  ): ConnectedAccount | undefined =>
+    accounts.find((account) => account.id === selectedAccountId) ?? accounts[0];
+
+  const renderAccountSelect = (
+    accounts: ConnectedAccount[],
+    selectedAccount: ConnectedAccount,
+  ) => (
+    <Select
+      dropdownId="settings-built-in-account-app-account"
+      label={t`Account`}
+      fullWidth
+      value={selectedAccount.id}
+      options={accounts.map((account) => ({
+        value: account.id,
+        label: account.handle,
+        Icon: SettingsConnectedAccountIcon({ account }),
+      }))}
+      onChange={setSelectedAccountId}
+    />
+  );
+
+  const renderContent = () => {
+    if (activeTabId === 'emails') {
+      const selectedAccount = getSelectedAccount(emailAccounts);
+
+      if (!isDefined(selectedAccount)) {
+        return <SettingsSectionSkeletonLoader />;
+      }
+
+      const { messageChannel } =
+        getConnectedAccountSettingsChannels(selectedAccount);
+
+      return (
+        <>
+          {renderAccountSelect(emailAccounts, selectedAccount)}
+          {isDefined(messageChannel) && (
+            <SettingsAppPreferencesSelectedMessageChannelDetails
+              messageChannel={messageChannel}
+            />
+          )}
+        </>
+      );
+    }
+
+    if (activeTabId === 'calendar') {
+      const selectedAccount = getSelectedAccount(calendarAccounts);
+
+      if (!isDefined(selectedAccount)) {
+        return <SettingsSectionSkeletonLoader />;
+      }
+
+      const { calendarChannel } =
+        getConnectedAccountSettingsChannels(selectedAccount);
+
+      return (
+        <>
+          {renderAccountSelect(calendarAccounts, selectedAccount)}
+          {isDefined(calendarChannel) && (
+            <SettingsAccountsCalendarChannelDetails
+              calendarChannel={calendarChannel}
+            />
+          )}
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Section.Root>
+          <SettingsApplicationOverviewCard
+            logoUrl={logoUrl}
+            displayName={appName}
+            description={t(app.description)}
+            coverImageUrl={app.coverImage}
+          />
+        </Section.Root>
+        <SettingsAccountGroupsSection builtInAccountApp={app} />
+        <SettingsAccountsBlocklistSection />
+      </>
+    );
+  };
+
+  return (
+    <SettingsPageLayout
+      title={appName}
+      icon={
+        <AppChip
+          logoUrl={logoUrl}
+          fallbackApplicationData={{ name: appName }}
+          size="md"
+          chipOnly
+        />
+      }
+      links={[
+        {
+          children: t`User`,
+          href: getSettingsPath(SettingsPath.ProfilePage),
+        },
+        {
+          children: t`Apps preferences`,
+          href: getSettingsPath(SettingsPath.AppPreferences),
+        },
+        { children: appName },
+      ]}
+      secondaryBar={
+        tabs.length > 1 ? (
+          <SettingsTabBar
+            aria-label={t`${appName} preferences`}
+            tabs={tabs}
+            componentInstanceId={tabListComponentInstanceId}
+          />
+        ) : undefined
+      }
+    >
+      <SettingsAccountsMessageChannelsSSEEffect />
+      <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
+    </SettingsPageLayout>
+  );
+};

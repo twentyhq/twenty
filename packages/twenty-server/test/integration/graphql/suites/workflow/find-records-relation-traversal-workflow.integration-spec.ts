@@ -16,7 +16,6 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_COMPANY_AIRBNB_ID = '20202020-eeee-4000-8000-000000000001';
@@ -259,7 +258,7 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     const result = workflowRun?.state?.stepInfos?.[findRecordsStepId!]
       ?.result as
       | {
-          all?: Array<{ id: string; companyId: string | null }>;
+          all?: Array<{ id: string }>;
           totalCount?: number | string;
         }
       | undefined;
@@ -269,12 +268,11 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     expect(Array.isArray(returnedRecords)).toBe(true);
     expect(Number.isFinite(Number(result?.totalCount))).toBe(true);
 
-    // An empty filter value can only match people with no company, and other
-    // specs sharing the database seed those, so assert the shape rather than []
-    const returnedCompanyIds = (returnedRecords ?? []).map(
-      (record) => record.companyId,
-    );
+    // other specs sharing the database leave people on unnamed companies, which an empty company name also matches
+    const returnedIds = (returnedRecords ?? []).map((record) => record.id);
 
-    expect(returnedCompanyIds.filter(isDefined)).toEqual([]);
+    expect(
+      returnedIds.filter((id) => ALL_TEST_PERSON_IDS.includes(id)),
+    ).toEqual([]);
   });
 });

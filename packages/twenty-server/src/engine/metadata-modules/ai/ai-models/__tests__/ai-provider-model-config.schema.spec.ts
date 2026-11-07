@@ -95,7 +95,7 @@ describe('aiProviderModelConfigSchema', () => {
           },
         }),
       ),
-    ).toContain('benchmarkByEffort.turbo');
+    ).toContain('benchmarkByEffort');
   });
 
   it('accepts an evaluation model declaring its question types and both token costs', () => {

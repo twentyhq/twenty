@@ -1,0 +1,59 @@
+name: CI Server Integration Test Timings
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  server-integration-test:
+    permissions:
+      actions: read
+      contents: read
+    uses: ./.github/workflows/ci-server-integration-test.yaml
+    with:
+      record-timings: true
+
+  save-integration-test-timings:
+    needs: server-integration-test
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: Download shard timings
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: integration-test-timings-*
+          merge-multiple: true
+          path: shard-timings
+      - name: Download previous timings
+        if: needs.server-integration-test.outputs.timings-run-id != ''
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: integration-test-timings
+          run-id: ${{ needs.server-integration-test.outputs.timings-run-id }}
+          github-token: ${{ github.token }}
+          path: previous-timings
+      - name: Merge shard timings into previous timings
+        run: |
+          if ! compgen -G 'shard-timings/*.json' > /dev/null; then
+            echo "::error::No shard recorded timings"
+            exit 1
+          fi
+          mkdir -p previous-timings
+          [ -f previous-timings/timings.json ] || echo '{}' > previous-timings/timings.json
+          jq -s 'map(with_entries(select(.value | type == "number" and . > 0))) | add' \
+            previous-timings/timings.json shard-timings/*.json > timings.json
+          echo "$(jq 'length' timings.json) spec timings saved"
+      - name: Upload timings
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: integration-test-timings
+          path: timings.json
+          overwrite: true
+          retention-days: 90

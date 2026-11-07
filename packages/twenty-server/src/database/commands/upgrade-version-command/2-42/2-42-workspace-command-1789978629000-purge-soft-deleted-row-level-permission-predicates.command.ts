@@ -72,6 +72,7 @@ export class PurgeSoftDeletedRowLevelPermissionPredicatesCommand extends Provisi
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,

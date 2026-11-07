@@ -1,10 +1,13 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
+import { parse } from 'graphql';
 import {
   type AgentRunExecution,
   captureAgentRunExecution,
 } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type ApplicationWithResources,
   setupApplicationWithResources,
@@ -28,24 +31,12 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 // history keeps a turn's tool calls only for the member who sent it
 const TOOL_CALL_STEPS = [
-  {
-    content: [
-      {
-        type: 'tool-call',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-      },
-      {
-        type: 'tool-result',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-        output: { isProbed: true },
-      },
-    ],
-  },
-] as unknown as StepResult<ToolSet>[];
+  buildToolCallStepResult({
+    toolCallId: 'probe-call',
+    toolName: 'probe',
+    output: { isProbed: true },
+  }),
+];
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;
@@ -111,6 +102,67 @@ const findRecordedTurn = async (threadId: string) => {
   return { ...message, ...turn };
 };
 
+const findThread = async (threadId: string) => {
+  const [thread] = await globalThis.testDataSource.query(
+    `SELECT "workspaceMemberId", "deletedAt"
+     FROM "${WORKSPACE_SCHEMA}"."agentChatThread"
+     WHERE id = $1`,
+    [threadId],
+  );
+
+  return thread;
+};
+
+const findThreadOwner = async (threadId: string) =>
+  (await findThread(threadId)).workspaceMemberId;
+
+const isThreadFollowed = async ({
+  threadId,
+  workspaceMemberId,
+}: {
+  threadId: string;
+  workspaceMemberId: string;
+}) => {
+  const [participant] = await globalThis.testDataSource.query(
+    `SELECT "isSubscribed" FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant"
+     WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+    [threadId, workspaceMemberId],
+  );
+
+  return participant?.isSubscribed ?? null;
+};
+
+const countThreadOwnerGrants = async ({
+  threadId,
+  workspaceMemberId,
+}: {
+  threadId: string;
+  workspaceMemberId: string;
+}) => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."recordShare"
+     WHERE "recordId" = $1 AND "principalId" = $2 AND "rowCause" = 'OWNER'`,
+    [threadId, workspaceMemberId],
+  );
+
+  return count;
+};
+
+const disownThread = async (threadId: string) => {
+  await globalThis.testDataSource.query(
+    `DELETE FROM "${WORKSPACE_SCHEMA}"."recordShare" WHERE "recordId" = $1`,
+    [threadId],
+  );
+  await globalThis.testDataSource.query(
+    `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+    [threadId],
+  );
+  await globalThis.testDataSource.query(
+    `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "workspaceMemberId" = NULL WHERE id = $1`,
+    [threadId],
+  );
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -122,16 +174,19 @@ describe('Agent run conversation should be recorded for the caller', () => {
   const runAgent = async ({
     token,
     threadKey,
+    runAsWorkspaceMemberId,
     steps,
   }: {
     token: string;
     threadKey?: string;
+    runAsWorkspaceMemberId?: string;
     steps?: StepResult<ToolSet>[];
   }) => {
     const execution = await captureAgentRunExecution({
       agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
       token,
       thread: isDefined(threadKey) ? { key: threadKey } : undefined,
+      runAsWorkspaceMemberId,
       steps,
     });
 
@@ -180,7 +235,11 @@ describe('Agent run conversation should be recorded for the caller', () => {
   }, 120000);
 
   afterAll(async () => {
-    // no member is granted the threads runAgent creates, so the API cannot destroy them
+    // the application's own threads have no member who could destroy them through the API
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."recordShare" WHERE "recordId" = ANY($1)`,
+      [threadIds],
+    );
     await globalThis.testDataSource.query(
       `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
@@ -227,6 +286,104 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
 
     expect(findPriorMessagePartTypes(execution)).toContain('tool-probe');
+    expect(await findThreadOwner(execution.threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    );
+  });
+
+  it('should give the thread to the member the application runs it as', async () => {
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    expect(await findThreadOwner(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    expect(
+      await isThreadFollowed({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).toBe(false);
+  });
+
+  it('should give a thread left without an owner to the member who took part in it', async () => {
+    const threadKey = randomUUID();
+    const runAsJony = () =>
+      runAgent({
+        token: globalTestContext.applicationToken,
+        threadKey,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+    const { threadId } = await runAsJony();
+
+    await disownThread(threadId);
+
+    await runAsJony();
+
+    expect(await findThreadOwner(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    expect(
+      await countThreadOwnerGrants({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).toBe(1);
+    expect(
+      await isThreadFollowed({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).toBe(false);
+  });
+
+  it('should not give a member a thread someone else took part in', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+    });
+
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    expect(await findThreadOwner(threadId)).toBeNull();
+    expect(
+      await countThreadOwnerGrants({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).toBe(0);
+  });
+
+  it('should bring back a thread its owner deleted when they run it again', async () => {
+    const threadKey = randomUUID();
+    const runAsJony = () =>
+      runAgent({
+        token: globalTestContext.applicationToken,
+        threadKey,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+    const { threadId } = await runAsJony();
+
+    await globalThis.testDataSource.query(
+      `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "deletedAt" = NOW() WHERE id = $1`,
+      [threadId],
+    );
+
+    await runAsJony();
+
+    expect(await findThread(threadId)).toEqual({
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      deletedAt: null,
+    });
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {
@@ -252,5 +409,95 @@ describe('Agent run conversation should be recorded for the caller', () => {
 
     expect(partTypes).toContain('text');
     expect(partTypes).not.toContain('tool-probe');
+  });
+
+  it('should show the owner only the text of a turn another member sent in their thread, with the tool output of the turns the application opened', async () => {
+    const threadKey = randomUUID();
+    const { threadId } = await runAgent({
+      token: globalTestContext.jonyApplicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    await runAgent({
+      token: globalTestContext.janeApplicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const response = await makeMetadataApiRequest(
+      {
+        query: parse(
+          'query($threadId: UUID!) { chatMessages(threadId: $threadId) { senderWorkspaceMemberId parts { type } } }',
+        ),
+        variables: { threadId },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const messages: {
+      senderWorkspaceMemberId: string | null;
+      parts: { type: string }[];
+    }[] = response.body.data.chatMessages;
+    const partTypes = messages.flatMap(({ parts }) =>
+      parts.map(({ type }) => type),
+    );
+
+    expect(
+      messages.map(({ senderWorkspaceMemberId }) => senderWorkspaceMemberId),
+    ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+    expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(2);
+  });
+
+  it('should show the application the tool output of a turn it ran as a member, and another member only its text', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const readPartTypes = async (token: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: parse(
+            'query($agentUniversalIdentifier: UUID!, $threadKey: String!) { chatMessages(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) { parts { type } } }',
+          ),
+          variables: {
+            agentUniversalIdentifier:
+              globalTestContext.agentUniversalIdentifier,
+            threadKey,
+          },
+        },
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return (
+        response.body.data.chatMessages as { parts: { type: string }[] }[]
+      ).flatMap(({ parts }) => parts.map(({ type }) => type));
+    };
+
+    expect(await readPartTypes(globalTestContext.applicationToken)).toContain(
+      'tool-probe',
+    );
+
+    const partTypesForJane = await readPartTypes(
+      globalTestContext.janeApplicationToken,
+    );
+
+    expect(partTypesForJane).toContain('text');
+    expect(partTypesForJane).not.toContain('tool-probe');
   });
 });

@@ -54,6 +54,10 @@ export class TrashCleanupCronJob {
             workspaceId: workspace.id,
             trashRetentionDays: workspace.trashRetentionDays,
           },
+          {
+            workspaceId: workspace.id,
+            isWorkspaceJob: true,
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

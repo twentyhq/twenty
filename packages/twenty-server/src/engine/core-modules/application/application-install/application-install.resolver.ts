@@ -40,21 +40,13 @@ import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-ta
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UsePipes(ResolverValidationPipe)
-@MetadataResolver()
-@UseFilters(
-  ApplicationExceptionFilter,
-  ApplicationRegistrationExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
-@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseGuards(
-  AuthPrincipalGuard({
+const APPLICATION_INSTALL_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -64,8 +56,33 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+};
+
+const APPLICATION_INSTALL_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+};
+
+@UsePipes(ResolverValidationPipe)
+@MetadataResolver()
+@UseFilters(
+  ApplicationExceptionFilter,
+  ApplicationRegistrationExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class ApplicationInstallResolver {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -76,7 +93,7 @@ export class ApplicationInstallResolver {
   ) {}
 
   @Query(() => [ApplicationDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(AccessPolicyGuard(APPLICATION_INSTALL_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -85,7 +102,7 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(AccessPolicyGuard(APPLICATION_INSTALL_READ_ACCESS_POLICY))
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
@@ -104,31 +121,18 @@ export class ApplicationInstallResolver {
         applicationUniversalIdentifier: universalIdentifier,
       });
 
-    return await this.applicationService.findOneApplicationWithRelationsOrThrow(
-      {
-        id: targetApplicationId,
-        universalIdentifier: targetApplicationUniversalIdentifier,
-        workspaceId,
-      },
-    );
+    return await this.applicationService.findOneApplicationOrThrow({
+      id: targetApplicationId,
+      universalIdentifier: targetApplicationUniversalIdentifier,
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean, {
     deprecationReason: 'Use installApplication instead',
   })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async installMarketplaceApp(
@@ -152,18 +156,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => ApplicationDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async installApplication(
@@ -182,7 +175,7 @@ export class ApplicationInstallResolver {
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationWithRelationsOrThrow({
+    return this.applicationService.findOneApplicationOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
     });
@@ -190,18 +183,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => TriggerInstallApplicationResultDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerInstallApplication(
@@ -221,18 +203,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => TriggerUninstallApplicationResultDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerUninstallApplication(
@@ -254,18 +225,7 @@ export class ApplicationInstallResolver {
     deprecationReason: 'Use triggerInstallApplication instead',
   })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerInstallApplicationJob(
@@ -287,18 +247,7 @@ export class ApplicationInstallResolver {
     deprecationReason: 'Use triggerUninstallApplication instead',
   })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerUninstallApplicationJob(
@@ -318,7 +267,7 @@ export class ApplicationInstallResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_READ_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async findInstallApplicationJobStatus(
@@ -340,7 +289,7 @@ export class ApplicationInstallResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_READ_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async findUninstallApplicationJobStatus(
@@ -378,18 +327,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => ApplicationDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async updateApplication(
@@ -417,18 +355,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async uninstallApplication(

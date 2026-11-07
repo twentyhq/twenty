@@ -18,7 +18,7 @@ export type SettingsBillingPlanPrices = Record<
 export type SettingsBillingPlanComparisonCell =
   | { kind: 'excluded' }
   | { kind: 'included' }
-  | { kind: 'text'; text: MessageDescriptor };
+  | { detail?: MessageDescriptor; kind: 'text'; text: MessageDescriptor };
 
 export type SettingsBillingPlanComparisonCategoryRow = {
   title: MessageDescriptor;

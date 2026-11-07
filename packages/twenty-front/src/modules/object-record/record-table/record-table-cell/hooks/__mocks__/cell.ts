@@ -4,6 +4,7 @@ import { RecordTableRowDraggableContextValue } from '@/object-record/record-tabl
 
 export const recordTableRowContextValue: RecordTableRowContextValue = {
   isSelected: false,
+  restrictedFieldNames: [],
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',

@@ -1,4 +1,9 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import {
   Args,
   Context,
@@ -12,15 +17,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
 import { UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
@@ -29,9 +31,11 @@ import { TimelineActivityTypeService } from 'src/engine/metadata-modules/timelin
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -41,8 +45,10 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
-)
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+};
+
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   TimelineActivityTypeGraphqlApiExceptionInterceptor,
@@ -83,7 +89,22 @@ export class TimelineActivityTypeResolver {
   }
 
   @Query(() => [TimelineActivityTypeDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+  )
   async timelineActivityTypes(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TimelineActivityTypeDTO[]> {
@@ -93,7 +114,8 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(AccessPolicyGuard(TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY))
+  @UsePipes(ResolverValidationPipe)
   async updateTimelineActivityType(
     @Args('input') input: UpdateTimelineActivityTypeInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -105,7 +127,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(AccessPolicyGuard(TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY))
   async resetTimelineActivityType(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

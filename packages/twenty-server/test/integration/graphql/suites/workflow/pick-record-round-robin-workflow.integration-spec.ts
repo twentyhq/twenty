@@ -1,4 +1,8 @@
-import request from 'supertest';
+import { randomUUID } from 'crypto';
+
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -12,8 +16,6 @@ import {
   destroyWorkflowRun,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 describe('Pick Record Workflow - round robin (e2e)', () => {
   let coreWorkflowId: string | null = null;
@@ -47,28 +49,19 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
 
     pickRecordStepId = pickRecordStep.id;
 
-    const companiesResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query Companies {
-            companies(first: 3) {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      });
+    const candidateRecordIds = [randomUUID(), randomUUID(), randomUUID()];
 
-    const candidateRecordIds = companiesResponse.body.data.companies.edges.map(
-      (edge: { node: { id: string } }) => edge.node.id,
+    await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: candidateRecordIds.map((id, index) => ({
+          id,
+          name: `Round robin candidate ${index + 1}`,
+        })),
+      }),
     );
-
-    expect(candidateRecordIds.length).toBe(3);
 
     // The executor sorts the resolved pool deterministically by id before
     // applying the round-robin cursor, so the expected cycle order is the
@@ -99,6 +92,15 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
     if (coreWorkflowId) {
       await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
+
+    await makeGraphqlApiRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        filter: { id: { in: orderedCandidateRecordIds } },
+      }),
+    );
   });
 
   it('cycles through the pool in order on consecutive runs', async () => {

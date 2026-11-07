@@ -32,7 +32,7 @@ export const assertFlatApplicationIsExportable = (
     case ApplicationRegistrationSourceType.NPM:
     case ApplicationRegistrationSourceType.TARBALL:
       throw new ApplicationException(
-        `Application "${flatApplication.name}" was installed from a ${flatApplication.sourceType} package and cannot be exported. Its published version can be reinstalled with app:install.`,
+        `Application "${flatApplication.name}" was installed from a ${flatApplication.sourceType} package and cannot be exported. Its published version can be reinstalled with twenty app install.`,
         ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE,
       );
     case ApplicationRegistrationSourceType.OAUTH_ONLY:

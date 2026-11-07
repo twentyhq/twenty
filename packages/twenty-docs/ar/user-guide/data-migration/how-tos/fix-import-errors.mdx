@@ -3,6 +3,8 @@ title: إصلاح أخطاء الاستيراد
 description: دليل شامل لاستكشاف أخطاء استيراد CSV وإصلاحها.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## نظرة عامة
 
 هل تواجه مشكلة في الاستيراد؟ يساعدك هذا الدليل على تحديد أخطاء الاستيراد الشائعة وإصلاحها خطوة بخطوة.
@@ -181,7 +183,7 @@ description: دليل شامل لاستكشاف أخطاء استيراد CSV و
 
 1. اذهب إلى **الإعدادات → نموذج البيانات**
 2. اختر الكائن والحقل
-3. فعّل **الوضع المتقدم** (زر التبديل في أسفل اليمين)
+3. افتح قائمة **⋮** بجوار **Options** واختر **Show API values**
 4. استخدم اسم واجهة برمجة التطبيقات (على سبيل المثال، `OPTION_1`، وليس "Option 1")
 
 ```
@@ -428,3 +430,5 @@ Too many records. Up to 10000 allowed
    * [قيود التفرد](/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
    * [كيفية استيراد العلاقات](/ar/user-guide/data-migration/capabilities/import-relations)
    * [التعامل مع الأخطاء](/ar/user-guide/data-migration/capabilities/error-handling)
+
+<PageBanner illustration="card-page-bug-requests" />

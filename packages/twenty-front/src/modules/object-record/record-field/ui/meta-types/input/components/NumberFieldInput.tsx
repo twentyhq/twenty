@@ -1,15 +1,18 @@
-import { useContext } from 'react';
+import { type ClipboardEvent, type KeyboardEvent, useContext } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
 import { getNumberValueToPersist } from '@/object-record/record-field/ui/meta-types/input/utils/getNumberValueToPersist';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { StyledFieldInputSuffix } from '@/ui/field/input/components/StyledFieldInputSuffix';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 export const NumberFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useNumberField();
+  const isPercentage = fieldDefinition.metadata.settings?.type === 'percentage';
 
   const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
     FieldInputEventContext,
@@ -60,8 +63,38 @@ export const NumberFieldInput = () => {
     setDraftValue(newText);
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isPercentage && event.key === '%') {
+      event.preventDefault();
+    }
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLDivElement>) => {
+    const input = event.target;
+    const pastedText = event.clipboardData.getData('text').trim();
+
+    if (
+      !isPercentage ||
+      !(input instanceof HTMLInputElement) ||
+      !pastedText.endsWith('%')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const selectionStart = input.selectionStart ?? input.value.length;
+    const selectionEnd = input.selectionEnd ?? input.value.length;
+
+    setDraftValue(
+      input.value.slice(0, selectionStart) +
+        pastedText.slice(0, -1).trim() +
+        input.value.slice(selectionEnd),
+    );
+  };
+
   return (
-    <FieldInputContainer>
+    <FieldInputContainer onKeyDown={handleKeyDown} onPaste={handlePaste}>
       <TextInput
         instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
@@ -73,7 +106,16 @@ export const NumberFieldInput = () => {
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         onChange={handleChange}
+        copyButton={!isPercentage}
       />
+      {isPercentage && (
+        <StyledFieldInputSuffix
+          data-globally-prevent-click-outside="true"
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          {doNotTranslate('%')}
+        </StyledFieldInputSuffix>
+      )}
     </FieldInputContainer>
   );
 };

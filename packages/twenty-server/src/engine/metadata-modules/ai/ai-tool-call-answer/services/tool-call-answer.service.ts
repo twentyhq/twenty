@@ -1,3 +1,4 @@
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -5,6 +6,7 @@ import { generateId } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -38,8 +40,9 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -65,6 +68,7 @@ export class ToolCallAnswerService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
+    private readonly toolCallAnswerRecorderService: ToolCallAnswerRecorderService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly threadService: AgentChatThreadService,
@@ -73,7 +77,7 @@ export class ToolCallAnswerService {
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly pendingWakeUpOwnerHandlerRegistry: PendingWakeUpOwnerHandlerRegistryService,
     private readonly pendingWakeUpResolverService: PendingWakeUpResolverService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
@@ -129,7 +133,7 @@ export class ToolCallAnswerService {
     });
 
     if (!isToolCallPending) {
-      throw this.notPending();
+      throw buildToolCallNotPendingException();
     }
 
     const validation = pausingToolCall.validate(args.response);
@@ -170,13 +174,13 @@ export class ToolCallAnswerService {
 
     try {
       const awaitingToolParts =
-        await this.agentChatService.findAwaitingToolParts({
+        await this.toolCallAnswerRecorderService.findAwaitingToolParts({
           messageId: toolPart.messageId,
           workspaceId,
         });
 
       if (!awaitingToolParts.some((part) => part.id === toolPart.id)) {
-        throw this.notPending();
+        throw buildToolCallNotPendingException();
       }
 
       if (isDefined(wakeUp)) {
@@ -209,7 +213,7 @@ export class ToolCallAnswerService {
             wakeUpId: wakeUp.id,
           });
 
-          throw this.notPending();
+          throw buildToolCallNotPendingException();
         }
       }
 
@@ -218,15 +222,13 @@ export class ToolCallAnswerService {
       );
 
       if (isDefined(runningToolResult)) {
-        if (
-          !(await this.agentChatService.claimToolCallAnswer({
-            partId: toolPart.id,
-            toolOutput: runningToolResult,
-            workspaceId,
-          }))
-        ) {
-          throw this.notPending();
-        }
+        await this.toolCallAnswerRecorderService.claimToolCallAnswerOrThrow({
+          threadId,
+          partId: toolPart.id,
+          toolOutput: runningToolResult,
+          workspaceId,
+          workspaceMemberId: args.workspaceMemberId,
+        });
 
         isClaimedAsRunning = true;
       }
@@ -242,13 +244,16 @@ export class ToolCallAnswerService {
 
       isLastAnswer = awaitingToolParts.length === 1;
 
-      await this.agentChatService.recordToolCallAnswer({
+      await this.toolCallAnswerRecorderService.recordToolCallAnswer({
         threadId,
         messageId: toolPart.messageId,
         partId: toolPart.id,
         toolOutput: completion.toolResult,
         isLastAnswer,
         workspaceId,
+        resolveMentionForWorkspaceMemberId: isClaimedAsRunning
+          ? null
+          : args.workspaceMemberId,
       });
 
       answerText = completion.answerText;
@@ -301,7 +306,17 @@ export class ToolCallAnswerService {
             : AgentTurnStatus.RUNNING,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: answerText }],
+          parts: [
+            {
+              type: 'text',
+              text: answerText,
+              providerMetadata: buildAgentChatAssistantReplyProviderMetadata({
+                isAssistantMentioned: false,
+                isDirectAssistantChat: false,
+                isStructuredRequestContinuation: true,
+              }),
+            },
+          ],
         },
         workspaceId,
       });
@@ -351,15 +366,17 @@ export class ToolCallAnswerService {
         return { streamId: null, turnId: answerMessage.turnId };
       }
 
-      await this.agentChatStreamingService.enqueueResumeStream({
+      await this.agentChatStreamingService.enqueueStreamJob({
         threadId,
+        workspaceId,
         userWorkspaceId,
         workspaceMemberId: args.workspaceMemberId,
-        workspace,
         turnId: answerMessage.turnId,
         streamId,
         modelId: args.modelId,
         messageId: answerMessage.id,
+        // the answer resumes the turn rather than opens the thread, so it never titles it
+        lastUserMessageText: '',
       });
 
       return { streamId, turnId: answerMessage.turnId };
@@ -479,11 +496,10 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(
-          toolName,
-          args,
-          await toolContext,
-        );
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          ...(await toolContext),
+          approvedToolName: toolName,
+        });
       },
     };
   }
@@ -506,12 +522,7 @@ export class ToolCallAnswerService {
       );
     }
 
-    const rolePermissions = await this.actorService.resolveRolePermissions({
-      workspaceId,
-      authContext,
-    });
-
-    if (!isDefined(rolePermissions)) {
+    if (!(await this.actorService.hasRole(authContext))) {
       throw new AiException(
         'Answering requires a role in the workspace',
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
@@ -526,7 +537,6 @@ export class ToolCallAnswerService {
 
     return {
       workspaceId,
-      ...rolePermissions,
       authContext,
       actorContext,
       userId,
@@ -545,20 +555,11 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
-    const requestUserAuthContext =
-      isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
-        ? requestAuthContext
-        : undefined;
-
-    const hasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting,
-        applicationId: requestUserAuthContext?.application?.id,
-        agentId: requestUserAuthContext?.agentId,
-      });
+    const hasPermission = await this.hasPermissionFlag({
+      setting,
+      userWorkspaceId,
+      workspaceId,
+    });
 
     if (!hasPermission) {
       throw new AiException(
@@ -568,11 +569,32 @@ export class ToolCallAnswerService {
     }
   }
 
-  private notPending(): AiException {
-    return new AiException(
-      'This tool call is no longer waiting for an answer',
-      AiExceptionCode.TOOL_CALL_NOT_PENDING,
-    );
+  private async hasPermissionFlag({
+    setting,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    setting: PermissionFlagType;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const requestAuthContext = workspaceAuthContextStorage.getStore();
+
+    if (
+      isDefined(requestAuthContext) &&
+      isUserAuthContext(requestAuthContext)
+    ) {
+      return this.settingPermissionsService.hasPermissionFlag({
+        authContext: requestAuthContext,
+        permissionFlag: setting,
+      });
+    }
+
+    return this.settingPermissionsService.userWorkspaceHasPermissionFlag({
+      workspaceId,
+      userWorkspaceId,
+      permissionFlag: setting,
+    });
   }
 
   private async publishToolCallResolved({

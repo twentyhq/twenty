@@ -7,6 +7,7 @@ export type TextInputComponentProps = Omit<
   'onChange'
 > & {
   label?: string;
+  hint?: string;
   onChange?: (text: string) => void;
   inputProps?: ComponentPropsWithRef<'input'>;
   fullWidth?: boolean;

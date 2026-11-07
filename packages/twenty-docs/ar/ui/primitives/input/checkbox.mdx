@@ -1,0 +1,163 @@
+---
+title: مربع اختيار
+description: حدّد خيارات مستقلة بحالات محددة وغير محددة وحالة غير محسومة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
+
+## نظرة عامة
+
+استخدم `Checkbox` عندما يمكن تحديد كل خيار بشكل مستقل. للاختيار المتبادل الحصري، استخدم [RadioGroup](/ar/ui/primitives/input/radio-group).
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--display" title="مثال على Checkbox" height={100} />
+
+## استخدام
+
+### الحالة غير المتحكم بها
+
+استخدم `defaultChecked` لتعيين حالة التحديد الأولية. يمتلك مربع الاختيار التغييرات اللاحقة.
+
+```tsx
+import { useId } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox id={checkboxId} name="updates" value="email" defaultChecked />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+يساهم مربع اختيار محدد ومسمى بقيمته في نموذج. عيّن `uncheckedValue` إذا كان ينبغي للنموذج أيضًا إرسال قيمة عندما يكون غير محدد.
+
+## المظهر والتفاعل
+
+قارن بين حالات المحدد وغير المحدد والمعطل، ثم اختر اللون والحجم والشكل والمتغير بشكل مستقل. يمكن تبديل الأمثلة المفعلة.
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--catalog" title="المظهر والتفاعل لمربع الاختيار" height={400} />
+
+| الخاصية   | القيم                          | الإعداد الافتراضي |
+| --------- | ------------------------------ | ----------------- |
+| `الحجم`   | `sm`, `md`                     | `sm`              |
+| `variant` | `solid`, `outline`, `soft`     | `solid`           |
+| `shape`   | `square`, `round`              | `square`          |
+| `اللون`   | `accent`, `success`, `warning` | `accent`          |
+
+يركّز مفتاح Tab على مربع الاختيار، ويبدّل مفتاح Space حالته. يؤدي النقر على تسميته أيضًا إلى تبديل حالته. استخدم `disabled` لمنع التفاعل، أو `readOnly` عندما ينبغي أن تبقى القيمة دون تغيير مع بقاء عنصر التحكم قابلاً للتركيز. أبقِ المعنى في التسمية بدلًا من إيصاله عبر اللون وحده.
+
+## الحالة المتحكَّم بها
+
+مرّر `checked` وحدّثه باستخدام `onCheckedChange` لامتلاك التفضيل نفسه في حالة React. تتلقى دالة الاستدعاء القيمة المنطقية التالية وتفاصيل الحدث.
+
+```tsx
+import { useId, useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+  const [checked, setChecked] = useState(true);
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox
+        id={checkboxId}
+        name="updates"
+        value="email"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+## حالة غير محددة
+
+يمثل مربع الاختيار غير المحدد اختيارًا جزئيًا. اشتقه من الخيارات الفرعية بشكل مستقل عن حالة تحديد مربع الاختيار.
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const ColumnSelection = () => {
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+
+  return (
+    <fieldset>
+      <legend>Visible columns</legend>
+      <label>
+        <Checkbox
+          checked={showEmail && showPhone}
+          indeterminate={showEmail !== showPhone}
+          onCheckedChange={(checked) => {
+            setShowEmail(checked);
+            setShowPhone(checked);
+          }}
+        />
+        All columns
+      </label>
+      <label>
+        <Checkbox checked={showEmail} onCheckedChange={setShowEmail} />
+        Email
+      </label>
+      <label>
+        <Checkbox checked={showPhone} onCheckedChange={setShowPhone} />
+        Phone
+      </label>
+    </fieldset>
+  );
+};
+```
+
+## الأجزاء والمحتوى المخصص
+
+يجمع `Checkbox` الجذر المنسق وأيقونتي التحديد والحالة غير المحددة الافتراضيتين. استخدم `Checkbox.Root` مع `Checkbox.Indicator` لتتولى ملكية محتوى المؤشر. يتولى الجذر الحالة ومظهر المربع؛ ويعرض المؤشر المحتوى الذي توفره.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Checkbox.Root aria-label="Updates" defaultChecked>
+    <Checkbox.Indicator>
+      <IconCheck aria-hidden />
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+);
+```
+
+`CheckboxRootProps` و`CheckboxIndicatorProps` نوعان عامان مُصدَّران من `twenty-ui/primitives/input`. يقبل كلا الجزأين السمات الأصلية والمعالجات والمراجع و`render` واستدعاءات `className` و`style` المعتمدة على الحالة. يستهدف `ref` الخاص بالجذر عنصر التحكم المرئي؛ ويستهدف `inputRef` الإدخال الأصلي. يستهدف مرجع الجزء العنصر الذي يعرضه. مرر `nativeButton` مع `render={<button />}` عند استبدال الجذر بزر. تنتمي خصائص المظهر إلى الجذر؛ وتُدمج الفئات والأنماط الصريحة مع الإعدادات الافتراضية.
+
+يتلقى المؤشر حالة التحديد والحالة غير المحددة، بما في ذلك حالة الانتقال. عيّن `keepMounted` للاحتفاظ بمؤشر غير محدد في DOM؛ إذ يخفيه التنسيق الافتراضي باستخدام العتامة. تجاوز `style` أو `className` الخاص به لإجراء انتقالات مخصصة.
+
+<StoryEmbed storyId="ui-input-checkbox-parts--composition" title="تركيب أجزاء Checkbox" height={100} />
+
+يبقى التجميع القابل للاستدعاء ونوعه `CheckboxProps` مدعومين. استبدل التجميع بالجذر وجزئه عند توفير أيقونات مخصصة بدلاً من إلحاق جزء آخر بأبناء التجميع.
+
+لإعادة تعيين نموذج متحكم به، عالج `onReset` الخاص بالنموذج وأعد `checked` إلى قيمتك الأولية. لا يستعيد Base UI 1.8 حالة المكوّن غير المتحكم به عند إعادة تعيين النموذج الأصلية. تحافظ `required` و`form` و`value` و`uncheckedValue` على سلوك الإدخال الأصلي في المصدر.
+
+## الإزاحة
+
+يتم إنشاء المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء المتاحة ومعالجات الأحداث، على الأجزاء التي تعرض عناصر.
+
+<CheckboxReference />
+
+<PageBanner illustration="page-cover-checkbox" />

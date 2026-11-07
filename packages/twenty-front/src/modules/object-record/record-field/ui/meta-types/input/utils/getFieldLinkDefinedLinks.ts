@@ -2,7 +2,9 @@ import { type FieldLinksValue } from '@/object-record/record-field/ui/types/Fiel
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
-export const getFieldLinkDefinedLinks = (fieldValue: FieldLinksValue) => {
+export const getFieldLinkDefinedLinks = (
+  fieldValue: FieldLinksValue | null | undefined,
+) => {
   if (!isDefined(fieldValue)) {
     return [];
   }

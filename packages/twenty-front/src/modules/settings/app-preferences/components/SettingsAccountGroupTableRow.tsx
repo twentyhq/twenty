@@ -2,110 +2,101 @@ import { SettingsAccountGroupUsedBy } from '@/settings/app-preferences/component
 import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
-import { SettingsNativeAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsNativeAccountAppPermissionsCell';
+import { SettingsBuiltInAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInAccountAppPermissionsCell';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useTheme } from 'twenty-ui/theme';
 
-const SYNC_STATUSES_NEEDING_ACTION: ReadonlySet<SyncStatus> = new Set([
+const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
   SyncStatus.FAILED,
   SyncStatus.PENDING_CONFIGURATION,
+  SyncStatus.IMPORTING,
 ]);
 
 type SettingsAccountGroupTableRowProps = {
   group: ConnectedAccountGroup;
-  gridTemplateColumns: string;
-  nativeAccountApp?: NativeAccountApp;
+  hasApplicationSettings: boolean;
+  builtInAccountApp?: BuiltInAccountApp;
 };
 
 export const SettingsAccountGroupTableRow = ({
   group,
-  gridTemplateColumns,
-  nativeAccountApp,
+  hasApplicationSettings,
+  builtInAccountApp,
 }: SettingsAccountGroupTableRowProps) => {
   const theme = useTheme();
-  const navigateSettings = useNavigateSettings();
-  const { nativeAccount } = group;
+  const { builtInAccount } = group;
 
   const ProviderIcon = SettingsConnectedAccountIcon({
-    account: nativeAccount ?? group.appAccounts[0],
+    account: builtInAccount ?? group.appAccounts[0],
   });
   const { messageChannel, calendarChannel } =
-    getConnectedAccountSettingsChannels(nativeAccount);
-  const hasSettings = isDefined(messageChannel) || isDefined(calendarChannel);
-  const needsAction =
-    isDefined(nativeAccount) &&
-    (isDefined(nativeAccount.archivedAt) ||
-      SYNC_STATUSES_NEEDING_ACTION.has(
+    getConnectedAccountSettingsChannels(builtInAccount);
+  const hasSettings =
+    isDefined(messageChannel) ||
+    isDefined(calendarChannel) ||
+    hasApplicationSettings;
+  const shouldShowSyncStatus =
+    isDefined(builtInAccount) &&
+    (isDefined(builtInAccount.archivedAt) ||
+      DISPLAYED_SYNC_STATUSES.has(
         computeSyncStatus(
-          nativeAccount.messageChannels[0],
-          nativeAccount.calendarChannels[0],
+          builtInAccount.messageChannels[0],
+          builtInAccount.calendarChannels[0],
         ),
       ));
 
-  const accountCell = (
-    <TableCell
-      color={themeCssVariables.font.color.primary}
-      gap={themeCssVariables.spacing[2]}
-      minWidth="0"
-    >
-      <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-      <OverflowingTextWithTooltip text={group.handle} />
-      {needsAction && (
-        <SettingsConnectedAccountSyncStatus account={nativeAccount} />
-      )}
-    </TableCell>
-  );
-
   return (
-    <TableRow
-      gridTemplateColumns={gridTemplateColumns}
-      onClick={
+    <SettingsApplicationTableRow
+      middleColumn="status"
+      hasActionMenu
+      link={
         hasSettings
-          ? () =>
-              navigateSettings(SettingsPath.AccountDetail, {
-                connectedAccountId: group.id,
-              })
+          ? getSettingsPath(SettingsPath.AppPreferencesAccountDetail, {
+              connectedAccountId: group.id,
+            })
           : undefined
       }
-    >
-      {hasSettings ? (
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.AccountDetail, {
-            connectedAccountId: group.id,
-          })}
-          onClick={(event) => event.stopPropagation()}
-        >
-          {accountCell}
-        </UndecoratedLink>
-      ) : (
-        accountCell
-      )}
-      {isDefined(nativeAccountApp) ? (
-        <SettingsNativeAccountAppPermissionsCell
-          nativeAccountApp={nativeAccountApp}
-          account={nativeAccount}
-        />
-      ) : (
-        <TableCell align="right">
+      name={
+        <>
+          <ProviderIcon
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+          <OverflowingTextWithTooltip text={group.handle} />
+        </>
+      }
+      middle={
+        shouldShowSyncStatus && (
+          <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+        )
+      }
+      details={
+        isDefined(builtInAccountApp) ? (
+          <SettingsBuiltInAccountAppPermissionsCell
+            builtInAccountApp={builtInAccountApp}
+            account={builtInAccount}
+          />
+        ) : (
           <SettingsAccountGroupUsedBy group={group} />
-        </TableCell>
-      )}
-      <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-        {isDefined(nativeAccount) && (
-          <SettingsAppPreferencesRowDropdownMenu account={nativeAccount} />
-        )}
-      </TableCell>
-    </TableRow>
+        )
+      }
+      detailsAlign={isDefined(builtInAccountApp) ? 'left' : 'right'}
+      shouldShowDetailsOnMobile
+      action={
+        <SettingsAppPreferencesRowDropdownMenu
+          group={group}
+          hasAccountSettings={hasSettings}
+          builtInAccountApp={builtInAccountApp}
+        />
+      }
+    />
   );
 };

@@ -3,6 +3,10 @@ title: FAQ sui flussi di lavoro
 description: Domande frequenti sui flussi di lavoro in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Domande comuni
+
 <AccordionGroup>
 
   <Accordion title="Perché non riesco ad attivare un flusso di lavoro?">
@@ -39,20 +43,8 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     Vedi [Trigger dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-triggers) per i dettagli.
   </Accordion>
 
-  <Accordion title="Non vedo un nodo If/Else. Cosa devo fare?">
-    Un nodo If/Else esplicito non è ancora disponibile ma è nella nostra roadmap.
-
-    **Soluzione temporanea**: Crea più diramazioni dal tuo passaggio, ciascuna iniziando con un'azione **Filtro**:
-
-    ```
-    Step 1
-       │
-       ├── Branch A: Filter (condition = true) → Actions...
-       │
-       └── Branch B: Filter (condition = false) → Actions...
-    ```
-
-    Solo la diramazione in cui la condizione del filtro è soddisfatta eseguirà le azioni successive.
+  <Accordion title="Come aggiungo un nodo If/Else?">
+    Aggiungi un'azione **If/else** dalla sezione **Flow** del selettore delle azioni, nello stesso modo in cui aggiungeresti qualsiasi altra azione. Configura una condizione sul ramo **If**, aggiungi facoltativamente rami **Else if** con le rispettive condizioni e un ramo **Else** finale che intercetta tutto il resto: viene eseguito solo il primo ramo corrispondente.
 
     Consulta [Come usare le diramazioni](/it/user-guide/workflows/capabilities/workflow-branches) per una guida passo passo.
   </Accordion>
@@ -103,7 +95,7 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     * Oppure digita `{{stepName.fieldName}}` direttamente
 
     **Esempi**:
-    * Dati del trigger: `{{trigger.object.email}}`
+    * Dati del trigger: `{{trigger.properties.after.name}}` per un trigger di record, `{{trigger.payload.name}}` per un trigger manuale su un record selezionato
     * Risultati della ricerca: `{{searchRecords[0].name}}`
     * Output del codice: `{{code.calculatedValue}}`
 
@@ -234,3 +226,5 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

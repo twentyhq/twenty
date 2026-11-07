@@ -10,6 +10,9 @@ import styles from './Text.module.scss';
 
 export const Text = ({
   render,
+  size,
+  weight,
+  color,
   truncate,
   lineClamp,
   className,
@@ -25,7 +28,11 @@ export const Text = ({
     ref,
     props: {
       ...props,
+      'data-size': size,
+      'data-weight': weight,
+      'data-color': color,
       className: clsx(
+        styles.typography,
         truncate && styles.truncate,
         shouldClamp && styles.lineClamp,
         className,

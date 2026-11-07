@@ -250,7 +250,6 @@ export const ObjectOptionsDropdownCustomView = ({
             <Tooltip
               content={t`Not available on Default View`}
               side="bottom"
-              maxWidth={'100%'}
               delay={TooltipDelay.mediumDelay}
               disabled={!isDefaultView}
             >
@@ -298,7 +297,6 @@ export const ObjectOptionsDropdownCustomView = ({
                 : t`Cannot delete the only view`
             }
             side="bottom"
-            maxWidth={'100%'}
             disabled={!(isDefaultView || isLastView)}
           >
             <div id="delete-view-menu-item">

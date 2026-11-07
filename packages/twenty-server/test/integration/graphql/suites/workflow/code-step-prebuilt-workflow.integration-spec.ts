@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -12,6 +13,7 @@ import {
   destroyWorkflowRun,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
@@ -66,9 +68,16 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
 
     codeStepId = codeStep.id;
 
-    const logicFunctionId = codeStep.settings.input.logicFunctionId as string;
+    const { data: createLogicFunctionData } = await createOneLogicFunction({
+      input: {
+        name: 'Code Step PREBUILT Test',
+        workflowActionTriggerSettings: SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
+      },
+      expectToFail: false,
+    });
 
-    expect(logicFunctionId).toBeDefined();
+    const logicFunctionId = createLogicFunctionData.createOneLogicFunction.id;
+
     codeStepLogicFunctionId = logicFunctionId;
 
     await updateCoreWorkflowVersionStep({
@@ -78,7 +87,7 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
         settings: {
           ...codeStep.settings,
           input: {
-            ...codeStep.settings.input,
+            logicFunctionId,
             logicFunctionInput: { items: '{{trigger.items}}' },
           },
         },
@@ -130,6 +139,22 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
 
     expect(logicFunction.executionMode).toBe(
       LogicFunctionExecutionMode.PREBUILT,
+    );
+  });
+
+  it('refuses source edits on the PREBUILT logic function', async () => {
+    const updateSourceResponse = await updateLogicFunctionSource({
+      input: {
+        id: codeStepLogicFunctionId!,
+        update: {
+          sourceHandlerCode: `export const main = async (): Promise<object> => ({});`,
+        },
+      },
+      expectToFail: true,
+    });
+
+    expect(updateSourceResponse.errors?.[0]?.extensions?.code).toBe(
+      'BAD_USER_INPUT',
     );
   });
 

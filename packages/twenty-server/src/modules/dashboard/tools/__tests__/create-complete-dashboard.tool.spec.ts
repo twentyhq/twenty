@@ -1,8 +1,11 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
-const ROLE_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 const PAGE_LAYOUT_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 
 const buildDeps = ({ insert }: { insert: jest.Mock }) => {
@@ -18,6 +21,10 @@ const buildDeps = ({ insert }: { insert: jest.Mock }) => {
       pageLayoutTabService: {
         create: jest.fn().mockResolvedValue({ id: 'tab-id' }),
       },
+      pageLayoutWidgetService: { create: jest.fn() },
+      flatEntityMapsCacheService: {
+        getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
+      },
       recordPositionService: {
         buildRecordPosition: jest.fn().mockResolvedValue(1),
       },
@@ -27,7 +34,7 @@ const buildDeps = ({ insert }: { insert: jest.Mock }) => {
           .mockImplementation(async (fn) => fn()),
         getRepository: jest.fn().mockReturnValue({ insert }),
       },
-    } as unknown as DashboardToolDependencies,
+    },
   };
 };
 
@@ -38,9 +45,7 @@ describe('createCreateCompleteDashboardTool', () => {
 
     const tool = createCreateCompleteDashboardTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
-      },
+      authContext: AUTH_CONTEXT,
     });
 
     const result = await tool.execute({ title: 'Revenue' });
@@ -60,9 +65,7 @@ describe('createCreateCompleteDashboardTool', () => {
 
     const tool = createCreateCompleteDashboardTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
-      },
+      authContext: AUTH_CONTEXT,
     });
 
     const result = await tool.execute({ title: 'Revenue' });

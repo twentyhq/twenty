@@ -1,23 +1,17 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetLayoutPickerOption } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type RecordTableWidgetLayoutMenuItemsProps = {
   layoutOptions: RecordTableWidgetLayoutPickerOption[];
-  // Undefined when no embedded view is shown, so no layout reads as selected
-  selectedViewType: RecordTableWidgetLayoutViewType | undefined;
-  focusedItemId: string | null;
   onSelect: (viewType: RecordTableWidgetLayoutViewType) => void;
 };
 
 export const RecordTableWidgetLayoutMenuItems = ({
   layoutOptions,
-  selectedViewType,
-  focusedItemId,
   onSelect,
 }: RecordTableWidgetLayoutMenuItemsProps) => {
   const { t } = useLingui();
@@ -26,28 +20,19 @@ export const RecordTableWidgetLayoutMenuItems = ({
     <>
       {layoutOptions.map(
         ({ viewType, Icon, label, isDisabled, unavailableReason }) => (
-          <SelectableListItem
+          <Dropdown.OptionItem
             key={viewType}
-            itemId={viewType}
-            onEnter={isDisabled ? undefined : () => onSelect(viewType)}
+            value={viewType}
+            disabled={isDisabled}
+            onSelect={() => onSelect(viewType)}
+            description={
+              isDefined(unavailableReason) ? t(unavailableReason) : undefined
+            }
+            descriptionPlacement="end"
+            startIcon={<SelectOptionIcon Icon={Icon} />}
           >
-            <ListItemButton
-              disabled={isDisabled}
-              focused={focusedItemId === viewType}
-              onClick={() => onSelect(viewType)}
-              role="option"
-              aria-selected={selectedViewType === viewType}
-              selected={selectedViewType === viewType}
-              indicator="check"
-              description={
-                isDefined(unavailableReason) ? t(unavailableReason) : undefined
-              }
-              descriptionPlacement={'end'}
-              startIcon={<SelectOptionIcon Icon={Icon} />}
-            >
-              {t(label)}
-            </ListItemButton>
-          </SelectableListItem>
+            {t(label)}
+          </Dropdown.OptionItem>
         ),
       )}
     </>

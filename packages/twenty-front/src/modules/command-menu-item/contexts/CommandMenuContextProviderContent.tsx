@@ -6,6 +6,7 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
@@ -23,7 +24,7 @@ import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
@@ -62,9 +63,7 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
-  const isCoreWorkflow =
-    commandMenuContextApi.objectMetadataItem.nameSingular ===
-    CoreObjectNameSingular.Workflow;
+  const isCoreWorkflow = commandMenuContextApi.coreObjectName === 'workflow';
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
@@ -104,6 +103,12 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
+    const isAiChatInboxHeader =
+      containerType === CommandMenuItemContainerType.ShowPageHeader &&
+      commandMenuContextApi.objectMetadataItem.nameSingular ===
+        StandardObjectNameSingular.AgentChatThread &&
+      (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
+
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
@@ -129,6 +134,11 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
+      .filter(
+        doesCommandMenuItemMatchCoreObjectName(
+          commandMenuContextApi.coreObjectName,
+        ),
+      )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
@@ -140,7 +150,13 @@ export const CommandMenuContextProviderContent = ({
       )
       .map((item) =>
         resolveCommandMenuItemPinning(
-          item,
+          {
+            ...item,
+            isPinned:
+              item.isPinned ||
+              (isAiChatInboxHeader &&
+                item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
+          },
           commandMenuContextApiForAvailability,
         ),
       );
@@ -154,6 +170,7 @@ export const CommandMenuContextProviderContent = ({
       shouldDisplayGlobalRecordCreationCommands,
     });
   }, [
+    containerType,
     commandMenuContextApi,
     commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,

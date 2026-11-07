@@ -71,6 +71,7 @@ describe('Chip content and composition', () => {
     render(
       <Chip
         ref={ref}
+        variant="outline"
         render={
           <a
             href="https://twenty.com"
@@ -88,6 +89,7 @@ describe('Chip content and composition', () => {
 
     const link = screen.getByRole('link', { name: 'Open Twenty' });
     expect(ref.current).toBe(link);
+    expect(link).toHaveAttribute('data-variant', 'outline');
     expect(link).toHaveAttribute('href', 'https://twenty.com');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('title', 'Documentation');

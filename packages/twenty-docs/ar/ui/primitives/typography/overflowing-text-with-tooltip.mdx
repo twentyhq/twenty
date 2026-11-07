@@ -1,0 +1,131 @@
+---
+title: OverflowingTextWithTooltip
+description: اقتطع النص الطويل واكشف عن قيمته الكاملة في تلميح.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
+
+## نظرة عامة
+
+يقتطع `OverflowingTextWithTooltip` المحتوى ضمن العرض المتاح. يتحقق من التجاوز عند دخول المؤشر وعند التركيز، ثم يعرض تلميحًا عند الحاجة فقط. يدير ظهور التلميح داخليًا ولا يوفّر أي خصائص لحالة الفتح المضبوطة أو غير المضبوطة. استخدم [OverflowingTextTooltipModeProvider](/ar/ui/primitives/typography/overflowing-text-tooltip-mode-provider) لتغيير وقت تحقّق شجرة فرعية من الاقتطاع أو لإيقاف تلميح الأداة.
+
+<StoryEmbed storyId="ui-surfaces-overflowingtextwithtooltip--display" title="مثال على OverflowingTextWithTooltip" height={180} />
+
+## استخدام
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Quarterly account review and renewal preparation"
+      isFocusable
+    />
+  </Text>
+);
+```
+
+قيّد عرض التخطيط المحيط لكي يمكن حدوث الاقتطاع. يمنح `isFocusable` النص نقطة توقف في التنقل بالضغط على Tab ويفتح التلميح عند التركيز أو النقر. أبقِ المعلومات الأساسية متاحة للمستخدمين الذين لا يمكنهم التمرير فوق العنصر.
+
+## اختيار الطباعة
+
+تتطابق `size` و`weight` و`color` مع [النص](/ar/ui/primitives/typography/text). إنها اختيارية وتُورَّث بشكل مستقل عند حذفها. تُطبَّق الطباعة الصريحة على النص المعروض؛ بينما تحتفظ تلميحة الأداة بمظهرها المشترك.
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceCaption = () => (
+  <OverflowingTextWithTooltip
+    text="Quarterly account review and renewal preparation"
+    size="xs"
+    weight="semibold"
+    color="light"
+    style={{ maxWidth: 220 }}
+  />
+);
+```
+
+## محتوى متعدد الأسطر
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Review the account history, confirm the renewal date, and prepare the next conversation with the customer."
+      lineClamp={2}
+      isTooltipMultiline
+      isFocusable
+    />
+  </Text>
+);
+```
+
+تتطابق `lineClamp` مع Text وتحدّ من الأسطر المعروضة؛ استخدم عددًا صحيحًا موجبًا. يحافظ `isTooltipMultiline` على المسافات البيضاء وفواصل الأسطر داخل التلميح. من دون حد لعدد الصفوف، يُقتطع النص في سطر واحد.
+
+## محتوى وتوقيت مخصصان
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const ImportResult = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text={<strong>24 records imported successfully</strong>}
+      tooltipContent="24 records imported successfully"
+      tooltipPlace="top"
+      tooltipDelay={300}
+      isFocusable
+    />
+  </Text>
+);
+```
+
+يتطلب محتوى React قيمة `tooltipContent` كسلسلة نصية عادية. مع النص من نوع سلسلة، يمكن لتلك الخاصية تجاوز تسمية التلميح؛ وإلا يُستخدم النص نفسه. لا تفتح التسمية الفارغة أو المفقودة تلميحًا. تظل عناوين URL النصية نصًا عاديًا. وفّر الروابط صراحةً في `text` أو عبر `render`. يبقى محتوى الرابط والتنقل تحت تحكم المستدعي.
+
+يسمح `alwaysShowTooltip` بعرض التلميح حتى من دون اقتطاع. يتحكم `tooltipDelay` في تأخير التمرير ويكون افتراضيًا 500 مللي ثانية. تكون القيمة الافتراضية لـ `tooltipPlace` هي `bottom`.
+
+تستهدف السمات والأنماط وأسماء الفئات ومعالجات الأحداث والمراجع الأصلية عنصر Text المعروض، وهو `div` افتراضياً. يمكن لـ `render` استبدال ذلك العنصر مع الاحتفاظ بسلوك الاقتطاع وتلميح الأدوات. يتم تصدير `OverflowingTextWithTooltipProps` من `twenty-ui/primitives/typography`. تُورَّث الطباعة من التخطيط المحيط ما لم يتم توفير خاصية طباعة صريحة. عيّن `truncate={false}` للالتفاف؛ اختر إما `truncate` أو `lineClamp`. تكشف العناصر المعروضة القابلة للتركيز و`tabIndex` الذي يوفره المستدعي أيضاً تلميح الأدوات عند التركيز. استخدم [Text](/ar/ui/primitives/typography/text) و[Tooltip](/ar/ui/primitives/surfaces/tooltip) مباشرةً عندما تحتاج إلى تركيب مخصص. ينتمي محتوى النافذة المنبثقة التفاعلي إلى [Popover](/ar/ui/primitives/surfaces/popover).
+
+## روابط صريحة
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const DocumentationLink = () => (
+  <OverflowingTextWithTooltip
+    text="https://twenty.com/developers"
+    render={
+      <a href="https://twenty.com/developers" aria-label="Documentation" />
+    }
+    style={{ maxWidth: 160, display: 'block' }}
+  />
+);
+```
+
+استخدم رابط مرساة واحداً للتسمية كاملة، أو وفّر روابط مرساة فردية في محتوى React مع `tooltipContent` عادي. لا يضيف المكوّن أي روابط مرساة من تلقاء نفسه. اجعل محتوى تلميح الأدوات معلوماتياً.
+
+## الترحيل
+
+استبدل `displayedMaxRows` بـ `lineClamp`. كانت خيارات `size="small"` و`size="large"` السابقة تتحكم في الارتفاع، وليس حجم الخط. يضبط `large` ارتفاعًا قدره 16px. تختار `size` الجديدة أحجام خطوط النسق ولا تقبل أي أسماء مستعارة قديمة؛ استخدم `style` أو `className` الأصليين لقيود الارتفاع. يقبل `color` الآن ألوانًا دلالية؛ انقل ألوان CSS العشوائية إلى `style={{ color: customColor }}`. انقل التعرّف المقصود على عناوين URL إلى محتوى يتحكم فيه المستدعي. لم يعد هناك تحويل تلقائي إلى روابط في هذا المكوّن.
+
+## الإزاحة
+
+<OverflowingTextWithTooltipReference />
+
+<PageBanner illustration="section-document-generator" />

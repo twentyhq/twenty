@@ -69,7 +69,9 @@ export const LinkIconWithLinkOverlay = ({
           src={faviconUrl}
           alt=""
           onError={() => {
-            if (isDefined(link)) failedFaviconUrls.add(link);
+            if (isDefined(link)) {
+              failedFaviconUrls.add(link);
+            }
             setLocalFailedLink(linkKey);
           }}
         />

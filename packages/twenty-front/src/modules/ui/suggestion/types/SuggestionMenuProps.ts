@@ -1,15 +1,9 @@
 import type { Editor, Range } from '@tiptap/core';
 import type { ReactNode } from 'react';
 
-export type SuggestionMenuSelectedItemPreview<TItem> = {
-  render: (item: TItem) => ReactNode;
-  width: number;
-};
-
-export type SuggestionMenuSection = {
-  key: string;
-  label: string;
-};
+import { type SuggestionMenuItemRenderProps } from '@/ui/suggestion/types/SuggestionMenuItemRenderProps';
+import { type SuggestionMenuSection } from '@/ui/suggestion/types/SuggestionMenuSection';
+import { type SuggestionMenuSelectedItemPreview } from '@/ui/suggestion/types/SuggestionMenuSelectedItemPreview';
 
 export type SuggestionMenuProps<TItem> = {
   items: TItem[];
@@ -17,7 +11,7 @@ export type SuggestionMenuProps<TItem> = {
   editor: Editor;
   range: Range;
   getItemKey: (item: TItem) => string;
-  renderItem: (item: TItem, isSelected: boolean) => ReactNode;
+  renderItem: (props: SuggestionMenuItemRenderProps<TItem>) => ReactNode;
   selectedItemPreview?: SuggestionMenuSelectedItemPreview<TItem>;
   getItemSection?: (item: TItem) => SuggestionMenuSection;
   onKeyDown?: (

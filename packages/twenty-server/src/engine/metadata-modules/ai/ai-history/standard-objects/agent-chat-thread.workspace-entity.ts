@@ -1,3 +1,5 @@
+import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
+
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -20,7 +22,14 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
 
   workspaceMemberId: string | null;
   assigneeId: string | null;
+  channelId: string | null;
+  channelArchivedAt: string | null;
+  channelSnoozedUntil: string | null;
   title: string | null;
+  conversationType: AgentChatThreadConversationType;
+  directMessageFirstWorkspaceMemberId: string | null;
+  directMessageSecondWorkspaceMemberId: string | null;
+  isAssistantParticipant: boolean;
   lastActivityAt: string | null;
   lastMessageText: string | null;
   lastMessageSenderWorkspaceMemberId: string | null;

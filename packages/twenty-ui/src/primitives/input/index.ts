@@ -173,4 +173,5 @@ export type { SwitchThumbProps } from './Switch/types/SwitchThumbProps';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { InputSize } from './types/InputSize';
+export type { InputVariant } from './types/InputVariant';
 export type { SelectOption } from './types/SelectOption';

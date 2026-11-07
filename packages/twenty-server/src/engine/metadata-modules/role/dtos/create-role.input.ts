@@ -39,6 +39,11 @@ export class CreateRoleInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
+  canAccessAllAgentChatChannels?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
   canReadAllObjectRecords?: boolean;
 
   @IsBoolean()

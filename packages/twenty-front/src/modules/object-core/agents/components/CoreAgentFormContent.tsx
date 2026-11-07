@@ -1,15 +1,10 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconBolt,
-  IconLock,
-  IconSettings,
-  IconTerminal,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -41,6 +36,8 @@ import { type CoreAgentFormValues } from '@/object-core/agents/validation-schema
 import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
 import { isCoreAgentRoleDirty } from '@/object-core/agents/utils/isCoreAgentRoleDirty';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
+import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -55,6 +52,7 @@ type CoreAgentFormContentProps = {
 };
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -142,7 +140,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   ];
 
   const title = agent.label;
-  const AgentIcon = getIcon(formValues.icon || 'IconLego');
+  const AgentIcon = getIcon(getAgentIcon(formValues.icon));
 
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
@@ -154,7 +152,12 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
     isAiChatInboxEnabled &&
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS;
 
-  const isFormDisabled = isReadonlyMode || !agent.isCustom;
+  const isFormDisabled =
+    isReadonlyMode ||
+    !getIsMetadataItemCustom(
+      agent,
+      currentWorkspace?.workspaceCustomApplication?.id,
+    );
 
   return (
     <>

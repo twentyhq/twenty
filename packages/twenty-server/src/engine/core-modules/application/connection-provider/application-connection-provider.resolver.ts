@@ -11,21 +11,23 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
 )
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
@@ -37,7 +39,7 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async applicationConnectionProviders(
     @ApplicationTargetArg(
       'applicationId',
@@ -47,34 +49,10 @@ export class ApplicationConnectionProviderResolver {
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationConnectionProviderDTO[]> {
-    const providers = await this.oauthProviderService.findManyByApplication({
-      applicationId,
+    return this.oauthProviderService.findManyDtosByApplications({
+      applicationIds: [applicationId],
       workspaceId: workspace.id,
     });
-
-    const credentialsConfiguredByProviderId =
-      await this.oauthProviderService.areClientCredentialsConfiguredBatch({
-        providers,
-        workspaceId: workspace.id,
-      });
-
-    return providers.map((provider) => ({
-      id: provider.id,
-      applicationId: provider.applicationId,
-      type: provider.type,
-      name: provider.name,
-      displayName: provider.displayName,
-      scope: provider.scope,
-      logo: provider.logo,
-      oauth:
-        provider.type === 'oauth' && provider.oauthConfig
-          ? {
-              scopes: provider.oauthConfig.scopes,
-              isClientCredentialsConfigured:
-                credentialsConfiguredByProviderId.get(provider.id) ?? false,
-            }
-          : null,
-    }));
   }
 
   @ResolveField(() => String, { nullable: true })

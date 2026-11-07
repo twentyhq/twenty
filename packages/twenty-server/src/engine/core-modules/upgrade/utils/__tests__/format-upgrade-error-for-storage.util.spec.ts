@@ -7,7 +7,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
-import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
@@ -54,11 +54,11 @@ describe('formatUpgradeErrorForStorage', () => {
   });
 
   it('should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED', () => {
-    const action = {
-      type: 'create',
+    const action: AllUniversalWorkspaceMigrationAction = {
+      type: 'delete',
       metadataName: 'objectMetadata',
-      flatEntity: { universalIdentifier: 'test-object-uid' },
-    } as unknown as AllUniversalWorkspaceMigrationAction;
+      universalIdentifier: 'test-object-uid',
+    };
 
     const error = new WorkspaceMigrationRunnerException({
       action,
@@ -83,13 +83,11 @@ describe('formatUpgradeErrorForStorage', () => {
         'Key (universalIdentifier)=(f473b435-e2d4-4928-8d90-1db0094389f7) already exists.',
     });
 
-    const action = {
-      type: 'create',
+    const action: AllUniversalWorkspaceMigrationAction = {
+      type: 'delete',
       metadataName: 'pageLayoutWidget',
-      flatEntity: {
-        universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
-      },
-    } as unknown as AllUniversalWorkspaceMigrationAction;
+      universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
+    };
 
     const error = new WorkspaceMigrationRunnerException({
       action,
@@ -108,12 +106,18 @@ describe('formatUpgradeErrorForStorage', () => {
 
   it('should format a WorkspaceMigrationBuilderException', () => {
     const report = {
+      ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
       objectMetadata: [
         {
-          validationErrors: ['name must not be empty'],
+          type: 'create' as const,
+          metadataName: 'objectMetadata' as const,
+          errors: [
+            { code: 'INVALID_INPUT', message: 'name must not be empty' },
+          ],
+          flatEntityMinimalInformation: {},
         },
       ],
-    } as unknown as OrchestratorFailureReport;
+    };
 
     const error = new WorkspaceMigrationBuilderException({
       status: 'fail',

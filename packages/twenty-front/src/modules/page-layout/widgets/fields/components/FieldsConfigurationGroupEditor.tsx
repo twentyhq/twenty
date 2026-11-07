@@ -48,7 +48,7 @@ const StyledGroupHeaderRow = styled.div`
   width: 100%;
 `;
 
-const StyledMenuItemDraggableWrapper = styled.div`
+const StyledGroupHeaderContent = styled.div`
   flex: 1;
   min-width: 0;
 `;
@@ -119,11 +119,11 @@ export const FieldsConfigurationGroupEditor = ({
   return (
     <StyledGroupContainer isDragging={isDragging}>
       <StyledGroupHeaderRow>
-        <StyledMenuItemDraggableWrapper ref={groupHeaderRef}>
+        <StyledGroupHeaderContent ref={groupHeaderRef}>
           <DragDropItemSortableHandle fill>
             <FieldsConfigurationGroupDraggableHeader text={group.name} />
           </DragDropItemSortableHandle>
-        </StyledMenuItemDraggableWrapper>
+        </StyledGroupHeaderContent>
         <DropdownRoot
           dropdownId={renameDropdownId}
           type="panel"

@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
@@ -207,6 +207,70 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     ).queryByRole('menuitem', { name: 'Set as Primary' });
 
     expect(setPrimaryOption).not.toBeInTheDocument();
+  },
+};
+
+export const EditsValueInPlace: Story = {
+  args: {
+    value: {
+      primaryEmail: 'primary@example.com',
+      additionalEmails: ['second@example.com'],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.hover(await canvas.findByText('second@example.com'));
+
+    const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButtons[1]);
+
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
+
+    await waitFor(() => {
+      expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    });
+
+    const input = await canvas.findByDisplayValue('second@example.com');
+    const addButton = await canvas.findByText('Add Email');
+
+    expect(input).toHaveFocus();
+    expect(addButton).toBeVisible();
+    expect(
+      input.compareDocumentPosition(addButton) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
+    await userEvent.clear(input);
+    await userEvent.type(input, 'updated@example.com{enter}');
+
+    expect(await canvas.findByText('updated@example.com')).toBeVisible();
+    expect(canvas.queryByText('second@example.com')).not.toBeInTheDocument();
+  },
+};
+
+export const FocusesNewEmailInputInLongList: Story = {
+  args: {
+    value: {
+      primaryEmail: 'first@example.com',
+      additionalEmails: [
+        'second@example.com',
+        'third@example.com',
+        'fourth@example.com',
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Add Email'));
+
+    expect(await canvas.findByPlaceholderText('Email')).toHaveFocus();
   },
 };
 

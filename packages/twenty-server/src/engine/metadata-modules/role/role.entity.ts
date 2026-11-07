@@ -9,7 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-can-create-permissions-upgrade-command-name.constant';
+import { ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-application-role-target-upgrade-command-name.constant';
+import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -32,8 +37,20 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @Column({ nullable: false, default: false })
   canAccessAllTools: boolean;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  canAccessAllAgentChatChannels: boolean;
+
   @Column({ nullable: false, default: false })
   canReadAllObjectRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  canCreateAllObjectRecords: boolean;
 
   @Column({ nullable: false, default: false })
   canUpdateAllObjectRecords: boolean;
@@ -68,11 +85,24 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @Column({ nullable: false, default: true })
   canBeAssignedToApiKeys: boolean;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  canBeAssignedToApplications: boolean;
+
   @OneToMany(
     () => RoleTargetEntity,
     (roleTargets: RoleTargetEntity) => roleTargets.role,
   )
   roleTargets: Relation<RoleTargetEntity[]>;
+
+  @OneToMany(
+    () => AgentChatChannelRoleEntity,
+    (agentChatChannelRole: AgentChatChannelRoleEntity) =>
+      agentChatChannelRole.role,
+  )
+  agentChatChannelRoles: Relation<AgentChatChannelRoleEntity[]>;
 
   @OneToMany(
     () => ObjectPermissionEntity,

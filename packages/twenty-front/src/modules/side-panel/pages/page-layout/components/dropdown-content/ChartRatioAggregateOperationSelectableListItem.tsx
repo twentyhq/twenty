@@ -1,33 +1,23 @@
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCheck } from 'twenty-ui/icon';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getChartAggregateDropdownPageId } from '@/side-panel/pages/page-layout/utils/getChartAggregateDropdownPageId';
+
+type ChartRatioAggregateOperationSelectableListItemProps = {
+  label: string;
+  currentFieldMetadataId: string;
+};
 
 export const ChartRatioAggregateOperationSelectableListItem = ({
   label,
-  onSelect,
-}: {
-  label: string;
-  onSelect: () => void;
-}) => {
+  currentFieldMetadataId,
+}: ChartRatioAggregateOperationSelectableListItemProps) => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
 
   const isCurrentlyRatio =
     isWidgetConfigurationOfType(
@@ -35,24 +25,18 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
       'AggregateChartConfiguration',
     ) && isDefined(widgetInEditMode.configuration.ratioAggregateConfig);
 
-  const isFocused = selectedItemId === DASHBOARD_AGGREGATE_OPERATION_RATIO;
-
   return (
-    <SelectableListItem
-      itemId={DASHBOARD_AGGREGATE_OPERATION_RATIO}
-      onEnter={onSelect}
+    <Dropdown.ActionItem
+      page={getChartAggregateDropdownPageId({
+        fieldMetadataId: currentFieldMetadataId,
+        page: 'ratio',
+      })}
+      aria-current={isCurrentlyRatio ? 'true' : undefined}
+      endIcon={
+        isCurrentlyRatio ? <SelectOptionIcon Icon={IconCheck} /> : undefined
+      }
     >
-      <ListItemButton
-        focused={isFocused}
-        onClick={onSelect}
-        role="option"
-        aria-selected={isCurrentlyRatio}
-        selected={isCurrentlyRatio}
-        indicator="check"
-        hasSubmenu={true}
-      >
-        {label}
-      </ListItemButton>
-    </SelectableListItem>
+      {label}
+    </Dropdown.ActionItem>
   );
 };

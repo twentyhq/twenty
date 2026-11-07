@@ -477,6 +477,17 @@ export const TWENTY_ICON_DICTIONARY = [
       'Representing an API, webhook, or app individually, or generic source code.',
   },
   {
+    key: 'cli',
+    label: 'CLI',
+    category: 'platform',
+    iconName: 'IconTerminal2',
+    tablerName: 'terminal-2',
+    keywords: ['CLI', 'command line', 'terminal', 'twenty command'],
+    useWhen: 'Representing the Twenty command line tool or its commands.',
+    avoidWhen:
+      'Representing execution logs, runtime output, or the command menu.',
+  },
+  {
     key: 'api-key',
     label: 'API Key',
     category: 'platform',

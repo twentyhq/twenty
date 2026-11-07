@@ -3,6 +3,10 @@ title: Handle Arrays in Code Actions
 description: Learn how to properly handle array inputs in workflow Code actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 When working with arrays in Code actions, you may encounter two common challenges:
 1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
 2. **Can't select individual items** — you can only select the entire array, not specific fields within it
@@ -78,3 +82,5 @@ The Code node returns a structured object instead of an array. In subsequent ste
 <Tip>
 Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
 </Tip>
+
+<PageBanner illustration="card-page-logic-functions" />

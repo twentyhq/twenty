@@ -55,7 +55,6 @@ const existingFlatView: FlatView = {
   key: null,
   position: 0,
   isCompact: false,
-  isCustom: true,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   kanbanAggregateOperation: null,
   kanbanAggregateOperationFieldMetadataId: null,

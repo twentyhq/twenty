@@ -1,4 +1,4 @@
-import { resolveByteRange } from 'src/engine/core-modules/file/utils/resolve-byte-range.utils';
+import { resolveByteRange } from 'src/engine/core-modules/file/utils/resolve-byte-range.util';
 
 describe('resolveByteRange', () => {
   it('should return full when no range header is present', () => {

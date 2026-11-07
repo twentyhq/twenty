@@ -1,4 +1,6 @@
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -6,7 +8,8 @@ import { useEffect } from 'react';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -137,12 +140,15 @@ export const MixedNativeCommandOwners: Story = {
         label="First command"
         onClick={onFirstCommand}
       />
-      <CommandMenuItemDropdown
-        id="dropdown"
-        label="Choose destination"
-        dropdownId="command-menu-item-destination"
-        dropdownComponents={<div>Available destinations</div>}
-      />
+      <DropdownRoot dropdownId="command-menu-item-destination" type="menu">
+        <CommandMenuItemDropdownTrigger
+          id="dropdown"
+          label="Choose destination"
+        />
+        <DropdownContent>
+          <Dropdown.ActionItem>Available destinations</Dropdown.ActionItem>
+        </DropdownContent>
+      </DropdownRoot>
       <CommandMenuItem
         id="disabled"
         label="Unavailable command"
@@ -167,22 +173,27 @@ export const MixedNativeCommandOwners: Story = {
     });
 
     expect(destination.parentElement?.closest('[role="button"]')).toBeNull();
-    expect(destination).toHaveAttribute(
-      'aria-controls',
-      'command-menu-item-destination-options',
-    );
     expect(destination).toHaveFocus();
 
     await userEvent.keyboard('{Enter}');
 
-    expect(await body.findByText('Available destinations')).toBeVisible();
+    const menu = await body.findByRole('menu', {
+      name: 'Choose destination',
+    });
+
+    expect(menu).toBeVisible();
+    expect(destination).toHaveAttribute('aria-controls', menu.id);
     expect(onFirstCommand).toHaveBeenCalledTimes(1);
 
-    await userEvent.keyboard('{Escape}{ArrowDown}');
+    await userEvent.keyboard('{Escape}');
 
-    expect(
-      canvas.getByRole('button', { name: 'Unavailable command' }),
-    ).toHaveFocus();
+    await waitFor(() => expect(destination).toHaveFocus());
+
+    const disabledCommand = canvas.getByRole('button', {
+      name: 'Unavailable command',
+    });
+
+    disabledCommand.focus();
 
     await userEvent.keyboard('{Enter}');
 

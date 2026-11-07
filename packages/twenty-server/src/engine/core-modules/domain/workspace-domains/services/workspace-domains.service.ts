@@ -50,15 +50,24 @@ export class WorkspaceDomainsService {
     return url;
   }
 
-  computeWorkspaceRedirectErrorUrl(
-    errorMessage: string,
-    workspace: WorkspaceDomainConfig,
-    pathname: string,
-  ) {
+  computeWorkspaceRedirectErrorUrl({
+    errorMessage,
+    workspace,
+    pathname,
+    searchParams,
+    hash,
+  }: {
+    errorMessage: string;
+    workspace: WorkspaceDomainConfig;
+    pathname: string;
+    searchParams?: Record<string, string>;
+    hash?: string;
+  }) {
     const url = this.buildWorkspaceURL({
       workspace,
       pathname,
-      searchParams: { errorMessage },
+      searchParams: { ...searchParams, errorMessage },
+      hash,
     });
 
     return url.toString();

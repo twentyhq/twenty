@@ -1,9 +1,9 @@
 ---
 title: Feature Flags
+description: Hide experimental features behind workspace-level feature flags.
 ---
 
-
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Adding a new feature flag
 
@@ -49,3 +49,4 @@ Change the corresponding record in the Table `core.featureFlag`:
 |----------|--------------------------|---------------|--------|
 |  Random  | `IS_FEATURENAME_ENABLED` |  WorkspaceID  | `true` |
 
+<PageBanner illustration="page-cover-switch" />

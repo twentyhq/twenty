@@ -1,13 +1,16 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-read-access-policy.constant';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemTypeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-type.schema';
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
-const listNavigationMenuItemsSchema = z.object({
+const listNavigationMenuItemsInputSchema = z.object({
   scope: z
     .enum(['workspace', 'user', 'all'])
     .optional()
@@ -22,7 +25,7 @@ const listNavigationMenuItemsSchema = z.object({
   type: navigationMenuItemTypeSchema
     .optional()
     .describe(
-      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).',
+      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, NATIVE_PAGE).',
     ),
   limit: z
     .number()
@@ -34,26 +37,37 @@ const listNavigationMenuItemsSchema = z.object({
     .describe('Max number of items to return.'),
 });
 
-type ListNavigationMenuItemsParams = z.infer<
-  typeof listNavigationMenuItemsSchema
->;
-
-export const createListNavigationMenuItemsTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'list_navigation_menu_items' as const,
+@DefineTool({
+  name: 'list_navigation_menu_items',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  accessPolicy: NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY,
   description: `List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.`,
-  inputSchema: listNavigationMenuItemsSchema,
-  execute: async (parameters: ListNavigationMenuItemsParams) => {
+})
+export class ListNavigationMenuItemsTool extends BaseTool<
+  typeof listNavigationMenuItemsInputSchema
+> {
+  readonly inputSchema = listNavigationMenuItemsInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId },
+  }: ToolExecuteArgs<
+    typeof listNavigationMenuItemsInputSchema
+  >): Promise<ToolOutput> {
     try {
-      const items = await deps.navigationMenuItemService.findAll({
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        scope: parameters.scope,
-        folderId: parameters.folderId,
-        type: parameters.type as NavigationMenuItemType | undefined,
-        limit: parameters.limit,
+      const items = await this.navigationMenuItemService.findAll({
+        workspaceId,
+        userWorkspaceId,
+        scope: input.scope,
+        folderId: input.folderId,
+        type: input.type,
+        limit: input.limit,
       });
 
       return {
@@ -74,6 +88,8 @@ export const createListNavigationMenuItemsTool = (
             targetRecordId: item.targetRecordId,
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
+            agentChatChannelId: item.agentChatChannelId,
+            nativePageKey: item.nativePageKey,
           })),
           count: items.length,
         },
@@ -87,5 +103,5 @@ export const createListNavigationMenuItemsTool = (
         error: message,
       };
     }
-  },
-});
+  }
+}

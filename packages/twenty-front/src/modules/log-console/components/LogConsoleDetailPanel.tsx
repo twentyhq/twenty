@@ -40,6 +40,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
 
+const StyledShowMoreContainer = styled.div`
+  align-self: flex-start;
+`;
+
 const StyledPanel = styled.aside`
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -147,7 +151,7 @@ export const LogConsoleDetailPanel = () => {
         })
       : undefined;
 
-  const DetailIcon = source.DetailIcon ?? source.Icon;
+  const DetailIcon = source.getDetailIcon?.(entry) ?? source.Icon;
 
   const title = isDefined(recordIdentifier)
     ? recordIdentifier.name
@@ -274,10 +278,12 @@ export const LogConsoleDetailPanel = () => {
                 </StyledMessageStackLine>
               ))}
               {hiddenMessageStackLineCount > 0 && (
-                <FieldWidgetShowMoreButton
-                  remainingCount={hiddenMessageStackLineCount}
-                  onClick={() => setEntryWithExpandedMessage(entry)}
-                />
+                <StyledShowMoreContainer>
+                  <FieldWidgetShowMoreButton
+                    remainingCount={hiddenMessageStackLineCount}
+                    onClick={() => setEntryWithExpandedMessage(entry)}
+                  />
+                </StyledShowMoreContainer>
               )}
             </StyledMessageCard>
           </Section.Root>

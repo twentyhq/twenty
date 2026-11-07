@@ -29,6 +29,15 @@ describe('isFieldMetadataEligibleForRecordForm', () => {
     ).toBe(false);
   });
 
+  it('accepts a files field', () => {
+    expect(
+      isFieldMetadataEligibleForRecordForm({
+        ...ELIGIBLE_TEXT_FIELD,
+        fieldType: FieldMetadataType.FILES,
+      }),
+    ).toBe(true);
+  });
+
   it('rejects the id field', () => {
     expect(
       isFieldMetadataEligibleForRecordForm({
@@ -44,7 +53,6 @@ describe('isFieldMetadataEligibleForRecordForm', () => {
     FieldMetadataType.POSITION,
     FieldMetadataType.ACTOR,
     FieldMetadataType.RATING,
-    FieldMetadataType.FILES,
     FieldMetadataType.NUMERIC,
   ])('rejects the unsupported type %s', (fieldType) => {
     expect(

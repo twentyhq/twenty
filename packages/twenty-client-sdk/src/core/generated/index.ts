@@ -11,7 +11,7 @@ export class CoreApiClient {
   constructor(_options?: TwentyClientOptions) {
     throw new Error(
       'CoreApiClient was not generated. ' +
-        'Install this app on a Twenty instance or run `yarn twenty dev`.',
+        'Run `twenty app generate-client` against your workspace to generate the client.',
     );
   }
 }

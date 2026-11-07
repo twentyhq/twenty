@@ -143,7 +143,7 @@ describe('Manifest sync - row level permission predicates declared on a role', (
   it('creates a row-level predicate owned by the app and pointing at the declared role/object/field', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifestWithPredicates([
-        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.IS),
+        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.CONTAINS),
       ]),
       expectToFail: false,
     });
@@ -162,7 +162,7 @@ describe('Manifest sync - row level permission predicates declared on a role', (
 
     const predicate = predicateRows[0];
 
-    expect(predicate.operand).toBe(RowLevelPermissionPredicateOperand.IS);
+    expect(predicate.operand).toBe(RowLevelPermissionPredicateOperand.CONTAINS);
     expect(predicate.roleId).toBe(roleId);
     expect(predicate.objectMetadataId).toBe(personObjectId);
     expect(predicate.fieldMetadataId).toBeTruthy();
@@ -173,7 +173,7 @@ describe('Manifest sync - row level permission predicates declared on a role', (
   it('updates the predicate in place on re-sync and removes it when dropped from the manifest', async () => {
     await syncApplication({
       manifest: buildManifestWithPredicates([
-        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.IS),
+        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.CONTAINS),
       ]),
       expectToFail: false,
     });
@@ -185,7 +185,9 @@ describe('Manifest sync - row level permission predicates declared on a role', (
 
     await syncApplication({
       manifest: buildManifestWithPredicates([
-        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.IS_NOT),
+        partnerUserStylePredicate(
+          RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
+        ),
       ]),
       expectToFail: false,
     });
@@ -195,7 +197,7 @@ describe('Manifest sync - row level permission predicates declared on a role', (
     expect(updatedRows).toHaveLength(1);
     expect(updatedRows[0].id).toBe(predicateId);
     expect(updatedRows[0].operand).toBe(
-      RowLevelPermissionPredicateOperand.IS_NOT,
+      RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
     );
 
     await syncApplication({
@@ -209,7 +211,7 @@ describe('Manifest sync - row level permission predicates declared on a role', (
   it('removes the predicate on uninstall', async () => {
     await syncApplication({
       manifest: buildManifestWithPredicates([
-        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.IS),
+        partnerUserStylePredicate(RowLevelPermissionPredicateOperand.CONTAINS),
       ]),
       expectToFail: false,
     });

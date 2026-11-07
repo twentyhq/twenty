@@ -13,11 +13,10 @@ export const sortByProperty =
       );
     } else if (typeof a[propertyName] === 'number') {
       return (a[propertyName] as number) - (b[propertyName] as number);
-    } else {
-      throw new Error(
-        doNotTranslate(
-          'Property type not supported in sortByProperty, only string and number are supported',
-        ),
-      );
     }
+    throw new Error(
+      doNotTranslate(
+        'Property type not supported in sortByProperty, only string and number are supported',
+      ),
+    );
   };

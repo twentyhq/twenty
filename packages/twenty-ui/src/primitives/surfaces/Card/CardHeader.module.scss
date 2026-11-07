@@ -5,12 +5,13 @@
 
   background-color: var(
     --card-section-background-color,
-    var(--t-background-primary)
+    var(--card-default-section-background-color, var(--t-background-primary))
   );
   border: 0;
-  border-bottom: 1px solid var(--t-border-color-medium);
+  border-bottom: var(--card-header-border-width, 1px) solid
+    var(--t-border-color-medium);
   font-size: var(--t-font-size-sm);
   font-weight: var(--t-font-weight-medium);
-  padding: var(--t-spacing-2) var(--t-spacing-4);
+  padding: var(--card-header-padding, var(--t-spacing-2) var(--t-spacing-4));
   width: 100%;
 }

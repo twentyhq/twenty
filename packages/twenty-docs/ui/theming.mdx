@@ -3,7 +3,11 @@ title: Theming
 description: Use Twenty UI theme tokens and scope theme overrides to part of your application.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## Overview
 
 Twenty UI components read public CSS custom properties prefixed with `--t-`. Prefer semantic tokens such as `background.secondary` and `font.color.primary` when styling your own components; these values adapt to the active palette.
 
@@ -90,3 +94,5 @@ The `theme` prop supplies resolved JavaScript theme values instead of reading co
 ## ThemeProvider props
 
 <ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

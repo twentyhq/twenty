@@ -2,6 +2,20 @@
 
 All notable changes to this application are documented in this file.
 
+## 1.4.0
+
+- Add **Required fields for people matches** and **Required fields for company
+  matches** app settings. A match only counts, and is only billed, when every
+  selected output field is present. Both are empty by default.
+- Add a **Required fields for a match** input to the enrichment workflow steps.
+  An empty selection uses the app setting. Refreshing a record that already has
+  a PDL ID skips the requirements. Twenty versions without the multiselect
+  show a text list that accepts field labels or PDL field names.
+
+## 1.3.0
+
+- Lower enrichment prices to $0.15 per person match and $0.075 per company match.
+
 ## 1.2.0
 
 - Move the minimum match likelihoods for people and companies from server

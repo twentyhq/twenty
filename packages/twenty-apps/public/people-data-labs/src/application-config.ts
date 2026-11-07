@@ -3,8 +3,12 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 import { DEFAULT_MIN_LIKELIHOOD } from 'src/constants/default-min-likelihood';
 import { DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD } from 'src/constants/default-weak-identifier-min-likelihood';
 import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-company-required-field-options';
+import { PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-company-required-fields-env-var-name';
 import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-min-likelihood-env-var-name';
+import { PDL_PERSON_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-person-required-field-options';
+import { PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-person-required-fields-env-var-name';
 import { PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-weak-identifier-min-likelihood-env-var-name';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -21,9 +25,31 @@ export default defineApplication({
   galleryImages: ['public/gallery/cover.png'],
   billing: {
     description:
-      '$0.336 per person match and $0.12 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
+      '$0.15 per person match and $0.075 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
   },
   applicationVariables: {
+    [PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.companyRequiredFields,
+      label: 'Required fields for company matches',
+      description:
+        'All selected output fields must be present for a match. Defaults to no required fields. Workflow selections take precedence.',
+      type: FieldType.MULTI_SELECT,
+      options: PDL_COMPANY_REQUIRED_FIELD_OPTIONS,
+      isSecret: false,
+      value: [],
+    },
+    [PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.personRequiredFields,
+      label: 'Required fields for people matches',
+      description:
+        'All selected output fields must be present for a match. Defaults to no required fields. Workflow selections take precedence.',
+      type: FieldType.MULTI_SELECT,
+      options: PDL_PERSON_REQUIRED_FIELD_OPTIONS,
+      isSecret: false,
+      value: [],
+    },
     [PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME]: {
       universalIdentifier:
         PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.personMinLikelihood,

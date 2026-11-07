@@ -18,7 +18,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
-import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
+import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -267,6 +268,13 @@ describe('Send chat message workflow step', () => {
               workflowRunId,
               workspaceId: SEED_APPLE_WORKSPACE_ID,
             });
+          const permissions =
+            await getAppProviderByClassName<WorkflowExecutionContextService>(
+              'WorkflowExecutionContextService',
+            ).getExecutionContext({
+              workflowRunId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            });
 
           postAgain = () =>
             getAppProviderByClassName<AgentCallerConversationService>(
@@ -284,10 +292,7 @@ describe('Send chat message workflow step', () => {
               fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
               awaitedToolCall: {
                 ...toolCall,
-                caller: {
-                  type: 'WORKFLOW_STEP',
-                  ref: { workflowRunId, stepId },
-                },
+                permissions,
                 // the message was already written, so the call is not built again
                 waitOnAnswer: async () => {},
               },
@@ -389,10 +394,12 @@ describe('Send chat message workflow step', () => {
     }, 120000);
 
     it('never runs an approved action twice when recording the answer fails', async () => {
-      const agentChatService =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
+      const toolCallAnswerRecorderService =
+        getAppProviderByClassName<ToolCallAnswerRecorderService>(
+          'ToolCallAnswerRecorderService',
+        );
       const recordToolCallAnswer = jest
-        .spyOn(agentChatService, 'recordToolCallAnswer')
+        .spyOn(toolCallAnswerRecorderService, 'recordToolCallAnswer')
         .mockRejectedValueOnce(new Error('Database unavailable'));
       let secondAnswerErrors: string | undefined;
       let partResult: Record<string, unknown> | undefined;

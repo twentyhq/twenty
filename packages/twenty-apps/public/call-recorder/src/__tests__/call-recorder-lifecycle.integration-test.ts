@@ -6,6 +6,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import {
+  afterAll,
   afterEach,
   beforeAll,
   beforeEach,
@@ -869,12 +870,14 @@ const waitForQueuedTriggerRunsToDrain = async () => {
     scopes: ['transcript'],
   });
 
-  await expect
-    .poll(() => getJobs([jobId]), {
-      timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS,
-      interval: 1_000,
-    })
-    .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+  await vi.waitFor(
+    async () => {
+      expect(await getJobs([jobId])).toMatchObject([
+        { jobId, state: 'COMPLETED' },
+      ]);
+    },
+    { timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS, interval: 1_000 },
+  );
 };
 
 describe('call recorder app lifecycle (integration)', () => {
@@ -908,6 +911,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
   beforeEach(() => {
     recall = new FakeRecallApi();
+    nextCalendarEventFixtureIndex = 0;
     nextArtifactImportRequestIndex = 0;
     nextFollowUpIndex = 0;
 
@@ -928,7 +932,7 @@ describe('call recorder app lifecycle (integration)', () => {
     );
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
-    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
     // Logic functions normally run with an app access token; the workspace
     // API key is a token with the same workspaceId claim.
     vi.stubEnv(
@@ -944,6 +948,42 @@ describe('call recorder app lifecycle (integration)', () => {
 
     await destroyCreatedRows();
   });
+
+  afterAll(async () => {
+    if (nextCalendarEventFixtureIndex === 0) {
+      return;
+    }
+
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+
+    try {
+      await waitForQueuedTriggerRunsToDrain();
+    } finally {
+      vi.unstubAllEnvs();
+
+      const leftoverCallRecordings = await findCallRecordings({
+        calendarEventId: {
+          in: availableCalendarEventFixtures
+            .slice(0, nextCalendarEventFixtureIndex)
+            .map(({ id }) => id),
+        },
+      });
+
+      await destroyCallRecordings(leftoverCallRecordings.map(({ id }) => id));
+    }
+  }, REAL_QUEUE_TIMEOUT_MS);
+
+  const destroyCallRecordings = async (
+    callRecordingIds: string[],
+  ): Promise<void> => {
+    for (const callRecordingId of callRecordingIds) {
+      await client
+        .mutation({
+          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+        })
+        .catch(() => {});
+    }
+  };
 
   const destroyCreatedRows = async (): Promise<void> => {
     const calendarEventRestoreErrors: Error[] = [];
@@ -963,13 +1003,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ]),
     ];
 
-    for (const callRecordingId of callRecordingIds) {
-      await client
-        .mutation({
-          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-        })
-        .catch(() => {});
-    }
+    await destroyCallRecordings(callRecordingIds);
 
     for (const fixture of borrowedCalendarEventFixtures) {
       try {
@@ -1411,15 +1445,20 @@ describe('call recorder app lifecycle (integration)', () => {
           markCalendarEventsRecordingOn(new CoreApiClient(), calendarEventIds),
         ).rejects.toThrow('1 of 3 calendar event preference batches failed');
 
-        const result = await client.query({
-          calendarEvents: {
-            __args: {
-              filter: { id: { in: calendarEventIds } },
-              first: fixtureCount,
-            },
-            edges: { node: { id: true, callRecorderPreference: true } },
-          },
-        });
+        const results = await Promise.all(
+          getBatches(calendarEventIds, CALENDAR_EVENT_UPDATE_BATCH_SIZE).map(
+            (calendarEventIdBatch) =>
+              client.query({
+                calendarEvents: {
+                  __args: {
+                    filter: { id: { in: calendarEventIdBatch } },
+                    first: calendarEventIdBatch.length,
+                  },
+                  edges: { node: { id: true, callRecorderPreference: true } },
+                },
+              }),
+          ),
+        );
         const failedCalendarEventIds = new Set(
           [...calendarEventIds]
             .sort()
@@ -1428,7 +1467,9 @@ describe('call recorder app lifecycle (integration)', () => {
               2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE,
             ),
         );
-        const calendarEvents = result.calendarEvents?.edges ?? [];
+        const calendarEvents = results.flatMap(
+          (result) => result.calendarEvents?.edges ?? [],
+        );
 
         expect(preferenceBatchCount).toBe(3);
         expect(calendarEvents).toHaveLength(fixtureCount);

@@ -56,7 +56,7 @@ const StyledIcon = styled.div`
   display: flex;
 `;
 
-const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
+const StyledDelete = styled.button`
   align-items: center;
   background: none;
   border: none;
@@ -72,19 +72,6 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   padding: 0;
   user-select: none;
   width: 20px;
-
-  &:hover {
-    background-color: ${({ variant }) => {
-      switch (variant) {
-        case 'danger':
-          return themeCssVariables.color.red5;
-        case 'default':
-        default:
-          return themeCssVariables.accent.secondary;
-      }
-    }};
-    border-radius: ${themeCssVariables.border.radius.smRound};
-  }
 `;
 
 const StyledLabelKey = styled.div`
@@ -169,7 +156,6 @@ export const SortOrFilterChip = ({
         )}
       </StyledKeyLabelContainer>
       <StyledDelete
-        variant={variant}
         onClick={handleDeleteClick}
         data-testid={'remove-icon-' + testId}
       >

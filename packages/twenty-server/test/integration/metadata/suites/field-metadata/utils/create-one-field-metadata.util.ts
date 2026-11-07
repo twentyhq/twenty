@@ -7,23 +7,30 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-export const createOneFieldMetadata = async <T extends FieldMetadataType>({
+export const createOneFieldMetadata = async <
+  T extends FieldMetadataType,
+  TField = FieldMetadataDTO<T>,
+>({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateOneFieldFactoryInput>): CommonResponseBody<{
-  createOneField: FieldMetadataDTO<T>;
+  createOneField: TField;
 }> => {
   const graphqlOperation = createOneFieldMetadataQueryFactory({
     input,
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

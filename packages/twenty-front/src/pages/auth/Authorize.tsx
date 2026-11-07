@@ -1,5 +1,6 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
@@ -11,7 +12,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { getUrlSafely, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconDatabase,
@@ -62,7 +63,6 @@ const StyledHeader = styled.div`
 `;
 
 const StyledOAuthTitle = styled(Heading)`
-  margin: 0;
   max-width: min(100%, var(--oauth-modal-content-max-width));
   padding-bottom: ${themeCssVariables.spacing[1]};
   text-wrap: balance;
@@ -124,6 +124,21 @@ const StyledScopeIcon = styled.div`
   justify-content: center;
 `;
 
+const StyledRedirectNotice = styled.p`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  margin: ${themeCssVariables.spacing[6]} 0 0;
+  overflow-wrap: anywhere;
+  padding-left: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledRedirectHost = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
 const StyledErrorText = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.sm};
@@ -174,7 +189,9 @@ export const Authorize = () => {
   const [isAuthorizing, setIsAuthorizing] = useState(false);
 
   const shouldRedirectToNotFound =
-    !isDefined(clientId) || (!loading && !isDefined(applicationRegistration));
+    !isDefined(clientId) ||
+    !isDefined(redirectUrl) ||
+    (!loading && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {
@@ -266,13 +283,14 @@ export const Authorize = () => {
     );
   }
 
-  if (loading || !applicationRegistration) {
+  if (loading || !applicationRegistration || !isDefined(redirectUrl)) {
     return null;
   }
 
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
+  const redirectHost = getUrlSafely(redirectUrl)?.host;
 
   return (
     <StyledAuthContent>
@@ -309,6 +327,14 @@ export const Authorize = () => {
                 })}
               </StyledScopeList>
             </StyledPermissionSection>
+          )}
+          {isNonEmptyString(redirectHost) && (
+            <StyledRedirectNotice>
+              <Trans>
+                After you connect, you will be redirected to{' '}
+                <StyledRedirectHost>{redirectHost}</StyledRedirectHost>
+              </Trans>
+            </StyledRedirectNotice>
           )}
           {authorizeError && (
             <StyledErrorText>{authorizeError}</StyledErrorText>

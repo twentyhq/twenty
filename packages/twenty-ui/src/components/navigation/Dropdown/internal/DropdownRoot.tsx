@@ -19,6 +19,11 @@ import { DropdownSelectionContext } from './DropdownSelectionContext';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
+type PageNavigationState = {
+  history: PageHistoryEntry[];
+  focusRequest?: DropdownPageFocusRequest;
+};
+
 export const DropdownRoot = ({
   children,
   type,
@@ -44,20 +49,34 @@ export const DropdownRoot = ({
     };
   }, []);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const isPageActive =
+    !isDefined(parent) ||
+    (parent.isPageActive && (!parent.isInsideContent || parent.open));
+  const open = isPageActive && (controlledOpen ?? uncontrolledOpen);
   const [previousOpen, setPreviousOpen] = useState(open);
-  const [pageHistory, setPageHistory] = useState<PageHistoryEntry[]>([
-    { id: defaultPage },
-  ]);
+  const [sessionId, setSessionId] = useState(0);
+  const [
+    { history: pageHistory, focusRequest: pageFocusRequest },
+    setPageNavigation,
+  ] = useState<PageNavigationState>({ history: [{ id: defaultPage }] });
+  const setPageFocusRequest = useCallback(
+    (request: DropdownPageFocusRequest | undefined) => {
+      setPageNavigation((navigation) =>
+        navigation.focusRequest === request
+          ? navigation
+          : { ...navigation, focusRequest: request },
+      );
+    },
+    [],
+  );
   const [activePage, setActivePage] = useState<{
     id: string;
     type: DropdownType;
   }>();
   const [rowIds, setRowIds] = useState<string[]>();
   const [focusedRowId, setFocusedRowId] = useState<string>();
-  const pageId = pageHistory[pageHistory.length - 1]?.id;
-  const [pageFocusRequest, setPageFocusRequest] =
-    useState<DropdownPageFocusRequest>();
+  const currentPage = pageHistory[pageHistory.length - 1];
+  const pageId = currentPage?.id;
   const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
     'first',
   );
@@ -69,15 +88,20 @@ export const DropdownRoot = ({
   const isOpening = open && !previousOpen;
   const isClosing = !open && previousOpen;
 
+  if (!isPageActive && uncontrolledOpen && !isDefined(controlledOpen)) {
+    setUncontrolledOpen(false);
+  }
+
   if (isOpening || isClosing) {
     setPreviousOpen(open);
   }
 
   if (isOpening) {
-    setPageHistory([{ id: defaultPage }]);
+    setSessionId(sessionId + 1);
+    setPageNavigation({ history: [{ id: defaultPage }] });
     setActivePage(undefined);
-    setPageFocusRequest(undefined);
     setFocusedRowId(undefined);
+    setRowIds(undefined);
   }
 
   if (isClosing) {
@@ -148,24 +172,32 @@ export const DropdownRoot = ({
     id: string;
     trigger?: DropdownFocusTarget;
   }) => {
-    setPageFocusRequest({ pageId: id });
-    setPageHistory((history) => [...history, { id, trigger }]);
+    setPageNavigation((navigation) => ({
+      history: [...navigation.history, { id, trigger }],
+      focusRequest: { pageId: id },
+    }));
   };
 
   const goBack = () => {
-    const previousPage = pageHistory[pageHistory.length - 2];
+    setPageNavigation((navigation) => {
+      if (navigation.history[navigation.history.length - 1] !== currentPage) {
+        return navigation;
+      }
 
-    if (!isDefined(previousPage)) {
-      return;
-    }
+      const previousPage = navigation.history[navigation.history.length - 2];
 
-    const trigger = pageHistory[pageHistory.length - 1]?.trigger;
+      if (!isDefined(previousPage)) {
+        return navigation;
+      }
 
-    setPageFocusRequest({
-      pageId: previousPage.id,
-      target: trigger,
+      return {
+        history: navigation.history.slice(0, -1),
+        focusRequest: {
+          pageId: previousPage.id,
+          target: navigation.history[navigation.history.length - 1]?.trigger,
+        },
+      };
     });
-    setPageHistory((history) => history.slice(0, -1));
   };
 
   const registerPage = useCallback(
@@ -189,7 +221,7 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
-        if (!nextOpen && !open) {
+        if (!isPageActive || (!nextOpen && !open)) {
           eventDetails.cancel();
           return;
         }
@@ -237,6 +269,9 @@ export const DropdownRoot = ({
               : type,
           rootType: type,
           open,
+          isPageActive,
+          isInsideContent: false,
+          sessionId,
           multiple,
           selections,
           initializeSelection,

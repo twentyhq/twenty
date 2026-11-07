@@ -3,13 +3,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
+  type BulkAddResult,
   type InFlightQueueJob,
   MessageQueueDriver,
   type QueueJobDetails,
   type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type JobMemoryReconciliation } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -35,7 +38,7 @@ export class MessageQueueService {
   add<T extends MessageQueueJobData>(
     jobName: string,
     data: T,
-    options?: QueueJobOptions,
+    options: QueueJobOptions,
   ): Promise<string | undefined> {
     return this.driver.add(this.queueName, jobName, data, options);
   }
@@ -43,8 +46,8 @@ export class MessageQueueService {
   bulkAdd<T extends MessageQueueJobData>(
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-    options?: QueueJobOptions,
-  ): Promise<string[]> {
+    options?: QueueJobSettings,
+  ): Promise<BulkAddResult> {
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
   }
 
@@ -66,6 +69,14 @@ export class MessageQueueService {
     }
 
     return this.driver.getInFlightJobs(this.queueName);
+  }
+
+  reconcileJobMemory(): Promise<JobMemoryReconciliation> {
+    if (typeof this.driver.reconcileJobMemory !== 'function') {
+      return Promise.resolve({ releasedCount: 0, releasedBytes: 0 });
+    }
+
+    return this.driver.reconcileJobMemory();
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

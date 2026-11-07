@@ -32,7 +32,6 @@ export const generateDeterministicIndexForFlatFieldMetadataOrThrow = ({
       ],
       indexType: IndexType.BTREE,
       indexWhereClause: null,
-      isCustom: true,
       isUnique: flatFieldMetadata.isUnique ?? false,
       isSystemSideEffect: true,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,

@@ -63,11 +63,6 @@ const StyledLogoRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledLogoAvatar = styled(Avatar)`
-  height: ${themeCssVariables.spacing[8]};
-  width: ${themeCssVariables.spacing[8]};
-`;
-
 const StyledLogoButtons = styled.div`
   align-items: center;
   display: flex;
@@ -251,12 +246,13 @@ export const SignInUpWorkspaceCreationForm = () => {
       <StyledFormSection>
         <OnboardingStepAnimatedItem index={2}>
           <StyledLogoRow>
-            <StyledLogoAvatar
+            <Avatar
               src={logoPreviewUrl}
               name={isNonEmptyString(workspaceName) ? workspaceName : '?'}
               colorSeed={getWorkspaceAvatarColorSeed(workspaceName)}
               shape="square"
               size="xl"
+              variant="outline"
               render={
                 <button
                   type="button"

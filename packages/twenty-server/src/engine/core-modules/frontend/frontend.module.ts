@@ -11,10 +11,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClientConfigModule } from 'src/engine/core-modules/client-config/client-config.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
 import { FrontendService } from 'src/engine/core-modules/frontend/frontend.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [ClientConfigModule, WorkspaceDomainsModule],
+  imports: [ClientConfigModule, WorkspaceDomainsModule, WorkspaceCacheModule],
   providers: [
     FrontendService,
     { provide: 'FRONTEND_PATH', useValue: join(__dirname, '../../../front') },
@@ -43,7 +45,7 @@ export class FrontendModule implements OnModuleInit {
           response.setHeader('Cloudflare-CDN-Cache-Control', 'no-store');
           response.setHeader(
             'Content-Security-Policy',
-            "frame-ancestors 'none'",
+            `frame-ancestors 'none'; ${DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES}`,
           );
           response.setHeader('X-Frame-Options', 'DENY');
         }

@@ -1,8 +1,5 @@
 import Fuse from 'fuse.js';
-import {
-  FieldMetadataType,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { isNull, isObject } from '@sniptt/guards';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -20,7 +17,7 @@ const LOGICAL_OPERATORS = new Set(['and', 'or', 'not']);
 const SUB_FIELDS_TO_EXCLUDE_BY_FIELD_TYPE: Partial<
   Record<FieldMetadataType, Set<string>>
 > = {
-  [FieldMetadataType.RICH_TEXT]: new Set(['blocknote']),
+  [FieldMetadataType.RICH_TEXT]: new Set(['blocknote', 'tiptap']),
 };
 
 const buildSelectedField = ({
@@ -176,7 +173,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps,
   selectedFields,
   selectableRelationFields,
-  objectsPermissions,
+  unreadableFieldMetadataIds,
 }: {
   select: string[];
   filter?:
@@ -191,7 +188,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectedFields: CommonSelectedFields;
   selectableRelationFields: CommonSelectedFields;
-  objectsPermissions: ObjectsPermissions;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): { effectiveSelectedFields: CommonSelectedFields; warnings: string[] } => {
   const filterFieldNames = extractFilterFieldNames(filter);
   const orderByFieldNames = extractOrderByFieldNames(orderBy);
@@ -212,7 +209,7 @@ export const buildEffectiveSelectedFields = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       selectableRelationFields,
-      objectsPermissions,
+      unreadableFieldMetadataIds,
     });
 
   const {

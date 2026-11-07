@@ -4,7 +4,7 @@
       "label": "Начало работы",
       "groups": {
         "welcome": {
-          "label": "Добро пожаловать"
+          "label": "Начало работы"
         },
         "coreConcepts": {
           "label": "Основные понятия"
@@ -15,7 +15,7 @@
       "label": "Руководство пользователя",
       "groups": {
         "userGuideOverview": {
-          "label": "Обзор"
+          "label": "Руководство пользователя"
         },
         "dataModel": {
           "label": "Модель данных",
@@ -46,6 +46,14 @@
               "label": "Справочник"
             },
             "calendarEmailsHowTos": {
+              "label": "Инструкции"
+            }
+          }
+        },
+        "emailCampaigns": {
+          "label": "Кампании по электронной почте",
+          "groups": {
+            "emailCampaignsHowTos": {
               "label": "Инструкции"
             }
           }
@@ -160,7 +168,7 @@
       "label": "Разработчики",
       "groups": {
         "developersOverview": {
-          "label": "Обзор"
+          "label": "Разработчики"
         },
         "apps": {
           "label": "Приложения",
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "Внести вклад"
+        },
+        "uiLibrary": {
+          "label": "Библиотека интерфейса",
+          "groups": {
+            "uiGuides": {
+              "label": "Руководства"
+            },
+            "uiPrimitives": {
+              "label": "Примитивы",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "Доступность"
+                },
+                "uiDataDisplay": {
+                  "label": "Отображение данных"
+                },
+                "uiFeedback": {
+                  "label": "Обратная связь"
+                },
+                "uiForms": {
+                  "label": "Формы"
+                },
+                "uiLayout": {
+                  "label": "Макет"
+                },
+                "uiNavigation": {
+                  "label": "Навигация"
+                },
+                "uiSurfaces": {
+                  "label": "Области отображения"
+                },
+                "uiTypography": {
+                  "label": "Типографика"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Компоненты",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Отображение данных"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Обратная связь"
+                },
+                "uiComponentsInput": {
+                  "label": "Ввод"
+                },
+                "uiComponentsLayout": {
+                  "label": "Макет"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Навигация"
+                },
+                "uiComponentsSettings": {
+                  "label": "Настройки"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Редактор кода"
+                }
+              }
+            }
+          }
         }
       }
     }

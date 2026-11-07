@@ -64,8 +64,6 @@ const StyledLabel = styled.span`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const infoCircleElementId = 'info-circle-id';
-
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition = false,
   onNewDirtyField,
@@ -99,7 +97,9 @@ export const SettingsDataModelObjectAboutForm = ({
   });
 
   const fillLabelPlural = (labelSingular: string | undefined) => {
-    if (!isDefined(labelSingular)) return;
+    if (!isDefined(labelSingular)) {
+      return;
+    }
 
     const labelPluralFromSingularLabel = plural(labelSingular);
     setValue('labelPlural', labelPluralFromSingularLabel, {
@@ -337,10 +337,8 @@ export const SettingsDataModelObjectAboutForm = ({
                               delay={TooltipDelay.shortDelay}
                             >
                               <IconInfoCircle
-                                id={infoCircleElementId + fieldName}
                                 size={theme.icon.size.md}
                                 color={theme.font.color.tertiary}
-                                style={{ outline: 'none' }}
                               />
                             </Tooltip>
                           )}

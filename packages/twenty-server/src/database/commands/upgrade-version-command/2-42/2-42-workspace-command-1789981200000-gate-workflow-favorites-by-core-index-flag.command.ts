@@ -67,6 +67,7 @@ export class GateWorkflowFavoritesByCoreIndexFlagCommand extends ProvisionedWork
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

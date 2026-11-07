@@ -1,4 +1,8 @@
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
@@ -9,6 +13,7 @@ import {
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 describe('resolveOrderByLeaves', () => {
@@ -103,20 +108,21 @@ describe('resolveOrderByLeaves', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const flatObjectMetadata = {
+  const flatObjectMetadata = getFlatObjectMetadataMock({
     id: objectMetadataId,
+    universalIdentifier: objectMetadataId,
     workspaceId,
     nameSingular: 'opportunity',
     fieldIds: rootFields.map((field) => field.id),
-  } as unknown as FlatObjectMetadata;
+  });
 
-  const companyObjectMetadata = {
+  const companyObjectMetadata = getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
     fieldIds: ['company-name-id', 'company-contactname-id'],
-  } as unknown as FlatObjectMetadata;
+  });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
@@ -351,18 +357,9 @@ describe('resolveOrderByLeaves', () => {
   });
 
   describe('field read permissions', () => {
-    const permissionsRestricting = (
-      fieldMetadataId: string,
-      objectId: string,
-    ) => ({
-      [objectId]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: { [fieldMetadataId]: { canRead: false } },
-        // oxlint-disable-next-line typescript/no-explicit-any
-      } as any,
+    const restrictionsOnField = (fieldMetadataId: string) => ({
+      unreadableObjectMetadataIds: new Set<string>(),
+      unreadableFieldMetadataIds: new Set([fieldMetadataId]),
     });
 
     it('should reject ordering by a role-restricted root field', () => {
@@ -371,10 +368,7 @@ describe('resolveOrderByLeaves', () => {
           orderBy: [{ closeDate: OrderByDirection.AscNullsLast }],
           flatObjectMetadata,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
-            'closedate-id',
-            objectMetadataId,
-          ),
+          recordReadRestrictions: restrictionsOnField('closedate-id'),
         }),
       ).toThrow('does not have permission');
     });
@@ -386,10 +380,72 @@ describe('resolveOrderByLeaves', () => {
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
-            'company-name-id',
-            'company-object-id',
-          ),
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
+        }),
+      ).toThrow('does not have permission');
+    });
+
+    it('should reject ordering by timelineActivity properties through a relation for a role with a restricted field', () => {
+      const activityField = createMockField({
+        id: 'activity-id',
+        type: FieldMetadataType.RELATION,
+        name: 'activity',
+        relationTargetObjectMetadataId: 'timeline-activity-object-id',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          joinColumnName: 'activityId',
+        },
+      });
+      const propertiesField = createMockField({
+        id: 'properties-id',
+        type: FieldMetadataType.RAW_JSON,
+        name: 'properties',
+        objectMetadataId: 'timeline-activity-object-id',
+      });
+      const timelineActivityObjectMetadata = getFlatObjectMetadataMock({
+        id: 'timeline-activity-object-id',
+        universalIdentifier: 'timeline-activity-object-id',
+        nameSingular: 'timelineActivity',
+        fieldIds: [propertiesField.id],
+      });
+      const fieldsWithActivity = [...fields, activityField, propertiesField];
+
+      expect(() =>
+        resolveOrderByLeaves({
+          orderBy: [
+            { activity: { properties: OrderByDirection.AscNullsLast } },
+          ],
+          flatObjectMetadata: {
+            ...flatObjectMetadata,
+            fieldIds: [...flatObjectMetadata.fieldIds, activityField.id],
+          },
+          flatObjectMetadataMaps: {
+            ...flatObjectMetadataMaps,
+            byUniversalIdentifier: {
+              ...flatObjectMetadataMaps.byUniversalIdentifier,
+              'timeline-activity-object-id': timelineActivityObjectMetadata,
+            },
+            universalIdentifierById: {
+              ...flatObjectMetadataMaps.universalIdentifierById,
+              'timeline-activity-object-id': 'timeline-activity-object-id',
+            },
+          },
+          flatFieldMetadataMaps: {
+            ...flatFieldMetadataMaps,
+            byUniversalIdentifier: Object.fromEntries(
+              fieldsWithActivity.map((field) => [
+                field.universalIdentifier,
+                field,
+              ]),
+            ),
+            universalIdentifierById: Object.fromEntries(
+              fieldsWithActivity.map((field) => [
+                field.id,
+                field.universalIdentifier,
+              ]),
+            ),
+          },
+          recordReadRestrictions: restrictionsOnField('company-name-id'),
         }),
       ).toThrow('does not have permission');
     });

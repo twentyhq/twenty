@@ -3,6 +3,8 @@ title: Remediați erorile de import
 description: Ghid complet de depanare pentru remedierea erorilor de import CSV.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Prezentare generală
 
 Importul nu funcționează? Acest ghid vă ajută să identificați și să remediați, pas cu pas, erorile comune de import.
@@ -24,13 +26,13 @@ După încărcarea fișierului și cartografierea coloanelor, douăzeci valideaz
 
 Dă click pe un rând evidențiat pentru a vedea mesajul de eroare specific. Tipuri de erori comune:
 
-| Mesaj de eroare                                                                            | Ce înseamnă                                                       |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| Valori duplicate evidențiate în galben                                                     | Valoarea există deja în 20 sau apare de două ori în fișierul dvs. |
-| `{field} nu este un {type}` (planează pe celula galbenă)                                   | Datele nu corespund formatului așteptat                           |
-| Câmp obligatoriu evidențiat                                                                | Un câmp obligatoriu este gol                                      |
-| `Nu se poate conecta la {object}. Nu s-a găsit nicio înregistrare unică...` (import fails) | Nu exista inregistrare referita                                   |
-| \`Prea multe înregistrări. Până la 10000 permise" (încărcare blocată)                      | Fișierul are mai mult de 10.000 de înregistrări                   |
+| Mesaj de eroare                                                                            | Ce înseamnă                                                      |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| Valori duplicate evidențiate în galben                                                     | Valoarea există deja în 20 sau apare de două ori în fișierul dvs |
+| `{field} nu este un {type}` (planează pe celula galbenă)                                   | Datele nu corespund formatului așteptat                          |
+| Câmp obligatoriu evidențiat                                                                | Un câmp obligatoriu este gol                                     |
+| `Nu se poate conecta la {object}. Nu s-a găsit nicio înregistrare unică...` (import fails) | Nu exista inregistrare referita                                  |
+| \`Prea multe înregistrări. Până la 10000 permise" (încărcare blocată)                      | Fișierul are mai mult de 10.000 de înregistrări                  |
 
 ### Pasul 2: Repară eroarea
 
@@ -90,7 +92,7 @@ Atâta timp cât un identificator unic se potrivește, douăzeci actualizează �
 <Warning>
 **Numar de inregistrari soft-eliminate catre unic.**
 
-Verificaţi Meniul de Comenzi → Vezi înregistrările şterse. (Automatic Translation) Înregistrările de acolo trebuie încă să fie unice. Ștergeți definitiv sau restabiliți și actualizați.
+Verificaţi Meniul de Comenzi → Vezi înregistrările şterse. (Automatic Translation). Înregistrările de acolo trebuie încă să fie unice. Ștergeți definitiv sau restabiliți și actualizați.
 </Warning>
 
 Pentru mai multe detalii: [Constrângeri de unicitate](/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -181,7 +183,7 @@ Cum să găsești numele API:
 
 1. Mergeți la **Setări → Modelul de date**
 2. Selectați obiectul și câmpul
-3. Activează **Mod avansat** (comutare în dreapta jos)
+3. Deschideți meniul **⋮** de lângă **Opțiuni** și alegeți **Afișează valorile API**
 4. Utilizați numele API (de exemplu, `OPTION_1`, nu "Opțiunea 1")
 
 ```
@@ -428,3 +430,5 @@ Dacă aţi încercat soluţiile de mai sus:
    * [Constrângeri unice](/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
    * [Importă Relații](/ro/user-guide/data-migration/capabilities/import-relations)
    * [Gestionare eroare](/ro/user-guide/data-migration/capabilities/error-handling)
+
+<PageBanner illustration="card-page-bug-requests" />

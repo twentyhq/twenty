@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-latest-teams-call-recording-ids-for-calendar-events-or-throw';
 
-type CallRecordingNode = { id: string; calendarEventId: string | null };
+type CallRecordingNode = { id: string; calendarEventId?: string | null };
 
 type QueryRequest = {
   callRecordings: {
@@ -40,6 +40,8 @@ describe('findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow', () => {
     const query = vi.fn(async () =>
       toConnection({
         nodes: [
+          { id: 'recording-without-event' },
+          { id: 'recording-with-null-event', calendarEventId: null },
           { id: 'recording-a-latest', calendarEventId: 'event-a' },
           { id: 'recording-b-latest', calendarEventId: 'event-b' },
           { id: 'recording-a-older', calendarEventId: 'event-a' },

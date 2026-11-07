@@ -6,8 +6,8 @@ import GraphQLJSON from 'graphql-type-json';
 // (a discriminated union defined in twenty-shared).
 @ObjectType('AgentChatEvent')
 export class AgentChatEventDTO {
-  @Field(() => String)
-  threadId: string;
+  @Field(() => String, { nullable: true })
+  threadId: string | null;
 
   @Field(() => GraphQLJSON)
   event: Record<string, unknown>;

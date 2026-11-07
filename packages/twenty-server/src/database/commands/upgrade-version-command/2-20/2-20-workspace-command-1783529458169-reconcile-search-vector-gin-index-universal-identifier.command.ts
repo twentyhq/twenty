@@ -231,6 +231,7 @@ export class ReconcileSearchVectorGinIndexUniversalIdentifierCommand extends Pro
       const validateAndBuildResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             allFlatEntityOperationByMetadataName: {
               index: {

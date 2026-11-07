@@ -115,7 +115,9 @@ describe('useAddressAutocomplete', () => {
       return { street: '10 Rue de Rivoli', city: 'Paris' };
     });
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails({
@@ -153,7 +155,9 @@ describe('useAddressAutocomplete', () => {
       return { street: '10 Rue de Rivoli', city: 'Paris', postcode: '75001' };
     });
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails({
@@ -185,7 +189,9 @@ describe('useAddressAutocomplete', () => {
     mockGetPlaceDetailsData.mockResolvedValue(mockPlaceData);
     mockFindCountryNameByCountryCode.mockReturnValue('United States');
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     const internalValue = {
       addressStreet1: '123 Main St',
@@ -231,7 +237,9 @@ describe('useAddressAutocomplete', () => {
     });
     mockFindCountryNameByCountryCode.mockReturnValue('United States');
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails({
@@ -271,7 +279,9 @@ describe('useAddressAutocomplete', () => {
     mockGetPlaceDetailsData.mockResolvedValue(mockPlaceData);
     mockFindCountryNameByCountryCode.mockReturnValue(null);
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     const internalValue = {
       addressStreet1: '123 Main St',
@@ -310,7 +320,9 @@ describe('useAddressAutocomplete', () => {
     mockGetPlaceDetailsData.mockResolvedValue({});
     mockFindCountryNameByCountryCode.mockReturnValue(null);
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails({
@@ -346,7 +358,9 @@ describe('useAddressAutocomplete', () => {
       addressLng: null,
     };
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     let firstSelection: Promise<unknown> = Promise.resolve();
     let secondSelection: Promise<unknown> = Promise.resolve();
@@ -397,7 +411,9 @@ describe('useAddressAutocomplete', () => {
     const mockOnChange = jest.fn();
     mockGetPlaceDetailsData.mockRejectedValue(new Error('Network error'));
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     act(() => {
       result.current.setTypeOfAddressForAutocomplete('addressStreet1');
@@ -424,7 +440,9 @@ describe('useAddressAutocomplete', () => {
       { text: '123 Main St', placeId: 'place123' },
     ]);
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.getAutocompletePlaceData({
@@ -474,7 +492,9 @@ describe('useAddressAutocomplete', () => {
     mockGetPlaceDetailsData.mockResolvedValue(mockPlaceData);
     mockFindCountryNameByCountryCode.mockReturnValue('United States');
 
-    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+    const { result } = renderHook(() =>
+      useAddressAutocomplete({ onChange: mockOnChange }),
+    );
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails({

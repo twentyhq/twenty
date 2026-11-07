@@ -1,7 +1,6 @@
 ---
 title: インストールフック
 description: インストール、アップグレード、アンインストールのライフサイクル中にロジックを実行し、データのシード、レコードのバックアップ、アップグレードの検証、外部リソースのクリーンアップを行います。
-icon: wrench
 ---
 
 インストールフックは、インストール、アップグレード、またはアンインストールのライフサイクル中に実行される特別なロジック関数です。 これらは通常の[ロジック関数](/ja/developers/extend/apps/logic/logic-functions)と同じハンドラーランタイムを共有しますが、独自の define 関数で宣言され、通常のトリガーモデル (HTTP、cron、データベースイベント) の外側で動作します。 インストールフックは `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — 新規インストールでは `previousVersion` は `undefined`) を受け取り、アンインストールフックは `UninstallPayload` (`{ version?: string }` — 削除されるバージョン) を受け取ります。

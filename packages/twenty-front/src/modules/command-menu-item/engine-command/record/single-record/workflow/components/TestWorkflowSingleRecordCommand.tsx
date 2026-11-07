@@ -1,4 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
@@ -11,6 +13,9 @@ export const TestWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(
+    getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
+  );
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
@@ -23,21 +28,31 @@ export const TestWorkflowSingleRecordCommand = () => {
     throw new Error(doNotTranslate('Record ID is required to test workflow'));
   }
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
 
-    const { currentVersion } = workflowWithCurrentVersion;
+    const { isSaved, savedDraftFlow } = await savePendingWorkflowFlow();
 
-    if (!isDefined(content) || !isDefined(content.trigger)) {
+    if (!isSaved) {
+      return;
+    }
+
+    const trigger = isDefined(savedDraftFlow)
+      ? savedDraftFlow.trigger
+      : content?.trigger;
+
+    if (!isDefined(trigger)) {
       return;
     }
 
     return runWorkflowVersion({
-      workflowVersionId: currentVersion.id,
+      workflowVersionId:
+        savedDraftFlow?.workflowVersionId ??
+        workflowWithCurrentVersion.currentVersion.id,
       workflowId: workflowWithCurrentVersion.id,
-      payload: getTestPayloadFromTrigger(content.trigger),
+      payload: getTestPayloadFromTrigger(trigger),
     });
   };
 

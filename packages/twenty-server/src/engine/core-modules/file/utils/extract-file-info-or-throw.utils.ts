@@ -11,7 +11,7 @@ import {
 
 import { detectPdf } from '@file-type/pdf';
 import { TWENTY_MIME_POLICY } from 'src/engine/core-modules/file/constants/twenty-mime-policy.constant';
-import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.util';
 
 const fileTypeParser = new FileTypeParser({
   customDetectors: [detectPdf],

@@ -7,7 +7,7 @@ import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { type Editor as ReactEditor } from '@tiptap/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
@@ -69,7 +69,7 @@ describe('AiChatParticipantMentionBar', () => {
       editor.commands.insertContent(
         getMentionTagContent({
           recordId: GRACE_ID,
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
           label: 'Grace Hopper',
           imageUrl: '',
           shouldAddAsParticipant: true,

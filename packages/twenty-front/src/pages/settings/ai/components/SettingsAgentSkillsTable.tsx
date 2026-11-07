@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -35,6 +36,7 @@ export const SettingsAgentSkillsTable = ({
 }: SettingsAgentSkillsTableProps) => {
   const theme = useTheme();
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const showSkeleton = loading && skills.length === 0;
 
@@ -73,7 +75,7 @@ export const SettingsAgentSkillsTable = ({
                   />
                 ) : (
                   <SettingsSkillInactiveMenuDropDown
-                    isCustomSkill={skill.isCustom}
+                    isCustomSkill={getIsMetadataItemCustom(skill)}
                     skillId={skill.id}
                     onActivate={() => onActivate(skill.id)}
                     onDelete={() => onDelete(skill.id)}

@@ -22,6 +22,7 @@ const METADATA_QUERY = `
           isRemote
           isActive
           isSystem
+          isAuditLogged
           isUIEditable
           isUICreatable
           createdAt
@@ -51,7 +52,8 @@ const METADATA_QUERY = `
             indexWhereClause
             indexType
             isUnique
-            isCustom
+            applicationId
+            isSystemSideEffect
             indexFieldMetadataList {
               __typename
               id

@@ -3,8 +3,12 @@ title: AvatarGroup
 description: Overlapping avatars with a derived overflow indicator.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
+
+## Overview
 
 `AvatarGroup` receives rendered avatars and derives the hidden count. `maxVisible` counts actual avatars; the overflow indicator is additional. Eight supplied avatars with `maxVisible={3}` show three avatars and `+5`.
 
@@ -167,3 +171,5 @@ export const NamedTeamAvatars = () => {
 `AvatarGroupProps` is exported from `twenty-ui/components/data-display`.
 
 <AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

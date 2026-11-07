@@ -1,5 +1,6 @@
 export const ALL_METADATA_NAME = {
   fieldMetadata: 'fieldMetadata',
+  fieldMetadataOption: 'fieldMetadataOption',
   objectMetadata: 'objectMetadata',
   view: 'view',
   viewField: 'viewField',
@@ -29,10 +30,15 @@ export const ALL_METADATA_NAME = {
   webhook: 'webhook',
   applicationVariable: 'applicationVariable',
   connectionProvider: 'connectionProvider',
+  messagingProvider: 'messagingProvider',
+  mcpServer: 'mcpServer',
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',
+  relatedRecordPath: 'relatedRecordPath',
   validationRule: 'validationRule',
   workflow: 'workflow',
   workflowVersion: 'workflowVersion',
+  agentChatChannel: 'agentChatChannel',
+  agentChatChannelRole: 'agentChatChannelRole',
 } as const;

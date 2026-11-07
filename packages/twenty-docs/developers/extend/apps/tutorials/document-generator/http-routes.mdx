@@ -1,8 +1,13 @@
 ---
 title: 3. HTTP routes
-icon: "globe"
 description: Trigger the function over HTTP and render documents as web pages.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Overview
 
 The same handler can also answer HTTP requests. We'll add two routes:
 
@@ -71,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -90,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -133,18 +152,25 @@ http://localhost:2020/s/documents/view?id=<documentId>
 ```
 
 <Frame caption="The public GET route renders the document as a printable page.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="A rendered document web page" />
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
+    alt="A rendered document web page"
+  />
 </Frame>
 
 <Tip>
-You can also stream a function's logs while testing with
-`yarn twenty dev:function:logs`, or invoke it directly with
-`yarn twenty dev:function:exec`.
+  You can also stream a function's logs while testing with `twenty app logs`, or
+  invoke it directly with `twenty app exec`.
 </Tip>
 
 **After this step:** the app can generate documents over HTTP and serve them as
 web pages. Now let's make it usable without `curl`.
 
-<Card title="Next: building the UI →" icon="table-columns" href="/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
+  <CardTitle>Next: building the UI →</CardTitle>
   Views, navigation, a command, and a front component.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />

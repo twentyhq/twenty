@@ -38,6 +38,7 @@ const ChipControls = () => {
                 <Chip
                   render={<button type="button" disabled />}
                   onClick={handleClick}
+                  variant="outline"
                 >
                   Disabled chip
                 </Chip>
@@ -84,6 +85,10 @@ const ChipControls = () => {
                   render={
                     <a href="#chip-documentation" data-composed="chip-link" />
                   }
+                  variant="outline"
+                  shape="round"
+                  clickable
+                  maxWidth={140}
                   aria-label="Chip documentation"
                   ref={(element) => {
                     element?.setAttribute('data-ref-target', 'chip-link');

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -79,7 +80,6 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 const StyledIntervalContainer = styled.div`
-  flex-direction: row;
   margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
@@ -136,7 +136,7 @@ export const EnterprisePlanModal = () => {
 
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
-      if (checkoutUrl !== null && checkoutUrl !== undefined) {
+      if (isDefined(checkoutUrl)) {
         openUrlInNewTab(checkoutUrl);
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
@@ -184,6 +184,7 @@ export const EnterprisePlanModal = () => {
             </StyledSubscriptionContainer>
 
             <RadioGroup
+              orientation="horizontal"
               render={<StyledIntervalContainer />}
               aria-label={t`Billing interval`}
               value={selectedInterval}

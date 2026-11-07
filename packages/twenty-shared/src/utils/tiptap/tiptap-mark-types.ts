@@ -4,6 +4,8 @@ export const TIPTAP_MARK_TYPES = {
   UNDERLINE: 'underline',
   STRIKE: 'strike',
   LINK: 'link',
+  CODE: 'code',
+  TEXT_STYLE: 'textStyle',
 } as const;
 
 export type TipTapMarkType =

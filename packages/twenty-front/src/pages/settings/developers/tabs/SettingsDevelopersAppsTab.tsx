@@ -1,10 +1,10 @@
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { TWENTY_CLI_CREATE_APP_COMMANDS } from '@/settings/developers/constants/TwentyCliCreateAppCommands';
+import { TWENTY_CLI_LOGIN_COMMAND } from '@/settings/developers/constants/TwentyCliLoginCommand';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -12,23 +12,20 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
+import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistrationListItemFragment,
   FindManyApplicationRegistrationsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import {
-  APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
-  SettingsApplicationTableRow,
-} from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
+import { SettingsApplicationsTableApplicationRow } from '@/settings/applications/components/SettingsApplicationsTableApplicationRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
@@ -49,7 +46,6 @@ const StyledTableRowsContainer = styled.div`
 
 export const SettingsDevelopersAppsTab = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { copyToClipboard } = useCopyToClipboard();
@@ -67,10 +63,10 @@ export const SettingsDevelopersAppsTab = () => {
   const registrations: ApplicationRegistrationListItemFragment[] =
     data?.findManyApplicationRegistrations ?? [];
 
-  const createCommands = doNotTranslate([
-    'npx create-twenty-app@latest my-twenty-app',
-    'cd my-twenty-app',
-  ]);
+  const createCommands = [
+    TWENTY_CLI_LOGIN_COMMAND,
+    ...TWENTY_CLI_CREATE_APP_COMMANDS,
+  ];
 
   const createCopyButton = (
     <Button
@@ -117,8 +113,6 @@ export const SettingsDevelopersAppsTab = () => {
         </StyledButtonContainer>
       </Section.Root>
 
-      {canClaimApplications && <SettingsClaimApplicationSection />}
-
       {registrations.length > 0 && (
         <Section.Root>
           <Section.Header
@@ -133,36 +127,21 @@ export const SettingsDevelopersAppsTab = () => {
             />
           </StyledSearchInputContainer>
           <Table>
-            <TableRow
-              gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Type`}</TableHeader>
-              <TableHeader>{''}</TableHeader>
-              <TableHeader />
-            </TableRow>
+            <SettingsApplicationTableHeaderRow middleColumn="type" />
             <StyledTableRowsContainer>
-              {registrations.map((registration) => {
-                return (
-                  <SettingsApplicationTableRow
-                    key={registration.id}
-                    application={registration}
-                    sourceType={registration.sourceType}
-                    action={
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={theme.font.color.light}
-                      />
-                    }
-                    link={getRegistrationLink(registration)}
-                  />
-                );
-              })}
+              {registrations.map((registration) => (
+                <SettingsApplicationsTableApplicationRow
+                  key={registration.id}
+                  application={registration}
+                  link={getRegistrationLink(registration)}
+                />
+              ))}
             </StyledTableRowsContainer>
           </Table>
         </Section.Root>
       )}
+
+      {canClaimApplications && <SettingsClaimApplicationSection />}
     </>
   );
 };

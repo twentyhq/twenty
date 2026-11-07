@@ -2,7 +2,6 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ComponentType } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,6 +24,7 @@ import {
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SchemaProperty = {
   type?: string;
@@ -95,6 +95,7 @@ export const SettingsToolParameterTable = ({
   requiredFields,
   functionLink,
 }: SettingsToolParameterTableProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const entries = Object.entries(schemaProperties);
 
@@ -117,8 +118,7 @@ export const SettingsToolParameterTable = ({
             </TableRow>
           </StyledTableHeaderRow>
           <StyledFieldsContainer>
-            {entries.map(([paramName, property], index) => {
-              const infoIconId = `param-info-${index}`;
+            {entries.map(([paramName, property]) => {
               const displayType = getDisplayType(property);
               const TypeIcon = TYPE_ICON_MAP[getTypeIconKey(property)];
 
@@ -155,10 +155,8 @@ export const SettingsToolParameterTable = ({
                           delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
-                            id={infoIconId}
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
-                            style={{ outline: 'none', cursor: 'pointer' }}
                           />
                         </Tooltip>
                       </StyledInfoIconContainer>

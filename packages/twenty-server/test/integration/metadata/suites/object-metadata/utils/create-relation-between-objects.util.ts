@@ -44,7 +44,10 @@ export const createRelationBetweenObjects = async <
     },
   };
 
-  const { data } = await createOneFieldMetadata<typeof type>({
+  const { data } = await createOneFieldMetadata<
+    T,
+    FieldMetadataDTO<T> & { relation: RelationDTO }
+  >({
     input: createFieldInput,
     gqlFields: `
             id
@@ -81,7 +84,5 @@ export const createRelationBetweenObjects = async <
     expectToFail: false,
   });
 
-  return data.createOneField as unknown as FieldMetadataDTO<T> & {
-    relation: RelationDTO;
-  };
+  return data.createOneField;
 };

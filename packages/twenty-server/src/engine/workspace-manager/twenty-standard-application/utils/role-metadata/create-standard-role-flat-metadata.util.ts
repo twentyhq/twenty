@@ -14,7 +14,9 @@ export type CreateStandardRoleContext = {
   isEditable: boolean;
   canUpdateAllSettings: boolean;
   canAccessAllTools: boolean;
+  canAccessAllAgentChatChannels: boolean;
   canReadAllObjectRecords: boolean;
+  canCreateAllObjectRecords: boolean;
   canUpdateAllObjectRecords: boolean;
   canSoftDeleteAllObjectRecords: boolean;
   canDestroyAllObjectRecords: boolean;
@@ -36,7 +38,9 @@ export const createStandardRoleFlatMetadata = ({
     isEditable,
     canUpdateAllSettings,
     canAccessAllTools,
+    canAccessAllAgentChatChannels,
     canReadAllObjectRecords,
+    canCreateAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords,
@@ -59,13 +63,16 @@ export const createStandardRoleFlatMetadata = ({
     isEditable,
     canUpdateAllSettings,
     canAccessAllTools,
+    canAccessAllAgentChatChannels,
     canReadAllObjectRecords,
+    canCreateAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords,
     canBeAssignedToUsers,
     canBeAssignedToAgents,
     canBeAssignedToApiKeys,
+    canBeAssignedToApplications: false,
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -81,8 +88,10 @@ export const createStandardRoleFlatMetadata = ({
     roleTargetIds: [],
     roleTargetUniversalIdentifiers: [],
     rowLevelPermissionPredicateIds: [],
+    agentChatChannelRoleIds: [],
     rowLevelPermissionPredicateGroupIds: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
+    agentChatChannelRoleUniversalIdentifiers: [],
   };
 };

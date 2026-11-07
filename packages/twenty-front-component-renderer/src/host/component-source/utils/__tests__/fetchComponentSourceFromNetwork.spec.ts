@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { fetchComponentSourceFromNetwork } from '@/host/component-source/utils/fetchComponentSourceFromNetwork';
 
 const COMPONENT_URL =
@@ -6,7 +9,6 @@ const CACHE_BUSTED_COMPONENT_URL = `${COMPONENT_URL}?cacheBust=v2`;
 const PRESIGNED_URL = 'https://s3.example.com/component.js?signed=abc';
 
 type FakeResponseInit = {
-  ok?: boolean;
   status?: number;
   statusText?: string;
   contentType?: string;
@@ -15,22 +17,17 @@ type FakeResponseInit = {
 };
 
 const createFakeResponse = ({
-  ok = true,
   status = 200,
   statusText = 'OK',
   contentType = 'application/javascript',
   body = '',
   json,
-}: FakeResponseInit) => ({
-  ok,
-  status,
-  statusText,
-  headers: {
-    get: (name: string) => (name === 'content-type' ? contentType : null),
-  },
-  text: jest.fn(async () => body),
-  json: jest.fn(async () => json),
-});
+}: FakeResponseInit) =>
+  new Response(json === undefined ? body : JSON.stringify(json), {
+    status,
+    statusText,
+    headers: { 'content-type': contentType },
+  });
 
 describe('fetchComponentSourceFromNetwork', () => {
   const originalFetch = globalThis.fetch;
@@ -45,7 +42,7 @@ describe('fetchComponentSourceFromNetwork', () => {
       createFakeResponse({ body: 'export default () => {};' }),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSourceFromNetwork({
       url: COMPONENT_URL,
@@ -55,6 +52,26 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('export default () => {};');
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
+      credentials: 'same-origin',
+    });
+  });
+
+  it('can load an app bundle without the user session', async () => {
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValue(
+        createFakeResponse({ body: 'export const shared = true;' }),
+      );
+    globalThis.fetch = fetchMock;
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
+      headers: { Authorization: 'Bearer app-token' },
       credentials: 'omit',
     });
   });
@@ -72,7 +89,7 @@ describe('fetchComponentSourceFromNetwork', () => {
         createFakeResponse({ body: 'presigned bundle source' }),
       );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     const source = await fetchComponentSourceFromNetwork({
       url: COMPONENT_URL,
@@ -82,10 +99,44 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('presigned bundle source');
     expect(fetchMock).toHaveBeenNthCalledWith(1, CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
-      credentials: 'omit',
+      credentials: 'same-origin',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
+    });
+  });
+
+  it('does not forward app authorization to a presigned handoff', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        createFakeResponse({
+          contentType: 'application/json',
+          json: { url: PRESIGNED_URL },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createFakeResponse({ body: 'presigned bundle source' }),
+      );
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer token' },
       credentials: 'omit',
+    });
+
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(
+      1,
+      CACHE_BUSTED_COMPONENT_URL,
+      {
+        headers: {
+          Authorization: 'Bearer token',
+        },
+        credentials: 'omit',
+      },
+    );
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
     });
   });
 
@@ -94,7 +145,7 @@ describe('fetchComponentSourceFromNetwork', () => {
       createFakeResponse({ body: 'export default () => {};' }),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await fetchComponentSourceFromNetwork({
       url: `${COMPONENT_URL}?token=abc`,
@@ -102,16 +153,16 @@ describe('fetchComponentSourceFromNetwork', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       `${COMPONENT_URL}?token=abc&cacheBust=v2`,
-      { headers: undefined, credentials: 'omit' },
+      { headers: undefined, credentials: 'same-origin' },
     );
   });
 
   it('throws when the initial response is not ok', async () => {
     const fetchMock = jest.fn(async () =>
-      createFakeResponse({ ok: false, status: 404, statusText: 'Not Found' }),
+      createFakeResponse({ status: 404, statusText: 'Not Found' }),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(
       fetchComponentSourceFromNetwork({ url: COMPONENT_URL }),
@@ -126,7 +177,7 @@ describe('fetchComponentSourceFromNetwork', () => {
       }),
     );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(
       fetchComponentSourceFromNetwork({ url: COMPONENT_URL }),
@@ -145,10 +196,10 @@ describe('fetchComponentSourceFromNetwork', () => {
         }),
       )
       .mockResolvedValueOnce(
-        createFakeResponse({ ok: false, status: 403, statusText: 'Forbidden' }),
+        createFakeResponse({ status: 403, statusText: 'Forbidden' }),
       );
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(
       fetchComponentSourceFromNetwork({ url: COMPONENT_URL }),

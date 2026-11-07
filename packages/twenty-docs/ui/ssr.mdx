@@ -3,7 +3,11 @@ title: Server rendering
 description: Understand Twenty UI's current server-rendering constraints and theme initialization.
 ---
 
-Twenty UI is still in alpha and does not yet provide a package-wide server-rendering guarantee. Verify the specific entry points and components you use with your framework's server build and hydration flow.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
+Twenty UI does not yet provide a package-wide server-rendering guarantee. Verify the specific entry points and components you use with your framework's server build and hydration flow.
 
 ## Load CSS through your framework
 
@@ -28,3 +32,5 @@ This makes the palette available before hydration. Decide the initial scheme fro
 Use CSS variable references for styles and defer calculations that need resolved dimensions until the client has loaded the theme. Test hydration with the same components, stylesheets, and initial scheme that you deploy.
 
 The [front component renderer](/developers/extend/apps/layout/front-components#current-limitations) is a separate sandbox with its own DOM limitations; successful browser rendering does not establish sandbox support.
+
+<PageBanner illustration="dev-self-host" />

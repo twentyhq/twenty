@@ -24,8 +24,8 @@ export const AUTH_LOGIN_COMMAND_DEFINITION: LocalCommandDefinition = {
   ],
   examples: [
     'twenty auth login --url https://acme.twenty.com',
-    'twenty auth login --url https://acme.twenty.com --name prod',
-    'printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name prod',
+    'twenty auth login --url https://acme.twenty.com --name prod --use',
+    'printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name prod --use',
     'twenty auth login --with-token --remote prod < api-key.txt',
   ],
   outputModes: ['human', 'json'],

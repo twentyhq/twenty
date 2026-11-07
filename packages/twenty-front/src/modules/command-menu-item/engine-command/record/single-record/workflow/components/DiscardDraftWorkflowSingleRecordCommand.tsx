@@ -1,4 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -10,6 +12,9 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(
+    getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
+  );
   const { discardCoreWorkflowDraft } = useDiscardCoreWorkflowDraft();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
@@ -21,10 +26,12 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
     );
   }
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
+
+    await savePendingWorkflowFlow();
 
     return discardCoreWorkflowDraft({
       coreWorkflowVersionId: workflowWithCurrentVersion.currentVersion.id,

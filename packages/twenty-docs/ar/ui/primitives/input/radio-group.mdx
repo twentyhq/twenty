@@ -1,0 +1,142 @@
+---
+title: RadioGroup
+description: إدارة اختيار واحد ضمن مجموعة من خيارات أزرار الاختيار.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+## نظرة عامة
+
+يتولى `RadioGroup` تنسيق القيمة والتنقل باستخدام لوحة المفاتيح وإرسال النموذج لعناصره الفرعية [Radio](/ar/ui/primitives/input/radio).
+
+<StoryEmbed storyId="ui-input-radiogroup--display" title="مثال على RadioGroup" height={110} />
+
+## استخدام
+
+### الحالة غير المتحكَّم بها.
+
+استخدم `defaultValue` لتعيين وتيرة الفوترة الأولية. تمتلك المجموعة التغييرات اللاحقة.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+يحدّد `name` الخاص بالمجموعة القيمة المحددة عند إرسال النموذج. امنح المجموعة اسمًا متاحًا، بالإضافة إلى تسمية كل زر اختيار.
+
+### تخطيط أفقي
+
+تستخدم المجموعات عمودًا رأسيًا افتراضيًا. عيّن `orientation="horizontal"` لصف. تتحكم الخاصية في التخطيط المرئي عبر `data-orientation`؛ ولا تضبط `aria-orientation` أو تغيّر التنقل عبر لوحة المفاتيح. يحتفظ مفتاحا السهمين الأفقي والرأسي بسلوك Base UI الحالي، بما في ذلك التنقل من اليمين إلى اليسار عبر [DirectionProvider](/ar/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-radiogroup--horizontal" title="RadioGroup أفقي" height={80} />
+
+تظل الفجوة الافتراضية كما هي في أي من الاتجاهين.
+
+## البنية
+
+ضع كل `Radio` أو `Radio.Root` داخل المجموعة واربطه بتسمية. استخدم `Radio.Indicator` لإنشاء مؤشر مخصص. `RadioGroup` و`Radio` تصديران منفصلان.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| الجزء                | المتطلبة         | الغرض                                                     |
+| -------------------- | ---------------- | --------------------------------------------------------- |
+| `RadioGroup`         | مطلوب            | يتولى التحديد والتنقل بلوحة المفاتيح والتكامل مع النموذج. |
+| `راديو`              | واحد لكل خيار    | يوفر خيارًا ذا `value` مميزة.                             |
+| `label`              | موصى به لكل خيار | يوفر اسمًا مرئيًا وقابلًا للنقر لزر الاختيار الخاص به.    |
+| `fieldset`, `legend` | تجميع اختياري    | يجمع عناصر التحكم ذات الصلة تحت عنوان مرئي.               |
+
+امنح المجموعة اسمًا خاصًا بها يمكن الوصول إليه باستخدام `aria-label` أو `aria-labelledby`. في الأمثلة أدناه، يربط `aria-labelledby` المجموعة بوسيلة الإيضاح. يحتاج كل زر اختيار أيضًا إلى اسمه الخاص. ضع خصائص التحديد على `RadioGroup` وقيم الخيارات على `Radio`.
+
+## الحالة المتحكم بها
+
+مرّر `value` وحدّثه باستخدام `onValueChange` لامتلاك وتيرة الفوترة نفسها في حالة React. الاختيار تابع للمجموعة، وليس لعناصر التحكّم الفردية من نوع radio.
+
+```tsx
+import { useId, useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+يتلقى `onValueChange` القيمة التالية وتفاصيل الحدث. يُستنتج نوع القيمة العام من الخصائص. استخدم `disabled` على المجموعة لتعطيل كل خيار، أو على زر اختيار فردي لتعطيل اختيار واحد. تتنقل مفاتيح الأسهم بين الخيارات المفعّلة وتحددها؛ وينقل المفتاح Tab التركيز خارج المجموعة. يدعم إصدار Base UI المثبّت مفاتيح الأسهم الأفقية والعمودية كليهما. تضيف RadioGroup الخاصية `orientation` للعرض المرئي فقط دون تغيير اتفاقية لوحة المفاتيح تلك.
+
+## تفاصيل التكامل الأصلي والأحداث
+
+يعرض `RadioGroup` عنصر div افتراضيًا. تستهدف الخصائص الأصلية و`ref` ذلك العنصر؛ بينما ينشئ `render` عنصرًا آخر ويغيّر هدف المرجع الفعلي. يستهدف `inputRef` حقل الإدخال المخفي الممثل لزر اختيار فرعي، باستخدام الخيار المفعّل المحدد أو خيار احتياطي مفعّل. تتضمن الأنواع العامة `RadioGroupProps` و`RadioGroupState` و`RadioGroupChangeEventReason` و`RadioGroupChangeEventDetails`.
+
+تتلقى دالة رد الاتصال تفاصيل الحدث الأصلية، بما في ذلك `event` و`reason` و`cancel()` و`allowPropagation()`. ألغِ تغييرًا مقترحًا قبل تحديث الحالة المتحكَّم بها عندما ينبغي رفض الاختيار.
+
+أبقِ `name` و`form` و`required` و`disabled` و`readOnly` في المجموعة للحفاظ على عقد نموذج Base UI الحالي. تُرسل القيمة المحددة ضمن `name`؛ وتُستبعد المجموعات المعطلة، بينما تحتفظ المجموعات للقراءة فقط باختيارها. يدعم `form` مجموعة خارج النموذج الذي يملكها. لا يستعيد الإصدار المثبّت حالة المجموعة تلقائيًا عند إعادة تعيين النموذج الأصلي. أعد تعيين الحالة المتحكَّم بها من معالج `onReset` الخاص بالنموذج عندما يتطلب سير العمل ذلك.
+
+في مكونات الواجهة الأمامية المعزولة، ضع المجموعة داخل النموذج الذي يملكها. يمرر العارض عملية التحقق `required` ويحظر مراجع `form` الصريحة، التي كانت ستُحلّ بخلاف ذلك عبر مستند المضيف.
+
+[عنصر التحكم المجزأ](/ar/ui/components/input/segmented-control) إعداد مسبق ملائم مُجمَّع من هذه المكونات الأساسية لاختيار حصري قصير. يستخدم دلالات زر الاختيار ويتطلب اسمًا متاحًا للمجموعة. علامات التبويب والتنقل بين لوحات علامات التبويب عنصرَا تحكم منفصلان.
+
+## الخصائص
+
+يُنشأ المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء المتاحة ومعالجات الأحداث، على الأجزاء التي تعرض عناصر.
+
+<RadioGroupReference />
+
+<PageBanner illustration="page-cover-switch" />

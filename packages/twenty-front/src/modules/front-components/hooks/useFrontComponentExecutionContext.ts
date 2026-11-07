@@ -7,6 +7,7 @@ import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   buildFrontComponentStorageNamespace,
   clearFrontComponentStorage,
@@ -37,6 +38,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
+import { isNonEmptyBlob } from '@/front-components/utils/isNonEmptyBlob';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -55,7 +57,7 @@ import { useStore } from 'jotai';
 import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -148,6 +150,7 @@ export const useFrontComponentExecutionContext = ({
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
+  const location = useLocation();
   const store = useStore();
   const { requestApplicationAccessTokenRefresh } =
     useFrontComponentApplicationTokenPair();
@@ -471,6 +474,12 @@ export const useFrontComponentExecutionContext = ({
     colorScheme,
     // The host is always configured with APP_LOCALES, so this is a valid AppLocale.
     locale: i18n.locale as AppLocale,
+    location: {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash,
+      origin: window.location.origin,
+    },
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =
@@ -521,8 +530,7 @@ export const useFrontComponentExecutionContext = ({
     async (file, params) => {
       // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
-        !(file instanceof Blob) ||
-        file.size === 0 ||
+        !isNonEmptyBlob(file) ||
         !isDefined(params) ||
         !isNonEmptyString(params.fieldMetadataId)
       ) {

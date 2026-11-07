@@ -1,3 +1,4 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -13,11 +14,12 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type Agent } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -50,7 +52,7 @@ type CoreAgentSettingsTabProps = {
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => void;
   disabled: boolean;
-  agent?: Agent;
+  agent?: FlatAgent;
 };
 
 export const CoreAgentSettingsTab = ({
@@ -61,6 +63,7 @@ export const CoreAgentSettingsTab = ({
 }: CoreAgentSettingsTabProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const noModelsAvailable = aiModels.length === 0;
@@ -76,7 +79,7 @@ export const CoreAgentSettingsTab = ({
       <StyledFormContainer>
         <StyledIconNameRow>
           <IconPicker
-            selectedIconKey={formValues.icon || 'IconLego'}
+            selectedIconKey={getAgentIcon(formValues.icon)}
             onChange={({ iconKey }) => {
               onFieldChange('icon', iconKey);
             }}
@@ -145,7 +148,7 @@ export const CoreAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-      {!disabled && agent && formValues.isCustom && (
+      {!disabled && isDefined(agent) && getIsMetadataItemCustom(agent) && (
         <Section.Root>
           <Section.Header
             title={t`Danger zone`}

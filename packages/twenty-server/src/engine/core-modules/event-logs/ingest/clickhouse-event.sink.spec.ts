@@ -1,3 +1,5 @@
+import { Test } from '@nestjs/testing';
+
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
@@ -13,11 +15,16 @@ const applicationLog: WorkspaceEventEnvelope = {
     timestamp: 't',
     workspaceId: 'w',
     applicationId: '',
+    applicationRegistrationId: '',
+    applicationVersion: '',
+    source: 'LOGIC_FUNCTION',
     logicFunctionId: '',
     logicFunctionName: 'fn',
     executionId: 'e',
     level: 'INFO',
     message: 'm',
+    errorCode: '',
+    properties: {},
   },
 };
 
@@ -26,14 +33,18 @@ describe('ClickHouseEventSink', () => {
   let insert: jest.Mock;
   let getMainClient: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     insert = jest.fn().mockResolvedValue({ success: true });
     getMainClient = jest.fn().mockReturnValue({});
 
-    sink = new ClickHouseEventSink({
-      insert,
-      getMainClient,
-    } as unknown as ClickHouseService);
+    const module = await Test.createTestingModule({
+      providers: [
+        ClickHouseEventSink,
+        { provide: ClickHouseService, useValue: { insert, getMainClient } },
+      ],
+    }).compile();
+
+    sink = module.get(ClickHouseEventSink);
   });
 
   it('groups envelopes by table and inserts each group once', async () => {

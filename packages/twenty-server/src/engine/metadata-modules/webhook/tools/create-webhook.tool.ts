@@ -1,11 +1,16 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
-import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
-import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
+import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
-const createWebhookSchema = z.object({
+const createWebhookInputSchema = z.object({
   targetUrl: z
     .string()
     .url()
@@ -21,15 +26,17 @@ const createWebhookSchema = z.object({
     .describe(
       'Optional shared secret used to sign payloads. A secret is generated if omitted.',
     ),
+  roleId: z
+    .uuid()
+    .describe(
+      'Id of the role attached to the webhook. Must be a role assignable to API keys.',
+    ),
 });
 
-type CreateWebhookParams = z.infer<typeof createWebhookSchema>;
-
-export const createCreateWebhookTool = (
-  deps: Pick<WebhookToolDependencies, 'webhookService'>,
-  context: WebhookToolContext,
-) => ({
-  name: 'create_webhook' as const,
+@DefineTool({
+  name: 'create_webhook',
+  category: ToolCategory.WEBHOOK,
+  accessPolicy: WEBHOOK_WRITE_ACCESS_POLICY,
   description: `Register a new outgoing webhook for this workspace.
 
 Operations are structured entries discriminated by 'kind':
@@ -39,17 +46,30 @@ Operations are structured entries discriminated by 'kind':
 - {kind:'metadata', metadataName:'*', operation:'*'} → fires on every metadata change.
 
 Mix as needed: pass one array containing both record and metadata operations.`,
-  inputSchema: createWebhookSchema,
-  execute: async (parameters: CreateWebhookParams) => {
-    const webhook = await deps.webhookService.create(
-      {
-        targetUrl: parameters.targetUrl,
-        operations: compileWebhookOperations(parameters.operations),
-        description: parameters.description,
-        secret: parameters.secret,
+})
+export class CreateWebhookTool extends BaseTool<
+  typeof createWebhookInputSchema
+> {
+  readonly inputSchema = createWebhookInputSchema;
+
+  constructor(private readonly webhookService: WebhookService) {
+    super();
+  }
+
+  async execute({
+    input: { targetUrl, operations, description, secret, roleId },
+    context,
+  }: ToolExecuteArgs<typeof createWebhookInputSchema>): Promise<ToolOutput> {
+    const webhook = await this.webhookService.create({
+      input: {
+        targetUrl,
+        operations: compileWebhookOperations(operations),
+        description,
+        secret,
+        roleId,
       },
-      context.workspaceId,
-    );
+      workspaceId: context.workspaceId,
+    });
 
     return {
       success: true,
@@ -61,5 +81,5 @@ Mix as needed: pass one array containing both record and metadata operations.`,
         description: webhook.description,
       },
     };
-  },
-});
+  }
+}

@@ -3,8 +3,12 @@ title: Callout
 description: Feedback with node content, actions, and caller-owned dismissal.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+## Overview
 
 `Callout` combines title, description, icon, and action nodes. Use `status` for `neutral`, `info`, `success`, `warning`, or `error`. It defaults to `info` and supports the `soft` appearance. The status selects a gray, blue, green, orange, or red palette; `color` overrides that palette without changing the meaning.
 
@@ -90,3 +94,5 @@ Replace the previous semantic `variant` with `status`, and constructor `Icon` wi
 ## Props
 
 <CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

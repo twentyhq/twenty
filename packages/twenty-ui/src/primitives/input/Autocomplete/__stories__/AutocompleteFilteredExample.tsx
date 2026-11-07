@@ -24,7 +24,7 @@ export const AutocompleteFilteredExample = () => {
             <Autocomplete.Empty>
               No city starts with this query
             </Autocomplete.Empty>
-            <Autocomplete.List>
+            <Autocomplete.List aria-label="City suggestions">
               {(city: string) => (
                 <Autocomplete.Item key={city} value={city}>
                   {city}

@@ -33,13 +33,9 @@ export const WorkflowDiagramEdgeLabel = ({
   return (
     <StyledContainer>
       {isDefined(elseIfIndex) && <StyledNumber>{elseIfIndex}</StyledNumber>}
-      <StyledDisplayLabel>{label}</StyledDisplayLabel>
+      <Text size="xs" weight="semibold" color="light">
+        {label}
+      </Text>
     </StyledContainer>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

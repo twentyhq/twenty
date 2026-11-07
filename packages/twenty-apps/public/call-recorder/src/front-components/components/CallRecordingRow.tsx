@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { getPublicAssetUrl } from 'twenty-sdk/utils';
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { IconCalendar } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CallRecordingRowMetadata } from 'src/front-components/components/CallRecordingRowMetadata';
 import { CallRecordingRowStatus } from 'src/front-components/components/CallRecordingRowStatus';
@@ -24,6 +24,7 @@ const StyledRightContent = styled.span`
 
 type CallRecordingRowProps = {
   callRecordingId: string;
+  calendarEventId: string | undefined;
   title: string;
   formattedDate: string | undefined;
   formattedDuration: string | undefined;
@@ -32,36 +33,52 @@ type CallRecordingRowProps = {
 
 export const CallRecordingRow = ({
   callRecordingId,
+  calendarEventId,
   title,
   formattedDate,
   formattedDuration,
   statusTag,
 }: CallRecordingRowProps) => {
+  const isClickable = isNonEmptyString(calendarEventId);
+
   const handleClick = () => {
+    if (!isClickable) {
+      return;
+    }
+
     void openRecord({
-      objectNameSingular: 'callRecording',
-      recordId: callRecordingId,
+      objectNameSingular: 'calendarEvent',
+      recordId: calendarEventId,
     });
   };
 
+  const chip = (
+    <Chip
+      clickable={isClickable}
+      variant={isClickable ? 'soft' : 'plain'}
+      startElement={
+        <Avatar
+          src={getPublicAssetUrl('logo.svg')}
+          name={title}
+          colorSeed={callRecordingId}
+          shape="circle"
+          size="sm"
+        />
+      }
+    >
+      {title}
+    </Chip>
+  );
+
   return (
     <StyledCallRecordingRowLayout>
-      <StyledChipButton type="button" onClick={handleClick}>
-        <Chip
-          label={title}
-          clickable
-          variant={ChipVariant.Highlighted}
-          leftComponent={
-            <Avatar
-              avatarUrl={getPublicAssetUrl('logo.svg')}
-              placeholder={title}
-              placeholderColorSeed={callRecordingId}
-              type="rounded"
-              size="sm"
-            />
-          }
-        />
-      </StyledChipButton>
+      {isClickable ? (
+        <StyledChipButton type="button" onClick={handleClick}>
+          {chip}
+        </StyledChipButton>
+      ) : (
+        chip
+      )}
       <StyledRightContent>
         <CallRecordingRowStatus
           statusTag={statusTag}

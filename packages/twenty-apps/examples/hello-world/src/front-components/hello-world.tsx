@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 
 export const HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
@@ -8,7 +8,7 @@ export const HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
 export const HelloWorld = () => {
   const client = new CoreApiClient();
   const [data, setData] = useState<
-    Pick<CoreSchema.Company, 'name' | 'id'> | undefined
+    { id: string; name: string | null } | null | undefined
   >(undefined);
 
   useEffect(() => {

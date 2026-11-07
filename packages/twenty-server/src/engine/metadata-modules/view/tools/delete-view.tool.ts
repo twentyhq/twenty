@@ -1,0 +1,52 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { z } from 'zod';
+
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
+
+const deleteViewInputSchema = z.object({
+  id: z.string().uuid().describe('View ID to delete'),
+});
+
+@DefineTool({
+  name: 'delete_view',
+  category: ToolCategory.VIEW,
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
+  description: 'Delete a view by its ID.',
+})
+export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
+  readonly inputSchema = deleteViewInputSchema;
+
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly viewAccessService: ViewAccessService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, authContext },
+  }: ToolExecuteArgs<typeof deleteViewInputSchema>): Promise<ToolOutput> {
+    await this.viewAccessService.findModifiableViewOrThrow({
+      viewId: input.id,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
+    });
+
+    const view = await this.viewService.deleteOne({
+      deleteViewInput: { id: input.id },
+      workspaceId,
+    });
+
+    return {
+      success: true,
+      message: `View "${view.name}" deleted`,
+      result: { id: view.id, name: view.name, deleted: true },
+    };
+  }
+}

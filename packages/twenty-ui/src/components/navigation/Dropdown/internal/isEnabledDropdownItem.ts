@@ -1,3 +1,5 @@
+import { isActiveDropdownElement } from './isActiveDropdownElement';
+
 export const isEnabledDropdownItem = ({
   content,
   item,
@@ -7,4 +9,5 @@ export const isEnabledDropdownItem = ({
 }) =>
   item.getAttribute('aria-disabled') !== 'true' &&
   !item.hasAttribute('disabled') &&
+  isActiveDropdownElement(item) &&
   item.closest('[data-dropdown-content]') === content;

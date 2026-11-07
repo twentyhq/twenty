@@ -1,0 +1,213 @@
+---
+title: ResizeHandle
+description: غيّر حجم لوحة بالسحب بالمؤشر أو باستخدام عناصر التحكم بلوحة المفاتيح.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## نظرة عامة
+
+يدير `ResizeHandle` حجمًا رقميًا ويعرض فاصلًا قابلًا للتركيز. يطبّق التطبيق ذلك الحجم على اللوحة؛ ولا يغيّر المقبض حجم عنصر آخر تلقائيًا.
+
+<StoryEmbed storyId="ui-layout-resizehandle--display" title="مثال على ResizeHandle" height={600} />
+
+## استخدام
+
+استخدم `edge` لحدود اللوحة، أو `axis="y"` لتغيير حجم الارتفاع المضمّن و`axis="x"` لتغيير حجم العرض المضمّن. امنح المقبض اسمًا محددًا لإمكانية الوصول، واستخدم `aria-controls` لتحديد اللوحة.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+يمتلك المقبض قيمته. ينسخ `onValueChange` أحدث حجم إلى تخطيط اللوحة دون التحكم بالمقبض. لا يضبط `defaultValue` سوى الحجم الأولي.
+
+## الحالة المتحكَّم بها
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+يمتلك التطبيق القيمة ويمكنه تحديثها من عناصر تحكم أخرى. اعكس التغييرات المباشرة في `value`؛ واستخدم `onValueCommitted` لحفظ الحجم النهائي. أبقِ `value` و`defaultValue` منفصلين، وحافظ على نمط الملكية نفسه طوال دورة حياة المكوّن.
+
+## حواف اللوحة والفجوات
+
+يحدّد `edge="left"`, `"right"`, `"top"` or `"bottom"` كلاً من المحور والاتجاه المادي للزيادة. تؤدي الحركة إلى اليسار إلى زيادة الحافة اليسرى، وتؤدي الحركة إلى الأعلى إلى زيادة الحافة العلوية، وينطبق العكس على الحافتين اليمنى والسفلية. يبقى هذا السلوك كما هو في المحتوى من اليمين إلى اليسار. استخدم إما `edge` أو `axis` و`direction`.
+
+مع `edge`، يكون الموضع الافتراضي هو `"edge"`. ضع المقبض داخل لوحة ذات `position: 'relative'` لوضعه بمحاذاة ذلك الحد. يبقي `placement="inline"` المقبض في التدفق العادي. استخدم `placement="gap"` بين اللوحات الشقيقة واضبط عرضه أو ارتفاعه عبر `style` عندما يحتاج التخطيط إلى فجوة. لا تحتوي مقابض الفجوات على مقبض إمساك مرئي افتراضياً.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--documentation" title="مثال على حافة لوحة ResizeHandle" height={250} />
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--gap" title="مثال على فجوة لوحة ResizeHandle" height={520} />
+
+يمتلك التطبيق التخطيط والحجم المحفوظ وحالة الطي ووجهة التركيز عندما تؤدي عملية الطي إلى إزالة المقبض. استخدم `onActivate` لإجراء طي اختياري.
+
+## لوحة المفاتيح والحدود
+
+بالنسبة إلى `axis="y"`، يزيد السهم لأسفل الحجم ويقلله السهم لأعلى. بالنسبة إلى `axis="x"`، يزيد «يمين» ويقلل «يسار» في المحتوى من اليسار إلى اليمين؛ وتنعكس الاتجاهات عند استخدام [موفر الاتجاه](/ar/ui/primitives/layout/direction-provider) مع `direction="rtl"`.
+
+تستخدم مفاتيح الأسهم `step`، وقيمته الافتراضية هي `10`. ينتقل Home إلى `min`، وينتقل End إلى `max`. يتم تجاهل المفاتيح المضغوطة مع Alt أو Control أو Meta. يستخدم السحب بالمؤشر الحركة بالبكسل ولا يلتزم بـ `step`. يبقى كلا التفاعلين ضمن الحدود. لا تنقل ضغطات المؤشر التركيز؛ ويصل مستخدمو لوحة المفاتيح إلى المقبض باستخدام Tab. يمنع `disabled` تغيير الحجم ويزيل المقبض من ترتيب التنقل بمفتاح Tab.
+
+يصف اتجاه الفاصل الحافة الفاصلة: أفقي لتغيير الارتفاع وعمودي لتغيير العرض.
+
+## الاتجاهات المادية والتكبير
+
+عيّن `direction="normal"` أو `direction="reverse"` عندما يجب أن تتبع زيادة الحجم اتجاها ماديا ثابتا، بغض النظر عن اتجاه النص. يزداد الحجم في الوضع العادي مع الحركة نحو اليمين أو الأسفل. يزداد الحجم في الوضع العكسي مع الحركة نحو اليسار أو الأعلى. احذف `direction` للاحتفاظ بسلوك اتجاه النص الموضح أعلاه.
+
+يقبل `scale` عامل تكبير موجبا أو دالة تعيد واحدا. يأخذ المقبض عينة منه عند ضغط المؤشر ويقسم حركة المؤشر على تلك القيمة. تبقى خطوات لوحة المفاتيح دون تغيير.
+
+## دورة حياة الإيماءة
+
+يبلغ `onValueChange` عن القيم المباشرة. يبلغ `onValueCommitted` عن القيمة النهائية بعد سحب ناجح بالمؤشر أو تغيير فعّال بلوحة المفاتيح. تلتزم مفاتيح Home وEnd والأسهم فورا عندما تغيّر الحجم.
+
+يتلقى `onResizeStart` أول قيمة مرشحة ضمن الحدود بعد أن يتجاوز المؤشر `dragThreshold`. تكون قيمة الحد الافتراضية `5` مع `edge` و`0` بخلاف ذلك، وتقاس بالبكسلات المادية. يتلقى `onResizeEnd` القيمة `{ cancelled, value }` لسحب بدأ بالفعل. تلغي Escape وإلغاء المؤشر وفقدان التقاط المؤشر وإلغاء التركيب الإيماءة دون التزام؛ ويؤدي تعطيل المقبض إلى إلغائها عند حدث المؤشر التالي له. يستدعي الإلغاء `onValueChange` بقيمة البداية، مع تقييدها بالحدود الحالية. يتلقى `onResizeEnd` تلك القيمة المستعادة.
+
+وفّر `onActivate` لمعالجة نقرة دون سحب، أو Enter أو Space. يمنع تجاوز الحد نقرة المؤشر التالية من التفعيل، حتى عندما يعود المؤشر إلى موضع بدايته.
+
+تعمل المعالجات الأصلية قبل تفاعل المقبض. يؤدي استدعاء `preventDefault()` في `onPointerDown` أو `onKeyDown` إلى تخطي ذلك التفاعل. يؤدي منع `onPointerMove` إلى تخطي ذلك التحديث فقط وإبقاء الإيماءة نشطة. يؤدي منع `onPointerUp` إلى إلغاء السحب واستعادة القيمة المحددة الابتدائية وتخطي `onValueCommitted`. يظل إلغاء المؤشر وفقدان الالتقاط ينهيان الإيماءة.
+
+## مقبض مخصص
+
+تستهدف `ref` والسمات الأصلية و`className` و`style` ومعالجات الأحداث الأصلية جذر الفاصل، وهو `div` افتراضياً. لا يستهدف المرجع اللوحة التي تم تغيير حجمها أو مقبض السحب المرئي.
+
+يستبدل `children` قبضة الإمساك المرئية، ويخفيها `children={null}`؛ ولا يستبدل سلوك الفاصل. يمكن لـ`render` استبدال العنصر الجذر، وعندها يستهدف المرجع ذلك البديل. يجب على الأغلفة المخصصة [تمرير الخصائص والمرجع المقدّمين](/ar/ui/primitives/overview#custom-components) لكي تصل خصائص التركيز والتقاط المؤشر ومعالجات لوحة المفاتيح وسمات إمكانية الوصول إلى العنصر نفسه.
+
+## الخصائص
+
+<ResizeHandleReference />
+
+<PageBanner illustration="layout" />

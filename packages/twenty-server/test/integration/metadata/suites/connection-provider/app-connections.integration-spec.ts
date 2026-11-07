@@ -21,6 +21,7 @@ const APP_CONNECTION_FIELDS = gql`
     scope
     visibility
     userWorkspaceId
+    providerType
     accessToken
   }
 `;
@@ -77,6 +78,7 @@ describe('app connections API (e2e)', () => {
     scope: 'WORKSPACE',
     visibility: 'workspace',
     userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    providerType: 'oauth',
     accessToken: application.connectedAccountAccessToken,
   });
 

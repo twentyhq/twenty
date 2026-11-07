@@ -1,0 +1,163 @@
+---
+title: Configurar un dominio de envío.
+description: Verifica tu dominio para poder enviar campañas desde tu propia dirección.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Las campañas proceden de una dirección de tu dominio, como `news@yourcompany.com`. Antes de que Twenty pueda enviar desde él, Gmail, Outlook y otros proveedores necesitan comprobar que eres el propietario del dominio. Añade esa prueba como registros DNS donde administras tu dominio.
+
+Crearás la dirección en Twenty, añadirás los registros DNS y luego los verificarás.
+
+¿Sólo responder desde una bandeja de entrada compartida, no enviar campañas? Puede omitir los registros de desuscripción. Ver [Canales de correo electrónico] (/user-guide/calendar-emails/capabilities/email-channels).
+
+<Note>
+  Los registros de Twenty usan sus propios nombres de host, como
+  `twenty-bounce.yourcompany.com` y `links.yourcompany.com`. No
+  modifican los registros de los que depende tu correo electrónico diario, por lo que puedes usar tu dominio
+  principal. La única excepción es DMARC, que se aplica a todo el dominio.
+  Twenty lo sugiere solo cuando aún no tienes uno.
+</Note>
+
+## Antes de empezar
+
+Antes de empezar, asegúrate de tener:
+
+* **Acceso a tu proveedor de DNS**: la empresa donde administras los registros de tu dominio, como Cloudflare, GoDaddy o Namecheap. No siempre es la empresa a la que compraste el dominio.
+* **El permiso de configuración del espacio de trabajo** en Twenty.
+
+## Parte 1: Crear la dirección en Twenty
+
+El dominio de envío procede de un canal de correo electrónico. Si ya configuraste una bandeja de entrada compartida en Twenty, el dominio ya está ahí. Pasa a la parte 2.
+
+1. Ve a **Configuración → Comunicación**.
+2. Haz clic en **Añadir canal de correo electrónico**.
+
+<img src="/images/user-guide/email-campaigns/channels-list.png" style={{ width: '100%' }} />
+
+3. En **Dirección de correo electrónico de origen**, introduce la dirección que quieres usar, por ejemplo `news@yourcompany.com`. Twenty usa la parte posterior a `@` como dominio de envío.
+4. En **Nombre para mostrar**, introduce el nombre que las personas ven en su bandeja de entrada, por ejemplo `Acme Newsletter`.
+5. Haz clic en **Guardar**.
+
+<img src="/images/user-guide/email-campaigns/new-channel-form.png" style={{ width: '100%' }} />
+
+Twenty abre el canal. Desplázate hasta **Dominio de envío**. Muestra los registros DNS que necesitas, con un botón para copiar junto a cada valor.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+<Note>
+  Un dominio solo se puede verificar en un espacio de trabajo de Twenty. Twenty te indica si
+  ya se está utilizando en otro lugar.
+</Note>
+
+## Parte 2: Comprender los registros
+
+| Grupo                                   | Registros                                                                                                       | Qué hace                                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Autenticación del dominio**           | Tres registros `CNAME` que terminan en `._domainkey`, además de un registro `MX` y uno `TXT` en `twenty-bounce` | Muestra que Twenty puede enviar en nombre de tu dominio (DKIM y SPF). Los registros `twenty-bounce` también envían informes de rebotes a Twenty.                             |
+| **Política DMARC**                      | Un registro `TXT` en `_dmarc`                                                                                   | Indica a los proveedores qué hacer con el correo que no supera las comprobaciones. Twenty solo lo muestra si no tienes un registro DMARC.                                    |
+| **Enlace para cancelar la suscripción** | Dos registros `CNAME`, en `links` y `_acme-challenge.links`                                                     | Aloja la página para cancelar la suscripción y los enlaces rastreados en tu dominio, por ejemplo, `links.yourcompany.com`. No puedes enviar campañas hasta que se verifique. |
+
+Añade todos los registros que muestra Twenty. Gmail, Yahoo y Outlook rechazan el correo masivo que no está autenticado.
+
+<Warning>
+  Si tu dominio ya tiene un registro DMARC, consérvalo. No añadas otro:
+  los proveedores tratan dos registros DMARC como si no tuvieras ninguno.
+</Warning>
+
+## Parte 3: Añadir los registros en tu proveedor de DNS
+
+Para cada registro, añade una entrada nueva en tu proveedor de DNS y copia estos valores de Twenty:
+
+* **Tipo**: `CNAME`, `MX` o `TXT`.
+* **Nombre**: a veces se denomina **Host**.
+* **Valor**: a veces se denomina **Destino**, **Apunta a**, **Contenido** o **Respuesta**.
+
+Para el registro `MX`, Twenty muestra la prioridad antes del valor, como `10 feedback-smtp.eu-central-1.amazonses.com`. La mayoría de los proveedores tienen un campo de **Prioridad** independiente. Introduce `10` ahí y el resto en el valor.
+
+<Warning>
+  Muchos proveedores añaden automáticamente tu dominio al final de **Nombre**. Si el tuyo
+  lo hace, introduce solo la parte anterior a tu dominio. Para
+  `twenty-bounce.yourcompany.com`, introduce `twenty-bounce`. De lo contrario, el registro
+  se convierte en `twenty-bounce.yourcompany.com.yourcompany.com` y no se verificará.
+</Warning>
+
+Sigue las instrucciones de tu proveedor y usa los valores de Twenty:
+
+| Proveedor               | Su guía                                                                                                                                                              | Ten cuidado con                                                                                                                      |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Amazon Route 53         | [Trabajar con registros](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html)                                                         | Incluye los valores `TXT` entre comillas dobles.                                                                                     |
+| Azure DNS               | [Administrar registros DNS](https://learn.microsoft.com/en-us/azure/dns/dns-getstarted-portal)                                                                       | Solo funciona si el dominio usa los servidores de nombres de Azure.                                                                  |
+| Bluehost                | [Añadir, editar o eliminar entradas DNS](https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries)                                        | Introduce solo la parte del host en **Registro de host**.                                                                            |
+| Cloudflare              | [Crear registros DNS](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)                                                           | Configura cada `CNAME` como **Solo DNS** (nube gris). Un registro con proxy nunca se verifica.                                       |
+| DigitalOcean            | [Administrar registros DNS](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/)                                                            | Solo funciona si el dominio usa los servidores de nombres de DigitalOcean.                                                           |
+| Gandi                   | [Registros DNS](https://docs.gandi.net/en/domain_names/common_operations/dns_records.html)                                                                           | Termina los valores `CNAME` con un punto, como en `abc.dkim.amazonses.com.`                                                          |
+| GoDaddy                 | [Añadir un registro CNAME](https://www.godaddy.com/help/add-a-cname-record-19236)                                                                                    | Introduce solo la parte del host en **Nombre**. GoDaddy añade el dominio automáticamente.                                            |
+| Google Cloud DNS        | [Administrar registros](https://cloud.google.com/dns/docs/records)                                                                                                   | Solo funciona si el dominio usa los servidores de nombres de Google Cloud.                                                           |
+| Hostinger               | [Administrar registros DNS](https://www.hostinger.com/support/1583249-how-to-manage-dns-records-at-hostinger/)                                                       | Solo funciona si el dominio usa los servidores de nombres de Hostinger.                                                              |
+| Hover                   | [Editar registros DNS](https://help.hover.com/hc/en-us/articles/217282457-how-to-edit-dns-records-a-aaaa-cname-mx-txt-srv-)                                          | Introduce solo la parte del host en **Nombre de host**.                                                                              |
+| IONOS                   | [Administrar la configuración de DNS](https://www.ionos.com/help/domains/general-information-about-dns-settings/managing-dns-settings-in-control-center/)            | Introduce solo la parte del host en **Nombre de host**.                                                                              |
+| Name.com                | [Añadir un registro CNAME](https://www.name.com/support/articles/115004895548-adding-a-cname-record)                                                                 | Introduce solo la parte del host en **Host**.                                                                                        |
+| Namecheap               | [Añadir registros TXT, SPF, DKIM y DMARC](https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/) | Solo funciona si el dominio usa Namecheap BasicDNS, FreeDNS o PremiumDNS. Introduce solo la parte del host.                          |
+| Netlify                 | [Registros DNS](https://docs.netlify.com/manage/domains/configure-domains/dns-records/)                                                                              | Solo funciona si el dominio usa los servidores de nombres de Netlify.                                                                |
+| Network Solutions       | [Administrar registros DNS avanzados](https://www.networksolutions.com/help/article/manage-dns-adns-records)                                                         | Introduce solo la parte del host.                                                                                                    |
+| OVHcloud                | [Crear un registro CNAME](https://docs.ovhcloud.com/en/guides/web-cloud/domains/dns-zone-cname-record-creation)                                                      | Introduce solo la parte del host en **Subdominio**.                                                                                  |
+| Porkbun                 | [Editar registros DNS](https://kb.porkbun.com/article/68-how-to-edit-dns-records)                                                                                    | Introduce solo la parte del host en **Host**.                                                                                        |
+| Dominios de Squarespace | [Editar los registros DNS de tu dominio](https://support.squarespace.com/hc/en-us/articles/360002101888-Edit-your-domain-s-DNS-records)                              | Squarespace bloquea un registro que entra en conflicto con uno existente en lugar de reemplazarlo.                                   |
+| Vercel                  | [Administrar registros DNS](https://vercel.com/docs/domains/managing-dns-records)                                                                                    | Solo funciona si el dominio usa los servidores de nombres de Vercel. De lo contrario, añade los registros donde esté alojado tu DNS. |
+| Wix                     | [Administrar registros DNS](https://support.wix.com/en/article/managing-dns-records-in-your-wix-account)                                                             | Solo funciona si el dominio usa los servidores de nombres de Wix. De lo contrario, añade los registros donde esté alojado tu DNS.    |
+
+Si tu proveedor no aparece en la lista, busca **DNS**, **registros DNS**, **editor de zona** o **DNS avanzado** en la configuración de tu dominio.
+
+## Parte 4: Verificar
+
+Twenty comprueba tus registros cada hora. Para comprobarlos ahora, haz clic en **Comprobar verificación** en **Dominio de envío**.
+
+Los cambios de DNS suelen aplicarse en una hora, pero algunos proveedores tardan hasta 48 horas. El dominio pasa de **Pendiente** a **Verificado** cuando Twenty encuentra los registros de autenticación. El **Enlace para cancelar la suscripción** también debe mostrar **Verificado** antes de que puedas enviar campañas.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-verified.png" style={{ width: '100%' }} />
+
+La fila **Política DMARC** siempre muestra **No configurada**. Es normal: Twenty sugiere el registro, pero no lo comprueba.
+
+## Solución de Problemas
+
+<Accordion title="El dominio permanece pendiente durante horas">
+  Abre tu proveedor de DNS y compara cada **Nombre** con el valor de Twenty.
+  El problema habitual es que el proveedor añadió tu dominio una segunda vez, como
+  se describe en la parte 3. Comprueba también que añadiste los registros donde está
+  alojado realmente tu DNS. Los registros en el panel de tu registrador no sirven de nada si tus servidores de
+  nombres apuntan a otro lugar.
+</Accordion>
+
+<Accordion title="Cloudflare: los registros están ahí, pero nunca se verifican">
+  Configura cada `CNAME` como **Solo DNS**. Con la nube naranja activada, Cloudflare
+  devuelve sus propios servidores en lugar del valor que te proporcionó Twenty.
+</Accordion>
+
+<Accordion title="El dominio muestra Error">
+  Twenty deja de comprobar un dominio que ha fallado. Corrige los registros y luego haz clic en **Comprobar
+  verificación**.
+</Accordion>
+
+<Accordion title="El dominio muestra Error temporal">
+  Tu proveedor de DNS no respondió cuando Twenty realizó la comprobación. Twenty sigue comprobando
+  cada hora, por lo que normalmente se soluciona solo.
+</Accordion>
+
+<Accordion title="La autenticación está verificada, pero el enlace para cancelar la suscripción permanece pendiente">
+  Los dos registros de cancelación de suscripción se comprueban por separado y pueden tardar más porque
+  Twenty también crea un certificado seguro para ellos. Comprueba que existan ambos registros `CNAME`
+  en `links` y `_acme-challenge.links`; luego espera hasta
+  una hora.
+</Accordion>
+
+<Accordion title="Mi proveedor rechaza el registro MX">
+  Introduce `10` en **Prioridad** y solo el nombre de host en el valor, como
+  `feedback-smtp.eu-central-1.amazonses.com`. No introduzcas `10` en el valor.
+</Accordion>
+
+A continuación, lee las [prácticas recomendadas](/es/user-guide/email-campaigns/how-tos/email-campaign-best-practices) y luego [envía tu primera campaña](/es/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+<PageBanner illustration="card-page-sending-domain" />

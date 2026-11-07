@@ -27,6 +27,10 @@ export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
 // above a long plain-text message, well below what would strain a full batch's transaction
 export const MAX_APP_MESSAGE_TEXT_LENGTH = 262_144;
 
+export const MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE = 32;
+
+export const MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE = 20;
+
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {
   @Field(() => MessageParticipantRole)
@@ -57,6 +61,19 @@ export class AppMessageParticipantInput {
   @IsOptional()
   @IsUUID()
   workspaceMemberId?: string;
+}
+
+@InputType('AppMessageAttachmentInput')
+export class AppMessageAttachmentInput {
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  fileId: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  label: string;
 }
 
 @InputType('AppMessageInput')
@@ -99,6 +116,23 @@ export class AppMessageInput {
   @ValidateNested({ each: true })
   @Type(() => AppMessageParticipantInput)
   participants: AppMessageParticipantInput[];
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  @MaxLength(512, { each: true })
+  folderExternalIds?: string[];
+
+  @Field(() => [AppMessageAttachmentInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE)
+  @ValidateNested({ each: true })
+  @Type(() => AppMessageAttachmentInput)
+  attachments?: AppMessageAttachmentInput[];
 }
 
 @InputType('IngestAppMessagesInput')

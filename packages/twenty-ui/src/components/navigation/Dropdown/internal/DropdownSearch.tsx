@@ -13,6 +13,7 @@ export const DropdownSearch = ({
   onValueChange,
   onBlur,
   className,
+  hasFocusRing = false,
   value,
   ref,
   ...props
@@ -31,6 +32,8 @@ export const DropdownSearch = ({
         ref={mergedRef}
         value={value}
         data-dropdown-search=""
+        variant="plain"
+        hasFocusRing={hasFocusRing}
         className={mergeClassNames(styles.search, className)}
         onValueChange={(value) => onValueChange?.(value)}
         onBlur={(event) => {

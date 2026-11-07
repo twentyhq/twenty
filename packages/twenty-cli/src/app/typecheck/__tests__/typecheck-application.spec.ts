@@ -12,7 +12,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { build, stop } from 'esbuild';
+import { stop } from 'esbuild';
 import {
   afterAll,
   afterEach,
@@ -41,10 +41,9 @@ const REPOSITORY_ROOT = fileURLToPath(
 const require = createRequire(import.meta.url);
 const compilerDirectory = dirname(require.resolve('typescript/package.json'));
 
-describe('CLI typecheck matches the SDK with the same compiler', () => {
+describe('CLI typecheck uses the application compiler', () => {
   let appPath: string;
   let referenceDirectory: string;
-  let sdk: { typecheckApplication: typeof typecheckApplication };
 
   const checkWithWorker = async () => {
     const response = await runAppWorker({
@@ -58,12 +57,10 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
     });
   };
 
-  const checkWithParity = async () => {
-    const expected = await sdk.typecheckApplication({ appPath });
+  const checkDirectAndWorker = async () => {
     const direct = await typecheckApplication({ appPath });
     const worker = await checkWithWorker();
-    expect(direct).toEqual(expected);
-    expect(worker).toEqual(expected);
+    expect(worker).toEqual(direct);
     return worker;
   };
 
@@ -78,21 +75,6 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
         join(referenceDirectory, 'node_modules', name),
       );
     }
-    const sdkSource = join(REPOSITORY_ROOT, 'packages/twenty-sdk/src');
-    const entry = join(referenceDirectory, 'sdk-reference.cjs');
-    await build({
-      entryPoints: [
-        join(sdkSource, 'application-build/typecheck-application.ts'),
-      ],
-      outfile: entry,
-      alias: { '@': sdkSource },
-      bundle: true,
-      packages: 'external',
-      platform: 'node',
-      format: 'cjs',
-      target: 'node24',
-    });
-    sdk = require(entry) as typeof sdk;
     await buildTestAppWorker(join(referenceDirectory, 'cli'));
     launch.modulePath = join(referenceDirectory, 'cli/app-worker.cjs');
   }, 60000);
@@ -122,7 +104,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
   });
 
   it('checks valid code without emitting files or requiring an SDK', async () => {
-    expect(await checkWithParity()).toEqual({
+    expect(await checkDirectAndWorker()).toEqual({
       success: true,
       data: null,
       diagnostics: [],
@@ -139,7 +121,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
       join(appPath, 'example.ts'),
       'export const broken: number = "bad";',
     );
-    expect(await checkWithParity()).toMatchObject({
+    expect(await checkDirectAndWorker()).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: [
@@ -156,7 +138,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
 
   it('fails when tsconfig.json is missing', async () => {
     await rm(join(appPath, 'tsconfig.json'));
-    expect(await checkWithParity()).toMatchObject({
+    expect(await checkDirectAndWorker()).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: [{ severity: 'error', code: 'TS5083' }],
@@ -174,7 +156,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
     ['no matching files', { include: ['missing/**/*.ts'] }, 'TS18003'],
   ])('fails on %s', async (_name, config, code) => {
     await writeFile(join(appPath, 'tsconfig.json'), JSON.stringify(config));
-    expect(await checkWithParity()).toMatchObject({
+    expect(await checkDirectAndWorker()).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: expect.arrayContaining([
@@ -185,7 +167,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
 
   it('reports invalid JSON configuration', async () => {
     await writeFile(join(appPath, 'tsconfig.json'), '{ "compilerOptions": ');
-    expect(await checkWithParity()).toMatchObject({
+    expect(await checkDirectAndWorker()).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
       diagnostics: [expect.objectContaining({ severity: 'error' })],
@@ -213,7 +195,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
         references: [{ path: './referenced' }],
       }),
     );
-    const result = await checkWithParity();
+    const result = await checkDirectAndWorker();
     expect(result).toMatchObject({
       success: false,
       error: { code: 'TYPECHECK_FAILED' },
@@ -302,7 +284,7 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
         }),
       );
       await writeFile(join(appPath, 'example.ts'), 'export const value = 1;');
-      expect(await checkWithParity()).toMatchObject({ success: true });
+      expect(await checkDirectAndWorker()).toMatchObject({ success: true });
     } finally {
       appPath = workspacePath;
     }
@@ -319,24 +301,24 @@ describe('CLI typecheck matches the SDK with the same compiler', () => {
     expect(await checkWithWorker()).toMatchObject({ success: true });
     await rm(join(appPath, 'node_modules/typescript'));
     await mkdir(join(appPath, 'node_modules/typescript'));
-    const sdkRequire = createRequire(
-      join(REPOSITORY_ROOT, 'packages/twenty-sdk/package.json'),
-    );
-    const legacyCompilerPath = sdkRequire.resolve('@ts-morph/common');
     await writeFile(
       join(appPath, 'node_modules/typescript/package.json'),
       JSON.stringify({ name: 'typescript', main: 'index.cjs' }),
     );
     await writeFile(
       join(appPath, 'node_modules/typescript/index.cjs'),
-      `module.exports = require(${JSON.stringify(legacyCompilerPath)}).ts;`,
+      `const compiler = require(${JSON.stringify(require.resolve('typescript'))});
+      module.exports = { ...compiler, getPreEmitDiagnostics() {
+        return [{ category: compiler.DiagnosticCategory.Error, code: 99999,
+          messageText: 'Diagnostic from the application compiler' }];
+      } };`,
     );
     expect(await checkWithWorker()).toMatchObject({
       success: false,
       diagnostics: expect.arrayContaining([
         expect.objectContaining({
-          code: 'TS6046',
-          message: expect.stringContaining('--module'),
+          code: 'TS99999',
+          message: 'Diagnostic from the application compiler',
         }),
       ]),
     });

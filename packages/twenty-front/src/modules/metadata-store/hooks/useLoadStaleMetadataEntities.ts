@@ -251,8 +251,17 @@ export const useLoadStaleMetadataEntities = () => {
         );
       }
 
-      await Promise.all(fetchPromises);
+      const settledFetches = await Promise.allSettled(fetchPromises);
+
       applyChanges();
+
+      const firstRejectedFetch = settledFetches.find(
+        (settledFetch) => settledFetch.status === 'rejected',
+      );
+
+      if (isDefined(firstRejectedFetch)) {
+        throw firstRejectedFetch.reason;
+      }
     },
     [client, replaceDraft, applyChanges],
   );

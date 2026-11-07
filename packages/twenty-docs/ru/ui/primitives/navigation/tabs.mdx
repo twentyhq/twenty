@@ -1,0 +1,230 @@
+---
+title: Вкладки
+description: Переключайтесь между связанными панелями с помощью доступной навигации по вкладкам.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Обзор
+
+`Tabs` связывает каждую вкладку с соответствующей панелью содержимого с помощью общего `value`. Сохраняйте уникальность значений в пределах одного корневого элемента. Используйте [TabButton](/ru/ui/components/navigation/tab-button) для ссылок маршрутов и соседних действий.
+
+<StoryEmbed storyId="ui-navigation-tabs--display" title="Пример Tabs" height={160} />
+
+## Использование
+
+Используйте `defaultValue`, чтобы задать начальный выбор. Корневой элемент управляет последующими изменениями.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` принимает `startIcon`, `endIcon`, `badge` и `size` со значением `compact`, `sm` или `md` (по умолчанию `sm`). Остальные свойства сохраняют контракт установленного Base UI. Значения не ограничены строками или числами. Ссылочные значения должны иметь одинаковую идентичность во вкладке, панели и корневом элементе. Значение корневого элемента `null` не выбирает ни одной панели.
+
+### Компактные вкладки
+
+Используйте `size="compact"` для каждой вкладки с короткими элементами управления вводом/выводом внутри карточки. Компактные вкладки имеют минимальную высоту строки 24px, мелкий текст и внутренние отступы содержимого 4px с каждой стороны. Существующие размеры `sm` и `md` сохраняют минимальную высоту 40px. Компактные вкладки используют те же индикатор, кольцо фокуса и активацию с клавиатуры, что и другие размеры.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-tabs--compact" title="Компактные вкладки ввода и вывода" height={110} />
+
+## Структура
+
+Разместите вкладки и необязательный индикатор внутри `Tabs.List`. Разместите их панели рядом со списком, все в пределах одного `Tabs.Root`.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| Часть       | Требование                             | Назначение                                                        |
+| ----------- | -------------------------------------- | ----------------------------------------------------------------- |
+| `Root`      | Обязательно                            | Управляет выбранным значением и ориентацией.                      |
+| `Список`    | Обязательно                            | Группирует вкладки и обеспечивает навигацию фокуса с клавиатуры.  |
+| `Вкладка`   | По одному на панель                    | Активирует панель с тем же `value`.                               |
+| `Panel`     | По одному на представление содержимого | Отображает своё содержимое, когда его `value` активно.            |
+| `Indicator` | Необязательно                          | Показывает положение активной вкладки с тематическим оформлением. |
+
+Задайте списку доступное имя и сопоставьте `value` каждой вкладки с `value` её панели. Base UI предоставляет идентификаторы вкладки и панели, а также связи `aria-controls` и `aria-labelledby`.
+
+Когда вы задаёте пользовательский `id` для `Tabs.Panel`, установите `aria-controls` соответствующего `Tabs.Tab` в тот же идентификатор. Установленная реализация Base UI 1.8.0 требует этой явной связи. Пользовательские идентификаторы вкладок корректно регистрируются для `aria-labelledby` панели.
+
+Добавьте один `Tabs.Indicator`, если нужна активная линия подчёркивания. `List` не добавляет индикатор.
+
+## Управляемое состояние и сведения о событиях
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять выбором. Колбэк получает следующее значение и сведения о событии Base UI, включая исходное `event`, `reason`, `activationDirection` и `cancel()`.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Активация пользователем имеет причину `none`. В неуправляемых корневых элементах автоматический резервный выбор может иметь причину `initial`, `disabled` или `missing`. Автоматический резервный выбор может установить `null`, если не остаётся включённых вкладок. Эти автоматические изменения нельзя отменить. В управляемых корневых элементах выбор остаётся под управлением приложения.
+
+Отмените пользовательское изменение до обновления управляемого состояния или используйте тот же колбэк с неуправляемым корневым элементом:
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## Активация с клавиатуры, ориентация и направление
+
+`Tabs.List` по умолчанию использует ручную активацию (`activateOnFocus={false}`). Клавиши со стрелками перемещают фокус; Enter или Space активируют вкладку в фокусе. Установите `activateOnFocus`, чтобы выбирать вкладку, когда фокус клавиатуры достигает её. Обе политики работают с управляемым и неуправляемым состоянием.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+Горизонтальные списки используют Left и Right; вертикальные — Up и Down. Home и End перемещают фокус на первую и последнюю включённые вкладки. Отключённые вкладки пропускаются. Значение `loopFocus` по умолчанию — `true`; установите `false`, чтобы останавливаться на любой границе.
+
+Используйте [DirectionProvider](/ru/ui/primitives/layout/direction-provider) для направления клавиатуры RTL и `dir="rtl"` на корневом элементе для макета. Установите `orientation="vertical"` для `Root`, чтобы получить вертикальный список и индикатор.
+
+## Время жизни панели
+
+Используйте `keepMounted`, когда содержимое панели должно сохранять своё состояние, пока она неактивна. Неактивные смонтированные панели остаются скрытыми и не занимают место в макете.
+
+## Макет панели
+
+`Panel` заполняет пространство, оставшееся от списка, и может сжиматься меньше своего содержимого по обеим осям, поэтому остаётся в пределах корневого элемента фиксированной высоты. Чтобы прокручивать его содержимое, задайте `overflow: auto` для панели или для дочернего элемента, который её заполняет, например дочернего элемента `flex: 1` панели с flex-разметкой в столбец.
+
+## Нативные свойства, композиция рендеринга и refs
+
+Все пять частей сохраняют нативные свойства, обработчики событий, refs и композицию `render` Base UI. Их `className` и `style` также могут быть функциями состояния части. Элементами по умолчанию являются `div` для Root, List и Panel, `button` для Tab и `span` для Indicator. Refs указывают на фактически отрендеренные элементы.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
+
+  return (
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
+        </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
+      </Tabs.List>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Согласуйте `nativeButton` с элементом, скомпонованным для вкладки. Используйте `nativeButton={false}` для пользовательского интерактивного элемента, который не является нативной кнопкой и передаёт предоставленные свойства и ref. Якорь маршрута следует размещать в `TabButton`, где маршрут управляет навигацией и `aria-current`.
+
+## Визуальное выделение
+
+Используйте `highlighted` в `Tabs.Tab`, чтобы выделить его содержимое независимо от выбора, например когда его настройки открыты. Выбор по-прежнему контролируется `Tabs.Root`.
+
+## Свойства
+
+Сгенерированная справка включает публичные свойства для каждой части. Типы состояния публичных частей и типы сведений о причине/изменении Root доступны из `twenty-ui/primitives/navigation`.
+
+<TabsReference />
+
+## Миграция
+
+Добавьте явный `Tabs.Indicator` в списки, которые должны сохранять активную линию подчёркивания. Удалите дублирующиеся индикаторы из композиций, которые ранее полагались на добавление индикатора компонентом `List`. Держите ссылки маршрутов, элементы управления созданием и элементы управления переполнением вне `Tabs.List`, чьи дочерние элементы выбирают связанные панели.
+
+<PageBanner illustration="layout" />

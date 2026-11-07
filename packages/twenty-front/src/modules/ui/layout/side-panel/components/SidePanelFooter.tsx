@@ -9,6 +9,7 @@ const StyledContainer = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   bottom: 0;
   box-sizing: border-box;
+  flex-shrink: 0;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
 `;

@@ -1,0 +1,27 @@
+.button[data-variant='ghost'][data-color='neutral'] {
+  --tw-button-padding-inline: var(--t-spacing-1);
+  --tw-button-radius: var(--t-border-radius-md-round);
+
+  border: 0;
+  corner-shape: round;
+  font-size: var(--t-font-size-sm);
+
+  &[aria-pressed='true'] {
+    --tw-button-background: var(--t-accent-tertiary);
+    --tw-button-color: var(--t-accent-accent10);
+    --tw-button-hover: var(--t-accent-secondary);
+    --tw-button-active: var(--t-accent-secondary);
+  }
+}
+
+.content {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--t-spacing-1);
+}
+
+.emoji {
+  font-size: var(--t-font-size-lg);
+  font-weight: var(--t-font-weight-regular);
+  line-height: 1;
+}

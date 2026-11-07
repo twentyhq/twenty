@@ -10,18 +10,16 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type FieldsWidgetFieldItemProps = {
   fieldMetadataItem: FieldMetadataItem;
   globalIndex: number;
   recordId: string;
+  restrictedFieldNames: string[];
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   isRecordReadOnly: boolean;
   useUpdateRecord: RecordUpdateHook;
   recordLoading: boolean;
@@ -33,6 +31,7 @@ export const FieldsWidgetFieldItem = ({
   fieldMetadataItem,
   globalIndex,
   recordId,
+  restrictedFieldNames,
   objectMetadataItem,
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
@@ -50,6 +49,10 @@ export const FieldsWidgetFieldItem = ({
     labelWidth: 90,
   });
 
+  const isFieldRestricted = restrictedFieldNames.includes(
+    fieldMetadataItem.name,
+  );
+
   return (
     <FieldContext.Provider
       key={recordId + fieldMetadataItem.id}
@@ -60,25 +63,29 @@ export const FieldsWidgetFieldItem = ({
         fieldDefinition,
         useUpdateRecord,
         isDisplayModeFixHeight: true,
-        isRecordFieldReadOnly: isRecordFieldReadOnly({
-          isRecordReadOnly,
-          objectMetadataId: objectMetadataItem.id,
-          fieldMetadataItem,
-          fieldDefinition,
-          objectPermissionsByObjectMetadataId,
-        }),
+        isRecordFieldReadOnly:
+          isFieldRestricted ||
+          isRecordFieldReadOnly({
+            isRecordReadOnly,
+            objectMetadataId: objectMetadataItem.id,
+            fieldMetadataItem,
+            fieldDefinition,
+            objectPermissionsByObjectMetadataId,
+          }),
         onMouseEnter,
         anchorId: `${getRecordFieldInputInstanceId({
           recordId,
           fieldName: fieldMetadataItem.name,
           prefix: instanceId,
         })}`,
-        isForbidden: isJunctionRelationForbidden({
-          fieldMetadataItem,
-          sourceObjectMetadataId: objectMetadataItem.id,
-          objectMetadataItems,
-          objectPermissionsByObjectMetadataId,
-        }),
+        isForbidden:
+          isFieldRestricted ||
+          isJunctionRelationForbidden({
+            fieldMetadataItem,
+            sourceObjectMetadataId: objectMetadataItem.id,
+            objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+          }),
       }}
     >
       <RecordFieldComponentInstanceContext.Provider

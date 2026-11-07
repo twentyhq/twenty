@@ -23,7 +23,7 @@ const SidePanelWorkflowStepSettingsForm = ({
   step: WorkflowAction;
 }) => {
   const { t } = useLingui();
-  const { updateStep } = useUpdateStep();
+  const { updateStepNow } = useUpdateStep();
 
   const [errorHandlingOptions, setErrorHandlingOptions] =
     useState<StepErrorHandlingOptions>(step.settings.errorHandlingOptions);
@@ -36,15 +36,15 @@ const SidePanelWorkflowStepSettingsForm = ({
 
     setErrorHandlingOptions(updatedOptions);
 
-    try {
-      await updateStep({
-        ...step,
-        settings: {
-          ...step.settings,
-          errorHandlingOptions: updatedOptions,
-        },
-      } as WorkflowAction);
-    } catch {
+    const { updatedStep } = await updateStepNow({
+      ...step,
+      settings: {
+        ...step.settings,
+        errorHandlingOptions: updatedOptions,
+      },
+    } as WorkflowAction).catch(() => ({ updatedStep: undefined }));
+
+    if (!isDefined(updatedStep)) {
       setErrorHandlingOptions((currentOptions) => ({
         ...currentOptions,
         ...('continueOnFailure' in partialOptions

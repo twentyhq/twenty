@@ -266,7 +266,9 @@ export const SettingsEnterprise = ({
     : t`Renews on`;
 
   const handleActivate = useCallback(async () => {
-    if (!enterpriseKey.trim()) return;
+    if (!enterpriseKey.trim()) {
+      return;
+    }
 
     setIsActivating(true);
 

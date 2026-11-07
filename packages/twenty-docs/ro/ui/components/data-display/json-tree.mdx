@@ -1,0 +1,45 @@
+---
+title: Arbore JSON
+description: Explorați valorile JSON cu noduri extensibile și etichete personalizate.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+## Prezentare generală
+
+`JsonTree` afișează fie o `value` JSON, fie o matrice de `entries` denumite. Furnizați toate etichetele pentru valori goale și extindere/restrângere, astfel încât aplicația dvs. să controleze textul.
+
+<StoryEmbed storyId="ui-jsonvisualizer-jsontree--display" title="Detalii extensibile ale înregistrării" height={320} />
+
+## Utilizare
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+Fiecare intrare are un `id`, o `label` și o `value` JSON. Utilizați intrări atunci când etichetele afișate diferă de cheile stocate. În mod implicit, sunt extinse nivelurile de adâncime 0 și 1. Suprascrieți `shouldExpandNodeInitially={({ depth }) => depth === 0}` pentru a extinde numai rădăcina; extinderea ulterioară este gestionată de fiecare nod.
+
+`getNodeHighlighting(keyPath)` returnează `blue`, `red`, `partial-blue` sau `undefined`. `onNodeValueClick` primește textul afișat: valorile frunză ca șiruri și eticheta corespunzătoare pentru valori goale, pentru șiruri, matrice și obiecte goale. Arborele afișează datele și nu le editează.
+
+Când este furnizat `onNodeValueClick`, valorile sunt butoane native denumite după textul lor afișat. Tab mută focalizarea la o valoare; Enter, Spațiu sau un clic cu un dispozitiv de indicare o activează. Fără callback, valorile rămân text neinteractiv. Butoanele pentru valori nu trimit formularele care le conțin.
+
+## Proprietăți
+
+<JsonTreeReference />
+
+<PageBanner illustration="page-cover-hierarchy" />

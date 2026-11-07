@@ -103,9 +103,8 @@ export class BlocklistReimportMessagesJob {
     workspaceId: string;
   }): Promise<string[]> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({
@@ -140,7 +139,7 @@ export class BlocklistReimportMessagesJob {
     connectedAccountIds: string[] | null;
   }): Promise<string[]> {
     const where: FindOptionsWhere<MessageChannelEntity> = {
-      syncStage: Not(MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING),
+      syncStage: Not(MessageChannelSyncStage.PENDING_CONFIGURATION),
       workspaceId,
     };
 

@@ -190,7 +190,7 @@ export const MatchingNavigateShortcuts: Story = {
 export const NoResultsSearchFallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
+    const searchInput = await canvas.findByRole('textbox', { name: 'Search' });
     await waitFor(() => expect(searchInput).toHaveFocus());
     await userEvent.type(searchInput, 'input without results');
     expect(

@@ -1,6 +1,6 @@
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 type UseResolveDefaultEmailRecipientParams = {
   objectNameSingular: string | null | undefined;
@@ -11,17 +11,17 @@ export const useResolveDefaultEmailRecipient = ({
   objectNameSingular,
   recordId,
 }: UseResolveDefaultEmailRecipientParams) => {
-  const isPerson = objectNameSingular === CoreObjectNameSingular.Person;
-  const isCompany = objectNameSingular === CoreObjectNameSingular.Company;
+  const isPerson = objectNameSingular === StandardObjectNameSingular.Person;
+  const isCompany = objectNameSingular === StandardObjectNameSingular.Company;
   const isOpportunity =
-    objectNameSingular === CoreObjectNameSingular.Opportunity;
+    objectNameSingular === StandardObjectNameSingular.Opportunity;
 
   const skipPerson = !isPerson || !recordId;
   const skipCompanyPeople = !isCompany || !recordId;
   const skipOpportunity = !isOpportunity || !recordId;
 
   const { record: personRecord, loading: personLoading } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     objectRecordId: recordId ?? '',
     recordGqlFields: { id: true, emails: { primaryEmail: true } },
     skip: skipPerson,
@@ -29,7 +29,7 @@ export const useResolveDefaultEmailRecipient = ({
 
   const { records: companyPeople, loading: companyPeopleLoading } =
     useFindManyRecords({
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       filter: { companyId: { eq: recordId ?? '' } },
       recordGqlFields: { id: true, emails: { primaryEmail: true } },
       limit: 1,
@@ -38,7 +38,7 @@ export const useResolveDefaultEmailRecipient = ({
 
   const { record: opportunityRecord, loading: opportunityLoading } =
     useFindOneRecord({
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNameSingular: StandardObjectNameSingular.Opportunity,
       objectRecordId: recordId ?? '',
       recordGqlFields: {
         id: true,

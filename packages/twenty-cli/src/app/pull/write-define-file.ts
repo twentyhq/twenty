@@ -7,7 +7,6 @@ import {
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
-  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
@@ -45,11 +44,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
     members: FieldMetadataType,
   },
   {
-    path: [...prefix, 'writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: [...prefix, 'universalSettings', 'relationType'],
     symbol: 'RelationType',
     members: RelationType,
@@ -75,11 +69,6 @@ export const FIELD_ENUM_BINDINGS: EnumBinding[] = buildFieldEnumBindings([]);
 
 export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
   {
-    path: ['writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: ['openRecordIn'],
     symbol: 'ObjectOpenRecordIn',
     members: ObjectOpenRecordIn,
@@ -91,7 +80,9 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
-export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
+export const buildRoleEnumBindings = (
+  systemPermissionFlag: Record<string, string>,
+): EnumBinding[] => [
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
@@ -105,9 +96,11 @@ export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
   {
     path: ['permissionFlagUniversalIdentifiers', '[]'],
     symbol: 'SystemPermissionFlag',
-    members: SystemPermissionFlag,
+    members: systemPermissionFlag,
   },
 ];
+
+export const ROLE_ENUM_BINDINGS = buildRoleEnumBindings(SystemPermissionFlag);
 
 const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   path,
@@ -202,6 +195,47 @@ export const PAGE_LAYOUT_ENUM_BINDINGS: EnumBinding[] = [
   ...buildPageLayoutTabEnumBindings(['tabs', '[]']),
 ];
 
+const STEP_PATH = ['version', 'steps', '[]'];
+
+const buildViewFilterOperandBinding = (path: string[]): EnumBinding => ({
+  path,
+  symbol: 'ViewFilterOperand',
+  members: ViewFilterOperand,
+});
+
+// twenty-sdk/define exports no filter group operator enums, so those stay string literals.
+export const WORKFLOW_ENUM_BINDINGS: EnumBinding[] = [
+  buildViewFilterOperandBinding([
+    'version',
+    'trigger',
+    'settings',
+    'filter',
+    'stepFilters',
+    '[]',
+    'operand',
+  ]),
+  buildViewFilterOperandBinding([
+    ...STEP_PATH,
+    'input',
+    'stepFilters',
+    '[]',
+    'operand',
+  ]),
+  buildViewFilterOperandBinding([
+    ...STEP_PATH,
+    'input',
+    'filter',
+    'recordFilters',
+    '[]',
+    'operand',
+  ]),
+  {
+    path: [...STEP_PATH, 'input', '[]', 'type'],
+    symbol: 'FieldType',
+    members: FieldMetadataType,
+  },
+];
+
 const isSamePath = (left: string[], right: string[]): boolean =>
   left.length === right.length &&
   left.every((segment, index) => segment === right[index]);
@@ -210,10 +244,12 @@ export const writeDefineFile = ({
   definer,
   config,
   enumBindings = [],
+  importStatements = [],
 }: {
   definer: string;
   config: unknown;
   enumBindings?: EnumBinding[];
+  importStatements?: string[];
 }): { content: string; requiredSdkExports: string[] } => {
   const usedSymbols = new Set<string>();
 
@@ -248,7 +284,7 @@ export const writeDefineFile = ({
       : `import {\n${imported.map((name) => `  ${name},`).join('\n')}\n} from 'twenty-sdk/define';`;
 
   return {
-    content: `${importStatement}
+    content: `${[...importStatements, importStatement].join('\n')}
 
 export default ${definer}(${body});
 `,

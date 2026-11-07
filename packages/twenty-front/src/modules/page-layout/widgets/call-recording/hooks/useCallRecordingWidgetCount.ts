@@ -4,7 +4,7 @@ import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-re
 import { getCallRecordingWidgetFilter } from '@/page-layout/widgets/call-recording/utils/getCallRecordingWidgetFilter';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCallRecordingWidgetCount = ({
@@ -35,7 +35,7 @@ export const useCallRecordingWidgetCount = ({
     error,
     refetch,
   } = useFindManyRecords<WidgetCallRecordingCandidate>({
-    objectNameSingular: CoreObjectNameSingular.CallRecording,
+    objectNameSingular: StandardObjectNameSingular.CallRecording,
     filter: callRecordingFilter,
     recordGqlFields: { id: true },
     limit: 1,
@@ -50,7 +50,7 @@ export const useCallRecordingWidgetCount = ({
   return {
     callRecordingsCount:
       callRecordingsTotalCount ?? callRecordingCountRecords.length,
-    loading,
+    loading: loading && !isDefined(callRecordingsTotalCount),
     error,
     refetchCallRecordingsCount,
   };

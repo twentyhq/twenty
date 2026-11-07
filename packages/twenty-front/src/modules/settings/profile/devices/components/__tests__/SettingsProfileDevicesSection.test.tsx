@@ -16,6 +16,9 @@ const buildSession = (id: string, isCurrent: boolean) => ({
   isImpersonating: false,
   userAgent: 'Mozilla/5.0 (Macintosh) Chrome/128.0',
   ipAddress: '127.0.0.1',
+  country: 'FR',
+  region: 'Île-de-France',
+  city: 'Paris',
   lastActiveAt: new Date().toISOString(),
 });
 
@@ -62,6 +65,21 @@ describe('SettingsProfileDevicesSection', () => {
       'Could not load devices',
     );
     expect(screen.queryByText('Devices')).not.toBeInTheDocument();
+  });
+
+  it('shows where each device was signed in from', async () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsProfileDevicesSection />
+        </MemoryRouter>
+      </I18nProvider>,
+      { wrapper: Wrapper },
+    );
+
+    expect(
+      await screen.findAllByText(/Paris, France · 127\.0\.0\.1/),
+    ).toHaveLength(2);
   });
 
   it('keeps a session row mounted across a re-render of the section', async () => {

@@ -1,19 +1,17 @@
 import { type QueryConfig, types } from 'pg';
-import {
-  type FeatureFlagKey,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   type FindOptionsLike,
   type ObjectWhereLike,
@@ -28,7 +26,7 @@ import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-build
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import {
   RESERVED_PARAMETER_NAMES,
   buildCountStatement,
@@ -51,10 +49,7 @@ import {
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import {
-  type WorkspaceRelationShape,
-  type WorkspaceTableShape,
-} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -70,19 +65,21 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
-  objectRecordsPermissions: ObjectsPermissions;
+  recordReadRestrictions: RecordReadRestrictions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
-  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
+  onBeforeExecute: (
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
 };
 
 export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
-  readonly objectRecordsPermissions: ObjectsPermissions;
+  readonly recordReadRestrictions: RecordReadRestrictions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
@@ -106,7 +103,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
-    this.objectRecordsPermissions = context.objectRecordsPermissions;
+    this.recordReadRestrictions = context.recordReadRestrictions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }
@@ -576,7 +573,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildSelectStatement();
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -673,19 +670,22 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return rows as T[];
   }
 
-  applyRowLevelPermissions(): this {
-    this.context.onBeforeExecute(this);
+  async applyRowLevelPermissions(): Promise<this> {
+    await this.context.onBeforeExecute(this);
 
     return this;
   }
 
   async getCount(): Promise<number> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
     );
-    const compiled = compileNamedParameters(sql, this.parameters);
+    const compiled = compileTwentyOrmStatement({
+      sql,
+      parameters: this.parameters,
+    });
     const rows = await this.context.executor.execute(compiled);
 
     return Number(rows[0]?.count ?? 0);
@@ -717,23 +717,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         (existsFilterClause) => existsFilterClause.alias === alias,
       )?.targetTableShape
     );
-  }
-
-  getJoinParentRelationShape(
-    alias: string,
-  ): WorkspaceRelationShape | undefined {
-    const clause =
-      this.joinClauses.find((joinClause) => joinClause.alias === alias) ??
-      this.existsFilterClauses.find(
-        (existsFilterClause) => existsFilterClause.alias === alias,
-      );
-
-    if (!isDefined(clause)) {
-      return undefined;
-    }
-
-    return this.getTableShapeForAlias(clause.parentAlias)
-      ?.relationShapeByFieldName[clause.relationFieldName];
   }
 
   markRowLevelPermissionApplied(alias: string): boolean {
@@ -1229,10 +1212,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     allowPlainToManyJoins?: boolean;
     types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return this.context.executor.execute({
       ...compiled,

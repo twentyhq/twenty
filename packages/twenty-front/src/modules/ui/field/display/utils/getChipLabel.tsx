@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 export const getChipLabel = (value: string | null | undefined) => {
   if (isNonEmptyString(value)) {
@@ -13,10 +12,7 @@ export const getChipLabel = (value: string | null | undefined) => {
   return {
     text,
     content: (
-      <Text
-        render={<span />}
-        style={{ color: themeCssVariables.font.color.tertiary }}
-      >
+      <Text render={<span />} color="tertiary">
         {text}
       </Text>
     ),

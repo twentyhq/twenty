@@ -4,7 +4,7 @@
       "label": "البدء",
       "groups": {
         "welcome": {
-          "label": "مرحبًا"
+          "label": "البدء"
         },
         "coreConcepts": {
           "label": "المفاهيم الأساسية"
@@ -15,7 +15,7 @@
       "label": "دليل المستخدم",
       "groups": {
         "userGuideOverview": {
-          "label": "نظرة عامة"
+          "label": "دليل المستخدم"
         },
         "dataModel": {
           "label": "نموذج البيانات",
@@ -46,6 +46,14 @@
               "label": "مرجع"
             },
             "calendarEmailsHowTos": {
+              "label": "الإرشادات"
+            }
+          }
+        },
+        "emailCampaigns": {
+          "label": "حملات البريد الإلكتروني",
+          "groups": {
+            "emailCampaignsHowTos": {
               "label": "الإرشادات"
             }
           }
@@ -136,7 +144,7 @@
           }
         },
         "settings": {
-          "label": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
+          "label": "الإعدادات",
           "groups": {
             "settingsReference": {
               "label": "مرجع"
@@ -160,7 +168,7 @@
       "label": "المطورون",
       "groups": {
         "developersOverview": {
-          "label": "نظرة عامة"
+          "label": "المطورون"
         },
         "apps": {
           "label": "التطبيقات",
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "المساهمة"
+        },
+        "uiLibrary": {
+          "label": "مكتبة واجهة المستخدم",
+          "groups": {
+            "uiGuides": {
+              "label": "أدلة"
+            },
+            "uiPrimitives": {
+              "label": "العناصر الأولية",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "إمكانية الوصول"
+                },
+                "uiDataDisplay": {
+                  "label": "عرض البيانات"
+                },
+                "uiFeedback": {
+                  "label": "التغذية الراجعة"
+                },
+                "uiForms": {
+                  "label": "النماذج"
+                },
+                "uiLayout": {
+                  "label": "التخطيط"
+                },
+                "uiNavigation": {
+                  "label": "التنقل"
+                },
+                "uiSurfaces": {
+                  "label": "الأسطح"
+                },
+                "uiTypography": {
+                  "label": "الطباعة"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "مكونات",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "عرض البيانات"
+                },
+                "uiComponentsFeedback": {
+                  "label": "التغذية الراجعة"
+                },
+                "uiComponentsInput": {
+                  "label": "إدخال"
+                },
+                "uiComponentsLayout": {
+                  "label": "التخطيط"
+                },
+                "uiComponentsNavigation": {
+                  "label": "التنقل"
+                },
+                "uiComponentsSettings": {
+                  "label": "الإعدادات"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "محرر الشفرات"
+                }
+              }
+            }
+          }
         }
       }
     }

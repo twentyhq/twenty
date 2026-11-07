@@ -12,7 +12,7 @@ exports[`Index metadata creation on relation field creation v2 Should create and
     },
   ],
   "indexType": "BTREE",
-  "isCustom": true,
+  "isSystemSideEffect": true,
   "isUnique": false,
   "name": "IDX_c7afa9b8a4109b84530eafdacdb",
 }
@@ -30,7 +30,7 @@ exports[`Index metadata creation on relation field creation v2 Should create and
     },
   ],
   "indexType": "BTREE",
-  "isCustom": true,
+  "isSystemSideEffect": true,
   "isUnique": false,
   "name": "IDX_9343d8f57e4835944dffb85d501",
 }

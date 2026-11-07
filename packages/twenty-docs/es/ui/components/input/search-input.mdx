@@ -1,0 +1,95 @@
+---
+title: Entrada de búsqueda
+description: Texto de búsqueda controlado con acciones opcionales, como una ventana emergente de filtro.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
+
+## Resumen
+
+`SearchInput` proporciona un icono de búsqueda y un campo de entrada de texto. `onValueChange` recibe la nueva cadena; `onChange` recibe el evento nativo de cambio de React. El filtrado, la obtención y la eliminación de rebotes pertenecen a tu aplicación.
+
+<StoryEmbed storyId="ui-input-searchinput--display" title="Ejemplo de SearchInput" height={110} />
+
+## Uso
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+Usa `aria-label` o `aria-labelledby` para un nombre accesible.
+
+Las propiedades nativas de entrada, `className`, `style` y `ref` se aplican al propio campo de entrada. El `InputGroup` compartido se encarga del elemento decorativo de búsqueda y del tratamiento del foco. El contenedor que distribuye el campo y sus acciones no acepta props; coloca `SearchInput` en tu propio contenedor para cambiar su tamaño o posición. Usa `size="sm"` para un campo de búsqueda compacto.
+
+## Acciones
+
+`actions` muestra controles después del campo de búsqueda. Compón una ventana emergente de filtro con un [Dropdown](/es/ui/components/navigation/dropdown) cuyo activador sea un `IconButton` y asigna a ese botón un nombre accesible.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
+  const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
+    />
+  );
+};
+```
+
+`disabled` desactiva solo la entrada de texto; desactiva los controles de acción por separado. Con `size="sm"`, pasa `size="sm"` también a los controles de acción.
+
+<StoryEmbed storyId="ui-input-searchinput--with-filter" title="SearchInput con una ventana emergente de filtro" height={320} />
+
+## "Props"
+
+<SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />

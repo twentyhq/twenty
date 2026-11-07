@@ -1,4 +1,4 @@
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -6,7 +6,7 @@ import {
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import {
   ChartDataException,
   ChartDataExceptionCode,

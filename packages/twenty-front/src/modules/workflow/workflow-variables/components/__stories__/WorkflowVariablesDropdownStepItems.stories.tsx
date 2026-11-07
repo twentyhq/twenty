@@ -78,3 +78,30 @@ export const NestedFieldSearch: Story = {
     expect(args.onSelect).toHaveBeenCalledWith('{{code.result.employees}}');
   },
 };
+
+export const UntestedCodeStep: Story = {
+  args: {
+    step: {
+      id: 'code',
+      name: 'Run code',
+      type: 'CODE',
+      outputSchema: {},
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await canvas.findByText(
+        'Test this step to see its outputs',
+        undefined,
+        ASYNC_DECORATOR_WAIT_OPTIONS,
+      ),
+    ).toBeInTheDocument();
+  },
+};

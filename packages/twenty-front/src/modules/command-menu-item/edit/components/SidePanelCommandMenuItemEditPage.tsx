@@ -1,3 +1,4 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
@@ -24,14 +25,9 @@ import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import {
-  IconDotsVertical,
-  IconPin,
-  IconPinnedOff,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconDotsVertical, IconPin, IconPinnedOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -235,18 +231,17 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           })
                         }
                       >
-                        <MenuItemDraggable
-                          withIconContainer
-                          LeftComponent={
+                        <DraggableListRow
+                          hasIconBackground
+                          startIcon={
                             <ApplicationStackIcon
                               Icon={ItemIcon}
                               applicationId={item.applicationId}
                             />
                           }
-                          text={getDisplayLabel(item)}
-                          gripMode="onHover"
-                          isIconDisplayedOnHoverOnly={false}
-                          iconButtons={
+                          dragHandleVisibility="hover"
+                          actionsVisibility="always"
+                          actions={
                             <ButtonGroup
                               attached={false}
                               aria-label={t`Menu item actions`}
@@ -278,7 +273,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
                               </LightIconButton>
                             </ButtonGroup>
                           }
-                        />
+                        >
+                          {getDisplayLabel(item)}
+                        </DraggableListRow>
                       </SelectableListItem>
                     }
                   />

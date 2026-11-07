@@ -15,8 +15,16 @@
   Trailing content, such as buttons, rendered after the content.
 </ParamField>
 
+<ParamField body="actionsPlacement" type="&quot;auto&quot; | &quot;end&quot;" default="auto">
+  Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch.
+</ParamField>
+
 <ParamField body="actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;" default="hover">
   When trailing actions are visible: on hover and focus, or always.
+</ParamField>
+
+<ParamField body="active" type="boolean" default="false">
+  Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item.
 </ParamField>
 
 <ParamField body="color" type="&quot;danger&quot; | &quot;neutral&quot;" default="neutral">
@@ -27,9 +35,8 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;" default="inline">
-  Where the description renders: inline after the content or at the end of
-  the row.
+<ParamField body="descriptionPlacement" type="&quot;below&quot; | &quot;end&quot; | &quot;inline&quot;" default="inline">
+  Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
@@ -63,6 +70,10 @@
 
 <ParamField body="selected" type="boolean" default="false">
   Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.
+</ParamField>
+
+<ParamField body="selectionAppearance" type="&quot;accent&quot; | &quot;default&quot;" default="default">
+  Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.
 </ParamField>
 
 <ParamField body="shortcut" type="ShortcutDefinition">

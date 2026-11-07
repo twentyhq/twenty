@@ -3,9 +3,13 @@ title: VisuallyHidden
 description: Keep supporting text available to assistive technology without displaying it visually.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## Overview
 
 `VisuallyHidden` renders a visually hidden `span`. Its content stays in the accessibility tree and can supply an accessible name. It accepts native span props, a span ref, and Base UI `render` composition. Import `VisuallyHiddenProps` from the same entry point.
 
@@ -43,3 +47,5 @@ Use `id` to associate hidden descriptions with `aria-describedby`. Native attrib
 ## Props
 
 <VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

@@ -5,7 +5,6 @@
   "tags": ["scope:create-app"],
   "targets": {
     "build": {
-      "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
@@ -25,14 +24,6 @@
       }
     },
     "set-local-version": {},
-    "generate-template-lock": {
-      "executor": "nx:run-commands",
-      "cache": false,
-      "options": {
-        "cwd": "packages/create-twenty-app",
-        "command": "tsx src/scripts/generate-template-lock.ts --version={args.releaseVersion} --registry={args.registry}"
-      }
-    },
     "typecheck": {},
     "lint": {},
     "test": {

@@ -13,10 +13,8 @@ import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
-import {
-  StyledAiChatAskStatusDetail,
-  StyledAiChatAskStatusMessage,
-} from '@/ai/components/AiChatAskStyledComponents';
+import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
+import { StyledAiChatAskStatusMessage } from '@/ai/components/StyledAiChatAskStatusMessage';
 
 const StyledAnswersCard = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};

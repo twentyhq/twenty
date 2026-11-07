@@ -1,5 +1,4 @@
 import { type BaseOutputSchemaV2 } from '../../types/BaseOutputSchema';
-import { type CodeOutputSchema } from '../../types/OutputSchema';
 import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughCodeOutputSchema = ({
@@ -8,7 +7,7 @@ const searchVariableThroughCodeOutputSchema = ({
   rawVariableName,
 }: {
   stepName: string;
-  codeOutputSchema: CodeOutputSchema;
+  codeOutputSchema: unknown;
   rawVariableName: string;
 }) =>
   searchVariableInOutputSchema({
@@ -20,20 +19,18 @@ const searchVariableThroughCodeOutputSchema = ({
   });
 
 describe('searchVariableInOutputSchema - code output schema', () => {
-  describe('LinkOutputSchema tests', () => {
-    const mockLinkSchema: CodeOutputSchema = {
-      link: {
-        isLeaf: true,
-        tab: 'main',
-        label: 'External Link',
-      },
-      _outputSchemaType: 'LINK',
-    };
-
+  describe('stored link placeholder', () => {
     it('should return undefined', () => {
       const result = searchVariableThroughCodeOutputSchema({
         stepName: 'Code Step',
-        codeOutputSchema: mockLinkSchema,
+        codeOutputSchema: {
+          link: {
+            isLeaf: true,
+            tab: 'test',
+            label: 'Generate Function Output',
+          },
+          _outputSchemaType: 'LINK',
+        },
         rawVariableName: '{{step1.link}}',
       });
 

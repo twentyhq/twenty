@@ -1,0 +1,63 @@
+---
+title: Темный режим
+description: Загрузите обе палитры Twenty и переключите активную цветовую схему.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
+Загрузите обе таблицы стилей темы, если ваше приложение может переключать схемы. `ThemeProvider` выбирает палитру, применяя класс `light` или `dark`.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+Провайдер принимает явно заданную схему. Ваше приложение отвечает за сохранение настроек и обработку системных настроек. При рендеринге на сервере используйте одну и ту же начальную схему на сервере и клиенте, чтобы избежать начального несоответствия палитр.
+
+## Смешивание палитр
+
+Установите `applyToRoot={false}` во вложенном провайдере, чтобы назначить поддереву другую палитру. Необходимо загрузить обе таблицы стилей:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+Используйте `useThemeColorScheme()` из `twenty-ui/theme` для получения активной цветовой схемы провайдера. Во фронтенд-компоненте Twenty используйте `useColorScheme()` из `twenty-sdk/front-component`, чтобы получить схему рабочего пространства, предоставленную хостом.
+
+<PageBanner illustration="page-cover-palette" />

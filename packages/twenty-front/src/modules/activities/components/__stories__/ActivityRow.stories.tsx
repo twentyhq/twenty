@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import {
   OverflowingTextWithTooltip,
   Text,
@@ -50,12 +51,12 @@ export const Disabled: Story = {
 export const IndependentCheckbox: Story = {
   render: (args) => (
     <ActivityRow {...args}>
-      <span style={{ position: 'relative', zIndex: 1 }}>
+      <Card.Control>
         <Checkbox aria-label="Complete activity" />
-      </span>
-      <Text style={{ position: 'relative', zIndex: 1 }}>
+      </Card.Control>
+      <Card.Control render={<Text />}>
         Activity with independent completion
-      </Text>
+      </Card.Control>
     </ActivityRow>
   ),
   play: async ({ canvasElement, args }) => {
@@ -82,21 +83,24 @@ export const IndependentCheckbox: Story = {
 export const BodyTooltipAndLink: Story = {
   render: (args) => (
     <ActivityRow {...args}>
-      <OverflowingTextWithTooltip
-        text={
-          <Text render={<span />}>
-            Activity body{' '}
-            <a
-              href="#activity-reference"
-              onClick={(event) => event.preventDefault()}
-            >
-              Reference
-            </a>
-          </Text>
+      <Card.Control
+        render={
+          <OverflowingTextWithTooltip
+            text={
+              <Text render={<span />}>
+                Activity body{' '}
+                <a
+                  href="#activity-reference"
+                  onClick={(event) => event.preventDefault()}
+                >
+                  Reference
+                </a>
+              </Text>
+            }
+            tooltipContent="Activity details"
+            alwaysShowTooltip
+          />
         }
-        tooltipContent="Activity details"
-        alwaysShowTooltip
-        style={{ position: 'relative', zIndex: 1 }}
       />
     </ActivityRow>
   ),
@@ -123,24 +127,25 @@ export const HoverSurface: Story = {
     <>
       <Text>Outside activity</Text>
       <ActivityRow {...args}>
-        <Text style={{ position: 'relative', zIndex: 1 }}>
-          Raised activity summary
-        </Text>
-        <span style={{ position: 'relative', zIndex: 1 }}>
+        <Card.Control render={<Text />}>Raised activity summary</Card.Control>
+        <Card.Control>
           <Checkbox aria-label="Complete hovered activity" />
-        </span>
-        <a
-          href="#hovered-activity-reference"
-          onClick={(event) => event.preventDefault()}
-          style={{ position: 'relative', zIndex: 1 }}
+        </Card.Control>
+        <Card.Control
+          render={
+            <a
+              href="#hovered-activity-reference"
+              onClick={(event) => event.preventDefault()}
+            />
+          }
         >
           Activity reference
-        </a>
+        </Card.Control>
       </ActivityRow>
       <ActivityRow {...args} disabled label="Unavailable activity">
-        <Text style={{ position: 'relative', zIndex: 1 }}>
+        <Card.Control render={<Text />}>
           Unavailable activity summary
-        </Text>
+        </Card.Control>
       </ActivityRow>
     </>
   ),

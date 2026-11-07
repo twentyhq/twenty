@@ -15,7 +15,6 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -75,12 +74,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-          value: true,
-        },
-      ],
+      featureFlags: [],
     });
   },
 };

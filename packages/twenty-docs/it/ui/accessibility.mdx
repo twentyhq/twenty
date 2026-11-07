@@ -1,0 +1,47 @@
+---
+title: Accessibilità
+description: Etichetta i controlli, preserva il comportamento della tastiera e testa le interfacce accessibili di Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+I componenti interattivi migrati utilizzano le primitive di Base UI per la semantica e il comportamento della tastiera. La tua applicazione continua a fornire etichette significative, descrizioni, messaggi di errore e ordine di attivazione.
+
+## Etichetta ogni controllo
+
+Usa `Field.Label` con un input per associare un'etichetta visibile al controllo. `Field.Description` fornisce testo di supporto:
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input type="email" name="email" required />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error>Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+Usa [VisuallyHidden](/it/ui/primitives/accessibility/visually-hidden) quando il testo di supporto deve rimanere disponibile per la tecnologia assistiva senza essere visualizzato.
+
+I segnaposto integrano le etichette; non le sostituiscono. Per un controllo senza testo visibile, fornisci un nome accessibile usando `aria-label` o `aria-labelledby`.
+
+## Mantieni il comportamento nativo
+
+Usa le proprietà di stato e di modifica del componente, come `checked` e `onCheckedChange` in `Switch`. Mantieni visibili gli indicatori di focus. Quando usi `render` per sostituire un elemento, preserva il ref, i gestori di eventi e gli attributi che il componente gli passa.
+
+Un controllo disabilitato non può essere modificato ed è generalmente escluso dalla navigazione tramite tastiera e dall'invio del modulo. Un controllo di sola lettura mantiene il proprio valore e può rimanere selezionabile; scegli lo stato corrispondente all'interazione desiderata.
+
+## Testa l'interfaccia completa
+
+Verifica la navigazione tramite tastiera, le etichette, gli annunci di errore, lo spostamento del focus negli overlay e lo zoom nel contesto in cui viene usato il componente. Verifica il contrasto in entrambe le palette e dopo aver applicato override personalizzati dei token.
+
+Le storie di Twenty UI includono controlli di interazione e di accessibilità automatizzati. Alcune storie rimandano ancora i controlli del contrasto cromatico, quindi tali controlli non stabiliscono la piena conformità all'accessibilità per un'applicazione.
+
+<PageBanner illustration="page-cover-accessibility" />

@@ -5,11 +5,14 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -19,7 +22,6 @@ import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-histo
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 
@@ -41,6 +43,7 @@ export class AgentChatStreamRecoveryService {
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly chatMessageQueueService: MessageQueueService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
     private readonly turnRecorderService: AgentTurnRecorderService,
@@ -92,9 +95,7 @@ export class AgentChatStreamRecoveryService {
       await this.publishStreamError({ threadId, workspaceId, turnError });
     }
 
-    if (shouldFlush) {
-      await this.flushQueuedMessages({ threadId, workspaceId });
-    }
+    await this.wakeNext({ threadId, workspaceId, shouldFlush });
 
     return true;
   }
@@ -139,16 +140,11 @@ export class AgentChatStreamRecoveryService {
       return null;
     }
 
-    const interruptedError: StreamErrorPayload = {
-      code: AiExceptionCode.STREAM_INTERRUPTED,
-      message: 'The response was interrupted before it could finish.',
-    };
-
     const hasReaped = await this.release({
       threadId: thread.id,
       workspaceId,
       streamId: thread.activeStreamId,
-      turnError: interruptedError,
+      turnError: AGENT_TURN_INTERRUPTED_ERROR,
       shouldFlush: true,
     });
 
@@ -161,7 +157,7 @@ export class AgentChatStreamRecoveryService {
       amount: 1,
       attributes: {
         failure_phase: 'interrupted',
-        error_code: interruptedError.code,
+        error_code: AGENT_TURN_INTERRUPTED_ERROR.code,
       },
     });
 
@@ -169,31 +165,52 @@ export class AgentChatStreamRecoveryService {
       `[AI_CHAT_TURN_FAILED] failurePhase=interrupted, threadId=${thread.id}, workspaceId=${workspaceId}: stream ${thread.activeStreamId} stopped sending heartbeats`,
     );
 
-    return interruptedError;
+    return AGENT_TURN_INTERRUPTED_ERROR;
   }
 
-  private async flushQueuedMessages({
+  // the oldest queued message is the queue's place in line, so it and the runs go in the order they came
+  async wakeNext({
     threadId,
     workspaceId,
+    shouldFlush,
   }: {
     threadId: string;
     workspaceId: string;
+    shouldFlush: boolean;
   }): Promise<void> {
     try {
-      const hasQueuedMessages = await this.messageRepository.existsBy(
-        workspaceId,
-        { threadId, status: AgentMessageStatus.QUEUED },
-      );
+      const [nextRun, oldestQueuedMessage] = await Promise.all([
+        this.pendingWakeUpService.findOldest({
+          workspaceId,
+          owner: { type: AGENT_CHAT_WAITING_RUN_OWNER_TYPE, id: threadId },
+        }),
+        shouldFlush
+          ? this.messageRepository.findOne(workspaceId, {
+              where: { threadId, status: AgentMessageStatus.QUEUED },
+              order: { createdAt: 'ASC' },
+            })
+          : null,
+      ]);
 
-      if (hasQueuedMessages) {
+      if (
+        isDefined(oldestQueuedMessage) &&
+        (!isDefined(nextRun) ||
+          new Date(oldestQueuedMessage.createdAt) <= nextRun.createdAt)
+      ) {
         await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
           FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
           { workspaceId, threadId },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
+      } else if (isDefined(nextRun)) {
+        await this.pendingWakeUpService.scheduleResolution({ wakeUp: nextRun });
       }
     } catch (error) {
       this.logger.error(
-        `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        `Failed to wake what waits on thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
       );
     }
   }

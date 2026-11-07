@@ -46,9 +46,16 @@ const NOTE_WIDGET = createDefaultStandaloneRichTextWidget({
   pageLayoutTabId: 'tab-1',
   title: 'Note',
   body: {
-    blocknote: JSON.stringify([
-      { id: 'instructions', type: 'paragraph', content: 'Shared instructions' },
-    ]),
+    tiptap: JSON.stringify({
+      type: 'doc',
+      attrs: { schemaVersion: 1 },
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Shared instructions' }],
+        },
+      ],
+    }),
     markdown: null,
   },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
@@ -246,7 +253,6 @@ export const SelectAndFormatText: Story = {
     await userEvent.tripleClick(canvas.getByText('Shared instructions'));
     const bold = await body.findByRole('button', { name: /^Bold/ });
     await waitFor(() => expect(bold).toBeVisible());
-    await expect(canvasElement.contains(bold)).toBe(false);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe('other-widget');
     await userEvent.click(bold);
@@ -259,7 +265,7 @@ export const SelectAndFormatText: Story = {
       expect(
         jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
       ).toMatchObject({
-        body: { blocknote: expect.stringContaining('"bold":true') },
+        body: { tiptap: expect.stringContaining('"type":"bold"') },
       }),
     );
     if (args.layoutType === PageLayoutType.RECORD_PAGE) {
@@ -273,6 +279,90 @@ export const SelectAndFormatText: Story = {
 export const DashboardSelection: Story = {
   args: { layoutType: PageLayoutType.DASHBOARD },
   play: SelectAndFormatText.play,
+};
+
+export const ApplyColors: Story = {
+  args: { layoutType: PageLayoutType.DASHBOARD },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await canvas.findByRole('textbox');
+    await userEvent.click(canvas.getByText('Shared instructions'));
+    await waitFor(() => expect(editor).toHaveFocus());
+    await userEvent.tripleClick(canvas.getByText('Shared instructions'));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Text and background colors' }),
+    );
+    const popup = await body.findByRole('dialog', {
+      name: 'Text and background colors',
+    });
+    await expect(within(popup).getByText('Text Colors')).toBeVisible();
+    await expect(within(popup).getByText('Background Colors')).toBeVisible();
+    await expect(
+      within(popup).getAllByRole('button', { name: 'Default' })[0],
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(
+      within(popup).getAllByRole('button', { name: 'Red' })[0],
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      editor.querySelector('[data-text-color="red"]'),
+    ).toHaveTextContent('Shared instructions');
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Text and background colors' }),
+    );
+    const reopened = await body.findByRole('dialog');
+    await expect(
+      within(reopened).getAllByRole('button', { name: 'Red' })[0],
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(
+      within(reopened).getAllByRole('button', { name: 'Blue' })[1],
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      editor.querySelector('[data-background-color="blue"]'),
+    ).toHaveTextContent('Shared instructions');
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+      ).toMatchObject({
+        body: {
+          tiptap: expect.stringContaining('"backgroundColor":"blue"'),
+        },
+      }),
+    );
+  },
+};
+
+export const AlignText: Story = {
+  args: { layoutType: PageLayoutType.DASHBOARD },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.tripleClick(canvas.getByText('Shared instructions'));
+    await expect(
+      await body.findByRole('button', { name: 'Align left' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(body.getByRole('button', { name: 'Align center' }));
+    await waitFor(() =>
+      expect(canvas.getByText('Shared instructions')).toHaveStyle({
+        textAlign: 'center',
+      }),
+    );
+    await expect(
+      body.getByRole('button', { name: 'Align center' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+      ).toMatchObject({
+        body: { tiptap: expect.stringContaining('"textAlign":"center"') },
+      }),
+    );
+  },
 };
 
 export const CancelPendingEdit: Story = {

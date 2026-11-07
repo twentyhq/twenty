@@ -17,11 +17,8 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       isSystem
       isUIEditable
       isUICreatable
-      writability
       isSearchable
       openRecordIn
-      sharingReach
-      readability
       shortcut
       duplicateCriteria
       createdAt
@@ -41,7 +38,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
         isActive
         isSystem
         isUIEditable
-        writability
+        isSystemSideEffect
         isNullable
         isUnique
         isSearchable
@@ -113,7 +110,6 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       isUnique
       isSearchable
       isNullable
-      writability
       createdAt
       updatedAt
       settings
@@ -186,7 +182,6 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       isUnique
       isSearchable
       isNullable
-      writability
       createdAt
       updatedAt
       settings
@@ -216,8 +211,6 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       isSearchable
       openRecordIn
-      sharingReach
-      readability
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -242,8 +235,6 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       isSearchable
       openRecordIn
-      sharingReach
-      readability
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -267,7 +258,6 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       isUnique
       isSearchable
       isNullable
-      writability
       createdAt
       updatedAt
       settings
@@ -286,7 +276,8 @@ export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
       name
       indexType
       isUnique
-      isCustom
+      applicationId
+      isSystemSideEffect
       indexWhereClause
       createdAt
       updatedAt

@@ -3,11 +3,15 @@ title: Icons
 description: Named icons, dynamic lookup, illustration wrappers, and their supported props.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import IconReference from '/snippets/ui/generated/icon/icon.mdx';
 import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
 import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
 import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
 import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+## Overview
 
 Import named icons from `twenty-ui/icon`. Use the surrounding control or visible text to communicate meaning. Decorative icons should be hidden from assistive technology.
 
@@ -28,12 +32,14 @@ Tabler icons accept `size` (number or CSS length), `stroke` (stroke width), `col
 
 Custom icons that do not accept accessible attributes need a wrapper with the appropriate label or `aria-hidden`. `className` and `style` are also available only where listed. Import a specific icon when possible to avoid loading the dynamic catalog.
 
+Exported icons keep their requested width in flex layouts, including inside buttons. Let adjacent text truncate or let the parent wrap or scroll when space is limited. Where an icon supports `className` or `style`, you can explicitly override `flex-shrink` for a layout that needs it. Illustration containers also preserve their width.
+
 ## Dynamic icon names
 
-Use `IconsProvider` and `Icon` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
+Use `IconsProvider` and `Icon` from `twenty-ui/icon/provider` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. `twenty-ui/icon` does not include the provider, so importing named icons never pulls in the map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
 
 ```tsx
-import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Icon, IconsProvider } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DynamicAction = ({ iconName }: { iconName: string }) => (
@@ -80,3 +86,5 @@ export const CalendarIllustration = () => (
 This catalog is generated from the public `twenty-ui/icon` exports and groups icons by the props they accept.
 
 <IconCatalog />
+
+<PageBanner illustration="card-page-iconography" />

@@ -132,7 +132,8 @@ export class AlignMessageCampaignViewFieldPositionsCommand extends ProvisionedWo
       return;
     }
 
-    const { others, lowest } = splitViewFieldPositionUpdates(viewFieldsToUpdate);
+    const { others, lowest } =
+      splitViewFieldPositionUpdates(viewFieldsToUpdate);
 
     for (const viewFieldBatch of [others, lowest]) {
       if (viewFieldBatch.length === 0) {
@@ -164,6 +165,7 @@ export class AlignMessageCampaignViewFieldPositionsCommand extends ProvisionedWo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,

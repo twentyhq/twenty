@@ -65,6 +65,9 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(grace).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
   });
+  await waitFor(() => expect(ada).toHaveAttribute('tabindex', '-1'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   await userEvent.tab({ shift: true });
   await waitFor(() => expect(search).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
@@ -88,7 +91,13 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     timeout: INTERACTION_TIMEOUT,
   });
   expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  expect(page.getByRole('dialog', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () =>
+      expect(
+        page.getByRole('dialog', { name: 'Assignee actions' }),
+      ).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
   await waitFor(
     () => expect(search).not.toHaveAttribute('aria-activedescendant'),
     { timeout: INTERACTION_TIMEOUT },
@@ -161,7 +170,7 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(
     await page.findByRole('menuitem', { name: /^Assign person/ }),
   );
-  const reopenedSearch = await page.findByRole('searchbox', {
+  let reopenedSearch = await page.findByRole('searchbox', {
     name: 'Search people',
   });
   await waitFor(() => expect(reopenedSearch).toHaveFocus());
@@ -179,6 +188,54 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   );
   expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
     'Assignee: Ada Lovelace',
+  );
+  const draft = page.getByRole('textbox', { name: 'Assignment note' });
+  await userEvent.type(draft, 'Reviewed');
+  await waitFor(() => expect(draft).toHaveValue('Reviewed'));
+  await userEvent.click(page.getByRole('button', { name: 'People' }));
+  const pageOpener = await page.findByRole('menuitem', {
+    name: /^Assign person/,
+  });
+  await waitFor(() => expect(pageOpener).toHaveFocus());
+  expect(page.queryByRole('searchbox', { name: 'Search people' })).toBeNull();
+  expect(reopenedSearch).toBeInTheDocument();
+  expect(reopenedSearch).not.toBeVisible();
+  expect(draft).not.toBeVisible();
+  expect(reopenedSearch.closest('[data-dropdown-page-type]')).toHaveAttribute(
+    'inert',
+  );
+  await userEvent.click(pageOpener);
+  await waitFor(() => expect(reopenedSearch).toHaveFocus());
+  expect(page.getByRole('searchbox', { name: 'Search people' })).toBe(
+    reopenedSearch,
+  );
+  expect(reopenedSearch).toHaveValue('Grace');
+  expect(page.getByRole('textbox', { name: 'Assignment note' })).toBe(draft);
+  expect(draft).toHaveValue('Reviewed');
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+  );
+  await userEvent.click(trigger);
+  const defaultPageOpener = await page.findByRole('menuitem', {
+    name: /^Assign person/,
+  });
+  await waitFor(
+    () =>
+      expect(
+        page.getByRole('menu', { name: 'Assignee actions' }),
+      ).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(page.queryByRole('searchbox', { name: 'Search people' })).toBeNull();
+  await userEvent.click(defaultPageOpener);
+  reopenedSearch = await page.findByRole('searchbox', {
+    name: 'Search people',
+  });
+  await waitFor(() => expect(reopenedSearch).toHaveFocus());
+  expect(reopenedSearch).toHaveValue('Grace');
+  expect(page.getByRole('textbox', { name: 'Assignment note' })).toHaveValue(
+    '',
   );
   await userEvent.clear(reopenedSearch);
   await waitFor(() =>

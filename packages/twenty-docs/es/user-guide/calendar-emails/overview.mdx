@@ -1,7 +1,10 @@
 ---
 title: Calendario y correos electrónicos
+sidebarTitle: Resumen
 description: Conecta tus cuentas de correo electrónico y calendario a Twenty.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Opciones de conexión
 
@@ -35,19 +38,19 @@ Para otros proveedores de correo y calendario:
 4. Probar la conexión
 
 <Note>
-**Autoalojamiento en una red aislada (air-gapped) o interna**: De forma predeterminada, Twenty rechaza las conexiones salientes a direcciones IP privadas/internas (protección SSRF). Si su servidor de correo o calendario se ejecuta en una IP local/privada (por ejemplo, un servidor local en una LAN), las conexiones hacia él se bloquearán. Para permitirlas, configure la siguiente variable de entorno en el servidor:
+**Autoalojamiento en una red interna**: De forma predeterminada, Twenty rechaza las conexiones salientes a direcciones IP privadas/internas (protección SSRF). Si su servidor de correo, calendario o proveedor de identidad se ejecuta en una IP local/privada (por ejemplo, un servidor local en una LAN), las conexiones hacia él se bloquearán. Para permitirlas, incluya los nombres de host o literales de IP en la siguiente variable de entorno del servidor:
 
 ```
-OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=mail.internal,keycloak,192.168.1.10
 ```
 
-Esto desactiva el modo seguro para **todas** las solicitudes salientes (acciones de flujo de trabajo HTTP, webhooks y conexiones IMAP/SMTP/CalDAV), así que solo configúrelo en redes aisladas y de confianza donde la protección SSRF no sea necesaria.
+Las entradas se comparan solo con el nombre de host (`keycloak`, no `http://keycloak:8080/realms/…`), sin comodines. Todas las demás solicitudes salientes (acciones de flujo de trabajo HTTP, webhooks y conexiones SSO, IMAP/SMTP/CalDAV) permanecen protegidas, e incluso un host permitido nunca puede acceder al intervalo de direcciones de metadatos de la nube. Establézcala en `*` para desactivar la protección por completo, lo cual solo es adecuado en redes aisladas y de confianza. Si configuraste previamente `OUTBOUND_HTTP_SAFE_MODE_ENABLED=false`, elimínalo: mientras esté configurado, la protección permanecerá completamente desactivada y la lista se ignorará.
 </Note>
 
 ### Múltiples Buzones
 
 * **Cuentas Ilimitadas**: Conecta múltiples cuentas de correo por usuario
-* **Gestión de Cuentas**: Cambiar entre diferentes buzones
+* **Selección del remitente**: Elige qué cuenta envía cada correo electrónico que escribes en Twenty
 * **Ajustes de Sincronización**: Configura diferentes ajustes por buzón
 
 <Warning>
@@ -74,10 +77,9 @@ Elige diferentes niveles de visibilidad para tus correos:
 <Note>Cuando está habilitado, los contactos se vinculan automáticamente a sus registros de Empresa en función de su dominio de correo electrónico. Si la Empresa aún no existe, Twenty la crea para ti.</Note>
 
 <Note>
-**Sincronización de correos internos**: El comportamiento de "correos internos no sincronizados" es el predeterminado, pero se puede desactivar. El interruptor se encuentra en la configuración avanzada:
-1. Abra **Ajustes** y active el interruptor **Avanzado** en la parte inferior de la página de configuración
-2. Vaya a **General → Seguridad**
-3. Active el interruptor **Sincronizar correos internos** para incluir los correos en los que todos los participantes comparten el mismo dominio
+**Sincronización de correos internos**: El comportamiento de "correos internos no sincronizados" es el predeterminado, pero se puede desactivar:
+1. Ve a **Ajustes → Comunicación**
+2. Active el interruptor **Sincronizar correos internos** para incluir los correos en los que todos los participantes comparten el mismo dominio
 
 Este es un ajuste a nivel de espacio de trabajo (útil para universidades u organizaciones con dominio compartido).
 </Note>
@@ -98,7 +100,7 @@ Esto te da un control preciso sobre qué correos aparecen en tu CRM sin sincroni
 **Qué se Sincroniza:**
 
 * **Correos Externos**: Todos los correos con contactos externos de carpetas seleccionadas
-* **Correos internos**: No se sincronizan de forma predeterminada (los correos del mismo dominio permanecen privados). Active el interruptor **Avanzado** en la parte inferior de **Ajustes** y, luego, active **Sincronizar correos internos** en **General → Seguridad** para incluirlos en todo el espacio de trabajo.
+* **Correos internos**: No se sincronizan de forma predeterminada (los correos del mismo dominio permanecen privados). Activa **Sincronizar correos electrónicos internos** en **Ajustes → Comunicación** para incluirlos en todo el espacio de trabajo.
 * **Adjuntos**: Se incluyen en la actualización del H1 2026
 
 **Nota**: No proporcionamos una dirección de correo CC para la sincronización selectiva. En su lugar, usa la función de carpeta de mensajes para lograr el mismo nivel de control sobre qué correos sincronizar con Twenty.
@@ -142,3 +144,5 @@ Elige qué será visible para otros usuarios en tu espacio de trabajo:
 
 * [Capacidades del buzón](/es/user-guide/calendar-emails/capabilities/mailbox)
 * [Solucionar problemas de correos electrónicos que faltan](/es/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+
+<PageBanner illustration="calendar-emails" />

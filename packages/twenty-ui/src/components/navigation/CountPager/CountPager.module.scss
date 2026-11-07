@@ -1,0 +1,25 @@
+.pager {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-1);
+  min-inline-size: 0;
+
+  &[data-position-placement='start'] {
+    display: flex;
+
+    .position {
+      flex: 1;
+    }
+  }
+}
+
+.position {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.icon:dir(rtl) {
+  transform: scaleX(-1);
+}

@@ -22,6 +22,7 @@ const ROLE_MANIFEST: RoleManifest = {
   icon: 'IconHeadset',
   canUpdateAllSettings: false,
   canAccessAllTools: true,
+  canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,

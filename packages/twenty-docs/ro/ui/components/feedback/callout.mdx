@@ -1,0 +1,90 @@
+---
+title: Evidențiere
+description: Feedback cu conținut de nod, acțiuni și închidere controlată de apelant.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+## Prezentare generală
+
+`Callout` combină noduri de titlu, descriere, pictogramă și acțiune. Utilizează `status` pentru `neutral`, `info`, `success`, `warning` sau `error`. Implicit, este `info` și acceptă aspectul `soft`. Starea selectează o paletă gri, albastră, verde, portocalie sau roșie; `color` înlocuiește acea paletă fără a schimba sensul.
+
+<StoryEmbed storyId="ui-feedback-callout--display" title="Exemplu de callout" height={230} />
+
+## Utilizare
+
+```tsx
+import { Callout } from 'twenty-ui/components/feedback';
+
+export const WorkflowNotice = () => (
+  <Callout
+    status="neutral"
+    title="This form will appear in workflow runs."
+    description="Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
+    action={<Callout.Action>Learn more</Callout.Action>}
+  />
+);
+```
+
+## Opțiuni vizuale
+
+Comparați stările semantice folosind același conținut. Alegeți o stare pentru semnificația mesajului și suprascrieți culoarea numai atunci când designul înconjurător o impune.
+
+<StoryEmbed storyId="ui-feedback-callout--catalog" title="Stări de feedback pentru callout" height={1010} />
+
+## Notificare care poate fi închisă
+
+```tsx
+import { useState } from 'react';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+      {isVisible && (
+        <Callout
+          status="warning"
+          title="Some records need attention"
+          description="Review the missing email addresses before importing."
+          icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+          action={
+            <Callout.Action onClick={onReview}>Review records</Callout.Action>
+          }
+          onDismiss={() => setIsVisible(false)}
+          closeLabel="Dismiss import notice"
+        />
+      )}
+      <Button onClick={() => setIsVisible(true)}>Show notice</Button>
+    </>
+  );
+};
+```
+
+## Închidere și etichete
+
+Transmiterea `onDismiss` expune un buton de închidere accesibil. Fiecare activare prin indicator sau tastatură îl apelează o dată. Callout-ul rămâne redat până când apelantul său îl ascunde. Omiteți `onDismiss` pentru un mesaj persistent. Valoarea implicită pentru `closeLabel` este `Close`.
+
+Aplicația dvs. deține conținutul, acțiunile, numele accesibile și traducerile. Utilizați `Callout.Action` pentru un buton ghost mic, cu grosime normală a fontului. Acceptă proprietăți Button, inclusiv atribute de link, starea dezactivată, referințe și redare personalizată; dimensiunea și aspectul sunt fixe. Zona pentru acțiuni acceptă și butoane personalizate, linkuri, controale dezactivate sau mai multe noduri. Pictograma implicită de ajutor este decorativă; transmiteți `icon={null}` pentru a o omite sau furnizați un nod cu semantică accesibilă adecvată. Twenty nu necesită un furnizor i18n.
+
+## Integrare nativă
+
+Atributele native, `className`, `style` și `ref` vizează elementul rădăcină `div`. Utilizați `render` pentru a compune un alt element rădăcină sau un callback care primește proprietățile rădăcinii și `{ status, variant, color }`. `title` și `description` sunt zone de conținut. `fullWidth` elimină lățimea maximă implicită de 512px.
+
+Componenta nu adaugă niciun rol de regiune live și nicio notificare. Furnizați `role`, `aria-live` și alte atribute accesibile native atunci când fluxul de lucru din jur le necesită.
+
+## Migrare
+
+Înlocuiți `variant` semantic anterior cu `status` și constructorul `Icon` cu un nod `icon`. Înlocuiți obiectele de acțiune `{ label, onClick }` cu `Callout.Action` sau controale personalizate. Înlocuiți `isClosable` și `onClose` cu `onDismiss` și redați condiționat callout-ul în apelant atunci când închiderea ar trebui să îl ascundă. Conținutul tradus existent și etichetele acțiunilor rămân în aplicație.
+
+## Proprietăți
+
+<CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

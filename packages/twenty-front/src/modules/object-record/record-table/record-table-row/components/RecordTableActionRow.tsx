@@ -56,8 +56,8 @@ const StyledIconContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  inset-inline-start: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   justify-content: center;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   position: sticky;
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
@@ -70,9 +70,9 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  inset-inline-start: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   justify-content: start;
 
-  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   position: sticky;
   width: ${({ width }) => width}px;
 `;

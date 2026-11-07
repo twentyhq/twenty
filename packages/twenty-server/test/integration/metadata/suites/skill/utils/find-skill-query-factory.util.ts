@@ -12,7 +12,6 @@ const DEFAULT_SKILL_GQL_FIELDS = `
   icon
   description
   content
-  isCustom
   isActive
   applicationId
   createdAt

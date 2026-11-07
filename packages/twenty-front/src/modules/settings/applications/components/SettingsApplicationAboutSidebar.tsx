@@ -2,7 +2,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { emailSchema, isDefined, isSafeUrl } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -22,6 +22,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export type DeveloperLinks = {
   websiteUrl?: string;
@@ -164,6 +165,7 @@ export const SettingsApplicationAboutSidebar = ({
   billsCredits = false,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
 
@@ -265,7 +267,7 @@ export const SettingsApplicationAboutSidebar = ({
           applicationId={applicationId}
           logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
-          size="xl"
+          size="xxl"
           chipOnly
         />
         <StyledIdentity>

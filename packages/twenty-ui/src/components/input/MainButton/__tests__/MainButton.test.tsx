@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
@@ -44,5 +45,25 @@ describe('MainButton appearance', () => {
     const button = screen.getByRole('button', { name: 'Save changes' });
 
     expect(button).toHaveAttribute('data-variant', 'outline');
+  });
+});
+
+describe('MainButton inherited color contract', () => {
+  it('rejects inherited color with its standalone solid default', () => {
+    expect(() =>
+      renderToStaticMarkup(<MainButton color="inherit">Save</MainButton>),
+    ).toThrow(
+      'Button color="inherit" does not support variant="solid". Use outline, ghost, soft, or link.',
+    );
+  });
+
+  it('accepts an explicit non-solid variant before solid group defaults', () => {
+    expect(() =>
+      renderToStaticMarkup(
+        <ButtonGroup variant="solid" color="inherit">
+          <MainButton variant="outline">Preview</MainButton>
+        </ButtonGroup>,
+      ),
+    ).not.toThrow();
   });
 });

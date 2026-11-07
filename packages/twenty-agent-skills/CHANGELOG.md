@@ -10,6 +10,8 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `use-twenty-mcp`: the Twenty MCP server now lists every tool by name by default; `learn_tools -> execute_tool` applies to `/mcp?mode=meta`.
+- Made Twenty UI the default for visible front components in `develop-app` and both app bootstrap instruction files, with essential renderer rules and links to current component APIs.
 - Consolidated canonical skills, shared references, and Codex metadata into `packages/twenty-agent-skills`, replacing the separate source and generated packages. The Codex plugin identifier remains `twenty`.
 - Build one distribution in ignored `dist/` for both the `skills` CLI and Codex. Individual skills contain their required references; only the publishing branch contains generated copies.
 - Publish the built distribution at the root of the `agent-skills` branch from `main`. Installation instructions use that branch and explain local installation before the first publish.

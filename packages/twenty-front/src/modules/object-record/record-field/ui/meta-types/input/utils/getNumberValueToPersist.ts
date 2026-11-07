@@ -1,5 +1,6 @@
 import { isNull } from '@sniptt/guards';
 
+import { PERCENTAGE_VALUE_PRECISION } from '@/object-record/record-field/ui/constants/PercentageValuePrecision';
 import { type FieldNumberVariant } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   canBeCastAsNumberOrNull,
@@ -29,7 +30,12 @@ export const getNumberValueToPersist = ({
   const castedValue = castAsNumberOrNull(valueToCast);
 
   if (numberType === 'percentage' && !isNull(castedValue)) {
-    return { success: true, value: castedValue / 100 };
+    return {
+      success: true,
+      value: parseFloat(
+        (castedValue / 100).toPrecision(PERCENTAGE_VALUE_PRECISION),
+      ),
+    };
   }
 
   return { success: true, value: castedValue };

@@ -5,7 +5,7 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
   FindManyNavigationMenuItemsDocument,
-  type NavigationMenuItem,
+  type FindManyNavigationMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
@@ -23,7 +23,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         metadataStoreState.atomFamily('navigationMenuItems'),
       );
       const currentNavigationMenuItems =
-        entry.current as unknown as NavigationMenuItem[];
+        entry.current as unknown as FindManyNavigationMenuItemsQuery['navigationMenuItems'];
 
       const updatedNavigationMenuItems = currentNavigationMenuItems.filter(
         (item) =>

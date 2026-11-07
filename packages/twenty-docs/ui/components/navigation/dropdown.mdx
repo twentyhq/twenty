@@ -3,8 +3,12 @@ title: Dropdown
 description: Action menus, searchable pickers, and form panels with shared presentation and interaction.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## Overview
 
 `Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching and pagination. `SelectionGroup` owns independent selection values inside the popup. Import it from `twenty-ui/components`.
 
@@ -282,7 +286,13 @@ Tab and Shift+Tab close a `menu`, along with its parent menus when focus is in a
 
 ## Pages and submenus
 
-Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
+Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row.
+
+Pages mount when first visited and stay mounted for that open session. Returning to a page preserves its local search, form drafts and scrollable sections. Inactive pages are hidden and inert: they do not participate in keyboard navigation, focus or the accessibility tree, and their nested Dropdown popups are inactive.
+
+Reopening starts a new session at `defaultPage` with fresh content, including when `Content.keepMounted` is set or the popup reopens during its exit transition. Page history, local search and drafts reset. The closing page remains mounted during its exit transition.
+
+Uncontrolled `SelectionGroup` values stay stored in `Root` under each group's stable `id` and survive reopening. Caller-controlled values remain caller-owned. For example, a search value stored above `Content` stays unchanged until the caller updates it. Put temporary search or draft state in a component inside `Content` or `Page` when it should reset with the session; keep durable application state above `Content`.
 
 A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page; other pages focus their first row after `Back`.
 
@@ -319,7 +329,7 @@ export const FilterMenu = () => (
 );
 ```
 
-To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()` and `canGoBack`. For example, an option can return to the previous page after a selection while the popup stays open:
+To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()`, `canGoBack` and `isActive`. Inside a page, `isActive` is true only while that page is active and its dropdown is open. Use `isActive` to show a page's custom portaled popups so they disappear when the page becomes inactive or the dropdown closes. For example, an option can return to the previous page after a selection while the popup stays open:
 
 ```tsx
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
@@ -457,6 +467,8 @@ export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
 
 Right-clicking elsewhere while the menu is open moves it to the new point.
 
+Call `useDropdownPlacementOrThrow` inside `Dropdown.Content` to read its resolved `side` and `align`, including collision flips. Use the resolved side to place a picker's search and create controls beside its trigger. Keep the controls in their visual DOM order so keyboard navigation follows the layout. A search below the results receives focus from `ArrowDown` on the last result; `ArrowUp` from that search returns to the last result.
+
 ## Labels
 
 Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `shortcutJoinLabel` to replace the default `then` between sequential shortcut steps. Native `aria-labelledby` takes precedence over `aria-label`.
@@ -464,3 +476,5 @@ Each part owns its text: supply `Search.placeholder` and native accessible names
 ## Props
 
 <DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

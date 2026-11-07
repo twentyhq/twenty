@@ -53,11 +53,11 @@ export const createListWorkflowsTool = (
         await deps.coreWorkflowListService.findManyByWorkspaceId({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
+          callerApplication: undefined,
           first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
           after: parameters.after,
           orderBy: CoreWorkflowOrderByField.UPDATED_AT,
           orderByDirection: CoreWorkflowOrderByDirection.DESC,
-          includeSystem: true,
           filter: parameters.status
             ? {
                 logicalOperator: CoreWorkflowFilterLogicalOperator.AND,

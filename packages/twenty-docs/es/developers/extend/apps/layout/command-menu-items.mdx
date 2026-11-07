@@ -1,8 +1,11 @@
 ---
 title: Elementos del menú de comandos
 description: Expón componentes de frontend como acciones rápidas y entradas del menú de comandos (Cmd+K) con defineCommandMenuItem.
-icon: terminal
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
 
 Un **elemento del menú de comandos** es el puente entre el usuario y un [componente de frontend](/es/developers/extend/apps/layout/front-components). Registra el componente en el menú de comandos de Twenty (Cmd+K) y, opcionalmente, como un botón de acción rápida anclado en la esquina superior derecha de la página.
 
@@ -31,7 +34,9 @@ export default defineCommandMenuItem({
 | `isPinned`                              | No          | Cuando es `true`, muestra el comando como un botón de acción rápida en la esquina superior derecha de la página                                                                                                                                                                                            |
 | `availabilityType`                      | No          | Controla dónde aparece el comando: `'GLOBAL'` (siempre disponible), `'GLOBAL_OBJECT_CONTEXT'` (solo en páginas con un contexto de objeto: páginas de índice y de registro), `'RECORD_SELECTION'` (solo cuando hay registros seleccionados) o `'FALLBACK'` (se muestra cuando ningún otro comando coincide) |
 | `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                                                                                                                                      |
+| `availabilityCoreObjectName`            | No          | Restringe el comando a las páginas de un objeto central integrado en lugar de un objeto de espacio de trabajo. Solo se admite `'workflow'` (la lista de Workflows y la página de un workflow). No se puede combinar con `availabilityObjectUniversalIdentifier`                                            |
 | `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                                                                                                                               |
+| `conditionalPinnedExpression`           | No          | Una expresión booleana que restringe `isPinned`: el comando se muestra como un botón de acción rápida solo mientras se cumple y, de lo contrario, permanece en el menú de comandos. La misma sintaxis y variables que `conditionalAvailabilityExpression`                                                  |
 
 ## Comandos sin interfaz
 
@@ -81,20 +86,22 @@ export default defineCommandMenuItem({
 
 Estas representan el estado actual de la página:
 
-| Variable                       | Tipo      | Descripción                                                         |
-| ------------------------------ | --------- | ------------------------------------------------------------------- |
-| `pageType`                     | `string`  | Tipo de página actual (p. ej., 'RecordIndexPage', 'RecordShowPage') |
-| `isInSidePanel`                | `boolean` | Si el componente se renderiza en un panel lateral                   |
-| `numberOfSelectedRecords`      | `number`  | Número de registros seleccionados actualmente                       |
-| `isSelectAll`                  | `boolean` | Si "seleccionar todo" está activo                                   |
-| `selectedRecords`              | `array`   | Los objetos de registro seleccionados                               |
-| `favoriteRecordIds`            | `array`   | IDs de registros marcados como favoritos                            |
-| `objectPermissions`            | `object`  | Permisos para el tipo de objeto actual                              |
-| `targetObjectReadPermissions`  | `object`  | Permisos de lectura para el objeto de destino                       |
-| `targetObjectWritePermissions` | `object`  | Permisos de escritura para el objeto de destino                     |
-| `featureFlags`                 | `object`  | Indicadores de características activos                              |
-| `objectMetadataItem`           | `object`  | Metadatos del tipo de objeto actual                                 |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Si la vista actual tiene un filtro de eliminación lógica            |
+| Variable                       | Tipo             | Descripción                                                                                            |
+| ------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `pageType`                     | `string`         | Tipo de página actual (p. ej., 'RecordIndexPage', 'RecordShowPage')                                    |
+| `isInSidePanel`                | `boolean`        | Si el componente se renderiza en un panel lateral                                                      |
+| `numberOfSelectedRecords`      | `number`         | Número de registros seleccionados actualmente                                                          |
+| `isSelectAll`                  | `boolean`        | Si "seleccionar todo" está activo                                                                      |
+| `selectedRecords`              | `array`          | Los objetos de registro seleccionados                                                                  |
+| `favoriteRecordIds`            | `array`          | IDs de registros marcados como favoritos                                                               |
+| `objectPermissions`            | `object`         | Permisos para el tipo de objeto actual                                                                 |
+| `targetObjectReadPermissions`  | `object`         | Permisos de lectura para el objeto de destino                                                          |
+| `targetObjectWritePermissions` | `object`         | Permisos de escritura para el objeto de destino                                                        |
+| `featureFlags`                 | `object`         | Indicadores de características activos                                                                 |
+| `objectMetadataItem`           | `object`         | Metadatos del tipo de objeto actual                                                                    |
+| `coreObjectName`               | `string \| null` | Objeto central de la página actual (`'workflow'` en las páginas de Workflows); de lo contrario, `null` |
+| `currentView`                  | `object \| null` | La vista mostrada en una página de índice, como `{ id, universalIdentifier }`; de lo contrario, `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | Si la vista actual tiene un filtro de eliminación lógica                                               |
 
 ### Operadores
 
@@ -116,3 +123,5 @@ Combina variables en expresiones booleanas:
 | `none(array, prop)`                 | `true` si la propiedad es falsy en cada elemento                      |
 | `noneDefined(array, prop)`          | `true` si la propiedad es undefined en cada elemento                  |
 | `noneEquals(array, prop, value)`    | `true` si la propiedad no es igual al valor en ningún elemento        |
+
+<PageBanner illustration="card-page-command-menu" />

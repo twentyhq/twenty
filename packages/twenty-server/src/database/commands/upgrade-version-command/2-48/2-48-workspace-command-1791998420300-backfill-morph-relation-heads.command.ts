@@ -147,6 +147,7 @@ export class BackfillMorphRelationHeadsCommand extends ProvisionedWorkspaceComma
       applicationHeads,
     ] of headsByApplication) {
       const args = {
+        shouldDeferActions: false,
         isSystemBuild: true,
         workspaceId,
         applicationUniversalIdentifier,

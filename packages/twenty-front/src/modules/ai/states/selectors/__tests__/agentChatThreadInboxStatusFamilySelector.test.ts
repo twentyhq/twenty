@@ -20,7 +20,7 @@ const buildStore = () => {
       createdAt: LAST_ACTIVITY_AT,
       updatedAt: LAST_ACTIVITY_AT,
       lastActivityAt: LAST_ACTIVITY_AT,
-    } as never,
+    },
   ]);
 
   return store;
@@ -28,6 +28,7 @@ const buildStore = () => {
 
 const UNREAD_PARTICIPANT = {
   [THREAD_ID]: {
+    __typename: 'AgentChatThreadParticipant' as const,
     id: 'participant',
     threadId: THREAD_ID,
     lastReadAt: null,
@@ -35,6 +36,7 @@ const UNREAD_PARTICIPANT = {
     snoozedUntil: null,
     isSubscribed: true,
     lastMentionedAt: null,
+    mentionsResolvedAt: null,
     updatedAt: LAST_ACTIVITY_AT,
   },
 };

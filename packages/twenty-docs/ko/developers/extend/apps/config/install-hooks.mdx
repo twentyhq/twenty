@@ -1,7 +1,6 @@
 ---
 title: 설치 훅
 description: 설치, 업그레이드 또는 제거 라이프사이클 동안 로직을 실행하여 데이터를 시드하고, 레코드를 백업하고, 업그레이드를 검증하고, 외부 리소스를 정리합니다.
-icon: wrench
 ---
 
 설치 훅은 설치, 업그레이드 또는 제거 라이프사이클 동안 실행되는 특수한 로직 함수입니다. 이들은 일반 [로직 함수](/ko/developers/extend/apps/logic/logic-functions)와 동일한 핸들러 런타임을 공유하지만, 자체 define 함수로 선언되며 일반 트리거 모델(HTTP, cron, 데이터베이스 이벤트) 외부에서 동작합니다. 설치 훅은 `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — 새로 설치하는 경우 `previousVersion`은 `undefined`임)을 받고, 제거 훅은 제거되는 버전을 나타내는 `UninstallPayload` (`{ version?: string }`)을 받습니다.

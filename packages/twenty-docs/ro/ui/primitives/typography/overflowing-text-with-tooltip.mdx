@@ -1,0 +1,131 @@
+---
+title: OverflowingTextWithTooltip
+description: Trunchiază textul lung și afișează valoarea sa completă într-un tooltip.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
+
+## Prezentare generală
+
+`OverflowingTextWithTooltip` trunchiază conținutul în lățimea disponibilă. Verifică depășirea la intrarea cu indicatorul și la focalizare, apoi afișează un tooltip doar când este necesar. Gestionează intern vizibilitatea tooltipului și nu expune props pentru starea de deschidere, nici controlate, nici necontrolate. Utilizați [OverflowingTextTooltipModeProvider](/ro/ui/primitives/typography/overflowing-text-tooltip-mode-provider) pentru a modifica momentul în care un subarbore verifică trunchierea sau pentru a dezactiva indiciul contextual.
+
+<StoryEmbed storyId="ui-surfaces-overflowingtextwithtooltip--display" title="Exemplu OverflowingTextWithTooltip" height={180} />
+
+## Utilizare
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Quarterly account review and renewal preparation"
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Limitează lățimea aspectului înconjurător pentru a permite trunchierea. `isFocusable` oferă textului un punct de oprire în tabulare și deschide tooltipul la focalizare sau clic. Menține disponibile informațiile esențiale pentru utilizatorii care nu pot trece cu indicatorul peste ele.
+
+## Alegeți tipografia
+
+`size`, `weight` și `color` corespund cu [Text](/ro/ui/primitives/typography/text). Sunt opționale și se moștenesc independent atunci când sunt omise. Tipografia explicită se aplică textului afișat; tooltipul își păstrează aspectul partajat.
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceCaption = () => (
+  <OverflowingTextWithTooltip
+    text="Quarterly account review and renewal preparation"
+    size="xs"
+    weight="semibold"
+    color="light"
+    style={{ maxWidth: 220 }}
+  />
+);
+```
+
+## Conținut pe mai multe linii
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Review the account history, confirm the renewal date, and prepare the next conversation with the customer."
+      lineClamp={2}
+      isTooltipMultiline
+      isFocusable
+    />
+  </Text>
+);
+```
+
+`lineClamp` se potrivește cu Text și limitează liniile afișate; utilizați un număr întreg pozitiv. `isTooltipMultiline` păstrează spațiile albe și întreruperile de linie în tooltip. Fără o limită de rânduri, textul este trunchiat pe o singură linie.
+
+## Conținut și temporizare personalizate
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const ImportResult = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text={<strong>24 records imported successfully</strong>}
+      tooltipContent="24 records imported successfully"
+      tooltipPlace="top"
+      tooltipDelay={300}
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Conținutul React necesită un `tooltipContent` cu șir simplu. Pentru textul de tip șir, acel prop poate suprascrie eticheta tooltipului; în caz contrar, se utilizează textul însuși. O etichetă goală sau lipsă nu deschide un tooltip. URL-urile de tip șir rămân text simplu. Furnizați explicit linkuri în `text` sau prin `render`. Conținutul linkului și navigarea rămân sub controlul apelantului.
+
+`alwaysShowTooltip` permite tooltipul chiar și fără trunchiere. `tooltipDelay` controlează întârzierea la trecerea cu indicatorul și are implicit valoarea de 500 de milisecunde. `tooltipPlace` are implicit valoarea `bottom`.
+
+Atributele native, stilurile, numele claselor, gestionarii de evenimente și referințele vizează elementul Text afișat, implicit un `div`. `render` poate înlocui acel element, păstrând în același timp comportamentul de trunchiere și de tooltip. `OverflowingTextWithTooltipProps` este exportat din `twenty-ui/primitives/typography`. Tipografia se moștenește din aspectul înconjurător, cu excepția cazului în care este furnizată o proprietate de tipografie explicită. Setați `truncate={false}` pentru a încadra textul; alegeți fie `truncate`, fie `lineClamp`. Elementele randate focalizabile și un `tabIndex` furnizat de apelant afișează, de asemenea, tooltipul la focalizare. Utilizează direct [Text](/ro/ui/primitives/typography/text) și [Tooltip](/ro/ui/primitives/surfaces/tooltip) când ai nevoie de compoziție personalizată. Conținutul pop-up interactiv aparține în [Popover](/ro/ui/primitives/surfaces/popover).
+
+## Linkuri explicite
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const DocumentationLink = () => (
+  <OverflowingTextWithTooltip
+    text="https://twenty.com/developers"
+    render={
+      <a href="https://twenty.com/developers" aria-label="Documentation" />
+    }
+    style={{ maxWidth: 160, display: 'block' }}
+  />
+);
+```
+
+Utilizați o singură ancoră pentru întreaga etichetă sau furnizați ancore individuale în conținut React cu un `tooltipContent` simplu. Componenta nu adaugă ancore proprii. Păstrați conținutul tooltipului informativ.
+
+## Migrare
+
+Înlocuiți `displayedMaxRows` cu `lineClamp`. Opțiunile anterioare `size="small"` și `size="large"` controlau înălțimea, nu dimensiunea fontului. `large` seta o înălțime de 16px. Noul `size` selectează dimensiunile fontului din temă și nu acceptă aliasuri vechi; utilizați `style` sau `className` native pentru constrângerile de înălțime. `color` acceptă acum culori semantice; mutați culorile CSS arbitrare în `style={{ color: customColor }}`. Mutați recunoașterea intenționată a URL-urilor în conținutul controlat de apelant. În această componentă nu mai există transformare automată în linkuri.
+
+## Proprietăți
+
+<OverflowingTextWithTooltipReference />
+
+<PageBanner illustration="section-document-generator" />

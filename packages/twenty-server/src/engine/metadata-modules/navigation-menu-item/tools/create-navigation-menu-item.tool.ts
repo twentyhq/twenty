@@ -1,11 +1,15 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { NavigationMenuItemType, NATIVE_PAGE_KEYS } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { NavigationMenuItemType } from 'twenty-shared/types';
-
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-write-access-policy.constant';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemScopeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-scope.schema';
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
 const commonOptionalFields = {
   icon: z
@@ -38,7 +42,7 @@ const derivedNameField = z
     "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
   );
 
-const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
+const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
@@ -87,10 +91,19 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
     name: requiredNameField,
     ...commonOptionalFields,
   }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.NATIVE_PAGE),
+    scope: navigationMenuItemScopeSchema,
+    nativePageKey: z
+      .enum(NATIVE_PAGE_KEYS)
+      .describe('Built-in page to pin: workflows or agents'),
+    name: derivedNameField,
+    ...commonOptionalFields,
+  }),
 ]);
 
 type CreateNavigationMenuItemParams = z.infer<
-  typeof createNavigationMenuItemSchema
+  typeof createNavigationMenuItemInputSchema
 >;
 
 const toServiceInput = (
@@ -100,7 +113,7 @@ const toServiceInput = (
   const resolvedUserWorkspaceId =
     params.scope === 'user' ? userWorkspaceId : undefined;
   const base = {
-    type: params.type as NavigationMenuItemType,
+    type: params.type,
     userWorkspaceId: resolvedUserWorkspaceId,
     icon: params.icon,
     color: params.color,
@@ -134,14 +147,19 @@ const toServiceInput = (
         name: params.name,
         pageLayoutId: params.pageLayoutId,
       };
+    case NavigationMenuItemType.NATIVE_PAGE:
+      return {
+        ...base,
+        name: params.name,
+        nativePageKey: params.nativePageKey,
+      };
   }
 };
 
-export const createCreateNavigationMenuItemTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'create_navigation_menu_item' as const,
+@DefineTool({
+  name: 'create_navigation_menu_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
@@ -151,12 +169,29 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+- NATIVE_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
-  inputSchema: createNavigationMenuItemSchema,
-  execute: async (parameters: CreateNavigationMenuItemParams) => {
+})
+export class CreateNavigationMenuItemTool extends BaseTool<
+  typeof createNavigationMenuItemInputSchema
+> {
+  readonly inputSchema = createNavigationMenuItemInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId },
+  }: ToolExecuteArgs<
+    typeof createNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
-      if (parameters.scope === 'user' && !context.userWorkspaceId) {
+      if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
           message:
@@ -165,12 +200,10 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         };
       }
 
-      const created = await deps.navigationMenuItemService.create({
-        input: toServiceInput(parameters, context.userWorkspaceId),
-        workspaceId: context.workspaceId,
-        authUserWorkspaceId: context.userWorkspaceId,
-        authApplicationId: context.applicationId,
-        authAgentId: context.agentId,
+      const created = await this.navigationMenuItemService.create({
+        input: toServiceInput(input, userWorkspaceId),
+        workspaceId,
+        authUserWorkspaceId: userWorkspaceId,
       });
 
       return {
@@ -194,5 +227,5 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         error: message,
       };
     }
-  },
-});
+  }
+}

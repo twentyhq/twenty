@@ -1,10 +1,12 @@
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { resetClosingAiChatInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -14,6 +16,7 @@ import { v4 } from 'uuid';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
+  const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const setAgentChatUISessionStartTime = useSetAtomState(
@@ -32,6 +35,8 @@ export const useOpenAskAiPageInSidePanel = () => {
       if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
         return;
       }
+
+      resetClosingAiChatInboxThread(store);
 
       const shouldReset =
         resetNavigationStack !== undefined
@@ -56,6 +61,7 @@ export const useOpenAskAiPageInSidePanel = () => {
       isSidePanelOpened,
       setAgentChatUISessionStartTime,
       isWorkspaceSuspended,
+      store,
     ],
   );
 

@@ -1,9 +1,9 @@
 ---
 title: Gestione dei Membri
-description: Invita i membri del team e gestisci l'accesso allo spazio di lavoro.
+description: Invita i membri del team e gestisci l'accesso al workspace in Impostazioni → Membri.
 ---
 
-Gestisci chi ha accesso al tuo spazio di lavoro in **Impostazioni → Membri**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Invita Nuovi Membri
 
@@ -65,6 +65,25 @@ I membri rimossi perdono immediatamente l'accesso. I loro dati (record, note, at
 Le email e gli eventi di calendario del membro cancellato sono archiviati e disponibili per gli altri membri.
 </Note>
 
+### Reimpostare l'autenticazione a due fattori di un membro
+
+Se un membro ha perso l'accesso alla propria app di autenticazione, un amministratore può fornirgli un codice di recupero monouso.
+
+Sono necessari l'autorizzazione **Sicurezza** e l'autenticazione a due fattori configurata sul proprio account.
+
+1. Fai clic sul membro per aprire il suo profilo
+2. Nella sezione **Autenticazione a due fattori**, fai clic su **Genera codice di recupero**
+3. Inserisci il codice dalla tua app di autenticazione per confermare
+4. Copia il codice e condividilo con il membro tramite un canale affidabile
+
+Il codice funziona una sola volta e, per impostazione predefinita, scade dopo 1 ora. Viene visualizzato una sola volta. La generazione di un nuovo codice sostituisce quello precedente e puoi fare clic su **Revoca** per annullare un codice in attesa. Il membro riceve un'email quando viene emesso un codice.
+
+Quando il membro utilizza il codice, la sua app di autenticazione per questo spazio di lavoro viene rimossa e viene disconnesso dalle altre sessioni. Se lo spazio di lavoro applica l'autenticazione a due fattori, gli verrà chiesto di configurare subito una nuova app di autenticazione. Se esce prima di terminare, genera un nuovo codice per lui: finché la configurazione non è completata, il membro può configurare un'app di autenticazione solo tramite un codice di recupero.
+
+<Note>
+Non puoi generare un codice di recupero per te stesso. Solo un amministratore del server può generarne uno per un altro amministratore del server.
+</Note>
+
 ## Inviti in sospeso
 
 Gestisci gli inviti non ancora accettati:
@@ -84,3 +103,5 @@ Consenti ai membri del team di unirsi automaticamente in base al loro dominio em
 
 * [Autorizzazioni](/it/user-guide/permissions-access/capabilities/permissions) — configura ciò che ogni ruolo può fare
 * [Impostazioni dominio](/it/user-guide/settings/capabilities/domains-settings) — configurare i domini approvati
+
+<PageBanner illustration="page-cover-users" />

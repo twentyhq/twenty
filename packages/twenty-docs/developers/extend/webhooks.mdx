@@ -1,10 +1,13 @@
 ---
 title: Webhooks
-icon: "satellite-dish"
 description: Get notified when records change — HTTP POST to your endpoint on every create, update, or delete.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Overview
 
 Twenty sends an HTTP POST to your URL whenever a record is created, updated, or deleted. All object types are covered, including custom objects.
 
@@ -115,3 +118,5 @@ const isValid = crypto.timingSafeEqual(
 | **Workflow Webhook Trigger** | IN | Receive data into Twenty from external systems |
 
 For receiving external data, see [Set Up a Webhook Trigger](/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

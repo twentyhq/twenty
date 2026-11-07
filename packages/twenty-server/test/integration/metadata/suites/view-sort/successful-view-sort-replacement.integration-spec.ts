@@ -5,6 +5,8 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ViewSortDirection } from 'twenty-shared/types';
 
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+
 const upsertCompleteViewThroughMcp = async (
   toolArguments: Record<string, unknown>,
 ): Promise<{ id: string }> => {
@@ -19,7 +21,11 @@ const upsertCompleteViewThroughMcp = async (
 
   expect(result.isError).toBe(false);
 
-  return JSON.parse(result.content[0].text);
+  const output: ToolOutput<{ id: string }> = JSON.parse(result.content[0].text);
+
+  jestExpectToBeDefined(output.result);
+
+  return output.result;
 };
 
 // upsert_complete_view replaces sorts wholesale, so re-saving a sort on the

@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="color" type="&quot;light&quot; | &quot;primary&quot; | &quot;secondary&quot; | &quot;tertiary&quot;">
+  Semantic text color. Omitted values inherit; native style supports runtime colors.
+</ParamField>
+
 <ParamField body="lineClamp" type="number">
   Positive integer limiting the number of visible lines. Cannot be combined with `truncate`.
 </ParamField>
@@ -19,6 +23,14 @@
   Replaces the default div. Native props and the ref target the rendered text element.
 </ParamField>
 
+<ParamField body="size" type="&quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot; | &quot;xs&quot; | &quot;xxl&quot; | &quot;xxs&quot;">
+  Font size from the theme scale. Omitted values inherit; this does not set height.
+</ParamField>
+
 <ParamField body="truncate" type="boolean">
   Truncates one line with an ellipsis. Cannot be combined with `lineClamp`.
+</ParamField>
+
+<ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot; | &quot;semibold&quot;">
+  Theme font weight. Omitted values inherit.
 </ParamField>

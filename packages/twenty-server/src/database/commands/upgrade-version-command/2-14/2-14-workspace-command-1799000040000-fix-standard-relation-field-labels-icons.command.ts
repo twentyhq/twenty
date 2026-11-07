@@ -122,6 +122,7 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],

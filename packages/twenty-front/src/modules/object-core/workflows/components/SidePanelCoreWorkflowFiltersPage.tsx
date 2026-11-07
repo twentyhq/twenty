@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreWorkflowFiltersBuilder } from '@/object-core/workflows/components/CoreWorkflowFiltersBuilder';
+import { CoreObjectFiltersBuilder } from '@/object-core/filters/components/CoreObjectFiltersBuilder';
+import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import {
   CORE_WORKFLOWS_FILTER_INSTANCE_ID,
   coreWorkflowsFilterSettingsState,
@@ -20,8 +21,9 @@ export const SidePanelCoreWorkflowFiltersPage = () => {
 
   return (
     <StyledPageContainer>
-      <CoreWorkflowFiltersBuilder
+      <CoreObjectFiltersBuilder
         instanceId={CORE_WORKFLOWS_FILTER_INSTANCE_ID}
+        filterFields={CORE_WORKFLOW_FILTER_FIELDS}
         defaultValue={coreWorkflowsFilterSettings}
         onFilterSettingsUpdate={setCoreWorkflowsFilterSettings}
       />

@@ -1,4 +1,5 @@
 .rotatedIconWrapper {
+  flex-shrink: 0;
   display: inline-flex;
   transform: rotate(90deg);
 }

@@ -1,7 +1,17 @@
 import { msg } from '@lingui/core/macro';
 import { Brackets, type WhereExpressionBuilder } from 'typeorm';
-import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { FIELD_REFERENCE_FILTER_OPERATORS } from 'twenty-shared/constants';
+import {
+  compositeTypeDefinitions,
+  type FieldReferenceFilterOperator,
+  RelationType,
+} from 'twenty-shared/types';
+import {
+  capitalize,
+  isDefined,
+  isFieldReferenceFilterOperator,
+  parseFieldReferenceFilterValue,
+} from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -10,27 +20,35 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
-import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
-import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
+import { assertArrayOperatorValueIsNonEmptyArrayOrThrow } from 'src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util';
+import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadata-by-name.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+
+export type ParentFilterScope = {
+  flatObjectMetadata: FlatObjectMetadata;
+  alias: string;
+  relationFieldMetadataId: string;
+};
+
+const SQL_COMPARISON_OPERATORS = {
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<=',
+} as const;
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -39,17 +57,20 @@ export class GraphqlQueryFilterFieldParser {
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
   private depth: number;
+  private parentFilterScope?: ParentFilterScope;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
+    parentFilterScope?: ParentFilterScope,
   ) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.depth = depth;
+    this.parentFilterScope = parentFilterScope;
 
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
@@ -82,31 +103,10 @@ export class GraphqlQueryFilterFieldParser {
       throw new Error(`Field metadata not found for field: ${key}`);
     }
 
-    const objectPermissions =
-      outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
-
-    // Filtering the queried object itself stays possible on records shared by
-    // name, while a filter through a relation still needs the object readable
-    if (
-      objectPermissions?.canReadObjectRecords === false &&
-      !(
-        this.depth === 0 &&
-        resolveObjectSharing({
-          flatObjectMetadata: this.flatObjectMetadata,
-          featureFlagsMap: outerQueryBuilder.featureFlagsMap,
-        }).operationTypesGrantedBeyondRole.includes('select')
-      )
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
     assertFieldIsReadableOrThrow({
-      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
-      objectMetadataId: this.flatObjectMetadata.id,
-      fieldMetadataId: fieldMetadata.id,
+      recordReadRestrictions: outerQueryBuilder.recordReadRestrictions,
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatFieldMetadata: fieldMetadata,
     });
 
     if (
@@ -139,7 +139,26 @@ export class GraphqlQueryFilterFieldParser {
     }
     const [[operator, value]] = Object.entries(filterValue);
 
-    assertArrayOperatorValueIsNonEmptyArray({ operator, value, key });
+    if (isFieldReferenceFilterOperator(operator)) {
+      const sql = this.computeFieldReferenceCondition({
+        outerQueryBuilder,
+        objectNameSingular,
+        key,
+        operator,
+        fieldReferenceValue: value,
+        useDirectTableReference,
+      });
+
+      if (isFirst) {
+        queryBuilder.where(sql);
+      } else {
+        queryBuilder.andWhere(sql);
+      }
+
+      return;
+    }
+
+    assertArrayOperatorValueIsNonEmptyArrayOrThrow({ operator, value, key });
 
     const { sql, params } = computeWhereConditionParts({
       operator,
@@ -219,6 +238,11 @@ export class GraphqlQueryFilterFieldParser {
       this.flatFieldMetadataMaps,
       this.flatObjectMetadataMaps,
       this.depth + 1,
+      {
+        flatObjectMetadata: this.flatObjectMetadata,
+        alias: parentAlias,
+        relationFieldMetadataId: fieldMetadata.id,
+      },
     );
 
     // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
@@ -283,6 +307,102 @@ export class GraphqlQueryFilterFieldParser {
     }
   }
 
+  // Column names come from metadata, so the filter value never reaches the SQL
+  private computeFieldReferenceCondition({
+    outerQueryBuilder,
+    objectNameSingular,
+    key,
+    operator,
+    fieldReferenceValue,
+    useDirectTableReference,
+  }: {
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    key: string;
+    operator: FieldReferenceFilterOperator;
+    fieldReferenceValue: unknown;
+    useDirectTableReference: boolean;
+  }): string {
+    const fieldReference = parseFieldReferenceFilterValue(fieldReferenceValue);
+    const referencedScope = isDefined(fieldReference?.relationFieldName)
+      ? this.findParentFilterScopeOrThrow({
+          operator,
+          relationFieldName: fieldReference.relationFieldName,
+          useDirectTableReference,
+        })
+      : {
+          flatObjectMetadata: this.flatObjectMetadata,
+          alias: objectNameSingular,
+        };
+
+    const referencedFieldMetadata = isDefined(fieldReference)
+      ? findFlatFieldMetadataByName({
+          fieldName: fieldReference.fieldName,
+          flatObjectMetadata: referencedScope.flatObjectMetadata,
+          flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+        })
+      : undefined;
+
+    if (!isDefined(referencedFieldMetadata)) {
+      throw new GraphqlQueryRunnerException(
+        `Field "${String(fieldReferenceValue)}" to compare "${key}" with was not found`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Invalid filter: the field to compare with was not found`,
+        },
+      );
+    }
+
+    assertFieldIsReadableOrThrow({
+      recordReadRestrictions: outerQueryBuilder.recordReadRestrictions,
+      flatObjectMetadata: referencedScope.flatObjectMetadata,
+      flatFieldMetadata: referencedFieldMetadata,
+    });
+
+    const fieldColumnReference = useDirectTableReference
+      ? `"${key}"`
+      : `"${objectNameSingular}"."${key}"`;
+    const referencedColumnReference = useDirectTableReference
+      ? `"${referencedFieldMetadata.name}"`
+      : `"${referencedScope.alias}"."${referencedFieldMetadata.name}"`;
+
+    return `${fieldColumnReference} ${SQL_COMPARISON_OPERATORS[FIELD_REFERENCE_FILTER_OPERATORS[operator]]} ${referencedColumnReference}`;
+  }
+
+  // Only the parent is supported: its row is already in scope, with no extra join
+  private findParentFilterScopeOrThrow({
+    operator,
+    relationFieldName,
+    useDirectTableReference,
+  }: {
+    operator: FieldReferenceFilterOperator;
+    relationFieldName: string;
+    useDirectTableReference: boolean;
+  }): ParentFilterScope {
+    const relationFieldMetadata = findFlatFieldMetadataByName({
+      fieldName: relationFieldName,
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
+
+    if (
+      !isDefined(this.parentFilterScope) ||
+      useDirectTableReference ||
+      relationFieldMetadata?.relationTargetFieldMetadataId !==
+        this.parentFilterScope.relationFieldMetadataId
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Operator "${operator}" can only reference "${relationFieldName}" when it leads back to the record the relation filter starts from`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Invalid filter: "${relationFieldName}" can only reference the record the relation filter starts from`,
+        },
+      );
+    }
+
+    return this.parentFilterScope;
+  }
+
   private parseCompositeFieldForFilter(
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: OrmFlatFieldMetadata,
@@ -320,7 +440,7 @@ export class GraphqlQueryFilterFieldParser {
         subFieldFilter as Record<string, any>,
       );
 
-      assertArrayOperatorValueIsNonEmptyArray({
+      assertArrayOperatorValueIsNonEmptyArrayOrThrow({
         operator,
         value,
         key: subFieldKey,

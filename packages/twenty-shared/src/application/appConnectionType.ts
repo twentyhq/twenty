@@ -5,7 +5,7 @@
 // `getConnection`) and the server controller / DTO — pick from one source
 // of truth. Adding a field on either side without updating this type will
 // fail typecheck.
-export type AppConnection = {
+type AppConnectionBase = {
   id: string;
   // The app-developer-facing provider name (e.g. "linear"), as declared on
   // `defineConnectionProvider({ name })`. Useful when listing across providers
@@ -28,7 +28,6 @@ export type AppConnection = {
   // The workspace member who created the credential. null when the creating
   // user is no longer a member of the workspace.
   workspaceMemberId: string | null;
-  accessToken: string;
   // OAuth scopes actually granted by the upstream provider on the most recent
   // token issuance (may be a subset of what the app requested).
   scopes: string[];
@@ -40,3 +39,9 @@ export type AppConnection = {
   // Human-readable explanation for `authFailedAt`, when the reporter gave one.
   authFailedReason: string | null;
 };
+
+export type AppConnection = AppConnectionBase &
+  (
+    | { providerType: 'oauth'; accessToken: string }
+    | { providerType: 'custom'; accessToken: string | null }
+  );

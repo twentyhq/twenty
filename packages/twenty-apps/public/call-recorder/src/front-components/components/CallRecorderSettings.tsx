@@ -2,11 +2,10 @@ import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { InCallSection } from 'src/front-components/components/InCallSection';
-import { RecordPagesSection } from 'src/front-components/components/RecordPagesSection';
 import { RecorderSection } from 'src/front-components/components/RecorderSection';
 import { SchedulingSection } from 'src/front-components/components/SchedulingSection';
 import { TranscriptionSection } from 'src/front-components/components/TranscriptionSection';
@@ -54,7 +53,6 @@ export const CallRecorderSettings = () => {
             how they behave. Your settings are kept.
           </StyledPausedNotice>
         )}
-        <RecordPagesSection />
       </StyledContainer>
     </FrontComponentThemeProvider>
   );

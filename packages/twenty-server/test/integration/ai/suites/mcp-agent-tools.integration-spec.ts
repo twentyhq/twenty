@@ -1,7 +1,16 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
+import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
+import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
+
+const AGENT_WRITE_TOOL_NAMES = ['create_agent', 'update_agent', 'delete_agent'];
+
+const AGENT_TOOL_NAMES = ['list_agents', ...AGENT_WRITE_TOOL_NAMES];
 
 type AgentSummary = {
   id: string;
@@ -65,6 +74,33 @@ const listAgentIds = async (): Promise<string[]> => {
   return (payload.result?.agents ?? []).map((agent) => agent.id);
 };
 
+const expectToolRefused = async ({
+  toolName,
+  token,
+}: {
+  toolName: string;
+  token: string;
+}) => {
+  const result = await callMcpTool({
+    toolName: 'execute_tool',
+    toolArguments: { toolName, arguments: {} },
+    token,
+  });
+
+  expect(result.isError).toBe(true);
+  expect(JSON.parse(result.content[0].text)).toMatchObject({
+    success: false,
+    message: `Tool "${toolName}" not found`,
+  });
+};
+
+const setAiChatInboxEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
 describe('MCP agent tools (integration)', () => {
   const createdAgentIds: string[] = [];
 
@@ -72,6 +108,29 @@ describe('MCP agent tools (integration)', () => {
     for (const id of createdAgentIds) {
       await executeTool('delete_agent', { id });
     }
+  });
+
+  it('should describe the agent tools to the model', async () => {
+    const result = await callMcpTool({
+      toolName: 'learn_tools',
+      toolArguments: { toolNames: AGENT_TOOL_NAMES },
+      token: API_KEY_ACCESS_TOKEN,
+    });
+
+    expect(result.isError).toBe(false);
+
+    const payload = JSON.parse(result.content[0].text);
+
+    expect(payload.notFound).toEqual([]);
+    expect(payload.tools).toMatchSnapshot();
+  });
+
+  it('should list the agent tools in the catalog', async () => {
+    const catalog = await getMcpToolCatalog({ token: API_KEY_ACCESS_TOKEN });
+
+    expect(catalog[ToolCategory.AGENT]?.map(({ name }) => name)).toEqual(
+      AGENT_TOOL_NAMES,
+    );
   });
 
   it('creates an agent with triggers, updates it and deletes it', async () => {
@@ -138,5 +197,76 @@ describe('MCP agent tools (integration)', () => {
 
     expect(created.success).toBe(false);
     expect(created.error).toContain('cron');
+  });
+
+  // The member's canAccessAllTools grants AI but not AI_SETTINGS, a settings flag
+  describe('for a member without AI_SETTINGS', () => {
+    it('should list only list_agents in the agent category', async () => {
+      const catalog = await getMcpToolCatalog({
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(catalog[ToolCategory.AGENT]?.map(({ name }) => name)).toEqual([
+        'list_agents',
+      ]);
+    });
+
+    it('should list the agents', async () => {
+      const result = await callMcpTool({
+        toolName: 'execute_tool',
+        toolArguments: { toolName: 'list_agents', arguments: {} },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(result.isError).toBe(false);
+      expect(JSON.parse(result.content[0].text)).toMatchObject({
+        success: true,
+      });
+    });
+
+    it.each(AGENT_WRITE_TOOL_NAMES)('should refuse %s', async (toolName) => {
+      await expectToolRefused({
+        toolName,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+    });
+  });
+
+  // The seeded guest role cannot access tools, so it lacks AI
+  describe('for a guest without AI', () => {
+    it('should hide the agent category from the catalog', async () => {
+      const catalog = await getMcpToolCatalog({
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      });
+
+      expect(Object.keys(catalog)).not.toContain(ToolCategory.AGENT);
+    });
+
+    it.each(AGENT_TOOL_NAMES)('should refuse %s', async (toolName) => {
+      await expectToolRefused({
+        toolName,
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      });
+    });
+  });
+
+  describe('with the AI chat inbox disabled', () => {
+    beforeAll(async () => {
+      await setAiChatInboxEnabled(false);
+    });
+
+    afterAll(async () => {
+      await setAiChatInboxEnabled(true);
+    });
+
+    it('should hide the agent category from the catalog', async () => {
+      const catalog = await getMcpToolCatalog({ token: API_KEY_ACCESS_TOKEN });
+
+      expect(Object.keys(catalog)).not.toContain(ToolCategory.AGENT);
+    });
+
+    it.each(AGENT_TOOL_NAMES)('should refuse %s', async (toolName) => {
+      await expectToolRefused({ toolName, token: API_KEY_ACCESS_TOKEN });
+    });
   });
 });

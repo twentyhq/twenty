@@ -108,7 +108,7 @@ The package command verifies Recall's executable is outside the ASAR archive. Th
 
 The backend is [Desktop Recorder](../twenty-apps/public/companion/README.md), an independently installable Twenty application. It owns `/companion/desktop`, the `companionSession` ownership field, import/recovery functions, its summarizer agent, and Recall credentials. Follow its [setup instructions](../twenty-apps/public/companion/SETUP.md). Call Recorder is optional.
 
-The desktop reuses the CLI OAuth client and browser sign-in flow used by `twenty remote:add`, with PKCE and a local callback. Tokens stay in the desktop's secure store. After sign-in, the desktop checks the backend and offers installation if it is missing. An administrator installs the integration in each target workspace. Existing completed desktop recordings can be transferred using the integration's one-time migration script without replacing their media or record IDs.
+The desktop reuses the CLI OAuth client and browser sign-in flow used by `twenty auth login`, with PKCE and a local callback. Tokens stay in the desktop's secure store. After sign-in, the desktop checks the backend and offers installation if it is missing. An administrator installs the integration in each target workspace. Existing completed desktop recordings can be transferred using the integration's one-time migration script without replacing their media or record IDs.
 
 ## Code structure
 
@@ -143,7 +143,7 @@ Google or Microsoft calendar connection.
 From `packages/twenty-apps/public/companion`:
 
 ```sh
-yarn twenty -r companion-local apply
+twenty app apply --remote companion-local
 ```
 
 The `companion-local` remote targets port 2021. It is separate from the normal

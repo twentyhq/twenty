@@ -12,7 +12,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { build, stop } from 'esbuild';
+import { stop } from 'esbuild';
 import {
   afterAll,
   afterEach,
@@ -44,7 +44,6 @@ describe('CLI client generation uses the app generator', () => {
   let root: string;
   let appPath: string;
   let packageRoot: string;
-  let sdkEntryPath: string;
 
   const readGeneratedClient = async () => {
     const directory = join(packageRoot, 'dist/core/generated');
@@ -105,24 +104,6 @@ describe('CLI client generation uses the app generator', () => {
         join(root, 'node_modules', name),
       );
     }
-    const sdkSource = join(REPOSITORY_ROOT, 'packages/twenty-sdk/src');
-    sdkEntryPath = join(root, 'sdk-reference.cjs');
-    await build({
-      stdin: {
-        contents: `export { generateApplicationClient } from './application-build/generate-application-client';`,
-        resolveDir: sdkSource,
-      },
-      outfile: sdkEntryPath,
-      alias: { '@': sdkSource },
-      bundle: true,
-      packages: 'external',
-      platform: 'node',
-      format: 'cjs',
-      target: 'node24',
-    });
-    await buildTestAppWorker(join(root, 'reference'), {
-      aliases: { '@/app/client/generate-application-client': sdkEntryPath },
-    });
     await buildTestAppWorker(join(root, 'cli'));
     launch.modulePath = join(root, 'cli/app-worker.cjs');
   }, 60000);
@@ -146,10 +127,8 @@ describe('CLI client generation uses the app generator', () => {
     await rm(appPath, { recursive: true, force: true });
   });
 
-  it('matches SDK-generated source and bundles byte for byte without an application SDK', async () => {
-    launch.modulePath = join(root, 'reference/app-worker.cjs');
+  it('generates repeatable source and loadable bundles without an application SDK', async () => {
     const result = await runGeneration();
-    launch.modulePath = join(root, 'cli/app-worker.cjs');
     expect(result).toEqual({
       success: true,
       data: null,

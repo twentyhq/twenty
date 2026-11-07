@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -9,6 +8,7 @@ import { IconCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatAskQuestionsQuestionProps = {
   question: AskQuestionItem;
@@ -70,10 +70,6 @@ const StyledOptionLabelRow = styled.div`
   overflow-wrap: anywhere;
 `;
 
-const StyledSelectedIcon = styled(IconCheck)`
-  flex-shrink: 0;
-`;
-
 const StyledRecommended = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex-shrink: 0;
@@ -90,6 +86,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
   question,
   answer,
 }: SettingsAdminChatAskQuestionsQuestionProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const selectedOptionIndices = new Set(answer?.selectedOptionIndices ?? []);
   const freeText = answer?.freeText ?? '';
@@ -116,9 +113,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
           return (
             <StyledOptionRow key={optionIndex} isSelected={isSelected}>
               <StyledOptionLabelRow>
-                {isSelected && (
-                  <StyledSelectedIcon size={14} color={theme.color.blue} />
-                )}
+                {isSelected && <IconCheck size={14} color={theme.color.blue} />}
                 <TextWithChatReferences text={option.label} />
                 {option.isRecommended === true && (
                   <StyledRecommended>· {t`Recommended`}</StyledRecommended>
@@ -135,7 +130,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
         {isNonEmptyString(freeText) && (
           <StyledOptionRow isSelected>
             <StyledOptionLabelRow>
-              <StyledSelectedIcon size={14} color={theme.color.blue} />
+              <IconCheck size={14} color={theme.color.blue} />
               {t`Other`}
             </StyledOptionLabelRow>
             <StyledOptionDescription>

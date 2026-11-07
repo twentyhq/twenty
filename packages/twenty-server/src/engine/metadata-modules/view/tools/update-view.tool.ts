@@ -1,0 +1,66 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { z } from 'zod';
+
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
+
+const updateViewInputSchema = z.object({
+  id: z.string().uuid().describe('View ID to update'),
+  name: z.string().optional().describe('New view name'),
+  icon: z.string().optional().describe('New icon identifier'),
+});
+
+@DefineTool({
+  name: 'update_view',
+  category: ToolCategory.VIEW,
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
+  description: 'Update an existing view. You can change the name and icon.',
+})
+export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
+  readonly inputSchema = updateViewInputSchema;
+
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly viewAccessService: ViewAccessService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, authContext },
+  }: ToolExecuteArgs<typeof updateViewInputSchema>): Promise<ToolOutput> {
+    await this.viewAccessService.findModifiableViewOrThrow({
+      viewId: input.id,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
+    });
+
+    const view = await this.viewService.updateOne({
+      updateViewInput: {
+        id: input.id,
+        name: input.name,
+        icon: input.icon,
+      },
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return {
+      success: true,
+      message: `View "${view.name}" updated`,
+      result: {
+        id: view.id,
+        name: view.name,
+        objectMetadataId: view.objectMetadataId,
+        type: view.type,
+        icon: view.icon,
+        visibility: view.visibility,
+      },
+    };
+  }
+}

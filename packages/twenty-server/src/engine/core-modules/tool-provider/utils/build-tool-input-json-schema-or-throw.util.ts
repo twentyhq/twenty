@@ -1,13 +1,12 @@
-import { type z } from 'zod';
-
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
+import { type ToolInputSchema } from 'src/engine/core-modules/tool-provider/types/tool-input-schema.type';
 
 export const buildToolInputJsonSchemaOrThrow = ({
   toolName,
   inputSchema,
 }: {
   toolName: string;
-  inputSchema: z.ZodObject;
+  inputSchema: ToolInputSchema;
 }): object => {
   try {
     return toToolJsonSchema(inputSchema);

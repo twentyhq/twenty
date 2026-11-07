@@ -2,9 +2,10 @@ import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
-export type UseAiChatThreadClickOptions = {
+type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
   shouldOpenInFullPage?: boolean;
 };
@@ -21,7 +22,10 @@ export const useAiChatThreadClick = (
   const handleThreadClick = (thread: Pick<AgentChatThreadRecord, 'id'>) => {
     selectAiChatThread(thread.id);
 
-    if (isCurrentPathAiChatPage()) {
+    const isOnChatPage =
+      isCurrentPathAiChatPage() || isAiChatInboxPath(window.location.pathname);
+
+    if (isOnChatPage) {
       return;
     }
 

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { partnerCookieState } from '@/auth/states/partnerCookieState';
+import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
@@ -25,7 +25,6 @@ export const useInitializeQueryParamState = () => {
           if (
             typeof parsedValue === 'object' &&
             parsedValue !== null &&
-            'plan' in parsedValue &&
             'interval' in parsedValue &&
             'requirePaymentMethod' in parsedValue &&
             !isDeeplyEqual(billingCheckoutSession, parsedValue)
@@ -52,11 +51,13 @@ export const useInitializeQueryParamState = () => {
           store.set(returnToPathState.atom, value);
         }
       },
-      partner: (value: string) => {
-        const partner = normalizePartner(value);
+      via: (value: string) => {
+        const affiliatePartnerName = normalizePartner(value);
 
-        if (isDefined(partner)) {
-          store.set(partnerCookieState.atom, { partner });
+        if (isDefined(affiliatePartnerName)) {
+          store.set(affiliatePartnerNameState.atom, {
+            partner: affiliatePartnerName,
+          });
         }
       },
     };

@@ -5,6 +5,7 @@ export type ListItemState = {
   color: ListItemColor;
   indicator: ListItemIndicator;
   selected: boolean;
+  active: boolean;
   highlighted: boolean;
   disabled: boolean;
 };

@@ -1,6 +1,5 @@
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -24,6 +23,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { preventDropdownDismissOnInputElement } from '@/ui/layout/dropdown/utils/preventDropdownDismissOnInputElement';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -57,10 +57,11 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   cursor: pointer;
   display: flex;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -89,6 +90,7 @@ export const FormMultiSelectFieldInput = ({
   hint,
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const instanceId = useId();
   const { closeDropdown } = useCloseDropdown();
@@ -162,6 +164,8 @@ export const FormMultiSelectFieldInput = ({
       : undefined;
 
   const placeholderText = placeholder ?? label;
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
+
   const accessibleLabel =
     [label, placeholder].find(isNonEmptyString) ?? t`Select options`;
 
@@ -172,7 +176,8 @@ export const FormMultiSelectFieldInput = ({
       <StyledFormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
+          shouldHighlightOnTriggerFocus
           hoverable={!readonly}
           preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
         >
@@ -202,7 +207,15 @@ export const FormMultiSelectFieldInput = ({
                 onInteractOutside={preventDropdownDismissOnInputElement}
               >
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement,
+                        })
+                      }
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >
@@ -248,7 +261,7 @@ export const FormMultiSelectFieldInput = ({
           )}
         </FormFieldInputInnerContainer>
 
-        {isDefined(VariablePicker) && !readonly && (
+        {hasRightElement && isDefined(VariablePicker) && (
           <VariablePicker
             instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}

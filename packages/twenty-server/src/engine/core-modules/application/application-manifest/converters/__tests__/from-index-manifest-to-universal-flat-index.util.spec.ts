@@ -55,7 +55,6 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     expect(result.indexType).toBe(IndexType.BTREE);
     expect(result.isUnique).toBe(false);
     expect(result.indexWhereClause).toBeNull();
-    expect(result.isCustom).toBe(false);
     expect(result.universalFlatIndexFieldMetadatas).toHaveLength(1);
     expect(result.universalFlatIndexFieldMetadatas[0]).toMatchObject({
       order: 0,

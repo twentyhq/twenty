@@ -1,24 +1,18 @@
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordIdentifierTitle } from '@/object-record/record-show/hooks/useRecordIdentifierTitle';
 import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
-import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -99,27 +93,12 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectNameSingular,
   });
 
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
-
-  const recordIdentifier = useAtomFamilySelectorValue(
-    recordStoreIdentifierFamilySelector,
+  const { recordIdentifier, titleFieldContextValue } = useRecordIdentifierTitle(
     {
-      recordId: objectRecordId,
-      allowRequestsToTwentyIcons,
+      objectNameSingular,
+      objectRecordId,
     },
   );
-
-  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
-    objectNameSingular,
-  });
-
-  const isLabelIdentifierReadOnly = useIsRecordFieldReadOnly({
-    recordId: objectRecordId,
-    objectMetadataId: objectMetadataItem.id,
-    fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-  });
 
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
@@ -177,29 +156,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </StyledEditableTitlePrefix>
       )}
       <StyledTitle isEmphasized={isMobile}>
-        <FieldContext.Provider
-          value={{
-            recordId: objectRecordId,
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              type:
-                labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.TEXT,
-              iconName: '',
-              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-              label: labelIdentifierFieldMetadataItem?.label || '',
-              metadata: {
-                fieldName: labelIdentifierFieldMetadataItem?.name || '',
-                objectMetadataNameSingular: objectNameSingular,
-              },
-              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
-            },
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            isCentered: false,
-            isDisplayModeFixHeight: true,
-            isRecordFieldReadOnly: isLabelIdentifierReadOnly,
-          }}
-        >
+        <FieldContext.Provider value={titleFieldContextValue}>
           <RecordTitleCell
             sizeVariant={isMobile ? 'sm' : 'xs'}
             containerType={RecordTitleCellContainerType.PageHeader}

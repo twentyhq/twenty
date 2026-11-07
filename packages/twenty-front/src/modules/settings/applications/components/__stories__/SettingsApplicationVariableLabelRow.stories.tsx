@@ -11,7 +11,6 @@ const meta: Meta<typeof SettingsApplicationVariableLabelRow> = {
     variableKey: 'MY_VARIABLE_KEY',
     isDeprecated: false,
     description: '',
-    tooltipId: 'variable-label-row-tooltip',
   },
   decorators: [ComponentDecorator],
 };

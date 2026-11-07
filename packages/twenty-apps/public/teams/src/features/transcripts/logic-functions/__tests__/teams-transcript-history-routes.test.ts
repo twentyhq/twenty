@@ -8,7 +8,6 @@ import { teamsTranscriptHistoryStatusHandler } from 'src/features/transcripts/lo
 const { releaseFlags, kvStore, listConnectionsMock, enqueueJobsMock } =
   vi.hoisted(() => ({
     releaseFlags: {
-      IS_TRANSCRIPT_IMPORT_RELEASED: true,
       IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: true,
     },
     kvStore: new Map<string, unknown>(),
@@ -41,9 +40,12 @@ const ADMIN_CONNECTION = {
   providerName: 'microsoft-teams',
   name: 'Admin',
   handle: 'admin@acme.com',
+  externalAccountId: null,
+  scope: 'WORKSPACE' as const,
   visibility: 'workspace' as const,
   userWorkspaceId: 'admin',
   workspaceMemberId: null,
+  providerType: 'oauth' as const,
   accessToken: 'token',
   scopes: [],
   authFailedAt: null,

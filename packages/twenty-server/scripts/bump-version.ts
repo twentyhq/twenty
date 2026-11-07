@@ -3,9 +3,25 @@ import { resolve } from 'path';
 
 import semver from 'semver';
 
+import { generateWorkspaceCustomApplicationDependencies } from './generate-workspace-custom-application-dependencies';
+
 const CONSTANTS_DIR = resolve(
   __dirname,
   '../src/engine/core-modules/upgrade/constants',
+);
+
+const PACKAGES_DIR = resolve(__dirname, '../..');
+
+const NPM_PACKAGES_RELEASED_WITH_SERVER = [
+  'twenty-client-sdk',
+  'twenty-ui',
+  'twenty-sdk',
+  'twenty-cli',
+];
+
+const UI_DOCUMENTATION_PATH = resolve(
+  __dirname,
+  '../src/engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json',
 );
 
 const AUTO_GENERATED_HEADER = `/*
@@ -100,6 +116,36 @@ const updateNextVersions = (versions: string[]): void => {
   );
 
   console.log(`Updated TWENTY_NEXT_VERSIONS with ${versions.length} versions`);
+};
+
+const updateNpmPackageVersions = (version: string): void => {
+  for (const packageName of NPM_PACKAGES_RELEASED_WITH_SERVER) {
+    const filePath = resolve(PACKAGES_DIR, packageName, 'package.json');
+    const packageJson = JSON.parse(readFileSync(filePath, 'utf-8'));
+
+    writeFileSync(
+      filePath,
+      `${JSON.stringify({ ...packageJson, version }, null, 2)}\n`,
+    );
+  }
+
+  console.log(
+    `Updated ${NPM_PACKAGES_RELEASED_WITH_SERVER.join(', ')} to '${version}'`,
+  );
+};
+
+// Patched because the release install lacks generate-ui-reference.ts dependencies
+const updateUiDocumentationVersion = (version: string): void => {
+  const uiDocumentation = JSON.parse(
+    readFileSync(UI_DOCUMENTATION_PATH, 'utf-8'),
+  );
+
+  writeFileSync(
+    UI_DOCUMENTATION_PATH,
+    `${JSON.stringify({ ...uiDocumentation, version })}\n`,
+  );
+
+  console.log(`Updated ui-documentation.json to '${version}'`);
 };
 
 const resolveNewVersion = ({
@@ -223,9 +269,15 @@ const bumpVersion = (newVersionArg?: string): void => {
 
   console.log('\nApplying changes:');
 
+  generateWorkspaceCustomApplicationDependencies({
+    version: previousVersions[previousVersions.length - 1],
+  });
+
   updatePreviousVersions(updatedPreviousVersions);
   updateCurrentVersion(newVersion);
   updateNextVersions(updatedNextVersions);
+  updateNpmPackageVersions(newVersion);
+  updateUiDocumentationVersion(newVersion);
 
   console.log('\nNew state:');
   console.log(`  TWENTY_CURRENT_VERSION: '${newVersion}'`);

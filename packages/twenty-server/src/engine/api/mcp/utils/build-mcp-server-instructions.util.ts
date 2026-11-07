@@ -45,7 +45,7 @@ export const buildMcpServerInstructions = ({
     ...(skillNames ? [`Available skills: ${skillNames}.`, ``] : []),
     `CRUD tool name grammar — construct names directly without prior discovery:`,
     `  Read:  find_many_{objects} | find_one_{object} | group_by_{objects}`,
-    `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
+    `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects} | merge_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
     ...(isDirectMode
       ? []
       : [
@@ -56,7 +56,7 @@ export const buildMcpServerInstructions = ({
       ? `Non-CRUD tools:`
       : `Non-CRUD tools — use learn_tools for schemas:`,
     `  ACTION:           ${actionToolNames.join(' | ')}`,
-    `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
+    `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | run_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
     `                     Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
     `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,
@@ -93,6 +93,7 @@ export const buildMcpServerInstructions = ({
     `  Multiple metrics                → run parallel group_by calls, merge results`,
     `  Per-record updates (different data per record) → find_many_{objects} first, then upsert_many_{objects} with each record's id (or other unique identifier) and new values`,
     `  Bulk update (same data for all) → update_many_{objects}`,
+    `  Merge duplicate records         → find_many_{objects} to get their ids, merge_many_{objects} with dryRun: true to preview, ask the user which record to keep when values conflict, then merge_many_{objects}. Never copy fields and delete a record: that loses its linked records`,
     isDirectMode
       ? `  Non-CRUD task                   → call the matching tool directly`
       : `  Non-CRUD task                   → use tool name from the list above + learn_tools for schema`,

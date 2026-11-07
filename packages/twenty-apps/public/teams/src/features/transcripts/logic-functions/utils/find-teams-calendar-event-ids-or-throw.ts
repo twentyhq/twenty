@@ -14,77 +14,34 @@ import { matchTeamsCalendarEventIds } from 'src/features/transcripts/logic-funct
 
 type RecordConnection<TNode> = {
   edges: { node: TNode }[];
-  pageInfo: { hasNextPage: boolean; endCursor: string | null };
-};
-
-const listAllNodesOrThrow = async <TNode>({
-  coreApiClient,
-  objectName,
-  filter,
-  node,
-  after,
-}: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
-  objectName: 'calendarChannelEventAssociations' | 'calendarEvents';
-  filter: Record<string, unknown>;
-  node: Record<keyof TNode, true>;
-  after?: string;
-}): Promise<TNode[]> => {
-  const result = await coreApiClient.query({
-    [objectName]: {
-      __args: {
-        filter,
-        first: TWENTY_QUERY_MAX_RECORDS,
-        ...(isDefined(after) ? { after } : {}),
-      },
-      edges: { node },
-      pageInfo: { hasNextPage: true, endCursor: true },
-    },
-  });
-  const connection: RecordConnection<TNode> | undefined = result[objectName];
-  const nodes = connection?.edges.map((edge) => edge.node) ?? [];
-  const endCursor = connection?.pageInfo.endCursor;
-
-  if (!connection?.pageInfo.hasNextPage || !isNonEmptyString(endCursor)) {
-    return nodes;
-  }
-
-  return [
-    ...nodes,
-    ...(await listAllNodesOrThrow({
-      coreApiClient,
-      objectName,
-      filter,
-      node,
-      after: endCursor,
-    })),
-  ];
+  pageInfo: { hasNextPage: boolean; endCursor?: string | null };
 };
 
 const listAllNodesInBatchesOrThrow = async <TNode>({
-  coreApiClient,
-  objectName,
   values,
-  buildFilter,
-  node,
+  fetchPage,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
-  objectName: 'calendarChannelEventAssociations' | 'calendarEvents';
   values: string[];
-  buildFilter: (batch: string[]) => Record<string, unknown>;
-  node: Record<keyof TNode, true>;
+  fetchPage: (options: {
+    batch: string[];
+    after?: string;
+  }) => Promise<RecordConnection<TNode> | undefined>;
 }): Promise<TNode[]> => {
   const nodes: TNode[] = [];
 
   for (const batch of chunkIntoBatches(values, TWENTY_QUERY_MAX_RECORDS)) {
-    nodes.push(
-      ...(await listAllNodesOrThrow<TNode>({
-        coreApiClient,
-        objectName,
-        filter: buildFilter(batch),
-        node,
-      })),
-    );
+    let after: string | undefined;
+
+    do {
+      const connection = await fetchPage({ batch, after });
+
+      nodes.push(...(connection?.edges.map((edge) => edge.node) ?? []));
+      after =
+        connection?.pageInfo.hasNextPage &&
+        isNonEmptyString(connection.pageInfo.endCursor)
+          ? connection.pageInfo.endCursor
+          : undefined;
+    } while (isDefined(after));
   }
 
   return nodes;
@@ -98,13 +55,56 @@ const listCalendarChannelEventAssociationsOrThrow = ({
   eventExternalIds: string[];
 }): Promise<CalendarChannelEventAssociation[]> =>
   listAllNodesInBatchesOrThrow<CalendarChannelEventAssociation>({
-    coreApiClient,
-    objectName: 'calendarChannelEventAssociations',
     values: eventExternalIds,
-    buildFilter: (eventExternalIdBatch) => ({
-      eventExternalId: { in: eventExternalIdBatch },
-    }),
-    node: { eventExternalId: true, calendarEventId: true },
+    fetchPage: async ({ batch, after }) => {
+      const result = await coreApiClient.query({
+        calendarChannelEventAssociations: {
+          __args: {
+            filter: { eventExternalId: { in: batch } },
+            first: TWENTY_QUERY_MAX_RECORDS,
+            ...(isDefined(after) ? { after } : {}),
+          },
+          edges: { node: { eventExternalId: true, calendarEventId: true } },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      });
+
+      const connection = result.calendarChannelEventAssociations;
+
+      if (!isDefined(connection)) {
+        return undefined;
+      }
+
+      return {
+        ...connection,
+        edges: connection.edges.flatMap(
+          ({
+            node,
+          }: {
+            node: {
+              eventExternalId?: string | null;
+              calendarEventId?: string | null;
+            };
+          }) => {
+            if (
+              !isNonEmptyString(node.eventExternalId) ||
+              !isNonEmptyString(node.calendarEventId)
+            ) {
+              return [];
+            }
+
+            return [
+              {
+                node: {
+                  eventExternalId: node.eventExternalId,
+                  calendarEventId: node.calendarEventId,
+                },
+              },
+            ];
+          },
+        ),
+      };
+    },
   });
 
 const listCalendarEventsByICalUidOrThrow = ({
@@ -115,14 +115,34 @@ const listCalendarEventsByICalUidOrThrow = ({
   iCalUIds: string[];
 }): Promise<CalendarEvent[]> =>
   listAllNodesInBatchesOrThrow<CalendarEvent>({
-    coreApiClient,
-    objectName: 'calendarEvents',
     values: iCalUIds,
-    buildFilter: (iCalUIdBatch) => ({
-      iCalUid: { in: iCalUIdBatch },
-      isCanceled: { eq: false },
-    }),
-    node: { id: true, iCalUid: true },
+    fetchPage: async ({ batch, after }) => {
+      const result = await coreApiClient.query({
+        calendarEvents: {
+          __args: {
+            filter: { iCalUid: { in: batch }, isCanceled: { eq: false } },
+            first: TWENTY_QUERY_MAX_RECORDS,
+            ...(isDefined(after) ? { after } : {}),
+          },
+          edges: { node: { id: true, iCalUid: true } },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      });
+      const connection = result.calendarEvents;
+
+      if (!isDefined(connection)) {
+        return undefined;
+      }
+
+      return {
+        ...connection,
+        edges: connection.edges.map(
+          ({ node }: { node: { id: string; iCalUid?: string | null } }) => ({
+            node: { id: node.id, iCalUid: node.iCalUid ?? null },
+          }),
+        ),
+      };
+    },
   });
 
 const addMissingICalUIdsOrThrow = async ({

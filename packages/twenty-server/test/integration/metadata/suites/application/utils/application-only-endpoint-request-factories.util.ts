@@ -191,6 +191,40 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
     `,
     variables: { id: messageChannelId },
   }),
+  appMessageFolders: ({
+    messageChannelId,
+  }: Pick<ApplicationOnlyEndpointTarget, 'messageChannelId'>) => ({
+    query: gql`
+      query AppMessageFolders($filter: ListAppMessageFoldersInput) {
+        appMessageFolders(filter: $filter) {
+          id
+        }
+      }
+    `,
+    variables: { filter: { messageChannelId } },
+  }),
+  syncAppMessageFolders: ({
+    messageChannelId,
+  }: Pick<ApplicationOnlyEndpointTarget, 'messageChannelId'>) => ({
+    query: gql`
+      mutation SyncAppMessageFolders($input: SyncAppMessageFoldersInput!) {
+        syncAppMessageFolders(input: $input) {
+          id
+        }
+      }
+    `,
+    variables: {
+      input: {
+        messageChannelId,
+        folders: [
+          {
+            externalId: 'application-only-probe',
+            name: 'application-only-probe',
+          },
+        ],
+      },
+    },
+  }),
   ingestAppMessages: ({
     messageChannelId,
   }: Pick<ApplicationOnlyEndpointTarget, 'messageChannelId'>) => ({

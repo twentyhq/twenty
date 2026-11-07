@@ -118,7 +118,7 @@ export class WorkspaceSetupChatService {
 
     if (isDefined(thread)) {
       if (isDefined(thread.deletedAt)) {
-        thread = await this.agentChatService.restoreThread({
+        thread = await this.threadService.restoreThread({
           threadId,
           workspaceMemberId,
           workspaceId: workspace.id,
@@ -274,9 +274,9 @@ export class WorkspaceSetupChatService {
       const workspaceMember =
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getRepository('workspaceMember', {
-              shouldBypassPermissionChecks: true,
-            });
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+              'workspaceMember',
+            );
 
           return workspaceMemberRepository.findOne({ where: { userId } });
         }, buildSystemAuthContext(workspaceId));

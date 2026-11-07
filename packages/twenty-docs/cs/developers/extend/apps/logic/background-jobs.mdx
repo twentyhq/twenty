@@ -1,7 +1,6 @@
 ---
 title: Úlohy na pozadí
 description: Předejte dlouhotrvající nebo rychlostně omezenou práci Twenty workerům tak, že místo provádění všeho přímo vkládáte do fronty další spuštění logické funkce.
-icon: layer-group
 ---
 
 Běh logické funkce je omezen svým `timeoutSeconds` (maximálně 900 sekund). Cokoli, co se nedokáže dokončit v tomto časovém okně — úplná resynchronizace, fan-out pro jednotlivé záznamy, služba třetí strany, která vás omezuje rychlostí — musí být rozděleno do menších běhů.

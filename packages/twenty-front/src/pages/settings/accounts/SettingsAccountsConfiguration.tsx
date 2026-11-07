@@ -7,9 +7,9 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
+import { useAccountsConfigurationCompletionPath } from '@/settings/accounts/hooks/useAccountsConfigurationCompletionPath';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
@@ -59,12 +59,17 @@ export const SettingsAccountsConfiguration = () => {
   const messageChannel = messageChannels[0];
   const calendarChannel = calendarChannels[0];
 
+  const completionPath =
+    useAccountsConfigurationCompletionPath(connectedAccountId);
+
   const handleNext = () => {
     setCurrentStep(SettingsAccountsConfigurationStep.Calendar);
   };
 
   const handleAddAccount = async () => {
-    if (!connectedAccountId) return;
+    if (!connectedAccountId) {
+      return;
+    }
 
     await startChannelSyncMutation({
       variables: {
@@ -75,7 +80,7 @@ export const SettingsAccountsConfiguration = () => {
           status: 'success',
           children: t`Account added successfully. Sync started.`,
         });
-        navigate(getSettingsPath(SettingsPath.Accounts));
+        navigate(completionPath);
       },
       onError: (error) => {
         enqueueToast(getToastOptionsFromError({ error }));

@@ -1,7 +1,6 @@
 ---
 title: Přehled
 description: Nakonfigurujte samotnou aplikaci – její identitu, výchozí oprávnění a to, co se spouští při instalaci.
-icon: screwdriver-wrench
 ---
 
 **Konfigurační vrstva** aplikace Twenty popisuje aplikaci *platformě* – její identitu, oprávnění, která má, a kód, který se spouští během instalace nebo aktualizace. Tato deklarativní nastavení nepřidávají nové datové struktury ani chování za běhu; říkají Twenty, *co je aplikace zač* a *jak ji nastavit*.
@@ -37,10 +36,10 @@ icon: screwdriver-wrench
   <Card title="Konfigurace aplikace" icon="rocket" href="/cs/developers/extend/apps/config/application">
     `defineApplication` – identita, výchozí role, proměnné, metadata pro marketplace.
   </Card>
-  <Card title="Role a oprávnění" icon="shield-halved" href="/cs/developers/extend/apps/config/roles">
+  <Card title="Role a oprávnění" icon="shield-half" href="/cs/developers/extend/apps/config/roles">
     `defineRole` – deklaruje, co mohou logické funkce vaší aplikace číst a zapisovat.
   </Card>
-  <Card title="Instalační hooky" icon="wrench" href="/cs/developers/extend/apps/config/install-hooks">
+  <Card title="Instalační hooky" icon="tool" href="/cs/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction` — zálohují data, nastavují výchozí hodnoty, validují aktualizace, uklízejí při odebrání.
   </Card>
 </CardGroup>

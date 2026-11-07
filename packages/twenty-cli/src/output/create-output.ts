@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createProgressOutput } from '@/output/create-progress-output';
 import { JSON_SCHEMA_VERSION } from '@/output/constants/json-schema-version.constant';
+import { formatValidationErrorLines } from '@/output/format-validation-error-lines';
+import { readValidationErrorDetails } from '@/output/read-validation-error-details';
 import { formatFailureLine, formatWarningLine } from '@/output/style';
 import { type CliWarning } from '@/output/types/cli-warning.type';
 import { type OutputMode } from '@/output/types/output-mode.type';
@@ -158,6 +160,15 @@ export const createOutput = ({
         stream: process.stderr,
         text: formatFailureLine(error.message),
       });
+
+      const validationErrors = readValidationErrorDetails(error.details);
+
+      if (validationErrors.length > 0) {
+        writeLine({
+          stream: process.stderr,
+          text: indentLines(formatValidationErrorLines(validationErrors)),
+        });
+      }
 
       if (isDefined(error.hint)) {
         writeLine({ stream: process.stderr, text: indentLines(error.hint) });

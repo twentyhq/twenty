@@ -3,26 +3,32 @@ import { Injectable } from '@nestjs/common';
 import { isAxiosError } from 'axios';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
+import {
+  type SearchHelpCenterInput,
+  SearchHelpCenterInputZodSchema,
+} from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { buildHelpCenterErrorDetail } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/build-help-center-error-detail.util';
 import { extractHelpCenterResults } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/extract-help-center-results.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const HELP_CENTER_MCP_URL = 'https://docs.twenty.com/mcp';
+const HELP_CENTER_MCP_SEARCH_TOOL_NAME = 'search_twenty_documentation';
 const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
+
+const buildSearchFailedMessage = (query: string) =>
+  `Could not search Twenty's documentation for "${query}". Do not guess menus, buttons, options or steps from memory: say you could not confirm them and offer to do the task when your tools can.`;
 
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
+    "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons, options and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -30,24 +36,9 @@ export class SearchHelpCenterTool implements Tool {
     parameters: ToolInput,
     _context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { query } = parameters;
+    const { query } = parameters as SearchHelpCenterInput;
 
     try {
-      const MINTLIFY_API_KEY = this.twentyConfigService.get('MINTLIFY_API_KEY');
-      const MINTLIFY_SUBDOMAIN =
-        this.twentyConfigService.get('MINTLIFY_SUBDOMAIN');
-
-      const useDirectApi = MINTLIFY_API_KEY && MINTLIFY_SUBDOMAIN;
-
-      const endpoint = useDirectApi
-        ? `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
-        : 'https://twenty-help-search.com/search/twenty';
-
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(useDirectApi && { Authorization: `Bearer ${MINTLIFY_API_KEY}` }),
-      };
-
       const httpClient = this.secureHttpClientService.getHttpClient({
         timeout: HELP_CENTER_REQUEST_TIMEOUT_MS,
         retries: HELP_CENTER_REQUEST_RETRIES,
@@ -55,9 +46,23 @@ export class SearchHelpCenterTool implements Tool {
       });
 
       const response = await httpClient.post(
-        endpoint,
-        { query, pageSize: 10 },
-        { headers },
+        HELP_CENTER_MCP_URL,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: {
+            name: HELP_CENTER_MCP_SEARCH_TOOL_NAME,
+            arguments: { query },
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+          },
+          responseType: 'text',
+        },
       );
 
       const extraction = extractHelpCenterResults(response.data);
@@ -65,9 +70,8 @@ export class SearchHelpCenterTool implements Tool {
       if (!extraction.isReadable) {
         return {
           success: false,
-          message: `Failed to search help center for "${query}"`,
-          error:
-            'Help center search returned a response in an unrecognized shape',
+          message: buildSearchFailedMessage(query),
+          error: extraction.error,
         };
       }
 
@@ -76,14 +80,14 @@ export class SearchHelpCenterTool implements Tool {
       if (results.length === 0) {
         return {
           success: true,
-          message: `No help center articles found for "${query}"`,
+          message: `No documentation found for "${query}". Say you could not confirm it and offer to do the task when your tools can.`,
           result: [],
         };
       }
 
       return {
         success: true,
-        message: `Found ${results.length} relevant help center article${results.length === 1 ? '' : 's'} for "${query}"`,
+        message: `Found ${results.length} documentation result${results.length === 1 ? '' : 's'} for "${query}". Name only the menus, buttons, options and steps they show, never from memory. If they do not answer, say you could not confirm it and offer to do the task when your tools can.`,
         result: results,
       };
     } catch (error) {
@@ -95,7 +99,7 @@ export class SearchHelpCenterTool implements Tool {
 
       return {
         success: false,
-        message: `Failed to search help center for "${query}"`,
+        message: buildSearchFailedMessage(query),
         error: errorDetail,
       };
     }

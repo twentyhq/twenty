@@ -9,9 +9,9 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "dev": "twenty dev",
-    "exec": "twenty dev:fn-exec",
-    "uninstall": "twenty app:uninstall",
+    "dev": "node ../../../twenty-cli/dist/cli.cjs app dev",
+    "exec": "node ../../../twenty-cli/dist/cli.cjs app exec",
+    "uninstall": "node ../../../twenty-cli/dist/cli.cjs app uninstall",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },

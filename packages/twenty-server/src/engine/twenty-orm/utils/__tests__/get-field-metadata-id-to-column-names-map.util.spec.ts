@@ -1,15 +1,10 @@
-import {
-  FieldMetadataType,
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+import { FieldMetadataType, ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 
 describe('getFieldMetadataIdToColumnNamesMap', () => {
   const createMockFlatObjectMetadata = (
@@ -48,10 +43,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
-    writability: MetadataWritability.OPEN,
-    readability: MetadataReadability.OPEN,
-    readabilityParentFieldUniversalIdentifiers: null,
-    sharingReach: ObjectSharingReach.WORKSPACE,
+    disabledObjectPermissionActions: null,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
@@ -75,7 +67,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     name: string,
     type: FieldMetadataType,
   ): FlatFieldMetadata =>
-    ({
+    getFlatFieldMetadataMock({
       id,
       name,
       type,
@@ -83,16 +75,15 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       objectMetadataId: 'test-object-id',
       isLabelSyncedWithName: true,
       isNullable: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: id,
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       mainGroupByFieldMetadataViewIds: [],
-      applicationId: null,
-    }) as unknown as FlatFieldMetadata;
+    });
 
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],

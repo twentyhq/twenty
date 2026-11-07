@@ -9,6 +9,7 @@ import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modul
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { camelCase } from 'src/utils/camel-case';
 
 const STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX =
   /^[a-z][a-zA-Z0-9]*$/;
@@ -48,6 +49,16 @@ export const validateFlatObjectMetadataNames = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: `Name is not valid: it must start with lowercase letter and contain only alphanumeric letters`,
         userFriendlyMessage: msg`Name is not valid: it must start with lowercase letter and contain only alphanumeric letters`,
+        value: name,
+      });
+    } else if (camelCase(name) !== name) {
+      // GraphQL resolver and type names are derived through camelCase
+      const camelCasedName = camelCase(name);
+
+      errors.push({
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: `Name is not valid: it must be camelCase, e.g. "${camelCasedName}"`,
+        userFriendlyMessage: msg`Name is not valid: it must be camelCase, e.g. "${camelCasedName}"`,
         value: name,
       });
     }

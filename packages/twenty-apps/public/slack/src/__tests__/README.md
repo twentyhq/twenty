@@ -40,7 +40,7 @@ file: `utils/*.util.ts` for behaviour, `types/*.type.ts` for shared shapes,
 `constants/*.constant.ts` for shared test values.
 
 `slack-deployed-functions.integration-test.ts` sits one level further out: it
-uses `functionExecute` from `twenty-sdk/cli` to run the functions the way the
+uses `executeOneLogicFunction` from the metadata client to run the functions the way the
 server runs them - deployed, in the app runtime, with the app's own access
 token and server variables - and asserts on the returned status, data and
 error.

@@ -2,9 +2,8 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { waitForAnimationFrames } from '@/__stories__/shared/test-utils/waitForAnimationFrames';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
+import { waitForGeometryTrackerToIdle } from '@/__stories__/twenty-ui-gallery/utils/waitForGeometryTrackerToIdle';
 
 export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -36,7 +35,7 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
         .getBoundingClientRect().width,
     ).toBe(208),
   );
-  await waitForAnimationFrames(GEOMETRY_IDLE_FRAME_THRESHOLD * 2);
+  await waitForGeometryTrackerToIdle();
   await expect(
     canvas.getByRole('button', { name: /Show all measured items$/ }),
   ).toHaveTextContent('+2');

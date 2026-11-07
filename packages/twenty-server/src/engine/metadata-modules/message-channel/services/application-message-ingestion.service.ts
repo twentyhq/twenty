@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { MessageParticipantRole } from 'twenty-shared/types';
+import { FeatureFlagKey, MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type IngestAppMessagesOutput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.output';
@@ -16,22 +18,17 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { buildAppIngestionLockKey } from 'src/engine/metadata-modules/message-channel/utils/build-app-ingestion-lock-key.util';
 import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-header-message-id.util';
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
+import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
+import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
-
-// the lease must outlast a full batch save, or the next delivery gets in and duplicates
-// withLock does not renew, so waiters must outlast the lease left behind by a crashed holder
-const INGESTION_LOCK_TTL_MS = 60_000;
-const INGESTION_LOCK_RETRY_INTERVAL_MS = 500;
-
-const INGESTION_LOCK_OPTIONS = {
-  ttl: INGESTION_LOCK_TTL_MS,
-  ms: INGESTION_LOCK_RETRY_INTERVAL_MS,
-  maxRetries:
-    Math.ceil(INGESTION_LOCK_TTL_MS / INGESTION_LOCK_RETRY_INTERVAL_MS) + 10,
-};
 
 type IngestArgs = {
   applicationId: string;
@@ -49,6 +46,10 @@ export class ApplicationMessageIngestionService {
     private readonly saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly cacheLockService: CacheLockService,
+    private readonly personHandleFieldService: PersonHandleFieldService,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async ingest({
@@ -77,9 +78,20 @@ export class ApplicationMessageIngestionService {
     this.assertExternalIdsAreUnique(messages);
     await this.assertReferencedIdentitiesExist({ messages, workspaceId });
 
+    const personHandleField = await this.findPersonHandleFieldOrThrow({
+      workspaceId,
+      participantHandleFieldUniversalIdentifier:
+        messageChannel.participantHandleFieldUniversalIdentifier,
+    });
+
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
-        message,
+        message: isDefined(personHandleField)
+          ? withCanonicalParticipantHandlesOrThrow({
+              message,
+              personHandleField,
+            })
+          : message,
         applicationId,
         messageChannel,
       }),
@@ -88,16 +100,22 @@ export class ApplicationMessageIngestionService {
     // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
-      () =>
-        this.saveMessagesService.saveMessagesAndEnqueueContactCreation(
-          messagesToSave,
+      async () =>
+        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
+          messagesToSave: await this.withMessageFolderIdsOrThrow({
+            workspaceId,
+            messageChannelId,
+            messages: messagesToSave,
+          }),
           // the save path only reads inert settings and the id off the channel
           messageChannel,
           connectedAccount,
           workspaceId,
-        ),
+          folderLinkUpdate: 'add',
+          personHandleField: personHandleField ?? undefined,
+        }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
-      INGESTION_LOCK_OPTIONS,
+      APP_INGESTION_LOCK_OPTIONS,
     );
 
     if (!isDefined(savedMessages)) {
@@ -111,6 +129,11 @@ export class ApplicationMessageIngestionService {
       messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
+
+    const messageIdsWithAttachments = await this.findMessageIdsWithAttachments({
+      workspaceId,
+      messageIds: [...new Set(messageExternalIdsAndIdsMap.values())],
+    });
 
     // never drop a row: the app would see success with nothing to retry
     return {
@@ -131,9 +154,53 @@ export class ApplicationMessageIngestionService {
           externalId: message.externalId,
           messageId,
           messageThreadId,
+          hasAttachments: messageIdsWithAttachments.has(messageId),
         };
       }),
     };
+  }
+
+  private async findMessageIdsWithAttachments({
+    workspaceId,
+    messageIds,
+  }: {
+    workspaceId: string;
+    messageIds: string[];
+  }): Promise<Set<string>> {
+    if (messageIds.length === 0) {
+      return new Set();
+    }
+
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isMessageAttachmentEnabled) {
+      return new Set();
+    }
+
+    const attachments =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+              'attachment',
+            )
+            .find({
+              where: { targetMessageId: In(messageIds) },
+              select: { targetMessageId: true },
+            }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    return new Set(
+      attachments
+        .map(({ targetMessageId }) => targetMessageId)
+        .filter(isDefined),
+    );
   }
 
   private toMessageWithParticipants({
@@ -157,11 +224,13 @@ export class ApplicationMessageIngestionService {
       isDraft: false,
       externalId: message.externalId,
       messageThreadExternalId: message.threadExternalId,
+      messageFolderExternalIds: [...new Set(message.folderExternalIds ?? [])],
       direction: resolveAppMessageDirection({
         participants: message.participants,
         channelHandle: messageChannel.handle,
       }),
       attachments: [],
+      attachmentFiles: message.attachments ?? [],
       participants: message.participants.map((participant) => ({
         role: participant.role,
         handle: participant.handle,
@@ -170,6 +239,89 @@ export class ApplicationMessageIngestionService {
         workspaceMemberId: participant.workspaceMemberId ?? null,
       })),
     };
+  }
+
+  private async withMessageFolderIdsOrThrow({
+    workspaceId,
+    messageChannelId,
+    messages,
+  }: {
+    workspaceId: string;
+    messageChannelId: string;
+    messages: MessageWithParticipants[];
+  }): Promise<MessageWithParticipants[]> {
+    const folderExternalIds = [
+      ...new Set(
+        messages.flatMap((message) => message.messageFolderExternalIds ?? []),
+      ),
+    ];
+
+    if (folderExternalIds.length === 0) {
+      return messages;
+    }
+
+    const messageFolders = await this.messageFolderRepository.find(
+      workspaceId,
+      {
+        where: { messageChannelId, externalId: In(folderExternalIds) },
+        select: { id: true, externalId: true },
+      },
+    );
+
+    const messageFolderIdByExternalId = new Map(
+      messageFolders.map((messageFolder) => [
+        messageFolder.externalId,
+        messageFolder.id,
+      ]),
+    );
+
+    const unknownFolderExternalIds = folderExternalIds.filter(
+      (folderExternalId) => !messageFolderIdByExternalId.has(folderExternalId),
+    );
+
+    if (unknownFolderExternalIds.length > 0) {
+      throw new MessageChannelException(
+        `Unknown folder externalId(s) on message channel ${messageChannelId}: ${unknownFolderExternalIds.join(', ')}. Declare them with syncAppMessageFolders first`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return messages.map((message) => ({
+      ...message,
+      messageFolderIds: (message.messageFolderExternalIds ?? [])
+        .map((folderExternalId) =>
+          messageFolderIdByExternalId.get(folderExternalId),
+        )
+        .filter(isDefined),
+    }));
+  }
+
+  // raw handles would mix with the canonical ones already stored and stop matching the channel's own handle
+  private async findPersonHandleFieldOrThrow({
+    workspaceId,
+    participantHandleFieldUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    participantHandleFieldUniversalIdentifier: string | null;
+  }): Promise<PersonHandleField | null> {
+    if (!isDefined(participantHandleFieldUniversalIdentifier)) {
+      return null;
+    }
+
+    const personHandleField =
+      await this.personHandleFieldService.findByUniversalIdentifier({
+        workspaceId,
+        fieldUniversalIdentifier: participantHandleFieldUniversalIdentifier,
+      });
+
+    if (!isDefined(personHandleField)) {
+      throw new MessageChannelException(
+        `The person field ${participantHandleFieldUniversalIdentifier} this channel matches participants on no longer exists or is inactive`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return personHandleField;
   }
 
   // checked up front so the app gets an error rather than a dangling link that never renders
@@ -228,10 +380,10 @@ export class ApplicationMessageIngestionService {
       return;
     }
 
-    const repository = this.workspaceOrmManager.getRepository(
-      objectMetadataName,
-      { shouldBypassPermissionChecks: true },
-    );
+    const repository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        objectMetadataName,
+      );
 
     const found = await repository.find({
       where: { id: In([...ids]) },

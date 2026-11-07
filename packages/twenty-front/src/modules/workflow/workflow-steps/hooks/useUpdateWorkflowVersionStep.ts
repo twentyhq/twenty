@@ -1,8 +1,6 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +25,6 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
     onError: handleCoreMutationError,
   });
   const { markStepForRecomputation } = useStepsOutputSchema();
-  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
   const updateWorkflowVersionStep = async (
     input: UpdateWorkflowVersionStepInput,
@@ -46,20 +43,6 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
     markStepForRecomputation({
       stepId: updatedStep.id,
       workflowVersionId,
-    });
-
-    setFlow((currentFlow) => {
-      if (!isDefined(currentFlow)) {
-        return currentFlow;
-      }
-
-      return {
-        ...currentFlow,
-        workflowVersionId,
-        steps: (currentFlow.steps ?? []).map((step) =>
-          step.id === updatedStep.id ? updatedStep : step,
-        ),
-      };
     });
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);

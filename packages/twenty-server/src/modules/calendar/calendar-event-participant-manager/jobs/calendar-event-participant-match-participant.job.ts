@@ -13,7 +13,6 @@ import { MatchParticipantService } from 'src/modules/match-participant/match-par
 export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
   participantMatching: {
-    personIds: string[];
     personEmails: string[];
     workspaceMemberIds: string[];
   };
@@ -46,10 +45,7 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    if (
-      participantMatching.personIds.length > 0 ||
-      participantMatching.personEmails.length > 0
-    ) {
+    if (participantMatching.personEmails.length > 0) {
       await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',
         participantMatching,

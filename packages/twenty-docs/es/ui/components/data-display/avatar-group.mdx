@@ -1,0 +1,159 @@
+---
+title: Grupo de avatares
+description: Avatares superpuestos con un indicador de desbordamiento derivado.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
+
+## Resumen
+
+`AvatarGroup` recibe avatares renderizados y calcula el recuento oculto. `maxVisible` cuenta los avatares reales; el indicador de desbordamiento es adicional. Ocho avatares proporcionados con `maxVisible={3}` muestran tres avatares y `+5`.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--display" title="Ocho avatares con tres visibles" height={100} />
+
+## Uso
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const TeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
+    avatars={[
+      'Ada',
+      'Grace',
+      'Margaret',
+      'Annie',
+      'Mary',
+      'Dorothy',
+      'Katherine',
+      'Joan',
+    ].map((name) => (
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
+    ))}
+  />
+);
+```
+
+Proporcione claves estables para mantener montados los avatares que permanecen cuando cambie el límite, el total o el orden de visualización. Los avatares son decorativos de forma predeterminada. Cuando el grupo sea la única representación de sus miembros, proporciona el nombre de cada miembro mediante `imageProps.alt` para etiquetar la imagen y el recurso alternativo predeterminado. Mantén los avatares decorativos cuando el texto visible o una etiqueta de propietario ya proporcione esa identidad.
+
+## Opciones visuales
+
+Compara avatares circulares y cuadrados en cada tamaño. El grupo mantiene tres miembros visibles en esta comparación.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--catalog" title="Compara formas y tamaños de avatar" height={850} />
+
+## Colecciones cargadas parcialmente
+
+Use `total` para el tamaño completo de la colección cuando solo se hayan cargado algunos avatares. Tres avatares proporcionados y visibles con `total={20}` muestran `+17`. Pase todos los avatares cargados y deje que el grupo aplique `maxVisible`.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const LoadedTeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+  />
+);
+```
+
+`total` se redondea hacia abajo y no puede ser menor que el número de avatares renderizables proporcionados. Los totales no finitos usan el recuento proporcionado. El recuento derivado de elementos ocultos siempre es no negativo.
+
+`maxVisible` tiene como valor predeterminado `4`. Los límites finitos se redondean hacia abajo y se restringen a cero, `Infinity` muestra todos los avatares proporcionados y `NaN` no muestra ninguno. Los nodos de React vacíos no cuentan como avatares. Un límite de cero puede mostrar solo el indicador de desbordamiento. Un grupo vacío con un total positivo puede mostrar ese total en su indicador; un grupo vacío sin avatares ocultos no renderiza nada.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--partially-loaded" title="Tres miembros cargados de un equipo de veinte" height={100} />
+
+## Desbordamiento personalizado
+
+`renderOverflow` recibe el mismo recuento derivado de elementos ocultos que el indicador predeterminado `+N`. Solo se ejecuta cuando ese recuento es positivo. Devuelva `null` para ocultar el indicador sin cambiar qué avatares son visibles.
+
+Use un control explícito cuando el indicador realice una acción. Su nombre accesible debe explicar la acción y el recuento.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type TeamAvatarsWithActionProps = { onShowAll: () => void };
+
+export const TeamAvatarsWithAction = ({
+  onShowAll,
+}: TeamAvatarsWithActionProps) => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+    renderOverflow={(hiddenCount) => (
+      <Button
+        size="sm"
+        aria-label={`Show ${hiddenCount} more members`}
+        onClick={onShowAll}
+      >
+        +{hiddenCount}
+      </Button>
+    )}
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatargroup--custom-overflow" title="Botón de desbordamiento personalizado" height={100} />
+
+## Apariencia
+
+Los avatares posteriores siempre se renderizan encima de los anteriores. `overlap` elige el margen físico, `left` o `right`, que lleva el desplazamiento negativo. `overlapOffset` establece ese desplazamiento como una longitud CSS. `overflowShape` establece la forma del indicador numérico predeterminado.
+
+## Personalización de la raíz
+
+Los atributos nativos, los controladores de eventos, `className` y `style` llegan a la raíz. Su elemento predeterminado es un `div`, incluso cuando se proporciona `onClick`. Use elementos interactivos nativos para las acciones, como el botón de desbordamiento anterior.
+
+La raíz acepta una ref y `render`, que puede ser un elemento o una función. Los componentes personalizados deben reenviar las props proporcionadas y la ref a su raíz nativa. Consulte [componentes personalizados](/es/ui/primitives/overview#custom-components) para conocer los requisitos de composición.
+
+```tsx
+import { useRef } from 'react';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const NamedTeamAvatars = () => {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <AvatarGroup
+      ref={groupRef}
+      role="group"
+      aria-label="Project members"
+      style={{ marginBlock: 8 }}
+      render={<div data-location="project-header" />}
+      avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
+    />
+  );
+};
+```
+
+## "Props"
+
+`AvatarGroupProps` se exporta desde `twenty-ui/components/data-display`.
+
+<AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

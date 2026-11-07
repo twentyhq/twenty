@@ -8,6 +8,7 @@ import {
 import { motion } from 'framer-motion';
 import {
   forwardRef,
+  useId,
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
@@ -21,11 +22,13 @@ import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList'
 import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
+import { SuggestionMenuAccessibilityEffect } from '@/ui/suggestion/components/SuggestionMenuAccessibilityEffect';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
 
@@ -34,6 +37,7 @@ const SuggestionMenuInner = <TItem,>(
   props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
 ) => {
+  const { t } = useLingui();
   const {
     items,
     onSelect,
@@ -47,6 +51,7 @@ const SuggestionMenuInner = <TItem,>(
   } = props;
 
   const isMobile = useIsMobile();
+  const menuId = useId();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -54,6 +59,12 @@ const SuggestionMenuInner = <TItem,>(
     items.length > 0 ? Math.min(selectedIndex, items.length - 1) : 0;
 
   const selectedItem = items[clampedSelectedIndex];
+  const activeOptionId = isDefined(selectedItem)
+    ? getSuggestionMenuItemAnchorId({
+        menuId,
+        itemKey: getItemKey(selectedItem),
+      })
+    : undefined;
 
   const [isSelectedItemVisible, setIsSelectedItemVisible] = useState(true);
 
@@ -199,7 +210,15 @@ const SuggestionMenuInner = <TItem,>(
       transition={{ duration: 0.1 }}
       data-suggestion-menu
     >
+      <SuggestionMenuAccessibilityEffect
+        editor={editor}
+        menuId={menuId}
+        activeOptionId={activeOptionId}
+      />
       <OverlayContainer
+        id={menuId}
+        role="listbox"
+        aria-label={t`Suggestions`}
         ref={refs.setFloating}
         style={{
           ...floatingStyles,
@@ -218,7 +237,6 @@ const SuggestionMenuInner = <TItem,>(
             return (
               <div
                 key={getItemKey(item)}
-                id={getSuggestionMenuItemAnchorId(getItemKey(item))}
                 ref={isSelected ? activeItemRef : null}
                 onMouseDown={(event) => {
                   event.preventDefault();
@@ -228,7 +246,14 @@ const SuggestionMenuInner = <TItem,>(
                 {isFirstOfSection && (
                   <DropdownMenuSectionLabel label={section.label} />
                 )}
-                {renderItem(item, isSelected)}
+                {renderItem({
+                  item,
+                  isSelected,
+                  id: getSuggestionMenuItemAnchorId({
+                    menuId,
+                    itemKey: getItemKey(item),
+                  }),
+                })}
               </div>
             );
           })}

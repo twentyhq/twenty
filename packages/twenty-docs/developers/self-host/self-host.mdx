@@ -2,9 +2,11 @@
 title: Self-Host
 description: Deploy and manage Twenty on your own infrastructure.
 ---
-<Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="AI" />
-</Frame>
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Overview
 
 Twenty can be self-hosted on your own infrastructure, giving you full control over your data and deployment.
@@ -17,9 +19,11 @@ Twenty can be self-hosted on your own infrastructure, giving you full control ov
 
 ## Getting Started
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="docker" href="/developers/self-host/capabilities/docker-compose">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
+    <CardTitle>Docker Compose</CardTitle>
     Quick setup with Docker
   </Card>
 </CardGroup>
 
+<PageBanner illustration="card-page-self-host-guide" />

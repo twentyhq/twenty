@@ -1,0 +1,103 @@
+---
+title: زر التفاعل
+description: بدّل تفاعل إيموجي يتضمن عددا وحالة ضغط متحكما بها.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ReactionButtonReference from '/snippets/ui/generated/components/input/reaction-button.mdx';
+
+## نظرة عامة
+
+يتألف `ReactionButton` من [زر](/ar/ui/primitives/input/button) لتكوين تفاعل إيموجي مدمج مع عدد. يوفر تطبيقك حالة الضغط والاسم المتاح ومعالج التغيير.
+
+<StoryEmbed storyId="ui-components-reactionbutton--display" title="تفاعل مفيد متحكم به مع تلميح إجراء إعادة تعيين" height={160} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import {
+  ReactionButton,
+  type ReactionButtonProps,
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const ReactionButtonExample = ({
+  emoji = '👍',
+  disabled,
+  loading,
+}: Partial<Pick<ReactionButtonProps, 'emoji' | 'disabled' | 'loading'>>) => {
+  const [pressed, setPressed] = useState(false);
+  const count = pressed ? 3 : 2;
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
+      <Text>Was this helpful?</Text>
+      <Text
+        render={<span />}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
+      >
+        <Tooltip content={`${count} people found this helpful`}>
+          <ReactionButton
+            aria-label="Helpful"
+            emoji={emoji}
+            count={count}
+            pressed={pressed}
+            onPressedChange={setPressed}
+            disabled={disabled}
+            loading={loading}
+          />
+        </Tooltip>
+        <Button size="sm" variant="ghost" onClick={() => setPressed(false)}>
+          Reset
+        </Button>
+      </Text>
+    </Text>
+  );
+};
+```
+
+## المظهر
+
+يبلغ ارتفاع عنصر التحكم 24px، وله زوايا مستديرة وإيموجي بحجم 16px وعدد صغير. تستخدم التفاعلات المضغوطة سطح التمييز ونصه الخاصين بالسمة. تستخدم التفاعلات غير المضغوطة سطحا شفافا ونصا ثانويا.
+
+يقبل `count` رقما أو سلسلة نصية منسقة بواسطة المستدعي. يتولى تطبيقك تنسيق الأرقام واختصارها وتحديد ما إذا كان سيعرض تفاعلا بعدد صفري.
+
+<StoryEmbed storyId="ui-components-reactionbutton--catalog" title="اختيار التفاعل والأعداد والحالات غير المتاحة" height={300} />
+
+## ملكية الحالة
+
+`pressed` مطلوب ويتحكم به تطبيقك. يستدعي التنشيط `onPressedChange` بالقيمة التالية المطلوبة. يستمر المكون في عرض قيمتي `pressed` و`count` الموفرين إلى أن يحدّثهما تطبيقك.
+
+عيّن `loading` أثناء انتظار طفرة لعرض مؤشر تحميل Button ومنع التنشيط المتكرر. يحافظ على قيمة `pressed` الموفرة ويضع علامة انشغال على عنصر التحكم. استخدم `disabled` عندما يكون التفاعل غير متاح. يبقى الاختيار والأعداد والأذونات والاستمرارية وأي تحديثات تفاؤلية في التطبيق.
+
+يعمل `onClick` الأصلي قبل طلب التغيير. يؤدي استدعاء `event.preventDefault()` في ذلك المعالج إلى إلغاء الطلب. تُمرر سمات الزر الأصلية الأخرى ومعالجاته وأنماطه وأسماء فئاته ومراجعه إلى الزر. يستخدم عنصر التحكم دائما `type="button"`.
+
+## إمكانية الوصول وتلميحات الأدوات
+
+وفّر `aria-label` أو `aria-labelledby` مع اسم تفاعل مترجم محليا. الإيموجي والعدد للزينة ومخفيان عن التقنية المساعدة، لذا ضمّن معلومات العدد أو المشاركين في الاسم أو الوصف الموفّر عند الحاجة. حافظ على استقرار اسم التفاعل عند تغير حالته؛ إذ يعبّر `aria-pressed` عن الاختيار.
+
+يدعم الزر الأصلي تركيز Tab والتنشيط باستخدام Enter أو Space. يمنع كل من `disabled` و`loading` التنشيط. يشير المرجع إلى الزر الأصلي.
+
+استخدم [تلميح الأدوات](/ar/ui/primitives/surfaces/tooltip) لتفاصيل المشاركين عند التمرير والتركيز باستخدام لوحة المفاتيح، كما هو موضح أعلاه، أو مرّر `title` أصليا. ينتمي محتوى تلميح الأدوات إلى المستدعي ولا يحل محل الاسم المتاح. لا تؤدي التسميات الطويلة المتاحة إلى تكبير عنصر التحكم المرئي.
+
+## الإزاحة
+
+<ReactionButtonReference />
+
+<PageBanner illustration="page-cover-emoji" />

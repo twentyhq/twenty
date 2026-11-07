@@ -18,10 +18,6 @@
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "**/__tests__/**",
-    "src/constants/template/src/**",
-    "src/constants/template/vitest.config.ts",
-    "src/constants/template/vitest.unit.config.ts",
-    "src/constants/template/tsconfig.spec.json"
+    "**/__tests__/**"
   ]
 }

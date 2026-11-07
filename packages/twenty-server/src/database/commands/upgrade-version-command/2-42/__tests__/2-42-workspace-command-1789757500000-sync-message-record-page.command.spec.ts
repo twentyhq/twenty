@@ -1,27 +1,30 @@
+import { Test } from '@nestjs/testing';
 import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500000-sync-message-record-page.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
+
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '7f1c2b9e-6a1d-4c55-9a2e-1a6f0d6c2b11';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
 );
 
-const computeTwentyStandardApplicationAllFlatEntityMapsMock = jest.mocked(
-  computeTwentyStandardApplicationAllFlatEntityMaps,
-);
+const computeTwentyStandardApplicationAllFlatEntityMapsMock =
+  computeTwentyStandardApplicationAllFlatEntityMaps as jest.Mock;
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION = {
@@ -94,7 +97,7 @@ describe('SyncMessageRecordPageCommand', () => {
   let loggerLogMock: jest.SpyInstance;
   let loggerWarnMock: jest.SpyInstance;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -131,27 +134,38 @@ describe('SyncMessageRecordPageCommand', () => {
         ]),
         flatPageLayoutWidgetMaps: buildMaps([buildStandardFieldsWidget()]),
       },
-    } as unknown as ReturnType<
-      typeof computeTwentyStandardApplicationAllFlatEntityMaps
-    >);
+    });
 
-    command = new SyncMessageRecordPageCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: STANDARD_APPLICATION,
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunLegacyWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        SyncMessageRecordPageCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: STANDARD_APPLICATION,
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunLegacyWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(SyncMessageRecordPageCommand);
 
     loggerLogMock = jest.spyOn(command['logger'], 'log').mockImplementation();
     loggerWarnMock = jest.spyOn(command['logger'], 'warn').mockImplementation();
@@ -328,11 +342,15 @@ describe('SyncMessageRecordPageCommand', () => {
           remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
           additionalCacheDataMaps: {
             featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
+            billingEntitlements: {},
           },
           buildOptions: {
             isSystemBuild: true,
             applicationUniversalIdentifier:
               STANDARD_APPLICATION.universalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
           },
           workspaceId: WORKSPACE_ID,
         });

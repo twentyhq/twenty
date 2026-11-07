@@ -3,7 +3,6 @@ import { type Equal, type Expect } from 'twenty-shared/testing';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { type ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
-import { type BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -23,7 +22,6 @@ export type AllNonWorkspaceRelatedEntity =
   | ApplicationRegistrationEntity
   | ApplicationRegistrationVariableEntity
   | ApplicationRegistrationVersionEntity
-  | BillingMeterEntity
   | BillingPriceEntity
   | BillingProductEntity
   | BillingSubscriptionItemEntity

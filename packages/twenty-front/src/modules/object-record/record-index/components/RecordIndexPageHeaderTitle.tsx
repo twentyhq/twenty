@@ -1,7 +1,7 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
@@ -28,6 +28,7 @@ export const RecordIndexPageHeaderTitle = ({
   label,
   numberOfSelectedRecords,
 }: RecordIndexPageHeaderTitleProps) => {
+  const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
   if (numberOfSelectedRecords === 0) {

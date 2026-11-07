@@ -1,4 +1,5 @@
-import { type ReactNode, useContext } from 'react';
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
+import { type ReactElement, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
@@ -13,7 +14,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailMorphRelationSectionDropdownProps = {
   loading: boolean;
-  dropdownTriggerClickableComponent: ReactNode;
+  dropdownTriggerClickableComponent: ReactElement;
 };
 
 export const RecordDetailMorphRelationSectionDropdown = ({
@@ -48,7 +49,7 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   const isRecordReadOnlyFromRelatedRecordPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
       return isRecordReadOnly({
-        objectPermissions: { canUpdateObjectRecords: true },
+        objectPermissions: getDefaultObjectPermissions(),
         isRecordDeleted: isDeleted,
         objectMetadataItem: relatedObjectMetadataItem,
       });
@@ -68,13 +69,11 @@ export const RecordDetailMorphRelationSectionDropdown = ({
         dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
       />
     );
-  } else if (isToManyObjects) {
-    return (
-      <RecordDetailMorphRelationSectionDropdownOneToMany
-        dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
-      />
-    );
-  } else {
-    return null;
   }
+
+  return isToManyObjects ? (
+    <RecordDetailMorphRelationSectionDropdownOneToMany
+      dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
+    />
+  ) : null;
 };

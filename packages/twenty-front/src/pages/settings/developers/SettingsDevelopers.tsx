@@ -11,6 +11,7 @@ import { PlaygroundSetupForm } from '@/settings/developers/components/Playground
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -21,28 +22,21 @@ import {
   IconApps,
   IconPlus,
   IconSparkle2,
+  IconTerminal2,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import AppsCoverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import AppsCoverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsDevelopersClaimErrorTabEffect } from '~/pages/settings/developers/components/SettingsDevelopersClaimErrorTabEffect';
 import { SettingsDevelopersAppsTab } from '~/pages/settings/developers/tabs/SettingsDevelopersAppsTab';
+import { SettingsDevelopersCliTab } from '~/pages/settings/developers/tabs/SettingsDevelopersCliTab';
 
 type TabKey =
   (typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS)[keyof typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS];
 
 const SETTINGS_DEVELOPERS_HERO_INSTANCE_ID_PREFIX = 'settings-developers-hero';
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${themeCssVariables.spacing[2]};
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-top: ${themeCssVariables.spacing[5]};
-  }
-`;
 
 const StyledTabContent = styled.div`
   display: flex;
@@ -54,7 +48,6 @@ const StyledTabContent = styled.div`
 const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
 `;
 
@@ -78,6 +71,11 @@ export const SettingsDevelopers = () => {
       title: t`Apps`,
       Icon: IconApps,
     },
+    {
+      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI,
+      title: t`CLI`,
+      Icon: IconTerminal2,
+    },
   ];
 
   const activeTab: TabKey =
@@ -87,6 +85,7 @@ export const SettingsDevelopers = () => {
     ) as TabKey) ?? SETTINGS_DEVELOPERS_TABS.TABS_IDS.API;
 
   const isAppsTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS;
+  const isCliTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI;
 
   return (
     <SettingsPageLayout
@@ -117,7 +116,7 @@ export const SettingsDevelopers = () => {
             darkSrc={isAppsTab ? AppsCoverDark : PlaygroundCoverDark}
             instanceIdPrefix={SETTINGS_DEVELOPERS_HERO_INSTANCE_ID_PREFIX}
             tabs={
-              isAppsTab
+              isAppsTab || isCliTab
                 ? []
                 : [
                     {
@@ -150,14 +149,14 @@ export const SettingsDevelopers = () => {
               />
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsApiKeysTable />
-                <StyledButtonContainer>
+                <TableFooter>
                   <NavigationButton
                     startIcon={<IconPlus />}
                     size="sm"
                     to={getSettingsPath(SettingsPath.NewApiKey)}
                     variant="outline"
                   >{t`Create API key`}</NavigationButton>
-                </StyledButtonContainer>
+                </TableFooter>
               </StyledTableContainer>
             </Section.Root>
           </StyledTabContent>
@@ -172,20 +171,22 @@ export const SettingsDevelopers = () => {
               />
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsWebhooksTable />
-                <StyledButtonContainer>
+                <TableFooter>
                   <NavigationButton
                     startIcon={<IconPlus />}
                     size="sm"
                     to={getSettingsPath(SettingsPath.NewWebhook)}
                     variant="outline"
                   >{t`Create webhook`}</NavigationButton>
-                </StyledButtonContainer>
+                </TableFooter>
               </StyledTableContainer>
             </Section.Root>
           </StyledTabContent>
         )}
 
         {isAppsTab && <SettingsDevelopersAppsTab />}
+
+        {isCliTab && <SettingsDevelopersCliTab />}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

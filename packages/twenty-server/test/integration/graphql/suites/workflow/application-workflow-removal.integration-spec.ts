@@ -20,6 +20,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -232,7 +233,14 @@ describe('removing workflows from an application manifest', () => {
       ).toBeUndefined();
     }
 
-    expect(await countTestWorkflowRuns([formRunId, secondFormRunId])).toBe(0);
+    await expectEventually(
+      async () => {
+        expect(await countTestWorkflowRuns([formRunId, secondFormRunId])).toBe(
+          0,
+        );
+      },
+      { timeoutMs: 30_000 },
+    );
     expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
 
     const [{ count: applicationFunctionCount }] =

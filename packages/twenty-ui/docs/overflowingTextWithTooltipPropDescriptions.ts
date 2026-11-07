@@ -1,6 +1,10 @@
 import { type OverflowingTextWithTooltipProps } from '../src/primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps';
 
 export const OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS = {
+  size: 'Font size from the theme scale. Omitted values inherit; this does not set height.',
+  weight: 'Theme font weight. Omitted values inherit.',
+  color:
+    'Semantic text color. Omitted values inherit; native style supports runtime colors.',
   text: 'Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text.',
   tooltipContent:
     'Plain text displayed in the tooltip. Defaults to nonempty string `text`.',

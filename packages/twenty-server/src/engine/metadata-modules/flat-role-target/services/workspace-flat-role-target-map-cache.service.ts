@@ -15,6 +15,7 @@ const FLAT_ROLE_TARGET_ROWS_REQUIREMENT = {
   application: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
   agent: ['id', 'universalIdentifier'],
+  webhook: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -32,6 +33,7 @@ export class WorkspaceFlatRoleTargetMapCacheService extends MetadataFlatEntityMa
       application: applications,
       role: roles,
       agent: agents,
+      webhook: webhooks,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -40,6 +42,8 @@ export class WorkspaceFlatRoleTargetMapCacheService extends MetadataFlatEntityMa
       createIdToUniversalIdentifierMap(roles);
     const agentIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(agents);
+    const webhookIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(webhooks);
 
     const flatRoleTargetMaps = createEmptyFlatEntityMaps();
 
@@ -49,6 +53,7 @@ export class WorkspaceFlatRoleTargetMapCacheService extends MetadataFlatEntityMa
         applicationIdToUniversalIdentifierMap,
         roleIdToUniversalIdentifierMap,
         agentIdToUniversalIdentifierMap,
+        webhookIdToUniversalIdentifierMap,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

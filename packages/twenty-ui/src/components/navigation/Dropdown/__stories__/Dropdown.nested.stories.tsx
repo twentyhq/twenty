@@ -102,6 +102,44 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
+export const PickerBesideClosedContent: Story = {
+  render: () => (
+    <Dropdown.Root type="menu">
+      <Dropdown.Trigger>Actions</Dropdown.Trigger>
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Choose status</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Status">
+          <Dropdown.OptionItem selected={false}>Active</Dropdown.OptionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+      <Dropdown.Content aria-label="Actions">
+        <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Choose status' }),
+    );
+    const option = await body.findByRole('button', { name: 'Active' });
+
+    await waitFor(() => expect(option).toBeVisible());
+    expect(canvas.getByRole('button', { name: 'Actions' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Status' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const InnerSelectionKeepsParentOpen: Story = {
   render: () => <NestedPicker />,
   play: async ({ canvasElement }) => {

@@ -1,9 +1,9 @@
 ---
 title: Gestión de Miembros
-description: Invita a los miembros del equipo y gestiona el acceso al espacio de trabajo.
+description: Invita a los miembros del equipo y administra el acceso al espacio de trabajo en Ajustes → Miembros.
 ---
 
-Gestiona quién tiene acceso a tu espacio de trabajo en **Ajustes → Miembros**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Invitar Nuevos Miembros
 
@@ -65,6 +65,25 @@ Los miembros eliminados pierden el acceso de inmediato. Sus datos (registros, no
 Los correos electrónicos y eventos del calendario del miembro eliminado están archivados y disponibles para otros miembros.
 </Note>
 
+### Restablecer la autenticación de dos factores de un miembro
+
+Si un miembro perdió el acceso a su aplicación de autenticación, un administrador puede proporcionarle un código de recuperación de un solo uso.
+
+Necesitas el permiso de **Seguridad** y tener configurada la autenticación de dos factores en tu propia cuenta.
+
+1. Haz clic en el miembro para abrir su perfil
+2. En la sección **Autenticación de dos factores**, haz clic en **Generar código de recuperación**
+3. Introduce el código de tu propia aplicación de autenticación para confirmar
+4. Copia el código y compártelo con el miembro a través de un canal de confianza
+
+El código funciona una vez y caduca después de 1 hora de forma predeterminada. Solo se muestra una vez. Generar un código nuevo reemplaza el anterior, y puedes hacer clic en **Revocar** para cancelar un código pendiente. El miembro recibe un correo electrónico cuando se emite un código.
+
+Cuando el miembro usa el código, se elimina su autenticador para este espacio de trabajo y se cierra la sesión en sus otras sesiones. Si el espacio de trabajo exige la autenticación de dos factores, se le pide que configure un autenticador nuevo de inmediato. Si se va antes de terminar, genera un código nuevo para esa persona: hasta que complete la configuración, el miembro solo puede configurar un autenticador mediante un código de recuperación.
+
+<Note>
+No puedes generar un código de recuperación para ti mismo. Solo un administrador del servidor puede generar uno para otro administrador del servidor.
+</Note>
+
 ## Invitaciones pendientes
 
 Gestiona las invitaciones que no se han aceptado:
@@ -84,3 +103,5 @@ Permite que los miembros del equipo se unan automáticamente según su dominio d
 
 * [Permisos](/es/user-guide/permissions-access/capabilities/permissions) — configura lo que cada rol puede hacer
 * [Configuración del dominio](/es/user-guide/settings/capabilities/domains-settings) — configurar los dominios aprobados
+
+<PageBanner illustration="page-cover-users" />

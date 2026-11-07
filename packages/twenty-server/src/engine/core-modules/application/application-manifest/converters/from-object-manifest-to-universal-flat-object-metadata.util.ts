@@ -1,12 +1,19 @@
-import { type ObjectManifest } from 'twenty-shared/application';
 import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+  type DisableableObjectPermissionAction,
+  type ObjectManifest,
+} from 'twenty-shared/application';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+
+// Disabling update has always blocked creating too, and manifests only declare it from here on
+const addDisabledCreateToDisabledUpdate = (
+  disabledActions: DisableableObjectPermissionAction[] | undefined,
+) =>
+  disabledActions?.includes('canUpdateObjectRecords') &&
+  !disabledActions.includes('canCreateObjectRecords')
+    ? [...disabledActions, 'canCreateObjectRecords' as const]
+    : disabledActions;
 
 export const fromObjectManifestToUniversalFlatObjectMetadata = ({
   objectManifest,
@@ -35,11 +42,10 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isSystem: false,
     isUIEditable: objectManifest.isUIEditable ?? true,
     isUICreatable: objectManifest.isUICreatable ?? true,
-    writability: objectManifest.writability ?? MetadataWritability.OPEN,
-    readability: objectManifest.readability ?? MetadataReadability.OPEN,
-    readabilityParentFieldUniversalIdentifiers:
-      objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
-    sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,
+    disabledObjectPermissionActions:
+      addDisabledCreateToDisabledUpdate(
+        objectManifest.disabledObjectPermissionActions,
+      ) ?? null,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,
     duplicateCriteria: null,

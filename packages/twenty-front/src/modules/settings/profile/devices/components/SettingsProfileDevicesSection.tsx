@@ -6,6 +6,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
+import { formatSessionLocation } from '@/settings/profile/devices/utils/formatSessionLocation';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -35,7 +36,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const SettingsProfileDevicesSection = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { enqueueToast } = useToast();
 
@@ -88,8 +89,17 @@ export const SettingsProfileDevicesSection = () => {
       localeCatalog,
     );
 
-    return isNonEmptyString(session.ipAddress)
-      ? t`Last active ${lastActive} · ${session.ipAddress}`
+    const location = formatSessionLocation({
+      city: session.city,
+      region: session.region,
+      country: session.country,
+      locale: i18n.locale,
+    });
+    const details = [location, session.ipAddress].filter(isNonEmptyString);
+
+    // An expression, not a variable, keeps the "{0}" placeholder and so the existing translations.
+    return isNonEmptyArray(details)
+      ? t`Last active ${lastActive} · ${details.join(' · ')}`
       : t`Last active ${lastActive}`;
   };
 

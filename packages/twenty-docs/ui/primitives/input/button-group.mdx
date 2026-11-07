@@ -3,8 +3,12 @@ title: ButtonGroup
 description: Group related buttons with shared appearance and an optional frame.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## Overview
 
 Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply defaults for size, variant, and color. Buttons retain their own tab stops.
 
@@ -38,6 +42,8 @@ For a mutually exclusive choice, use [RadioGroup](/ui/primitives/input/radio-gro
 ## Appearance precedence
 
 Each appearance prop resolves independently: the child's explicit prop, then the group default, then the component default. This applies to both Button and IconButton, including an explicit `IconButton size="xs"`. Defaults reach children through fragments, wrappers, and tooltip anchors.
+
+A group can supply `color="inherit"` on a colored surface. A child that resolves to inherited color must also resolve to a non-solid variant. Explicit child color and variant overrides take precedence, so a child may choose a non-solid variant or a semantic color when the group supplies solid and inherit together.
 
 Keep attached buttons at the same size so their edges align. This example overrides variant and color while inheriting the group size.
 
@@ -104,3 +110,5 @@ Replace `IconButtonGroup` and its `iconButtons` array with `ButtonGroup framed a
 ## Props
 
 <ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

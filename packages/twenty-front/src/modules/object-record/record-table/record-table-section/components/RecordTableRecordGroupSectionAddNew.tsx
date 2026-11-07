@@ -15,13 +15,14 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
+  const { t } = useLingui();
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);

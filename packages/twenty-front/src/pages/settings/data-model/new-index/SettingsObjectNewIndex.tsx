@@ -1,4 +1,5 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -17,6 +18,7 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, useToast } from 'twenty-ui/components/feedback';
@@ -32,9 +34,15 @@ import {
 } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
-  if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
-  if (field.isSystem === true) return false;
-  if (field.isActive !== true) return false;
+  if (field.name === SEARCH_VECTOR_FIELD_NAME) {
+    return false;
+  }
+  if (field.isSystem === true) {
+    return false;
+  }
+  if (field.isActive !== true) {
+    return false;
+  }
 
   // Only MANY_TO_ONE relations have a join column on this side to index
   const relationType =
@@ -81,6 +89,7 @@ export const SettingsObjectNewIndex = () => {
   }, [activeObjectMetadataItem, navigateApp, workspaceSurface.type]);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const indexableFields = useMemo(
     () =>
@@ -97,7 +106,12 @@ export const SettingsObjectNewIndex = () => {
   }
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
-    (indexMetadata) => indexMetadata.isCustom,
+    (indexMetadata) =>
+      isWorkspaceCustomIndex({
+        indexMetadata,
+        workspaceCustomApplicationId:
+          currentWorkspace?.workspaceCustomApplication?.id,
+      }),
   ).length;
   const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
 

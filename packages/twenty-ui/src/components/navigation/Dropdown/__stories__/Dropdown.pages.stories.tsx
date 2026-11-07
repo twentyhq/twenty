@@ -9,6 +9,11 @@ import { Dropdown } from '../Dropdown';
 import { useDropdownPage } from '../hooks/useDropdownPage';
 import { type DropdownType } from '../types/DropdownType';
 import { createStoryState } from './createStoryState';
+import { DropdownPageSessionExample } from './DropdownPageSessionExample';
+import { DropdownPickerPageSessionExample } from './DropdownPickerPageSessionExample';
+import { DropdownNestedPageSessionExample } from './DropdownNestedPageSessionExample';
+import { DropdownControlledPageSessionExample } from './DropdownControlledPageSessionExample';
+import { DropdownPageActivityExample } from './DropdownPageActivityExample';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 type FilterAction = { label: string; page?: string; id?: string };
@@ -25,6 +30,9 @@ const editPageRevision = createStoryState(0);
 const editPageType = createStoryState<DropdownType>('panel');
 
 const onStatusChange = fn();
+const onNestedOpenChange = fn();
+const onSessionOpenChange = fn();
+const callerSessionOpen = createStoryState(false);
 
 const FilterPages = ({ keepMounted }: { keepMounted?: boolean }) => {
   const [search, setSearch] = useState('');
@@ -203,6 +211,9 @@ const meta: Meta = {
     editPageRevision.set(0);
     editPageType.set('panel');
     onStatusChange.mockClear();
+    onNestedOpenChange.mockClear();
+    onSessionOpenChange.mockClear();
+    callerSessionOpen.set(false);
   },
 };
 
@@ -330,14 +341,18 @@ export const ProgrammaticNavigation: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await openRecordActions(canvasElement);
-    await waitFor(() => expect(body.getByText('root page')).toBeVisible());
+    await waitFor(() =>
+      expect(body.getByRole('paragraph')).toHaveTextContent('root page'),
+    );
     await userEvent.click(body.getByRole('menuitem', { name: 'Open details' }));
-    expect(body.getByText('details page with history')).toBeVisible();
+    expect(body.getByRole('paragraph')).toHaveTextContent(
+      'details page with history',
+    );
     expect(body.getByRole('menu', { name: 'Record actions' })).toBeVisible();
     await userEvent.click(
       body.getByRole('menuitem', { name: 'Back to actions' }),
     );
-    expect(body.getByText('root page')).toBeVisible();
+    expect(body.getByRole('paragraph')).toHaveTextContent('root page');
     await waitFor(() =>
       expect(
         body.getByRole('menuitem', { name: 'Open details' }),
@@ -707,5 +722,462 @@ export const ConsumerIdRestoresTrigger: Story = {
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const KeepsVisitedPageDrafts: Story = {
+  render: () => <DropdownPageSessionExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Session actions' }),
+    );
+    const edit = await body.findByRole('menuitem', { name: 'Edit details' });
+
+    expect(body.queryByLabelText('Draft name')).not.toBeInTheDocument();
+    expect(body.queryByLabelText('Find person')).not.toBeInTheDocument();
+    await userEvent.click(edit);
+    const draft = await body.findByRole('textbox', { name: 'Draft name' });
+
+    await userEvent.type(draft, ' company');
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to actions' }),
+    );
+    await waitFor(() => expect(edit).toHaveFocus());
+    expect(draft).toBeInTheDocument();
+    expect(draft).not.toBeVisible();
+    expect(draft.closest('[inert]')).not.toBeNull();
+    expect(body.queryByRole('textbox')).not.toBeInTheDocument();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(body.getByRole('menuitem', { name: 'Choose person' })).toHaveFocus();
+    await userEvent.click(edit);
+    expect(body.getByRole('textbox', { name: 'Draft name' })).toBe(draft);
+    expect(draft).toHaveValue('Acme company');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+const playResetsPageSession = async ({
+  canvasElement,
+}: {
+  canvasElement: HTMLElement;
+}) => {
+  const body = within(canvasElement.ownerDocument.body);
+  const trigger = within(canvasElement).getByRole('button', {
+    name: 'Session actions',
+  });
+
+  await userEvent.click(trigger);
+  await userEvent.click(
+    await body.findByRole('menuitem', { name: 'Choose person' }),
+  );
+  const search = await body.findByRole('searchbox', { name: 'Find person' });
+
+  await userEvent.type(search, 'Grace');
+  await userEvent.click(body.getByRole('option', { name: 'Grace Hopper' }));
+  await userEvent.click(body.getByRole('button', { name: 'Back to actions' }));
+  await userEvent.click(
+    await body.findByRole('menuitem', { name: 'Choose person' }),
+  );
+  expect(body.getByRole('searchbox', { name: 'Find person' })).toBe(search);
+  expect(search).toHaveValue('Grace');
+  expect(body.getByRole('option', { name: 'Grace Hopper' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await userEvent.click(body.getByRole('button', { name: 'Back to actions' }));
+  await userEvent.click(
+    await body.findByRole('menuitem', { name: 'Edit details' }),
+  );
+  const draft = await body.findByRole('textbox', { name: 'Draft name' });
+
+  await userEvent.type(draft, ' company');
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+  );
+  await waitFor(() => expect(trigger).toHaveFocus());
+  await userEvent.click(trigger);
+  await waitFor(() =>
+    expect(body.getByRole('menuitem', { name: 'Edit details' })).toBeVisible(),
+  );
+  expect(body.queryByLabelText('Find person')).not.toBeInTheDocument();
+  expect(body.queryByLabelText('Draft name')).not.toBeInTheDocument();
+  await userEvent.click(body.getByRole('menuitem', { name: 'Edit details' }));
+  expect(await body.findByRole('textbox', { name: 'Draft name' })).toHaveValue(
+    'Acme',
+  );
+  await userEvent.click(body.getByRole('button', { name: 'Back to actions' }));
+  await userEvent.click(
+    await body.findByRole('menuitem', { name: 'Choose person' }),
+  );
+  expect(
+    await body.findByRole('searchbox', { name: 'Find person' }),
+  ).toHaveValue('');
+  expect(body.getByRole('option', { name: 'Grace Hopper' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  expect(body.getByRole('option', { name: 'Ada Lovelace' })).toHaveAttribute(
+    'aria-selected',
+    'false',
+  );
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+  );
+};
+
+export const ResetsSearchAndDraftsPreservingSelection: Story = {
+  render: () => <DropdownPageSessionExample />,
+  play: playResetsPageSession,
+};
+
+export const ResetsKeptMountedSearchAndDraftsPreservingSelection: Story = {
+  render: () => <DropdownPageSessionExample keepMounted />,
+  play: playResetsPageSession,
+};
+
+export const KeepsCallerOwnedSearchAndDrafts: Story = {
+  render: () => <DropdownControlledPageSessionExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Controlled session',
+    });
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Edit details' }),
+    );
+    await userEvent.type(
+      await body.findByRole('textbox', { name: 'Owned draft' }),
+      ' company',
+    );
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to actions' }),
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Choose person' }),
+    );
+    await userEvent.type(
+      await body.findByRole('searchbox', { name: 'Owned search' }),
+      'Grace',
+    );
+    await userEvent.click(body.getByRole('option', { name: 'Grace Hopper' }));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Choose person' }),
+    );
+    expect(
+      await body.findByRole('searchbox', { name: 'Owned search' }),
+    ).toHaveValue('Grace');
+    expect(body.getByRole('option', { name: 'Grace Hopper' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to actions' }),
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Edit details' }),
+    );
+    expect(
+      await body.findByRole('textbox', { name: 'Owned draft' }),
+    ).toHaveValue('Acme company');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const InactivePageClosesPortaledSubmenu: Story = {
+  render: () => <DropdownNestedPageSessionExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Page actions' }),
+    );
+    const submenuTrigger = await body.findByRole('menuitem', {
+      name: 'Nested actions',
+    });
+
+    await userEvent.click(submenuTrigger);
+    const submenu = await body.findByRole('menu', { name: 'Nested actions' });
+
+    await userEvent.click(
+      within(submenu).getByRole('menuitem', { name: 'Continue to editor' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.getByRole('textbox', { name: 'Nested page draft' }),
+      ).toHaveFocus(),
+    );
+    await waitFor(() => expect(submenu).not.toBeVisible());
+    expect(
+      body.queryByRole('menu', { name: 'Nested actions' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to actions' }),
+    );
+    expect(body.getByRole('menuitem', { name: 'Nested actions' })).toBe(
+      submenuTrigger,
+    );
+    expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('menu', { name: 'Page actions' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const InactivePageSuspendsCallerOwnedNestedPopup: Story = {
+  render: () => (
+    <DropdownNestedPageSessionExample
+      isNestedControlled
+      onNestedOpenChange={onNestedOpenChange}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Page actions',
+    });
+
+    await userEvent.click(trigger);
+    const nestedPopup = await body.findByRole('menu', {
+      name: 'Nested actions',
+    });
+
+    await userEvent.click(
+      within(nestedPopup).getByRole('menuitem', { name: 'Continue to editor' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.getByRole('textbox', { name: 'Nested page draft' }),
+      ).toHaveFocus(),
+    );
+    await waitFor(() => expect(nestedPopup).not.toBeVisible());
+    expect(
+      body.queryByRole('menu', { name: 'Nested actions' }),
+    ).not.toBeInTheDocument();
+    expect(onNestedOpenChange).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Page actions' }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(onNestedOpenChange).not.toHaveBeenCalled();
+  },
+};
+
+export const PickerSelectionsOutlivePageSessions: Story = {
+  render: () => <DropdownPickerPageSessionExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Picker pages',
+    });
+
+    for (const { pageName, searchName, query, optionName } of [
+      {
+        pageName: 'Country',
+        searchName: 'Find country',
+        query: 'Japon',
+        optionName: 'Japon',
+      },
+      {
+        pageName: 'Currency',
+        searchName: 'Find currency',
+        query: 'Euro',
+        optionName: 'Euro (EUR)',
+      },
+      {
+        pageName: 'Phone country',
+        searchName: 'Find phone country',
+        query: 'Canada',
+        optionName: 'Canada (+1)',
+      },
+    ]) {
+      await userEvent.click(trigger);
+      await userEvent.click(
+        await body.findByRole('menuitem', { name: pageName }),
+      );
+      const search = await body.findByRole('searchbox', { name: searchName });
+
+      await userEvent.type(search, query);
+      await userEvent.click(body.getByRole('option', { name: optionName }));
+      await userEvent.click(
+        body.getByRole('button', { name: 'Back to picker pages' }),
+      );
+      await userEvent.click(
+        await body.findByRole('menuitem', { name: pageName }),
+      );
+      expect(body.getByRole('searchbox', { name: searchName })).toBe(search);
+      expect(search).toHaveValue(query);
+      expect(body.getByRole('option', { name: optionName })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(
+          body.queryByRole('dialog', { name: 'Picker pages' }),
+        ).not.toBeInTheDocument(),
+      );
+      await userEvent.click(trigger);
+      await userEvent.click(
+        await body.findByRole('menuitem', { name: pageName }),
+      );
+      expect(
+        await body.findByRole('searchbox', { name: searchName }),
+      ).toHaveValue('');
+      expect(body.getByRole('option', { name: optionName })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(
+          body.queryByRole('dialog', { name: 'Picker pages' }),
+        ).not.toBeInTheDocument(),
+      );
+    }
+  },
+};
+
+const RefusingClosePageSession = () => (
+  <DropdownPageSessionExample
+    keepMounted
+    open={callerSessionOpen.useValue()}
+    onOpenChange={(nextOpen) => {
+      onSessionOpenChange(nextOpen);
+
+      if (nextOpen) {
+        callerSessionOpen.set(true);
+      }
+    }}
+  />
+);
+
+export const RejectedCloseKeepsPageSession: Story = {
+  render: () => <RefusingClosePageSession />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Session actions' }),
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Edit details' }),
+    );
+    const draft = await body.findByRole('textbox', { name: 'Draft name' });
+
+    await userEvent.type(draft, ' company');
+    await userEvent.keyboard('{Escape}');
+    expect(onSessionOpenChange).toHaveBeenLastCalledWith(false);
+    expect(body.getByRole('textbox', { name: 'Draft name' })).toBe(draft);
+    expect(draft).toHaveValue('Acme company');
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to actions' }),
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Edit details' }),
+    );
+    expect(body.getByRole('textbox', { name: 'Draft name' })).toBe(draft);
+    expect(draft).toHaveValue('Acme company');
+    callerSessionOpen.set(false);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const UnpagedContentResetsWithEachSession: Story = {
+  render: () => <DropdownPageSessionExample keepMounted hasPages={false} />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Session actions',
+    });
+
+    await userEvent.click(trigger);
+    const search = await body.findByRole('searchbox', { name: 'Find person' });
+    const draft = body.getByRole('textbox', { name: 'Draft name' });
+
+    await userEvent.type(search, 'Grace');
+    await userEvent.type(draft, ' company');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(trigger);
+    expect(
+      await body.findByRole('searchbox', { name: 'Find person' }),
+    ).toHaveValue('');
+    expect(body.getByRole('textbox', { name: 'Draft name' })).toHaveValue(
+      'Acme',
+    );
+    expect(search).not.toBeInTheDocument();
+    expect(draft).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const PageActivityTracksNavigationAndClosing: Story = {
+  render: () => <DropdownPageActivityExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Page activity',
+    });
+
+    await userEvent.click(trigger);
+    const rootActivity = await body.findByRole('status', {
+      name: 'Root page activity',
+    });
+
+    expect(rootActivity).toHaveTextContent(/^Active$/);
+    await userEvent.click(body.getByRole('button', { name: 'Open details' }));
+    const detailsActivity = await body.findByRole('status', {
+      name: 'Details page activity',
+    });
+
+    expect(detailsActivity).toHaveTextContent(/^Active$/);
+    expect(rootActivity).toBeInTheDocument();
+    expect(rootActivity).not.toBeVisible();
+    expect(rootActivity).toHaveTextContent(/^Inactive$/);
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to activity' }),
+    );
+    expect(rootActivity).toHaveTextContent(/^Active$/);
+    expect(detailsActivity).toBeInTheDocument();
+    expect(detailsActivity).not.toBeVisible();
+    expect(detailsActivity).toHaveTextContent(/^Inactive$/);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+    );
+    expect(rootActivity).toBeInTheDocument();
+    expect(rootActivity).toHaveTextContent(/^Inactive$/);
+    expect(detailsActivity).toHaveTextContent(/^Inactive$/);
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };

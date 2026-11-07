@@ -5,7 +5,6 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   RecordShareAccessLevel,
-  RecordShareRowCause,
 } from 'twenty-shared/types';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -21,9 +20,9 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { type RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -33,7 +32,7 @@ const RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const JONY = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
 const fields =
-  'sharingMode canManageSharing generalAccessLevel defaultGeneralAccessLevel permissions { canRead canUpdate } shares { principalId rowCause accessLevel }';
+  'isShareable isPrivate canManageSharing permissions { canRead canUpdate } shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
@@ -43,13 +42,14 @@ const SET_SHARE = parse(
 const REMOVE_SHARE = parse(
   `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { ${fields} } }`,
 );
-const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
+const SET_PRIVATE = parse(
+  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { ${fields} } }`,
 );
 
 describe('Record-level sharing on an object open by default', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
+  let recordPermissionReadRepository: RecordPermissionReadRepository;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
 
   const setRecordSharingEnabled = (value: boolean) =>
@@ -82,14 +82,17 @@ describe('Record-level sharing on an object open by default', () => {
       token,
     );
 
-  const setGeneralAccess = (
-    accessLevel: RecordShareAccessLevel,
+  const setPrivate = ({
+    isPrivate,
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  ) =>
+  }: {
+    isPrivate: boolean;
+    token?: string;
+  }) =>
     makeMetadataApiRequest(
       {
-        query: SET_GENERAL_ACCESS,
-        variables: { target: target(), accessLevel },
+        query: SET_PRIVATE,
+        variables: { target: target(), isPrivate },
       },
       token,
     );
@@ -127,6 +130,10 @@ describe('Record-level sharing on an object open by default', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
+    recordPermissionReadRepository =
+      getAppProviderByClassName<RecordPermissionReadRepository>(
+        'RecordPermissionReadRepository',
+      );
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -162,6 +169,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   beforeEach(async () => {
+    await setPrivate({ isPrivate: false });
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -199,14 +207,13 @@ describe('Record-level sharing on an object open by default', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.recordSharing).toMatchObject({
-      sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+      isShareable: true,
       canManageSharing: true,
-      generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
-      defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+      isPrivate: false,
       shares: [],
     });
     expect(
-      await shares.findByRecordIds({
+      await recordPermissionReadRepository.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RECORD_ID],
@@ -217,20 +224,13 @@ describe('Record-level sharing on an object open by default', () => {
     ]);
   });
 
-  it('should hide a restricted record from everyone but its creator', async () => {
-    const restricted = await setGeneralAccess(RecordShareAccessLevel.NONE);
+  it('should hide a private record from everyone but its creator, with no share row for the creator', async () => {
+    const restricted = await setPrivate({ isPrivate: true });
 
     expect(restricted.body.errors).toBeUndefined();
-    expect(restricted.body.data.setRecordGeneralAccess).toMatchObject({
-      generalAccessLevel: RecordShareAccessLevel.NONE,
-      defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
-      shares: [
-        expect.objectContaining({
-          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          rowCause: RecordShareRowCause.OWNER,
-          accessLevel: RecordShareAccessLevel.FULL,
-        }),
-      ],
+    expect(restricted.body.data.setRecordPrivate).toMatchObject({
+      isPrivate: true,
+      shares: [],
     });
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
     expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual([
@@ -242,7 +242,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should let a grant lift a restriction up to its level', async () => {
-    await setGeneralAccess(RecordShareAccessLevel.NONE);
+    await setPrivate({ isPrivate: true });
     await setShare({ principal: JONY });
 
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
@@ -263,36 +263,15 @@ describe('Record-level sharing on an object open by default', () => {
     ).toBeUndefined();
   });
 
-  it('should let everyone view without editing', async () => {
-    const viewOnly = await setGeneralAccess(RecordShareAccessLevel.READ);
+  it('should let a private record follow its roles again', async () => {
+    await setPrivate({ isPrivate: true });
+    const reopened = await setPrivate({ isPrivate: false });
 
-    expect(viewOnly.body.data.setRecordGeneralAccess).toMatchObject({
-      generalAccessLevel: RecordShareAccessLevel.READ,
-    });
-    expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
-      RECORD_ID,
-    ]);
-    expect(
-      (await rename('Not allowed', APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.errors,
-    ).toBeDefined();
-    expect(
-      (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
-        .recordSharing,
-    ).toMatchObject({
-      canManageSharing: false,
-      permissions: { canRead: true, canUpdate: false },
-    });
-  });
-
-  it('should drop the exception row when general access returns to the default', async () => {
-    await setGeneralAccess(RecordShareAccessLevel.NONE);
-    const reopened = await setGeneralAccess(RecordShareAccessLevel.READ_WRITE);
-
-    expect(reopened.body.data.setRecordGeneralAccess).toMatchObject({
-      generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
+    expect(reopened.body.data.setRecordPrivate).toMatchObject({
+      isPrivate: false,
     });
     expect(
-      await shares.findByRecordIds({
+      await recordPermissionReadRepository.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RECORD_ID],
@@ -304,10 +283,10 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should keep sharing in the hands of the creator and full access holders', async () => {
-    const response = await setGeneralAccess(
-      RecordShareAccessLevel.NONE,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    const response = await setPrivate({
+      isPrivate: true,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(response.body.errors).toBeDefined();
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
@@ -328,10 +307,10 @@ describe('Record-level sharing on an object open by default', () => {
       accessLevel: RecordShareAccessLevel.FULL,
     });
 
-    const restricted = await setGeneralAccess(
-      RecordShareAccessLevel.NONE,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    const restricted = await setPrivate({
+      isPrivate: true,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(restricted.body.errors).toBeUndefined();
 
@@ -348,19 +327,6 @@ describe('Record-level sharing on an object open by default', () => {
       (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
         .recordSharing.canManageSharing,
     ).toBe(true);
-  });
-
-  it('should refuse full access as general access', async () => {
-    const response = await setGeneralAccess(RecordShareAccessLevel.FULL);
-
-    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
-    expect(
-      await shares.findByRecordIds({
-        workspaceId,
-        objectMetadataId,
-        recordIds: [RECORD_ID],
-      }),
-    ).toEqual([]);
   });
 
   it('should refuse NONE as a granted access level', async () => {
@@ -380,8 +346,8 @@ describe('Record-level sharing on an object open by default', () => {
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });
 
-  it('should keep the restriction when a grant is removed', async () => {
-    await setGeneralAccess(RecordShareAccessLevel.NONE);
+  it('should keep a record private when a grant is removed', async () => {
+    await setPrivate({ isPrivate: true });
     await setShare({ principal: JONY });
 
     const removed = await makeMetadataApiRequest({
@@ -391,34 +357,58 @@ describe('Record-level sharing on an object open by default', () => {
 
     expect(removed.body.errors).toBeUndefined();
     expect(removed.body.data.removeRecordShare).toMatchObject({
-      generalAccessLevel: RecordShareAccessLevel.NONE,
-      shares: [
-        expect.objectContaining({
-          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          rowCause: RecordShareRowCause.OWNER,
-        }),
-      ],
+      isPrivate: true,
+      shares: [],
     });
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
   });
 
-  it('should leave open objects untouched while the flag is off', async () => {
-    await setGeneralAccess(RecordShareAccessLevel.NONE);
+  it('should let a record be made private with private records on and sharing off', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
     await setRecordSharingEnabled(false);
 
     try {
-      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
-        RECORD_ID,
-      ]);
-      expect((await readSharing()).body.data.recordSharing).toMatchObject({
-        sharingMode: RecordSharingMode.ROLE_ONLY,
-        canManageSharing: false,
-        generalAccessLevel: null,
-        defaultGeneralAccessLevel: null,
-      });
       expect(
-        (await setGeneralAccess(RecordShareAccessLevel.NONE)).body.errors,
+        (
+          await setPrivate({
+            isPrivate: true,
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          })
+        ).body.errors,
       ).toBeDefined();
+      expect(
+        (await setPrivate({ isPrivate: true })).body.errors,
+      ).toBeUndefined();
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
+      expect(
+        (await setPrivate({ isPrivate: false })).body.errors,
+      ).toBeUndefined();
+    } finally {
+      await setRecordSharingEnabled(true);
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
+  });
+
+  it('should keep a private record private while record sharing is off', async () => {
+    await setPrivate({ isPrivate: true });
+    await setRecordSharingEnabled(false);
+
+    try {
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
+      expect((await readSharing()).body.data.recordSharing).toMatchObject({
+        isShareable: false,
+        canManageSharing: false,
+        isPrivate: true,
+      });
+      expect((await setPrivate({ isPrivate: true })).body.errors).toBeDefined();
     } finally {
       await setRecordSharingEnabled(true);
     }

@@ -1,9 +1,9 @@
 ---
 title: Managementul membrilor
-description: Invitați membrii echipei și gestionați accesul la spațiul de lucru.
+description: Invită membrii echipei şi gestionează accesul la spaţiul de lucru în Setări → Membri.
 ---
 
-Gestionați cine are acces la spațiul dvs. de lucru din **Setări → Membri**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Invită Noi Membri
 
@@ -65,6 +65,25 @@ Membrii eliminați își pierd accesul imediat. Datele lor (înregistrări, note
 E-mailurile și evenimentele din calendar ale membrului șters sunt arhivate și disponibile pentru alți membri.
 </Note>
 
+### Resetați autentificarea cu doi factori a unui membru
+
+Dacă un membru a pierdut accesul la aplicația sa de autentificare, un administrator îi poate oferi un cod de recuperare de unică folosință.
+
+Aveți nevoie de permisiunea **Securitate** și de autentificarea cu doi factori configurată în propriul cont.
+
+1. Faceți clic pe membru pentru a-i deschide profilul
+2. În secțiunea **Autentificare cu doi factori**, faceți clic pe **Generați cod de recuperare**
+3. Introduceți codul din propria aplicație de autentificare pentru a confirma
+4. Copiați codul și partajați-l cu membrul printr-un canal în care aveți încredere
+
+Codul poate fi utilizat o singură dată și expiră implicit după 1 oră. Este afișat o singură dată. Generarea unui cod nou îl înlocuiește pe cel anterior și puteți face clic pe **Revocați** pentru a anula un cod în așteptare. Membrul primește un e-mail atunci când este emis un cod.
+
+Când membrul utilizează codul, aplicația sa de autentificare pentru acest spațiu de lucru este eliminată și acesta este deconectat din celelalte sesiuni. Dacă spațiul de lucru impune autentificarea cu doi factori, i se solicită să configureze imediat o nouă aplicație de autentificare. Dacă pleacă înainte de a finaliza, generați-i un cod nou: până la finalizarea configurării, membrul poate configura o aplicație de autentificare numai printr-un cod de recuperare.
+
+<Note>
+Nu puteți genera un cod de recuperare pentru dvs. înșivă. Doar un administrator de server poate genera unul pentru un alt administrator de server.
+</Note>
+
 ## Invitații în așteptare
 
 Gestionați invitațiile care nu au fost acceptate:
@@ -84,3 +103,5 @@ Permiteți membrilor echipei să se alăture automat pe baza domeniului lor de e
 
 * [Permisiuni](/ro/user-guide/permissions-access/capabilities/permissions) — configurați ce poate face fiecare rol
 * [Setări domeniu](/ro/user-guide/settings/capabilities/domains-settings) - configurați domeniile aprobate
+
+<PageBanner illustration="page-cover-users" />

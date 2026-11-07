@@ -12,6 +12,9 @@ export const CardRoot = ({
   className,
   fullWidth,
   backgroundColor,
+  variant = 'default',
+  borderStyle = 'solid',
+  isSelected = false,
   style,
   render,
   ref,
@@ -24,6 +27,9 @@ export const CardRoot = ({
       ...props,
       className: clsx(styles.card, className),
       'data-full-width': fullWidth || undefined,
+      'data-variant': variant,
+      'data-border-style': borderStyle,
+      'data-selected': isSelected || undefined,
       style: isDefined(backgroundColor)
         ? ({
             ...style,

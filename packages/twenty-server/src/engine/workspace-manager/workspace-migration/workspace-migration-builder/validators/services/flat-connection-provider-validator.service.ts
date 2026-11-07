@@ -84,6 +84,24 @@ export class FlatConnectionProviderValidatorService {
       }
     }
 
+    if (flatConnectionProvider.type === 'custom') {
+      const customConfig = flatConnectionProvider.customConfig;
+
+      if (
+        !isDefined(customConfig) ||
+        !isNonEmptyString(
+          customConfig.authorizeLogicFunctionUniversalIdentifier,
+        ) ||
+        !isNonEmptyString(customConfig.callbackLogicFunctionUniversalIdentifier)
+      ) {
+        validationResult.errors.push({
+          code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+          message: t`Connection provider with type 'custom' must reference an authorize and a callback logic function`,
+          userFriendlyMessage: msg`Custom connection provider is missing its authorize or callback logic function`,
+        });
+      }
+    }
+
     const existingByName = Object.values(
       optimisticFlatConnectionProviderMaps.byUniversalIdentifier,
     ).find(
@@ -174,11 +192,27 @@ export class FlatConnectionProviderValidatorService {
       return validationResult;
     }
 
-    validationResult.errors.push(
-      ...validateConnectionProviderScope(
-        flatEntityUpdate.scope ?? fromFlatConnectionProvider.scope,
-      ),
-    );
+    if (
+      isDefined(flatEntityUpdate.scope) &&
+      flatEntityUpdate.scope !== fromFlatConnectionProvider.scope
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider scope cannot be changed`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.type) &&
+      flatEntityUpdate.type !== fromFlatConnectionProvider.type
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider type cannot be changed`,
+      });
+    }
 
     return validationResult;
   }

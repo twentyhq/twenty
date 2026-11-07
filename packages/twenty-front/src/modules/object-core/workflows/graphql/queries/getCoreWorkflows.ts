@@ -7,7 +7,6 @@ export const GET_CORE_WORKFLOWS = gql`
     $orderBy: CoreWorkflowOrderByField
     $orderByDirection: CoreWorkflowOrderByDirection
     $filter: CoreWorkflowFilterInput
-    $includeSystem: Boolean
   ) {
     coreWorkflows(
       first: $first
@@ -15,7 +14,6 @@ export const GET_CORE_WORKFLOWS = gql`
       orderBy: $orderBy
       orderByDirection: $orderByDirection
       filter: $filter
-      includeSystem: $includeSystem
     ) {
       edges {
         node {

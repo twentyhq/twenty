@@ -34,6 +34,8 @@ export const VariableTag = Node.create({
     },
   }),
 
+  parseHTML: () => [{ tag: 'span[data-type="variableTag"]' }],
+
   renderHTML: ({ node, HTMLAttributes }) => {
     const variable = node.attrs.variable as string;
 

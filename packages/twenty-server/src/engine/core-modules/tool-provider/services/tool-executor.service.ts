@@ -17,10 +17,12 @@ import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
+import { MergeManyRecordsService } from 'src/engine/core-modules/record-crud/services/merge-many-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
+import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
@@ -30,6 +32,7 @@ import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/typ
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
 import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -50,7 +53,9 @@ export class ToolExecutorService {
     private readonly upsertManyRecordsService: UpsertManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
+    private readonly mergeManyRecordsService: MergeManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly mcpToolProvider: McpToolProvider,
     private readonly recordFilesResolverService: RecordFilesResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
@@ -112,7 +117,37 @@ export class ToolExecutorService {
           args,
           context,
         );
+      case 'mcp_server_tool':
+        return this.dispatchMcpServerTool({
+          toolName: descriptor.name,
+          executionRef: descriptor.executionRef,
+          args,
+          context,
+        });
     }
+  }
+
+  private async dispatchMcpServerTool({
+    toolName,
+    executionRef,
+    args,
+    context,
+  }: {
+    toolName: string;
+    executionRef: Extract<ToolExecutionRef, { kind: 'mcp_server_tool' }>;
+    args: Record<string, unknown>;
+    context: ToolProviderContext;
+  }): Promise<ToolOutput> {
+    if (!(await this.mcpToolProvider.isAvailable(context))) {
+      return buildToolNotAvailableOutput(toolName);
+    }
+
+    return this.mcpToolProvider.executeMcpServerTool({
+      toolName,
+      executionRef,
+      toolArguments: args,
+      context,
+    });
   }
 
   private async dispatchDatabaseCrud(
@@ -141,7 +176,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: true,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -155,7 +189,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: isDefined(select),
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -171,7 +204,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -191,7 +223,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -217,7 +248,6 @@ export class ToolExecutorService {
           objectRecordId: id as string,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -230,7 +260,6 @@ export class ToolExecutorService {
           filter: args.filter as Record<string, unknown>,
           data: args.data as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -246,7 +275,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -259,7 +287,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecordId: args.id as string,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
         });
 
@@ -268,7 +295,15 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           filter: args.filter as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
+        });
+
+      case 'merge_many':
+        return this.mergeManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          ids: args.ids as string[],
+          conflictPriorityIndex: args.conflictPriorityIndex as number,
+          dryRun: args.dryRun as boolean | undefined,
+          authContext,
         });
 
       case 'group_by': {
@@ -292,7 +327,6 @@ export class ToolExecutorService {
           orderBy: groupByOrderBy as 'ASC' | 'DESC' | undefined,
           filter: groupByFilter,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
     }
@@ -321,6 +355,18 @@ export class ToolExecutorService {
       throw new Error('Expected static executionRef');
     }
 
+    const definedTool = this.definedToolRegistryService.findDefinedTool(
+      descriptor.executionRef.toolId,
+    );
+
+    if (isDefined(definedTool)) {
+      return this.definedToolRegistryService.execute({
+        definedTool,
+        args,
+        context,
+      });
+    }
+
     const provider = this.providers.find(
       (candidate) => candidate.category === descriptor.category,
     );
@@ -333,23 +379,7 @@ export class ToolExecutorService {
 
     // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
     if (!(await provider.isAvailable(context))) {
-      return {
-        success: false,
-        message: `Tool "${descriptor.name}" is not available`,
-        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
-      };
-    }
-
-    const definedTool = this.definedToolRegistryService.findDefinedTool(
-      descriptor.executionRef.toolId,
-    );
-
-    if (isDefined(definedTool)) {
-      return this.definedToolRegistryService.execute(
-        definedTool,
-        args,
-        context,
-      );
+      return buildToolNotAvailableOutput(descriptor.name);
     }
 
     return provider.executeStaticTool(

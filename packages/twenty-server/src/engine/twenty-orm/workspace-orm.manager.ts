@@ -1,9 +1,3 @@
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
@@ -22,13 +16,19 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
-  getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type WorkspaceRepositoryOptions } from 'src/engine/twenty-orm/types/workspace-repository-options.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+
+type OrmRepositoryOptions = WorkspaceRepositoryOptions & {
+  useReplica?: boolean;
+};
 
 @Injectable()
 export class WorkspaceOrmManager {
@@ -37,67 +37,37 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
-    workspaceEntity: Type<T>,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
-  ): WorkspaceRepository<T>;
-
-  getRepository<T extends ObjectLiteral = ObjectRecord>(
-    objectMetadataName: string,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
-  ): WorkspaceRepository<T>;
-
-  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
+    repositoryOptions?: OrmRepositoryOptions,
   ): WorkspaceRepository<T> {
-    const objectMetadataName = this.resolveObjectMetadataName(
-      workspaceEntityOrObjectMetadataName,
+    return this.getDataSource(repositoryOptions).getRepository<T>(
+      this.resolveObjectMetadataName(workspaceEntityOrObjectMetadataName),
+      { shouldSkipEventEmission: repositoryOptions?.shouldSkipEventEmission },
     );
-
-    return this.workspaceDataSourceService
-      .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
-      .getRepository<T>(objectMetadataName, permissionOptions, {
-        shouldSkipEventEmission:
-          repositoryOptions?.shouldSkipEventEmission ?? false,
-      });
   }
 
-  // Domain APIs must evaluate the same role intersection as ordinary record APIs.
-  getRepositoryWithContextPermissions<
-    TData extends ObjectLiteral = ObjectRecord,
-  >(
-    objectMetadataName: string,
-    transactionScope?: WorkspaceTransactionScope,
-  ): WorkspaceRepository<TData> {
-    const context = getWorkspaceContext();
-    const permissionConfig = resolveRolePermissionConfig(context);
-    if (!isDefined(permissionConfig)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-    return isDefined(transactionScope)
-      ? transactionScope.getRepository<TData>(
-          objectMetadataName,
-          permissionConfig,
-        )
-      : this.getRepository<TData>(objectMetadataName, permissionConfig);
+  // Only for work the system does itself, never on behalf of a caller
+  getRepositoryWithoutPermissionChecks<T extends ObjectLiteral = ObjectRecord>(
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    repositoryOptions?: OrmRepositoryOptions,
+  ): WorkspaceRepository<T> {
+    return this.getDataSource(
+      repositoryOptions,
+    ).getRepositoryWithoutPermissionChecks<T>(
+      this.resolveObjectMetadataName(workspaceEntityOrObjectMetadataName),
+      { shouldSkipEventEmission: repositoryOptions?.shouldSkipEventEmission },
+    );
+  }
+
+  private getDataSource(repositoryOptions?: OrmRepositoryOptions) {
+    return this.workspaceDataSourceService.getDataSource({
+      useReplica: repositoryOptions?.useReplica ?? false,
+    });
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(
@@ -133,6 +103,18 @@ export class WorkspaceOrmManager {
     return withWorkspaceContext(context, fn);
   }
 
+  async executeTransactionInWorkspaceContext<TResult>(
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<TResult>,
+    authContext?: WorkspaceAuthContext,
+    options?: ExecuteInWorkspaceContextOptions,
+  ): Promise<TResult> {
+    return this.executeInWorkspaceContext(
+      () => this.runInWorkspaceTransaction(work),
+      authContext,
+      options,
+    );
+  }
+
   private async loadWorkspaceContext(
     authContext: WorkspaceAuthContext,
   ): Promise<ORMWorkspaceContext> {
@@ -144,33 +126,28 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       billingEntitlements,
-      rolesPermissions: permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
       'flatIndexMaps',
       'featureFlagsMap',
       'billingEntitlements',
-      'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
-      'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
+    const permissionsPrincipals =
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
+        authContext,
+      });
+    const recordReadRestrictions = isDefined(permissionsPrincipals)
+      ? await this.recordPermissionsService.findRecordReadRestrictions({
+          principals: permissionsPrincipals,
+        })
+      : NO_RECORD_READ_RESTRICTIONS;
+
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
-      featureFlagsMap,
       billingEntitlements,
       hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
       isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
@@ -187,17 +164,12 @@ export class WorkspaceOrmManager {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
       flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
-      permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
+      permissionsPrincipals,
+      recordReadRestrictions,
     };
   }
 
@@ -228,24 +200,11 @@ export class WorkspaceOrmManager {
         universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
-      flatRowLevelPermissionPredicateMaps: {
-        byUniversalIdentifier: {},
-        universalIdentifierById: {},
-        universalIdentifiersByApplicationId: {},
-      },
-      flatRowLevelPermissionPredicateGroupMaps: {
-        byUniversalIdentifier: {},
-        universalIdentifierById: {},
-        universalIdentifiersByApplicationId: {},
-      },
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
-      permissionsPerRoleId: {},
-      roleIdsWithAllRecordsAccess: [],
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: {},
-      flatRoleTargetByAgentIdMaps: {},
+      permissionsPrincipals: undefined,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     };
   }
 }

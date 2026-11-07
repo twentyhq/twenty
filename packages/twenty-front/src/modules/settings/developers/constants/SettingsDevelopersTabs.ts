@@ -4,5 +4,6 @@ export const SETTINGS_DEVELOPERS_TABS = {
     API: 'api',
     WEBHOOKS: 'webhooks',
     APPS: 'apps',
+    CLI: 'cli',
   },
 } as const;

@@ -25,10 +25,10 @@ yarn install --immutable
 yarn lint
 yarn typecheck
 yarn test:unit
-yarn twenty dev:build
+twenty app build
 ```
 
-For installation tests, start an isolated Twenty test instance with `yarn twenty docker:start --test`, then run `TWENTY_API_URL=http://localhost:2021 yarn test`. The integration configuration defaults to the scaffold's local dev instance at port 2020; the `--test` instance listens on 2021, hence the override above. Override `TWENTY_API_URL` and `TWENTY_API_KEY` only with credentials for an isolated test workspace: setup installs and teardown uninstalls this app.
+Install the standalone CLI with `npm install -g twenty`. For installation tests, start an isolated Twenty instance with Docker or the repository development setup, then set `TWENTY_API_URL` and `TWENTY_API_KEY` for that instance and run `yarn test`. Use a disposable workspace: setup installs and teardown uninstalls this app.
 
 The deployed function-execution tests need an authenticated QA user’s access token in `TWENTY_API_KEY`. The scaffold’s default API key can install the app and inspect its schema, but cannot authorize user-only function execution.
 

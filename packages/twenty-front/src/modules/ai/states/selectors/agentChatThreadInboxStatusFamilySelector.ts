@@ -35,6 +35,7 @@ export const agentChatThreadInboxStatusFamilySelector =
           isAssignedToMe:
             isDefined(currentWorkspaceMemberId) &&
             thread?.assigneeId === currentWorkspaceMemberId,
+          isChannelCopy: false,
         };
       },
     areEqual: isDeeplyEqual,

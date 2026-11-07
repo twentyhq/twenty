@@ -17,6 +17,7 @@ import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { removeAiContentFromSentryEvent } from 'src/engine/core-modules/exception-handler/utils/remove-ai-content-from-sentry-event.util';
 import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { MeterTemporality } from 'src/engine/core-modules/metrics/types/meter-temporality.type';
@@ -92,10 +93,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
           uptime: false,
         },
       }),
-      Sentry.vercelAIIntegration({
-        recordInputs: true,
-        recordOutputs: true,
-      }),
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
@@ -103,14 +101,16 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       name.startsWith('invoke_agent')
         ? 1
         : inheritOrSampleWith(tracesSampleRate),
-    profilesSampleRate: parseSampleRate({
+    profileSessionSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,
     }),
+    profileLifecycle: 'trace',
+    // Sentry 11 streams spans by default; keep sending transactions so beforeSendTransaction still runs
+    traceLifecycle: 'static',
     maxValueLength: 8192,
-    sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
-    beforeSendSpan: (span) => {
+    beforeSendSpan: Sentry.withStaticSpan((span) => {
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
         | {
@@ -132,7 +132,12 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       };
 
       return span;
-    },
+    }),
+    beforeSend: removeAiContentFromSentryEvent,
+    beforeSendTransaction: (event) =>
+      event.contexts?.trace?.op === 'gen_ai.invoke_agent'
+        ? { ...event, spans: event.spans?.filter(({ op }) => op !== 'db') }
+        : event,
   });
 }
 

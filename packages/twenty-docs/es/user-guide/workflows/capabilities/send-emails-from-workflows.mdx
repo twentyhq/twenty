@@ -3,7 +3,7 @@ title: Enviar correos electrónicos desde flujos de trabajo
 description: Envía correos electrónicos personalizados automáticamente utilizando acciones de flujos de trabajo.
 ---
 
-Envía correos electrónicos automáticamente cuando se produzcan eventos específicos en tu CRM—da la bienvenida a nuevos contactos, haz seguimiento de oportunidades o notifica a los miembros del equipo.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Prerrequisitos
 
@@ -29,11 +29,11 @@ Antes de poder enviar correos electrónicos desde flujos de trabajo:
    * Selecciona **Enviar correo electrónico**
    * Configura el correo electrónico:
 
-| Campo      | Valor                                  |
-| ---------- | -------------------------------------- |
-| **Para**   | `{{trigger.object.email}}`             |
-| **Asunto** | `Bienvenido a {{Your Company Name}}`   |
-| **Cuerpo** | `Hi {{trigger.object.firstName}}, ...` |
+| Campo      | Valor                                                 |
+| ---------- | ----------------------------------------------------- |
+| **Para**   | `{{trigger.properties.after.emails.primaryEmail}}`    |
+| **Asunto** | `Bienvenido a {{Your Company Name}}`                  |
+| **Cuerpo** | `Hi {{trigger.properties.after.name.firstName}}, ...` |
 
 4. **Probar y activar**: Prueba con un registro de ejemplo y luego actívalo
 
@@ -42,11 +42,9 @@ Antes de poder enviar correos electrónicos desde flujos de trabajo:
 Haz referencia a datos de pasos anteriores usando la sintaxis `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+Hi {{trigger.properties.after.name.firstName}},
 
 Thank you for connecting with us!
-
-Your company, {{trigger.object.company.name}}, is now in our system.
 
 Best regards,
 The Team
@@ -54,11 +52,14 @@ The Team
 
 ### Variables disponibles de los disparadores
 
-| Tipo de disparador              | Variables comunes                      |
-| ------------------------------- | -------------------------------------- |
-| **Registro creado/actualizado** | `{{trigger.object.fieldName}}`         |
-| **Manual**                      | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                     | `{{trigger.body.fieldName}}`           |
+| Tipo de disparador                       | Variables comunes                         |
+| ---------------------------------------- | ----------------------------------------- |
+| **Registro creado/actualizado**          | `{{trigger.properties.after.fieldName}}`  |
+| **Se elimina un registro**               | `{{trigger.properties.before.fieldName}}` |
+| **Manual** (en un registro seleccionado) | `{{trigger.payload.fieldName}}`           |
+| **Webhook**                              | `{{trigger.fieldName}}`                   |
+
+Los campos de relación solo exponen el ID del registro relacionado; por ejemplo, `{{trigger.properties.after.companyId}}`. Para usar otros campos del registro relacionado, primero agrega un paso de **Buscar registros**. La forma más sencilla de obtener la ruta correcta es insertar la variable desde el selector.
 
 ## Avanzado: correos electrónicos condicionales
 
@@ -71,7 +72,7 @@ The Team
 1. **Disparador**: Se crea el registro (Personas)
 
 2. **Agregar la acción de filtro**:
-   * Condición: `{{trigger.object.source}}` es igual a `"Website"`
+   * Condición: `{{trigger.properties.after.source}}` es igual a `"Website"`
    * Si es verdadero → continúa al correo de bienvenida del sitio web
 
 3. **Rama para otras fuentes**:
@@ -88,15 +89,19 @@ The Team
 
 1. **Disparador**: Se actualiza el registro (Oportunidades, Etapa = "Cerrado Ganado")
 
-2. **Buscar registros**: Busca al gerente del propietario de la oportunidad
+2. **Buscar registros** (asígnale el nombre "Buscar propietario"): busca el propietario de la oportunidad
+   * Objeto: Miembros del espacio de trabajo
+   * Filtro: ID igual a `{{trigger.properties.after.ownerId}}`
 
-3. **Enviar correo electrónico #1**: Al propietario de la oportunidad
-   * Para: `{{trigger.object.owner.email}}`
-   * Asunto: `Congratulations on closing {{trigger.object.name}}!`
+3. **Buscar registros**: Busca al gerente del propietario de la oportunidad
 
-4. **Enviar correo electrónico #2**: Al gerente
+4. **Enviar correo electrónico #1**: Al propietario de la oportunidad
+   * Para: `{{Find Owner.first.userEmail}}` (selecciónalo desde el selector de variables; escribir el nombre del paso no funciona)
+   * Asunto: `Congratulations on closing {{trigger.properties.after.name}}!`
+
+5. **Enviar correo electrónico #2**: Al gerente
    * Para: `{{searchRecords.manager.email}}`
-   * Asunto: `Deal Won: {{trigger.object.name}}`
+   * Asunto: `Deal Won: {{trigger.properties.after.name}}`
 
 ## Correos de seguimiento programados
 
@@ -165,3 +170,5 @@ Los archivos adjuntos son estáticos—se envía el mismo archivo a todos los de
 
 * [Disparadores de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-triggers)
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="page-cover-email" />

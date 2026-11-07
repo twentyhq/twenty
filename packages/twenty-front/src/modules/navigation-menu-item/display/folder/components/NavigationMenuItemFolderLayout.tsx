@@ -1,14 +1,7 @@
-import { styled } from '@linaria/react';
 import { useDeferredValue, type ReactNode } from 'react';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-
-const StyledFolderExpandableWrapper = styled.div`
-  & > div {
-    overflow: visible !important;
-  }
-`;
 
 type NavigationMenuItemFolderLayoutProps = {
   header: ReactNode;
@@ -29,13 +22,11 @@ export const NavigationMenuItemFolderLayout = ({
   return (
     <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
       {header}
-      <StyledFolderExpandableWrapper>
-        <Collapsible.Root open={isExpandedForAnimation}>
-          <Collapsible.Panel dimension="height" containAnimation>
-            {children}
-          </Collapsible.Panel>
-        </Collapsible.Root>
-      </StyledFolderExpandableWrapper>
+      <Collapsible.Root open={isExpandedForAnimation}>
+        <Collapsible.Panel dimension="height" containAnimation>
+          {children}
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerItemsCollapsableContainer>
   );
 };

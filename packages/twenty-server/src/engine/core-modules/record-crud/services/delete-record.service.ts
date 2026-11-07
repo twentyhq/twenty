@@ -24,13 +24,7 @@ export class DeleteRecordService {
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      objectRecordId,
-      authContext,
-      rolePermissionConfig,
-      soft = true,
-    } = params;
+    const { objectName, objectRecordId, authContext, soft = true } = params;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -45,7 +39,6 @@ export class DeleteRecordService {
         await this.commonApiContextBuilder.build({
           authContext,
           objectName,
-          rolePermissionConfig,
         });
 
       if (
@@ -76,26 +69,25 @@ export class DeleteRecordService {
           message: `Record soft deleted successfully from ${objectName}`,
           result: deletedRecord,
         };
-      } else {
-        const { results: destroyedRecord } =
-          await this.commonDestroyOneRunner.execute(
-            {
-              id: objectRecordId,
-              selectedFields,
-            },
-            queryRunnerContext,
-          );
-
-        this.logger.log(
-          `Record permanently deleted successfully from ${objectName}`,
+      }
+      const { results: destroyedRecord } =
+        await this.commonDestroyOneRunner.execute(
+          {
+            id: objectRecordId,
+            selectedFields,
+          },
+          queryRunnerContext,
         );
 
-        return {
-          success: true,
-          message: `Record permanently deleted successfully from ${objectName}`,
-          result: destroyedRecord,
-        };
-      }
+      this.logger.log(
+        `Record permanently deleted successfully from ${objectName}`,
+      );
+
+      return {
+        success: true,
+        message: `Record permanently deleted successfully from ${objectName}`,
+        result: destroyedRecord,
+      };
     } catch (error) {
       if (error instanceof RecordCrudException) {
         return {

@@ -28,7 +28,7 @@ export const getRecordCrudRichTextIssues = ({
 
     if (
       isDefined(fieldValue) &&
-      !richTextValueSchema.safeParse(fieldValue).success
+      !richTextValueSchema.strict().safeParse(fieldValue).success
     ) {
       issues.push({
         severity: 'error',

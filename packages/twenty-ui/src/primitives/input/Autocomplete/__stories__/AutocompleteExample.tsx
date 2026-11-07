@@ -16,7 +16,7 @@ export const AutocompleteExample = (
       <Autocomplete.Positioner>
         <Autocomplete.Popup>
           <Autocomplete.Empty>No fruits found</Autocomplete.Empty>
-          <Autocomplete.List>
+          <Autocomplete.List aria-label="Fruit suggestions">
             {(fruit: string) => (
               <Autocomplete.Item key={fruit} value={fruit}>
                 {fruit}

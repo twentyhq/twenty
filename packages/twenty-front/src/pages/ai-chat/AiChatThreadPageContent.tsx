@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
@@ -18,7 +18,7 @@ export const AiChatThreadPageContent = ({
 }: AiChatThreadPageContentProps) => (
   <RecordShowPageContent
     parameters={{
-      objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
       objectRecordId: threadId,
     }}
     headerActions={headerActions}

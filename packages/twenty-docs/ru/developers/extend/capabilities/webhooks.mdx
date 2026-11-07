@@ -3,13 +3,13 @@ title: Вебхуки
 description: Получайте уведомления в реальном времени, когда в вашей CRM происходят события.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Вебхуки отправляют данные в ваши системы в реальном времени при возникновении событий в Twenty — опрос не требуется. Используйте их, чтобы поддерживать синхронизацию с внешними системами, запускать автоматизации или отправлять оповещения.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Создать Webhook
 
-1. Перейдите в **Настройки → API и Вебхуки → Вебхуки**
+1. Перейдите в **Настройки → Разработчики → вебхуки**
 2. Нажмите **+ Создать вебхук**
 3. Введите URL вашего вебхука (должен быть общедоступным)
 4. Нажмите **Сохранить**
@@ -110,3 +110,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **Триггер вебхука в рабочем процессе** | IN          | Получать данные в Twenty из внешних систем                                 |
 
 Для получения внешних данных см. [Настройка триггера вебхука](/ru/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

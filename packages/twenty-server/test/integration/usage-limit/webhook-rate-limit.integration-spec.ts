@@ -116,10 +116,12 @@ describe('Webhook rate limiting', () => {
     receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
 
     const createWebhookResponse = await createWebhook({
-      targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
-      operations: ['person.created'],
-      description: 'Webhook rate limiting test webhook',
-      secret: 'test-secret',
+      input: {
+        targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+        operations: ['person.created'],
+        description: 'Webhook rate limiting test webhook',
+        secret: 'test-secret',
+      },
     });
 
     expect(createWebhookResponse.body.errors).toBeUndefined();
@@ -128,7 +130,7 @@ describe('Webhook rate limiting', () => {
 
   afterAll(async () => {
     await receiver.close();
-    await deleteWebhook(webhookId).catch(() => {});
+    await deleteWebhook({ id: webhookId }).catch(() => {});
 
     for (const personId of createdPersonIds) {
       await makeGraphqlApiRequest({

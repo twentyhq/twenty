@@ -1,28 +1,46 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
-import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ROLE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-write-access-policy.constant';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 
-const deleteRoleSchema = z.object({
+const deleteRoleInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role to delete'),
 });
 
-type DeleteRoleParams = z.infer<typeof deleteRoleSchema>;
-
-export const createDeleteRoleTool = (
-  deps: Pick<RoleToolDependencies, 'roleService'>,
-  context: RoleToolContext,
-) => ({
-  name: 'delete_role' as const,
+@DefineTool({
+  name: 'delete_role',
+  category: ToolCategory.ROLE,
+  accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Delete a role. Members, agents and API keys assigned to it are reassigned to the workspace default role.
 
 System-managed roles (isEditable=false, like Admin), the workspace default role, and roles you are assigned to cannot be deleted.`,
-  inputSchema: deleteRoleSchema,
-  execute: async (parameters: DeleteRoleParams) => {
-    const deletedRole = await deps.roleService.deleteRole({
-      roleId: parameters.roleId,
-      workspaceId: context.workspaceId,
-      actingRoleIds: context.callerRoleIds,
+})
+export class DeleteRoleTool extends BaseTool<typeof deleteRoleInputSchema> {
+  readonly inputSchema = deleteRoleInputSchema;
+
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly rolePermissionsService: RolePermissionsService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, authContext },
+  }: ToolExecuteArgs<typeof deleteRoleInputSchema>): Promise<ToolOutput> {
+    const deletedRole = await this.roleService.deleteRole({
+      roleId: input.roleId,
+      workspaceId,
+      actingRoleIds: await this.rolePermissionsService.findRoleIds({
+        authContext: authContext,
+      }),
     });
 
     return {
@@ -30,5 +48,5 @@ System-managed roles (isEditable=false, like Admin), the workspace default role,
       message: `Role "${deletedRole.label}" deleted`,
       result: { id: deletedRole.id, label: deletedRole.label },
     };
-  },
-});
+  }
+}

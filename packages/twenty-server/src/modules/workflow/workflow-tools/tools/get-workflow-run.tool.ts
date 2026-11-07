@@ -2,7 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
+import { jsonPreview } from 'src/engine/core-modules/tool/utils/json-preview.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   type WorkflowToolContext,
@@ -20,24 +21,31 @@ const FAILED_STEP_STATUSES: StepStatus[] = [
   StepStatus.FAILED_SAFELY,
 ];
 
+const boundStepOutput = (output: unknown) =>
+  Buffer.byteLength(JSON.stringify(output) ?? '') > MAX_INLINE_TOOL_OUTPUT_BYTES
+    ? { output: jsonPreview(output), isOutputTruncated: true }
+    : { output };
+
 export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+  deps: {
+    workspaceOrmManager: Pick<
+      WorkflowToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
   description:
-    'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
+    'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status, output (a preview when large) and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
   inputSchema: getWorkflowRunSchema,
   execute: async (parameters: GetWorkflowRunInput) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
-
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
             deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
-              context.rolePermissionConfig,
             );
 
           const workflowRun = await workflowRunRepository.findOne({
@@ -61,6 +69,7 @@ export const createGetWorkflowRunTool = (
               name: step.name,
               type: step.type,
               status: stepInfo?.status,
+              ...boundStepOutput(stepInfo?.result),
               error: stepInfo?.error,
             };
           });
@@ -94,7 +103,7 @@ export const createGetWorkflowRunTool = (
             },
           };
         },
-        authContext,
+        context.authContext,
       );
     } catch (error) {
       return {

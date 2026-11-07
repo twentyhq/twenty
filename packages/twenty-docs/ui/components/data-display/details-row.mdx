@@ -1,0 +1,109 @@
+---
+title: DetailsRow
+description: Align detail labels with wrapping values and optional actions.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## Overview
+
+`DetailsRow` pairs a label with a value in a description list. Add a decorative icon, multiple value items, or an action supplied by your application.
+
+<StoryEmbed
+  storyId="ui-data-display-detailsrow--display"
+  title="Details row example"
+  height={220}
+/>
+
+## Usage
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Place each row directly inside a `dl`. Pass the label through `label` and its value through `children`. The application owns labels, localization, formatted values, and placeholders for missing values.
+
+## Alignment and wrapping
+
+Labels and values wrap rather than truncate. Multiple value items, such as chips or tags, wrap onto additional lines. Rows align their content at the top as that content grows.
+
+The label column defaults to `7rem` and is capped at 40% of the row's width to leave space for the value in narrow containers. Set the same `labelWidth` on sibling rows to adjust their alignment. Numbers use pixels; CSS lengths such as `'8rem'` are also supported.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Actions
+
+Use `action` for a control beside the value. The row does not add editing, click, or keyboard behavior. Supply a control with an accessible name and connect its handler to the application behavior.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Composition and accessibility
+
+Each row renders a `div` grouping with a `dt` label and a `dd` containing the value and optional action. The caller supplies the enclosing `dl`. Provide meaningful text in the label. The optional `startIcon` is hidden from assistive technology, and the caller controls its dimensions.
+
+Native attributes, `className`, `style`, and `ref` target the outer `div`. When using `render` with a custom wrapper, preserve that `div` directly inside the `dl` and forward all supplied props and the ref. Keep actions inside their slot so the term and definition remain the row's direct children.
+
+Use [MetricRow](/ui/components/data-display/metric-row) for a metric with optional progress. `DetailsRow` provides only the label, value, and action layout.
+
+## Props
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

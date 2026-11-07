@@ -22,7 +22,7 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 export const SidePanelWorkflowCreateStepContent = () => {
   const { getIcon } = useIcons();
@@ -31,7 +31,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
   );
 
   const { createStep } = useCreateStep();
-  const { updateStep } = useUpdateStep();
+  const { updateStepNow } = useUpdateStep();
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
@@ -55,7 +55,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
       targetStepId: createdStepId,
     });
 
-    await updateStep(updatedStep);
+    await updateStepNow(updatedStep);
   };
 
   const handleCreateStep = async (selection: WorkflowActionSelection) => {

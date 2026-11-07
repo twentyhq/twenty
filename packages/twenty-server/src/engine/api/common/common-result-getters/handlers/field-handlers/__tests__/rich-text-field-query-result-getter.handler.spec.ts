@@ -1,7 +1,6 @@
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const baseRecord: ObjectRecord = {
@@ -20,7 +19,7 @@ const richTextFieldMetadata = [
 
 const mockFileUrlService = {
   signFileByIdUrl: jest.fn().mockReturnValue('signed-path'),
-} as unknown as FileUrlService;
+};
 
 describe('RichTextFieldQueryResultGetterHandler', () => {
   let handler: RichTextFieldQueryResultGetterHandler;
@@ -152,6 +151,57 @@ describe('RichTextFieldQueryResultGetterHandler', () => {
       );
 
       expect(result).toEqual(record);
+    });
+  });
+
+  describe('should sign file urls', () => {
+    it('when uploaded images and files sit anywhere in the TipTap and BlockNote documents, leaving external ones alone', async () => {
+      const uploadedFileUrl =
+        'https://my-domain.twenty.com/file/files-field/20202020-0000-4000-8000-000000000001';
+      const tiptap = (nestedImageSrc: string, fileUrl: string) =>
+        JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'bulletList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [
+                    { type: 'paragraph' },
+                    { type: 'image', attrs: { src: nestedImageSrc } },
+                  ],
+                },
+              ],
+            },
+            { type: 'file', attrs: { url: fileUrl, name: 'contract.pdf' } },
+            {
+              type: 'image',
+              attrs: { src: 'https://external.com/image.jpg' },
+            },
+          ],
+        });
+      const blocknote = (imageUrl: string) =>
+        JSON.stringify([{ type: 'image', props: { url: imageUrl } }]);
+
+      const result = await handler.handle(
+        {
+          ...baseRecord,
+          bodyV2: {
+            markdown: null,
+            blocknote: blocknote(uploadedFileUrl),
+            tiptap: tiptap(uploadedFileUrl, uploadedFileUrl),
+          },
+        },
+        'ws-1',
+        richTextFieldMetadata,
+      );
+
+      expect(result.bodyV2).toEqual({
+        markdown: null,
+        blocknote: blocknote('signed-path'),
+        tiptap: tiptap('signed-path', 'signed-path'),
+      });
     });
   });
 

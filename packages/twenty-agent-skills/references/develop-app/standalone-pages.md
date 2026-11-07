@@ -21,13 +21,13 @@ The current model is:
 
 Use these surfaces for different jobs:
 
-| Surface | Use it for | Primary app entity |
-| --- | --- | --- |
-| Standalone page | A full workspace page that is not tied to one record | `STANDALONE_PAGE` + `PAGE_LAYOUT` navigation item + `FRONT_COMPONENT` widget |
-| Record page layout | Tabs and widgets for one object record | `RECORD_PAGE` page layout or page layout tab |
-| Dashboard | Metric and report composition from built-in widgets | `DASHBOARD` page layout |
-| Command or side panel | Short actions, focused forms, one selected record, or background commands | `defineFrontComponent` plus command menu item |
-| Settings menu item | Configuration the app's admins set up, as a tab on the app's page under Settings > Apps, see `layout.md` | `defineFrontComponent` plus `defineSettingsMenuItem` |
+| Surface               | Use it for                                                                                               | Primary app entity                                                           |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Standalone page       | A full workspace page that is not tied to one record                                                     | `STANDALONE_PAGE` + `PAGE_LAYOUT` navigation item + `FRONT_COMPONENT` widget |
+| Record page layout    | Tabs and widgets for one object record                                                                   | `RECORD_PAGE` page layout or page layout tab                                 |
+| Dashboard             | Metric and report composition from built-in widgets                                                      | `DASHBOARD` page layout                                                      |
+| Command or side panel | Short actions, focused forms, one selected record, or background commands                                | `defineFrontComponent` plus command menu item                                |
+| Settings menu item    | Configuration the app's admins set up, as a tab on the app's page under Settings > Apps, see `layout.md` | `defineFrontComponent` plus `defineSettingsMenuItem`                         |
 
 ## Removing The Scaffolded Placeholder
 
@@ -60,10 +60,10 @@ export const MISSION_CONTROL_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
 
 ```tsx src/front-components/mission-control.front-component.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Heading } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import {
-  MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-} from '../constants/universal-identifiers';
+import { MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers';
 
 const MissionControl = () => {
   return (
@@ -72,12 +72,12 @@ const MissionControl = () => {
         boxSizing: 'border-box',
         display: 'grid',
         minHeight: '100%',
-        padding: 24,
+        padding: themeCssVariables.spacing[4],
         placeItems: 'center',
         width: '100%',
       }}
     >
-      <h1 style={{ margin: 0 }}>Mission Control</h1>
+      <Heading level={1}>Mission Control</Heading>
     </main>
   );
 };
@@ -91,10 +91,7 @@ export default defineFrontComponent({
 ```
 
 ```ts src/page-layouts/mission-control.page-layout.ts
-import {
-  definePageLayout,
-  PageLayoutTabLayoutMode,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -136,9 +133,7 @@ import {
   NavigationMenuItemType,
 } from 'twenty-sdk/define';
 
-import {
-  MISSION_CONTROL_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
-} from '../constants/universal-identifiers';
+import { MISSION_CONTROL_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '61d44a63-16e8-4fbe-bccb-9c220d44fdb9',
@@ -157,41 +152,54 @@ Use a `VERTICAL_LIST` tab and give its single widget `TAB_VIEWPORT` height behav
 After the tiny page renders, replace the component body with a full-screen structure:
 
 ```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
 const MissionControl = () => {
   return (
     <main
       style={{
         boxSizing: 'border-box',
         display: 'grid',
-        gap: 16,
+        gap: themeCssVariables.spacing[4],
         gridTemplateRows: 'auto minmax(0, 1fr)',
         height: '100%',
         minHeight: '100%',
         overflow: 'hidden',
-        padding: 16,
+        padding: themeCssVariables.spacing[4],
         width: '100%',
       }}
     >
-      <header style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <h1 style={{ margin: 0 }}>Mission Control</h1>
-        <button type="button">Refresh</button>
-      </header>
+      <Section.Header
+        level={1}
+        title="Mission Control"
+        actions={<LightButton>Refresh</LightButton>}
+      />
 
       <section
         style={{
           display: 'grid',
-          gridTemplateColumns: '280px minmax(0, 1fr)',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 3fr)',
+          gap: themeCssVariables.spacing[4],
           minHeight: 0,
           overflow: 'hidden',
         }}
       >
-        <aside style={{ minHeight: 0, overflow: 'auto' }}>Filters</aside>
-        <div style={{ minHeight: 0, overflow: 'auto' }}>Workspace data</div>
+        <aside style={{ minHeight: 0, overflow: 'auto' }}>
+          <Text>Filters</Text>
+        </aside>
+        <div style={{ minHeight: 0, overflow: 'auto' }}>
+          <Text>Workspace data</Text>
+        </div>
       </section>
     </main>
   );
 };
 ```
+
+Connect Refresh to the page's data-loading action using `front-components.md`.
 
 ## API Reference
 
@@ -253,104 +261,32 @@ Avoid hidden overflow traps. `overflow: 'hidden'` is useful for map and canvas r
 
 ## Data And Interactivity
 
-Fetch live workspace records from the front component when the page reflects workspace state:
+Use `front-components.md` for fetching live workspace records, client APIs, hooks, and runtime behavior. A standalone page adds full-page loading, empty, and error states, plus navigation from its surface back into Twenty records.
 
-Use `front-components.md` for general client/runtime rules. In standalone pages, the key additions are visible full-page loading, empty, and error states, plus navigation from the standalone surface back into Twenty records.
+Keep a record action focused on its destination and use a Twenty UI control:
 
 ```tsx
-import { useEffect, useState } from 'react';
-import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
-import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  AppPath,
-  enqueueSnackbar,
-  navigate,
-} from 'twenty-sdk/front-component';
+import { AppPath, navigate } from 'twenty-sdk/front-component';
+import { LightButton } from 'twenty-ui/components/input';
 
-type CompanySummary = Pick<CoreSchema.Company, 'id' | 'name'>;
-
-const CompaniesStandalonePage = () => {
-  const [companies, setCompanies] = useState<CompanySummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadCompanies = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const client = new CoreApiClient();
-        const result = await client.query({
-          companies: {
-            edges: {
-              node: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        });
-
-        if (!cancelled) {
-          setCompanies(result.companies.edges.map((edge) => edge.node));
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to load companies';
-
-        if (!cancelled) {
-          setError(message);
-          enqueueSnackbar({ message, variant: 'error' });
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadCompanies();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (loading) return <div style={{ padding: 24 }}>Loading companies...</div>;
-  if (error) return <div style={{ padding: 24 }}>{error}</div>;
-  if (companies.length === 0) {
-    return <div style={{ padding: 24 }}>No companies yet.</div>;
-  }
-
-  return (
-    <div style={{ display: 'grid', gap: 8, padding: 24 }}>
-      {companies.map((company) => (
-        <button
-          key={company.id}
-          type="button"
-          onClick={() =>
-            navigate(AppPath.RecordShowPage, {
-              objectNameSingular: 'company',
-              objectRecordId: company.id,
-            })
-          }
-        >
-          {company.name}
-        </button>
-      ))}
-    </div>
-  );
-};
-
-export default defineFrontComponent({
-  universalIdentifier: '5aa8c51f-72a4-4929-a6ab-2d4ea9d2a6df',
-  name: 'companies-standalone-page',
-  description: 'Lists companies and opens related records.',
-  component: CompaniesStandalonePage,
-});
+const CompanyRecordAction = ({
+  companyId,
+  companyName,
+}: {
+  companyId: string;
+  companyName: string;
+}) => (
+  <LightButton
+    onClick={() =>
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular: 'company',
+        objectRecordId: companyId,
+      })
+    }
+  >
+    {companyName}
+  </LightButton>
+);
 ```
 
 Always model these states:
@@ -393,9 +329,12 @@ Installed-app checks:
 Known-good component test:
 
 ```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
 const KnownGoodStandalonePage = () => (
-  <main style={{ minHeight: '100%', padding: 24 }}>
-    <h1>Standalone page runtime is working</h1>
+  <main style={{ minHeight: '100%', padding: themeCssVariables.spacing[4] }}>
+    <Heading level={1}>Standalone page runtime is working</Heading>
   </main>
 );
 ```
@@ -407,7 +346,7 @@ If this renders but the full page does not, the issue is inside the full compone
 Use bounded apply for deployment and verification. Use `../manage-app/cli-and-sync.md` for exact command behavior, remote setup, verbose troubleshooting, deploys, and logs.
 
 ```bash
-yarn twenty apply
+twenty app apply
 ```
 
 Install and update flow:

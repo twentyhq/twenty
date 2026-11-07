@@ -1,0 +1,98 @@
+---
+title: Tematización
+description: Usa tokens de tema de Twenty UI y limita las anulaciones de tema a una parte de tu aplicación.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## Resumen
+
+Los componentes de Twenty UI leen propiedades personalizadas públicas de CSS con el prefijo `--t-`. Prefiere tokens semánticos como `background.secondary` y `font.color.primary` al aplicar estilos a tus propios componentes; estos valores se adaptan a la paleta activa.
+
+## Usa tokens en los estilos
+
+`themeCssVariables` asigna rutas de tokens a referencias de variables CSS. Úsalo para valores que CSS resuelve:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+El CSS equivalente usa variables directamente:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## Lee valores resueltos
+
+`useTheme()` lee los tokens calculados del proveedor activo. Úsalo cuando un componente espera un número de JavaScript, como el tamaño de un icono. El proveedor necesita que la hoja de estilos del tema se cargue en el navegador para resolver las variables CSS.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+Cada entrada de `themeCssVariables` es una cadena de referencia CSS, incluidos los tokens numéricos. No realices operaciones aritméticas con esas cadenas. En el servidor, los valores resueltos del navegador no están disponibles; consulta [Renderizado del servidor](/es/ui/ssr).
+
+## Limita una anulación
+
+Pasa `applyToRoot={false}` para aplicar un tema a un subárbol. Anula las variables CSS públicas mediante su nombre completo:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+Un proveedor limitado añade un contenedor con `display: contents`; no crea un cuadro de diseño. También proporciona un contenedor para los componentes que admiten portales con tema. Los portales creados por otras bibliotecas necesitan su propia configuración de contenedor.
+
+Las variables con el prefijo `--tw-` son detalles privados de los componentes. Usa props públicas y tokens `--t-` en lugar de depender de esas variables.
+
+Consulta la [referencia de tokens](/es/ui/tokens) para ver los nombres y valores de paleta disponibles.
+
+## Valores explícitos y escala
+
+La prop `theme` proporciona valores de tema de JavaScript resueltos en lugar de leer estilos calculados. También se transmite a proveedores anidados, a menos que proporcionen otro tema explícito. Esto cambia los valores leídos por los hooks; carga la hoja de estilos adecuada y usa anulaciones de CSS para aplicar estilos a los componentes.
+
+`scale` escribe `--t-scale-user` en la raíz del documento. Solo afecta a las interfaces cuyo CSS consume esa variable y los proveedores con ámbito la ignoran. `className` se aplica a un contenedor con ámbito; pasarla por sí sola no crea un contenedor. `overrides` crea un ámbito incluso cuando `applyToRoot` permanece en true.
+
+## Props de ThemeProvider
+
+<ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

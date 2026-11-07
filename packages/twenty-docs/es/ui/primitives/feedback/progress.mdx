@@ -1,0 +1,119 @@
+---
+title: Progreso
+description: Componga un indicador de progreso accesible con semántica compartida de intervalo, etiquetado y valor.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
+
+## Resumen
+
+`Progress` expone las partes de Base UI disponibles: `Root`, `Track`, `Indicator`, `Label` y `Value`. Impórtelas desde `twenty-ui/primitives/feedback`. Use [ProgressBar](/es/ui/primitives/feedback/progress-bar) o [ProgressRing](/es/ui/primitives/feedback/progress-ring) para obtener una apariencia práctica con el mismo contrato semántico.
+
+<StoryEmbed storyId="ui-feedback-progress--display" title="Ejemplo de progreso compuesto" height={100} />
+
+## "Uso"
+
+`Root` gestiona el valor controlado y la semántica accesible de la barra de progreso. `Label` proporciona su nombre accesible. `Value` muestra el valor formateado. `Track` e `Indicator` describen el relleno visual; el ancho del indicador proviene del intervalo normalizado de la raíz. Las partes no imponen una apariencia.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportProgress = () => (
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
+    <Progress.Track
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
+    >
+      <Progress.Indicator
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
+      />
+    </Progress.Track>
+  </Progress.Root>
+);
+```
+
+Este intervalo muestra `50%`, mientras que `aria-valuenow` es `70`, `aria-valuemin` es `20` y `aria-valuemax` es `120`. La aplicación gestiona las solicitudes, la temporización y las actualizaciones de progreso. No hay `defaultValue` ni avance automático.
+
+## Valores, intervalos y progreso indeterminado
+
+`min` tiene como valor predeterminado `0` y `max` tiene como valor predeterminado `100`. Proporcione límites finitos con `min \< max`. Los valores finitos fuera del intervalo se limitan para el valor semántico, el valor formateado y el relleno visual. La finalización ocurre en el máximo. Cambiar el intervalo vuelve a calcular el porcentaje sin cambiar el valor sin procesar proporcionado por la aplicación.
+
+Pase `value={null}` cuando se desconozca la cantidad de progreso. La raíz pasa entonces a tener estado indeterminado, omite `aria-valuenow` y usa `indeterminate progress` como texto de valor accesible predeterminado. Los valores no finitos también permanecen indeterminados; no se convierten en cero. El `Indicator` sin procesar no tiene un ancho porcentual calculado en ese estado, por lo que la composición elige su apariencia indeterminada.
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+
+export const PendingImport = () => (
+  <ProgressBar value={null} aria-label="Preparing the import" />
+);
+```
+
+## Etiquetas y formato
+
+Componga `Progress.Label` dentro de `Root`, o establezca `aria-label` o `aria-labelledby` nativos. Use `aria-valuetext` para una alternativa legible por personas cuando un porcentaje sea insuficiente.
+
+El formateador predeterminado muestra el porcentaje normalizado. `locale` y `format` conservan el contrato de `Intl.NumberFormat` disponible; un `format` explícito formatea el valor numérico limitado. `getAriaValueText(formattedValue, value)` recibe ese texto formateado y el valor sin procesar de la aplicación, incluido `null`. Cambia el texto de valor accesible sin cambiar el relleno.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+
+export const RecordCount = () => (
+  <Progress.Root
+    value={600}
+    max={1000}
+    format={{ style: 'decimal' }}
+    getAriaValueText={(formattedValue) => `${formattedValue} of 1,000 records`}
+  >
+    <Progress.Label>Importing records</Progress.Label>
+    <Progress.Value>
+      {(formattedValue) => `${formattedValue} / 1,000`}
+    </Progress.Value>
+  </Progress.Root>
+);
+```
+
+`Progress.Value` recibe tanto el valor formateado como el valor sin procesar mediante su callback de elemento secundario opcional. Para el progreso indeterminado, el callback recibe `indeterminate` como texto formateado; sin un callback, la parte de valor no muestra contenido. El contenido mostrado no se convierte automáticamente en el nombre accesible ni en el texto de valor accesible.
+
+## Props nativas, refs y composición
+
+| Parte       | DOM predeterminado y destino de la ref           |
+| ----------- | ------------------------------------------------ |
+| `Root`      | `div` externo con semántica de barra de progreso |
+| `Track`     | `div` de pista                                   |
+| `Indicator` | `div` de relleno                                 |
+| `Label`     | `span` de etiqueta                               |
+| `Valor`     | `span` de valor                                  |
+
+Cada parte conserva las props nativas, las refs y el contrato de composición `render` disponible. Reenvíe las props y la ref proporcionadas al reemplazar un elemento. Los callbacks de `className`, `style` y `render` reciben el estado público con `status`: `progressing`, `complete` o `indeterminate`. Los atributos de estado ponen el mismo estado a disposición de los estilos.
+
+El punto de entrada exporta `ProgressStatus` y los tipos `Props` y `State` para cada parte, incluidos `ProgressRootProps`, `ProgressRootState`, `ProgressIndicatorProps` y `ProgressIndicatorState`. Cada parte reenvía los controladores de eventos nativos. Las aplicaciones gestionan la orquestación de funcionalidades y los callbacks de finalización.
+
+## "Props"
+
+<ProgressReference />
+
+<PageBanner illustration="card-page-usage-limits" />

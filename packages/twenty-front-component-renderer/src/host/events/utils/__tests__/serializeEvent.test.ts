@@ -229,6 +229,33 @@ describe('serializeEvent', () => {
     });
   });
 
+  it('should include the target scroll extents', () => {
+    expect(
+      serializeEvent({
+        type: 'keydown',
+        target: { scrollLeft: 0, scrollWidth: 480, clientWidth: 160 },
+      }),
+    ).toEqual({
+      type: 'keydown',
+      scrollLeft: 0,
+      scrollWidth: 480,
+      clientWidth: 160,
+    });
+  });
+
+  it('should leave out target scroll state when a non-bubbling event reaches a listener on another element', () => {
+    const listeningElement = { scrollTop: 0 };
+
+    expect(
+      serializeEvent({
+        type: 'mouseenter',
+        bubbles: false,
+        currentTarget: listeningElement,
+        target: { scrollTop: 40, scrollWidth: 480, clientWidth: 160 },
+      }),
+    ).toEqual({ type: 'mouseenter' });
+  });
+
   it.each(['keydown', 'keypress', 'beforeinput', 'pointerdown', 'paste'])(
     'should leave out form control state on %s, before the browser applies the change',
     (type) => {

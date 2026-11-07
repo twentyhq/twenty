@@ -1,5 +1,6 @@
 import { type ReactNode, useSyncExternalStore } from 'react';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { ToastProvider, Toaster } from 'twenty-ui/components/feedback';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
 import '@fontsource/inter/latin-400.css';
@@ -29,5 +30,12 @@ export const CompanionTheme = ({
   const systemDark = useSyncExternalStore(subscribe, getSnapshot);
   const colorScheme =
     appearance === 'system' ? (systemDark ? 'dark' : 'light') : appearance;
-  return <ThemeProvider colorScheme={colorScheme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider colorScheme={colorScheme}>
+      <ToastProvider limit={1}>
+        {children}
+        <Toaster />
+      </ToastProvider>
+    </ThemeProvider>
+  );
 };

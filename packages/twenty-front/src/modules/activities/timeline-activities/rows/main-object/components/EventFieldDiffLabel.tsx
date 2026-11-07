@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { Icon123, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Icon123 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 type EventFieldDiffLabelProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -28,6 +29,7 @@ export const EventFieldDiffLabel = ({
   fieldMetadataItem,
 }: EventFieldDiffLabelProps) => {
   const { getIcon } = useIcons();
+  const theme = useTheme();
 
   const IconComponent = fieldMetadataItem?.icon
     ? getIcon(fieldMetadataItem?.icon)
@@ -36,7 +38,7 @@ export const EventFieldDiffLabel = ({
   return (
     <StyledUpdatedFieldContainer>
       <StyledUpdatedFieldIconContainer>
-        <IconComponent />
+        <IconComponent size={theme.icon.size.sm} />
       </StyledUpdatedFieldIconContainer>
       {fieldMetadataItem.label}
     </StyledUpdatedFieldContainer>

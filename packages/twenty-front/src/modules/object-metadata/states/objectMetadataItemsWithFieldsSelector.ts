@@ -6,6 +6,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getPermittedFields } from '@/object-metadata/utils/getPermittedFields';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
@@ -51,7 +53,11 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
     }
 
     return flatObjects.map((flatObject) => {
-      const fields = fieldsByObjectId.get(flatObject.id) ?? [];
+      const fields = (fieldsByObjectId.get(flatObject.id) ?? []).map((field) =>
+        isNonEmptyString(field.icon?.trim())
+          ? field
+          : { ...field, icon: FIELD_TYPE_DEFAULT_ICONS[field.type] },
+      );
       const indexMetadatas = indexesByObjectId.get(flatObject.id) ?? [];
 
       return {

@@ -26,6 +26,7 @@ import {
 
 const NAME_COLUMN = 'c.name';
 const UPDATED_AT_COLUMN = 'c."updatedAt"';
+const IS_SYSTEM_COLUMN = 'c."isSystem"';
 const CORE_WORKFLOW_STATUS_VALUES: WorkflowStatus[] =
   Object.values(WorkflowStatus);
 
@@ -41,17 +42,18 @@ export type CoreWorkflowFilterPredicate = {
   parameters: unknown[];
 };
 
-const requireTextValue = (rule: CoreWorkflowFilterRuleInput): string => {
-  const trimmedValue = rule.value?.trim();
-
-  if (!isNonEmptyString(trimmedValue)) {
+const requireExactTextValue = (rule: CoreWorkflowFilterRuleInput): string => {
+  if (!isNonEmptyString(rule.value) || rule.value.trim() === '') {
     throw new UserInputError(
       `Operand ${rule.operand} on field ${rule.fieldKey} requires a value`,
     );
   }
 
-  return trimmedValue;
+  return rule.value;
 };
+
+const requireTextValue = (rule: CoreWorkflowFilterRuleInput): string =>
+  requireExactTextValue(rule).trim();
 
 const parseJsonValue = (value: string): unknown => {
   try {
@@ -119,6 +121,18 @@ const parseStatusesValue = (
   }
 
   return statuses;
+};
+
+const parseBooleanValue = (rule: CoreWorkflowFilterRuleInput): boolean => {
+  const rawValue = requireTextValue(rule);
+
+  if (rawValue !== 'true' && rawValue !== 'false') {
+    throw new UserInputError(
+      `Operand ${rule.operand} on field ${rule.fieldKey} requires true or false`,
+    );
+  }
+
+  return rawValue === 'true';
 };
 
 const parseDateValue = (rule: CoreWorkflowFilterRuleInput): Date => {
@@ -244,8 +258,10 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
         pattern: `%${escapeForIlike(requireTextValue(rule))}%`,
         negated: true,
       }),
-    [CoreWorkflowFilterOperand.IS]: null,
-    [CoreWorkflowFilterOperand.IS_NOT]: null,
+    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
+      `${NAME_COLUMN} = ${bindParameter(requireExactTextValue(rule))}`,
+    [CoreWorkflowFilterOperand.IS_NOT]: ({ rule, bindParameter }) =>
+      `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} <> ${bindParameter(requireExactTextValue(rule))})`,
     [CoreWorkflowFilterOperand.IS_EMPTY]: () =>
       `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} = '')`,
     [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>
@@ -325,6 +341,21 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
     [CoreWorkflowFilterOperand.CONTAINS]: null,
     [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: null,
     [CoreWorkflowFilterOperand.IS_NOT]: null,
+  },
+  [CoreWorkflowFilterFieldKey.IS_SYSTEM]: {
+    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
+      `${IS_SYSTEM_COLUMN} = ${bindParameter(parseBooleanValue(rule))}::boolean`,
+    [CoreWorkflowFilterOperand.CONTAINS]: null,
+    [CoreWorkflowFilterOperand.DOES_NOT_CONTAIN]: null,
+    [CoreWorkflowFilterOperand.IS_NOT]: null,
+    [CoreWorkflowFilterOperand.IS_EMPTY]: null,
+    [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: null,
+    [CoreWorkflowFilterOperand.IS_BEFORE]: null,
+    [CoreWorkflowFilterOperand.IS_AFTER]: null,
+    [CoreWorkflowFilterOperand.IS_IN_PAST]: null,
+    [CoreWorkflowFilterOperand.IS_IN_FUTURE]: null,
+    [CoreWorkflowFilterOperand.IS_TODAY]: null,
+    [CoreWorkflowFilterOperand.IS_RELATIVE]: null,
   },
 };
 

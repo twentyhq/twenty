@@ -1,0 +1,95 @@
+---
+title: LabeledSeparator
+description: Separate content with a centered or end-aligned text label.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## Overview
+
+`LabeledSeparator` composes [Separator](/ui/primitives/layout/separator) and [Text](/ui/primitives/typography/text) into a named horizontal divider. Your application supplies the label and surrounding spacing.
+
+<StoryEmbed
+  storyId="ui-layout-labeledseparator--display"
+  title="Labeled separator between import options"
+  height={180}
+/>
+
+## Usage
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## Label placement and tone
+
+`labelPosition` defaults to `center`, with a line on each side of the label. Use `end` to place the label after the leading line. The label accepts a string supplied and localized by your application.
+
+`tone` defaults to `neutral`. Use `danger` for a red marker with a medium-weight label and a thicker rule. Set `hasStartMarker` to add a small decorative cap at the beginning of the rule.
+
+The optional cap follows the [shared calendar and chat line design](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed
+  storyId="ui-layout-labeledseparator--unread-marker"
+  title="Unread marker with an end-aligned label"
+  height={100}
+/>
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## Spacing and application state
+
+The component fills its container and adds no outer margin. Use parent layout spacing or native `style` and `className` for margins and alignment. Keep offsets for adjacent avatars or calendar positions in your application.
+
+The component presents the supplied label. Your application decides where an unread boundary or calendar marker belongs and when it is visible.
+
+## Accessibility and composition
+
+The root exposes one horizontal separator named from its label. The rule segments and optional start marker are decorative, so assistive technology does not announce extra separators. Native accessible attributes can provide a different name or description when needed.
+
+Native attributes, styles, class names, and `ref` target the outer `div`. Use `render` to compose another noninteractive element while forwarding the supplied props and ref. `LabeledSeparatorProps` is exported from `twenty-ui/components/layout`.
+
+## Migration
+
+Replace the frontend `LabeledDivider` with `LabeledSeparator`. Rename `textPosition` to `labelPosition`, and use `tone="danger"` for the unread marker's red appearance. Remove `noMargin`, since outer margins default to zero. Preserve the former default spacing with `style={{ marginBlock: 'var(--t-spacing-3)' }}` where needed.
+
+## Props
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

@@ -1,0 +1,176 @@
+---
+title: Glisor
+description: Alegeți o valoare numerică sau un interval folosind butoane glisante accesibile cu tastatura.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## Prezentare generală
+
+`Slider` acceptă un singur număr sau o matrice de numere pentru un interval. Compuneți eticheta, șina, indicatorul și butoanele glisante în interiorul `Root`.
+
+<StoryEmbed storyId="ui-input-slider--display" title="Exemplu de glisor" height={120} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizează `defaultValue` pentru a seta volumul inițial. Glisorul controlează modificările ulterioare.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Opțiuni vizuale
+
+Comparați culorile de accent și de succes la valorile minime, medii, maxime și dezactivate. Glisoarele activate rămân interactive.
+
+<StoryEmbed storyId="ui-input-slider--catalog" title="Opțiuni vizuale pentru glisor" height={340} />
+
+## Anatomie
+
+Plasați pista și cursoarele în interiorul `Slider.Control`, care gestionează interacțiunea cu indicatorul. Acest arbore prezintă un glisor cu un singur cursor.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Parte       | Cerință                               | Scop                                                                            |
+| ----------- | ------------------------------------- | ------------------------------------------------------------------------------- |
+| `Root`      | Obligatoriu                           | Deține valoarea, limitele, pasul și orientarea.                                 |
+| `Control`   | Obligatoriu                           | Gestionează interacțiunea cu indicatorul și poziționează cursoarele.            |
+| `Track`     | Necesar pentru pista stilizată        | Afișează întregul interval de valori.                                           |
+| `Thumb`     | Unul pentru fiecare valoare reglabilă | Oferă un mâner focalizabil cu interacțiune prin tastatură.                      |
+| `Label`     | Recomandat                            | Furnizează o etichetă vizibilă; fiecare cursor are nevoie de un nume accesibil. |
+| `Valoare`   | Opțional                              | Afișează valoarea numerică actuală.                                             |
+| `Indicator` | Opțional                              | Afișează porțiunea selectată a șinei.                                           |
+
+Pentru un interval, adăugați un cursor pentru fiecare valoare, cu `index` corespunzător și un nume accesibil distinct. Etichetele și ieșirea numerică rămân în afara `Control`, astfel încât să nu devină parte din zona care poate fi glisată.
+
+## Stare controlată
+
+Transmite `value` și actualizează-l cu `onValueChange` pentru a controla același volum în starea React. Funcția de apel invers primește următoarea valoare și detaliile evenimentului.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+Utilizează `onValueChange` pentru a menține actualizată valoarea controlată în timpul unei interacțiuni. `onValueCommitted` gestionează valoarea finală când interacțiunea se încheie, de exemplu pentru a o salva. Ambele funcții de apel invers sunt disponibile și în modul necontrolat, fără a prelua controlul asupra valorii.
+
+Detaliile modificării includ `event` de origine, `reason` al interacțiunii, `activeThumbIndex` și `cancel()`. Detaliile confirmării utilizează contractul generic de evenimente al Base UI și nu includ anularea modificării. O modificare anulată nu se confirmă.
+
+## Interval
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Oferiți butoanelor glisante ale intervalului nume accesibile distincte și un `index` corespunzător valorii lor. `minStepsBetweenValues` stabilește diferența minimă în pași. Tipul generic de valoare al rădăcinii este un număr sau o matrice de numere doar pentru citire.
+
+Pentru a controla un interval, stochează matricea în starea React și transmite-o prin `value` și `onValueChange`, la fel ca pentru o singură valoare.
+
+## Tastatură și aspect
+
+Tastele săgeată ajustează cu un pas un buton glisant focalizat. Home și End îl deplasează spre limite, respectând constrângerile intervalului. `orientation="vertical"` modifică aspectul și direcția tastaturii. Utilizați `disabled` pe `Root` pentru a preveni modificările.
+
+Setați `color="success"` pentru paleta alternativă; valoarea implicită este `accent`.
+
+Valoarea implicită pentru `thumbAlignment` este `edge`. Transmite `center` sau `edge-client-only` pentru a o suprascrie. Compunerea nativă cu `className`, `style` și `render` rămâne disponibilă pentru fiecare parte, inclusiv pentru funcțiile de stare.
+
+<Note>
+  Cu alinierea `edge` și `edge-client-only`, Base UI 1.8 și 1.9 nu
+  măsoară din nou niciodată un mâner după ce `Slider.Control` își modifică dimensiunea, iar un glisor montat
+  în timp ce este ascuns își păstrează mânerele ascunse după ce devine vizibil
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). Componentele frontale React
+  întâmpină aceeași problemă la prima lor randare. Utilizați
+  `thumbAlignment="center"` până când o versiune Base UI include remedierea
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
+## Integrare nativă și tipuri
+
+`Slider.Root` deduce un număr sau un array numeric readonly din `value` sau `defaultValue`, păstrând acel tip în ambele callback-uri. `SliderRootProps` acceptă implicit ambele variante; utilizează `SliderRootProps\<number>` pentru helperi cu o singură valoare sau `SliderRootProps\<readonly number[]>` pentru helperi de interval.
+
+Fiecare parte are un tip de props exportat în `twenty-ui/primitives/input`: `SliderRootProps`, `SliderControlProps`, `SliderTrackProps`, `SliderIndicatorProps`, `SliderThumbProps`, `SliderLabelProps` și `SliderValueProps`.
+
+Referințele vizează elemente div pentru Root, Control, Track, Indicator, Thumb și Label, precum și un element output pentru Value. Referința unui Thumb vizează mânerul său vizibil; numele său accesibil și valoarea sa nativă de formular aparțin inputului de interval imbricat. Utilizează `name` și `form` pe Root pentru trimiterea nativă, cu câte un input pentru fiecare valoare din interval.
+
+## Proprietăți
+
+Referința este generată din tipurile componentei publice. Atributele native, inclusiv numele accesibile și gestionarele de evenimente, sunt acceptate și pe părțile care redau elemente.
+
+<SliderReference />
+
+<PageBanner illustration="section-apps-config" />
