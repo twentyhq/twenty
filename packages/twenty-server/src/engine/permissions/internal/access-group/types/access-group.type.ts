@@ -12,7 +12,7 @@ export type AccessGroupMemberFieldValues = Record<
   AccessGroupMemberFieldValue
 >;
 
-export type NewAccessGroup = {
+export type AccessGroup = {
   groupHash: string;
   roleId: string;
   objectMetadataId: string;
