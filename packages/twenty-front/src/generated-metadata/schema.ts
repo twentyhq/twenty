@@ -1014,6 +1014,8 @@ export type BarChartData = {
 
 export type BarChartDataInput = {
   configuration: Scalars['JSON']['input'];
+  dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
+  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 
@@ -3129,6 +3131,8 @@ export type LineChartData = {
 
 export type LineChartDataInput = {
   configuration: Scalars['JSON']['input'];
+  dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
+  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 
@@ -5933,6 +5937,8 @@ export type PieChartData = {
 
 export type PieChartDataInput = {
   configuration: Scalars['JSON']['input'];
+  dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
+  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 

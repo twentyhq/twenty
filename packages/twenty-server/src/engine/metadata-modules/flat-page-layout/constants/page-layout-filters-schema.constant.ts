@@ -1,9 +1,10 @@
 import {
   type PageLayoutFilter,
   PageLayoutFilterType,
-  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { z } from 'zod';
+
+import { PAGE_LAYOUT_FILTER_VALUE_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout/constants/page-layout-filter-value-schema.constant';
 
 export const PAGE_LAYOUT_FILTERS_SCHEMA = z.array(
   z.strictObject({
@@ -11,15 +12,6 @@ export const PAGE_LAYOUT_FILTERS_SCHEMA = z.array(
     label: z.string(),
     type: z.enum(PageLayoutFilterType),
     position: z.number(),
-    defaultValue: z
-      .strictObject({
-        conditions: z.array(
-          z.strictObject({
-            operand: z.enum(ViewFilterOperand),
-            value: z.string(),
-          }),
-        ),
-      })
-      .nullable(),
+    defaultValue: PAGE_LAYOUT_FILTER_VALUE_SCHEMA.nullable(),
   }),
 ) satisfies z.ZodType<PageLayoutFilter[]>;

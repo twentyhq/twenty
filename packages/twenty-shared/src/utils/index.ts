@@ -129,6 +129,7 @@ export { resolveRelativeDateFilter } from './filter/dates/utils/resolveRelativeD
 export { resolveRelativeDateFilterStringified } from './filter/dates/utils/resolveRelativeDateFilterStringified';
 export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelativeDateTimeFilter';
 export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
+export { stringifyRelativeDateFilter } from './filter/dates/utils/stringifyRelativeDateFilter';
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
 export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
@@ -231,6 +232,7 @@ export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
+export { buildDashboardFilterForWidget } from './pageLayout/buildDashboardFilterForWidget';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';

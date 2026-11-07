@@ -925,6 +925,8 @@ type BarChartData {
 
 input BarChartDataInput {
   configuration: JSON!
+  dashboardFilterTimeZone: String
+  dashboardFilterValues: JSON
   objectMetadataId: UUID!
 }
 
@@ -2960,6 +2962,8 @@ type LineChartData {
 
 input LineChartDataInput {
   configuration: JSON!
+  dashboardFilterTimeZone: String
+  dashboardFilterValues: JSON
   objectMetadataId: UUID!
 }
 
@@ -4172,6 +4176,8 @@ type PieChartData {
 
 input PieChartDataInput {
   configuration: JSON!
+  dashboardFilterTimeZone: String
+  dashboardFilterValues: JSON
   objectMetadataId: UUID!
 }
 

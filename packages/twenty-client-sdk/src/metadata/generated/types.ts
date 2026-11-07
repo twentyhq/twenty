@@ -2105,6 +2105,12 @@ export default {
             "configuration": [
                 335
             ],
+            "dashboardFilterTimeZone": [
+                1
+            ],
+            "dashboardFilterValues": [
+                335
+            ],
             "objectMetadataId": [
                 555
             ],
@@ -6130,6 +6136,12 @@ export default {
         },
         "LineChartDataInput": {
             "configuration": [
+                335
+            ],
+            "dashboardFilterTimeZone": [
+                1
+            ],
+            "dashboardFilterValues": [
                 335
             ],
             "objectMetadataId": [
@@ -10898,6 +10910,12 @@ export default {
         },
         "PieChartDataInput": {
             "configuration": [
+                335
+            ],
+            "dashboardFilterTimeZone": [
+                1
+            ],
+            "dashboardFilterValues": [
                 335
             ],
             "objectMetadataId": [

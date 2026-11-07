@@ -4,10 +4,12 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
 import {
+  combineFilters,
   isDefined,
   isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
@@ -31,6 +33,7 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
+import { buildDashboardChartFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-dashboard-chart-filter-or-throw.util';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
@@ -52,6 +55,9 @@ type ExecuteGroupByQueryParams = {
   aggregateFieldMetadataId: string;
   aggregateOperation: AggregateOperations;
   filter?: ChartFilter;
+  dashboardFilterBindings?: DashboardFilterBinding[] | null;
+  dashboardFilterValues?: unknown;
+  dashboardFilterTimeZone?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -81,6 +87,9 @@ export class ChartDataQueryService {
     aggregateFieldMetadataId,
     aggregateOperation,
     filter,
+    dashboardFilterBindings,
+    dashboardFilterValues,
+    dashboardFilterTimeZone,
     dateGranularity,
     userTimezone,
     firstDayOfTheWeek,
@@ -96,13 +105,33 @@ export class ChartDataQueryService {
       ? authContext.workspaceMemberId
       : undefined;
 
-    const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
-      filter,
+    const dashboardFilterTimeZoneOrWidgetTimeZone =
+      dashboardFilterTimeZone ?? userTimezone;
+
+    const dashboardFilter = buildDashboardChartFilterOrThrow({
+      dashboardFilterValues,
+      dashboardFilterBindings,
+      timeZone: dashboardFilterTimeZoneOrWidgetTimeZone,
+      objectMetadataId: flatObjectMetadata.id,
       flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      userTimezone,
-      currentWorkspaceMemberId,
     });
+
+    const gqlOperationFilter = combineFilters([
+      convertChartFilterToGqlOperationFilter({
+        filter,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        userTimezone,
+        currentWorkspaceMemberId,
+      }),
+      convertChartFilterToGqlOperationFilter({
+        filter: dashboardFilter,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        userTimezone: dashboardFilterTimeZoneOrWidgetTimeZone,
+        currentWorkspaceMemberId,
+      }),
+    ]);
 
     const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,

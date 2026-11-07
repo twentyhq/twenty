@@ -29,6 +29,8 @@ type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
+  dashboardFilterValues?: unknown;
+  dashboardFilterTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
 };
 
@@ -44,6 +46,8 @@ export class PieChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
+    dashboardFilterValues,
+    dashboardFilterTimeZone,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
@@ -115,6 +119,9 @@ export class PieChartDataService {
         aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
         aggregateOperation: configuration.aggregateOperation,
         filter: configuration.filter,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        dashboardFilterValues,
+        dashboardFilterTimeZone,
         dateGranularity: configuration.dateGranularity,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:

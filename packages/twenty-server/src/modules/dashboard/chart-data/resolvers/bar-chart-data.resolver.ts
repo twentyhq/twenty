@@ -43,6 +43,8 @@ export class BarChartDataResolver {
     return this.barChartDataService.getBarChartData({
       objectMetadataId: input.objectMetadataId,
       configuration: input.configuration,
+      dashboardFilterValues: input.dashboardFilterValues,
+      dashboardFilterTimeZone: input.dashboardFilterTimeZone,
       workspaceId: authContext.workspace.id,
       authContext,
       locale: context.req.locale,
