@@ -194,3 +194,86 @@ export const StoresZonedRelativeDateWithoutZone: Story = {
     );
   },
 };
+
+export const KeepsTheValueUntilADateIsEntered: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Relative date'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Date range' }),
+    );
+
+    const [startDateInput] = await canvas.findAllByRole('textbox', {
+      name: 'Date',
+    });
+
+    expect(args.onChange).not.toHaveBeenCalled();
+
+    await userEvent.click(startDateInput);
+    await userEvent.keyboard('03102026');
+
+    await waitFor(() =>
+      expect(args.onChange).toHaveBeenLastCalledWith({
+        conditions: [
+          { operand: ViewFilterOperand.IS_AFTER, value: '2026-03-10' },
+        ],
+      }),
+    );
+  },
+};
+
+export const KeepsTheRelativeValueAcrossModes: Story = {
+  args: {
+    initialValue: {
+      conditions: [
+        { operand: ViewFilterOperand.IS_RELATIVE, value: 'NEXT_1_WEEK' },
+      ],
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Relative date'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Date range' }),
+    );
+    await userEvent.click(await canvas.findByText('Date range'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Relative date' }),
+    );
+
+    expect(await canvas.findByText('Next')).toBeVisible();
+    expect(canvas.getByPlaceholderText('Number')).toHaveValue('1');
+    expect(canvas.getByText('Week')).toBeVisible();
+    expect(args.onChange).not.toHaveBeenCalled();
+  },
+};
+
+export const AppliesARelativeDateOnceOneIsPicked: Story = {
+  args: { initialValue: null },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('No default'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Relative date' }),
+    );
+    await userEvent.click(await canvas.findByText('Day'));
+
+    expect(args.onChange).not.toHaveBeenCalled();
+
+    await userEvent.click(await body.findByRole('option', { name: 'Week' }));
+
+    await waitFor(() =>
+      expect(args.onChange).toHaveBeenLastCalledWith({
+        conditions: [
+          { operand: ViewFilterOperand.IS_RELATIVE, value: 'THIS_1_WEEK' },
+        ],
+      }),
+    );
+  },
+};

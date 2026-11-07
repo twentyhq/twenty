@@ -13,10 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import {
-  DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX,
-  DEFAULT_RELATIVE_DATE_FILTER_VALUE,
-} from 'twenty-shared/constants';
+import { DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX } from 'twenty-shared/constants';
 import {
   getDashboardFilterConditionValueIssue,
   isDefined,
@@ -64,7 +61,8 @@ export const PageLayoutFilterValueInput = ({
   const instanceId = useId();
   const { getRelativeDateFilterWithUserTimezone } =
     useGetRelativeDateFilterWithUserTimezone();
-  const [isDateRangeChosen, setIsDateRangeChosen] = useState(false);
+  const [chosenMode, setChosenMode] =
+    useState<PageLayoutFilterValueMode | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // The pickers keep their own draft, so a refused input remounts them on the stored value
   const [pickersKey, setPickersKey] = useState(0);
@@ -78,8 +76,7 @@ export const PageLayoutFilterValueInput = ({
   };
 
   const valueMode = getPageLayoutFilterValueMode(value ?? null);
-  const mode =
-    valueMode === 'NONE' && isDateRangeChosen ? 'DATE_RANGE' : valueMode;
+  const mode = chosenMode ?? valueMode;
   const storedDateRange = getPageLayoutFilterDateRange(value ?? null);
   const { startDate, endDate } = storedDateRange;
 
@@ -104,7 +101,7 @@ export const PageLayoutFilterValueInput = ({
     { label: emptyValueLabel, value: 'NONE' },
     { label: t`Relative date`, value: 'RELATIVE' },
     { label: t`Date range`, value: 'DATE_RANGE' },
-    ...(mode === 'CUSTOM' ? [customModeOption] : []),
+    ...(valueMode === 'CUSTOM' ? [customModeOption] : []),
   ];
 
   const handleRelativeDateChange = (relativeDateFilter: RelativeDateFilter) => {
@@ -134,7 +131,7 @@ export const PageLayoutFilterValueInput = ({
   };
 
   const handleDateRangeChange = (dateRange: typeof storedDateRange) => {
-    setIsDateRangeChosen(true);
+    setChosenMode('DATE_RANGE');
 
     if (
       isNonEmptyString(dateRange.startDate) &&
@@ -165,18 +162,20 @@ export const PageLayoutFilterValueInput = ({
       return;
     }
 
-    setIsDateRangeChosen(newMode === 'DATE_RANGE');
     showError(null);
 
-    if (newMode === 'RELATIVE') {
-      handleRelativeDateChange(
-        getRelativeDateFilterWithUserTimezone(
-          DEFAULT_RELATIVE_DATE_FILTER_VALUE,
-        ),
-      );
+    if (newMode === valueMode) {
+      setChosenMode(null);
       return;
     }
 
+    // Only the empty mode is a value in itself; the others apply once one is picked
+    if (newMode !== 'NONE') {
+      setChosenMode(newMode);
+      return;
+    }
+
+    setChosenMode(null);
     onChange(null);
   };
 
@@ -198,7 +197,9 @@ export const PageLayoutFilterValueInput = ({
       {mode === 'RELATIVE' && (
         <FormRelativeDatePicker
           key={pickersKey}
-          defaultValue={relativeDateDisplayValue}
+          defaultValue={
+            valueMode === 'RELATIVE' ? relativeDateDisplayValue : undefined
+          }
           onChange={handleRelativeDateChange}
         />
       )}

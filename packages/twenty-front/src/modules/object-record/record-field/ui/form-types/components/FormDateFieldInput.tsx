@@ -1,3 +1,4 @@
+import { FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID } from '@/object-record/record-field/ui/form-types/constants/FormDateFieldPickerClickOutsideId';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -31,9 +32,6 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-shared/types';
 
-const FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID =
-  'form-date-field-picker-floating';
-
 const StyledDateInputTextContainer = styled.div<{ isReadonly?: boolean }>`
   align-items: center;
   display: flex;
@@ -49,6 +47,11 @@ const StyledDateInputTextContainer = styled.div<{ isReadonly?: boolean }>`
         ? themeCssVariables.font.color.light
         : themeCssVariables.font.color.primary};
   }
+`;
+
+// Portaled to the body, so it must stack above the dropdown or grid it opens from
+const StyledDatePickerFloatingContainer = styled.div`
+  z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
 const StyledDatePickerInputWrapper = styled.div`
@@ -106,7 +109,7 @@ export const FormDateFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, elements, floatingStyles } = useFloating({
     open: displayDatePicker,
     placement: 'bottom-start',
     strategy: 'fixed',
@@ -298,7 +301,7 @@ export const FormDateFieldInput = ({
         draftValue.mode === 'edit' &&
         !readonly ? (
           <FloatingPortal>
-            <div
+            <StyledDatePickerFloatingContainer
               data-floating-ui-viewport
               ref={refs.setFloating}
               style={floatingStyles}
@@ -314,9 +317,11 @@ export const FormDateFieldInput = ({
                   onEscape={handlePickerEscape}
                   onClear={handlePickerClear}
                   hideHeaderInput
+                  // Inside a dropdown, the month and year lists would otherwise portal under the picker
+                  portalContainer={elements.floating}
                 />
               </OverlayContainer>
-            </div>
+            </StyledDatePickerFloatingContainer>
           </FloatingPortal>
         ) : null}
         {VariablePicker && !readonly ? (

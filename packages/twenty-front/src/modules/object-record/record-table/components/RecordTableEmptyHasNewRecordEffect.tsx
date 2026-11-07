@@ -6,6 +6,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -18,7 +19,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
+import {
+  combineFilters,
+  computeRecordGqlOperationFilter,
+} from 'twenty-shared/utils';
 
 export const RecordTableEmptyHasNewRecordEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -56,18 +60,23 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
     currentRecordFilterGroupsComponentState,
   );
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const queryId = `record-table-empty-${objectMetadataItem.nameSingular}`;
 
   const operationSignature = useMemo(
     () => ({
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
-        filter: computeRecordGqlOperationFilter({
-          fieldMetadataItems: flattenedFieldMetadataItems,
-          recordFilters: currentRecordFilters,
-          recordFilterGroups: currentRecordFilterGroups,
-          filterValueDependencies,
-        }),
+        filter: combineFilters([
+          computeRecordGqlOperationFilter({
+            fieldMetadataItems: flattenedFieldMetadataItems,
+            recordFilters: currentRecordFilters,
+            recordFilterGroups: currentRecordFilterGroups,
+            filterValueDependencies,
+          }),
+          additionalFilter,
+        ]),
         orderBy: turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts),
       },
     }),
@@ -78,6 +87,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       filterValueDependencies,
       currentRecordSorts,
       flattenedFieldMetadataItems,
+      additionalFilter,
     ],
   );
 

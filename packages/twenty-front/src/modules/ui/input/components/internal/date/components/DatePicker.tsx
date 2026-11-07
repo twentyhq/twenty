@@ -5,6 +5,7 @@ import { DatePickerHeader } from '@/ui/input/components/internal/date/components
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { Temporal } from 'temporal-polyfill';
+import { type DropdownContentProps } from 'twenty-ui/components/navigation';
 import { type Nullable } from 'twenty-shared/types';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
@@ -33,6 +34,7 @@ type DatePickerProps = {
   keyboardEventsDisabled?: boolean;
   onClear?: () => void;
   hideCalendar?: boolean;
+  portalContainer?: DropdownContentProps['container'];
 };
 
 export const DatePicker = ({
@@ -46,6 +48,7 @@ export const DatePicker = ({
   relativeDate,
   onRelativeDateChange,
   hideHeaderInput,
+  portalContainer,
 }: DatePickerProps) => {
   const plainDate = isDefined(plainDateString)
     ? Temporal.PlainDate.from(plainDateString)
@@ -102,6 +105,7 @@ export const DatePicker = ({
               prevMonthButtonDisabled={header.isPreviousMonthDisabled}
               nextMonthButtonDisabled={header.isNextMonthDisabled}
               hideInput={hideHeaderInput}
+              portalContainer={portalContainer}
             />
           );
         }}
