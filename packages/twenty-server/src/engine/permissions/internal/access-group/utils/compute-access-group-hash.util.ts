@@ -7,11 +7,13 @@ import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/intern
 export const computeAccessGroupHash = ({
   roleId,
   objectMetadataId,
+  hasRowLevelRule,
   rowLevelPermissionPredicateGroupId,
   memberFieldValues,
 }: {
   roleId: string;
   objectMetadataId: string;
+  hasRowLevelRule: boolean;
   rowLevelPermissionPredicateGroupId: string | null;
   memberFieldValues: AccessGroupMemberFieldValues | null;
 }): string =>
@@ -20,6 +22,7 @@ export const computeAccessGroupHash = ({
       JSON.stringify([
         roleId,
         objectMetadataId,
+        hasRowLevelRule,
         rowLevelPermissionPredicateGroupId,
         Object.entries(memberFieldValues ?? {}).sort(
           ([firstKey], [secondKey]) => firstKey.localeCompare(secondKey),
