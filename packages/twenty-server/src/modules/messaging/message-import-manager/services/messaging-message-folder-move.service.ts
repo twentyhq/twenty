@@ -17,7 +17,6 @@ export class MessagingMessageFolderMoveService {
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
   ) {}
 
-  // Returns what still needs saving: a sent draft has more to refresh, a plain move doesn't.
   async relinkMovedMessages({
     messages,
     messageChannelId,
@@ -47,19 +46,20 @@ export class MessagingMessageFolderMoveService {
           return messages;
         }
 
-        const folderLinkRepository =
+        const messageChannelMessageAssociationMessageFolderRepository =
           transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
             { shouldSkipEventEmission: true },
           );
 
-        const folderLinks = await folderLinkRepository.find({
-          where: {
-            messageChannelMessageAssociationId: In(
-              associations.map(({ id }) => id),
-            ),
-          },
-        });
+        const folderLinks =
+          await messageChannelMessageAssociationMessageFolderRepository.find({
+            where: {
+              messageChannelMessageAssociationId: In(
+                associations.map(({ id }) => id),
+              ),
+            },
+          });
 
         const movedMessages = messages.flatMap((message) => {
           const association = associations.find(
@@ -97,7 +97,7 @@ export class MessagingMessageFolderMoveService {
           return messages;
         }
 
-        await folderLinkRepository.delete({
+        await messageChannelMessageAssociationMessageFolderRepository.delete({
           messageChannelMessageAssociationId: In(
             movedMessages.map(
               ({ messageChannelMessageAssociationId }) =>

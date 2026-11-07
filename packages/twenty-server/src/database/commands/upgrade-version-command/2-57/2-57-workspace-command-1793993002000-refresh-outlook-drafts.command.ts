@@ -69,7 +69,6 @@ export class RefreshOutlookDraftsCommand extends ProvisionedWorkspaceCommandRunn
         continue;
       }
 
-      // The next list fetch clears the import queue, so only an idle channel can take these
       if (
         messageChannel.syncStage !==
         MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
