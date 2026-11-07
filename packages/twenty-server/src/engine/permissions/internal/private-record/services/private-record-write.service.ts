@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { RecordPrivacyWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-privacy-write-orm.service';
@@ -141,13 +142,23 @@ export class PrivateRecordWriteService {
   private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingObject: { flatObjectMetadata },
+    sharingObject: { flatObjectMetadata, isShareable },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
+
+    // Without sharing no share is read, so anyone but the creator would lock themselves out
+    if (
+      isPrivate &&
+      !isShareable &&
+      args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
+    ) {
+      throw new NotFoundError('Record not found');
+    }
+
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',

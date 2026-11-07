@@ -373,6 +373,14 @@ describe('Record-level sharing on an object open by default', () => {
 
     try {
       expect(
+        (
+          await setPrivate({
+            isPrivate: true,
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          })
+        ).body.errors,
+      ).toBeDefined();
+      expect(
         (await setPrivate({ isPrivate: true })).body.errors,
       ).toBeUndefined();
       expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);

@@ -66,7 +66,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
-    description: msg`Apply private records on objects that aren't private by default. Turning this off makes existing private records visible to roles again.`,
+    description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing.`,
   },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
