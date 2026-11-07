@@ -97,8 +97,11 @@ it.each(['button', 'Enter'])(
     );
     const user = userEvent.setup();
     await user.type(await editableInput(), 'https://PORTAL.example.com:443/');
-    if (method === 'Enter') await user.keyboard('{Enter}');
-    else await user.click(screen.getByRole('button', { name: 'Add origin' }));
+    if (method === 'Enter') {
+      await user.keyboard('{Enter}');
+    } else {
+      await user.click(screen.getByRole('button', { name: 'Add origin' }));
+    }
     await user.click(
       await screen.findByRole('button', {
         name: 'Remove https://portal.example.com',

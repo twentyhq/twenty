@@ -20,16 +20,14 @@ export const getNavigationSubItemLeftAdornment = ({
   if (thereIsOnlyOneItem || itsTheLastItem) {
     if (itsTheSelectedItem) {
       return 'last-selected';
-    } else {
-      return 'last-not-selected';
     }
-  } else {
-    if (itsTheSelectedItem) {
-      return 'intermediate-selected';
-    } else if (itsBeforeTheSelectedItem) {
-      return 'intermediate-before-selected';
-    } else {
-      return 'intermediate-after-selected';
-    }
+    return 'last-not-selected';
   }
+  if (itsTheSelectedItem) {
+    return 'intermediate-selected';
+  }
+  if (itsBeforeTheSelectedItem) {
+    return 'intermediate-before-selected';
+  }
+  return 'intermediate-after-selected';
 };

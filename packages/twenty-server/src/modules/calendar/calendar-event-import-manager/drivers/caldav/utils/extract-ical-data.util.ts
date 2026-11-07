@@ -6,7 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 export const extractICalData = (
   calendarData: string | Record<string, unknown> | null | undefined,
 ): string | null => {
-  if (!isDefined(calendarData)) return null;
+  if (!isDefined(calendarData)) {
+    return null;
+  }
 
   if (isString(calendarData) && calendarData.includes('VCALENDAR')) {
     return calendarData;
@@ -16,7 +18,9 @@ export const extractICalData = (
     for (const value of Object.values(calendarData)) {
       const result = extractICalData(value as string | Record<string, unknown>);
 
-      if (isDefined(result)) return result;
+      if (isDefined(result)) {
+        return result;
+      }
     }
   }
 

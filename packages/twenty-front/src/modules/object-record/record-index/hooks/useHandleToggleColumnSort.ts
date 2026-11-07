@@ -39,7 +39,9 @@ export const useHandleToggleColumnSort = ({
           columnDefinition.fieldMetadataId === fieldMetadataId,
       );
 
-      if (!isDefined(correspondingColumnDefinition)) return;
+      if (!isDefined(correspondingColumnDefinition)) {
+        return;
+      }
 
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 

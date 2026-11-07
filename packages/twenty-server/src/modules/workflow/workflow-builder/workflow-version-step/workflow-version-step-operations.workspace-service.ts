@@ -813,10 +813,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             });
 
             return { key, value: record };
-          } else {
-            // @ts-expect-error legacy noImplicitAny
-            return { key, value: response[key] };
           }
+          // @ts-expect-error legacy noImplicitAny
+          return { key, value: response[key] };
         }),
       );
 

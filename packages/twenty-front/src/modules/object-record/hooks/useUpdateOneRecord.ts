@@ -194,7 +194,9 @@ export const useUpdateOneRecord = () => {
         },
         update: (cache, { data }) => {
           const record = (data as Record<string, any>)?.[mutationResponseField];
-          if (!isDefined(record)) return;
+          if (!isDefined(record)) {
+            return;
+          }
 
           const recordToUpsert = getRecordFromRecordNode({
             recordNode: record,

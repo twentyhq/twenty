@@ -27,7 +27,7 @@ const normalizeErrorMessage = (error: any) => {
 
 describe('View Field Group Resolver - Failing Create Operation', () => {
   let testSetup: ViewFieldGroupTestSetup;
-  let createdViewFieldGroupIds: string[] = [];
+  const createdViewFieldGroupIds: string[] = [];
 
   beforeAll(async () => {
     testSetup = await setupViewFieldGroupTest();

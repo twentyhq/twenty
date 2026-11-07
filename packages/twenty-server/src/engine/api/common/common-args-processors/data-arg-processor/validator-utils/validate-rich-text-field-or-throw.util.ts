@@ -119,7 +119,9 @@ export const validateRichTextFieldOrThrow = (
 } | null => {
   const preValidatedValue = validateRawJsonFieldOrThrow(value, fieldName);
 
-  if (isNull(preValidatedValue)) return null;
+  if (isNull(preValidatedValue)) {
+    return null;
+  }
 
   for (const [subField, subFieldValue] of Object.entries(preValidatedValue)) {
     switch (subField) {
