@@ -51,6 +51,7 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
 import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   MessageQueueException,
@@ -113,7 +114,10 @@ export class BullMQDriver
       getJobKey: ({ queueName, jobId }) =>
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
+      getGroupRateLimits: (queueName) =>
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].groupRateLimits,
       metricsService,
+      twentyConfigService,
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -873,7 +877,9 @@ export class BullMQDriver
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      ['waiting', 'paused', 'prioritized'],
+      this.fairQueueScheduler.isGroupRateLimitEnabled(queueName)
+        ? ['waiting', 'paused', 'prioritized', 'delayed']
+        : ['waiting', 'paused', 'prioritized'],
       0,
       -1,
     );
