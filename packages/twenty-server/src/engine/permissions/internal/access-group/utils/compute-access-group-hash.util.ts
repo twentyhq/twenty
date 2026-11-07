@@ -2,7 +2,11 @@
 
 import { createHash } from 'crypto';
 
-import { type RowLevelRecordsPermissions } from 'twenty-shared/types';
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  type RowLevelRecordsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
@@ -10,31 +14,48 @@ import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/intern
 const sortByContent = (entries: unknown[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
 
-const buildRowLevelRuleContent = (
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined,
-) =>
-  isDefined(rowLevelRecordsPermissions)
-    ? {
-        predicates: sortByContent(
-          rowLevelRecordsPermissions.predicates.map((predicate) => [
-            predicate.rowLevelPermissionPredicateGroupId,
-            predicate.fieldMetadataId,
-            predicate.subFieldName,
-            predicate.operand,
-            predicate.value,
-            predicate.workspaceMemberFieldMetadataId,
-            predicate.workspaceMemberSubFieldName,
-          ]),
-        ),
-        predicateGroups: sortByContent(
-          rowLevelRecordsPermissions.predicateGroups.map((predicateGroup) => [
-            predicateGroup.id,
-            predicateGroup.parentRowLevelPermissionPredicateGroupId,
-            predicateGroup.logicalOperator,
-          ]),
-        ),
-      }
-    : null;
+const buildPredicateGroupContent = ({
+  parentPredicateGroupId,
+  predicates,
+  predicateGroups,
+}: {
+  parentPredicateGroupId: string | null;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+}): { predicates: string[]; predicateGroups: string[] } => ({
+  predicates: sortByContent(
+    predicates
+      .filter(
+        ({ rowLevelPermissionPredicateGroupId }) =>
+          (rowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicate) => [
+        predicate.fieldMetadataId,
+        predicate.subFieldName,
+        predicate.operand,
+        predicate.value,
+        predicate.workspaceMemberFieldMetadataId,
+        predicate.workspaceMemberSubFieldName,
+      ]),
+  ),
+  predicateGroups: sortByContent(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          (parentRowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicateGroup) => [
+        predicateGroup.logicalOperator,
+        buildPredicateGroupContent({
+          parentPredicateGroupId: predicateGroup.id,
+          predicates,
+          predicateGroups,
+        }),
+      ]),
+  ),
+});
 
 export const computeAccessGroupHash = ({
   roleId,
@@ -54,7 +75,13 @@ export const computeAccessGroupHash = ({
       JSON.stringify([
         roleId,
         objectMetadataId,
-        buildRowLevelRuleContent(rowLevelRecordsPermissions),
+        isDefined(rowLevelRecordsPermissions)
+          ? buildPredicateGroupContent({
+              parentPredicateGroupId: null,
+              predicates: rowLevelRecordsPermissions.predicates,
+              predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+            })
+          : null,
         rowLevelPermissionPredicateGroupId,
         Object.entries(memberFieldValues ?? {}).sort(
           ([firstKey], [secondKey]) => firstKey.localeCompare(secondKey),

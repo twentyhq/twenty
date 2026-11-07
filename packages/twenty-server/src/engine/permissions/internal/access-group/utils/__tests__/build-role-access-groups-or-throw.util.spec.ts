@@ -272,9 +272,13 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     expect(buildHash('Paris')).not.toBe(buildHash('London'));
   });
 
-  it('should keep the hash when ids, order or operation flags change', () => {
+  it('should keep the hash when ids below the root, order or operation flags change', () => {
     const firstPredicate = buildPredicate({ id: 'first', value: 'Paris' });
-    const secondPredicate = buildPredicate({ id: 'second', value: 'London' });
+    const secondPredicate = buildPredicate({
+      id: 'second',
+      value: 'London',
+      rowLevelPermissionPredicateGroupId: 'nested',
+    });
     const [accessGroup] = build({
       objectRecordsPermissions: buildRowLevelPermissions({
         predicates: [firstPredicate, secondPredicate],
@@ -283,10 +287,23 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     const [sameRuleAccessGroup] = build({
       objectRecordsPermissions: buildRowLevelPermissions({
         predicates: [
-          { ...secondPredicate, id: 'other-second' },
+          {
+            ...secondPredicate,
+            id: 'other-second',
+            rowLevelPermissionPredicateGroupId: 'other-nested',
+          },
           { ...firstPredicate, id: 'other-first' },
         ],
-        predicateGroups: ROOT_AND_NESTED_GROUPS.map((predicateGroup) => ({
+        predicateGroups: [
+          buildPredicateGroup({
+            id: 'other-nested',
+            parentRowLevelPermissionPredicateGroupId: RULE_ID,
+          }),
+          buildPredicateGroup({
+            id: RULE_ID,
+            parentRowLevelPermissionPredicateGroupId: null,
+          }),
+        ].map((predicateGroup) => ({
           ...predicateGroup,
           positionInRowLevelPermissionPredicateGroup: 1,
           canUpdateRecords: true,
@@ -295,6 +312,24 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     });
 
     expect(sameRuleAccessGroup.groupHash).toBe(accessGroup.groupHash);
+  });
+
+  it('should change the hash when a predicate moves to another group', () => {
+    const buildHash = (rowLevelPermissionPredicateGroupId: string) =>
+      build({
+        objectRecordsPermissions: buildRowLevelPermissions({
+          predicates: [
+            buildPredicate({ id: 'first', value: 'Paris' }),
+            buildPredicate({
+              id: 'second',
+              value: 'London',
+              rowLevelPermissionPredicateGroupId,
+            }),
+          ],
+        }),
+      })[0].groupHash;
+
+    expect(buildHash(RULE_ID)).not.toBe(buildHash('nested'));
   });
 
   it('should make no member group when no member holds the role', () => {
