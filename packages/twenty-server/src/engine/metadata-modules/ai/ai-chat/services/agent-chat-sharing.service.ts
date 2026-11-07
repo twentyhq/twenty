@@ -477,7 +477,7 @@ export class AgentChatSharingService {
         });
         await this.recordShareSystemWriteService.setRecordsPrivacy({
           workspaceId: args.workspaceId,
-          flatObjectMetadata: objectMetadata,
+          objectMetadataId: objectMetadata.id,
           recordIds: [threadId],
           isPrivate: true,
           transactionScope,
@@ -694,7 +694,7 @@ export class AgentChatSharingService {
 
     await this.recordShareSystemWriteService.setRecordsPrivacy({
       workspaceId,
-      flatObjectMetadata: participantObjectMetadata,
+      objectMetadataId: participantObjectMetadata.id,
       recordIds: insertedParticipantIds,
       isPrivate: true,
       transactionScope,
@@ -820,7 +820,7 @@ export class AgentChatSharingService {
     const { permissionsPrincipals, objectIdByNameSingular } =
       getWorkspaceContext();
 
-    return this.recordPermissionsService.findGrantedRecordIdsOnReadableObject({
+    return this.recordPermissionsService.filterGrantedRecordIds({
       principals: permissionsPrincipals,
       objectMetadataId: objectIdByNameSingular.agentChatThread,
       recordIds: threadIds,

@@ -7,7 +7,7 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
-import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
+import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
 import { RecordShareWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-share-write-orm.service';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
@@ -35,7 +35,7 @@ export class RecordSharingChangeService {
     private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
     private readonly recordPermissionsService: RecordPermissionsService,
-    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
+    private readonly recordSharingReadService: RecordSharingReadService,
   ) {}
 
   async runChange({
@@ -105,7 +105,7 @@ export class RecordSharingChangeService {
           }
 
           const { viewerAccessLevel, creatorWorkspaceMemberId } =
-            await this.recordSharingPermissionsService.findViewerRecordAccess({
+            await this.recordSharingReadService.findViewerRecordAccess({
               ...args,
               transactionScope,
             });
@@ -126,8 +126,6 @@ export class RecordSharingChangeService {
       throw toPermissionsException(error);
     }
 
-    return this.recordSharingPermissionsService.findRecordSharingAfterChange(
-      args,
-    );
+    return this.recordSharingReadService.findRecordSharingAfterChange(args);
   }
 }

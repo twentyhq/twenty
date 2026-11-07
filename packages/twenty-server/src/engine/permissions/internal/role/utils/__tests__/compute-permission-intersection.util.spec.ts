@@ -29,6 +29,7 @@ const buildAllRecordsPermissions = ({
 }: AllRecordsGrants & {
   restrictedFields?: RestrictedFieldsPermissions;
 }): ObjectRecordsPermissions => ({
+  canCreateAllRecords: grants.canUpdate,
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
@@ -49,6 +50,29 @@ const buildRoleRecordsPermissions = (
 describe('computePermissionIntersection', () => {
   const objectMetadataId1 = 'object-1';
   const objectMetadataId2 = 'object-2';
+
+  describe('create permission', () => {
+    const buildRole = (
+      objectRecordsPermissions: Partial<ObjectRecordsPermissions>,
+    ) =>
+      buildRoleRecordsPermissions({
+        [objectMetadataId1]: {
+          ...buildAllRecordsPermissions(ALL_GRANTED),
+          ...objectRecordsPermissions,
+        },
+      });
+
+    it('should deny when one role denies it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({ canCreateAllRecords: false }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+  });
 
   describe('edge cases', () => {
     it('should return no permissions for empty array', () => {
@@ -314,6 +338,7 @@ describe('computePermissionIntersection', () => {
             canDestroy: false,
           }),
           rowLevelRecordsPermissions: {
+            canCreateRecords: grants.canUpdate,
             canReadRecords: grants.canRead,
             canUpdateRecords: grants.canUpdate,
             canSoftDeleteRecords: grants.canSoftDelete,
@@ -415,6 +440,7 @@ describe('computePermissionIntersection', () => {
           canDestroy: false,
         }),
         rowLevelRecordsPermissions: {
+          canCreateRecords: true,
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,
@@ -444,6 +470,7 @@ describe('computePermissionIntersection', () => {
         expect(
           result.objects[objectMetadataId1]?.rowLevelRecordsPermissions,
         ).toMatchObject({
+          canCreateRecords: deniedGrant !== 'canUpdate',
           canReadRecords: deniedGrant !== 'canRead',
           canUpdateRecords: deniedGrant !== 'canUpdate',
           canSoftDeleteRecords: deniedGrant !== 'canSoftDelete',

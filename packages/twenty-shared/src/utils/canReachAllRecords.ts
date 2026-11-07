@@ -10,6 +10,7 @@ export const canReachAllRecords = ({
   objectRecordsPermissions:
     | Pick<
         ObjectRecordsPermissions,
+        | 'canCreateAllRecords'
         | 'canReadAllRecords'
         | 'canUpdateAllRecords'
         | 'canSoftDeleteAllRecords'
@@ -26,6 +27,7 @@ export const canReachAllRecords = ({
     case 'read':
       return objectRecordsPermissions.canReadAllRecords;
     case 'create':
+      return objectRecordsPermissions.canCreateAllRecords;
     case 'update':
       return objectRecordsPermissions.canUpdateAllRecords;
     case 'destroy':
