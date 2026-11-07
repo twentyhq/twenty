@@ -7,7 +7,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
@@ -65,14 +65,14 @@ export const buildWorkspaceAccessGroups = ({
     'idByUserWorkspaceId' | 'byId'
   >;
 }): {
-  accessGroups: AccessGroup[];
+  accessGroups: AccessGroupWithoutCompactId[];
   hasFailures: boolean;
 } => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
     flatWorkspaceMemberMaps,
   });
-  const accessGroupByGroupHash = new Map<string, AccessGroup>();
+  const accessGroupByGroupHash = new Map<string, AccessGroupWithoutCompactId>();
   let hasFailures = false;
 
   for (const [roleId, { objects }] of Object.entries(rolesPermissions)) {

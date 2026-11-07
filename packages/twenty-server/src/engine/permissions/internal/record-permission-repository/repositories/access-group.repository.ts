@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
@@ -58,7 +58,7 @@ export class AccessGroupRepository {
     newAccessGroups,
   }: {
     workspaceId: string;
-    newAccessGroups: AccessGroup[];
+    newAccessGroups: AccessGroupWithoutCompactId[];
   }): Promise<void> {
     for (
       let start = 0;
