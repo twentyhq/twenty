@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 
-const sortByContent = (entries: unknown[]): string[] =>
+const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
 
 const buildPredicateGroupContent = ({
