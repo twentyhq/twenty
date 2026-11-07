@@ -13,6 +13,7 @@ import {
   type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { type JobMemoryReconciliation } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
+import { type JobPayloadReconciliation } from 'src/engine/core-modules/message-queue/drivers/payload/job-payload-offloader';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -77,6 +78,14 @@ export class MessageQueueService {
     }
 
     return this.driver.reconcileJobMemory();
+  }
+
+  reconcileJobPayloads(): Promise<JobPayloadReconciliation> {
+    if (typeof this.driver.reconcileJobPayloads !== 'function') {
+      return Promise.resolve({ deletedCount: 0 });
+    }
+
+    return this.driver.reconcileJobPayloads();
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

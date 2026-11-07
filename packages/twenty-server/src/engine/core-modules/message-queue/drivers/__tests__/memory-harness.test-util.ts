@@ -1,10 +1,18 @@
 import { Logger } from '@nestjs/common';
 
+import { Readable } from 'stream';
+
 import { UnrecoverableError } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import {
   type QueueJobOptions,
@@ -20,6 +28,7 @@ const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${MEMORY_SCENARIO_QUEUE}:`;
 const USED_KEY_PREFIX = `${KEY_PREFIX}:jobmem:used:`;
 const JOBS_KEY_PREFIX = `${KEY_PREFIX}:jobmem:jobs:`;
+const PAYLOAD_REFS_KEY = `${KEY_PREFIX}:jobpayload:refs`;
 export const MEMORY_SCENARIO_JOB_NAME = 'memory-scenario-job';
 
 export type MemoryScenarioJobData = {
@@ -115,7 +124,13 @@ const mockBullMQ: BullMQDouble = {
       mockBullMQ.deduplicatedJobIds.set(deduplicationId, id);
     }
 
-    await mockBullMQ.redis?.hset(buildJobKey(id), 'name', name);
+    await mockBullMQ.redis?.hset(
+      buildJobKey(id),
+      'name',
+      name,
+      'data',
+      JSON.stringify(data),
+    );
 
     return { id };
   },
@@ -175,6 +190,7 @@ jest.mock('bullmq', () => ({
       return mockBullMQ.jobs.get(jobId);
     },
     getRanges: async () => [...mockBullMQ.waitingJobIds],
+    getJobs: async () => [...mockBullMQ.jobs.values()],
     setGlobalConcurrency: jest.fn(),
     removeGlobalConcurrency: jest.fn(),
   })),
@@ -234,6 +250,8 @@ export type MemoryHarnessOptions = {
   applicationShare?: number;
   reserve?: number;
   maxJobSizeBytes?: number;
+  payloadOffloadThresholdBytes?: number;
+  maxOffloadedJobSizeBytes?: number;
 };
 
 // used_memory follows the charged bytes, as jobs are what fills Redis in these scenarios
@@ -245,12 +263,50 @@ export const createMemoryHarness = async ({
   applicationShare = 0.4,
   reserve = 0.1,
   maxJobSizeBytes = 1_048_576,
+  payloadOffloadThresholdBytes,
+  maxOffloadedJobSizeBytes = 10_000_000,
 }: MemoryHarnessOptions = {}) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
 
-  const state = { otherDataBytes, isRedisBroken: false };
+  const state = {
+    otherDataBytes,
+    isRedisBroken: false,
+    isStorageBroken: false,
+  };
+  const storedFiles = new Map<string, Buffer>();
+  const storageDriver = {
+    writeFile: async ({ filePath, sourceFile }) => {
+      if (state.isStorageBroken) {
+        throw new Error('storage unavailable');
+      }
+
+      storedFiles.set(filePath, Buffer.from(sourceFile));
+    },
+    readFile: async ({ filePath }) => {
+      const content = storedFiles.get(filePath);
+
+      if (!isDefined(content)) {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      return Readable.from([content]);
+    },
+    delete: async ({ folderPath, filename }) => {
+      if (state.isStorageBroken) {
+        throw new Error('storage unavailable');
+      }
+
+      storedFiles.delete(`${folderPath}/${filename}`);
+    },
+  } as Pick<
+    StorageDriver,
+    'writeFile' | 'readFile' | 'delete'
+  > as StorageDriver;
 
   const readUsedBytes = async (groupKey: string) =>
     Number((await redis.get(`${USED_KEY_PREFIX}${groupKey}`)) ?? 0);
@@ -320,9 +376,15 @@ export const createMemoryHarness = async ({
     JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER:
       applicationShare,
     JOB_QUEUE_MEMORY_RESERVE: reserve,
+    IS_JOB_QUEUE_PAYLOAD_OFFLOAD_ENABLED: isDefined(
+      payloadOffloadThresholdBytes,
+    ),
+    JOB_QUEUE_PAYLOAD_OFFLOAD_THRESHOLD_BYTES: payloadOffloadThresholdBytes,
+    JOB_QUEUE_MAX_OFFLOADED_JOB_SIZE_BYTES: maxOffloadedJobSizeBytes,
   };
   const metricsService = {
     incrementCounterForEvent: jest.fn(),
+    incrementCounterBy: jest.fn(),
     recordHistogram: jest.fn(),
     createMultiObservableGauge: jest.fn(),
   };
@@ -331,6 +393,7 @@ export const createMemoryHarness = async ({
     metricsService as never,
     { get: (key: string) => configValues[key] } as never,
     { emit: jest.fn() } as never,
+    { getCurrentDriver: () => storageDriver },
   );
 
   driver.register(MEMORY_SCENARIO_QUEUE);
@@ -499,6 +562,11 @@ export const createMemoryHarness = async ({
     },
     setOtherDataBytes: (bytes: number) => {
       state.otherDataBytes = bytes;
+    },
+    storedFiles,
+    readPayloadRefs: () => redis.hgetall(PAYLOAD_REFS_KEY),
+    breakStorage: () => {
+      state.isStorageBroken = true;
     },
   };
 };

@@ -38,9 +38,44 @@ export class JobSizeLimiter {
       return;
     }
 
-    const maxBytes = this.twentyConfigService.get(
-      'JOB_QUEUE_MAX_JOB_SIZE_BYTES',
-    );
+    this.throwOnOversizedJob({
+      queueName,
+      jobName,
+      jobs,
+      maxBytes: this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES'),
+    });
+  }
+
+  checkOffloadedJobSizesOrThrow({
+    queueName,
+    jobName,
+    jobs,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobs: SizedJob[];
+  }): void {
+    this.throwOnOversizedJob({
+      queueName,
+      jobName,
+      jobs,
+      maxBytes: this.twentyConfigService.get(
+        'JOB_QUEUE_MAX_OFFLOADED_JOB_SIZE_BYTES',
+      ),
+    });
+  }
+
+  private throwOnOversizedJob({
+    queueName,
+    jobName,
+    jobs,
+    maxBytes,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobs: SizedJob[];
+    maxBytes: number;
+  }): void {
     const oversizedJob = jobs.find(({ sizeBytes }) => sizeBytes > maxBytes);
 
     if (!isDefined(oversizedJob)) {

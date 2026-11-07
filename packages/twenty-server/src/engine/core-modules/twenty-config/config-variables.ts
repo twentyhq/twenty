@@ -1680,6 +1680,35 @@ export class ConfigVariables {
   JOB_QUEUE_MEMORY_RESERVE = 0.1;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Store large job payloads in file storage and keep only a reference in Redis. Server and worker must share the same storage',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_JOB_QUEUE_PAYLOAD_OFFLOAD_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Serialized job data size in bytes above which the payload is stored in file storage instead of Redis',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  JOB_QUEUE_PAYLOAD_OFFLOAD_THRESHOLD_BYTES = 262_144;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Maximum size in bytes of a job payload stored in file storage',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  JOB_QUEUE_MAX_OFFLOADED_JOB_SIZE_BYTES = 52_428_800;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,

@@ -1,5 +1,7 @@
 import { type EventEmitter2 } from '@nestjs/event-emitter';
 
+import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+
 import {
   type BullMQDriverFactoryOptions,
   MessageQueueDriverType,
@@ -14,6 +16,7 @@ export const messageQueueModuleFactory = async (
   redisClientService: RedisClientService,
   metricsService: MetricsService,
   eventEmitter: EventEmitter2,
+  fileStorageDriverFactory: FileStorageDriverFactory,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = MessageQueueDriverType.BullMQ;
 
@@ -28,6 +31,7 @@ export const messageQueueModuleFactory = async (
         metricsService,
         twentyConfigService,
         eventEmitter,
+        fileStorageDriverFactory,
       } satisfies BullMQDriverFactoryOptions;
     }
     default:

@@ -40,6 +40,7 @@ import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { AccessPolicyModule } from 'src/engine/guards/access-policy/access-policy.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { GettingStartedWorkflowModule } from 'src/engine/core-modules/getting-started/getting-started-workflow.module';
 import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
@@ -153,6 +154,7 @@ import { FileApiModule } from './file/file-api.module';
         RedisClientService,
         MetricsService,
         EventEmitter2,
+        FileStorageDriverFactory,
       ],
     }),
     ExceptionHandlerModule.forRootAsync({

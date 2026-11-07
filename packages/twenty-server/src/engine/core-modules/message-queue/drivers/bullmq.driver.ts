@@ -39,6 +39,7 @@ import {
   type MessageQueueJobData,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
@@ -50,6 +51,12 @@ import {
   JobMemoryLimiter,
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
+import { isOffloadedJobPayload } from 'src/engine/core-modules/message-queue/drivers/payload/is-offloaded-job-payload.util';
+import {
+  JobPayloadOffloader,
+  type JobPayloadReconciliation,
+} from 'src/engine/core-modules/message-queue/drivers/payload/job-payload-offloader';
+import { type OffloadedJobPayload } from 'src/engine/core-modules/message-queue/drivers/payload/offloaded-job-payload.type';
 import { JOBS_EXIST_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/jobs-exist-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -80,7 +87,20 @@ type BullMQJobsOptions = JobsOptions & {
   memorySizeBytes?: number;
 };
 
-type PreparedJob = { options: BullMQJobsOptions; sizeBytes: number };
+type PreparedJob = {
+  data: unknown;
+  options: BullMQJobsOptions;
+  sizeBytes: number;
+  offloadedPayload?: OffloadedJobPayload;
+};
+
+type JobToPrepare = {
+  index: number;
+  data: unknown;
+  options: BullMQJobsOptions;
+  scope: QueueJobScope;
+  offloadedPayload?: OffloadedJobPayload;
+};
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -101,12 +121,17 @@ export class BullMQDriver
   private readonly fairQueueScheduler: FairQueueScheduler;
   private readonly jobSizeLimiter: JobSizeLimiter;
   private readonly jobMemoryLimiter: JobMemoryLimiter;
+  private readonly jobPayloadOffloader: JobPayloadOffloader;
 
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
+    fileStorageDriverFactory?: Pick<
+      FileStorageDriverFactory,
+      'getCurrentDriver'
+    >,
   ) {
     this.fairQueueScheduler = new FairQueueScheduler({
       getClient: (queueName) => this.queueMap[queueName].client,
@@ -123,6 +148,17 @@ export class BullMQDriver
       getClient: (queueName) => this.queueMap[queueName].client,
       getJobKey: ({ queueName, jobId }) =>
         this.queueMap[queueName].toKey(jobId),
+      keyPrefix: options.prefix ?? 'bull',
+      metricsService,
+      twentyConfigService,
+    });
+    this.jobPayloadOffloader = new JobPayloadOffloader({
+      getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
+      getStorageDriver: isDefined(fileStorageDriverFactory)
+        ? () => fileStorageDriverFactory.getCurrentDriver()
+        : undefined,
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       twentyConfigService,
@@ -173,6 +209,16 @@ export class BullMQDriver
     }
 
     return this.jobMemoryLimiter.reconcile(queueName);
+  }
+
+  async reconcileJobPayloads(): Promise<JobPayloadReconciliation> {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return { deletedCount: 0 };
+    }
+
+    return this.jobPayloadOffloader.reconcile(queueName);
   }
 
   private async collectQueueMemoryUsedRatio(): Promise<
@@ -358,11 +404,21 @@ export class BullMQDriver
       queueName,
       async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
-          applyWorkspaceSentryContextFromJobData(job.data);
-
           if (isDefined(job.id)) {
             this.fairQueueScheduler.onJobStarted({ queueName, jobId: job.id });
           }
+
+          let offloadedPayload = isOffloadedJobPayload(job.data)
+            ? job.data
+            : undefined;
+          const data = await this.jobPayloadOffloader.load<T>({
+            queueName,
+            jobName: job.name,
+            jobId: job.id,
+            data: job.data,
+          });
+
+          applyWorkspaceSentryContextFromJobData(data);
 
           const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 
@@ -379,7 +435,7 @@ export class BullMQDriver
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
           const logContext = buildJobLogContext({
-            jobData: job.data,
+            jobData: data,
             queueWaitMs,
           });
 
@@ -389,11 +445,31 @@ export class BullMQDriver
 
           try {
             await handler({
-              data: job.data,
+              data,
               id: job.id ?? '',
               name: job.name,
               retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-              updateData: (data) => job.updateData(data),
+              updateData: async (updatedData) => {
+                if (!isDefined(offloadedPayload) || !isDefined(job.id)) {
+                  await job.updateData(updatedData);
+
+                  return;
+                }
+
+                const previousPayload = offloadedPayload;
+
+                offloadedPayload = await this.jobPayloadOffloader.replace({
+                  queueName,
+                  jobId: job.id,
+                  offloadedPayload: previousPayload,
+                  data: updatedData,
+                });
+                await job.updateData(offloadedPayload);
+                await this.jobPayloadOffloader.delete({
+                  queueName,
+                  data: previousPayload,
+                });
+              },
               updateProgress: (progress) => job.updateProgress(progress),
               abortSignal,
             });
@@ -439,11 +515,11 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('completed', (job) =>
-      this.releaseFinishedJobMemory({ queueName, job }),
+      this.releaseFinishedJob({ queueName, job }),
     );
     this.workerMap[queueName].on('failed', (job) => {
       if (isDefined(job?.finishedOn)) {
-        this.releaseFinishedJobMemory({ queueName, job });
+        this.releaseFinishedJob({ queueName, job });
       }
     });
 
@@ -632,23 +708,25 @@ export class BullMQDriver
       additionalGroupKeys: options.groupKeys,
     });
 
-    const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: [options],
-      additionalGroupKeys: options.groupKeys,
-      delay: options.delay,
-      staticPriority: queueOptions.priority,
-    });
-
     const [job] = await this.addPreparedJobs({
       queueName,
       preparedJobs: [preparedJob],
-      addJobs: async () => [
-        await this.queueMap[queueName].add(jobName, data, {
-          ...preparedJob.options,
-          ...jobOptions,
-        }),
-      ],
+      addJobs: async () => {
+        const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
+          queueName,
+          scopes: [options],
+          additionalGroupKeys: options.groupKeys,
+          delay: options.delay,
+          staticPriority: queueOptions.priority,
+        });
+
+        return [
+          await this.queueMap[queueName].add(jobName, preparedJob.data, {
+            ...preparedJob.options,
+            ...jobOptions,
+          }),
+        ];
+      },
     });
 
     return job.id;
@@ -663,28 +741,145 @@ export class BullMQDriver
   }: {
     queueName: MessageQueue;
     jobName: string;
-    jobs: {
-      index: number;
-      data: unknown;
-      options: BullMQJobsOptions;
-      scope: QueueJobScope;
-    }[];
+    jobs: JobToPrepare[];
     additionalGroupKeys?: string[];
     shouldReportSizes?: boolean;
   }): Promise<{ preparedJobs: PreparedJob[]; availableBytes: number | null }> {
+    const jobsToCharge = await this.offloadLargePayloads({
+      queueName,
+      jobName,
+      jobs,
+      additionalGroupKeys,
+    });
+
+    try {
+      return await this.chargeJobs({
+        queueName,
+        jobName,
+        jobs: jobsToCharge,
+        additionalGroupKeys,
+        shouldReportSizes,
+      });
+    } catch (error) {
+      await Promise.all(
+        jobsToCharge.map(({ offloadedPayload }) =>
+          this.jobPayloadOffloader.delete({
+            queueName,
+            data: offloadedPayload,
+          }),
+        ),
+      );
+
+      throw error;
+    }
+  }
+
+  private async offloadLargePayloads({
+    queueName,
+    jobName,
+    jobs,
+    additionalGroupKeys,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobs: JobToPrepare[];
+    additionalGroupKeys?: string[];
+  }): Promise<JobToPrepare[]> {
+    if (!this.jobPayloadOffloader.isEnabled()) {
+      return jobs;
+    }
+
+    const serializedJobs = jobs.map((job) => {
+      const serializedData = JSON.stringify(job.data) ?? '';
+
+      return {
+        job,
+        serializedData,
+        dataSizeBytes: Buffer.byteLength(serializedData),
+      };
+    });
+    const largeJobs = serializedJobs.filter(({ dataSizeBytes }) =>
+      this.jobPayloadOffloader.shouldOffload(dataSizeBytes),
+    );
+
+    if (largeJobs.length === 0) {
+      return jobs;
+    }
+
+    this.jobSizeLimiter.checkOffloadedJobSizesOrThrow({
+      queueName,
+      jobName,
+      jobs: largeJobs.map(({ job, dataSizeBytes }) => ({
+        index: job.index,
+        groupKey: buildQueueJobGroupKeys({
+          scope: job.scope,
+          additionalGroupKeys,
+        })[0],
+        sizeBytes: dataSizeBytes,
+      })),
+    });
+
+    return Promise.all(
+      serializedJobs.map(async (serializedJob) => {
+        const { job, serializedData } = serializedJob;
+
+        if (!largeJobs.includes(serializedJob)) {
+          return job;
+        }
+
+        const jobId = job.options.jobId ?? v4();
+        const offloadedPayload = await this.jobPayloadOffloader.offload({
+          queueName,
+          jobName,
+          jobId,
+          scope: job.scope,
+          serializedData,
+        });
+
+        if (!isDefined(offloadedPayload)) {
+          return job;
+        }
+
+        return {
+          ...job,
+          data: offloadedPayload,
+          options: { ...job.options, jobId },
+          offloadedPayload,
+        };
+      }),
+    );
+  }
+
+  private async chargeJobs({
+    queueName,
+    jobName,
+    jobs,
+    additionalGroupKeys,
+    shouldReportSizes,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobs: JobToPrepare[];
+    additionalGroupKeys?: string[];
+    shouldReportSizes: boolean;
+  }): Promise<{ preparedJobs: PreparedJob[]; availableBytes: number | null }> {
     const isLimitingEnabled = this.jobMemoryLimiter.isEnabled();
-    const sizedJobs = jobs.map(({ index, data, options, scope }) => ({
-      index,
-      groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
-      sizeBytes:
-        isLimitingEnabled || shouldReportSizes
-          ? computeJobSizeBytes({ data, options })
-          : 0,
-      options: {
-        ...options,
-        jobId: options.jobId ?? (isLimitingEnabled ? v4() : undefined),
-      },
-    }));
+    const sizedJobs = jobs.map(
+      ({ index, data, options, scope, offloadedPayload }) => ({
+        index,
+        data,
+        offloadedPayload,
+        groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
+        sizeBytes:
+          isLimitingEnabled || shouldReportSizes
+            ? computeJobSizeBytes({ data, options })
+            : 0,
+        options: {
+          ...options,
+          jobId: options.jobId ?? (isLimitingEnabled ? v4() : undefined),
+        },
+      }),
+    );
 
     this.jobSizeLimiter.checkJobSizesOrThrow({
       queueName,
@@ -720,7 +915,8 @@ export class BullMQDriver
     });
 
     const preparedJobs = sizedJobs.map((sizedJob) => {
-      const { options, sizeBytes, groupKeys } = sizedJob;
+      const { data, offloadedPayload, options, sizeBytes, groupKeys } =
+        sizedJob;
       const memoryGroupKeys = getChargedGroupKeys(groupKeys);
 
       const isJobCharged =
@@ -729,10 +925,12 @@ export class BullMQDriver
         isNonEmptyArray(memoryGroupKeys);
 
       if (!isJobCharged) {
-        return { sizeBytes, options };
+        return { data, offloadedPayload, sizeBytes, options };
       }
 
       return {
+        data,
+        offloadedPayload,
         sizeBytes,
         options: { ...options, memoryGroupKeys, memorySizeBytes: sizeBytes },
       };
@@ -788,37 +986,29 @@ export class BullMQDriver
     const addedJobs = await addJobs().catch(async (error: unknown) => {
       await Promise.all(
         preparedJobs.map((preparedJob) =>
-          this.releaseJobMemoryIfNotAdded({ queueName, preparedJob }),
+          this.discardPreparedJobIfNotAdded({ queueName, preparedJob }),
         ),
       );
 
       throw error;
     });
 
+    // a deduplicated job resolves to the job already queued, which keeps its own charge and payload
     await Promise.all(
-      addedJobs.map((addedJob, index) => {
-        const { jobId, memoryGroupKeys } = preparedJobs[index].options;
-
-        if (
-          !isDefined(jobId) ||
-          !isNonEmptyArray(memoryGroupKeys) ||
-          addedJob.id === jobId
-        ) {
-          return;
-        }
-
-        return this.jobMemoryLimiter.release({
-          queueName,
-          jobId,
-          groupKeys: memoryGroupKeys,
-        });
-      }),
+      addedJobs.map((addedJob, index) =>
+        addedJob.id === preparedJobs[index].options.jobId
+          ? undefined
+          : this.discardPreparedJob({
+              queueName,
+              preparedJob: preparedJobs[index],
+            }),
+      ),
     );
 
     return addedJobs;
   }
 
-  private async releaseJobMemoryIfNotAdded({
+  private async discardPreparedJobIfNotAdded({
     queueName,
     preparedJob,
   }: {
@@ -827,7 +1017,11 @@ export class BullMQDriver
   }): Promise<void> {
     const { jobId, memoryGroupKeys } = preparedJob.options;
 
-    if (!isDefined(jobId) || !isNonEmptyArray(memoryGroupKeys)) {
+    if (
+      !isDefined(jobId) ||
+      (!isNonEmptyArray(memoryGroupKeys) &&
+        !isDefined(preparedJob.offloadedPayload))
+    ) {
       return;
     }
 
@@ -837,38 +1031,61 @@ export class BullMQDriver
       }
     } catch (error) {
       this.logger.warn(
-        `Kept the job memory charge of job ${jobId} on queue ${queueName}: its enqueue outcome is unknown (${error instanceof Error ? error.message : String(error)})`,
+        `Kept the job memory charge and payload of job ${jobId} on queue ${queueName}: its enqueue outcome is unknown (${error instanceof Error ? error.message : String(error)})`,
       );
 
       return;
     }
 
-    await this.jobMemoryLimiter.release({
-      queueName,
-      jobId,
-      groupKeys: memoryGroupKeys,
-    });
+    await this.discardPreparedJob({ queueName, preparedJob });
   }
 
-  private releaseFinishedJobMemory({
+  private async discardPreparedJob({
+    queueName,
+    preparedJob,
+  }: {
+    queueName: MessageQueue;
+    preparedJob: PreparedJob;
+  }): Promise<void> {
+    const { jobId, memoryGroupKeys } = preparedJob.options;
+
+    await Promise.all([
+      isDefined(jobId) && isNonEmptyArray(memoryGroupKeys)
+        ? this.jobMemoryLimiter.release({
+            queueName,
+            jobId,
+            groupKeys: memoryGroupKeys,
+          })
+        : undefined,
+      this.jobPayloadOffloader.delete({
+        queueName,
+        data: preparedJob.offloadedPayload,
+      }),
+    ]);
+  }
+
+  private releaseFinishedJob({
     queueName,
     job,
   }: {
     queueName: MessageQueue;
     job: Job | undefined;
   }): void {
-    const memoryGroupKeys = (job?.opts as BullMQJobsOptions | undefined)
-      ?.memoryGroupKeys;
-
-    if (!isDefined(job?.id) || !isNonEmptyArray(memoryGroupKeys)) {
+    if (!isDefined(job?.id)) {
       return;
     }
 
-    void this.jobMemoryLimiter.release({
-      queueName,
-      jobId: job.id,
-      groupKeys: memoryGroupKeys,
-    });
+    const memoryGroupKeys = (job.opts as BullMQJobsOptions).memoryGroupKeys;
+
+    if (isNonEmptyArray(memoryGroupKeys)) {
+      void this.jobMemoryLimiter.release({
+        queueName,
+        jobId: job.id,
+        groupKeys: memoryGroupKeys,
+      });
+    }
+
+    void this.jobPayloadOffloader.delete({ queueName, data: job.data });
   }
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
@@ -937,28 +1154,29 @@ export class BullMQDriver
       shouldReportSizes: true,
     });
 
-    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
-      queueName,
-      scopes: jobsToAdd,
-      additionalGroupKeys: options?.groupKeys,
-      delay: options?.delay,
-      staticPriority: queueOptions.priority,
-    });
-
     const addedJobs = await this.addPreparedJobs({
       queueName,
       preparedJobs,
-      addJobs: () =>
-        this.queueMap[queueName].addBulk(
-          jobsToAdd.map(({ data }, index) => ({
+      addJobs: async () => {
+        const jobOptions = await this.fairQueueScheduler.computeJobOptions({
+          queueName,
+          scopes: jobsToAdd,
+          additionalGroupKeys: options?.groupKeys,
+          delay: options?.delay,
+          staticPriority: queueOptions.priority,
+        });
+
+        return this.queueMap[queueName].addBulk(
+          jobsToAdd.map((_, index) => ({
             name: jobName,
-            data,
+            data: preparedJobs[index].data,
             opts: {
               ...preparedJobs[index].options,
               ...jobOptions[index],
             },
           })),
-        ),
+        );
+      },
     });
 
     return {
@@ -1007,7 +1225,34 @@ export class BullMQDriver
       return undefined;
     }
 
-    return this.buildQueueJobDetails<T>({ job, state });
+    const jobDetails = this.buildQueueJobDetails<T>({ job, state });
+
+    return isDefined(jobDetails)
+      ? {
+          ...jobDetails,
+          data: await this.resolveJobData<T>({ queueName, job }),
+        }
+      : undefined;
+  }
+
+  // a payload that cannot be loaded is returned as its reference so listings keep working
+  private async resolveJobData<T>({
+    queueName,
+    job,
+  }: {
+    queueName: MessageQueue;
+    job: Job;
+  }): Promise<T> {
+    try {
+      return await this.jobPayloadOffloader.load<T>({
+        queueName,
+        jobName: job.name,
+        jobId: job.id,
+        data: job.data,
+      });
+    } catch {
+      return job.data;
+    }
   }
 
   private buildQueueJobDetails<T extends MessageQueueJobData>({
@@ -1053,8 +1298,11 @@ export class BullMQDriver
       'delayed',
     ]);
 
-    return jobs
-      .filter(isDefined)
-      .map((job) => ({ id: job.id, data: job.data }));
+    return Promise.all(
+      jobs.filter(isDefined).map(async (job) => ({
+        id: job.id,
+        data: await this.resolveJobData<T>({ queueName, job }),
+      })),
+    );
   }
 }
