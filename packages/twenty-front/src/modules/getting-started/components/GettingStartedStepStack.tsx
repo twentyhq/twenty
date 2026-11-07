@@ -36,7 +36,7 @@ const StyledStepsTrack = styled.div`
   bottom: 0;
   position: absolute;
   right: calc(100% + ${themeCssVariables.spacing[10]});
-  top: 0;
+  top: calc(-1 * ${themeCssVariables.spacing[3]});
 
   @container getting-started-scroll (max-width: ${GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH}px) {
     display: none;
