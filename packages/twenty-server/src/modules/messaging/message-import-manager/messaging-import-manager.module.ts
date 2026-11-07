@@ -41,7 +41,6 @@ import { MessagingGetMessagesService } from 'src/modules/messaging/message-impor
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
-import { MessagingMessageFolderMoveService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-move.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
@@ -94,7 +93,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingInboundEmailImportJob,
     MessagingMessageService,
     MessagingMessageFolderAssociationService,
-    MessagingMessageFolderMoveService,
     MessagingMessageAttachmentService,
     MessagingMessageListFetchService,
     MessagingMessagesImportService,

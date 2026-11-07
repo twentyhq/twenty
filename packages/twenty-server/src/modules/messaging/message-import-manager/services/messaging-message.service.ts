@@ -10,7 +10,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
@@ -52,18 +51,15 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction({
-    messages,
-    messageChannelId,
-    transactionScope,
-    workspaceId,
-  }: {
-    messages: MessageWithParticipants[];
-    messageChannelId: string;
-    transactionScope: WorkspaceTransactionScope;
-    workspaceId: string;
-  }): Promise<{
+  public async saveMessagesWithinTransaction(
+    messages: MessageWithParticipants[],
+    messageChannelId: string,
+    transactionScope: WorkspaceTransactionScope,
+    workspaceId: string,
+  ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
+    refetchedMessageChannelMessageAssociationIds: string[];
+    sentDraftMessageIds: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -72,6 +68,7 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
+    const refetchedMessageChannelMessageAssociationIds: string[] = [];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -198,13 +195,21 @@ export class MessagingMessageService {
           const existingAssociation =
             messageAccumulator.existingMessageChannelMessageAssociationInDB;
 
-          const isSentDraft =
+          const isRefetched =
             isDefined(existingAssociation) &&
-            existingAssociation.messageExternalId === message.externalId &&
-            messageAccumulator.existingMessageInDB?.isDraft === true &&
-            !message.isDraft;
+            existingAssociation.messageExternalId === message.externalId;
 
-          if (isSentDraft) {
+          if (isRefetched) {
+            refetchedMessageChannelMessageAssociationIds.push(
+              existingAssociation.id,
+            );
+          }
+
+          if (
+            isRefetched &&
+            messageAccumulator.existingMessageInDB?.isDraft === true &&
+            !message.isDraft
+          ) {
             messageAccumulator.sentDraftToRefresh = {
               id: newOrExistingMessageId,
               subject: message.subject,
@@ -364,6 +369,8 @@ export class MessagingMessageService {
 
         return {
           createdMessages: messagesToCreate,
+          refetchedMessageChannelMessageAssociationIds,
+          sentDraftMessageIds: sentDraftsToRefresh.map(({ id }) => id),
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,
@@ -378,19 +385,9 @@ export class MessagingMessageService {
     sentDrafts: MessageToRefresh[],
     transactionScope: WorkspaceTransactionScope,
   ) {
-    if (sentDrafts.length === 0) {
-      return;
-    }
-
     const messageRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
         'message',
-      );
-
-    const messageParticipantRepository =
-      transactionScope.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
-        'messageParticipant',
-        { shouldSkipEventEmission: true },
       );
 
     for (const sentDraftsChunk of chunk(sentDrafts, QUERY_MAX_RECORDS)) {
@@ -401,10 +398,6 @@ export class MessagingMessageService {
         })),
       );
     }
-
-    await messageParticipantRepository.delete({
-      messageId: In(sentDrafts.map(({ id }) => id)),
-    });
   }
 
   private async enrichMessageAccumulatorWithExistingMessages(
