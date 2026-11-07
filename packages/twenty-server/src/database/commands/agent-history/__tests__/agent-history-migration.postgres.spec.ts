@@ -744,6 +744,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
           conversationWriter.upsertAssistantMessage({
+            agentId: null,
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,

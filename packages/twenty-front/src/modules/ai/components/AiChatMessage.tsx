@@ -10,9 +10,8 @@ import { type ReactNode } from 'react';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
-import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
+import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
-import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
@@ -31,14 +30,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LabeledSeparator } from 'twenty-ui/components/layout';
-import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledMessageBubble = styled.div<{ isRightAligned: boolean }>`
   align-items: ${({ isRightAligned }) =>
@@ -273,12 +270,6 @@ export const AiChatMessage = ({
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
-  const senderLabel = isDefined(senderId)
-    ? getAgentChatSenderLabel({
-        sender,
-        isCurrentWorkspaceMember: isOwnMessage,
-      })
-    : t`Unknown sender`;
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
@@ -314,30 +305,21 @@ export const AiChatMessage = ({
         >{t`New`}</LabeledSeparator>
       )}
       <StyledMessageBubble isRightAligned={isRightAligned}>
-        {hasHeader && (isUser || isDefined(senderId)) && (
-          <AiChatMessageHeader
-            avatar={
-              <Avatar
-                src={getAbsoluteImageUrl(sender?.avatarUrl)}
-                colorSeed={senderId ?? messageId}
-                name={senderLabel}
-                size="sm"
-                shape="circle"
-              />
-            }
-            name={senderLabel}
-            createdAt={createdAt}
-          />
-        )}
-        {hasHeader && !isUser && !isDefined(senderId) && (
-          <AiChatMessageHeader
-            avatar={<AiChatAssistantAvatar />}
-            name={t`Assistant`}
+        {hasHeader && (
+          <AiChatMessageAuthorHeader
+            metadata={agentChatMessage.metadata}
+            sender={sender}
+            messageId={messageId}
             createdAt={createdAt}
           />
         )}
         {!isAiChatInboxEnabled && isUser && isDefined(senderId) && (
-          <StyledSender>{senderLabel}</StyledSender>
+          <StyledSender>
+            {getAgentChatSenderLabel({
+              sender,
+              isCurrentWorkspaceMember: isOwnMessage,
+            })}
+          </StyledSender>
         )}
         <StyledMessageContainer isUser={isUser}>
           {isUser ? (

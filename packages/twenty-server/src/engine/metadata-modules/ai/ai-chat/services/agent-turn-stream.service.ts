@@ -100,6 +100,8 @@ export type AgentTurnStreamInput<
   // where a turn without a claim streams, when its caller follows it; a claimed turn streams to its thread
   streamChannelId?: string;
   turnId: string;
+  agentId: string | null;
+  isBuiltInAssistant?: boolean;
   abortSignal?: AbortSignal;
   startTurn: (
     writer: UIMessageStreamWriter<ExtendedUIMessage>,
@@ -285,6 +287,8 @@ export class AgentTurnStreamService {
     claim,
     streamChannelId,
     turnId,
+    agentId,
+    isBuiltInAssistant = false,
     abortSignal,
     startTurn,
     completeTurn,
@@ -299,6 +303,8 @@ export class AgentTurnStreamService {
       claim,
       channelId,
       turnId,
+      agentId,
+      isBuiltInAssistant,
       startTurn,
     });
     const completion = await completeTurn(streamed).catch(
@@ -318,6 +324,7 @@ export class AgentTurnStreamService {
       workspaceId,
       claim,
       turnId,
+      agentId,
       result: {
         ...streamed,
         isAborted: streamed.isAborted || completion.isAborted === true,
@@ -375,12 +382,15 @@ export class AgentTurnStreamService {
     claim,
     channelId,
     turnId,
+    agentId,
+    isBuiltInAssistant,
     startTurn,
   }: Pick<
     AgentTurnStreamInput<TStarted, AgentTurnCompletion>,
-    'workspaceId' | 'claim' | 'turnId' | 'startTurn'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId' | 'startTurn'
   > & {
     channelId: string | undefined;
+    isBuiltInAssistant: boolean;
   }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     // a turn without a claim keeps no reply, so its id only has to be its own
     const assistantMessageId = uuidv5(
@@ -436,6 +446,9 @@ export class AgentTurnStreamService {
                 part,
                 modelConfig: source.modelConfig,
                 usage,
+                turnId,
+                agentId,
+                isBuiltInAssistant,
               }),
             onEnd: async ({ responseMessage, isAborted }) => {
               try {
@@ -495,6 +508,7 @@ export class AgentTurnStreamService {
                   id: assistantMessageId,
                   threadId: claim.threadId,
                   turnId,
+                  agentId,
                   parts,
                 });
               })
@@ -543,6 +557,7 @@ export class AgentTurnStreamService {
     workspaceId,
     claim,
     turnId,
+    agentId,
     result,
     modelId,
     stopReason,
@@ -553,7 +568,7 @@ export class AgentTurnStreamService {
       { source: AgentTurnStreamSource },
       AgentTurnCompletion
     >,
-    'workspaceId' | 'claim' | 'turnId'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId'
   > & {
     result: AgentTurnStreamResult;
     modelId: string;
@@ -640,6 +655,7 @@ export class AgentTurnStreamService {
       id: assistantMessageId,
       threadId: claim.threadId,
       turnId,
+      agentId,
       parts: replyParts,
     });
 
@@ -748,6 +764,9 @@ export class AgentTurnStreamService {
     part,
     modelConfig,
     usage,
+    turnId,
+    agentId,
+    isBuiltInAssistant,
   }: {
     part: {
       type: string;
@@ -761,6 +780,9 @@ export class AgentTurnStreamService {
     };
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
+    turnId: string;
+    agentId: string | null;
+    isBuiltInAssistant: boolean;
   }) {
     // a step that failed before the model answered still ends with a finish-step, one without token counts;
     // one whose model answered with an error finish reason reports real usage and is billed
@@ -775,7 +797,12 @@ export class AgentTurnStreamService {
     }
 
     if (part.type === 'start') {
-      return { startedAt: new Date().toISOString() };
+      return {
+        startedAt: new Date().toISOString(),
+        turnId,
+        agentId,
+        isBuiltInAssistant,
+      };
     }
 
     if (part.type === 'finish') {

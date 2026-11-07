@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatAssistantProfileSelector } from '@/ai/states/selectors/aiChatAssistantProfileSelector';
 import { getAgentChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -19,9 +20,11 @@ export const agentChatDraftPreviewTextFamilySelector = createAtomFamilySelector<
         return null;
       }
 
-      const text = getAgentChatPreviewPlainText(
-        tipTapDocumentToMarkdown(serializedDraft),
-      );
+      const assistantProfile = get(aiChatAssistantProfileSelector);
+      const text = getAgentChatPreviewPlainText({
+        markdown: tipTapDocumentToMarkdown(serializedDraft),
+        assistantDisplayName: assistantProfile.displayName,
+      });
 
       return isNonEmptyString(text) ? text : null;
     },
