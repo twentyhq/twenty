@@ -6,7 +6,6 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { type FormFieldCurrencyInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldCurrencyInputSettings';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isCurrencyCodeSelectable } from '@/ui/input/components/internal/currency/utils/isCurrencyCodeSelectable';
 import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { Field } from 'twenty-ui/primitives/input';
 import { useMemo } from 'react';
@@ -35,7 +34,6 @@ export const FormCurrencyFieldInput = ({
 }: FormCurrencyFieldInputProps) => {
   const { t } = useLingui();
   const localizedCurrencies = useCurrencies();
-  const selectedCurrencyCode = defaultValue?.currencyCode;
 
   const currencies = useMemo(() => {
     return [
@@ -44,14 +42,9 @@ export const FormCurrencyFieldInput = ({
         value: '',
         Icon: IconCircleOff,
       },
-      ...localizedCurrencies.filter(({ value }) =>
-        isCurrencyCodeSelectable({
-          currencyCode: value,
-          selectedCurrencyCode,
-        }),
-      ),
+      ...localizedCurrencies,
     ];
-  }, [localizedCurrencies, selectedCurrencyCode, t]);
+  }, [localizedCurrencies, t]);
 
   const handleAmountMicrosChange = (
     newAmountMicros: string | number | null,

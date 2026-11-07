@@ -12,14 +12,12 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
-import { isCurrencyCodeSelectable } from '@/ui/input/components/internal/currency/utils/isCurrencyCodeSelectable';
 import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
 import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,
@@ -75,17 +73,10 @@ export const SettingsDataModelFieldCurrencyForm = ({
               onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-default-value-select-currency"
-              options={currencies
-                .filter(({ value: currencyCode }) =>
-                  isCurrencyCodeSelectable({
-                    currencyCode,
-                    selectedCurrencyCode: stripSimpleQuotesFromString(value),
-                  }),
-                )
-                .map(({ value, ...rest }) => ({
-                  ...rest,
-                  value: applySimpleQuotesToString(value),
-                }))}
+              options={currencies.map(({ value, ...rest }) => ({
+                ...rest,
+                value: applySimpleQuotesToString(value),
+              }))}
               selectSizeVariant="small"
               withSearchInput={true}
             />
