@@ -13,9 +13,12 @@ export type AccessGroupMemberFieldValues = Record<
 >;
 
 export type AccessGroup = {
+  compactId: number;
   groupHash: string;
   roleId: string;
   objectMetadataId: string;
   rowLevelPermissionPredicateGroupId: string | null;
   memberFieldValues: AccessGroupMemberFieldValues | null;
 };
+
+export type AccessGroupWithoutCompactId = Omit<AccessGroup, 'compactId'>;

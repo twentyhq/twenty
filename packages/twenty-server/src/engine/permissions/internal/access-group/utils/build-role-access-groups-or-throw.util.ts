@@ -8,7 +8,7 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
 import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
@@ -35,7 +35,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   operationTypes?: ObjectRecordsOperationType[];
   workspaceMembers: RowLevelPermissionWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): AccessGroup[] => {
+}): AccessGroupWithoutCompactId[] => {
   const isReachable = operationTypes.some((operationType) =>
     canReachSomeRecords({ objectRecordsPermissions, operationType }),
   );
@@ -48,9 +48,9 @@ export const buildRoleAccessGroupsOrThrow = ({
     rowLevelPermissionPredicateGroupId,
     memberFieldValues,
   }: Pick<
-    AccessGroup,
+    AccessGroupWithoutCompactId,
     'rowLevelPermissionPredicateGroupId' | 'memberFieldValues'
-  >): AccessGroup => ({
+  >): AccessGroupWithoutCompactId => ({
     groupHash: computeAccessGroupHash({
       roleId,
       objectMetadataId,
