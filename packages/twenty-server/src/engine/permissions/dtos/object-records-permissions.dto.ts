@@ -12,6 +12,9 @@ export class ObjectRecordsPermissionsDTO {
   objectMetadataId: string;
 
   @Field(() => Boolean)
+  canCreateAllRecords: boolean;
+
+  @Field(() => Boolean)
   canReadAllRecords: boolean;
 
   @Field(() => Boolean)

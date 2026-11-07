@@ -2041,6 +2041,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
+            canCreateAllRecords: false,
             canReadAllRecords: false,
             canUpdateAllRecords: false,
             canSoftDeleteAllRecords: false,
@@ -2056,6 +2057,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
+            canCreateAllRecords: true,
             canReadAllRecords: true,
             canUpdateAllRecords: true,
             canSoftDeleteAllRecords: true,

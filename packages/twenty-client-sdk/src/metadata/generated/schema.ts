@@ -2829,6 +2829,7 @@ export interface ObjectRecordEventWithQueryIds {
 export type ObjectRecordGroupByDateGranularity = 'DAY' | 'DAY_OF_THE_WEEK' | 'MONTH' | 'MONTH_OF_THE_YEAR' | 'NONE' | 'QUARTER' | 'QUARTER_OF_THE_YEAR' | 'WEEK' | 'YEAR'
 
 export interface ObjectRecordsPermissions {
+    canCreateAllRecords: Scalars['Boolean']
     canDestroyAllRecords: Scalars['Boolean']
     canReadAllRecords: Scalars['Boolean']
     canSoftDeleteAllRecords: Scalars['Boolean']
@@ -3456,6 +3457,7 @@ export type RowLevelPermissionPredicateGroupLogicalOperator = 'AND' | 'OR'
 export type RowLevelPermissionPredicateOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_OR_EQUAL' | 'IS' | 'IS_AFTER' | 'IS_BEFORE' | 'IS_EMPTY' | 'IS_IN_FUTURE' | 'IS_IN_PAST' | 'IS_NOT' | 'IS_NOT_EMPTY' | 'IS_NOT_NULL' | 'IS_RELATIVE' | 'IS_TODAY' | 'LESS_THAN_OR_EQUAL' | 'VECTOR_SEARCH'
 
 export interface RowLevelRecordsPermissions {
+    canCreateRecords: Scalars['Boolean']
     canDestroyRecords: Scalars['Boolean']
     canReadRecords: Scalars['Boolean']
     canSoftDeleteRecords: Scalars['Boolean']
@@ -7563,6 +7565,7 @@ export interface ObjectRecordEventWithQueryIdsGenqlSelection{
 }
 
 export interface ObjectRecordsPermissionsGenqlSelection{
+    canCreateAllRecords?: boolean | number
     canDestroyAllRecords?: boolean | number
     canReadAllRecords?: boolean | number
     canSoftDeleteAllRecords?: boolean | number
@@ -8243,6 +8246,7 @@ export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Sca
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
+    canCreateRecords?: boolean | number
     canDestroyRecords?: boolean | number
     canReadRecords?: boolean | number
     canSoftDeleteRecords?: boolean | number

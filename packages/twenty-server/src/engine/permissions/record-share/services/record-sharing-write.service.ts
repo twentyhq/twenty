@@ -3,13 +3,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/internal/record-share/services/record-share-principal.service';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordSharingChangeService } from 'src/engine/permissions/internal/record-share/services/record-sharing-change.service';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/permissions/internal/record-share/utils/build-record-share-inputs-for-created-records.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util';
@@ -140,14 +145,14 @@ export class RecordSharingWriteService {
 
   async insertRecordSharesForCreatedRecords({
     authContext,
-    flatObjectMetadata,
+    objectMetadataId,
     objectSharing,
     recordIds,
     createdRecordSharing: { shareWith, isPrivate },
     transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     objectSharing: ObjectSharing;
     recordIds: string[];
     createdRecordSharing: CreatedRecordSharing;
@@ -158,21 +163,33 @@ export class RecordSharingWriteService {
     // A hard-destroyed record leaves its rows behind, and a client may reuse its id
     await this.recordShareStorageService.deleteByRecordIds({
       workspaceId,
-      objectMetadataId: flatObjectMetadata.id,
+      objectMetadataId,
       recordIds,
       transactionScope,
     });
 
-    const { apiKeyRoleMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['apiKeyRoleMap'],
-    );
+    const { apiKeyRoleMap, flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'apiKeyRoleMap',
+        'flatObjectMetadataMaps',
+      ]);
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
 
     await this.recordShareStorageService.insertMany({
       workspaceId,
       recordShares: buildRecordShareInputsForCreatedRecords({
         recordIds,
-        objectMetadataId: flatObjectMetadata.id,
+        objectMetadataId,
         authContext,
         apiKeyRoleMap,
         shareWith,
@@ -183,9 +200,9 @@ export class RecordSharingWriteService {
     });
 
     if (isPrivate) {
-      await this.privateRecordWriteService.setPrivate({
+      await this.privateRecordWriteService.setPrivateOrThrow({
         workspaceId,
-        flatObjectMetadata,
+        objectMetadataId,
         recordIds,
         isPrivate: true,
         transactionScope,
