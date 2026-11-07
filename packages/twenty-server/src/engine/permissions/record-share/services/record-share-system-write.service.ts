@@ -37,9 +37,9 @@ export class RecordShareSystemWriteService {
   ) {}
 
   setRecordsPrivacy(
-    args: Parameters<PrivateRecordWriteService['setPrivate']>[0],
+    args: Parameters<PrivateRecordWriteService['setPrivateOrThrow']>[0],
   ): Promise<void> {
-    return this.privateRecordWriteService.setPrivate(args);
+    return this.privateRecordWriteService.setPrivateOrThrow(args);
   }
 
   // Every path removing a member from an active workspace must call this, or only all-records roles can manage their records

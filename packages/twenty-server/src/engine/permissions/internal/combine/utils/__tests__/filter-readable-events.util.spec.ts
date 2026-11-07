@@ -45,6 +45,7 @@ const flatFieldMetadataMaps = [
 );
 
 const READ_ACCESS: ObjectRecordsPermissions = {
+  canCreateAllRecords: false,
   canReadAllRecords: true,
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
