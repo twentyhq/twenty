@@ -298,7 +298,9 @@ describe('buildPermissionsCondition', () => {
       const policy = buildForCompany(withoutCompanyPermission);
 
       expect(policy.kind).toBe('gated');
-      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
       expect(policy.condition.sql).toMatch(
         /^"company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId" FROM "workspace"."recordShare"/,
       );
@@ -312,7 +314,9 @@ describe('buildPermissionsCondition', () => {
     it('narrows edits of a principal without object permission to the records named for editing', () => {
       const policy = buildForCompany(withoutCompanyPermission, 'update');
 
-      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
       expect(Object.values(policy.condition.parameters)).toEqual(
         expect.arrayContaining([
           ['member-1', 'role-2', 'role-3'],
@@ -324,7 +328,9 @@ describe('buildPermissionsCondition', () => {
     it('never lets general access reach beyond the role', () => {
       const policy = buildForCompany(withoutObjectPermission);
 
-      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
       expect(Object.values(policy.condition.parameters)).toContainEqual([
         'member-1',
         ROLE_WITHOUT_PERMISSION_ID,
@@ -346,7 +352,9 @@ describe('buildPermissionsCondition', () => {
       );
       const policy = buildForCompany(readEverything);
 
-      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
       expect(policy.condition.sql).toMatch(
         /^\(\(\("company"."title" = :restricted\) AND \("company"."_isPrivate" = FALSE\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
@@ -416,7 +424,9 @@ describe('buildPermissionsCondition', () => {
       operationType: 'read',
     });
     expect(policy.kind).toBe('gated');
-    if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+    if (policy.kind !== 'gated') {
+      throw new Error('Expected a grant gate');
+    }
     expect(policy.condition.sql).toContain('recordShare');
     expect(policy.condition.sql).not.toContain('rowCause');
   });

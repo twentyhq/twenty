@@ -396,16 +396,19 @@ export class TimelineMessagingService {
 
       return threadParticipantsWithCompositeFields.reduce(
         (threadParticipantsAcc, threadParticipant) => {
-          if (!threadParticipant.message.messageThreadId)
+          if (!threadParticipant.message.messageThreadId) {
             return threadParticipantsAcc;
+          }
 
           if (
             // @ts-expect-error legacy noImplicitAny
             !threadParticipantsAcc[threadParticipant.message.messageThreadId]
           )
-            // @ts-expect-error legacy noImplicitAny
+          // @ts-expect-error legacy noImplicitAny
+          {
             threadParticipantsAcc[threadParticipant.message.messageThreadId] =
               [];
+          }
 
           // @ts-expect-error legacy noImplicitAny
           threadParticipantsAcc[threadParticipant.message.messageThreadId].push(
@@ -578,7 +581,9 @@ export class TimelineMessagingService {
         {};
 
       for (const { id: threadId, messageChannelId } of threadChannelRows) {
-        if (!messageChannelId) continue;
+        if (!messageChannelId) {
+          continue;
+        }
 
         const channel = channelById.get(messageChannelId);
 
@@ -591,7 +596,9 @@ export class TimelineMessagingService {
 
         const channelVisibility = channelVisibilityMap.get(messageChannelId);
 
-        if (!channelVisibility) continue;
+        if (!channelVisibility) {
+          continue;
+        }
 
         threadVisibilityByThreadId[threadId] =
           visibilityValues[
