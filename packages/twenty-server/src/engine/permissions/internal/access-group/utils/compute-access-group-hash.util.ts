@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
 
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
@@ -68,7 +68,7 @@ export const computeAccessGroupHash = ({
   objectMetadataId: string;
   rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
   rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: AccessGroupMemberFieldValues | null;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
 }): string =>
   createHash('sha256')
     .update(

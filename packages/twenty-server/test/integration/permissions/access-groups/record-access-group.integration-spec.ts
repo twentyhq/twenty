@@ -50,12 +50,11 @@ describe('access group ids on records (integration)', () => {
     return rows.map(({ compactId }) => compactId);
   };
 
-  const syncAndRecompute = async (heldCompactIds: number[] | null = null) => {
+  const syncAndRecompute = async () => {
     await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
     await recordAccessGroupService.recomputeRecordAccessGroupIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
-      heldCompactIds,
     });
   };
 
@@ -181,7 +180,7 @@ describe('access group ids on records (integration)', () => {
         input: { idToDelete: roleId },
       });
       isRoleDeleted = true;
-      await syncAndRecompute([londonCompactId]);
+      await syncAndRecompute();
 
       const [, londonPersonAfterDelete] = await readPeople();
 

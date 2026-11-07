@@ -2,7 +2,7 @@
 
 import { type RowLevelPermissionPredicate } from 'twenty-shared/types';
 
-export const buildAccessGroupMemberFieldKey = ({
+export const buildMemberFieldKey = ({
   workspaceMemberFieldMetadataId,
   workspaceMemberSubFieldName,
 }: Pick<

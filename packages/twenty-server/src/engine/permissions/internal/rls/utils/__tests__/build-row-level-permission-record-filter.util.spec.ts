@@ -515,10 +515,13 @@ describe('buildRowLevelPermissionRecordFilter', () => {
 });
 
 describe('buildRecordFilterForRole with access group member values', () => {
-  const buildForAccessGroup = (
-    roleId: string,
-    memberFieldValues: Record<string, string | null>,
-  ) =>
+  const buildForAccessGroup = ({
+    roleId,
+    memberFieldValues,
+  }: {
+    roleId: string;
+    memberFieldValues: Record<string, string | string[] | null>;
+  }) =>
     buildRecordFilterForRole({
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
@@ -531,8 +534,11 @@ describe('buildRecordFilterForRole with access group member values', () => {
 
   it('should filter on the group value as a member carrying it would', () => {
     expect(
-      buildForAccessGroup(LOCALE_BOUND_ROLE_ID, {
-        [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'fr-FR',
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'fr-FR',
+        },
       }),
     ).toEqual(
       build([LOCALE_BOUND_ROLE_ID], buildWorkspaceMember({ locale: 'fr-FR' })),
@@ -541,16 +547,27 @@ describe('buildRecordFilterForRole with access group member values', () => {
 
   it('should wrap the group value of a select member field into a list', () => {
     expect(
-      buildForAccessGroup(TEAM_BOUND_ROLE_ID, {
-        [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: 'OPEN',
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should use a whole list kept by the group as it is', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN'] },
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
   });
 
   it('should match nothing when the group holds no value', () => {
     expect(
-      buildForAccessGroup(LOCALE_BOUND_ROLE_ID, {
-        [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: null,
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: null },
       }),
     ).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });

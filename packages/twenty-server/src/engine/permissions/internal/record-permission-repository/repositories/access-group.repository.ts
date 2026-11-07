@@ -22,18 +22,18 @@ export class AccessGroupRepository {
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
-  async findGroupHashes(workspaceId: string): Promise<string[]> {
-    const rows = await this.recordPermissionQueryService.execute<{
-      groupHash: string;
-    }>({
+  async findAccessGroupHashes(
+    workspaceId: string,
+  ): Promise<Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>[]> {
+    return this.recordPermissionQueryService.execute<
+      Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>
+    >({
       workspaceId,
       query: {
-        sql: `SELECT "groupHash" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
+        sql: `SELECT "groupHash", "objectMetadataId" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
         parameters: {},
       },
     });
-
-    return rows.map(({ groupHash }) => groupHash);
   }
 
   async findObjectAccessGroups({
@@ -129,14 +129,11 @@ export class AccessGroupRepository {
   }: {
     workspaceId: string;
     groupHashes: string[];
-  }): Promise<Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[]> {
-    return this.recordPermissionQueryService.execute<
-      Pick<AccessGroup, 'compactId' | 'objectMetadataId'>
-    >({
+  }): Promise<void> {
+    await this.recordPermissionQueryService.execute({
       workspaceId,
       query: {
-        sql: `DELETE FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)
-          RETURNING "compactId", "objectMetadataId"`,
+        sql: `DELETE FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)`,
         parameters: { groupHashes },
       },
     });

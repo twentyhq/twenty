@@ -16,8 +16,8 @@ import {
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
-import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { resolveAccessGroupMemberFieldValue } from 'src/engine/permissions/internal/access-group/utils/resolve-access-group-member-field-value.util';
+import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -44,7 +44,37 @@ type BuildRecordFilterForRoleArgs = {
   objectMetadata: FlatObjectMetadata;
   roleId: string;
   workspaceMember?: RowLevelPermissionWorkspaceMember;
-  memberFieldValues?: AccessGroupMemberFieldValues;
+  memberFieldValues?: RowLevelPermissionMemberFieldValues;
+};
+
+const resolveBoundPredicateValue = ({
+  predicate,
+  workspaceMemberFieldMetadata,
+  workspaceMember,
+  memberFieldValues,
+}: {
+  predicate: FlatRowLevelPermissionPredicate;
+  workspaceMemberFieldMetadata: OrmFlatFieldMetadata;
+  workspaceMember: RowLevelPermissionWorkspaceMember | undefined;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | undefined;
+}): RowLevelPermissionPredicateValue | null => {
+  if (isDefined(memberFieldValues)) {
+    return resolveMemberFieldValuesPredicateValue({
+      memberFieldValues,
+      predicate,
+      workspaceMemberFieldMetadata,
+    });
+  }
+
+  if (!isDefined(workspaceMember)) {
+    return null;
+  }
+
+  return resolveWorkspaceMemberPredicateValue({
+    workspaceMember,
+    workspaceMemberFieldMetadata,
+    workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+  });
 };
 
 const resolveWorkspaceMemberBoundPredicateValue = ({
@@ -60,7 +90,7 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
   targetFieldMetadata: OrmFlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceMember: RowLevelPermissionWorkspaceMember | undefined;
-  memberFieldValues: AccessGroupMemberFieldValues | undefined;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | undefined;
 }): RowLevelPermissionPredicateValue | null => {
   const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: workspaceMemberFieldMetadataId,
@@ -74,19 +104,12 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
     );
   }
 
-  const resolvedWorkspaceMemberValue = isDefined(memberFieldValues)
-    ? resolveAccessGroupMemberFieldValue({
-        memberFieldValues,
-        predicate,
-        workspaceMemberFieldMetadata,
-      })
-    : isDefined(workspaceMember)
-      ? resolveWorkspaceMemberPredicateValue({
-          workspaceMember,
-          workspaceMemberFieldMetadata,
-          workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
-        })
-      : null;
+  const resolvedWorkspaceMemberValue = resolveBoundPredicateValue({
+    predicate,
+    workspaceMemberFieldMetadata,
+    workspaceMember,
+    memberFieldValues,
+  });
 
   if (!isDefined(resolvedWorkspaceMemberValue)) {
     return null;

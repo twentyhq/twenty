@@ -1,16 +1,6 @@
 /* @license Enterprise */
 
-import { type RowLevelPermissionPredicateValue } from 'twenty-shared/types';
-
-export type AccessGroupMemberFieldValue = Exclude<
-  RowLevelPermissionPredicateValue,
-  string[]
->;
-
-export type AccessGroupMemberFieldValues = Record<
-  string,
-  AccessGroupMemberFieldValue
->;
+import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
 
 export type AccessGroup = {
   compactId: number;
@@ -18,7 +8,7 @@ export type AccessGroup = {
   roleId: string;
   objectMetadataId: string;
   rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: AccessGroupMemberFieldValues | null;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
 };
 
 export type AccessGroupWithoutCompactId = Omit<AccessGroup, 'compactId'>;
