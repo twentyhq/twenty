@@ -5961,6 +5961,11 @@ msgstr "Checklista"
 msgid "Check recent runs"
 msgstr "Kontrollera senaste körningarna"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Kontrollera behörigheten att skapa separat när poster skapas, i stället för behörigheten att uppdatera."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8171,6 +8176,11 @@ msgstr "Skapa post"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Skapa post"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Behörighet att skapa poster"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -23683,11 +23693,6 @@ msgstr "Replit-installationslänkar kräver en HTTPS MCP-URL."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Svara"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Svara..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

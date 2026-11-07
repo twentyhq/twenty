@@ -5956,6 +5956,11 @@ msgstr ""
 msgid "Check recent runs"
 msgstr ""
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr ""
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8165,6 +8170,11 @@ msgstr ""
 #. js-lingui-id: 4JOSed
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
+msgstr ""
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
 msgstr ""
 
 #. js-lingui-id: fRYkDa
@@ -23639,11 +23649,6 @@ msgstr ""
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
-msgstr ""
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
 msgstr ""
 
 #. js-lingui-id: Q3LOVJ

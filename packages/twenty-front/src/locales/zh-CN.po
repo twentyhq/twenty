@@ -5961,6 +5961,11 @@ msgstr "检查清单"
 msgid "Check recent runs"
 msgstr "检查最近运行"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "创建记录时，仅检查创建权限，而非更新权限。"
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8171,6 +8176,11 @@ msgstr "创建记录"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "创建记录"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "创建记录权限"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -23681,11 +23691,6 @@ msgstr "Replit 安装链接需要使用 HTTPS MCP URL。"
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "回复"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "回复..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

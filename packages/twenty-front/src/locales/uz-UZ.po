@@ -5961,6 +5961,11 @@ msgstr "Tekshiruv ro‘yxati"
 msgid "Check recent runs"
 msgstr "So‘nggi ishga tushirishlarni tekshirish"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Yozuvlarni yaratishda yangilash ruxsati o‘rniga yaratish ruxsatini alohida tekshiring."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8171,6 +8176,11 @@ msgstr "Yozuv yarating"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Yozuv yaratish"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Yozuvlarni yaratish ruxsati"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -23681,11 +23691,6 @@ msgstr "Replit o‘rnatish havolalari HTTPS MCP URL manzilini talab qiladi."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Javob berish"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Javob berish..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
