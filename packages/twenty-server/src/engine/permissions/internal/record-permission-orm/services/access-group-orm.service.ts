@@ -6,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AccessGroupDefinition } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-query.service';
-import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
 
 const INSERT_BATCH_SIZE = 500;
@@ -19,50 +17,13 @@ const buildAccessGroupTableExpression = (workspaceId: string): string =>
 export class AccessGroupOrmService {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
-    private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
   ) {}
 
-  async runWithSyncLock({
-    workspaceId,
-    run,
-  }: {
-    workspaceId: string;
-    run: (transactionScope: RecordPermissionTransactionScope) => Promise<void>;
-  }): Promise<void> {
-    await this.workspaceQueryExecutorService.runInTransaction(
-      async (executor) => {
-        const transactionScope: RecordPermissionTransactionScope = {
-          workspaceId,
-          executeRawQuery: (sql, parameters = []) =>
-            executor.execute({ text: sql, values: parameters }),
-        };
-
-        await this.recordPermissionQueryService.execute({
-          workspaceId,
-          transactionScope,
-          query: {
-            sql: 'SELECT pg_advisory_xact_lock(hashtextextended(:lockKey, 0))',
-            parameters: { lockKey: `access-group-sync-${workspaceId}` },
-          },
-        });
-
-        await run(transactionScope);
-      },
-    );
-  }
-
-  async findGroupHashes({
-    workspaceId,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    transactionScope: RecordPermissionTransactionScope;
-  }): Promise<string[]> {
+  async findGroupHashes(workspaceId: string): Promise<string[]> {
     const rows = await this.recordPermissionQueryService.execute<{
       groupHash: string;
     }>({
       workspaceId,
-      transactionScope,
       query: {
         sql: `SELECT "groupHash" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
         parameters: {},
@@ -95,11 +56,9 @@ export class AccessGroupOrmService {
   async insertAccessGroups({
     workspaceId,
     definitions,
-    transactionScope,
   }: {
     workspaceId: string;
     definitions: AccessGroupDefinition[];
-    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     for (
       let start = 0;
@@ -110,7 +69,6 @@ export class AccessGroupOrmService {
 
       await this.recordPermissionQueryService.execute({
         workspaceId,
-        transactionScope,
         query: {
           sql: `INSERT INTO ${buildAccessGroupTableExpression(workspaceId)}
             ("roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues", "groupHash")
@@ -143,15 +101,12 @@ export class AccessGroupOrmService {
   async deleteAccessGroups({
     workspaceId,
     groupHashes,
-    transactionScope,
   }: {
     workspaceId: string;
     groupHashes: string[];
-    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     await this.recordPermissionQueryService.execute({
       workspaceId,
-      transactionScope,
       query: {
         sql: `DELETE FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)`,
         parameters: { groupHashes },
