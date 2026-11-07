@@ -70,7 +70,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
-    description: msg`Compute the access groups that record listings will use for row-level permissions.`,
+    description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
     label: msg`AI data policy and Privacy tab`,
