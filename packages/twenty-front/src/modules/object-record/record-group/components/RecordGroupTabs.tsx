@@ -1,6 +1,7 @@
 import { RecordGroupAllTab } from '@/object-record/record-group/components/RecordGroupAllTab';
 import { RecordGroupTab } from '@/object-record/record-group/components/RecordGroupTab';
 import { RecordGroupTabsRecordCountsEffect } from '@/object-record/record-group/components/RecordGroupTabsRecordCountsEffect';
+import { RecordGroupTabsPortalContext } from '@/object-record/record-group/states/context/RecordGroupTabsPortalContext';
 import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
@@ -18,6 +19,8 @@ import { type ViewType } from '@/views/types/ViewType';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 
@@ -32,10 +35,17 @@ const StyledTabsList = styled.div`
 
 type RecordGroupTabsProps = {
   viewType: ViewType;
+  dndType: string;
 };
 
-export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
+// Mounted in the rows' drag-and-drop provider to be drop targets, portaled above the rows
+export const RecordGroupTabs = ({
+  viewType,
+  dndType,
+}: RecordGroupTabsProps) => {
   const { t } = useLingui();
+
+  const recordGroupTabsPortalElement = useContext(RecordGroupTabsPortalContext);
 
   const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
     isRecordGroupTabsDisplayedComponentSelector,
@@ -75,11 +85,11 @@ export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
     setSelectedRecordGroupTabId(recordGroupId);
   };
 
-  if (!isRecordGroupTabsDisplayed) {
+  if (!isRecordGroupTabsDisplayed || !isDefined(recordGroupTabsPortalElement)) {
     return null;
   }
 
-  return (
+  return createPortal(
     <Tabs.Root
       value={activeRecordGroupTabId}
       onValueChange={handleRecordGroupTabChange}
@@ -88,7 +98,11 @@ export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
         <Tabs.List aria-label={t`Groups`} render={<StyledTabsList />}>
           <RecordGroupAllTab />
           {visibleRecordGroupIds.map((recordGroupId) => (
-            <RecordGroupTab key={recordGroupId} recordGroupId={recordGroupId} />
+            <RecordGroupTab
+              key={recordGroupId}
+              recordGroupId={recordGroupId}
+              dndType={dndType}
+            />
           ))}
         </Tabs.List>
       </StyledTabsScrollContainer>
@@ -100,6 +114,7 @@ export const RecordGroupTabs = ({ viewType }: RecordGroupTabsProps) => {
         )}
       {/* The grouped body loads the group totals, but All shows the ungrouped one */}
       {isAllRecordGroupsTabActive && <RecordIndexGroupAggregatesDataLoader />}
-    </Tabs.Root>
+    </Tabs.Root>,
+    recordGroupTabsPortalElement,
   );
 };

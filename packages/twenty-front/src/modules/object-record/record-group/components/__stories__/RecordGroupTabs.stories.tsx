@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
+import { RecordGroupTabsPortalProvider } from '@/object-record/record-group/components/RecordGroupTabsPortalProvider';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { selectedRecordGroupTabIdComponentState } from '@/object-record/record-group/states/selectedRecordGroupTabIdComponentState';
@@ -11,7 +12,9 @@ import {
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { recordIndexShouldDisplayGroupsAsTabsComponentState } from '@/object-record/record-index/states/recordIndexShouldDisplayGroupsAsTabsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { DragDropProvider } from '@dnd-kit/react';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewType } from '@/views/types/ViewType';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -126,7 +129,14 @@ const meta: Meta<typeof RecordGroupTabs> = {
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
   ],
-  args: { viewType: ViewType.TABLE },
+  args: { viewType: ViewType.TABLE, dndType: RECORD_TABLE_ROW_DND_TYPE },
+  render: (args) => (
+    <DragDropProvider>
+      <RecordGroupTabsPortalProvider>
+        <RecordGroupTabs {...args} />
+      </RecordGroupTabsPortalProvider>
+    </DragDropProvider>
+  ),
   parameters: {
     recordTableObjectNameSingular: 'company',
     msw: graphqlMocks,
