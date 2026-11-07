@@ -74,7 +74,7 @@ export class RecordSharePrincipalService {
       userWorkspaceRoleMap,
     });
     const roleIdsUnableToReadObject =
-      await this.recordPermissionsService.findRoleIdsUnableToReadObject({
+      await this.recordPermissionsService.filterRoleIdsWithoutReadAccess({
         workspaceId,
         roleIds: roleIds.filter(isDefined),
         objectMetadataId: flatObjectMetadata.id,
@@ -103,9 +103,10 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordPermissionsService.canReadRecords({
+      const hasGrant = await this.recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals:
-          await this.principalPermissionsService.buildPermissionsPrincipals({
+          await this.principalPermissionsService.resolvePermissionsPrincipals({
             authContext: {
               type: 'user',
               workspace: { id: workspaceId },

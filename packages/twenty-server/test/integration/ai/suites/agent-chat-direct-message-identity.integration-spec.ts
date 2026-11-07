@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -7,7 +8,6 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -138,6 +138,14 @@ describe('Canonical direct message identity', () => {
         .createQueryBuilder()
         .delete()
         .from(
+          `${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}.recordShare`,
+        )
+        .where('"recordId" = :threadId', { threadId: otherWorkspacePair })
+        .execute();
+      await global.testDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(
           `${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}.agentChatThread`,
         )
         .where('id = :threadId', { threadId: otherWorkspacePair })
@@ -157,7 +165,7 @@ describe('Canonical direct message identity', () => {
     expect(identity).toEqual({ isPrivate: true });
   });
 
-  it('allocates a normalized dormant identity without inbox or assistant side effects', async () => {
+  it('allocates a normalized pair-shared identity without inbox or assistant side effects', async () => {
     const threadId = await getOrCreate({
       firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY.toUpperCase(),
       secondWorkspaceMemberId:
@@ -192,15 +200,20 @@ describe('Canonical direct message identity', () => {
         .getRawMany<{ id: string }>(),
       global.testDataSource
         .createQueryBuilder()
-        .select('id')
+        .select('"principalId"')
         .from(`${context.schema}.recordShare`, 'share')
         .where('"recordId" = :threadId', { threadId })
-        .getRawMany<{ id: string }>(),
+        .getRawMany<{ principalId: string }>(),
     ]);
 
     expect(participants).toHaveLength(0);
     expect(messages).toHaveLength(0);
-    expect(shares).toHaveLength(0);
+    expect(shares.map(({ principalId }) => principalId).sort()).toEqual(
+      [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ].sort(),
+    );
   });
 
   it('rejects duplicate pairs at the database boundary', async () => {

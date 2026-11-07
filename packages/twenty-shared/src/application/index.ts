@@ -171,6 +171,7 @@ export type {
   EnqueueJobResult,
   EnqueueJobItem,
   EnqueueJobsInput,
+  EnqueuedJob,
   EnqueueJobsResult,
   JobStatusState,
   JobStatusResult,
@@ -221,8 +222,14 @@ export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderCon
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
-export type { ObjectPermissionAction } from './objectPermissionActionType';
-export { OBJECT_PERMISSION_ACTIONS } from './objectPermissionActionType';
+export type {
+  ObjectPermissionAction,
+  DisableableObjectPermissionAction,
+} from './objectPermissionActionType';
+export {
+  OBJECT_PERMISSION_ACTIONS,
+  DISABLEABLE_OBJECT_PERMISSION_ACTIONS,
+} from './objectPermissionActionType';
 export type {
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,

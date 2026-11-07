@@ -15,7 +15,7 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -35,7 +35,7 @@ export class DevSeederPermissionsService {
 
   constructor(
     private readonly roleService: RoleService,
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
@@ -111,7 +111,7 @@ export class DevSeederPermissionsService {
           ownerFlatApplication: workspaceCustomFlatApplication,
         });
 
-        await this.userRoleService.assignRoleToManyUserWorkspace({
+        await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
           workspaceId,
           userWorkspaceIds: [guestUserWorkspaceId],
           roleId: guestRole.id,
@@ -124,7 +124,7 @@ export class DevSeederPermissionsService {
           ownerFlatApplication: workspaceCustomFlatApplication,
         });
 
-        await this.userRoleService.assignRoleToManyUserWorkspace({
+        await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
           workspaceId,
           userWorkspaceIds: [limitedUserWorkspaceId],
           roleId: limitedRole.id,
@@ -136,7 +136,7 @@ export class DevSeederPermissionsService {
             ownerFlatApplication: workspaceCustomFlatApplication,
           });
 
-        await this.userRoleService.assignRoleToManyUserWorkspace({
+        await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
           workspaceId,
           userWorkspaceIds: [USER_WORKSPACE_DATA_SEED_IDS.SCOTT],
           roleId: impersonateOnlyRole.id,
@@ -157,7 +157,7 @@ export class DevSeederPermissionsService {
       );
     }
 
-    await this.userRoleService.assignRoleToManyUserWorkspace({
+    await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId,
       userWorkspaceIds: [adminUserWorkspaceId],
       roleId: adminRole.id,
@@ -169,7 +169,7 @@ export class DevSeederPermissionsService {
     });
 
     if (memberUserWorkspaceIds.length > 0) {
-      await this.userRoleService.assignRoleToManyUserWorkspace({
+      await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
         workspaceId,
         userWorkspaceIds: memberUserWorkspaceIds,
         roleId: memberRole.id,

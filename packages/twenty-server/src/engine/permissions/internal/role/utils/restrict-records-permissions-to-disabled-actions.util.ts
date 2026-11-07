@@ -1,4 +1,5 @@
 import {
+  type DisableableObjectPermissionAction,
   type FieldPermissionAction,
   type ObjectPermissionAction,
 } from 'twenty-shared/application';
@@ -29,7 +30,7 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
   disabledObjectPermissionActions,
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
-  disabledObjectPermissionActions: ObjectPermissionAction[];
+  disabledObjectPermissionActions: DisableableObjectPermissionAction[];
 }): ObjectRecordsPermissions => {
   const isEnabled = (action: ObjectPermissionAction) =>
     !disabledObjectPermissionActions.includes(action);

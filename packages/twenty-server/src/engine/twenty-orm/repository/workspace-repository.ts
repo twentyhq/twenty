@@ -101,6 +101,16 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
+const OPERATION_TYPE_BY_MUTATION_KIND: Record<
+  MutationKind,
+  Exclude<ObjectRecordsOperationType, 'read'>
+> = {
+  delete: 'destroy',
+  restore: 'softDelete',
+  'soft-delete': 'softDelete',
+  update: 'update',
+};
+
 type ValidateWrittenRecords = (writtenRecords: ObjectRecord[]) => Promise<void>;
 
 type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
@@ -209,7 +219,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder: WorkspaceSelectQueryBuilder,
     kind: MutationKind,
   ): Promise<void> {
-    await this.applyRowLevelPermissionPredicates(queryBuilder, kind);
+    await this.applyRowLevelPermissionPredicates(
+      queryBuilder,
+      OPERATION_TYPE_BY_MUTATION_KIND[kind],
+    );
   }
 
   get internalContext(): WorkspaceInternalContext {
@@ -994,7 +1007,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.buildInsertRows(recordsToInsert);
 
     await this.validateWriteIsPermitted({
-      operationType: 'insert',
+      operationType: 'create',
       columnsToReturn,
       updatedColumns: insertedColumns,
     });
@@ -1476,7 +1489,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     validateWrittenRecords?: ValidateWrittenRecords;
   }): Promise<ObjectRecord[]> {
     await this.validateWriteIsPermitted({
-      operationType: kind,
+      operationType: OPERATION_TYPE_BY_MUTATION_KIND[kind],
       columnsToReturn,
       updatedColumns: isDefined(data)
         ? Object.keys(this.formatWriteData(data)).filter(
@@ -1486,7 +1499,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!rowLevelPermissionsApplied) {
-      await this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
+      await this.applyRowLevelPermissionPredicates(
+        selectQueryBuilder,
+        OPERATION_TYPE_BY_MUTATION_KIND[kind],
+      );
     }
 
     // The before-image only feeds events, scoped-write checks and files field diffs
@@ -1650,7 +1666,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn,
     updatedColumns,
   }: {
-    operationType: MutationKind | 'insert';
+    operationType: Exclude<ObjectRecordsOperationType, 'read'>;
     columnsToReturn: string[];
     updatedColumns: string[];
   }): Promise<void> {
@@ -1792,14 +1808,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       await this.assertObjectOperationIsAccessibleOrThrow({
         flatObjectMetadata,
-        operationType: 'select',
+        operationType: 'read',
       });
 
       await this.options.internalContext.recordPermissions.assertColumnsReadableAndUpdatableOrThrow(
         {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           flatObjectMetadata,
-          operationType: 'select',
+          operationType: 'read',
           selectedColumns: columnNames,
           updatedColumns: [],
         },
@@ -1809,7 +1825,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private async applyRowLevelPermissionPredicates(
     queryBuilder: WorkspaceSelectQueryBuilder,
-    operationType: ObjectRecordsOperationType = 'select',
+    operationType: ObjectRecordsOperationType = 'read',
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -1835,7 +1851,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         flatObjectMetadata: this.options.flatObjectMetadataByObjectMetadataId(
           joinedTableShape.objectMetadataId,
         ),
-        operationType: 'select',
+        operationType: 'read',
       });
     }
   }
@@ -1925,7 +1941,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   isReadDisabled(): Promise<boolean> {
-    return this.isOperationDisabled({ operationType: 'select' });
+    return this.isOperationDisabled({ operationType: 'read' });
   }
 
   private async isOperationDisabled({
@@ -1981,7 +1997,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }): void {
     if (alias === queryBuilder.alias) {
       throw new PermissionsException(
-        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'select' ? 'readable' : 'writable'} through the API`,
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'read' ? 'readable' : 'writable'} through the API`,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }

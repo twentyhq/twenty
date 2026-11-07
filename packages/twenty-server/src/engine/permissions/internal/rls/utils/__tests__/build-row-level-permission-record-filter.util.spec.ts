@@ -300,6 +300,7 @@ const buildPredicateGroup = (
   objectMetadataId: OBJECT_ID,
   positionInRowLevelPermissionPredicateGroup: null,
   canReadRecords: true,
+  canCreateRecords: true,
   canUpdateRecords: true,
   canSoftDeleteRecords: true,
   canDestroyRecords: true,

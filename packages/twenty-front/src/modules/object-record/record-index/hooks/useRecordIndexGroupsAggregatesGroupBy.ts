@@ -99,7 +99,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 
   const hasReadPermission = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const groupByGqlInput = buildGroupByFieldObject({

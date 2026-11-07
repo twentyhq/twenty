@@ -22,7 +22,7 @@ describe('workspace context sharing enforcement', () => {
           {
             provide: PrincipalPermissionsService,
             useValue: {
-              buildPermissionsPrincipals: jest
+              resolvePermissionsPrincipals: jest
                 .fn()
                 .mockResolvedValue(undefined),
             },
