@@ -29,6 +29,8 @@ describe('getDashboardFilterConditionValueIssue', () => {
     [ViewFilterOperand.IS_RELATIVE, 'PAST_1000_SECOND', 'a day or longer'],
     [ViewFilterOperand.IS_RELATIVE, 'NEXT_2_MINUTE', 'a day or longer'],
     [ViewFilterOperand.IS_RELATIVE, 'THIS_1_HOUR', 'a day or longer'],
+    [ViewFilterOperand.IS_RELATIVE, 'THIS_1_MONTH;;Bad/Zone;;', 'time zone'],
+    [ViewFilterOperand.IS_RELATIVE, 'THIS_1_MONTH;;;;', 'time zone'],
   ])('should reject %s value "%s"', (operand, value, expectedIssue) => {
     expect(getDashboardFilterConditionValueIssue({ operand, value })).toContain(
       expectedIssue,

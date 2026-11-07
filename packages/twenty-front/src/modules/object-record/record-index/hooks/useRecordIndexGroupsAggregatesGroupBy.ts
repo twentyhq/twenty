@@ -12,6 +12,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -117,6 +118,8 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       .map((recordGroupDefinition) => recordGroupDefinition.value),
   });
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const { data, loading, error } = useQuery(groupByAggregateQuery, {
     skip:
       !isDefined(objectMetadataItem) ||
@@ -128,6 +131,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
         anyFieldFilter,
         requestFilters,
         recordGroupOptionsFilter,
+        additionalFilter,
       ]),
       groupBy: {
         ...groupByGqlInput,

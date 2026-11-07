@@ -91,7 +91,11 @@ describe('buildDashboardFilterForWidget', () => {
         timeZone: VIEWER_TIME_ZONE,
         firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       }),
-    ).toEqual({ recordFilters: [], unresolvedBindings: [] });
+    ).toEqual({
+      boundDashboardFilterValues: [],
+      recordFilters: [],
+      unresolvedBindings: [],
+    });
   });
 
   it('should ignore values of filters the widget does not bind', () => {
@@ -103,7 +107,33 @@ describe('buildDashboardFilterForWidget', () => {
         timeZone: VIEWER_TIME_ZONE,
         firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       }),
-    ).toEqual({ recordFilters: [], unresolvedBindings: [] });
+    ).toEqual({
+      boundDashboardFilterValues: [],
+      recordFilters: [],
+      unresolvedBindings: [],
+    });
+  });
+
+  it('should return the value of each filter the widget binds', () => {
+    const { boundDashboardFilterValues } = buildDashboardFilterForWidget({
+      values: {
+        [PERIOD_FILTER_ID]: JANUARY_2026,
+        [SIGNED_FILTER_ID]: JANUARY_2026,
+      },
+      bindings: [
+        {
+          pageLayoutFilterId: PERIOD_FILTER_ID,
+          fieldMetadataId: CLOSE_DATE_FIELD.id,
+        },
+      ],
+      fields: FIELDS,
+      timeZone: VIEWER_TIME_ZONE,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
+    });
+
+    expect(boundDashboardFilterValues).toEqual([
+      { pageLayoutFilterId: PERIOD_FILTER_ID, ...JANUARY_2026 },
+    ]);
   });
 
   it('should report a binding with a value whose field is not given', () => {

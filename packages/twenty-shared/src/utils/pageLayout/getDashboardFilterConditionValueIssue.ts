@@ -1,9 +1,11 @@
 import { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from '@/constants/DashboardFilterPlainDateOperands';
 import { DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX } from '@/constants/DashboardFilterRelativeDateAmountMax';
 import { type PageLayoutFilterCondition, ViewFilterOperand } from '@/types';
+import { getValidTimeZoneOrUndefined } from '@/utils/date/getValidTimeZoneOrUndefined';
 import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { plainDateFilterValueSchema } from '@/utils/filter/utils/validation-schemas/filterValueScalarSchemas';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const SUPPORTED_PLAIN_DATE_FORMAT = /^(?!0000)\d{4}-\d{2}-\d{2}$/;
 
@@ -20,6 +22,15 @@ const getRelativeDateIssue = (value: string): string | undefined => {
     DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX
   ) {
     return `Expected a relative date amount of at most ${DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX}.`;
+  }
+
+  const { timezone } = relativeDateFilter.data;
+
+  if (
+    isDefined(timezone) &&
+    !isDefined(getValidTimeZoneOrUndefined(timezone))
+  ) {
+    return `Expected a valid time zone, got "${timezone}".`;
   }
 
   // A dashboard filter can bind a DATE field, where a sub-day range is empty

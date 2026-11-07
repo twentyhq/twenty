@@ -23,6 +23,10 @@ type DashboardRecordFilter = Omit<RecordFilter, 'id'>;
 
 type DashboardFilterField = Pick<PartialFieldMetadataItem, 'id' | 'type'>;
 
+type BoundDashboardFilterValue = PageLayoutFilterValue & {
+  pageLayoutFilterId: string;
+};
+
 // Postgres rejects year 0 and ISO dates with an expanded year
 const SUPPORTED_ISO_YEAR_PREFIX = /^(?!0000)\d{4}-/;
 
@@ -135,6 +139,7 @@ export const buildDashboardFilterForWidget = ({
   timeZone: string;
   firstDayOfTheWeek: FirstDayOfTheWeek;
 }): {
+  boundDashboardFilterValues: BoundDashboardFilterValue[];
   recordFilters: DashboardRecordFilter[];
   unresolvedBindings: DashboardFilterBinding[];
 } => {
@@ -170,6 +175,12 @@ export const buildDashboardFilterForWidget = ({
   });
 
   return {
+    boundDashboardFilterValues: boundValues.map(
+      ({ binding: { pageLayoutFilterId }, value: { conditions } }) => ({
+        pageLayoutFilterId,
+        conditions,
+      }),
+    ),
     recordFilters,
     unresolvedBindings: boundValues
       .map(({ binding }) => binding)
