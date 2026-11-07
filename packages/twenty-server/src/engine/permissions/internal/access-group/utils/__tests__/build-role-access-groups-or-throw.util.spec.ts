@@ -202,6 +202,23 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     ).toEqual([null]);
   });
 
+  it('should not give predicates without a predicate group the hash of an all records group', () => {
+    const permissions = buildRowLevelPermissions([
+      { id: 'ungrouped', rowLevelPermissionPredicateGroupId: null },
+    ]);
+
+    if (isDefined(permissions.rowLevelRecordsPermissions)) {
+      permissions.rowLevelRecordsPermissions.predicateGroups = [];
+    }
+
+    const [ruleAccessGroup] = build({ objectRecordsPermissions: permissions });
+    const [allRecordsAccessGroup] = build({
+      objectRecordsPermissions: { ...noAccess, canReadAllRecords: true },
+    });
+
+    expect(ruleAccessGroup.groupHash).not.toBe(allRecordsAccessGroup.groupHash);
+  });
+
   it('should make no member group when no member holds the role', () => {
     expect(
       build({
