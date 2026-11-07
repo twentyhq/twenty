@@ -43,7 +43,7 @@ export class TwoFactorAuthenticationBackupCodeService {
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
-  async issueBackupCodes({
+  async issueBackupCodesOrThrow({
     userId,
     workspaceId,
     twoFactorAuthenticationMethodId,
@@ -100,7 +100,7 @@ export class TwoFactorAuthenticationBackupCodeService {
     return backupCodes;
   }
 
-  async regenerateBackupCodes({
+  async regenerateBackupCodesOrThrow({
     userId,
     workspaceId,
     otp,
@@ -120,7 +120,7 @@ export class TwoFactorAuthenticationBackupCodeService {
         },
       );
 
-    return this.issueBackupCodes({
+    return this.issueBackupCodesOrThrow({
       userId,
       workspaceId,
       twoFactorAuthenticationMethodId,

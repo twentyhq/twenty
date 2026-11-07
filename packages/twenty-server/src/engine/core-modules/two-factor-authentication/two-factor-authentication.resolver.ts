@@ -275,11 +275,13 @@ export class TwoFactorAuthenticationResolver {
     }
 
     const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
-        userId: user.id,
-        workspaceId: workspace.id,
-        twoFactorAuthenticationMethodId,
-      });
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodesOrThrow(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          twoFactorAuthenticationMethodId,
+        },
+      );
 
     return { success: true, backupCodes };
   }
@@ -306,7 +308,7 @@ export class TwoFactorAuthenticationResolver {
     @AuthUser() user: AuthContextUser,
   ): Promise<TwoFactorAuthenticationBackupCodesDTO> {
     const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.regenerateBackupCodes(
+      await this.twoFactorAuthenticationBackupCodeService.regenerateBackupCodesOrThrow(
         { userId: user.id, workspaceId: workspace.id, otp },
       );
 
