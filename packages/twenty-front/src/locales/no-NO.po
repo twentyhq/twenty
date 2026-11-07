@@ -23692,11 +23692,6 @@ msgstr "Replit-installasjonslenker krever en HTTPS MCP-URL."
 msgid "Reply"
 msgstr "Svar"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Svar..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"

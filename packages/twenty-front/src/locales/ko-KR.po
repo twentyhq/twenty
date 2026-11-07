@@ -23692,11 +23692,6 @@ msgstr "Replit 설치 링크에는 HTTPS MCP URL이 필요합니다."
 msgid "Reply"
 msgstr "답장"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "답장..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"

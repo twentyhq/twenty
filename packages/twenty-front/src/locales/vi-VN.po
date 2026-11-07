@@ -23692,11 +23692,6 @@ msgstr "Liên kết cài đặt Replit yêu cầu một MCP URL dạng HTTPS."
 msgid "Reply"
 msgstr "Trả lời"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Trả lời..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
