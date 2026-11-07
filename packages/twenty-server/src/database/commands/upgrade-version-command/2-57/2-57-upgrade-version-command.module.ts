@@ -10,6 +10,7 @@ import { ReadCreatePermissionInCommandMenuItemsCommand } from 'src/database/comm
 import { RecomputeRolesPermissionsWithCreateKeysCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794045345000-recompute-roles-permissions-with-create-keys.command';
 import { AddAccessGroupObjectMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794063316000-add-access-group-object-metadata-id.command';
 import { RefreshOutlookDraftsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794061333000-refresh-outlook-drafts.command';
+import { ReplaceWithdrawnCurrencyCodeCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794064503000-replace-withdrawn-currency-code.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -34,6 +35,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ReadCreatePermissionInCommandMenuItemsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,
     RefreshOutlookDraftsCommand,
+    ReplaceWithdrawnCurrencyCodeCommand,
   ],
 })
 export class V2_57_UpgradeVersionCommandModule {}

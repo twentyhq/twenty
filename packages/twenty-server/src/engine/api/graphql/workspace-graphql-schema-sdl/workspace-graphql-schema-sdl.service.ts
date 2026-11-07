@@ -224,7 +224,9 @@ export class WorkspaceGraphqlSchemaSDLService {
     for (const [universalId, object] of Object.entries(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(object)) continue;
+      if (!isDefined(object)) {
+        continue;
+      }
 
       reconciledByUniversalIdentifier[universalId] = {
         ...object,

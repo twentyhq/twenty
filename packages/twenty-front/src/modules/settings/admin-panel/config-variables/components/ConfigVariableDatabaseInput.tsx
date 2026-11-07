@@ -63,12 +63,16 @@ export const ConfigVariableDatabaseInput = ({
   ];
 
   const isValueSelected = (optionValue: string) => {
-    if (!Array.isArray(value)) return false;
+    if (!Array.isArray(value)) {
+      return false;
+    }
     return value.includes(optionValue);
   };
 
   const handleMultiSelectChange = (optionValue: string) => {
-    if (!Array.isArray(value)) return;
+    if (!Array.isArray(value)) {
+      return;
+    }
 
     let newValues = [...value];
     if (isValueSelected(optionValue)) {
