@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
+import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793995651000-backfill-can-create-permissions.command';
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793971872390-drop-workspace-workflow-object.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -20,6 +21,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddMessageAttachmentTargetCommand,
+    BackfillCanCreatePermissionsCommand,
     DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
     MoveFindRecordsSortsToRecordSortsCommand,
     DropWorkspaceWorkflowObjectCommand,
