@@ -54,7 +54,7 @@ export class RecordSharingReadService {
   async findRecordSharingPanel(
     args: RecordSharingArgs,
   ): Promise<RecordSharingDTO> {
-    const sharingObject = await this.findSharingObject(args);
+    const sharingObject = await this.findSharingObjectOrThrow(args);
     const permissions = await this.findPermissions({ args, sharingObject });
 
     if (!permissions.canRead) {
@@ -67,7 +67,7 @@ export class RecordSharingReadService {
   async findRecordSharingAfterChange(
     args: RecordSharingArgs,
   ): Promise<RecordSharingDTO> {
-    const sharingObject = await this.findSharingObject(args);
+    const sharingObject = await this.findSharingObjectOrThrow(args);
     const permissions = await this.findPermissions({ args, sharingObject });
 
     if (!permissions.canRead) {
@@ -86,7 +86,7 @@ export class RecordSharingReadService {
   }
 
   async canManageRecordSharing(args: RecordSharingArgs): Promise<boolean> {
-    const sharingObject = await this.findSharingObject(args);
+    const sharingObject = await this.findSharingObjectOrThrow(args);
     const permissions = await this.findPermissions({ args, sharingObject });
 
     if (!permissions.canRead) {
@@ -114,7 +114,7 @@ export class RecordSharingReadService {
     const { viewerAccessLevel, creatorWorkspaceMemberId } =
       await this.findRecordShareState({
         ...args,
-        sharingObject: await this.findSharingObject(args),
+        sharingObject: await this.findSharingObjectOrThrow(args),
       });
 
     return { viewerAccessLevel, creatorWorkspaceMemberId };
@@ -398,7 +398,7 @@ export class RecordSharingReadService {
     );
   }
 
-  private async findSharingObject({
+  private async findSharingObjectOrThrow({
     authContext,
     objectMetadataId,
   }: Pick<
