@@ -1,11 +1,9 @@
 import {
   buildClientSchema,
   buildSchema,
-  getIntrospectionQuery,
-  graphql,
   type GraphQLNamedType,
   type GraphQLSchema,
-  type IntrospectionQuery,
+  introspectionFromSchema,
 } from 'graphql';
 import { type BuiltInParserName } from 'prettier';
 
@@ -28,22 +26,8 @@ export type SchemaRenderer = (
 // renderers see a client schema exactly like one built from a real endpoint.
 export const toClientSchema = async (
   schemaGql: string,
-): Promise<GraphQLSchema> => {
-  const schema = buildSchema(schemaGql);
-
-  const introspectionResponse = await graphql({
-    schema,
-    source: getIntrospectionQuery(),
-  });
-
-  if (!introspectionResponse.data) {
-    throw new Error(JSON.stringify(introspectionResponse.errors));
-  }
-
-  return buildClientSchema(
-    introspectionResponse.data as unknown as IntrospectionQuery,
-  );
-};
+): Promise<GraphQLSchema> =>
+  buildClientSchema(introspectionFromSchema(buildSchema(schemaGql)));
 
 export const schemaRenderTest = async (
   schemaGql: string,

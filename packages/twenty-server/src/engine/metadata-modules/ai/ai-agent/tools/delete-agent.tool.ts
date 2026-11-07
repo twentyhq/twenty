@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -23,7 +24,10 @@ const deleteAgentInputSchema = z.object({
 @DefineTool({
   name: 'delete_agent',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Delete an AI agent and its triggers, for example once it is no longer useful. Use list_agents first if you don't know the id.`,
 })
 export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {

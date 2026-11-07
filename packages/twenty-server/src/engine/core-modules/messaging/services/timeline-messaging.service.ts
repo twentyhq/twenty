@@ -9,6 +9,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { type TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
@@ -17,6 +18,7 @@ import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/me
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -42,6 +44,7 @@ export class TimelineMessagingService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly fileUrlService: FileUrlService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   public async getAndCountMessageThreads(
@@ -425,17 +428,14 @@ export class TimelineMessagingService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<TimelineThreadChannelDTO | null> {
-    const allowedRecordIds =
-      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
-        this.workspaceOrmManager
-          .getRepository('messageThread')
-          .findRecordIdsAllowedForOperations({
-            recordIds: [messageThreadId],
-            operationTypes: ['select'],
-          }),
-      );
+    const recordsPermissions =
+      await this.recordPermissionsService.findRecordsActions({
+        authContext: getWorkspaceAuthContext(),
+        objectNameSingular: 'messageThread',
+        recordIds: [messageThreadId],
+      });
 
-    if (!allowedRecordIds.select.has(messageThreadId)) {
+    if (!recordsPermissions.get(messageThreadId)?.canRead) {
       return null;
     }
 

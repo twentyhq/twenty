@@ -1,5 +1,3 @@
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
-
 type ObjectMetadataId = string;
 
 export type RoleRecordsPermissions = {
@@ -9,3 +7,4 @@ export type RoleRecordsPermissions = {
   canDestroyAllRecords: boolean;
   objects: Partial<Record<ObjectMetadataId, ObjectRecordsPermissions>>;
 };
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';

@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
@@ -10,8 +11,6 @@ import {
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
@@ -39,8 +38,6 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -50,7 +47,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -85,6 +82,21 @@ const BILLING_CHECKOUT_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 
+const BILLING_PARTNER_CODE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: false,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
+
 const BILLING_PLAN_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
@@ -116,7 +128,7 @@ export class BillingResolver {
     private readonly billingService: BillingService,
     private readonly billingPartnerCodeService: BillingPartnerCodeService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -135,37 +147,19 @@ export class BillingResolver {
   }
 
   @Query(() => BillingPartnerCodeDTO)
-  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
   async billingPartnerCode(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
-    await this.validateCanCheckoutSessionPermissionOrThrow({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      applicationId: application?.id,
-      workspaceActivationStatus: workspace.activationStatus,
-    });
-
     return this.billingPartnerCodeService.getPartnerCode(workspace.id);
   }
 
   @Mutation(() => BillingPartnerCodeDTO)
-  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(BILLING_PARTNER_CODE_ACCESS_POLICY))
   async setBillingPartnerCode(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { partnerCode }: BillingSetPartnerCodeInput,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
-    await this.validateCanCheckoutSessionPermissionOrThrow({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      applicationId: application?.id,
-      workspaceActivationStatus: workspace.activationStatus,
-    });
-
     return this.billingPartnerCodeService.setPartnerCode({
       workspaceId: workspace.id,
       partnerCode,
@@ -185,14 +179,9 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
-    @AuthApiKey() apiKey?: ApiKeyEntity,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
-      userWorkspaceId,
-      apiKeyId: apiKey?.id,
-      applicationId: application?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -251,14 +240,9 @@ export class BillingResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { recurringInterval, plan }: BillingCheckoutSessionInput,
     @Args('idempotencyKey', { type: () => String }) idempotencyKey: string,
-    @AuthApiKey() apiKey?: ApiKeyEntity,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPaymentIntentDTO> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
-      userWorkspaceId,
-      apiKeyId: apiKey?.id,
-      applicationId: application?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -538,15 +522,9 @@ export class BillingResolver {
 
   private async validateCanCheckoutSessionPermissionOrThrow({
     workspaceId,
-    userWorkspaceId,
-    apiKeyId,
-    applicationId,
     workspaceActivationStatus,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
-    apiKeyId?: string;
-    applicationId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -561,13 +539,9 @@ export class BillingResolver {
     }
 
     const userHasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting: PermissionFlagType.BILLING,
-        apiKeyId,
-        applicationId,
-        agentId: undefined,
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: workspaceAuthContextStorage.getStore(),
+        permissionFlag: PermissionFlagType.BILLING,
       });
 
     if (!userHasPermission) {

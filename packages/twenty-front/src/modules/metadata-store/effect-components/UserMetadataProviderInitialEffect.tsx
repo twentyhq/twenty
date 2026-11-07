@@ -2,7 +2,10 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import {
+  type CurrentUserWorkspace,
+  currentUserWorkspaceState,
+} from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -15,7 +18,6 @@ import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useQuery } from '@apollo/client/react';
@@ -113,7 +115,7 @@ export const UserMetadataProviderInitialEffect = () => {
             .twoFactorAuthenticationMethodSummary ?? [],
         objectRecordsPermissions:
           (userQueryData.currentUser.currentUserWorkspace
-            .objectRecordsPermissions as CurrentUserWorkspaceObjectRecordsPermissions[]) ??
+            .objectRecordsPermissions as CurrentUserWorkspace['objectRecordsPermissions']) ??
           [],
         isImpersonating:
           userQueryData.currentUser.currentUserWorkspace.isImpersonating ??

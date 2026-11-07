@@ -15,8 +15,8 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FAIR_REBASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-rebase-script.constant';
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
-import { runRedisScript } from 'src/engine/core-modules/message-queue/drivers/fairness/run-redis-script';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 
 export type FairTicketRequest = { groupKeys: string[]; jobCount: number };
 

@@ -10,7 +10,7 @@ export type CalendarEventParticipantLink = {
 };
 
 export const applyMeetingInteractions = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   links: CalendarEventParticipantLink[],
 ): Promise<string[]> => {
   const calendarEventIds = [

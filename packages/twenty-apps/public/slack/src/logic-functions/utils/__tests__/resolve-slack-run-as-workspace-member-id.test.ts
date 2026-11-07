@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -49,7 +48,10 @@ const client = {} as CoreApiClient;
 
 const authTestMock = vi.fn();
 const SLACK_CONNECTION_ID = 'connection-1';
-const slackClient = { auth: { test: authTestMock } } as unknown as WebClient;
+const slackClient = {
+  auth: { test: authTestMock },
+  users: { info: vi.fn() },
+};
 
 const IDENTITY: SlackUserIdentity = {
   slackUserId: 'U0123456789',

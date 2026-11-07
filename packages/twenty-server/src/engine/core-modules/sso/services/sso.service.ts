@@ -8,7 +8,7 @@ import { custom, Issuer } from 'openid-client';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryFailedError, Repository } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   WorkspaceSsoIdentityProviderEntity,

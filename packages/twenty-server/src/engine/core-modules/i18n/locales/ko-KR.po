@@ -219,11 +219,6 @@ msgstr "거래 성사됨"
 msgid "A DNS manager error occurred."
 msgstr "DNS 매니저 오류가 발생했습니다."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "중복 항목이 감지되었습니다."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "필수 필드가 누락되었습니다."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "필수 필드가 누락되었습니다. 모든 필수 값을 입력한 후 다시 시도하세요."
 
@@ -1173,7 +1168,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "이중 인증 데이터에서 오류가 발생했습니다."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1197,6 +1192,11 @@ msgstr "이 작업 공간에서는 이미 내보내기가 실행 중입니다."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
 msgstr "이 작업공간에서 이미 내보내기가 실행 중입니다. 완료될 때까지 기다려 주세요."
+
+#. js-lingui-id: M71yE1
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "An external service took too long to respond."
+msgstr "외부 서비스의 응답 시간이 너무 오래 걸렸습니다."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1663,6 +1663,7 @@ msgstr "파일을 첨부했습니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "연결 대상"
@@ -1710,6 +1711,7 @@ msgid "Attachment record position"
 msgstr "첨부 파일 레코드 위치"
 
 #. js-lingui-id: nOtYs7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1814,11 +1816,6 @@ msgstr "인증에 실패했습니다. 다시 로그인해 주세요."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "이 공급자로 인증이 활성화되지 않았습니다."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "이 기능에 접근하려면 인증이 필요합니다. 로그인 후 다시 시도해 주세요."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -2959,7 +2956,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "재정의할 기존 타임라인 활동 유형을 선택하세요."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "공유할 한 명의 사용자 또는 하나의 역할을 선택하세요."
 
@@ -3018,6 +3015,11 @@ msgstr "클레임 토큰"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "이 서버에서는 소유권 등록 기능이 설정되어 있지 않습니다. 관리자에게 GitHub OAuth 앱을 구성해 달라고 요청하세요."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "이 워크스페이스의 개인정보 보호 설정에서는 분류를 사용할 수 없습니다."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3343,10 +3345,10 @@ msgstr "먼저 이 MCP 서버의 계정을 연결하세요."
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "{objectMetadataNameSingular}의 {connectFieldName}에 대해서는 연결이 허용되지 않습니다."
 
-#. js-lingui-id: eTJ1jL
+#. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Connect your mailbox"
-msgstr "메일박스 연결하기"
+msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
+msgstr "이메일과 캘린더를 연결하여 전체 네트워크를 즉시 확인하세요. 30초면 충분합니다."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3822,7 +3824,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "필드 메타데이터가 생성되었으나 상위 객체 메타데이터를 찾을 수 없습니다"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "비공개 객체의 레코드를 생성하려면 shareWith 인수가 필요합니다"
 
@@ -4057,6 +4059,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Dashboards"
 msgstr "대시보드"
 
+#. js-lingui-id: lJDD6I
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Data imported"
+msgstr "데이터를 가져왔습니다"
+
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -4070,6 +4077,7 @@ msgid "Data Model"
 msgstr "데이터 모델"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "데이터 구조가 잘못되었습니다."
@@ -4167,6 +4175,11 @@ msgstr "거래"
 msgctxt "viewFieldGroup.name"
 msgid "Deal"
 msgstr "거래"
+
+#. js-lingui-id: jlACtx
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Deal follow-ups on track"
+msgstr "거래 후속 조치 진행 중"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4498,11 +4511,6 @@ msgctxt "fieldMetadata.label"
 msgid "Delivered At"
 msgstr "전달 시각"
 
-#. js-lingui-id: G768/0
-#: src/filters/__tests__/unhandled-exception.filter.spec.ts
-msgid "denied"
-msgstr "거부됨"
-
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4734,9 +4742,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "각 관련 레코드 경로 필드는 이전 관계에서 도달한 객체에 속해야 합니다"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "각 shareWith 항목은 workspaceMemberId, roleId 또는 everyone 중 정확히 하나를 대상으로 해야 합니다"
+
+#. js-lingui-id: +mARCF
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Each week, every deal about to close gets a follow-up draft."
+msgstr "매주 마감 예정인 모든 거래에 후속 조치 초안이 생성됩니다."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5064,6 +5077,11 @@ msgstr "대기열에 추가됨"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "보강"
+
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "1자에서 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}자 사이의 이름과 지원되는 어시스턴트 외관 옵션을 입력하세요."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5591,6 +5609,23 @@ msgstr "필드 이름이 레이블과 동기화되지 않았습니다."
 msgid "Field not found."
 msgstr "필드를 찾을 수 없음."
 
+#. js-lingui-id: SX2JS0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option field not found"
+msgstr "필드 옵션 필드를 찾을 수 없음"
+
+#. js-lingui-id: aG/F93
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Field option not found"
+msgstr "필드 옵션을 찾을 수 없음"
+
+#. js-lingui-id: cBUqMY
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Field option not found."
+msgstr "필드 옵션을 찾을 수 없음."
+
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field permission already exists"
@@ -5807,6 +5842,7 @@ msgstr "파일"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "파일 {fileId}은(는) 이미 영구 파일 필드에 연결되어 있습니다. 파일을 다시 업로드해 주세요."
 
@@ -5896,6 +5932,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "파일"
 
+#. js-lingui-id: xz4d+o
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Files attached to the message"
+msgstr "메시지에 첨부된 파일"
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
@@ -5979,11 +6021,6 @@ msgstr "마감 예정 거래 후속 조치"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
 msgstr "후속 조치 지침"
-
-#. js-lingui-id: xRdoZk
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Follow-up request sent"
-msgstr "후속 조치 요청 전송됨"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6407,6 +6444,11 @@ msgstr "핸들러 이름이 잘못되었습니다."
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "handlerName은 올바른 JavaScript 식별자이거나 점으로 구분된 경로여야 합니다."
 
+#. js-lingui-id: xeZiA6
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Handover ready"
+msgstr "인계 준비 완료"
+
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6592,6 +6634,11 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "{objectLabelPlural} 가져오기"
 
+#. js-lingui-id: vXTVX9
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your contacts"
+msgstr "연락처 가져오기"
+
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
@@ -6604,6 +6651,7 @@ msgid "In progress"
 msgstr "진행 중"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "이 워크스페이스에서는 받은 편지함이 활성화되어 있지 않습니다."
@@ -6729,8 +6777,8 @@ msgid "Internal name of the campaign"
 msgstr "캠페인의 내부 이름"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "잘못된 액세스 수준입니다."
 
@@ -6948,6 +6996,11 @@ msgstr "잘못된 기능 플래그 키입니다."
 msgid "Invalid field input."
 msgstr "잘못된 필드 입력입니다."
 
+#. js-lingui-id: XRDeBh
+#: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
+msgid "Invalid field option input."
+msgstr "잘못된 필드 옵션 입력입니다."
+
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
 msgid "Invalid field selection. Check the requested fields and relation depth."
@@ -6992,7 +7045,7 @@ msgid "Invalid filter parameter."
 msgstr "잘못된 필터 매개변수입니다."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "잘못된 필터 값"
 
@@ -7104,9 +7157,9 @@ msgid "Invalid input for application registration."
 msgstr "애플리케이션 등록을 위한 입력이 유효하지 않습니다."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "잘못된 입력이 제공되었습니다."
 
@@ -7443,8 +7496,8 @@ msgstr "잘못된 URL 형식입니다."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "잘못된 UUID 형식입니다."
 
@@ -7693,6 +7746,11 @@ msgstr "초대 전송됨"
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
 msgstr "팀 초대"
+
+#. js-lingui-id: z9L5cr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invites are out. Bring in more people anytime."
+msgstr "초대장을 보냈습니다. 언제든지 더 많은 사람을 초대하세요."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8329,6 +8387,11 @@ msgstr "비공개로 전환"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "워크플로를 비공개로 전환"
+
+#. js-lingui-id: 0NPa8y
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Manage your apps in settings."
+msgstr "설정에서 앱을 관리하세요."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9278,6 +9341,11 @@ msgstr "새 워크스페이스 설정이 비활성화되어 있습니다"
 msgid "No"
 msgstr "아니요"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "이 워크스페이스의 개인정보 보호 설정을 충족하는 AI 모델이 없습니다."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9403,6 +9471,11 @@ msgstr "유효한 수신자가 지정되지 않았습니다"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "No verified sending domain matches this from address."
 msgstr "이 발신 주소와 일치하는 검증된 발신 도메인이 없습니다."
+
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "선택한 사용자 중 이 채팅에서 답장할 수 있는 사람이 없습니다. {AGENT_CHAT_ASSISTANT_NAME} 또는 답장할 수 있는 사람을 추가하세요."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9814,6 +9887,11 @@ msgstr "뷰를 생성하려면 ObjectMetadataId가 필요합니다."
 msgid "ObjectMetadataId is required when creating a view"
 msgstr "뷰를 생성하려면 ObjectMetadataId가 필요합니다."
 
+#. js-lingui-id: rmu9zf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Objects, fields and views adapt to the way your team works."
+msgstr "객체, 필드 및 보기는 팀의 업무 방식에 맞게 조정됩니다."
+
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
@@ -10130,6 +10208,12 @@ msgstr "옵션 레이블은 최소 한 글자의 문자열이어야 합니다"
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "옵션 값 \"{sanitizedValue}\"이(가) 1자 밑입니다"
 
+#. js-lingui-id: yWgQ06
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option value \"{value}\" already exists on this field"
+msgstr "옵션 값 \"{value}\"이 이 필드에 이미 있습니다."
+
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10156,6 +10240,12 @@ msgstr "옵션 값은 최소 한 글자의 문자열이어야 합니다"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
 msgstr "열거형 필드에 옵션이 필요합니다."
+
+#. js-lingui-id: bn7Bbf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Options can only belong to select, multi-select or rating fields"
+msgstr "옵션은 선택, 다중 선택 또는 평점 필드에만 속할 수 있습니다"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10387,7 +10477,7 @@ msgstr "참가자"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "파트너 코드는 신규 Twenty 고객에게만 적용됩니다."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10901,6 +10991,16 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "주체 유형"
 
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "업그레이드가 완료될 때까지 개인정보 보호 설정을 사용할 수 없습니다."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "이 워크스페이스에서는 개인정보 보호 설정이 활성화되어 있지 않습니다."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11039,11 +11139,6 @@ msgstr "쿼리 실행에 실패했습니다."
 msgid "Query failed."
 msgstr "쿼리 실패."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "쿼리가 시간 초과되었습니다. 다시 시도해 주세요."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11174,7 +11269,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "에이전트 채팅 스레드가 연결된 레코드"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "레코드가 보안 제약 조건을 충족하지 않습니다."
 
@@ -12514,11 +12609,6 @@ msgstr "설정 메뉴 항목 제목이 필요합니다"
 msgid "Setup instructions"
 msgstr "설정 지침"
 
-#. js-lingui-id: gIoyTf
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Setup request sent"
-msgstr "설정 요청 전송됨"
-
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
@@ -12574,17 +12664,17 @@ msgid "Shared record"
 msgstr "공유된 레코드"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith에서 이 워크스페이스에 속하지 않는 역할을 지정했습니다"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith에서 이 워크스페이스에 속하지 않는 워크스페이스 멤버를 지정했습니다"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith에서 동일한 주체를 두 번 이상 지정했습니다"
 
@@ -12600,10 +12690,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "짧은 링크"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "워크스페이스 멤버로 로그인하거나 애플리케이션 토큰을 사용하여 이 대화를 변경하세요."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "워크스페이스 멤버로 로그인하거나 애플리케이션 토큰을 사용하여 이 요청을 수행하세요."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12707,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "선택한 권한 중 일부가 유효하지 않습니다. 유효한 권한 설정으로 다시 시도하십시오."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "일부 작업 공간 멤버십을 찾을 수 없습니다. 이 작업 공간에 대한 접근 권한이 더 이상 없을 수 있습니다."
 
@@ -12868,11 +12958,6 @@ msgstr "공백과 쉼표"
 msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "스프레드시트"
-
-#. js-lingui-id: 73/iLE
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Spreadsheet uploaded"
-msgstr "스프레드시트 업로드됨"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -13540,11 +13625,6 @@ msgstr "이 단계에서 실행해야 하는 에이전트를 찾을 수 없습�
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "찾고 있는 에이전트를 찾을 수 없습니다. 삭제되었거나 접근 권한이 없을 수 있습니다."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "API 키에 할당된 유효한 역할이 없습니다. API 키 구성을 확인하십시오."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13555,11 +13635,6 @@ msgstr "앱 매니페스트에 유효하지 않은 서버 버전 요구 사항�
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "앱 소스 채널이 예상된 유형과 일치하지 않습니다."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "애플리케이션에 할당된 유효한 역할이 없습니다. 애플리케이션 구성을 확인하십시오."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -13582,6 +13657,11 @@ msgstr "애플리케이션의 프로덕션 의존성 크기가 너무 커서 설
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "애플리케이션이 요청한 권한이 변경되었습니다. 승인하기 전에 다시 검토하세요."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "워크스페이스가 활성화되기 전에 어시스턴트 프로필을 업데이트할 수 없습니다."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14002,7 +14082,7 @@ msgstr "패키지의 출처를 검증하기 위해 패키지 레지스트리에 
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "파트너 코드는 더 이상 추가하거나 변경할 수 없습니다. 지원팀에 문의하세요."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14108,6 +14188,11 @@ msgstr "고정된 다이렉트 메시지 쌍의 두 번째 멤버"
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "선택한 모델은 관리자가 비활성화했습니다."
+
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "선택한 모델은 이 워크스페이스의 개인정보 보호 설정에서 허용되지 않습니다."
 
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
@@ -14315,12 +14400,12 @@ msgid "The workspace member who last updated the record"
 msgstr "레코드를 마지막으로 업데이트한 워크스페이스 구성원"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "해당 역할은 이 레코드에 액세스할 수 없으며, 이 객체는 액세스할 수 있는 역할하고만 공유됩니다."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "해당 역할은 이 레코드를 볼 수 없으며, 이 객체는 볼 수 있는 사용자하고만 공유됩니다."
 
@@ -14740,6 +14825,11 @@ msgstr "이 인덱스는 존재하지 않거나 이미 삭제되었습니다."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "이 인스턴스는 서버 식별자를 보고하지 않았습니다. 이 인스턴스에서 SERVER_ID를 설정한 후 다시 시도하세요."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "이 작업은 큐에 넣기에는 너무 큽니다."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -14865,7 +14955,7 @@ msgid "This operation is not supported."
 msgstr "이 작업은 지원되지 않습니다."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "이 작업은 존재하지 않거나 기존 관계로 인해 수정할 수 없는 레코드를 참조합니다."
 
@@ -14877,7 +14967,7 @@ msgstr "이 조직 키는 이미 다른 서버 인스턴스에서 사용 중입�
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "이 파트너 코드는 유효하지 않습니다."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -14916,12 +15006,12 @@ msgid "This public domain is already registered."
 msgstr "이 공용 도메인은 이미 등록되어 있습니다."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "이 레코드는 이미 존재합니다. 데이터를 확인하고 다시 시도하십시오."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "이 레코드는 다른 레코드에서 계속 참조하고 있으므로 삭제할 수 없습니다."
 
@@ -15484,6 +15574,11 @@ msgstr "관리자 후보가 너무 많이 발견되었습니다."
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "참석자가 너무 많습니다: {attendeeCount}. 허용되는 최대 수는 {MAX_EMAIL_RECIPIENTS}명입니다."
 
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "대기 중인 작업이 너무 많습니다. 나중에 다시 시도해 주세요."
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
@@ -15700,6 +15795,11 @@ msgstr "턴"
 msgctxt "fieldMetadata.label"
 msgid "Turn"
 msgstr "턴"
+
+#. js-lingui-id: 57tP4r
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Turn it on and won deals move to delivery on their own."
+msgstr "활성화하면 성사된 거래가 자동으로 딜리버리로 이동합니다."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16838,8 +16938,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "감시 필드는 \"updated\" 데이터베이스 이벤트 트리거에만 적용됩니다"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
 
@@ -17212,11 +17312,6 @@ msgstr "워크플로우 복제에 실패했습니다. 다시 시도해 주세요
 msgid "Workflow edge not found."
 msgstr "워크플로우 엣지를 찾을 수 없음."
 
-#. js-lingui-id: 5ENQ3i
-#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
-msgid "Workflow enabled"
-msgstr "워크플로우 활성화됨"
-
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
@@ -17552,6 +17647,11 @@ msgstr "워크스페이스 데모 데이터 시드"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
 msgstr "워크스페이스가 존재하지 않습니다."
+
+#. js-lingui-id: fPWuXm
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workspace fit to your process"
+msgstr "프로세스에 맞춘 워크스페이스"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -17893,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "자신에 대한 복구 코드는 생성할 수 없습니다. 대신 프로필에서 이중 인증을 재설정하세요."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "자신의 역할을 변경할 수 없습니다. 다른 관리자에게 역할 업데이트를 요청하십시오."
 
@@ -17914,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "본인 역할에서 설정에 대한 접근 권한을 제거할 수 없습니다. 이 변경을 다른 관리자에게 요청하세요."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "마지막 관리자로부터 관리자 역할을 제거할 수 없습니다. 먼저 다른 관리자를 지정하십시오."
 
@@ -18036,6 +18136,11 @@ msgstr "이 작업을 수행할 권한이 없습니다."
 msgid "You do not have permission to perform this workflow action."
 msgstr "이 워크플로우 작업을 수행할 권한이 없습니다."
 
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "어시스턴트 프로필을 업데이트할 권한이 없습니다. 작업 공간 관리자에게 문의하십시오."
+
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
@@ -18149,14 +18254,19 @@ msgstr "결제 수단이 거절되었습니다. 결제 수단을 업데이트한
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "구매한 크레딧을 추가할 수 없습니다. 지원팀에 문의하세요."
 
+#. js-lingui-id: V6omJV
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Your records are in, organized around how you work."
+msgstr "업무 방식에 맞게 정리된 레코드가 준비되었습니다."
+
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "현재 역할로는 이러한 레코드 중 일부를 삭제할 수 없으므로 병합할 수 없습니다."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "이 작업 공간에서 귀하의 역할을 찾을 수 없습니다. 작업 공간 관리자에게 문의하십시오."
 

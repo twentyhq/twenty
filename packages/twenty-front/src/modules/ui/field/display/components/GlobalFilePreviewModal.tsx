@@ -2,6 +2,7 @@ import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { FilePreviewDialog } from '@/ui/field/display/components/FilePreviewDialog';
 import { GlobalFilePreviewOpenEffect } from '@/ui/field/display/components/GlobalFilePreviewOpenEffect';
 import { GLOBAL_FILE_PREVIEW_MODAL_ID } from '@/ui/field/display/constants/GlobalFilePreviewModalId';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -9,6 +10,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledLoadingContainer = styled.div`
   align-items: center;
@@ -25,6 +27,9 @@ export const GlobalFilePreviewModal = () => {
   const { t } = useLingui();
   const [filePreview, setFilePreview] = useAtomState(filePreviewState);
   const { closeDialog } = useDialog();
+  const hasDownloadPermission = useHasPermissionFlag(
+    PermissionFlagType.DOWNLOAD_FILE,
+  );
 
   const handleClose = () => {
     closeDialog(GLOBAL_FILE_PREVIEW_MODAL_ID);
@@ -53,7 +58,7 @@ export const GlobalFilePreviewModal = () => {
         documentUrl={filePreview.url ?? ''}
         documentExtension={filePreview.extension ?? ''}
         onClose={handleClose}
-        onDownload={handleDownload}
+        onDownload={hasDownloadPermission ? handleDownload : undefined}
         downloadLabel={t`Download file`}
         loadingFallback={
           <StyledLoadingContainer>

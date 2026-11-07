@@ -11,7 +11,10 @@ export const closeOpenToolParts = async ({
   messageId,
   workspaceId,
 }: {
-  messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>;
+  messagePartRepository: Pick<
+    AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    'find' | 'query'
+  >;
   messageId: string;
   workspaceId: string;
 }): Promise<void> => {

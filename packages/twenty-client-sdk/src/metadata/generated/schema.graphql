@@ -266,6 +266,22 @@ enum AiChatAssistantMode {
   NEVER
 }
 
+type AiChatAssistantProfile {
+  avatarColor: String!
+  avatarFace: String!
+  avatarShape: String!
+  displayName: String!
+  isAvatarAnimated: Boolean!
+}
+
+input AiChatAssistantProfileInput {
+  avatarColor: String
+  avatarFace: String
+  avatarShape: String
+  displayName: String
+  isAvatarAnimated: Boolean
+}
+
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
@@ -277,6 +293,18 @@ type AiChatUserCreditsUsage {
   consumedValue: BigInt
   limitValue: BigInt!
   periodEnd: DateTime!
+}
+
+type AiDataPolicy {
+  isProductImprovementDataSharingEnabled: Boolean!
+  isZeroDataRetentionRequired: Boolean!
+  requiredDataResidencyRegion: String
+}
+
+input AiDataPolicyInput {
+  isProductImprovementDataSharingEnabled: Boolean
+  isZeroDataRetentionRequired: Boolean!
+  requiredDataResidencyRegion: String
 }
 
 enum AiModelTier {
@@ -311,6 +339,7 @@ enum AllMetadataName {
   commandMenuItem
   connectionProvider
   fieldMetadata
+  fieldMetadataOption
   fieldPermission
   frontComponent
   index
@@ -413,6 +442,11 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageAttachmentInput {
+  fileId: UUID!
+  label: String!
+}
+
 input AppMessageFolderInput {
   externalId: String!
   isSynced: Boolean
@@ -420,6 +454,7 @@ input AppMessageFolderInput {
 }
 
 input AppMessageInput {
+  attachments: [AppMessageAttachmentInput!]
   externalId: String!
   folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
@@ -1308,10 +1343,13 @@ type ClientAiModelConfig {
   providerLabel: String
   providerName: String
   sdkPackage: String
+  zeroDataRetention: Boolean
 }
 
 type ClientAiModelTierConfig {
+  isZeroDataRetentionRequired: Boolean!
   modelId: String!
+  requiredDataResidencyRegion: String
   tier: AiModelTier!
 }
 
@@ -2232,10 +2270,17 @@ input EnqueueJobsInput {
 }
 
 type EnqueueJobsResult {
+  availableBytes: Float
   enqueued: Boolean!
   enqueuedJobsCount: Int!
   jobIds: [String!]!
+  jobs: [EnqueuedJob!]!
   logicFunctionUniversalIdentifier: String!
+}
+
+type EnqueuedJob {
+  jobId: String!
+  sizeBytes: Int!
 }
 
 type EnterpriseLicenseInfoDTO {
@@ -2339,11 +2384,14 @@ enum FeatureFlagKey {
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
+  IS_AI_DATA_POLICY_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
+  IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
+  IS_MESSAGE_ATTACHMENT_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2648,7 +2696,10 @@ enum GettingStartedStepActionKey {
 type GettingStartedStepDefinition {
   actionKey: GettingStartedStepActionKey!
   description: String!
+  doneChatThreadId: String
+  doneDescription: String!
   doneTitle: String!
+  doneWorkflowId: String
   icon: String!
   iconColor: String!
   kind: GettingStartedStepKind!
@@ -2815,6 +2866,7 @@ type IngestAppMessagesOutput {
 
 type IngestedAppMessage {
   externalId: String!
+  hasAttachments: Boolean!
   messageId: UUID!
   messageThreadId: UUID!
 }
@@ -3504,6 +3556,7 @@ type Mutation {
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
+  openDirectMessage(workspaceMemberId: UUID!): UUID!
   prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
@@ -3515,8 +3568,9 @@ type Mutation {
   renewToken(appToken: String!): AuthTokens!
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
-  resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
+  resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  resetAiChatAssistantProfile: AiChatAssistantProfile!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   resetPageLayoutToDefault(id: String!): PageLayout!
@@ -3548,7 +3602,7 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signOut(refreshToken: String): Boolean!
-  signUp(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
+  signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -4843,9 +4897,9 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  affiliatePartnerName: String
   captchaToken: String
   displayName: String
-  partner: String
   subdomain: String
 }
 
@@ -5224,6 +5278,7 @@ input UpdateFrontComponentInputUpdates {
 
 input UpdateGettingStartedInput {
   completedStepActionKey: GettingStartedStepActionKey
+  completedStepChatThreadId: String
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
@@ -5610,9 +5665,11 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatAssistantProfile: AiChatAssistantProfileInput
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
+  aiDataPolicy: AiDataPolicyInput
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -6018,7 +6075,9 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
+  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   objectRecordsPermissions: [ObjectRecordsPermissions!]
+  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!
@@ -6380,9 +6439,11 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatAssistantProfile: AiChatAssistantProfile!
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
+  aiDataPolicy: AiDataPolicy
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!

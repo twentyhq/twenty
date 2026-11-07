@@ -1,5 +1,5 @@
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
+import { SidePanelFormCancellationEffect } from '@/object-record/record-form/components/SidePanelFormCancellationEffect';
 import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
@@ -191,7 +191,7 @@ export const RecordCreationFormProvider = ({
     <RecordCreationFormContextProvider value={contextValue}>
       {children}
       {pendingRecordCreations.map(({ requestId }) => (
-        <RecordCreationFormCancellationEffect
+        <SidePanelFormCancellationEffect
           key={requestId}
           requestId={requestId}
           onCancel={cancelPendingRecordCreation}

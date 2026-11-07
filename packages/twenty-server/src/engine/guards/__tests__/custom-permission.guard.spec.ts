@@ -1,5 +1,7 @@
 import { type ExecutionContext } from '@nestjs/common';
 
+import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
+
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 
 describe('CustomPermissionGuard', () => {
@@ -19,10 +21,7 @@ describe('CustomPermissionGuard', () => {
     });
 
     it('should return true even with different contexts', () => {
-      const differentContext = {
-        switchToHttp: jest.fn(),
-        getHandler: jest.fn(),
-      } as unknown as ExecutionContext;
+      const differentContext = buildExecutionContextMock();
 
       const result = guard.canActivate(differentContext);
 

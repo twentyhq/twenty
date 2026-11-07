@@ -53,7 +53,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
   removedOccurrences = [],
   now = new Date(),
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   calendarEventIds: string[];
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
@@ -80,7 +80,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
   removedOccurrences = [],
   now = new Date(),
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   calendarEventIds: string[];
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
@@ -190,7 +190,7 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
   calendarEventsById,
   removedOccurrences = [],
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
   calendarEventsById: Map<string, CalendarEventRecord>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
@@ -292,7 +292,7 @@ const reconcileCanceledMeetings = async ({
   policyManagedCallRecordingsById,
   activeMeetingCallRecordingIds,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
   removedCalendarEventIdsByMeetingKey: Map<string, string[]>;
   callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
@@ -370,7 +370,7 @@ const reconcileActiveMeetings = async ({
   callRecordingsByCalendarEventId,
   policyManagedCallRecordingsById,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
   calendarEventsById: Map<string, CalendarEventRecord>;
   removedCalendarEventIdsByMeetingKey: Map<string, string[]>;
@@ -420,7 +420,7 @@ const reconcileActiveMeeting = async ({
   policyManagedCallRecordingsById,
   meetingCallRecordings,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
   calendarEventsById: Map<string, CalendarEventRecord>;
   policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
@@ -523,7 +523,7 @@ const getCalendarEventIdsToMarkRecordingOn = ({
       );
 
 const markActiveMeetingsRecordingOn = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   calendarEventIds: string[],
 ): Promise<void> => {
   try {
@@ -543,7 +543,7 @@ const updatePolicyManagedCallRecording = async ({
   representativeCalendarEvent,
   realMeetingKey,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   existingCallRecording: CallRecordingRecord;
   representativeCalendarEvent: CalendarEventRecord;
   realMeetingKey: string;
@@ -583,7 +583,7 @@ const writeCurrentPolicyManagedCallRecordingChanges = async ({
   callRecordingId,
   calendarEvent,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   calendarEvent: CalendarEventRecord;
 }): Promise<CallRecordingRecord | undefined> => {
@@ -621,7 +621,7 @@ const createPolicyManagedCallRecording = async ({
   representativeCalendarEvent,
   realMeetingKey,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   representativeCalendarEvent: CalendarEventRecord;
   realMeetingKey: string;
@@ -699,7 +699,7 @@ const reconcileCanceledMeeting = async ({
   cancellableCallRecordings,
   callRecordingIdsCanceledInBatch,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
   meetingCallRecordings: CallRecordingRecord[];
   cancellableCallRecordings: CallRecordingRecord[];
@@ -762,7 +762,7 @@ const getCalendarEventIdsToClearRecordingOn = ({
 };
 
 const clearCanceledMeetingsRecordingOn = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   calendarEventIds: string[],
 ): Promise<void> => {
   try {

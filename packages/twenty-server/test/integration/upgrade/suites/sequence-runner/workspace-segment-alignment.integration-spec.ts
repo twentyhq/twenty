@@ -492,7 +492,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       {
         ...makeFastInstance('Ic1'),
         command: ic1Command,
-      } as unknown as ReturnType<typeof makeFastInstance>,
+      },
       makeWorkspace('Wc0'),
       makeWorkspace('Wc1'),
     ];

@@ -16,14 +16,13 @@ const toolPart = ({
   status: 'pending' | 'answered';
   toolCallId?: string;
   input?: unknown;
-}): ExtendedUIMessagePart =>
-  ({
-    type: `tool-${toolName}`,
-    toolCallId,
-    state: 'output-available',
-    input,
-    output: { success: true, result: { question: QUESTIONS[0], status } },
-  }) as unknown as ExtendedUIMessagePart;
+}): ExtendedUIMessagePart => ({
+  type: `tool-${toolName}`,
+  toolCallId,
+  state: 'output-available',
+  input,
+  output: { success: true, result: { question: QUESTIONS[0], status } },
+});
 
 const textPart = { type: 'text', text: 'hello' } as ExtendedUIMessagePart;
 
