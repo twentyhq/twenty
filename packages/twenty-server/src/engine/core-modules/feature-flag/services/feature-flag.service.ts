@@ -4,6 +4,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG } from 'src/engine/core-modules/feature-flag/constants/workspace-caches-computed-from-feature-flag.constant';
 import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -15,12 +16,6 @@ import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-// rolesPermissions is computed from this flag, so it has to follow it
-const getWorkspaceCacheKeysToInvalidate = (keys: FeatureFlagKey[]) =>
-  keys.includes(FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED)
-    ? (['featureFlagsMap', 'rolesPermissions'] as const)
-    : (['featureFlagsMap'] as const);
 
 @Injectable()
 export class FeatureFlagService {
@@ -79,7 +74,10 @@ export class FeatureFlagService {
       );
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        ...getWorkspaceCacheKeysToInvalidate(keys),
+        'featureFlagsMap',
+        ...keys.flatMap(
+          (key) => WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG[key] ?? [],
+        ),
       ]);
     }
   }
@@ -129,7 +127,8 @@ export class FeatureFlagService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      ...getWorkspaceCacheKeysToInvalidate([featureFlag]),
+      'featureFlagsMap',
+      ...(WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG[featureFlag] ?? []),
     ]);
 
     return result;

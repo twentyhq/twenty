@@ -16,8 +16,9 @@ export const isObjectOperationDisabledToPrincipals = ({
     objectMetadata: flatObjectMetadata,
     operationType,
     isCreatePermissionEnabled:
-      metadataMaps.featureFlagsMap[FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED] ??
-      false,
+      metadataMaps.featureFlagsMap[
+        FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED
+      ] ?? false,
   }) &&
   !isPermissionsPrincipalsOwningObject({
     principals,

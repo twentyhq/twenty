@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import {
   type ApiKeyWithObjectRecordGrants,
   createApiKeyWithObjectRecordGrants,
@@ -11,6 +12,7 @@ import { expectPermissionDeniedResponse } from 'test/integration/permissions/uti
 import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import { createPersonRecords } from 'test/integration/utils/create-person-records.util';
 import { destroyPersonRecordsByFirstName } from 'test/integration/utils/destroy-person-records-by-first-name.util';
+import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { findPersonRecordStates } from 'test/integration/utils/find-person-record-states.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -19,7 +21,10 @@ import {
   personRequestsByApi,
   type RecordApi,
 } from 'test/integration/utils/person-requests-by-api.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -73,14 +78,18 @@ const setPersonDisabledActions = ({
     ],
   );
 
-const createPerson = (token: string) => {
+const createPerson = (token: string, jobTitle?: string) => {
   const id = randomUUID();
 
   return personRequestsByApi
     .createOne({
       api: API,
       token,
-      data: { id, name: { firstName: PERSON_RECORD_FIXTURE.firstName } },
+      data: {
+        id,
+        name: { firstName: PERSON_RECORD_FIXTURE.firstName },
+        jobTitle,
+      },
     })
     .then((response) => ({ id, response }));
 };
@@ -98,6 +107,29 @@ const expectCreateGranted = async (token: string) => {
   expectPermissionGrantedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([
     { status: 'active', jobTitle: '' },
+  ]);
+};
+
+// Row-level roles only reach records with a job title
+const expectRowLevelCreateDenied = async (token: string) => {
+  const { id, response } = await createPerson(
+    token,
+    PERSON_RECORD_FIXTURE.jobTitle,
+  );
+
+  expectPermissionDeniedResponse({ api: API, response });
+  expect(await findPersonRecordStates([id])).toEqual([{ status: 'absent' }]);
+};
+
+const expectRowLevelCreateGranted = async (token: string) => {
+  const { id, response } = await createPerson(
+    token,
+    PERSON_RECORD_FIXTURE.jobTitle,
+  );
+
+  expectPermissionGrantedResponse({ api: API, response });
+  expect(await findPersonRecordStates([id])).toEqual([
+    { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle },
   ]);
 };
 
@@ -126,6 +158,8 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
   let createWithoutUpdate: ApiKeyWithObjectRecordGrants;
   let objectOverrideWithoutCreate: ApiKeyWithObjectRecordGrants;
   let updateAndCreate: ApiKeyWithObjectRecordGrants;
+  let rowLevelUpdateWithoutCreate: ApiKeyWithObjectRecordGrants;
+  let rowLevelCreateWithoutUpdate: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
     personObjectMetadataId = await findObjectMetadataIdByName('person');
@@ -147,12 +181,41 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       createWithoutUpdate,
       objectOverrideWithoutCreate,
       updateAndCreate,
+      rowLevelUpdateWithoutCreate,
+      rowLevelCreateWithoutUpdate,
     ] = await Promise.all([
       createApiKeyWithObjectRecordGrants(readAndUpdate),
       createApiKeyWithObjectRecordGrants({ canReadAllObjectRecords: true }),
       createApiKeyWithObjectRecordGrants(readAndUpdate),
       createApiKeyWithObjectRecordGrants(readAndUpdate),
+      createApiKeyWithObjectRecordGrants(readAndUpdate),
+      createApiKeyWithObjectRecordGrants({ canReadAllObjectRecords: true }),
     ]);
+
+    const jobTitleFieldMetadataId = await findFieldMetadataIdByName({
+      objectMetadataId: personObjectMetadataId,
+      fieldName: 'jobTitle',
+    });
+
+    for (const { roleId } of [
+      rowLevelUpdateWithoutCreate,
+      rowLevelCreateWithoutUpdate,
+    ]) {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId,
+          objectMetadataId: personObjectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: jobTitleFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
+    }
 
     await upsertObjectPermissions({
       expectToFail: false,
@@ -177,6 +240,14 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       roleId: createWithoutUpdate.roleId,
       canCreateAllObjectRecords: true,
     });
+    await setRoleCreatePermission({
+      roleId: rowLevelUpdateWithoutCreate.roleId,
+      canCreateAllObjectRecords: false,
+    });
+    await setRoleCreatePermission({
+      roleId: rowLevelCreateWithoutUpdate.roleId,
+      canCreateAllObjectRecords: true,
+    });
     await global.testDataSource.query(
       'UPDATE core."objectPermission" SET "canCreateObjectRecords" = FALSE WHERE "roleId" = $1 AND "objectMetadataId" = $2',
       [objectOverrideWithoutCreate.roleId, personObjectMetadataId],
@@ -199,6 +270,8 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       createWithoutUpdate,
       objectOverrideWithoutCreate,
       updateAndCreate,
+      rowLevelUpdateWithoutCreate,
+      rowLevelCreateWithoutUpdate,
     ]);
     await destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName);
   });
@@ -210,6 +283,11 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       await expectCreateGranted(updateWithoutCreate.token);
       await expectCreateGranted(objectOverrideWithoutCreate.token);
       await expectCreateDenied(createWithoutUpdate.token);
+    });
+
+    it('lets row-level create follow update', async () => {
+      await expectRowLevelCreateGranted(rowLevelUpdateWithoutCreate.token);
+      await expectRowLevelCreateDenied(rowLevelCreateWithoutUpdate.token);
     });
 
     it('ignores create when it is the only disabled action', async () => {
@@ -240,6 +318,22 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       await expectCreateDenied(updateWithoutCreate.token);
       await expectCreateGranted(createWithoutUpdate.token);
       await expectCreateGranted(updateAndCreate.token);
+    });
+
+    it('checks the create permission on a role with row-level rules', async () => {
+      await expectRowLevelCreateDenied(rowLevelUpdateWithoutCreate.token);
+      await expectRowLevelCreateGranted(rowLevelCreateWithoutUpdate.token);
+    });
+
+    it('still requires created records to match the row-level rules', async () => {
+      const { id, response } = await createPerson(
+        rowLevelCreateWithoutUpdate.token,
+      );
+
+      expect(response.body.errors).toHaveLength(1);
+      expect(await findPersonRecordStates([id])).toEqual([
+        { status: 'absent' },
+      ]);
     });
 
     it('leaves update alone', async () => {

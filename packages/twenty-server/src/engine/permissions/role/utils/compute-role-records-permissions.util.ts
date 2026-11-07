@@ -30,28 +30,28 @@ type RoleDefinitionForRecordsPermissions = Pick<
   | 'canDestroyAllObjectRecords'
 > &
   Partial<Pick<FlatRole, 'canCreateAllObjectRecords'>> & {
-  isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
-  // an AI run scope leaves system objects readable but not writable unless it grants them
-  areSystemObjectsReadOnlyByDefault?: boolean;
-  objectPermissions: Pick<
-    ObjectPermissionEntity,
-    | 'objectMetadataId'
-    | 'canCreateObjectRecords'
-    | 'canReadObjectRecords'
-    | 'canUpdateObjectRecords'
-    | 'canSoftDeleteObjectRecords'
-    | 'canDestroyObjectRecords'
-  >[];
-  fieldPermissions: Pick<
-    FieldPermissionEntity,
-    | 'objectMetadataId'
-    | 'fieldMetadataId'
-    | 'canReadFieldValue'
-    | 'canUpdateFieldValue'
-  >[];
-  rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
-  rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
-};
+    isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
+    // an AI run scope leaves system objects readable but not writable unless it grants them
+    areSystemObjectsReadOnlyByDefault?: boolean;
+    objectPermissions: Pick<
+      ObjectPermissionEntity,
+      | 'objectMetadataId'
+      | 'canCreateObjectRecords'
+      | 'canReadObjectRecords'
+      | 'canUpdateObjectRecords'
+      | 'canSoftDeleteObjectRecords'
+      | 'canDestroyObjectRecords'
+    >[];
+    fieldPermissions: Pick<
+      FieldPermissionEntity,
+      | 'objectMetadataId'
+      | 'fieldMetadataId'
+      | 'canReadFieldValue'
+      | 'canUpdateFieldValue'
+    >[];
+    rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
+    rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
+  };
 
 type ObjectRecordsAccess = {
   canCreate: boolean;
@@ -112,7 +112,8 @@ const resolveObjectRecordsAccess = ({
   return {
     canCreate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canCreateObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords ?? false,
+      hasAllObjectsPermission:
+        roleDefinition.canCreateAllObjectRecords ?? false,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canRead: resolveObjectPermissionValue({
