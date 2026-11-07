@@ -5964,7 +5964,7 @@ msgstr "Verificar execuções recentes"
 #. js-lingui-id: 1rduS8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr ""
+msgstr "Verifique a permissão de criar isoladamente ao criar registros, em vez da permissão de atualizar."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -8180,7 +8180,7 @@ msgstr "Criar Registro"
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
-msgstr ""
+msgstr "Permissão para criar registros"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx

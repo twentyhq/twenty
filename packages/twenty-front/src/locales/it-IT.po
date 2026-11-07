@@ -5964,7 +5964,7 @@ msgstr "Controlla le esecuzioni recenti"
 #. js-lingui-id: 1rduS8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr ""
+msgstr "Controlla separatamente l'autorizzazione di creazione durante la creazione dei record, anziché l'autorizzazione di aggiornamento."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -8180,7 +8180,7 @@ msgstr "Crea Record"
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
-msgstr ""
+msgstr "Autorizzazione di creazione dei record"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx

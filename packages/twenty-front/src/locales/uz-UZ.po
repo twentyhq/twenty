@@ -5964,7 +5964,7 @@ msgstr "So‘nggi ishga tushirishlarni tekshirish"
 #. js-lingui-id: 1rduS8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr ""
+msgstr "Yozuvlarni yaratishda yangilash ruxsati o‘rniga yaratish ruxsatini alohida tekshiring."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -8180,7 +8180,7 @@ msgstr "Yozuv yaratish"
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
-msgstr ""
+msgstr "Yozuvlarni yaratish ruxsati"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx

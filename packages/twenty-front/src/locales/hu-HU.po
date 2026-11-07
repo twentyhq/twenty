@@ -5964,7 +5964,7 @@ msgstr "Legutóbbi futások ellenőrzése"
 #. js-lingui-id: 1rduS8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr ""
+msgstr "Rekordok létrehozásakor a létrehozási jogosultságot ellenőrizze önmagában, ne a frissítési jogosultságot."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -8180,7 +8180,7 @@ msgstr "Rekord létrehozása"
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
-msgstr ""
+msgstr "Rekordok létrehozására vonatkozó jogosultság"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
