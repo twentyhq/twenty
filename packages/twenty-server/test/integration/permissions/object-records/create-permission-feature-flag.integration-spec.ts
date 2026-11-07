@@ -101,42 +101,21 @@ const createPerson = ({
     .then((response) => ({ id, response }));
 };
 
-const expectCreateDenied = async (token: string) => {
-  const { id, response } = await createPerson({ token });
+type CreatePersonInput = Parameters<typeof createPerson>[0];
+
+const expectCreateDenied = async (input: CreatePersonInput) => {
+  const { id, response } = await createPerson(input);
 
   expectPermissionDeniedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([{ status: 'absent' }]);
 };
 
-const expectCreateGranted = async (token: string) => {
-  const { id, response } = await createPerson({ token });
+const expectCreateGranted = async (input: CreatePersonInput) => {
+  const { id, response } = await createPerson(input);
 
   expectPermissionGrantedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([
-    { status: 'active', jobTitle: '' },
-  ]);
-};
-
-// Row-level roles only reach records with a job title
-const expectRowLevelCreateDenied = async (token: string) => {
-  const { id, response } = await createPerson({
-    token,
-    jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
-  });
-
-  expectPermissionDeniedResponse({ api: API, response });
-  expect(await findPersonRecordStates([id])).toEqual([{ status: 'absent' }]);
-};
-
-const expectRowLevelCreateGranted = async (token: string) => {
-  const { id, response } = await createPerson({
-    token,
-    jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
-  });
-
-  expectPermissionGrantedResponse({ api: API, response });
-  expect(await findPersonRecordStates([id])).toEqual([
-    { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle },
+    { status: 'active', jobTitle: input.jobTitle ?? '' },
   ]);
 };
 
@@ -158,6 +137,7 @@ const updatePerson = ({ token, id }: { token: string; id: string }) =>
     data: { jobTitle: 'Updated job title' },
   });
 
+// Row-level roles in this spec only reach records with a job title
 describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
   let personObjectMetadataId: string;
   let personDisabledActions: string[] | null;
@@ -287,14 +267,20 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
     beforeEach(() => setCreatePermissionFlag(false));
 
     it('lets create follow update, whatever the create permission says', async () => {
-      await expectCreateGranted(updateWithoutCreate.token);
-      await expectCreateGranted(objectOverrideWithoutCreate.token);
-      await expectCreateDenied(createWithoutUpdate.token);
+      await expectCreateGranted({ token: updateWithoutCreate.token });
+      await expectCreateGranted({ token: objectOverrideWithoutCreate.token });
+      await expectCreateDenied({ token: createWithoutUpdate.token });
     });
 
     it('lets row-level create follow update', async () => {
-      await expectRowLevelCreateGranted(rowLevelUpdateWithoutCreate.token);
-      await expectRowLevelCreateDenied(rowLevelCreateWithoutUpdate.token);
+      await expectCreateGranted({
+        token: rowLevelUpdateWithoutCreate.token,
+        jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+      });
+      await expectCreateDenied({
+        token: rowLevelCreateWithoutUpdate.token,
+        jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+      });
     });
 
     it('ignores create when it is the only disabled action', async () => {
@@ -304,7 +290,7 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
       });
       await recomputeCaches();
 
-      await expectCreateGranted(updateAndCreate.token);
+      await expectCreateGranted({ token: updateAndCreate.token });
     });
 
     it('blocks create when update is disabled', async () => {
@@ -322,14 +308,20 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
     beforeEach(() => setCreatePermissionFlag(true));
 
     it('checks the role create permission rather than update', async () => {
-      await expectCreateDenied(updateWithoutCreate.token);
-      await expectCreateGranted(createWithoutUpdate.token);
-      await expectCreateGranted(updateAndCreate.token);
+      await expectCreateDenied({ token: updateWithoutCreate.token });
+      await expectCreateGranted({ token: createWithoutUpdate.token });
+      await expectCreateGranted({ token: updateAndCreate.token });
     });
 
     it('checks the create permission on a role with row-level rules', async () => {
-      await expectRowLevelCreateDenied(rowLevelUpdateWithoutCreate.token);
-      await expectRowLevelCreateGranted(rowLevelCreateWithoutUpdate.token);
+      await expectCreateDenied({
+        token: rowLevelUpdateWithoutCreate.token,
+        jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+      });
+      await expectCreateGranted({
+        token: rowLevelCreateWithoutUpdate.token,
+        jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+      });
     });
 
     it('still requires created records to match the row-level rules', async () => {
@@ -357,7 +349,7 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
     });
 
     it('checks the object create permission over the role', async () => {
-      await expectCreateDenied(objectOverrideWithoutCreate.token);
+      await expectCreateDenied({ token: objectOverrideWithoutCreate.token });
     });
 
     it('blocks create when it is disabled, and leaves update alone', async () => {
