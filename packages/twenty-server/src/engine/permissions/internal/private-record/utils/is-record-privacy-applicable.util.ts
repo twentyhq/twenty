@@ -11,10 +11,12 @@ export const isRecordPrivacyApplicable = ({
   flatObjectMetadata,
   operationType,
   metadataMaps: { featureFlagsMap },
-}: Pick<
-  PermissionsRowAccessRequest,
-  'flatObjectMetadata' | 'operationType' | 'metadataMaps'
->): boolean =>
+}: Pick<PermissionsRowAccessRequest, 'flatObjectMetadata' | 'operationType'> & {
+  metadataMaps: Pick<
+    PermissionsRowAccessRequest['metadataMaps'],
+    'featureFlagsMap'
+  >;
+}): boolean =>
   isNonEmptyArray(resolveRequiredRecordShareAccessLevels(operationType)) &&
   !isPermissionStorageObject(flatObjectMetadata) &&
   arePrivateRecordsEnabled({ flatObjectMetadata, featureFlagsMap });
