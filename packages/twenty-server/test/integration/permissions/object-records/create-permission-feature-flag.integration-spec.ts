@@ -79,7 +79,13 @@ const setPersonDisabledActions = ({
     ],
   );
 
-const createPerson = (token: string, jobTitle?: string) => {
+const createPerson = ({
+  token,
+  jobTitle,
+}: {
+  token: string;
+  jobTitle?: string;
+}) => {
   const id = randomUUID();
 
   return personRequestsByApi
@@ -96,14 +102,14 @@ const createPerson = (token: string, jobTitle?: string) => {
 };
 
 const expectCreateDenied = async (token: string) => {
-  const { id, response } = await createPerson(token);
+  const { id, response } = await createPerson({ token });
 
   expectPermissionDeniedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([{ status: 'absent' }]);
 };
 
 const expectCreateGranted = async (token: string) => {
-  const { id, response } = await createPerson(token);
+  const { id, response } = await createPerson({ token });
 
   expectPermissionGrantedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([
@@ -113,20 +119,20 @@ const expectCreateGranted = async (token: string) => {
 
 // Row-level roles only reach records with a job title
 const expectRowLevelCreateDenied = async (token: string) => {
-  const { id, response } = await createPerson(
+  const { id, response } = await createPerson({
     token,
-    PERSON_RECORD_FIXTURE.jobTitle,
-  );
+    jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+  });
 
   expectPermissionDeniedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([{ status: 'absent' }]);
 };
 
 const expectRowLevelCreateGranted = async (token: string) => {
-  const { id, response } = await createPerson(
+  const { id, response } = await createPerson({
     token,
-    PERSON_RECORD_FIXTURE.jobTitle,
-  );
+    jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+  });
 
   expectPermissionGrantedResponse({ api: API, response });
   expect(await findPersonRecordStates([id])).toEqual([
@@ -135,7 +141,7 @@ const expectRowLevelCreateGranted = async (token: string) => {
 };
 
 const expectCreateDisabled = async (token: string) => {
-  const { id, response } = await createPerson(token);
+  const { id, response } = await createPerson({ token });
 
   expect(response.body.errors).toHaveLength(1);
   expect(response.body.errors[0].message).toBe(
@@ -327,9 +333,9 @@ describe('IS_CREATE_RECORDS_PERMISSION_ENABLED', () => {
     });
 
     it('still requires created records to match the row-level rules', async () => {
-      const { id, response } = await createPerson(
-        rowLevelCreateWithoutUpdate.token,
-      );
+      const { id, response } = await createPerson({
+        token: rowLevelCreateWithoutUpdate.token,
+      });
 
       expect(response.body.errors).toHaveLength(1);
       expect(await findPersonRecordStates([id])).toEqual([
