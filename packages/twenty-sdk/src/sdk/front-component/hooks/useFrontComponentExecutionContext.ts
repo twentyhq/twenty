@@ -1,63 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-
+import { useSyncExternalStore } from 'react';
 import {
   getFrontComponentExecutionContext,
   subscribeToFrontComponentExecutionContext,
   unsubscribeFromFrontComponentExecutionContext,
 } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
-import { isShallowEqual } from '../utils/is-shallow-equal';
 
-export type FrontComponentSelectorEqualityFn<TSelected> = (
-  previousValue: TSelected,
-  newValue: TSelected,
-) => boolean;
+const subscribe = (listener: () => void) => {
+  subscribeToFrontComponentExecutionContext(listener);
+
+  return () => unsubscribeFromFrontComponentExecutionContext(listener);
+};
 
 export const useFrontComponentExecutionContext = <TSelected>(
   selector: (context: FrontComponentExecutionContext) => TSelected,
-  isEqual: FrontComponentSelectorEqualityFn<TSelected> = isShallowEqual,
-): TSelected => {
-  const selectorRef = useRef(selector);
-  const isEqualRef = useRef(isEqual);
-
-  selectorRef.current = selector;
-  isEqualRef.current = isEqual;
-
-  const [currentSelectedValue, setCurrentSelectedValue] = useState(() =>
-    selector(getFrontComponentExecutionContext()),
-  );
-
-  const previousSelectedValueRef = useRef(currentSelectedValue);
-
-  const latestSelectedValue = selector(getFrontComponentExecutionContext());
-
-  if (!isEqual(previousSelectedValueRef.current, latestSelectedValue)) {
-    previousSelectedValueRef.current = latestSelectedValue;
-    setCurrentSelectedValue(latestSelectedValue);
-  }
-
-  useEffect(() => {
-    const onContextChange = () => {
-      const newSelectedValue = selectorRef.current(
-        getFrontComponentExecutionContext(),
-      );
-
-      const hasSelectedValueChanged = !isEqualRef.current(
-        previousSelectedValueRef.current,
-        newSelectedValue,
-      );
-
-      if (hasSelectedValueChanged) {
-        previousSelectedValueRef.current = newSelectedValue;
-        setCurrentSelectedValue(newSelectedValue);
-      }
-    };
-
-    subscribeToFrontComponentExecutionContext(onContextChange);
-    onContextChange();
-
-    return () => unsubscribeFromFrontComponentExecutionContext(onContextChange);
-  }, []);
-
-  return currentSelectedValue;
-};
+): TSelected =>
+  selector(useSyncExternalStore(subscribe, getFrontComponentExecutionContext));
