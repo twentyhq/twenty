@@ -13,9 +13,8 @@ const normalizeToLong = (addr: string): number => {
       return parseInt(part, 8);
     } else if (/^[1-9]\d*$/.test(part) || part === '0') {
       return parseInt(part, 10);
-    } else {
-      return NaN;
     }
+    return NaN;
   });
 
   if (parts.some(isNaN)) return -1;

@@ -58,9 +58,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiUpdateOneHandler.handle(request);
-    } else {
-      return await this.restApiUpdateManyHandler.handle(request);
     }
+    return await this.restApiUpdateManyHandler.handle(request);
   }
 
   async get(request: AuthenticatedRequest) {
@@ -68,9 +67,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiFindOneHandler.handle(request);
-    } else {
-      return await this.restApiFindManyHandler.handle(request);
     }
+    return await this.restApiFindManyHandler.handle(request);
   }
 
   async groupBy(request: AuthenticatedRequest) {
@@ -98,9 +96,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiRestoreOneHandler.handle(request);
-    } else {
-      return await this.restApiRestoreManyHandler.handle(request);
     }
+    return await this.restApiRestoreManyHandler.handle(request);
   }
 
   async mergeMany(request: AuthenticatedRequest) {
