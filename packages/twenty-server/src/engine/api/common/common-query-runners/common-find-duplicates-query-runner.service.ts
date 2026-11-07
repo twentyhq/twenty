@@ -77,8 +77,8 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       const sourceColumnsToSelect = buildDuplicateSourceColumnsToSelect({
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        restrictedFields:
-          await this.recordPermissionsService.findRestrictedFields({
+        unreadableFieldMetadataIds:
+          await this.recordPermissionsService.findUnreadableFields({
             principals: permissionsPrincipals,
             objectMetadataId: flatObjectMetadata.id,
           }),

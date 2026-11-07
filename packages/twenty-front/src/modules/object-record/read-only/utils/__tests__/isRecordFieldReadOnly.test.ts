@@ -12,6 +12,7 @@ const INVERSE_FIELD_METADATA_ID = 'inverse-field-metadata-id';
 const buildObjectPermissions = (
   overrides: Partial<ObjectRecordsPermissions> = {},
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,

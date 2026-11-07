@@ -5652,6 +5652,7 @@ export enum ObjectRecordGroupByDateGranularity {
 
 export type ObjectRecordsPermissions = {
   __typename?: 'ObjectRecordsPermissions';
+  canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
@@ -6976,6 +6977,7 @@ export enum RowLevelPermissionPredicateOperand {
 
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
+  canCreateRecords: Scalars['Boolean']['output'];
   canDestroyRecords: Scalars['Boolean']['output'];
   canReadRecords: Scalars['Boolean']['output'];
   canSoftDeleteRecords: Scalars['Boolean']['output'];

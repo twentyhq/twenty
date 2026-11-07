@@ -76,10 +76,6 @@ type RecordsQuestion = ObjectQuestion & {
 
 type RecordsOperationQuestion = RecordsQuestion & ObjectOperationQuestion;
 
-type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
-  principals: PermissionsPrincipalsWithRolesContext;
-};
-
 @Injectable()
 export class RecordPermissionsService {
   private readonly sharedAccessLevelsByPrincipals = new WeakMap<
@@ -131,22 +127,6 @@ export class RecordPermissionsService {
         },
       ]),
     );
-  }
-
-  async findRestrictedFields({
-    principals,
-    objectMetadataId,
-  }: ObjectQuestion): Promise<RestrictedFieldsPermissions> {
-    if (!isDefined(principals)) {
-      return {};
-    }
-
-    const { objects } =
-      await this.permissionsMetadataMapsService.loadRecordsPermissionsForPrincipals(
-        { principals },
-      );
-
-    return objects[objectMetadataId]?.restrictedFields ?? {};
   }
 
   async canAccessSomeRecords({
@@ -230,7 +210,7 @@ export class RecordPermissionsService {
     );
   }
 
-  async findGrantedRecordIdsOnReadableObject(
+  async filterGrantedRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
@@ -250,22 +230,12 @@ export class RecordPermissionsService {
     return this.findGrantedRecordIds(request);
   }
 
-  public findUnreadableFieldMetadataIdsOrThrow(
-    question: FieldsQuestion,
-  ): Promise<Set<string>> {
-    return this.findDeniedFieldMetadataIdsOrThrow({
-      ...question,
-      fieldPermission: 'canRead',
-    });
+  findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
+    return this.findDeniedFields({ ...question, fieldPermission: 'canRead' });
   }
 
-  public findNonUpdatableFieldMetadataIdsOrThrow(
-    question: FieldsQuestion,
-  ): Promise<Set<string>> {
-    return this.findDeniedFieldMetadataIdsOrThrow({
-      ...question,
-      fieldPermission: 'canUpdate',
-    });
+  findUneditableFields(question: ObjectQuestion): Promise<Set<string>> {
+    return this.findDeniedFields({ ...question, fieldPermission: 'canUpdate' });
   }
 
   async filterRoleIdsWithoutReadAccess({
@@ -664,15 +634,17 @@ export class RecordPermissionsService {
     });
   }
 
-  private async findDeniedFieldMetadataIdsOrThrow({
+  private async findDeniedFields({
     principals,
     objectMetadataId,
     fieldPermission,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    objectMetadataId: string;
+  }: ObjectQuestion & {
     fieldPermission: keyof RestrictedFieldPermissions;
   }): Promise<Set<string>> {
+    if (!isDefined(principals)) {
+      return new Set();
+    }
+
     const flatObjectMetadata = this.findFlatObjectMetadata({
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },

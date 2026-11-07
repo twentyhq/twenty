@@ -23,6 +23,7 @@ describe('commandMenuTargetObjectPermissionsSelector', () => {
       objectRecordsPermissions: [
         {
           objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+          canCreateAllRecords: false,
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
@@ -31,6 +32,7 @@ describe('commandMenuTargetObjectPermissionsSelector', () => {
         },
         {
           objectMetadataId: getMockObjectMetadataItemOrThrow('opportunity').id,
+          canCreateAllRecords: false,
           canReadAllRecords: false,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,

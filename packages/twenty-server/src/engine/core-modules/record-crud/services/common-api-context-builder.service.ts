@@ -97,12 +97,10 @@ export class CommonApiContextBuilderService {
       );
 
     const unreadableFieldMetadataIds =
-      await this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
-        {
-          principals,
-          objectMetadataId: flatObjectMetadata.id,
-        },
-      );
+      await this.recordPermissionsService.findUnreadableFields({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectedFields = buildFieldSelection({
       unreadableFieldMetadataIds,
