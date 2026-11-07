@@ -25,6 +25,7 @@ import {
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 type SettingsAiIntegrationStoryOptions = {
+  assistantDisplayName?: string;
   permissionFlags: PermissionFlagType[];
   isInboxEnabled: boolean;
 };
@@ -54,6 +55,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     permissionFlags = options.permissionFlags;
     workspace = {
       ...mockCurrentWorkspace,
+      aiChatAssistantProfile: {
+        ...mockCurrentWorkspace.aiChatAssistantProfile,
+        displayName:
+          options.assistantDisplayName ??
+          mockCurrentWorkspace.aiChatAssistantProfile.displayName,
+      },
       aiAdditionalInstructions: null,
       featureFlags: [
         {

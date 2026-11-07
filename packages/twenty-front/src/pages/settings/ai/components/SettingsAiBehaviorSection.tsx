@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
 type SettingsAiBehaviorSectionProps = {
+  assistantDisplayName?: string;
   directMessageMode: AiChatAssistantMode | null;
   inboxMode: AiChatAssistantMode | null;
   onDirectMessageModeChange: (value: AiChatAssistantMode) => void;
@@ -35,6 +36,7 @@ const StyledBehaviorMessages = styled.div`
 `;
 
 export const SettingsAiBehaviorSection = ({
+  assistantDisplayName = AGENT_CHAT_ASSISTANT_NAME,
   directMessageMode,
   inboxMode,
   onDirectMessageModeChange,
@@ -58,7 +60,7 @@ export const SettingsAiBehaviorSection = ({
     <Section.Root>
       <Section.Header
         title={t`Behavior`}
-        description={t`Choose when ${AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace`}
+        description={t`Choose when ${assistantDisplayName} participates in conversations across your workspace`}
       />
       <Card.Root
         backgroundColor={themeCssVariables.background.secondary}
@@ -98,7 +100,7 @@ export const SettingsAiBehaviorSection = ({
       </Card.Root>
       <StyledBehaviorMessages>
         <Text id={helperId} size="sm" color="tertiary">
-          {t`Never keeps ${AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks ${AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets ${AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and ${AGENT_CHAT_ASSISTANT_NAME} always get replies.`}
+          {t`Never keeps ${assistantDisplayName} out. Only when mentioned asks ${assistantDisplayName} to reply when tagged. Auto lets ${assistantDisplayName} decide when to reply. Chats with only you and ${assistantDisplayName} always get replies.`}
         </Text>
         {isLoading && (
           <Text aria-hidden size="sm" color="tertiary">
