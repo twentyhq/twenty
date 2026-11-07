@@ -2,8 +2,8 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-orm/types/record-permission-query.type';
-import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-orm/types/record-share-criteria.type';
+import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-repository/types/record-permission-query.type';
+import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-repository/types/record-share-criteria.type';
 import {
   RecordShareException,
   RecordShareExceptionCode,

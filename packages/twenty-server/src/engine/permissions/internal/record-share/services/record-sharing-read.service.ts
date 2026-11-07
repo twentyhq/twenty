@@ -16,7 +16,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
+import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
@@ -46,7 +46,7 @@ export type ViewerRecordAccess = {
 export class RecordSharingReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
@@ -308,7 +308,7 @@ export class RecordSharingReadService {
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         roleIdsWithAllRecordsAccess,
       });
-    const shares = await this.recordPermissionReadOrmService.findRecordShares({
+    const shares = await this.recordPermissionReadRepository.findRecordShares({
       workspaceId,
       objectMetadataId,
       recordIds: [recordId],
@@ -367,7 +367,7 @@ export class RecordSharingReadService {
         'flatFieldMetadataMaps',
       ]);
     const privateRecordStates =
-      await this.recordPermissionReadOrmService.findPrivateRecordStates({
+      await this.recordPermissionReadRepository.findPrivateRecordStates({
         workspaceId,
         flatObjectMetadata,
         flatFieldMetadataMaps,

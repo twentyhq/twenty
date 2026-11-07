@@ -2,7 +2,7 @@
 
 import { RecordShareRowCause } from 'twenty-shared/types';
 
-import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-orm/types/record-permission-query.type';
+import { type RecordPermissionQuery } from 'src/engine/permissions/internal/record-permission-repository/types/record-permission-query.type';
 
 export type RuleRecordSharesScope =
   | { recordIds: string[] }

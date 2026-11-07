@@ -5,8 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AccessGroupDefinition } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
-import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-query.service';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-workspace-table-expression.util';
+import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
 const INSERT_BATCH_SIZE = 500;
 
@@ -14,7 +14,7 @@ const buildAccessGroupTableExpression = (workspaceId: string): string =>
   buildWorkspaceTableExpression({ workspaceId, tableName: 'accessGroup' });
 
 @Injectable()
-export class AccessGroupOrmService {
+export class AccessGroupRepository {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
