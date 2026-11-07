@@ -13,7 +13,6 @@ import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Syncs of a workspace can queue behind each other, so wait longer than the default 5 seconds
 const SYNC_LOCK_OPTIONS = { ms: 500, maxRetries: 120 };
 
 @Injectable()
@@ -27,7 +26,6 @@ export class AccessGroupService {
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
-    // Serialized so an older sync cannot delete the groups of a newer one
     await this.cacheLockService.withLock(
       () => this.syncAccessGroupsWithLock(workspaceId),
       `access-group-sync:${workspaceId}`,
@@ -36,7 +34,6 @@ export class AccessGroupService {
   }
 
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
-    // This process memoizes reads for seconds, and syncing from stale grants would delete live groups
     await this.workspaceCacheService.clearMemoizedReads(workspaceId);
 
     const { definitions, failures } = buildWorkspaceAccessGroupDefinitions(
@@ -72,7 +69,6 @@ export class AccessGroupService {
       );
     }
 
-    // Group ids are never reused, so an incomplete or empty read must not delete anything
     if (failures.length > 0 || definitions.length === 0) {
       return;
     }
@@ -92,7 +88,6 @@ export class AccessGroupService {
     }
   }
 
-  // Limiting roles have no RLS, so only the main role adds groups. A group with no row reaches no record.
   async findCallerCompactIds({
     principals,
     objectMetadataId,

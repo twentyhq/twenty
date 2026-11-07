@@ -113,7 +113,6 @@ export class AccessGroupSyncListener {
   private async refreshMembersAndScheduleSync(
     workspaceId: string,
   ): Promise<void> {
-    // Listeners run in no set order, and the sync must read the member values this event changed
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatWorkspaceMemberMaps',
     ]);
