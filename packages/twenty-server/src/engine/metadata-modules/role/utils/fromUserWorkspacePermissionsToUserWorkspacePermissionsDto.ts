@@ -54,6 +54,7 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
     objectRecordsPermissions.push({
       objectMetadataId,
+      canCreateAllRecords: permissions.canCreateAllRecords,
       canReadAllRecords: permissions.canReadAllRecords,
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,

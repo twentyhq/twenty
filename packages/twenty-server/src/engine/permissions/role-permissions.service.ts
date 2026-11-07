@@ -4,7 +4,6 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -103,52 +102,6 @@ export class RolePermissionsService {
     }
 
     return rolesMap;
-  }
-
-  async findWorkspaceMembersWithRole({
-    roleId,
-    workspaceId,
-  }: {
-    roleId: string;
-    workspaceId: string;
-  }): Promise<FlatWorkspaceMember[]> {
-    const userWorkspaceIdsWithRole = await this.findUserWorkspaceIdsWithRole({
-      roleId,
-      workspaceId,
-    });
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    return userWorkspaceIdsWithRole
-      .map((userWorkspaceId) => {
-        const workspaceMemberId =
-          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
-
-        return isDefined(workspaceMemberId)
-          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-          : undefined;
-      })
-      .filter(isDefined);
-  }
-
-  async findUserWorkspaceIdsWithRole({
-    roleId,
-    workspaceId,
-  }: {
-    roleId: string;
-    workspaceId: string;
-  }): Promise<string[]> {
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
-
-    return Object.entries(userWorkspaceRoleMap)
-      .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
-      .map(([userWorkspaceId]) => userWorkspaceId);
   }
 
   async findWorkspaceMemberRoleIds({

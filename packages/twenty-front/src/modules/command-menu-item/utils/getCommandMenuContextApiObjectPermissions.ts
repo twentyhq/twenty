@@ -13,6 +13,10 @@ export const getCommandMenuContextApiObjectPermissions = ({
   objectRecordsPermissions: ObjectRecordsPermissions;
 }): CommandMenuContextApi['objectPermissions'] => ({
   objectMetadataId,
+  canCreateObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'create',
+  }),
   canReadObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
     operationType: 'read',
