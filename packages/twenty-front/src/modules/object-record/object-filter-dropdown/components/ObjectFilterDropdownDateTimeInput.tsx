@@ -32,6 +32,8 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
   const { userTimezone } = useUserTimezone();
 
+  const resolvedTimeZone = timeZone ?? userTimezone;
+
   const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
@@ -44,7 +46,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
     const formattedDateTime = formatDateTimeString({
       value: newFilterValue,
-      timeZone,
+      timeZone: resolvedTimeZone,
       dateFormat,
       timeFormat,
       localeCatalog: dateLocale.localeCatalog,
@@ -73,7 +75,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
           ...relativeDate,
-          timezone: timeZone,
+          timezone: resolvedTimeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
@@ -107,10 +109,10 @@ export const ObjectFilterDropdownDateTimeInput = () => {
       ? // Date and time syntax must stay stable across locales.
         stringFilterValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
-            timeZone ?? userTimezone,
+            resolvedTimeZone,
           )
         : Temporal.PlainDate.from(stringFilterValue).toZonedDateTime(
-            timeZone ?? userTimezone,
+            resolvedTimeZone,
           )
       : null;
 
