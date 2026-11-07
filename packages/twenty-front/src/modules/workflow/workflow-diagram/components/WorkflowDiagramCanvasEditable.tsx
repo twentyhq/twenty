@@ -116,6 +116,11 @@ export const WorkflowDiagramCanvasEditable = () => {
     await deleteEdge({
       source: edge.source,
       target: edge.target,
+      sourceConnectionOptions:
+        edge.data?.sourceConnectionOptions ??
+        getConnectionOptionsForSourceHandle({
+          sourceHandleId: edge.sourceHandle,
+        }),
     });
   };
 

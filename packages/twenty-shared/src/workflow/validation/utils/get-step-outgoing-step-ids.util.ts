@@ -1,4 +1,5 @@
 import { isDefined } from '@/utils';
+import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import { isIfElseStepInput } from '@/workflow/validation/guards/isIfElseStepInput';
 import { isIteratorStepInput } from '@/workflow/validation/guards/isIteratorStepInput';
 import { type ValidatableWorkflowStep } from '@/workflow/validation/types/WorkflowValidation';
@@ -19,15 +20,17 @@ export const getStepInput = (
 export const getStepOutgoingStepIds = (
   step: ValidatableWorkflowStep,
 ): string[] => {
-  const outgoingStepIds = new Set<string>(step.nextStepIds ?? []);
+  if (step.type === WorkflowActionType.IF_ELSE) {
+    const branches = isIfElseStepInput(step)
+      ? (step.settings.input.branches ?? [])
+      : [];
 
-  if (isIfElseStepInput(step)) {
-    for (const branch of step.settings.input.branches ?? []) {
-      for (const nextStepId of branch?.nextStepIds ?? []) {
-        outgoingStepIds.add(nextStepId);
-      }
-    }
+    return [
+      ...new Set(branches.flatMap((branch) => branch?.nextStepIds ?? [])),
+    ];
   }
+
+  const outgoingStepIds = new Set<string>(step.nextStepIds ?? []);
 
   if (isIteratorStepInput(step)) {
     for (const nextStepId of step.settings.input.initialLoopStepIds ?? []) {

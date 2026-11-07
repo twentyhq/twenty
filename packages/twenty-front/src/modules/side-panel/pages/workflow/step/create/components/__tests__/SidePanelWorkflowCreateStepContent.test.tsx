@@ -165,6 +165,9 @@ describe('SidePanelWorkflowCreateStepContent', () => {
     renderContent();
     await user.click(screen.getByRole('button', { name: 'Search Records' }));
     await waitFor(() => expect(mockOpenWorkflowEditStep).toHaveBeenCalled());
+    expect(mockCreateStep).toHaveBeenCalledWith(
+      expect.objectContaining({ parentStepId: undefined }),
+    );
     expect(mockUpdateStep).toHaveBeenCalledTimes(1);
     expect(mockUpdateStep.mock.calls[0][0].settings.input.branches).toEqual([
       mockParentStep.settings.input.branches[0],

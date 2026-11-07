@@ -97,6 +97,15 @@ const validateBranchingStep = (
       ?.branches;
     const branches = Array.isArray(branchList) ? branchList : [];
 
+    if (isNonEmptyArray(step.nextStepIds)) {
+      issues.push({
+        severity: 'error',
+        code: 'IF_ELSE_HAS_NEXT_STEP_IDS',
+        message: `If/Else step "${step.name ?? step.id}" lists next steps outside its branches (${step.nextStepIds.join(', ')}), which a run never follows. Save this step with an empty nextStepIds, moving any of those steps into one of its branches' nextStepIds (settings.input.branches[].nextStepIds).`,
+        stepId: step.id,
+      });
+    }
+
     if (branches.length < 2) {
       issues.push({
         severity: 'warning',

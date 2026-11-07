@@ -98,6 +98,9 @@ ITERATOR steps (loops):
 - The last step of the loop body must have an edge back to the ITERATOR, otherwise the loop runs a single iteration.
 - An ITERATOR with an empty loop body does not fail: it completes immediately and {{<iterator-id>.currentItem}} resolves to undefined for every step downstream.
 
+IF_ELSE steps:
+- A run only continues through the branches in settings.input.branches, so an IF_ELSE step has no nextStepIds. Every edge leaving it carries sourceConnectionOptions: { connectedStepType: "IF_ELSE", settings: { branchId: "<one of settings.input.branches[].id>" } }.
+
 Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
 - Missing the "name" and "valid" fields in steps

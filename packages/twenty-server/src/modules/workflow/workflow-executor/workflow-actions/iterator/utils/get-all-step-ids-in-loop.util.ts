@@ -60,6 +60,8 @@ const traverseSteps = ({
           });
         }
       }
+
+      continue;
     }
 
     if (!step.nextStepIds) {

@@ -208,6 +208,30 @@ describe('getAllStepIdsInLoop', () => {
   });
 
   describe('if-else branch looping back to enclosing iterator', () => {
+    it('should ignore the steps an if-else lists outside its branches', () => {
+      const steps = [
+        createMockIteratorStep('iterator1', [], ['if-else']),
+        createMockIfElseStep(
+          'if-else',
+          [
+            { id: 'if', nextStepIds: ['step2'] },
+            { id: 'else', nextStepIds: ['iterator1'] },
+          ],
+          ['outside'],
+        ),
+        createMockCodeStep('step2', ['iterator1']),
+        createMockCodeStep('outside'),
+      ];
+
+      expect(
+        getAllStepIdsInLoop({
+          iteratorStepId: 'iterator1',
+          initialLoopStepIds: ['if-else'],
+          steps,
+        }),
+      ).toEqual(['if-else', 'step2']);
+    });
+
     it('should not stack overflow when an if-else branch points back to the enclosing iterator', () => {
       const steps = [
         createMockIteratorStep('iterator1', [], ['step1']),

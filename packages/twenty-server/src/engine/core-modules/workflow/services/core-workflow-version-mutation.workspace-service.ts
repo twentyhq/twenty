@@ -39,10 +39,7 @@ import { applyWorkflowStepPositions } from 'src/modules/workflow/workflow-builde
 import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { addEdgeToWorkflowVersionContent } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/add-edge-to-workflow-version-content.util';
-import {
-  assertEdgeConnectionOptionsAreSupported,
-  buildSourceStepWithRemovedEdge,
-} from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
+import { buildSourceStepWithRemovedEdge } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
@@ -458,8 +455,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     target: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
-
     const { coreWorkflowVersion, trigger, steps } =
       await this.getValidatedDraftWithTargetStep({
         workspaceId,
@@ -512,16 +507,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       source,
       coreWorkflowVersionId,
     });
-
-    if (
-      !sourceStep.nextStepIds?.includes(target) &&
-      !isDefined(sourceConnectionOptions)
-    ) {
-      return computeWorkflowVersionStepChanges({
-        existingTrigger: trigger,
-        existingSteps: steps,
-      });
-    }
 
     const { updatedSourceStep, shouldPersist } = buildSourceStepWithRemovedEdge(
       {

@@ -174,6 +174,57 @@ describe('validateWorkflowGraph', () => {
     expect(() => getCodes(workflow)).not.toThrow();
   });
 
+  it('should flag an if-else step whose next steps are outside its branches', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          nextStepIds: ['outside'],
+          settings: {
+            input: {
+              branches: [{ nextStepIds: ['end'] }, { nextStepIds: ['end'] }],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+        { id: 'outside', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).toEqual(
+      expect.arrayContaining(['IF_ELSE_HAS_NEXT_STEP_IDS', 'UNREACHABLE_STEP']),
+    );
+    expect(
+      validateWorkflowGraph({
+        workflow,
+        graph: buildWorkflowGraph(workflow),
+      }).find((issue) => issue.code === 'IF_ELSE_HAS_NEXT_STEP_IDS')?.message,
+    ).toContain('outside its branches (outside)');
+  });
+
+  it('should accept an if-else step with empty next steps', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          nextStepIds: [],
+          settings: {
+            input: {
+              branches: [{ nextStepIds: ['end'] }, { nextStepIds: ['end'] }],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).toEqual([]);
+  });
+
   it('should flag an iterator with items but no loop body', () => {
     const workflow: ValidatableWorkflow = {
       trigger: { type: 'MANUAL', nextStepIds: ['iterator'] },
