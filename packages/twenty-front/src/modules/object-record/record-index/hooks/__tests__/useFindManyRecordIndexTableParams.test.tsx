@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
@@ -20,6 +21,8 @@ const groupByFieldMetadataItem = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'name',
 });
+
+const ADDITIONAL_FILTER = { name: { eq: 'Acme' } };
 
 const getWrapper = (recordGroupId: string) => {
   const JestMetadataAndApolloMocksWrapper =
@@ -69,6 +72,41 @@ describe('useFindManyRecordIndexTableParams', () => {
     );
 
     expect(result.current.limit).toBe(50);
+  });
+
+  it('should AND the additional filter of the surrounding record index', () => {
+    const RecordGroupWrapper = getWrapper('unknown-record-group-id');
+
+    const { result } = renderHook(
+      () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <RecordGroupWrapper>
+            <RecordIndexContextProvider
+              value={{
+                indexIdentifierUrl: () => '',
+                onIndexRecordsLoaded: () => {},
+                objectNamePlural: companyObjectMetadataItem.namePlural,
+                objectNameSingular: companyObjectMetadataItem.nameSingular,
+                objectMetadataItem: companyObjectMetadataItem,
+                objectPermissionsByObjectMetadataId: {},
+                recordIndexId: INSTANCE_ID,
+                viewBarInstanceId: INSTANCE_ID,
+                recordFieldByFieldMetadataItemId: {},
+                labelIdentifierFieldMetadataItem: undefined,
+                fieldMetadataItemByFieldMetadataItemId: {},
+                fieldDefinitionByFieldMetadataItemId: {},
+                additionalFilter: ADDITIONAL_FILTER,
+              }}
+            >
+              {children}
+            </RecordIndexContextProvider>
+          </RecordGroupWrapper>
+        ),
+      },
+    );
+
+    expect(result.current.filter).toEqual(ADDITIONAL_FILTER);
   });
 
   it('should not set a limit outside a record group', () => {

@@ -1,6 +1,7 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -33,6 +34,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     recordIndexCalendarLayout,
   );
   const { userTimezone } = useUserTimezone();
+  const additionalFilter = useRecordIndexAdditionalFilter();
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarInstanceId,
@@ -96,6 +98,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
       dateRangeFilterBefore,
       viewFilter,
       anyFieldFilter,
+      additionalFilter,
     ]),
   };
 };

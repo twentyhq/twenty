@@ -6,7 +6,10 @@ export const useResetLocationHash = () => {
 
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const resetLocationHash = () => {
-    navigate(location.pathname, { replace: true });
+    navigate(
+      { pathname: location.pathname, search: location.search },
+      { replace: true },
+    );
   };
 
   return { resetLocationHash };
