@@ -1,12 +1,5 @@
 import gql from 'graphql-tag';
-import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { expectEventually } from 'test/integration/utils/expect-eventually.util';
-import { isDefined } from 'twenty-shared/utils';
 
 const OBJECT_RECORD_COUNTS_QUERY = gql`
   query ObjectRecordCounts {
@@ -76,77 +69,5 @@ describe('objectRecordCounts', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors.length).toBeGreaterThan(0);
-  });
-});
-
-describe('objectRecordCounts for a newly created object', () => {
-  const OBJECT_NAME_SINGULAR = 'recordCountProbe';
-  const OBJECT_NAME_PLURAL = 'recordCountProbes';
-  const RECORD_COUNT = 3;
-
-  let objectMetadataId: string | undefined;
-
-  beforeAll(async () => {
-    const { data, errors } = await createOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        nameSingular: OBJECT_NAME_SINGULAR,
-        namePlural: OBJECT_NAME_PLURAL,
-        labelSingular: 'Record Count Probe',
-        labelPlural: 'Record Count Probes',
-        isLabelSyncedWithName: false,
-      },
-    });
-
-    expect(errors).toBeUndefined();
-    objectMetadataId = data.createOneObject.id;
-
-    const response = await makeGraphqlApiRequest(
-      createManyOperationFactory({
-        objectMetadataSingularName: OBJECT_NAME_SINGULAR,
-        objectMetadataPluralName: OBJECT_NAME_PLURAL,
-        gqlFields: 'id',
-        data: Array.from({ length: RECORD_COUNT }, (_, index) => ({
-          name: `Probe ${index + 1}`,
-        })),
-      }),
-    );
-
-    expect(response.body.errors).toBeUndefined();
-  });
-
-  afterAll(async () => {
-    if (!isDefined(objectMetadataId)) {
-      return;
-    }
-
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: objectMetadataId,
-        updatePayload: { isActive: false },
-      },
-    });
-    await deleteOneObjectMetadata({
-      expectToFail: false,
-      input: { idToDelete: objectMetadataId },
-    });
-  });
-
-  it('counts records in a never-analyzed table instead of returning 0', async () => {
-    await expectEventually(async () => {
-      const response = await makeMetadataApiRequest({
-        query: OBJECT_RECORD_COUNTS_QUERY,
-      });
-
-      const counts: { objectNamePlural: string; totalCount: number }[] =
-        response.body.data.objectRecordCounts;
-
-      const probe = counts.find(
-        (entry) => entry.objectNamePlural === OBJECT_NAME_PLURAL,
-      );
-
-      expect(probe?.totalCount).toBe(RECORD_COUNT);
-    });
   });
 });

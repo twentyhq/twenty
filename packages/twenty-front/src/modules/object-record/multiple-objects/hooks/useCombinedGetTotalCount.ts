@@ -11,9 +11,7 @@ type ObjectRecordCountsResult = {
 };
 
 export const useCombinedGetTotalCount = () => {
-  const { data } = useQuery<ObjectRecordCountsResult>(OBJECT_RECORD_COUNTS, {
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data } = useQuery<ObjectRecordCountsResult>(OBJECT_RECORD_COUNTS);
 
   const totalCountByObjectMetadataItemNamePlural = useMemo(
     () =>
