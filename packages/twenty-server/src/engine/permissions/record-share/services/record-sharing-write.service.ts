@@ -59,6 +59,7 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
+      requiredCapability: 'isShareable',
       write: async ({ workspaceId, transactionScope, sharingObject }) => {
         await this.recordShareStorageService.setManualShare({
           workspaceId,
@@ -92,6 +93,7 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
+      requiredCapability: 'isShareable',
       write: ({ workspaceId, transactionScope }) =>
         this.recordShareStorageService.setManualShare({
           workspaceId,

@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -9,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/private-record.repository';
@@ -96,6 +98,7 @@ export class PrivateRecordWriteService {
     return this.recordSharingChangeService.runChange({
       args,
       write: (change) => this.writeRecordPrivacy({ ...change, args }),
+      requiredCapability: 'canSetRecordPrivacy',
     });
   }
 
@@ -140,13 +143,24 @@ export class PrivateRecordWriteService {
   private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingObject: { flatObjectMetadata },
+    sharingObject: { flatObjectMetadata, isShareable },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
+
+    if (
+      isPrivate &&
+      !isShareable &&
+      args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
+    ) {
+      throw new NotFoundError('Record not found', {
+        userFriendlyMessage: msg`Record not found`,
+      });
+    }
+
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',

@@ -363,6 +363,40 @@ describe('Record-level sharing on an object open by default', () => {
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
   });
 
+  it('should let a record be made private with private records on and sharing off', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+    await setRecordSharingEnabled(false);
+
+    try {
+      expect(
+        (
+          await setPrivate({
+            isPrivate: true,
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          })
+        ).body.errors,
+      ).toBeDefined();
+      expect(
+        (await setPrivate({ isPrivate: true })).body.errors,
+      ).toBeUndefined();
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
+      expect(
+        (await setPrivate({ isPrivate: false })).body.errors,
+      ).toBeUndefined();
+    } finally {
+      await setRecordSharingEnabled(true);
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
+  });
+
   it('should keep a private record private while record sharing is off', async () => {
     await setPrivate({ isPrivate: true });
     await setRecordSharingEnabled(false);

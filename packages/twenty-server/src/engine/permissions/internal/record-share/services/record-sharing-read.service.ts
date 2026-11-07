@@ -293,7 +293,7 @@ export class RecordSharingReadService {
     transactionScope?: RecordPermissionTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const { flatObjectMetadata, isShareable } = sharingObject;
+    const { flatObjectMetadata, canSetRecordPrivacy } = sharingObject;
     const { roleIdsWithAllRecordsAccess } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'roleIdsWithAllRecordsAccess',
@@ -332,7 +332,7 @@ export class RecordSharingReadService {
           ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
-      implicitAccessLevels: isShareable
+      implicitAccessLevels: canSetRecordPrivacy
         ? [
             isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
             creatorWorkspaceMemberId === authContext.workspaceMemberId ||

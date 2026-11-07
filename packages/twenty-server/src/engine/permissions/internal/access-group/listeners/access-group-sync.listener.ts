@@ -20,6 +20,12 @@ import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permiss
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
+const FLAGS_AFFECTING_ACCESS_GROUPS = [
+  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+  FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+];
+
 @Injectable()
 export class AccessGroupSyncListener {
   constructor(
@@ -51,7 +57,7 @@ export class AccessGroupSyncListener {
   >): Promise<void> {
     if (
       isDefined(workspaceId) &&
-      events.some(({ key }) => key === FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED)
+      events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
       await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
         workspaceId,
