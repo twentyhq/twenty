@@ -19,13 +19,17 @@ export class AccessGroupSyncSchedulerService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async scheduleSync(workspaceId: string): Promise<void> {
+  async isEnabled(workspaceId: string): Promise<boolean> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['featureFlagsMap'],
     );
 
-    if (!featureFlagsMap[FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]) {
+    return featureFlagsMap[FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED] ?? false;
+  }
+
+  async scheduleSyncIfEnabled(workspaceId: string): Promise<void> {
+    if (!(await this.isEnabled(workspaceId))) {
       return;
     }
 
@@ -36,10 +40,6 @@ export class AccessGroupSyncSchedulerService {
         isWorkspaceJob: true,
         workspaceId,
         retryLimit: 3,
-        deduplication: {
-          id: `${SYNC_ACCESS_GROUPS_JOB_NAME}-${workspaceId}`,
-          keepLastIfActive: true,
-        },
       },
     );
   }

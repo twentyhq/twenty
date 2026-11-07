@@ -10,10 +10,14 @@ import {
   type AccessGroupMemberFieldValue,
   type AccessGroupMemberFieldValues,
 } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { resolveWorkspaceMemberPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-workspace-member-predicate-value.util';
 
-const resolveMemberFieldValues = ({
+const resolveMemberFieldValuesOrThrow = ({
   predicate,
   workspaceMember,
   flatFieldMetadataMaps,
@@ -28,7 +32,10 @@ const resolveMemberFieldValues = ({
   });
 
   if (!isDefined(workspaceMemberFieldMetadata)) {
-    return [null];
+    throw new PermissionsException(
+      `Workspace member field metadata not found for row level predicate ${predicate.id}`,
+      PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+    );
   }
 
   const value = resolveWorkspaceMemberPredicateValue({
@@ -46,8 +53,7 @@ const resolveMemberFieldValues = ({
     : [null];
 };
 
-// A rule comparing to a list of member values makes one group per value
-export const buildAccessGroupMemberFieldValues = ({
+export const buildAccessGroupMemberFieldValuesOrThrow = ({
   workspaceMemberBoundPredicates,
   workspaceMember,
   flatFieldMetadataMaps,
@@ -65,7 +71,7 @@ export const buildAccessGroupMemberFieldValues = ({
       continue;
     }
 
-    const memberFieldValues = resolveMemberFieldValues({
+    const memberFieldValues = resolveMemberFieldValuesOrThrow({
       predicate,
       workspaceMember,
       flatFieldMetadataMaps,

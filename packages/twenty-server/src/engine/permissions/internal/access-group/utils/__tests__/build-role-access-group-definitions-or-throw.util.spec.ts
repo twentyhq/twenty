@@ -7,7 +7,7 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { buildRoleAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions.util';
+import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
 
 const ROLE_ID = 'role-id';
 const OBJECT_METADATA_ID = 'object-metadata-id';
@@ -65,10 +65,10 @@ const buildRowLevelPermissions = (
 const build = (
   objectRecordsPermissions: ObjectRecordsPermissions | undefined,
   overrides: Partial<
-    Parameters<typeof buildRoleAccessGroupDefinitions>[0]
+    Parameters<typeof buildRoleAccessGroupDefinitionsOrThrow>[0]
   > = {},
 ) =>
-  buildRoleAccessGroupDefinitions({
+  buildRoleAccessGroupDefinitionsOrThrow({
     roleId: ROLE_ID,
     objectMetadataId: OBJECT_METADATA_ID,
     objectRecordsPermissions,
@@ -77,7 +77,7 @@ const build = (
     ...overrides,
   });
 
-describe('buildRoleAccessGroupDefinitions', () => {
+describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
   it('should make no group for a role with no access', () => {
     expect(build(noAccess)).toEqual([]);
     expect(build(undefined)).toEqual([]);
@@ -113,7 +113,11 @@ describe('buildRoleAccessGroupDefinitions', () => {
   it('should make one group per list value, shared by members with the same value', () => {
     const definitions = build(
       buildRowLevelPermissions([
-        { id: 'predicate', workspaceMemberFieldMetadataId: MEMBER_FIELD_ID },
+        {
+          id: 'predicate',
+          workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          rowLevelPermissionPredicateGroupId: RULE_ID,
+        },
       ]),
       {
         workspaceMembers: [
@@ -132,11 +136,45 @@ describe('buildRoleAccessGroupDefinitions', () => {
     ]);
   });
 
+  it('should only split a root rule on the member values of its own predicates', () => {
+    const permissions = buildRowLevelPermissions([
+      {
+        id: 'bound',
+        workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+        rowLevelPermissionPredicateGroupId: 'nested',
+      },
+    ]);
+
+    permissions.rowLevelRecordsPermissions?.predicateGroups.push({
+      id: 'other-root',
+      parentRowLevelPermissionPredicateGroupId: null,
+    } as RowLevelPermissionPredicateGroup);
+
+    const definitions = build(permissions, {
+      workspaceMembers: [{ id: 'jane', teams: ['sales', 'support'] }] as never,
+    });
+
+    expect(
+      definitions.map((definition) => [
+        definition.rowLevelPermissionPredicateGroupId,
+        definition.memberFieldValues,
+      ]),
+    ).toEqual([
+      [RULE_ID, { [MEMBER_FIELD_KEY]: 'sales' }],
+      [RULE_ID, { [MEMBER_FIELD_KEY]: 'support' }],
+      ['other-root', null],
+    ]);
+  });
+
   it('should make no member group when no member holds the role', () => {
     expect(
       build(
         buildRowLevelPermissions([
-          { id: 'predicate', workspaceMemberFieldMetadataId: MEMBER_FIELD_ID },
+          {
+            id: 'predicate',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+            rowLevelPermissionPredicateGroupId: RULE_ID,
+          },
         ]),
       ),
     ).toEqual([]);

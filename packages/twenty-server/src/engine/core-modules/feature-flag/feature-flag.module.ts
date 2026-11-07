@@ -1,4 +1,3 @@
-import { AccessGroupSyncSchedulerModule } from 'src/engine/permissions/internal/access-group/access-group-sync-scheduler.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -11,7 +10,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    AccessGroupSyncSchedulerModule,
     TypeOrmModule.forFeature([FeatureFlagEntity]),
     MetricsModule,
     WorkspaceCacheModule,

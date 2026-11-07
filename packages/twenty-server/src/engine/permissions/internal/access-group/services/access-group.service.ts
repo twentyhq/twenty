@@ -6,10 +6,11 @@ import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AccessGroupOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/access-group-orm.service';
-import { buildRoleAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions.util';
-import { buildWorkspaceAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions.util';
+import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
+import { buildWorkspaceAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-group-definitions-or-throw.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -19,7 +20,25 @@ export class AccessGroupService {
     private readonly accessGroupOrmService: AccessGroupOrmService,
   ) {}
 
+  // Serialized so an older sync cannot delete the groups of a newer one
   async syncAccessGroups(workspaceId: string): Promise<void> {
+    await this.accessGroupOrmService.runWithSyncLock({
+      workspaceId,
+      run: (transactionScope) =>
+        this.syncAccessGroupsInTransaction({ workspaceId, transactionScope }),
+    });
+  }
+
+  private async syncAccessGroupsInTransaction({
+    workspaceId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    // This process memoizes reads for seconds, and syncing from stale grants would delete live groups
+    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+
     const {
       rolesPermissions,
       flatObjectMetadataMaps,
@@ -34,7 +53,7 @@ export class AccessGroupService {
       'flatWorkspaceMemberMaps',
     ]);
 
-    const definitions = buildWorkspaceAccessGroupDefinitions({
+    const definitions = buildWorkspaceAccessGroupDefinitionsOrThrow({
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -42,7 +61,10 @@ export class AccessGroupService {
       flatWorkspaceMemberMaps,
     });
     const existingGroupHashes = new Set(
-      await this.accessGroupOrmService.findGroupHashes(workspaceId),
+      await this.accessGroupOrmService.findGroupHashes({
+        workspaceId,
+        transactionScope,
+      }),
     );
     const expectedGroupHashes = new Set(
       definitions.map(({ groupHash }) => groupHash),
@@ -56,12 +78,14 @@ export class AccessGroupService {
       definitions: definitions.filter(
         ({ groupHash }) => !existingGroupHashes.has(groupHash),
       ),
+      transactionScope,
     });
 
     if (isNonEmptyArray(staleGroupHashes)) {
       await this.accessGroupOrmService.deleteAccessGroups({
         workspaceId,
         groupHashes: staleGroupHashes,
+        transactionScope,
       });
     }
   }
@@ -72,7 +96,10 @@ export class AccessGroupService {
     objectMetadataId,
     operationType,
   }: {
-    principals: PermissionsPrincipalsWithRolesContext;
+    principals: Pick<
+      PermissionsPrincipalsWithRolesContext,
+      'workspaceId' | 'mainPrincipal'
+    >;
     objectMetadataId: string;
     operationType: ObjectRecordsOperationType;
   }): Promise<number[]> {
@@ -88,7 +115,7 @@ export class AccessGroupService {
     )
       ? flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
       : undefined;
-    const definitions = buildRoleAccessGroupDefinitions({
+    const definitions = buildRoleAccessGroupDefinitionsOrThrow({
       roleId: mainPrincipal.roleId,
       objectMetadataId,
       objectRecordsPermissions:

@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
+import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
+import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
@@ -23,7 +25,7 @@ export class FeatureFlagService {
     @InjectWorkspaceScopedRepository(FeatureFlagEntity)
     private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   public async isFeatureEnabled(
@@ -78,9 +80,7 @@ export class FeatureFlagService {
         'featureFlagsMap',
       ]);
 
-      if (keys.includes(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED)) {
-        await this.accessGroupSyncSchedulerService.scheduleSync(workspaceId);
-      }
+      this.emitFeatureFlagsEnabled({ keys, workspaceId });
     }
   }
 
@@ -132,10 +132,24 @@ export class FeatureFlagService {
       'featureFlagsMap',
     ]);
 
-    if (featureFlag === FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED) {
-      await this.accessGroupSyncSchedulerService.scheduleSync(workspaceId);
+    if (value) {
+      this.emitFeatureFlagsEnabled({ keys: [featureFlag], workspaceId });
     }
 
     return result;
+  }
+
+  private emitFeatureFlagsEnabled({
+    keys,
+    workspaceId,
+  }: {
+    keys: FeatureFlagKey[];
+    workspaceId: string;
+  }): void {
+    this.workspaceEventEmitter.emitCustomBatchEvent<FeatureFlagEnabledEvent>(
+      FEATURE_FLAG_ENABLED_EVENT,
+      keys.map((key) => ({ key })),
+      workspaceId,
+    );
   }
 }

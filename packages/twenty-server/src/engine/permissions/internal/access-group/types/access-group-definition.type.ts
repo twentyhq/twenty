@@ -10,6 +10,7 @@ export type AccessGroupMemberFieldValues = Record<
 export type AccessGroupDefinition = {
   groupHash: string;
   roleId: string;
+  objectMetadataId: string;
   rowLevelPermissionPredicateGroupId: string | null;
   memberFieldValues: AccessGroupMemberFieldValues | null;
 };

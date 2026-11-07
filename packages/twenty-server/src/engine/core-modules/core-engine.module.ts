@@ -1,4 +1,3 @@
-import { AccessGroupModule } from 'src/engine/permissions/internal/access-group/access-group.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
@@ -89,7 +88,6 @@ import { FileApiModule } from './file/file-api.module';
 
 @Module({
   imports: [
-    AccessGroupModule,
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,

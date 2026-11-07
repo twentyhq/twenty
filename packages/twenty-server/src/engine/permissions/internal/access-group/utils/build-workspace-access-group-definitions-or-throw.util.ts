@@ -8,7 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AccessGroupDefinition } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
-import { buildRoleAccessGroupDefinitions } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions.util';
+import { buildRoleAccessGroupDefinitionsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-group-definitions-or-throw.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
@@ -18,7 +18,10 @@ const groupWorkspaceMembersByRoleId = ({
   flatWorkspaceMemberMaps,
 }: {
   userWorkspaceRoleMap: Record<string, string>;
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatWorkspaceMemberMaps: Pick<
+    FlatWorkspaceMemberMaps,
+    'idByUserWorkspaceId' | 'byId'
+  >;
 }): Map<string, RowLevelPermissionWorkspaceMember[]> => {
   const workspaceMembersByRoleId = new Map<
     string,
@@ -45,7 +48,7 @@ const groupWorkspaceMembersByRoleId = ({
   return workspaceMembersByRoleId;
 };
 
-export const buildWorkspaceAccessGroupDefinitions = ({
+export const buildWorkspaceAccessGroupDefinitionsOrThrow = ({
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -80,7 +83,7 @@ export const buildWorkspaceAccessGroupDefinitions = ({
         continue;
       }
 
-      for (const definition of buildRoleAccessGroupDefinitions({
+      for (const definition of buildRoleAccessGroupDefinitionsOrThrow({
         roleId,
         objectMetadataId,
         objectRecordsPermissions,

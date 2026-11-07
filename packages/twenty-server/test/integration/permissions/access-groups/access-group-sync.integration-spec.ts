@@ -52,8 +52,8 @@ describe('access group sync (integration)', () => {
     expect(accessGroups.length).toBeGreaterThan(0);
 
     await global.testDataSource.query(
-      `INSERT INTO ${ACCESS_GROUP_TABLE} ("roleId", "groupHash") VALUES ($1, 'stale-group')`,
-      [await findAdminRoleId()],
+      `INSERT INTO ${ACCESS_GROUP_TABLE} ("roleId", "objectMetadataId", "groupHash") VALUES ($1, $2, 'stale-group')`,
+      [await findAdminRoleId(), await findPersonObjectMetadataId()],
     );
 
     await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);

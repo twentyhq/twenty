@@ -18,7 +18,6 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
@@ -38,13 +37,6 @@ import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engi
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
-const FLAT_ENTITY_MAPS_KEYS_AFFECTING_ACCESS_GROUPS: (keyof AllFlatEntityMaps)[] =
-  [
-    'flatObjectMetadataMaps',
-    'flatRowLevelPermissionPredicateMaps',
-    'flatRowLevelPermissionPredicateGroupMaps',
-  ];
-
 @Injectable()
 export class WorkspaceMigrationRunnerService {
   constructor(
@@ -59,7 +51,6 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
     private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
-    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
   ) {}
 
   async invalidateCache({
@@ -112,17 +103,6 @@ export class WorkspaceMigrationRunnerService {
       workspaceId,
       cacheKeyNamesToInvalidate,
     );
-
-    if (
-      hasRolesPermissionsChanged ||
-      allFlatEntityMapsKeys.some((flatEntityMapsKey) =>
-        FLAT_ENTITY_MAPS_KEYS_AFFECTING_ACCESS_GROUPS.includes(
-          flatEntityMapsKey,
-        ),
-      )
-    ) {
-      await this.accessGroupSyncSchedulerService.scheduleSync(workspaceId);
-    }
 
     if (hasSchemaMetadataChanged) {
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
