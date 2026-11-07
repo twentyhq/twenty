@@ -1,0 +1,1 @@
+export const PROTECTED_CHAT_REFERENCE_MARKER = '\uFDD0';
