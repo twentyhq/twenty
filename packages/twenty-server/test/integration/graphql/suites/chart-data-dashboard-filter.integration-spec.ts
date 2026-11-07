@@ -27,12 +27,16 @@ const RLS_TOKEN = 'DashboardFilterRls';
 const CAPPED_COMPANIES_IN_MAY = 60;
 const CAPPED_COMPANIES_IN_AUGUST = 41;
 
-const MARCH_2019 = {
-  conditions: [
-    { operand: ViewFilterOperand.IS_AFTER, value: '2019-03-01' },
-    { operand: ViewFilterOperand.IS_BEFORE, value: '2019-04-01' },
-  ],
-};
+type Condition = { operand: ViewFilterOperand; value: string };
+
+const periodValues = (conditions: Condition[]) => [
+  { pageLayoutFilterId: PERIOD_FILTER_ID, conditions },
+];
+
+const MARCH_2019 = periodValues([
+  { operand: ViewFilterOperand.IS_AFTER, value: '2019-03-01' },
+  { operand: ViewFilterOperand.IS_BEFORE, value: '2019-04-01' },
+]);
 
 const MAIN_COMPANIES = [
   {
@@ -202,6 +206,12 @@ describe('Chart data with dashboard filters (e2e)', () => {
     });
   };
 
+  const expectRejectedInput = (response: Response) => {
+    expect(response.body.data ?? null).toBeNull();
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+  };
+
   const destroyTestCompanies = async () => {
     // Destroys are capped at 100 records per mutation, so the capped set goes in two batches.
     for (const namePrefix of [
@@ -260,7 +270,7 @@ describe('Chart data with dashboard filters (e2e)', () => {
       configuration: barChartConfiguration({
         filter: nameContains(MAIN_TOKEN),
       }),
-      dashboardFilterValues: { [PERIOD_FILTER_ID]: MARCH_2019 },
+      dashboardFilterValues: MARCH_2019,
       dashboardFilterTimeZone: WIDGET_TIME_ZONE,
     });
 
@@ -291,15 +301,13 @@ describe('Chart data with dashboard filters (e2e)', () => {
   });
 
   it('should apply IS on a day the same way as the widget filter', async () => {
-    const isMarch10 = {
-      conditions: [{ operand: ViewFilterOperand.IS, value: '2019-03-10' }],
-    };
+    const isMarch10 = { operand: ViewFilterOperand.IS, value: '2019-03-10' };
 
     const withDashboardFilter = await queryBarChartNames({
       configuration: barChartConfiguration({
         filter: nameContains(MAIN_TOKEN),
       }),
-      dashboardFilterValues: { [PERIOD_FILTER_ID]: isMarch10 },
+      dashboardFilterValues: periodValues([isMarch10]),
       dashboardFilterTimeZone: WIDGET_TIME_ZONE,
     });
 
@@ -311,7 +319,7 @@ describe('Chart data with dashboard filters (e2e)', () => {
             {
               id: uuidv4(),
               fieldMetadataId: fieldIds.companyCreatedAtFieldId,
-              ...isMarch10.conditions[0],
+              ...isMarch10,
             },
           ],
         },
@@ -330,14 +338,11 @@ describe('Chart data with dashboard filters (e2e)', () => {
     const unfiltered = await queryBarChart({ configuration });
     const filtered = await queryBarChart({
       configuration,
-      dashboardFilterValues: {
-        [PERIOD_FILTER_ID]: {
-          conditions: [
-            { operand: ViewFilterOperand.IS_AFTER, value: '2019-05-01' },
-            { operand: ViewFilterOperand.IS_BEFORE, value: '2019-06-01' },
-          ],
-        },
-      },
+      dashboardFilterValues: periodValues([
+        { operand: ViewFilterOperand.IS_AFTER, value: '2019-05-01' },
+        { operand: ViewFilterOperand.IS_BEFORE, value: '2019-06-01' },
+      ]),
+      dashboardFilterTimeZone: WIDGET_TIME_ZONE,
     });
 
     expect(unfiltered.body.errors).toBeUndefined();
@@ -368,7 +373,8 @@ describe('Chart data with dashboard filters (e2e)', () => {
           filter: nameContains(MAIN_TOKEN),
           dashboardFilterBindings: periodBinding(),
         },
-        dashboardFilterValues: { [PERIOD_FILTER_ID]: MARCH_2019 },
+        dashboardFilterValues: MARCH_2019,
+        dashboardFilterTimeZone: WIDGET_TIME_ZONE,
       },
     });
 
@@ -396,7 +402,8 @@ describe('Chart data with dashboard filters (e2e)', () => {
           filter: nameContains(MAIN_TOKEN),
           dashboardFilterBindings: periodBinding(),
         },
-        dashboardFilterValues: { [PERIOD_FILTER_ID]: MARCH_2019 },
+        dashboardFilterValues: MARCH_2019,
+        dashboardFilterTimeZone: WIDGET_TIME_ZONE,
       },
     });
 
@@ -415,13 +422,15 @@ describe('Chart data with dashboard filters (e2e)', () => {
 
     const withUnboundValue = await queryBarChartNames({
       configuration,
-      dashboardFilterValues: {
-        [uuidv4()]: {
+      dashboardFilterValues: [
+        {
+          pageLayoutFilterId: uuidv4(),
           conditions: [
             { operand: ViewFilterOperand.IS_BEFORE, value: '1900-01-01' },
           ],
         },
-      },
+      ],
+      dashboardFilterTimeZone: WIDGET_TIME_ZONE,
     });
 
     expect(withUnboundValue).toHaveLength(MAIN_COMPANIES.length);
@@ -436,16 +445,12 @@ describe('Chart data with dashboard filters (e2e)', () => {
         filter: nameContains(RELATIVE_TOKEN),
         timezone: CREATOR_TIME_ZONE,
       }),
-      dashboardFilterValues: {
-        [PERIOD_FILTER_ID]: {
-          conditions: [
-            {
-              operand: ViewFilterOperand.IS_RELATIVE,
-              value: `PAST_1_MONTH;;${CREATOR_TIME_ZONE};;`,
-            },
-          ],
+      dashboardFilterValues: periodValues([
+        {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: `PAST_1_MONTH;;${CREATOR_TIME_ZONE};;`,
         },
-      },
+      ]),
       dashboardFilterTimeZone: VIEWER_TIME_ZONE,
     });
 
@@ -454,34 +459,60 @@ describe('Chart data with dashboard filters (e2e)', () => {
     ]);
   });
 
-  it('should reject a draft binding to a field of another object with the named error', async () => {
-    expectNamedDashboardFilterError(
-      await queryBarChart({
-        configuration: barChartConfiguration({
-          filter: nameContains(MAIN_TOKEN),
-          bindingFieldMetadataId: fieldIds.personCreatedAtFieldId,
+  it.each<{
+    title: string;
+    bindingFieldMetadataId?: () => string;
+    conditions: Condition[];
+    dashboardFilterTimeZone?: string;
+  }>([
+    {
+      title: 'a draft binding to a field of another object',
+      bindingFieldMetadataId: () => fieldIds.personCreatedAtFieldId,
+      conditions: MARCH_2019[0].conditions,
+    },
+    {
+      title: 'a binding to deletedAt, which would count soft-deleted records',
+      bindingFieldMetadataId: () => fieldIds.companyDeletedAtFieldId,
+      conditions: [{ operand: ViewFilterOperand.IS_NOT_EMPTY, value: '' }],
+    },
+    {
+      title: 'a disallowed operand',
+      conditions: [{ operand: ViewFilterOperand.CONTAINS, value: '2019' }],
+    },
+    {
+      title: 'a relative date too far away for Temporal',
+      conditions: [
+        { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_999999_YEAR' },
+      ],
+    },
+    {
+      title: 'a date out of range in the viewer time zone',
+      conditions: [
+        { operand: ViewFilterOperand.IS_AFTER, value: '+275760-09-13' },
+      ],
+      dashboardFilterTimeZone: 'America/Los_Angeles',
+    },
+    {
+      title: 'a date with a time',
+      conditions: [
+        { operand: ViewFilterOperand.IS_AFTER, value: '2019-03-01T10:00' },
+      ],
+    },
+  ])(
+    'should reject $title with the named error',
+    async ({ bindingFieldMetadataId, conditions, dashboardFilterTimeZone }) => {
+      expectNamedDashboardFilterError(
+        await queryBarChart({
+          configuration: barChartConfiguration({
+            filter: nameContains(MAIN_TOKEN),
+            bindingFieldMetadataId: bindingFieldMetadataId?.(),
+          }),
+          dashboardFilterValues: periodValues(conditions),
+          dashboardFilterTimeZone: dashboardFilterTimeZone ?? WIDGET_TIME_ZONE,
         }),
-        dashboardFilterValues: { [PERIOD_FILTER_ID]: MARCH_2019 },
-      }),
-    );
-  });
-
-  it('should reject a disallowed operand with the named error', async () => {
-    expectNamedDashboardFilterError(
-      await queryBarChart({
-        configuration: barChartConfiguration({
-          filter: nameContains(MAIN_TOKEN),
-        }),
-        dashboardFilterValues: {
-          [PERIOD_FILTER_ID]: {
-            conditions: [
-              { operand: ViewFilterOperand.CONTAINS, value: '2019' },
-            ],
-          },
-        },
-      }),
-    );
-  });
+      );
+    },
+  );
 
   it.each<{
     title: string;
@@ -490,18 +521,26 @@ describe('Chart data with dashboard filters (e2e)', () => {
   }>([
     { title: 'values that are a string', dashboardFilterValues: 'last month' },
     {
-      title: 'conditions that are not a list',
-      dashboardFilterValues: { [PERIOD_FILTER_ID]: { conditions: 'IS' } },
+      title: 'conditions that are not objects',
+      dashboardFilterValues: [
+        { pageLayoutFilterId: PERIOD_FILTER_ID, conditions: 'IS' },
+      ],
     },
+    { title: 'values without a time zone', dashboardFilterValues: MARCH_2019 },
     {
       title: 'an invalid time zone',
-      dashboardFilterValues: { [PERIOD_FILTER_ID]: MARCH_2019 },
+      dashboardFilterValues: MARCH_2019,
       dashboardFilterTimeZone: 'Mars/Base',
     },
+    {
+      title: 'two values for the same filter',
+      dashboardFilterValues: [...MARCH_2019, ...MARCH_2019],
+      dashboardFilterTimeZone: WIDGET_TIME_ZONE,
+    },
   ])(
-    'should reject $title with the named error instead of an empty chart',
+    'should reject $title as invalid input instead of an empty chart',
     async ({ dashboardFilterValues, dashboardFilterTimeZone }) => {
-      expectNamedDashboardFilterError(
+      expectRejectedInput(
         await queryBarChart({
           configuration: barChartConfiguration({
             filter: nameContains(MAIN_TOKEN),
@@ -526,16 +565,15 @@ describe('Chart data with dashboard filters (e2e)', () => {
         filter: nameContains(RLS_TOKEN),
       });
       const june2019 = {
-        [PERIOD_FILTER_ID]: {
-          conditions: [
-            { operand: ViewFilterOperand.IS_AFTER, value: '2019-06-01' },
-            { operand: ViewFilterOperand.IS_BEFORE, value: '2019-07-01' },
-          ],
-        },
+        dashboardFilterValues: periodValues([
+          { operand: ViewFilterOperand.IS_AFTER, value: '2019-06-01' },
+          { operand: ViewFilterOperand.IS_BEFORE, value: '2019-07-01' },
+        ]),
+        dashboardFilterTimeZone: WIDGET_TIME_ZONE,
       };
 
       const restrictedWithFilter = await queryBarChartNames(
-        { configuration, dashboardFilterValues: june2019 },
+        { configuration, ...june2019 },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       const restrictedWithoutFilter = await queryBarChartNames(
@@ -544,7 +582,7 @@ describe('Chart data with dashboard filters (e2e)', () => {
       );
       const adminWithFilter = await queryBarChartNames({
         configuration,
-        dashboardFilterValues: june2019,
+        ...june2019,
       });
 
       expect(adminWithFilter).toHaveLength(RLS_COMPANIES.length);

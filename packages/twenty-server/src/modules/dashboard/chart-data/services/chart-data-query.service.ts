@@ -26,6 +26,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -33,7 +34,7 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
-import { buildDashboardChartFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-dashboard-chart-filter-or-throw.util';
+import { buildDashboardGqlOperationFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-dashboard-gql-operation-filter-or-throw.util';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
@@ -56,7 +57,7 @@ type ExecuteGroupByQueryParams = {
   aggregateOperation: AggregateOperations;
   filter?: ChartFilter;
   dashboardFilterBindings?: DashboardFilterBinding[] | null;
-  dashboardFilterValues?: unknown;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
   dashboardFilterTimeZone?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
@@ -105,17 +106,6 @@ export class ChartDataQueryService {
       ? authContext.workspaceMemberId
       : undefined;
 
-    const dashboardFilterTimeZoneOrWidgetTimeZone =
-      dashboardFilterTimeZone ?? userTimezone;
-
-    const dashboardFilter = buildDashboardChartFilterOrThrow({
-      dashboardFilterValues,
-      dashboardFilterBindings,
-      timeZone: dashboardFilterTimeZoneOrWidgetTimeZone,
-      objectMetadataId: flatObjectMetadata.id,
-      flatFieldMetadataMaps,
-    });
-
     const gqlOperationFilter = combineFilters([
       convertChartFilterToGqlOperationFilter({
         filter,
@@ -124,11 +114,14 @@ export class ChartDataQueryService {
         userTimezone,
         currentWorkspaceMemberId,
       }),
-      convertChartFilterToGqlOperationFilter({
-        filter: dashboardFilter,
+      buildDashboardGqlOperationFilterOrThrow({
+        dashboardFilterValues,
+        dashboardFilterTimeZone,
+        dashboardFilterBindings,
+        firstDayOfTheWeek,
+        objectMetadataId: flatObjectMetadata.id,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
-        userTimezone: dashboardFilterTimeZoneOrWidgetTimeZone,
         currentWorkspaceMemberId,
       }),
     ]);

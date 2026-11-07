@@ -1,89 +1,198 @@
+import { Temporal } from 'temporal-polyfill';
+
 import {
   type DashboardFilterBinding,
-  type FieldMetadataType,
+  type FirstDayOfTheWeek,
   type PageLayoutFilterCondition,
   type PageLayoutFilterValue,
+  type PartialFieldMetadataItem,
   ViewFilterOperand,
 } from '@/types';
+import { turnPlainDateIntoUserTimeZoneInstantString } from '@/utils/date/turnPlainDateIntoUserTimeZoneInstantString';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { stringifyRelativeDateFilter } from '@/utils/filter/dates/utils/stringifyRelativeDateFilter';
-import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
-import { plainDateFilterValueSchema } from '@/utils/filter/utils/validation-schemas/filterValueScalarSchemas';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const convertConditionValueToBoundFieldFormat = ({
-  condition: { operand, value },
-  fieldType,
-  timeZone,
-}: {
-  condition: PageLayoutFilterCondition;
-  fieldType: FieldMetadataType;
-  timeZone: string;
-}): string => {
-  if (operand === ViewFilterOperand.IS_RELATIVE) {
-    const relativeDateFilter =
-      relativeDateFilterStringifiedSchema.safeParse(value);
+type DashboardRecordFilter = Omit<RecordFilter, 'id'>;
 
-    return relativeDateFilter.success
-      ? stringifyRelativeDateFilter({
-          ...relativeDateFilter.data,
-          timezone: timeZone,
-        })
-      : value;
+type DashboardFilterField = Pick<PartialFieldMetadataItem, 'id' | 'type'>;
+
+const MAX_RELATIVE_DATE_AMOUNT = 1000;
+
+// Postgres rejects year 0 and ISO dates with an expanded year
+const SUPPORTED_ISO_YEAR_PREFIX = /^(?!0000)\d{4}-/;
+
+const PLAIN_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
+
+const PLAIN_DATE_OPERANDS = [
+  ViewFilterOperand.IS,
+  ViewFilterOperand.IS_AFTER,
+  ViewFilterOperand.IS_BEFORE,
+];
+
+const parsePlainDateOrThrow = (value: string): Temporal.PlainDate => {
+  if (
+    !PLAIN_DATE_FORMAT.test(value) ||
+    !SUPPORTED_ISO_YEAR_PREFIX.test(value)
+  ) {
+    throw new Error(
+      `Dashboard filter date "${value}" is not a YYYY-MM-DD date between years 0001 and 9999`,
+    );
   }
 
-  const isDateTimeBoundary =
-    getFilterTypeFromFieldType(fieldType) === 'DATE_TIME' &&
-    (operand === ViewFilterOperand.IS_AFTER ||
-      operand === ViewFilterOperand.IS_BEFORE);
-
-  if (!isDateTimeBoundary) {
-    return value;
-  }
-
-  const plainDate = plainDateFilterValueSchema.safeParse(value);
-
-  return plainDate.success
-    ? plainDate.data.toZonedDateTime(timeZone).toInstant().toString()
-    : value;
+  return Temporal.PlainDate.from(value);
 };
 
-// Values are in the DATE field format. Convert the result to a gql filter with
-// the same timeZone: IS on a DATE_TIME field and IS_TODAY resolve days in it.
+const parseRelativeDateOrThrow = (value: string) => {
+  const relativeDateFilter =
+    relativeDateFilterStringifiedSchema.safeParse(value);
+
+  if (!relativeDateFilter.success) {
+    throw new Error(`Dashboard filter value "${value}" is not a relative date`);
+  }
+
+  if ((relativeDateFilter.data.amount ?? 1) > MAX_RELATIVE_DATE_AMOUNT) {
+    throw new Error(
+      `Dashboard filter relative date "${value}" exceeds the maximum amount of ${MAX_RELATIVE_DATE_AMOUNT}`,
+    );
+  }
+
+  return relativeDateFilter.data;
+};
+
+const turnPlainDateIntoInstantStringOrThrow = ({
+  plainDate,
+  timeZone,
+}: {
+  plainDate: Temporal.PlainDate;
+  timeZone: string;
+}) => {
+  const instantString = turnPlainDateIntoUserTimeZoneInstantString(
+    plainDate,
+    timeZone,
+  );
+
+  if (!SUPPORTED_ISO_YEAR_PREFIX.test(instantString)) {
+    throw new Error(
+      `Dashboard filter date "${plainDate}" is out of range in time zone "${timeZone}"`,
+    );
+  }
+
+  return instantString;
+};
+
+const convertConditionToRecordFilters = ({
+  condition: { operand, value },
+  field: { id: fieldMetadataId, type: fieldType },
+  timeZone,
+  firstDayOfTheWeek,
+}: {
+  condition: PageLayoutFilterCondition;
+  field: DashboardFilterField;
+  timeZone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
+}): DashboardRecordFilter[] => {
+  if (operand === ViewFilterOperand.IS_RELATIVE) {
+    const relativeDateFilter = parseRelativeDateOrThrow(value);
+
+    return [
+      {
+        fieldMetadataId,
+        operand,
+        value: stringifyRelativeDateFilter({
+          ...relativeDateFilter,
+          timezone: timeZone,
+          firstDayOfTheWeek:
+            relativeDateFilter.firstDayOfTheWeek ?? firstDayOfTheWeek,
+        }),
+      },
+    ];
+  }
+
+  if (!PLAIN_DATE_OPERANDS.includes(operand)) {
+    return [{ fieldMetadataId, operand, value }];
+  }
+
+  const plainDate = parsePlainDateOrThrow(value);
+
+  if (getFilterTypeFromFieldType(fieldType) !== 'DATE_TIME') {
+    return [{ fieldMetadataId, operand, value }];
+  }
+
+  const startOfDay = turnPlainDateIntoInstantStringOrThrow({
+    plainDate,
+    timeZone,
+  });
+
+  if (operand !== ViewFilterOperand.IS) {
+    return [{ fieldMetadataId, operand, value: startOfDay }];
+  }
+
+  return [
+    {
+      fieldMetadataId,
+      operand: ViewFilterOperand.IS_AFTER,
+      value: startOfDay,
+    },
+    {
+      fieldMetadataId,
+      operand: ViewFilterOperand.IS_BEFORE,
+      value: turnPlainDateIntoInstantStringOrThrow({
+        plainDate: plainDate.add({ days: 1 }),
+        timeZone,
+      }),
+    },
+  ];
+};
+
+// Convert the record filters to a gql filter in the same timeZone: IS_TODAY resolves in it
 export const buildDashboardFilterForWidget = ({
   values,
   bindings,
   fields,
   timeZone,
+  firstDayOfTheWeek,
 }: {
   values: Record<string, PageLayoutFilterValue>;
   bindings: DashboardFilterBinding[] | null | undefined;
-  fields: { id: string; type: FieldMetadataType }[];
+  fields: DashboardFilterField[];
   timeZone: string;
-}): { recordFilters: Omit<RecordFilter, 'id'>[] } => {
-  const fieldTypeById = new Map(fields.map(({ id, type }) => [id, type]));
+  firstDayOfTheWeek: FirstDayOfTheWeek;
+}): {
+  recordFilters: DashboardRecordFilter[];
+  unresolvedBindings: DashboardFilterBinding[];
+} => {
+  const fieldById = new Map(fields.map((field) => [field.id, field]));
 
-  const recordFilters = (bindings ?? []).flatMap<Omit<RecordFilter, 'id'>>(
-    ({ pageLayoutFilterId, fieldMetadataId }) => {
-      const value = values[pageLayoutFilterId];
-      const fieldType = fieldTypeById.get(fieldMetadataId);
+  const boundValues = (bindings ?? []).flatMap((binding) => {
+    const value = values[binding.pageLayoutFilterId];
 
-      if (!isDefined(value) || !isDefined(fieldType)) {
-        return [];
-      }
+    return isDefined(value) ? [{ binding, value }] : [];
+  });
 
-      return value.conditions.map((condition) => ({
-        fieldMetadataId,
-        operand: condition.operand,
-        value: convertConditionValueToBoundFieldFormat({
-          condition,
-          fieldType,
-          timeZone,
-        }),
-      }));
-    },
-  );
+  const recordFilters = boundValues.flatMap(({ binding, value }) => {
+    const field = fieldById.get(binding.fieldMetadataId);
 
-  return { recordFilters };
+    if (!isDefined(field)) {
+      return [];
+    }
+
+    return value.conditions.flatMap((condition) =>
+      convertConditionToRecordFilters({
+        condition,
+        field,
+        timeZone,
+        firstDayOfTheWeek,
+      }),
+    );
+  });
+
+  return {
+    recordFilters,
+    unresolvedBindings: boundValues
+      .map(({ binding }) => binding)
+      .filter(({ fieldMetadataId }) => !fieldById.has(fieldMetadataId)),
+  };
 };

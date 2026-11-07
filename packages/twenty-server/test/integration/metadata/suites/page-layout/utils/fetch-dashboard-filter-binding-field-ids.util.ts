@@ -5,6 +5,7 @@ export type DashboardFilterBindingFieldIds = {
   companyObjectMetadataId: string;
   companyCreatedAtFieldId: string;
   companyUpdatedAtFieldId: string;
+  companyDeletedAtFieldId: string;
   companyNameFieldId: string;
   companyPositionFieldId: string;
   personCreatedAtFieldId: string;
@@ -49,6 +50,7 @@ export const fetchDashboardFilterBindingFieldIds =
       companyObjectMetadataId: findObject('company').id,
       companyCreatedAtFieldId: findFieldId('company', 'createdAt'),
       companyUpdatedAtFieldId: findFieldId('company', 'updatedAt'),
+      companyDeletedAtFieldId: findFieldId('company', 'deletedAt'),
       companyNameFieldId: findFieldId('company', 'name'),
       companyPositionFieldId: findFieldId('company', 'position'),
       personCreatedAtFieldId: findFieldId('person', 'createdAt'),

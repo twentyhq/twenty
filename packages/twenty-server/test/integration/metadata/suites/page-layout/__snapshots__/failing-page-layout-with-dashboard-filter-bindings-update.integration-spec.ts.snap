@@ -157,7 +157,7 @@ exports[`Dashboard filter bindings update should fail when a date filter is boun
           "errors": [
             {
               "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
-              "message": "Widget "Companies" binds dashboard filter "Period" of type DATE to field "name", whose filter type TEXT is not compatible",
+              "message": "Widget "Companies" binds dashboard filter "Period" of type DATE to field "name", which is not compatible",
               "userFriendlyMessage": "This field cannot be bound to this dashboard filter",
               "value": "20202020-4d99-4e2e-a84c-4a27837b1ece",
             },

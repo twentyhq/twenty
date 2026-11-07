@@ -3,13 +3,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
   type RelativeDateFilter,
-  stringifyRelativeDateFilter as stringifyRelativeDateFilterWithoutDetectedCalendarStartDay,
+  stringifyRelativeDateFilter,
 } from 'twenty-shared/utils';
 
-export const stringifyRelativeDateFilter = (
+export const stringifyRelativeDateFilterWithDetectedStartDay = (
   relativeDateFilter: RelativeDateFilter,
 ) =>
-  stringifyRelativeDateFilterWithoutDetectedCalendarStartDay(
+  stringifyRelativeDateFilter(
     isNonEmptyString(relativeDateFilter.timezone) &&
       !isDefined(relativeDateFilter.firstDayOfTheWeek)
       ? { ...relativeDateFilter, firstDayOfTheWeek: detectCalendarStartDay() }

@@ -1015,7 +1015,7 @@ export type BarChartData = {
 export type BarChartDataInput = {
   configuration: Scalars['JSON']['input'];
   dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
-  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
+  dashboardFilterValues?: InputMaybe<Array<DashboardFilterValueInput>>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 
@@ -2072,6 +2072,11 @@ export type DashboardFilterBinding = {
   __typename?: 'DashboardFilterBinding';
   fieldMetadataId: Scalars['UUID']['output'];
   pageLayoutFilterId: Scalars['UUID']['output'];
+};
+
+export type DashboardFilterValueInput = {
+  conditions: Array<PageLayoutFilterConditionInput>;
+  pageLayoutFilterId: Scalars['UUID']['input'];
 };
 
 /** Database Event Action */
@@ -3132,7 +3137,7 @@ export type LineChartData = {
 export type LineChartDataInput = {
   configuration: Scalars['JSON']['input'];
   dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
-  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
+  dashboardFilterValues?: InputMaybe<Array<DashboardFilterValueInput>>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 
@@ -5938,7 +5943,7 @@ export type PieChartData = {
 export type PieChartDataInput = {
   configuration: Scalars['JSON']['input'];
   dashboardFilterTimeZone?: InputMaybe<Scalars['String']['input']>;
-  dashboardFilterValues?: InputMaybe<Scalars['JSON']['input']>;
+  dashboardFilterValues?: InputMaybe<Array<DashboardFilterValueInput>>;
   objectMetadataId: Scalars['UUID']['input'];
 };
 

@@ -1,11 +1,11 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 jest.mock('@/localization/utils/detection/detectCalendarStartDay');
 
-describe('stringifyRelativeDateFilter', () => {
+describe('stringifyRelativeDateFilterWithDetectedStartDay', () => {
   const mockDetectCalendarStartDay =
     detectCalendarStartDay as jest.MockedFunction<
       typeof detectCalendarStartDay
@@ -24,7 +24,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_5_DAY',
+      );
     });
 
     it('should stringify a NEXT relative date filter', () => {
@@ -34,7 +36,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'WEEK',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('NEXT_3_WEEK');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'NEXT_3_WEEK',
+      );
     });
 
     it('should stringify with different units', () => {
@@ -79,14 +83,30 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'YEAR',
       };
 
-      expect(stringifyRelativeDateFilter(secondFilter)).toBe('PAST_1_SECOND');
-      expect(stringifyRelativeDateFilter(minuteFilter)).toBe('PAST_1_MINUTE');
-      expect(stringifyRelativeDateFilter(hourFilter)).toBe('PAST_1_HOUR');
-      expect(stringifyRelativeDateFilter(dayFilter)).toBe('PAST_1_DAY');
-      expect(stringifyRelativeDateFilter(weekFilter)).toBe('PAST_1_WEEK');
-      expect(stringifyRelativeDateFilter(monthFilter)).toBe('PAST_1_MONTH');
-      expect(stringifyRelativeDateFilter(quarterFilter)).toBe('PAST_1_QUARTER');
-      expect(stringifyRelativeDateFilter(yearFilter)).toBe('PAST_1_YEAR');
+      expect(
+        stringifyRelativeDateFilterWithDetectedStartDay(secondFilter),
+      ).toBe('PAST_1_SECOND');
+      expect(
+        stringifyRelativeDateFilterWithDetectedStartDay(minuteFilter),
+      ).toBe('PAST_1_MINUTE');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(hourFilter)).toBe(
+        'PAST_1_HOUR',
+      );
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(dayFilter)).toBe(
+        'PAST_1_DAY',
+      );
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(weekFilter)).toBe(
+        'PAST_1_WEEK',
+      );
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(monthFilter)).toBe(
+        'PAST_1_MONTH',
+      );
+      expect(
+        stringifyRelativeDateFilterWithDetectedStartDay(quarterFilter),
+      ).toBe('PAST_1_QUARTER');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(yearFilter)).toBe(
+        'PAST_1_YEAR',
+      );
     });
   });
 
@@ -98,7 +118,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'WEEK',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('THIS_1_WEEK');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'THIS_1_WEEK',
+      );
     });
 
     it('should stringify THIS direction with amount 1 when amount is undefined', () => {
@@ -108,7 +130,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'MONTH',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('THIS_1_MONTH');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'THIS_1_MONTH',
+      );
     });
 
     it('should stringify THIS direction with amount 1 when amount is null', () => {
@@ -118,7 +142,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'YEAR',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('THIS_1_YEAR');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'THIS_1_YEAR',
+      );
     });
   });
 
@@ -130,7 +156,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(() => stringifyRelativeDateFilter(filter)).toThrow(
+      expect(() =>
+        stringifyRelativeDateFilterWithDetectedStartDay(filter),
+      ).toThrow(
         'Amount must be defined and greater than 0 for relative date filters',
       );
     });
@@ -142,7 +170,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'WEEK',
       };
 
-      expect(() => stringifyRelativeDateFilter(filter)).toThrow(
+      expect(() =>
+        stringifyRelativeDateFilterWithDetectedStartDay(filter),
+      ).toThrow(
         'Amount must be defined and greater than 0 for relative date filters',
       );
     });
@@ -154,7 +184,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(() => stringifyRelativeDateFilter(filter)).toThrow(
+      expect(() =>
+        stringifyRelativeDateFilterWithDetectedStartDay(filter),
+      ).toThrow(
         'Amount must be defined and greater than 0 for relative date filters',
       );
     });
@@ -166,7 +198,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(() => stringifyRelativeDateFilter(filter)).toThrow(
+      expect(() =>
+        stringifyRelativeDateFilterWithDetectedStartDay(filter),
+      ).toThrow(
         'Amount must be defined and greater than 0 for relative date filters',
       );
     });
@@ -178,7 +212,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'WEEK',
       };
 
-      expect(() => stringifyRelativeDateFilter(filter)).toThrow(
+      expect(() =>
+        stringifyRelativeDateFilterWithDetectedStartDay(filter),
+      ).toThrow(
         'Amount must be defined and greater than 0 for relative date filters',
       );
     });
@@ -193,7 +229,7 @@ describe('stringifyRelativeDateFilter', () => {
         timezone: 'America/New_York',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'PAST_5_DAY;;America/New_York;;MONDAY;;',
       );
     });
@@ -205,7 +241,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_5_DAY',
+      );
     });
 
     it('should not append timezone when it is an empty string', () => {
@@ -216,7 +254,9 @@ describe('stringifyRelativeDateFilter', () => {
         timezone: '',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_5_DAY',
+      );
     });
 
     it('should not append timezone when it is null', () => {
@@ -227,7 +267,9 @@ describe('stringifyRelativeDateFilter', () => {
         timezone: null,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_5_DAY',
+      );
     });
   });
 
@@ -241,7 +283,7 @@ describe('stringifyRelativeDateFilter', () => {
         firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'PAST_5_DAY;;America/New_York;;SUNDAY;;',
       );
     });
@@ -256,7 +298,7 @@ describe('stringifyRelativeDateFilter', () => {
         timezone: 'America/New_York',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'PAST_5_DAY;;America/New_York;;MONDAY;;',
       );
       expect(mockDetectCalendarStartDay).toHaveBeenCalledTimes(1);
@@ -273,7 +315,7 @@ describe('stringifyRelativeDateFilter', () => {
         firstDayOfTheWeek: null,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'PAST_5_DAY;;America/New_York;;SATURDAY;;',
       );
       expect(mockDetectCalendarStartDay).toHaveBeenCalledTimes(1);
@@ -287,7 +329,9 @@ describe('stringifyRelativeDateFilter', () => {
         firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_5_DAY',
+      );
       expect(mockDetectCalendarStartDay).not.toHaveBeenCalled();
     });
 
@@ -301,7 +345,7 @@ describe('stringifyRelativeDateFilter', () => {
         timezone: 'America/New_York',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'PAST_5_DAY;;America/New_York;;',
       );
     });
@@ -317,7 +361,7 @@ describe('stringifyRelativeDateFilter', () => {
         firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'NEXT_10_MONTH;;Europe/London;;MONDAY;;',
       );
     });
@@ -331,7 +375,7 @@ describe('stringifyRelativeDateFilter', () => {
         firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe(
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
         'THIS_1_WEEK;;Asia/Tokyo;;SUNDAY;;',
       );
     });
@@ -343,7 +387,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'DAY',
       };
 
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_999_DAY');
+      expect(stringifyRelativeDateFilterWithDetectedStartDay(filter)).toBe(
+        'PAST_999_DAY',
+      );
     });
   });
 });

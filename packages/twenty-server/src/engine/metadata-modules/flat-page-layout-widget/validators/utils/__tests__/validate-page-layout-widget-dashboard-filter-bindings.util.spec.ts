@@ -33,6 +33,8 @@ const DEACTIVATED_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-1111-4111-8111-000000000004';
 const OTHER_OBJECT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-1111-4111-8111-000000000005';
+const DELETED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-1111-4111-8111-000000000006';
 
 const PERIOD_FILTER: PageLayoutFilter = {
   id: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01',
@@ -53,18 +55,20 @@ const buildFlatFieldMetadata = ({
   type,
   objectMetadataUniversalIdentifier = OBJECT_UNIVERSAL_IDENTIFIER,
   isActive = true,
+  name = 'closeDate',
 }: {
   universalIdentifier: string;
   type: FieldMetadataType;
   objectMetadataUniversalIdentifier?: string;
   isActive?: boolean;
+  name?: string;
 }) =>
   getFlatFieldMetadataMock({
     universalIdentifier,
     objectMetadataId: 'object-metadata-id',
     objectMetadataUniversalIdentifier,
     type,
-    name: 'closeDate',
+    name,
     isActive,
   });
 
@@ -92,6 +96,11 @@ const flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'> =
         universalIdentifier: OTHER_OBJECT_FIELD_UNIVERSAL_IDENTIFIER,
         type: FieldMetadataType.DATE,
         objectMetadataUniversalIdentifier: OTHER_OBJECT_UNIVERSAL_IDENTIFIER,
+      }),
+      [DELETED_AT_FIELD_UNIVERSAL_IDENTIFIER]: buildFlatFieldMetadata({
+        universalIdentifier: DELETED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+        type: FieldMetadataType.DATE_TIME,
+        name: 'deletedAt',
       }),
     },
   };
@@ -323,6 +332,11 @@ describe('validatePageLayoutWidgetDashboardFilterBindings', () => {
     [
       'an incompatible field',
       TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      'is not compatible',
+    ],
+    [
+      'the soft-delete field',
+      DELETED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       'is not compatible',
     ],
   ])(

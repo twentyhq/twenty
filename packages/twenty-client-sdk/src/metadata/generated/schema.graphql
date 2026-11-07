@@ -926,7 +926,7 @@ type BarChartData {
 input BarChartDataInput {
   configuration: JSON!
   dashboardFilterTimeZone: String
-  dashboardFilterValues: JSON
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
 }
 
@@ -1952,6 +1952,11 @@ type DashboardFilterBinding {
   pageLayoutFilterId: UUID!
 }
 
+input DashboardFilterValueInput {
+  conditions: [PageLayoutFilterConditionInput!]!
+  pageLayoutFilterId: UUID!
+}
+
 """Database Event Action"""
 enum DatabaseEventAction {
   CREATED
@@ -2963,7 +2968,7 @@ type LineChartData {
 input LineChartDataInput {
   configuration: JSON!
   dashboardFilterTimeZone: String
-  dashboardFilterValues: JSON
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
 }
 
@@ -4177,7 +4182,7 @@ type PieChartData {
 input PieChartDataInput {
   configuration: JSON!
   dashboardFilterTimeZone: String
-  dashboardFilterValues: JSON
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
 }
 

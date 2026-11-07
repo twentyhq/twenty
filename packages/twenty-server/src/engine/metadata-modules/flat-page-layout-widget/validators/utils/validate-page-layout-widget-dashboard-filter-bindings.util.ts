@@ -1,13 +1,12 @@
 import { msg, t } from '@lingui/core/macro';
-import { BINDABLE_FIELD_FILTER_TYPES_BY_PAGE_LAYOUT_FILTER_TYPE } from 'twenty-shared/constants';
 import {
   type PageLayoutFilter,
   PageLayoutType,
   type UniversalDashboardFilterBinding,
 } from 'twenty-shared/types';
 import {
-  getFilterTypeFromFieldType,
   isDefined,
+  isFieldBindableToDashboardFilter,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 
@@ -102,21 +101,18 @@ const validateDashboardFilterBinding = ({
     return errors;
   }
 
-  const fieldFilterType = getFilterTypeFromFieldType(field.type);
   const { label: pageLayoutFilterLabel, type: pageLayoutFilterType } =
     pageLayoutFilter;
 
-  const isFieldBindable =
-    BINDABLE_FIELD_FILTER_TYPES_BY_PAGE_LAYOUT_FILTER_TYPE[
-      pageLayoutFilterType
-    ].some(
-      (bindableFieldFilterType) => bindableFieldFilterType === fieldFilterType,
-    );
-
-  if (!isFieldBindable) {
+  if (
+    !isFieldBindableToDashboardFilter({
+      field,
+      filterType: pageLayoutFilterType,
+    })
+  ) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Widget "${widgetTitle}" binds dashboard filter "${pageLayoutFilterLabel}" of type ${pageLayoutFilterType} to field "${fieldName}", whose filter type ${fieldFilterType} is not compatible`,
+      message: t`Widget "${widgetTitle}" binds dashboard filter "${pageLayoutFilterLabel}" of type ${pageLayoutFilterType} to field "${fieldName}", which is not compatible`,
       userFriendlyMessage: msg`This field cannot be bound to this dashboard filter`,
       value: fieldMetadataUniversalIdentifier,
     });

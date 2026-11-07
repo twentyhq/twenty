@@ -5,9 +5,9 @@ import {
   type PageLayoutFilterCondition,
   type PageLayoutFilterValue,
 } from 'twenty-shared/types';
-import { isNonEmptyArray, isRecordFilterValueValid } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { getFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-filter-condition-validation-issue.util';
+import { getPageLayoutFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-page-layout/utils/get-page-layout-filter-condition-validation-issue.util';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
@@ -23,10 +23,9 @@ const validateCondition = ({
   valueFormatFieldType: FieldMetadataType;
   filterLabel: string;
 }): PageLayoutFilterValidationError[] => {
-  const issue = getFilterConditionValidationIssue({
-    fieldType: valueFormatFieldType,
-    operand,
-    value,
+  const issue = getPageLayoutFilterConditionValidationIssue({
+    condition: { operand, value },
+    valueFormatFieldType,
   });
 
   if (issue?.kind === 'UNSUPPORTED_OPERAND') {
@@ -57,7 +56,7 @@ const validateCondition = ({
     ];
   }
 
-  if (!isRecordFilterValueValid({ operand, value })) {
+  if (issue?.kind === 'MISSING_VALUE') {
     return [
       {
         code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,

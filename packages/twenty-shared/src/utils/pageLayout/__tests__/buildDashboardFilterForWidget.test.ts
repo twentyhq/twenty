@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  FirstDayOfTheWeek,
   type PartialFieldMetadataItem,
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -45,27 +46,33 @@ const JANUARY_2026 = {
 const buildForBinding = ({
   fieldMetadataId,
   conditions,
+  timeZone = VIEWER_TIME_ZONE,
+  firstDayOfTheWeek = FirstDayOfTheWeek.MONDAY,
 }: {
   fieldMetadataId: string;
   conditions: { operand: ViewFilterOperand; value: string }[];
+  timeZone?: string;
+  firstDayOfTheWeek?: FirstDayOfTheWeek;
 }) =>
   buildDashboardFilterForWidget({
     values: { [PERIOD_FILTER_ID]: { conditions } },
     bindings: [{ pageLayoutFilterId: PERIOD_FILTER_ID, fieldMetadataId }],
     fields: FIELDS,
-    timeZone: VIEWER_TIME_ZONE,
+    timeZone,
+    firstDayOfTheWeek,
   });
 
 const toGqlOperationFilter = (
   recordFilters: Parameters<
     typeof computeRecordGqlOperationFilter
   >[0]['recordFilters'],
+  timeZone = VIEWER_TIME_ZONE,
 ) =>
   computeRecordGqlOperationFilter({
     fieldMetadataItems: FIELDS,
     recordFilters,
     recordFilterGroups: [],
-    filterValueDependencies: { timeZone: VIEWER_TIME_ZONE },
+    filterValueDependencies: { timeZone },
   });
 
 describe('buildDashboardFilterForWidget', () => {
@@ -81,8 +88,9 @@ describe('buildDashboardFilterForWidget', () => {
         ],
         fields: FIELDS,
         timeZone: VIEWER_TIME_ZONE,
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       }),
-    ).toEqual({ recordFilters: [] });
+    ).toEqual({ recordFilters: [], unresolvedBindings: [] });
   });
 
   it('should ignore values of filters the widget does not bind', () => {
@@ -92,8 +100,38 @@ describe('buildDashboardFilterForWidget', () => {
         bindings: undefined,
         fields: FIELDS,
         timeZone: VIEWER_TIME_ZONE,
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       }),
-    ).toEqual({ recordFilters: [] });
+    ).toEqual({ recordFilters: [], unresolvedBindings: [] });
+  });
+
+  it('should report a binding with a value whose field is not given', () => {
+    const missingFieldBinding = {
+      pageLayoutFilterId: SIGNED_FILTER_ID,
+      fieldMetadataId: 'unreadable-field-id',
+    };
+
+    const { recordFilters, unresolvedBindings } = buildDashboardFilterForWidget(
+      {
+        values: {
+          [PERIOD_FILTER_ID]: JANUARY_2026,
+          [SIGNED_FILTER_ID]: JANUARY_2026,
+        },
+        bindings: [
+          {
+            pageLayoutFilterId: PERIOD_FILTER_ID,
+            fieldMetadataId: CLOSE_DATE_FIELD.id,
+          },
+          missingFieldBinding,
+        ],
+        fields: FIELDS,
+        timeZone: VIEWER_TIME_ZONE,
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
+      },
+    );
+
+    expect(recordFilters).toHaveLength(2);
+    expect(unresolvedBindings).toEqual([missingFieldBinding]);
   });
 
   it('should AND the conditions of an absolute range on the bound field', () => {
@@ -146,6 +184,7 @@ describe('buildDashboardFilterForWidget', () => {
       ],
       fields: FIELDS,
       timeZone: VIEWER_TIME_ZONE,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(toGqlOperationFilter(recordFilters)).toEqual({
@@ -178,7 +217,7 @@ describe('buildDashboardFilterForWidget', () => {
     });
   });
 
-  it('should keep the plain date of IS on a DATE_TIME field so the day resolves in the viewer time zone', () => {
+  it('should turn IS on a DATE_TIME field into the day in the viewer time zone', () => {
     const { recordFilters } = buildForBinding({
       fieldMetadataId: CREATED_AT_FIELD.id,
       conditions: [{ operand: ViewFilterOperand.IS, value: '2026-07-14' }],
@@ -192,12 +231,27 @@ describe('buildDashboardFilterForWidget', () => {
     });
   });
 
+  it('should keep IS on a DATE_TIME field to the 23 hours of a day that skips midnight', () => {
+    const { recordFilters } = buildForBinding({
+      fieldMetadataId: CREATED_AT_FIELD.id,
+      conditions: [{ operand: ViewFilterOperand.IS, value: '2026-09-06' }],
+      timeZone: 'America/Santiago',
+    });
+
+    expect(toGqlOperationFilter(recordFilters, 'America/Santiago')).toEqual({
+      and: [
+        { createdAt: { gte: '2026-09-06T04:00:00Z' } },
+        { createdAt: { lt: '2026-09-07T03:00:00Z' } },
+      ],
+    });
+  });
+
   it.each([
     [
       'PAST_1_MONTH;;America/Los_Angeles;;SUNDAY;;',
       'PAST_1_MONTH;;Europe/Paris;;SUNDAY;;',
     ],
-    ['THIS_1_QUARTER', 'THIS_1_QUARTER;;Europe/Paris;;'],
+    ['THIS_1_QUARTER', 'THIS_1_QUARTER;;Europe/Paris;;MONDAY;;'],
   ])(
     'should replace the time zone of relative value %s with the viewer time zone',
     (storedValue, expectedValue) => {
@@ -215,6 +269,60 @@ describe('buildDashboardFilterForWidget', () => {
           value: expectedValue,
         },
       ]);
+    },
+  );
+
+  it.each([
+    ['PAST_2_WEEK', 'PAST_2_WEEK;;Europe/Paris;;SUNDAY;;'],
+    ['PAST_2_WEEK;;UTC;;SATURDAY;;', 'PAST_2_WEEK;;Europe/Paris;;SATURDAY;;'],
+  ])(
+    'should start the weeks of relative value %s on the given first day unless it embeds one',
+    (storedValue, expectedValue) => {
+      const { recordFilters } = buildForBinding({
+        fieldMetadataId: CREATED_AT_FIELD.id,
+        conditions: [
+          { operand: ViewFilterOperand.IS_RELATIVE, value: storedValue },
+        ],
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
+      });
+
+      expect(recordFilters.map(({ value }) => value)).toEqual([expectedValue]);
+    },
+  );
+
+  it.each([
+    [ViewFilterOperand.IS_AFTER, '2026-01-01T10:00'],
+    [ViewFilterOperand.IS_AFTER, '2026-01-01[u-ca=hebrew]'],
+    [ViewFilterOperand.IS_BEFORE, '+012026-01-01'],
+    [ViewFilterOperand.IS_BEFORE, '0000-01-01'],
+    [ViewFilterOperand.IS, '2026-02-30'],
+    [ViewFilterOperand.IS_RELATIVE, 'LAST_MONTH'],
+    [ViewFilterOperand.IS_RELATIVE, 'PAST_999999_YEAR'],
+  ])(
+    'should throw on %s value %s instead of passing it through',
+    (operand, value) => {
+      expect(() =>
+        buildForBinding({
+          fieldMetadataId: CLOSE_DATE_FIELD.id,
+          conditions: [{ operand, value }],
+        }),
+      ).toThrow();
+    },
+  );
+
+  it.each([
+    [ViewFilterOperand.IS, '9999-12-31', 'America/Los_Angeles'],
+    [ViewFilterOperand.IS_AFTER, '0001-01-01', 'Asia/Tokyo'],
+  ])(
+    'should throw on %s %s in %s on a DATE_TIME field, whose bound leaves years 0001 to 9999',
+    (operand, value, timeZone) => {
+      expect(() =>
+        buildForBinding({
+          fieldMetadataId: CREATED_AT_FIELD.id,
+          conditions: [{ operand, value }],
+          timeZone,
+        }),
+      ).toThrow('is out of range');
     },
   );
 
