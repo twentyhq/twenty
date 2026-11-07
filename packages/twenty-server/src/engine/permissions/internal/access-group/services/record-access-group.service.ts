@@ -11,9 +11,10 @@ import {
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-condition-or-throw.util';
+import { type RecordAccessGroupObject } from 'src/engine/permissions/internal/access-group/types/record-access-group-object.type';
+import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
-import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
@@ -36,6 +37,98 @@ export class RecordAccessGroupService {
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
+    const recordAccessGroupObject = await this.findRecordAccessGroupObject({
+      workspaceId,
+      objectMetadataId,
+    });
+
+    if (!isDefined(recordAccessGroupObject)) {
+      return;
+    }
+
+    // The sync queues this job before writing, so groups are read once its writes are done
+    const accessGroups = await this.cacheLockService.withLock(
+      () =>
+        this.accessGroupRepository.findObjectAccessGroups({
+          workspaceId,
+          objectMetadataId,
+        }),
+      buildAccessGroupSyncLockKey(workspaceId),
+      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
+    );
+    const recordAccessGroupConditions = buildRecordAccessGroupConditions({
+      ...recordAccessGroupObject,
+      accessGroups,
+    });
+
+    let afterRecordId: string | null = null;
+
+    do {
+      afterRecordId =
+        await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
+          {
+            workspaceId,
+            flatObjectMetadata: recordAccessGroupObject.flatObjectMetadata,
+            recordAccessGroupConditions,
+            afterRecordId,
+            batchSize: RECOMPUTE_BATCH_SIZE,
+          },
+        );
+    } while (isDefined(afterRecordId));
+  }
+
+  async recomputeRecordAccessGroupIdsOfRecords({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+
+    const recordAccessGroupObject = await this.findRecordAccessGroupObject({
+      workspaceId,
+      objectMetadataId,
+    });
+
+    if (!isDefined(recordAccessGroupObject)) {
+      return;
+    }
+
+    const accessGroups =
+      await this.accessGroupRepository.findObjectAccessGroups({
+        workspaceId,
+        objectMetadataId,
+        transactionScope,
+      });
+
+    await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsOfRecords(
+      {
+        workspaceId,
+        flatObjectMetadata: recordAccessGroupObject.flatObjectMetadata,
+        recordAccessGroupConditions: buildRecordAccessGroupConditions({
+          ...recordAccessGroupObject,
+          accessGroups,
+        }),
+        recordIds,
+        transactionScope,
+      },
+    );
+  }
+
+  private async findRecordAccessGroupObject({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<RecordAccessGroupObject | null> {
     const metadataMaps = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
@@ -59,42 +152,9 @@ export class RecordAccessGroupService {
         objectMetadataId,
       })
     ) {
-      return;
+      return null;
     }
 
-    // The sync queues this job before writing, so groups are read once its writes are done
-    const accessGroups = await this.cacheLockService.withLock(
-      () =>
-        this.accessGroupRepository.findObjectAccessGroups({
-          workspaceId,
-          objectMetadataId,
-        }),
-      buildAccessGroupSyncLockKey(workspaceId),
-      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
-    );
-    const recordAccessGroupConditions = accessGroups.map((accessGroup) => ({
-      compactId: accessGroup.compactId,
-      condition: buildRecordAccessGroupConditionOrThrow({
-        accessGroup,
-        flatObjectMetadata,
-        tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
-        metadataMaps,
-      }),
-    }));
-
-    let afterRecordId: string | null = null;
-
-    do {
-      afterRecordId =
-        await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
-          {
-            workspaceId,
-            flatObjectMetadata,
-            recordAccessGroupConditions,
-            afterRecordId,
-            batchSize: RECOMPUTE_BATCH_SIZE,
-          },
-        );
-    } while (isDefined(afterRecordId));
+    return { flatObjectMetadata, metadataMaps };
   }
 }

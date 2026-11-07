@@ -32,6 +32,7 @@ export interface WorkspaceInternalContext {
     | 'buildRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
+    | 'recomputeRecordAccessGroupIds'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,

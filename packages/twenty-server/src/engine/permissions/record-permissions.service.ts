@@ -16,6 +16,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
@@ -87,7 +88,27 @@ export class RecordPermissionsService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordAccessGroupService: RecordAccessGroupService,
   ) {}
+
+  async recomputeRecordAccessGroupIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords({
+      workspaceId,
+      objectMetadataId,
+      recordIds,
+      transactionScope,
+    });
+  }
 
   async findRecordsActions({
     authContext,

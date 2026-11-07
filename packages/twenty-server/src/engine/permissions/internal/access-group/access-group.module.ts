@@ -24,6 +24,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecomputeRecordAccessGroupIdsJob,
     SyncAccessGroupsJob,
   ],
-  exports: [AccessGroupService],
+  exports: [AccessGroupService, RecordAccessGroupService],
 })
 export class AccessGroupModule {}

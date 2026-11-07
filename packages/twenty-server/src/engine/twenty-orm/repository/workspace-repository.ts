@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
@@ -1044,6 +1045,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
+    await this.recomputeRecordAccessGroupIds(insertedIds);
+
     await this.emitCreateEvents(insertedIds);
 
     return {
@@ -1222,6 +1225,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     await validateWrittenRecords?.(generatedMaps);
+
+    await this.recomputeRecordAccessGroupIds(
+      generatedMaps.map((record) => record.id).filter(isNonEmptyString),
+    );
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1597,6 +1604,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(mutationResult.generatedMaps);
 
+    if (kind === 'update') {
+      await this.recomputeRecordAccessGroupIds(
+        mutationResult.generatedMaps
+          .map((record) => record.id)
+          .filter(isNonEmptyString),
+      );
+    }
+
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
@@ -1701,6 +1716,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         updates,
         formatRecords: (rawRecords) =>
           this.formatResult<ObjectRecord[]>(rawRecords),
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
+    );
+  }
+
+  // Runs for every writer, system ones included, since any write can move a record between groups
+  private async recomputeRecordAccessGroupIds(
+    recordIds: string[],
+  ): Promise<void> {
+    if (
+      !this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED
+      ]
+    ) {
+      return;
+    }
+
+    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIds(
+      {
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds,
         transactionScope: this.buildRecordPermissionTransactionScope(),
       },
     );
