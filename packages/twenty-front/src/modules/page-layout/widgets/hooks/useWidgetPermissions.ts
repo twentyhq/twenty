@@ -2,6 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useDashboardFilters } from '@/page-layout/hooks/useDashboardFilters';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
@@ -19,6 +20,7 @@ export const useWidgetPermissions = (
   const { t } = useLingui();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const dashboardFilters = useDashboardFilters();
 
   if (!isDefined(widget.objectMetadataId)) {
     return {
@@ -53,9 +55,10 @@ export const useWidgetPermissions = (
     };
   }
 
-  const nonReadableFieldMetadataIds = extractFieldMetadataIdsFromWidget(
+  const nonReadableFieldMetadataIds = extractFieldMetadataIdsFromWidget({
     widget,
-  ).filter(
+    areDashboardFiltersActive: isDefined(dashboardFilters),
+  }).filter(
     (fieldMetadataId) =>
       !getFieldPermissions({ objectPermissions, fieldMetadataId }).canReadField,
   );

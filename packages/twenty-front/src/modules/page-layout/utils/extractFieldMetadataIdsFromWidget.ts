@@ -41,10 +41,15 @@ const extractChartFieldMetadataIds = (widget: PageLayoutWidget): string[] => {
   }
 };
 
-export const extractFieldMetadataIdsFromWidget = (
-  widget: PageLayoutWidget,
-): string[] => {
+export const extractFieldMetadataIdsFromWidget = ({
+  widget,
+  areDashboardFiltersActive,
+}: {
+  widget: PageLayoutWidget;
+  areDashboardFiltersActive: boolean;
+}): string[] => {
   const boundFieldMetadataIds =
+    areDashboardFiltersActive &&
     isDefined(widget.configuration) &&
     'dashboardFilterBindings' in widget.configuration
       ? (widget.configuration.dashboardFilterBindings ?? []).map(
