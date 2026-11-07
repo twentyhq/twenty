@@ -10,6 +10,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
+import { sanitizeDashboardFilterBindingsInPageLayoutDraft } from '@/page-layout/utils/sanitizeDashboardFilterBindingsInPageLayoutDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -58,15 +59,21 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
 
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
 
-    const sanitizedPageLayoutDraft = sanitizeChartFiltersInPageLayoutDraft({
-      pageLayoutDraft,
-      fieldMetadataItemsByObjectMetadataId: new Map(
-        objectMetadataItems.map((objectMetadataItem) => [
-          objectMetadataItem.id,
-          objectMetadataItem.fields,
-        ]),
-      ),
-    });
+    const fieldMetadataItemsByObjectMetadataId = new Map(
+      objectMetadataItems.map((objectMetadataItem) => [
+        objectMetadataItem.id,
+        objectMetadataItem.fields,
+      ]),
+    );
+
+    const sanitizedPageLayoutDraft =
+      sanitizeDashboardFilterBindingsInPageLayoutDraft({
+        pageLayoutDraft: sanitizeChartFiltersInPageLayoutDraft({
+          pageLayoutDraft,
+          fieldMetadataItemsByObjectMetadataId,
+        }),
+        fieldMetadataItemsByObjectMetadataId,
+      });
 
     const updateInput = convertPageLayoutDraftToUpdateInput(
       sanitizedPageLayoutDraft,

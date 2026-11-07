@@ -125,11 +125,10 @@ export class PageLayoutUpdateService {
       widgets: tabInput.widgets.map((widgetInput) => ({
         ...widgetInput,
         configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
-          pageLayout: existingPageLayout,
-          existingConfiguration: findFlatEntityByIdInFlatEntityMaps({
+          existingWidget: findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: widgetInput.id,
             flatEntityMaps: flatPageLayoutWidgetMaps,
-          })?.configuration,
+          }),
           configuration: widgetInput.configuration,
           workspaceCustomApplicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,

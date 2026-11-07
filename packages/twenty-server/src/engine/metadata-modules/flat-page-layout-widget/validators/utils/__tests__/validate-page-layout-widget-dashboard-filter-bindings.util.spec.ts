@@ -3,11 +3,19 @@ import {
   type PageLayoutFilter,
   PageLayoutFilterType,
   PageLayoutType,
+  type UniversalDashboardFilterBinding,
 } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { validatePageLayoutWidgetDashboardFilterBindings } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-page-layout-widget-dashboard-filter-bindings.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+
+const OWNER_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000002';
 
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -87,17 +95,24 @@ const validateBindings = ({
   dashboardFilterBindings,
   pageLayoutType = PageLayoutType.DASHBOARD,
   filters = [PERIOD_FILTER, CLOSE_DATE_FILTER],
+  isActive = true,
+  universalOverrides = null,
 }: {
-  dashboardFilterBindings: unknown;
+  dashboardFilterBindings: UniversalDashboardFilterBinding[] | null;
   pageLayoutType?: PageLayoutType;
   filters?: PageLayoutFilter[] | null;
+  isActive?: boolean;
+  universalOverrides?: UniversalFlatPageLayoutWidget['universalOverrides'];
 }) =>
   validatePageLayoutWidgetDashboardFilterBindings({
     widget: {
       title: 'Deals per month',
       objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: OWNER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      isActive,
+      universalOverrides,
       universalConfiguration: {
-        configurationType: 'BAR_CHART',
+        configurationType: WidgetConfigurationType.RECORD_TABLE,
         dashboardFilterBindings,
       },
     },
@@ -151,31 +166,47 @@ describe('validatePageLayoutWidgetDashboardFilterBindings', () => {
     ).toEqual([]);
   });
 
-  it.each([
-    ['not an array', { pageLayoutFilterId: PERIOD_FILTER.id }],
-    [
-      'a binding without filter id',
-      [{ fieldMetadataUniversalIdentifier: DATE_FIELD_UNIVERSAL_IDENTIFIER }],
-    ],
-    [
-      'a binding with an unknown key',
-      [
-        {
-          pageLayoutFilterId: PERIOD_FILTER.id,
-          fieldMetadataUniversalIdentifier: DATE_FIELD_UNIVERSAL_IDENTIFIER,
-          subFieldName: 'year',
-        },
-      ],
-    ],
-  ])(
-    'should report malformed bindings when they are %s',
-    (_title, dashboardFilterBindings) => {
-      const errors = validateBindings({ dashboardFilterBindings });
+  it('should report a binding with an unknown key as malformed', () => {
+    const bindingWithUnknownKey = {
+      pageLayoutFilterId: PERIOD_FILTER.id,
+      fieldMetadataUniversalIdentifier: DATE_FIELD_UNIVERSAL_IDENTIFIER,
+      subFieldName: 'year',
+    };
 
-      expect(errors).not.toHaveLength(0);
-      expect(errors[0].message).toContain('are malformed');
-    },
-  );
+    const errors = validateBindings({
+      dashboardFilterBindings: [bindingWithUnknownKey],
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('are malformed');
+  });
+
+  it.each([
+    ['its own flag', { isActive: false }],
+    [
+      'an override',
+      {
+        universalOverrides: {
+          [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+            isActive: false,
+          },
+        },
+      },
+    ],
+  ])('should skip a widget deactivated through %s', (_title, deactivation) => {
+    expect(
+      validateBindings({
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: PERIOD_FILTER.id,
+            fieldMetadataUniversalIdentifier: DATE_FIELD_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        filters: [],
+        ...deactivation,
+      }),
+    ).toEqual([]);
+  });
 
   it('should reject bindings on a widget that is not on a dashboard', () => {
     const errors = validateBindings({

@@ -1,5 +1,6 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { MALFORMED_DASHBOARD_FILTER_BINDINGS } from 'test/integration/metadata/suites/page-layout/constants/malformed-dashboard-filter-bindings.constant';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import {
@@ -53,6 +54,14 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       }),
     },
   },
+  ...MALFORMED_DASHBOARD_FILTER_BINDINGS.map(
+    ([malformedValueTitle, malformedDashboardFilterBindings]) => ({
+      title: `when the bindings are ${malformedValueTitle}`,
+      context: {
+        buildDashboardFilterBindings: () => malformedDashboardFilterBindings,
+      },
+    }),
+  ),
   {
     title: 'when a binding has no filter id',
     context: {

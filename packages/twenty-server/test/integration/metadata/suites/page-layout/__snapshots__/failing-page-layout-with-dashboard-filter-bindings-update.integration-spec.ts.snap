@@ -256,6 +256,150 @@ exports[`Dashboard filter bindings update should fail when a widget binds the sa
 }
 `;
 
+exports[`Dashboard filter bindings update should fail when the bindings are a list binding 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Dashboard filter bindings of widget "Companies" are malformed at "0": Invalid input: expected object, received array",
+              "userFriendlyMessage": "Dashboard filter bindings are malformed",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a null binding 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Dashboard filter bindings of widget "Companies" are malformed at "0": Invalid input: expected object, received null",
+              "userFriendlyMessage": "Dashboard filter bindings are malformed",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a number binding 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Dashboard filter bindings of widget "Companies" are malformed at "0": Invalid input: expected object, received number",
+              "userFriendlyMessage": "Dashboard filter bindings are malformed",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Dashboard filter bindings of widget "Companies" are malformed: Invalid input: expected array, received string",
+              "userFriendlyMessage": "Dashboard filter bindings are malformed",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Dashboard filter bindings update should fail when the bindings are not a list 1`] = `
 {
   "extensions": {

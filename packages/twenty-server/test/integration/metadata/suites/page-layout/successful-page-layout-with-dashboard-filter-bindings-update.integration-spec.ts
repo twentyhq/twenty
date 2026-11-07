@@ -15,17 +15,26 @@ import {
   fetchDashboardFilterBindingFieldIds,
 } from 'test/integration/metadata/suites/page-layout/utils/fetch-dashboard-filter-binding-field-ids.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
+import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { saveDashboardWithAggregateWidget } from 'test/integration/metadata/suites/page-layout/utils/save-dashboard-with-aggregate-widget.util';
+import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
+  type ChartFilter,
   type DashboardFilterBinding,
   FieldMetadataType,
   type PageLayoutFilter,
   PageLayoutFilterType,
   PageLayoutType,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+
+import { type UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 
 const PERIOD_FILTER: PageLayoutFilter = {
   id: '8d6c1f3a-2b4e-4c5d-9e7f-0a1b2c3d4e01',
@@ -62,14 +71,17 @@ const createDashboardPageLayoutWithTab = async () => {
   return { pageLayoutId, tabId: tabData.createPageLayoutTab.id };
 };
 
-const findStoredDashboardFilterBindings = async (widgetId: string) => {
+const findStoredConfiguration = async (widgetId: string) => {
   const [widget] = await globalThis.testDataSource.query(
     `SELECT configuration FROM core."pageLayoutWidget" WHERE id = $1`,
     [widgetId],
   );
 
-  return widget?.configuration?.dashboardFilterBindings;
+  return widget?.configuration;
 };
+
+const findStoredDashboardFilterBindings = async (widgetId: string) =>
+  (await findStoredConfiguration(widgetId))?.dashboardFilterBindings;
 
 describe('Dashboard filter bindings', () => {
   let fieldIds: DashboardFilterBindingFieldIds;
@@ -79,10 +91,12 @@ describe('Dashboard filter bindings', () => {
 
   const saveDashboard = ({
     filters,
+    chartFilter,
     dashboardFilterBindings,
   }: {
     filters: PageLayoutFilter[];
-    dashboardFilterBindings: DashboardFilterBinding[];
+    chartFilter?: ChartFilter;
+    dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   }) =>
     saveDashboardWithAggregateWidget({
       pageLayoutId,
@@ -91,6 +105,7 @@ describe('Dashboard filter bindings', () => {
       objectMetadataId: fieldIds.companyObjectMetadataId,
       aggregateFieldMetadataId: fieldIds.companyPositionFieldId,
       filters,
+      chartFilter,
       dashboardFilterBindings,
     });
 
@@ -173,6 +188,35 @@ describe('Dashboard filter bindings', () => {
     ]);
   });
 
+  it('should keep the stored bindings when a save omits them, and clear them on null', async () => {
+    const periodBinding = {
+      pageLayoutFilterId: PERIOD_FILTER.id,
+      fieldMetadataId: fieldIds.companyCreatedAtFieldId,
+    };
+
+    await saveDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: [periodBinding],
+    });
+
+    const { errors } = await saveDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: undefined,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(await findStoredDashboardFilterBindings(widgetId)).toEqual([
+      periodBinding,
+    ]);
+
+    await saveDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: null,
+    });
+
+    expect(await findStoredDashboardFilterBindings(widgetId)).toBeNull();
+  });
+
   describe('when the bound field changes', () => {
     let renewalDateFieldId: string;
     let isRenewalDateFieldDeleted: boolean;
@@ -246,17 +290,101 @@ describe('Dashboard filter bindings', () => {
       expect(errors).toBeUndefined();
     });
 
-    it('should drop the bindings to a deleted field and keep the widget', async () => {
-      await deactivateRenewalDateField();
-      await deleteOneFieldMetadata({
+    const deleteField = async (fieldMetadataId: string) => {
+      await updateOneFieldMetadata({
         expectToFail: false,
-        input: { idToDelete: renewalDateFieldId },
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+        gqlFields: 'id',
       });
+
+      return deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldMetadataId },
+      });
+    };
+
+    const buildChartFilter = (fieldMetadataId: string): ChartFilter => ({
+      recordFilters: [
+        {
+          id: v4(),
+          fieldMetadataId,
+          operand: ViewFilterOperand.IS_NOT_EMPTY,
+          value: '',
+        },
+      ],
+    });
+
+    it('should drop the bindings to a deleted field and keep the widget', async () => {
+      await deleteField(renewalDateFieldId);
       isRenewalDateFieldDeleted = true;
 
       expect(await findStoredDashboardFilterBindings(widgetId)).toEqual([
         periodBinding(),
       ]);
+    });
+
+    it('should drop the binding and the chart filter on a deleted field, and keep the dashboard saving', async () => {
+      await saveDashboard({
+        filters: [PERIOD_FILTER, CLOSE_DATE_FILTER],
+        chartFilter: buildChartFilter(renewalDateFieldId),
+        dashboardFilterBindings: [periodBinding(), renewalDateBinding()],
+      });
+
+      const { errors: deletionErrors } = await deleteField(renewalDateFieldId);
+
+      isRenewalDateFieldDeleted = true;
+      expect(deletionErrors).toBeUndefined();
+      expect(await findStoredConfiguration(widgetId)).toMatchObject({
+        filter: { recordFilters: [] },
+        dashboardFilterBindings: [periodBinding()],
+      });
+
+      const { errors } = await saveDashboard({
+        filters: [PERIOD_FILTER, CLOSE_DATE_FILTER],
+        chartFilter: { recordFilters: [] },
+        dashboardFilterBindings: [periodBinding()],
+      });
+
+      expect(errors).toBeUndefined();
+    });
+
+    it('should delete the bound field of a widget whose chart filter already dangles', async () => {
+      const { data } = await createOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          objectMetadataId: fieldIds.companyObjectMetadataId,
+          name: 'churnDate',
+          label: 'Churn date',
+          type: FieldMetadataType.DATE,
+        },
+        gqlFields: 'id',
+      });
+
+      await saveDashboard({
+        filters: [PERIOD_FILTER, CLOSE_DATE_FILTER],
+        chartFilter: buildChartFilter(data.createOneField.id),
+        dashboardFilterBindings: [periodBinding(), renewalDateBinding()],
+      });
+      await deleteField(data.createOneField.id);
+
+      const { errors: deletionErrors } = await deleteField(renewalDateFieldId);
+
+      isRenewalDateFieldDeleted = true;
+      expect(deletionErrors).toBeUndefined();
+      expect(await findStoredConfiguration(widgetId)).toMatchObject({
+        filter: { recordFilters: [] },
+        dashboardFilterBindings: [periodBinding()],
+      });
+
+      const { errors } = await saveDashboard({
+        filters: [PERIOD_FILTER, CLOSE_DATE_FILTER],
+        dashboardFilterBindings: [periodBinding()],
+      });
+
+      expect(errors).toBeUndefined();
     });
   });
 });
@@ -323,5 +451,159 @@ describe('Dashboard duplication should keep the filter bindings resolving', () =
     expect(duplicatedPageLayout.tabs).toMatchObject([
       { widgets: [{ configuration: { dashboardFilterBindings } }] },
     ]);
+  });
+});
+
+describe('Standard dashboard filter bindings should not block removing a widget and its filter', () => {
+  let standardDashboardId: string;
+  let standardDashboardTabs: UpdatePageLayoutWithTabsInput['tabs'];
+  let boundWidgetId: string;
+  let periodBinding: DashboardFilterBinding;
+
+  const saveStandardDashboard = ({
+    filters,
+    dashboardFilterBindings,
+    isBoundWidgetRemoved = false,
+  }: {
+    filters: PageLayoutFilter[] | null;
+    dashboardFilterBindings: DashboardFilterBinding[] | null;
+    isBoundWidgetRemoved?: boolean;
+  }) =>
+    updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      gqlFields: PAGE_LAYOUT_WITH_DASHBOARD_FILTER_BINDINGS_GQL_FIELDS,
+      input: {
+        id: standardDashboardId,
+        name: 'My First Dashboard',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        filters,
+        tabs: standardDashboardTabs.map((tab) => ({
+          ...tab,
+          widgets: tab.widgets
+            .filter(
+              (widget) => !isBoundWidgetRemoved || widget.id !== boundWidgetId,
+            )
+            .map((widget) =>
+              widget.id === boundWidgetId &&
+              widget.configuration.configurationType ===
+                WidgetConfigurationType.AGGREGATE_CHART
+                ? {
+                    ...widget,
+                    configuration: {
+                      ...widget.configuration,
+                      dashboardFilterBindings,
+                    },
+                  }
+                : widget,
+            ),
+        })),
+      },
+    });
+
+  beforeAll(async () => {
+    const { data } = await findPageLayouts({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id universalIdentifier',
+    });
+
+    const standardDashboard = data.getPageLayouts.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier ===
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.myFirstDashboard
+          .universalIdentifier,
+    );
+
+    jestExpectToBeDefined(standardDashboard);
+    standardDashboardId = standardDashboard.id;
+
+    const tabs = await globalThis.testDataSource.query(
+      `SELECT id, title, position, icon, "layoutMode" FROM core."pageLayoutTab"
+       WHERE "pageLayoutId" = $1 AND "deletedAt" IS NULL AND "isActive"`,
+      [standardDashboardId],
+    );
+    const widgets: UpdatePageLayoutWidgetWithIdInput[] =
+      await globalThis.testDataSource.query(
+        `SELECT id, "pageLayoutTabId", title, type, "objectMetadataId", position,
+         configuration, "conditionalDisplay", "conditionalAvailabilityExpression"
+         FROM core."pageLayoutWidget"
+         WHERE "pageLayoutTabId" = ANY($1) AND "deletedAt" IS NULL AND "isActive"`,
+        [tabs.map(({ id }: { id: string }) => id)],
+      );
+
+    const boundWidget = widgets.find(
+      ({ configuration }) =>
+        configuration.configurationType ===
+        WidgetConfigurationType.AGGREGATE_CHART,
+    );
+
+    jestExpectToBeDefined(boundWidget);
+    boundWidgetId = boundWidget.id;
+
+    const [createdAtField] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'createdAt'`,
+      [boundWidget.objectMetadataId],
+    );
+
+    periodBinding = {
+      pageLayoutFilterId: PERIOD_FILTER.id,
+      fieldMetadataId: createdAtField.id,
+    };
+
+    standardDashboardTabs = tabs.map((tab: { id: string }) => ({
+      ...tab,
+      widgets: widgets.filter(
+        ({ pageLayoutTabId }) => pageLayoutTabId === tab.id,
+      ),
+    }));
+  });
+
+  beforeEach(async () => {
+    await saveStandardDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: [periodBinding],
+    });
+
+    expect(await findStoredDashboardFilterBindings(boundWidgetId)).toEqual([
+      periodBinding,
+    ]);
+  });
+
+  afterEach(async () => {
+    const { errors } = await saveStandardDashboard({
+      filters: null,
+      dashboardFilterBindings: null,
+    });
+
+    expect(errors).toBeUndefined();
+  });
+
+  it('should remove the bound widget and its filter in one save', async () => {
+    const { errors } = await saveStandardDashboard({
+      filters: null,
+      dashboardFilterBindings: [periodBinding],
+      isBoundWidgetRemoved: true,
+    });
+
+    expect(errors).toBeUndefined();
+  });
+
+  it('should remove the bound widget, then its filter', async () => {
+    const { errors: widgetRemovalErrors } = await saveStandardDashboard({
+      filters: [PERIOD_FILTER],
+      dashboardFilterBindings: [periodBinding],
+      isBoundWidgetRemoved: true,
+    });
+
+    expect(widgetRemovalErrors).toBeUndefined();
+
+    const { errors } = await saveStandardDashboard({
+      filters: null,
+      dashboardFilterBindings: [periodBinding],
+      isBoundWidgetRemoved: true,
+    });
+
+    expect(errors).toBeUndefined();
   });
 });

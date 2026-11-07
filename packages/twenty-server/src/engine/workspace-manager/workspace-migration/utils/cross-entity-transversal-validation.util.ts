@@ -16,10 +16,12 @@ import { validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation }
 export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
+  orchestratorFailureReport,
   preDeletionFlatViewFieldMaps,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
+  orchestratorFailureReport: OrchestratorFailureReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
 }): OrchestratorFailureReport => {
   const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
@@ -51,6 +53,7 @@ export const crossEntityTransversalValidation = ({
     validatePageLayoutWidgetDashboardFilterBindingsCrossEntity({
       optimisticUniversalFlatMaps,
       orchestratorActionsReport,
+      orchestratorFailureReport,
     });
 
   crossEntityFailureReport.objectMetadata.push(...objectMetadata);

@@ -6,6 +6,7 @@ import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import {
   AggregateOperations,
+  type ChartFilter,
   type PageLayoutFilter,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -23,6 +24,7 @@ export const saveDashboardWithAggregateWidget = async ({
   objectMetadataId,
   aggregateFieldMetadataId,
   filters,
+  chartFilter,
   dashboardFilterBindings,
   expectToFail = false,
 }: {
@@ -33,6 +35,7 @@ export const saveDashboardWithAggregateWidget = async ({
   objectMetadataId: string;
   aggregateFieldMetadataId: string;
   filters?: PageLayoutFilter[] | null;
+  chartFilter?: ChartFilter;
   dashboardFilterBindings: unknown;
   expectToFail?: boolean;
 }): CommonResponseBody<{
@@ -76,6 +79,7 @@ export const saveDashboardWithAggregateWidget = async ({
                   configurationType: WidgetConfigurationType.AGGREGATE_CHART,
                   aggregateFieldMetadataId,
                   aggregateOperation: AggregateOperations.COUNT,
+                  filter: chartFilter,
                   dashboardFilterBindings,
                 },
               },

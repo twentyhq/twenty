@@ -1,5 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
-import { type PageLayoutFilter } from 'twenty-shared/types';
+import { type PageLayoutFilter, PageLayoutType } from 'twenty-shared/types';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
@@ -9,7 +9,7 @@ import {
   PageLayoutException,
   PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { isDashboardInstalledByThirdPartyApplication } from 'src/engine/metadata-modules/page-layout/utils/is-dashboard-installed-by-third-party-application.util';
+import { isOwnedByThirdPartyApplication } from 'src/engine/metadata-modules/page-layout/utils/is-owned-by-third-party-application.util';
 
 const sortPageLayoutFiltersById = (
   filters: PageLayoutFilter[] | null,
@@ -50,8 +50,10 @@ export const getPageLayoutFiltersToSaveOrThrow = ({
   }
 
   if (
-    isDashboardInstalledByThirdPartyApplication({
-      pageLayout: existingPageLayout,
+    existingPageLayout.type === PageLayoutType.DASHBOARD &&
+    isOwnedByThirdPartyApplication({
+      applicationUniversalIdentifier:
+        existingPageLayout.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier,
     })
   ) {

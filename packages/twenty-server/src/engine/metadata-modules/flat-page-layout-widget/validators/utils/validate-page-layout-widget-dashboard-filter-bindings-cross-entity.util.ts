@@ -1,17 +1,12 @@
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { validatePageLayoutWidgetDashboardFilterBindings } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-page-layout-widget-dashboard-filter-bindings.util';
-import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
-import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
-import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
-import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
-
-type MapsOf<TEntity> = {
-  byUniversalIdentifier: Partial<Record<string, TEntity>>;
-};
-
-type UniversalIdentifierHolder = { universalIdentifier: string };
+import {
+  type OrchestratorActionsReport,
+  type OrchestratorFailureReport,
+} from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
 export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
   optimisticUniversalFlatMaps: {
@@ -21,44 +16,39 @@ export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
     flatFieldMetadataMaps,
   },
   orchestratorActionsReport,
+  orchestratorFailureReport,
 }: {
-  optimisticUniversalFlatMaps: {
-    flatPageLayoutMaps: MapsOf<
-      Pick<
-        UniversalFlatPageLayout,
-        'type' | 'filters' | 'tabUniversalIdentifiers'
-      >
-    >;
-    flatPageLayoutTabMaps: MapsOf<
-      Pick<UniversalFlatPageLayoutTab, 'widgetUniversalIdentifiers'>
-    >;
-    flatPageLayoutWidgetMaps: MapsOf<
-      Pick<
-        UniversalFlatPageLayoutWidget,
-        'universalIdentifier' | 'title' | 'objectMetadataUniversalIdentifier'
-      > & { universalConfiguration: object }
-    >;
-    flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
-  };
-  orchestratorActionsReport: {
-    pageLayout: { update: UniversalIdentifierHolder[] };
-    pageLayoutWidget: {
-      create: { flatEntity: UniversalIdentifierHolder }[];
-      update: UniversalIdentifierHolder[];
-    };
-  };
+  optimisticUniversalFlatMaps: Pick<
+    AllUniversalFlatEntityMaps,
+    | 'flatPageLayoutMaps'
+    | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutWidgetMaps'
+    | 'flatFieldMetadataMaps'
+  >;
+  orchestratorActionsReport: Pick<
+    OrchestratorActionsReport,
+    'pageLayout' | 'pageLayoutWidget'
+  >;
+  orchestratorFailureReport: Pick<
+    OrchestratorFailureReport,
+    'pageLayoutWidget'
+  >;
 }): Pick<OrchestratorFailureReport, 'pageLayoutWidget'> => {
   const validationErrors: Pick<OrchestratorFailureReport, 'pageLayoutWidget'> =
     {
       pageLayoutWidget: [],
     };
 
-  const alreadyValidatedWidgetUniversalIdentifiers = new Set<string>([
+  const alreadyValidatedWidgetUniversalIdentifiers = new Set([
     ...orchestratorActionsReport.pageLayoutWidget.create.map(
       (action) => action.flatEntity.universalIdentifier,
     ),
     ...orchestratorActionsReport.pageLayoutWidget.update.map(
       (action) => action.universalIdentifier,
+    ),
+    ...orchestratorFailureReport.pageLayoutWidget.map(
+      (failedValidation) =>
+        failedValidation.flatEntityMinimalInformation.universalIdentifier,
     ),
   ]);
 
@@ -93,21 +83,24 @@ export const validatePageLayoutWidgetDashboardFilterBindingsCrossEntity = ({
       .filter(isDefined);
 
     for (const widget of widgetsToRevalidate) {
-      const errors = validatePageLayoutWidgetDashboardFilterBindings({
-        widget,
-        pageLayout,
-        flatFieldMetadataMaps,
+      const failedValidation = getEmptyFlatEntityValidationError({
+        flatEntityMinimalInformation: {
+          universalIdentifier: widget.universalIdentifier,
+        },
+        metadataName: 'pageLayoutWidget',
+        type: 'update',
       });
 
-      if (isNonEmptyArray(errors)) {
-        validationErrors.pageLayoutWidget.push({
-          type: 'update',
-          metadataName: 'pageLayoutWidget',
-          flatEntityMinimalInformation: {
-            universalIdentifier: widget.universalIdentifier,
-          },
-          errors,
-        });
+      failedValidation.errors.push(
+        ...validatePageLayoutWidgetDashboardFilterBindings({
+          widget,
+          pageLayout,
+          flatFieldMetadataMaps,
+        }),
+      );
+
+      if (isNonEmptyArray(failedValidation.errors)) {
+        validationErrors.pageLayoutWidget.push(failedValidation);
       }
     }
   }

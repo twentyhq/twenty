@@ -71,6 +71,7 @@ export const ChartDataSourceDropdownContent = () => {
           groupBySubFieldName: undefined,
           filter: {},
           ratioAggregateConfig: undefined,
+          dashboardFilterBindings: null,
         },
       });
 

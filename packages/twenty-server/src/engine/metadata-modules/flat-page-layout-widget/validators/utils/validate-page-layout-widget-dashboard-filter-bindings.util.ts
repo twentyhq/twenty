@@ -15,14 +15,20 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { UNIVERSAL_DASHBOARD_FILTER_BINDINGS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/constants/universal-dashboard-filter-bindings-schema.constant';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 
 type DashboardFilterBindingWidget = Pick<
   UniversalFlatPageLayoutWidget,
-  'title' | 'objectMetadataUniversalIdentifier'
-> & { universalConfiguration: object };
+  | 'title'
+  | 'objectMetadataUniversalIdentifier'
+  | 'universalConfiguration'
+  | 'isActive'
+  | 'applicationUniversalIdentifier'
+  | 'universalOverrides'
+>;
 
 const validateDashboardFilterBinding = ({
   binding: { pageLayoutFilterId, fieldMetadataUniversalIdentifier },
@@ -127,6 +133,16 @@ export const validatePageLayoutWidgetDashboardFilterBindings = ({
   flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): FlatPageLayoutWidgetValidationError[] => {
   const { title: widgetTitle, universalConfiguration } = widget;
+
+  if (
+    !resolveEffectiveUniversalFlatEntityProperty({
+      metadataName: 'pageLayoutWidget',
+      universalFlatEntity: widget,
+      property: 'isActive',
+    })
+  ) {
+    return [];
+  }
 
   const rawBindings =
     'dashboardFilterBindings' in universalConfiguration

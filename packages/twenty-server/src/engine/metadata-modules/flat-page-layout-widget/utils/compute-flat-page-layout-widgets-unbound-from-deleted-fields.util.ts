@@ -1,65 +1,54 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { getChartAggregateAndGroupByFieldMetadataIds } from 'src/engine/metadata-modules/page-layout-widget/utils/get-chart-aggregate-and-group-by-field-metadata-ids.util';
 
 export const computeFlatPageLayoutWidgetsUnboundFromDeletedFields = <
   TFlatPageLayoutWidget extends Pick<
     FlatPageLayoutWidget,
-    'configuration' | 'universalConfiguration'
+    'deletedAt' | 'configuration' | 'universalConfiguration'
   >,
 >({
   flatPageLayoutWidgets,
-  deletedFlatFieldMetadatas,
+  deletedFieldIds,
+  flatFieldMetadataMaps,
 }: {
   flatPageLayoutWidgets: TFlatPageLayoutWidget[];
-  deletedFlatFieldMetadatas: Pick<
-    FlatFieldMetadata,
-    'id' | 'universalIdentifier'
-  >[];
+  deletedFieldIds: ReadonlySet<string>;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier' | 'universalIdentifierById'
+  >;
 }): TFlatPageLayoutWidget[] => {
-  const deletedFieldIds = new Set(
-    deletedFlatFieldMetadatas.map(({ id }) => id),
-  );
-  const deletedFieldUniversalIdentifiers = deletedFlatFieldMetadatas.map(
-    ({ universalIdentifier }) => universalIdentifier,
-  );
+  const isFieldKept = (fieldMetadataId: string | undefined) =>
+    isDefined(fieldMetadataId) &&
+    !deletedFieldIds.has(fieldMetadataId) &&
+    isDefined(flatFieldMetadataMaps.universalIdentifierById[fieldMetadataId]);
+
+  const isUniversalFieldKept = (
+    fieldMetadataUniversalIdentifier: string | null,
+  ) =>
+    isDefined(fieldMetadataUniversalIdentifier) &&
+    isFieldKept(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        fieldMetadataUniversalIdentifier
+      ]?.id,
+    );
 
   return flatPageLayoutWidgets.flatMap((flatPageLayoutWidget) => {
     const { configuration, universalConfiguration } = flatPageLayoutWidget;
 
     if (
+      isDefined(flatPageLayoutWidget.deletedAt) ||
       !('dashboardFilterBindings' in configuration) ||
       !('dashboardFilterBindings' in universalConfiguration) ||
       !configuration.dashboardFilterBindings?.some(({ fieldMetadataId }) =>
         deletedFieldIds.has(fieldMetadataId),
-      )
-    ) {
-      return [];
-    }
-
-    const unboundUniversalConfiguration = {
-      ...universalConfiguration,
-      dashboardFilterBindings:
-        universalConfiguration.dashboardFilterBindings?.filter(
-          ({ fieldMetadataUniversalIdentifier }) =>
-            !isDefined(fieldMetadataUniversalIdentifier) ||
-            !deletedFieldUniversalIdentifiers.includes(
-              fieldMetadataUniversalIdentifier,
-            ),
-        ),
-    };
-
-    // The runner cannot resolve a deleted field, so a widget that still references one elsewhere keeps its bindings
-    const serializedUnboundUniversalConfiguration = JSON.stringify(
-      unboundUniversalConfiguration,
-    );
-
-    if (
-      deletedFieldUniversalIdentifiers.some((deletedFieldUniversalIdentifier) =>
-        serializedUnboundUniversalConfiguration.includes(
-          deletedFieldUniversalIdentifier,
-        ),
+      ) ||
+      !getChartAggregateAndGroupByFieldMetadataIds(configuration).every(
+        isFieldKept,
       )
     ) {
       return [];
@@ -70,11 +59,41 @@ export const computeFlatPageLayoutWidgetsUnboundFromDeletedFields = <
         ...flatPageLayoutWidget,
         configuration: {
           ...configuration,
+          ...('filter' in configuration && isDefined(configuration.filter)
+            ? {
+                filter: {
+                  ...configuration.filter,
+                  recordFilters: configuration.filter.recordFilters?.filter(
+                    ({ fieldMetadataId }) => isFieldKept(fieldMetadataId),
+                  ),
+                },
+              }
+            : {}),
           dashboardFilterBindings: configuration.dashboardFilterBindings.filter(
-            ({ fieldMetadataId }) => !deletedFieldIds.has(fieldMetadataId),
+            ({ fieldMetadataId }) => isFieldKept(fieldMetadataId),
           ),
         },
-        universalConfiguration: unboundUniversalConfiguration,
+        universalConfiguration: {
+          ...universalConfiguration,
+          ...('filter' in universalConfiguration &&
+          isDefined(universalConfiguration.filter)
+            ? {
+                filter: {
+                  ...universalConfiguration.filter,
+                  recordFilters:
+                    universalConfiguration.filter.recordFilters?.filter(
+                      ({ fieldMetadataUniversalIdentifier }) =>
+                        isUniversalFieldKept(fieldMetadataUniversalIdentifier),
+                    ),
+                },
+              }
+            : {}),
+          dashboardFilterBindings:
+            universalConfiguration.dashboardFilterBindings?.filter(
+              ({ fieldMetadataUniversalIdentifier }) =>
+                isUniversalFieldKept(fieldMetadataUniversalIdentifier),
+            ),
+        },
       },
     ];
   });

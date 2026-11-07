@@ -5,7 +5,7 @@ import {
   type UniversalChartFilter,
   type UniversalDashboardFilterBinding,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
@@ -91,17 +91,18 @@ const convertDashboardFilterBindingsToUniversalDashboardFilterBindings = ({
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
 }): UniversalDashboardFilterBinding[] | null | undefined =>
   isArray(dashboardFilterBindings)
-    ? dashboardFilterBindings.map(
-        ({ pageLayoutFilterId, fieldMetadataId }) => ({
-          pageLayoutFilterId,
-          fieldMetadataUniversalIdentifier: getFieldMetadataUniversalIdentifier(
-            {
-              fieldMetadataId,
-              fieldMetadataUniversalIdentifierById,
-              shouldThrowOnMissingIdentifier: false,
-            },
-          ),
-        }),
+    ? dashboardFilterBindings.map((dashboardFilterBinding) =>
+        isPlainObject(dashboardFilterBinding)
+          ? {
+              pageLayoutFilterId: dashboardFilterBinding.pageLayoutFilterId,
+              fieldMetadataUniversalIdentifier:
+                getFieldMetadataUniversalIdentifier({
+                  fieldMetadataId: dashboardFilterBinding.fieldMetadataId,
+                  fieldMetadataUniversalIdentifierById,
+                  shouldThrowOnMissingIdentifier: false,
+                }),
+            }
+          : dashboardFilterBinding,
       )
     : dashboardFilterBindings;
 

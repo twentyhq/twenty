@@ -69,6 +69,7 @@ export const RecordTableDataSourceDropdownContent = () => {
       objectMetadataId: newObjectMetadataItemId,
       configToUpdate: {
         viewId: undefined,
+        dashboardFilterBindings: null,
       },
     });
 

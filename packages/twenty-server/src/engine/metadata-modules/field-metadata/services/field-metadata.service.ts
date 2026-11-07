@@ -141,36 +141,38 @@ export class FieldMetadataService {
       },
     );
 
-    const deletedFlatFieldMetadatas = flatFieldMetadatasToDelete
-      .map((flatFieldMetadataToDelete) =>
-        findFlatEntityByUniversalIdentifier({
-          universalIdentifier: flatFieldMetadataToDelete.universalIdentifier,
-          flatEntityMaps: existingFlatFieldMetadataMaps,
-        }),
-      )
-      .filter(isDefined);
-
     const deletedFieldIds = new Set(
-      deletedFlatFieldMetadatas.map(({ id }) => id),
+      flatFieldMetadatasToDelete
+        .map((f) => {
+          const resolved = findFlatEntityByUniversalIdentifier({
+            universalIdentifier: f.universalIdentifier,
+            flatEntityMaps: existingFlatFieldMetadataMaps,
+          });
+
+          return resolved?.id;
+        })
+        .filter(isDefined),
     );
 
-    const flatPageLayoutWidgets = Object.values(
+    const flatPageLayoutWidgetsToDelete = Object.values(
       existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((widget) => !isDefined(widget.deletedAt));
-
-    const flatPageLayoutWidgetsToDelete = flatPageLayoutWidgets.filter(
-      (widget) =>
-        widget.configuration?.configurationType ===
-          WidgetConfigurationType.FIELD &&
-        deletedFieldIds.has(widget.configuration.fieldMetadataId),
-    );
+      .filter(
+        (widget) =>
+          !isDefined(widget.deletedAt) &&
+          widget.configuration?.configurationType ===
+            WidgetConfigurationType.FIELD &&
+          deletedFieldIds.has(widget.configuration.fieldMetadataId),
+      );
 
     const flatPageLayoutWidgetsToUpdate =
       computeFlatPageLayoutWidgetsUnboundFromDeletedFields({
-        flatPageLayoutWidgets,
-        deletedFlatFieldMetadatas,
+        flatPageLayoutWidgets: Object.values(
+          existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+        deletedFieldIds,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       });
 
     const validateAndBuildResult =
