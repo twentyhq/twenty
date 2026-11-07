@@ -6,7 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 
-export type AccessGroupConditionMetadataMaps = {
+export type RecordAccessGroupConditionMetadataMaps = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;

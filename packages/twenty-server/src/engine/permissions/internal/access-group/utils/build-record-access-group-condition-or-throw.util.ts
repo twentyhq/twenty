@@ -3,14 +3,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type AccessGroupConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/access-group-condition-metadata-maps.type';
+import { type RecordAccessGroupConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 
 // null when the group reaches every record of the object
-export const buildAccessGroupConditionOrThrow = ({
+export const buildRecordAccessGroupConditionOrThrow = ({
   accessGroup,
   flatObjectMetadata,
   tableAlias,
@@ -19,7 +19,7 @@ export const buildAccessGroupConditionOrThrow = ({
   accessGroup: Pick<AccessGroup, 'roleId' | 'memberFieldValues'>;
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;
-  metadataMaps: AccessGroupConditionMetadataMaps;
+  metadataMaps: RecordAccessGroupConditionMetadataMaps;
 }): SqlCondition | null => {
   const recordFilter = buildRecordFilterForRole({
     ...metadataMaps,

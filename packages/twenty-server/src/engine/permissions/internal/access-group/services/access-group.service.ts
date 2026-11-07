@@ -9,8 +9,8 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { RECOMPUTE_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-access-group-ids-job-name.constant';
-import { type RecomputeAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-access-group-ids-job-data.type';
+import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
+import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
@@ -71,7 +71,7 @@ export class AccessGroupService {
     );
 
     if (hasFailures || newAccessGroups.length === 0) {
-      await this.scheduleAccessGroupIdsRecompute({
+      await this.scheduleRecordAccessGroupIdsRecompute({
         workspaceId,
         objectMetadataIdsToRecompute,
         deletedAccessGroups: [],
@@ -94,7 +94,7 @@ export class AccessGroupService {
         })
       : [];
 
-    await this.scheduleAccessGroupIdsRecompute({
+    await this.scheduleRecordAccessGroupIdsRecompute({
       workspaceId,
       objectMetadataIdsToRecompute,
       deletedAccessGroups,
@@ -102,7 +102,7 @@ export class AccessGroupService {
   }
 
   // An object with a new group recomputes every record, which also drops its deleted groups
-  private async scheduleAccessGroupIdsRecompute({
+  private async scheduleRecordAccessGroupIdsRecompute({
     workspaceId,
     objectMetadataIdsToRecompute,
     deletedAccessGroups,
@@ -124,7 +124,7 @@ export class AccessGroupService {
       ]);
     }
 
-    const jobsData: RecomputeAccessGroupIdsJobData[] = [
+    const jobsData: RecomputeRecordAccessGroupIdsJobData[] = [
       ...[...objectMetadataIdsToRecompute].map((objectMetadataId) => ({
         workspaceId,
         objectMetadataId,
@@ -140,8 +140,8 @@ export class AccessGroupService {
     ];
 
     for (const jobData of jobsData) {
-      await this.messageQueueService.add<RecomputeAccessGroupIdsJobData>(
-        RECOMPUTE_ACCESS_GROUP_IDS_JOB_NAME,
+      await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
+        RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
         jobData,
         { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
       );

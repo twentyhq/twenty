@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupRecordService } from 'src/engine/permissions/internal/access-group/services/access-group-record.service';
+import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -21,7 +21,7 @@ type PersonRow = { id: string; jobTitle: string; accessGroupIds: number[] };
 
 describe('access group ids on records (integration)', () => {
   let accessGroupService: AccessGroupService;
-  let accessGroupRecordService: AccessGroupRecordService;
+  let recordAccessGroupService: RecordAccessGroupService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let originalPeople: Pick<PersonRow, 'id' | 'jobTitle'>[];
@@ -52,7 +52,7 @@ describe('access group ids on records (integration)', () => {
 
   const syncAndRecompute = async (heldCompactIds: number[] | null = null) => {
     await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await accessGroupRecordService.recomputeAccessGroupIds({
+    await recordAccessGroupService.recomputeRecordAccessGroupIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       heldCompactIds,
@@ -62,9 +62,9 @@ describe('access group ids on records (integration)', () => {
   beforeAll(async () => {
     accessGroupService =
       getAppProviderByClassName<AccessGroupService>('AccessGroupService');
-    accessGroupRecordService =
-      getAppProviderByClassName<AccessGroupRecordService>(
-        'AccessGroupRecordService',
+    recordAccessGroupService =
+      getAppProviderByClassName<RecordAccessGroupService>(
+        'RecordAccessGroupService',
       );
 
     [{ id: objectMetadataId }] = await global.testDataSource.query(

@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type RecomputeAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-access-group-ids-job-data.type';
-import { buildAccessGroupConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-condition-or-throw.util';
-import { AccessGroupRecordRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-record.repository';
+import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
+import { buildRecordAccessGroupConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-condition-or-throw.util';
+import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -19,29 +19,29 @@ const RECOMPUTE_BATCH_SIZE = 1_000;
 const RECOMPUTE_LOCK_OPTIONS = { ms: 1_000, maxRetries: 900 };
 
 @Injectable()
-export class AccessGroupRecordService {
+export class RecordAccessGroupService {
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
-    private readonly accessGroupRecordRepository: AccessGroupRecordRepository,
+    private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
   ) {}
 
-  async recomputeAccessGroupIds(
-    jobData: RecomputeAccessGroupIdsJobData,
+  async recomputeRecordAccessGroupIds(
+    jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
     await this.cacheLockService.withLock(
-      () => this.recomputeAccessGroupIdsWithLock(jobData),
-      `access-group-ids-recompute:${jobData.workspaceId}:${jobData.objectMetadataId}`,
+      () => this.recomputeRecordAccessGroupIdsWithLock(jobData),
+      `record-access-group-ids-recompute:${jobData.workspaceId}:${jobData.objectMetadataId}`,
       RECOMPUTE_LOCK_OPTIONS,
     );
   }
 
-  private async recomputeAccessGroupIdsWithLock({
+  private async recomputeRecordAccessGroupIdsWithLock({
     workspaceId,
     objectMetadataId,
     heldCompactIds,
-  }: RecomputeAccessGroupIdsJobData): Promise<void> {
+  }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const metadataMaps = await this.workspaceCacheService.getOrRecompute(
@@ -71,9 +71,9 @@ export class AccessGroupRecordService {
         workspaceId,
         objectMetadataId,
       });
-    const accessGroupRecordConditions = accessGroups.map((accessGroup) => ({
+    const recordAccessGroupConditions = accessGroups.map((accessGroup) => ({
       compactId: accessGroup.compactId,
-      condition: buildAccessGroupConditionOrThrow({
+      condition: buildRecordAccessGroupConditionOrThrow({
         accessGroup,
         flatObjectMetadata,
         tableAlias,
@@ -85,15 +85,17 @@ export class AccessGroupRecordService {
 
     do {
       afterRecordId =
-        await this.accessGroupRecordRepository.recomputeAccessGroupIdsBatch({
-          workspaceId,
-          flatObjectMetadata,
-          tableAlias,
-          accessGroupRecordConditions,
-          afterRecordId,
-          heldCompactIds,
-          batchSize: RECOMPUTE_BATCH_SIZE,
-        });
+        await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
+          {
+            workspaceId,
+            flatObjectMetadata,
+            tableAlias,
+            recordAccessGroupConditions,
+            afterRecordId,
+            heldCompactIds,
+            batchSize: RECOMPUTE_BATCH_SIZE,
+          },
+        );
     } while (isDefined(afterRecordId));
   }
 }

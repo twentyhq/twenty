@@ -12,19 +12,19 @@ import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export type AccessGroupRecordCondition = {
+export type RecordAccessGroupCondition = {
   compactId: number;
   condition: SqlCondition | null;
 };
 
-const buildAccessGroupIdsExpression = (
-  accessGroupRecordConditions: AccessGroupRecordCondition[],
+const buildRecordAccessGroupIdsExpression = (
+  recordAccessGroupConditions: RecordAccessGroupCondition[],
 ): string => {
-  if (accessGroupRecordConditions.length === 0) {
+  if (recordAccessGroupConditions.length === 0) {
     return `CAST('{}' AS integer[])`;
   }
 
-  const compactIdCases = accessGroupRecordConditions.map(
+  const compactIdCases = recordAccessGroupConditions.map(
     ({ compactId, condition }) =>
       isDefined(condition)
         ? `CASE WHEN (${condition.sql}) THEN ${compactId} END`
@@ -35,17 +35,17 @@ const buildAccessGroupIdsExpression = (
 };
 
 @Injectable()
-export class AccessGroupRecordRepository {
+export class RecordAccessGroupRepository {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
   // Returns the last record id of the batch, or null once no record is left
-  async recomputeAccessGroupIdsBatch({
+  async recomputeRecordAccessGroupIdsBatch({
     workspaceId,
     flatObjectMetadata,
     tableAlias,
-    accessGroupRecordConditions,
+    recordAccessGroupConditions,
     afterRecordId,
     heldCompactIds,
     batchSize,
@@ -53,7 +53,7 @@ export class AccessGroupRecordRepository {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     tableAlias: string;
-    accessGroupRecordConditions: AccessGroupRecordCondition[];
+    recordAccessGroupConditions: RecordAccessGroupCondition[];
     afterRecordId: string | null;
     heldCompactIds: number[] | null;
     batchSize: number;
@@ -83,7 +83,7 @@ export class AccessGroupRecordRepository {
             LIMIT :batchSize
           )
           UPDATE ${tableExpression} AS ${alias}
-          SET ${accessGroupIdsColumn} = ${buildAccessGroupIdsExpression(accessGroupRecordConditions)}
+          SET ${accessGroupIdsColumn} = ${buildRecordAccessGroupIdsExpression(recordAccessGroupConditions)}
           FROM "batch"
           WHERE ${alias}."id" = "batch"."id"
           RETURNING ${alias}."id"`,
@@ -93,7 +93,7 @@ export class AccessGroupRecordRepository {
           batchSize,
           ...Object.assign(
             {},
-            ...accessGroupRecordConditions.map(
+            ...recordAccessGroupConditions.map(
               ({ condition }) => condition?.parameters ?? {},
             ),
           ),

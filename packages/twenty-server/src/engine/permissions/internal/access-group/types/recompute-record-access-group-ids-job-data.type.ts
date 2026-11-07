@@ -1,4 +1,4 @@
-export type RecomputeAccessGroupIdsJobData = {
+export type RecomputeRecordAccessGroupIdsJobData = {
   workspaceId: string;
   objectMetadataId: string;
   heldCompactIds: number[] | null;
