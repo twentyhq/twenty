@@ -150,7 +150,6 @@ export class PrivateRecordWriteService {
   }): Promise<void> {
     const { isPrivate } = args;
 
-    // Without sharing no share is read, so anyone but the creator would lock themselves out
     if (
       isPrivate &&
       !isShareable &&

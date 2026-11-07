@@ -30,7 +30,6 @@ export class EnablePrivateRecordsForSharingWorkspacesCommand extends Provisioned
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    // A row set back to false still counts: turning sharing off kept its private records
     const sharingFlagRows: { exists: number }[] = await this.coreDataSource.query(
       `SELECT 1 AS "exists" FROM core."featureFlag" WHERE "workspaceId" = $1 AND "key" = $2`,
       [workspaceId, FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
