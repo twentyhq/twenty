@@ -1,72 +1,100 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-workspace-member-update-affecting-access-groups.util';
 
 const FIELD_ID = 'team-field-id';
+const TIMESTAMP = '2026-01-01T00:00:00.000Z';
 
-const flatFieldMetadataMaps = {
-  byId: {
-    [FIELD_ID]: {
-      id: FIELD_ID,
-      name: 'team',
-      type: FieldMetadataType.RELATION,
-    },
-  },
-  byUniversalIdentifier: {
-    [FIELD_ID]: {
-      id: FIELD_ID,
-      name: 'team',
-      type: FieldMetadataType.RELATION,
-    },
-  },
-  universalIdentifierById: { [FIELD_ID]: FIELD_ID },
-  universalIdentifiersByApplicationId: {},
-} as unknown as FlatEntityMaps<OrmFlatFieldMetadata>;
+const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: getFlatFieldMetadataMock({
+    id: FIELD_ID,
+    universalIdentifier: FIELD_ID,
+    objectMetadataId: 'workspace-member-object-id',
+    type: FieldMetadataType.RELATION,
+    name: 'team',
+  }),
+  flatEntityMaps: createEmptyFlatEntityMaps(),
+});
 
-const buildPredicateMaps = (
-  predicate: Record<string, unknown>,
-): FlatRowLevelPermissionPredicateMaps =>
-  ({
-    byUniversalIdentifier: { predicate },
-  }) as unknown as FlatRowLevelPermissionPredicateMaps;
+const buildPredicate = (
+  overrides: Pick<
+    FlatRowLevelPermissionPredicate,
+    'workspaceMemberFieldMetadataId' | 'deletedAt'
+  >,
+): FlatRowLevelPermissionPredicate => ({
+  id: 'predicate-id',
+  universalIdentifier: 'predicate-id',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-id',
+  workspaceId: 'workspace-id',
+  createdAt: TIMESTAMP,
+  updatedAt: TIMESTAMP,
+  roleId: 'role-id',
+  roleUniversalIdentifier: 'role-id',
+  objectMetadataId: 'object-id',
+  objectMetadataUniversalIdentifier: 'object-id',
+  fieldMetadataId: 'field-id',
+  fieldMetadataUniversalIdentifier: 'field-id',
+  relationFieldMetadataId: null,
+  relationFieldMetadataUniversalIdentifier: null,
+  workspaceMemberFieldMetadataUniversalIdentifier: null,
+  rowLevelPermissionPredicateGroupId: null,
+  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  positionInRowLevelPermissionPredicateGroup: null,
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  subFieldName: null,
+  workspaceMemberSubFieldName: null,
+  ...overrides,
+});
 
-const isAffecting = (
-  updatedFields: string[],
-  predicate: Record<string, unknown> = {
-    workspaceMemberFieldMetadataId: FIELD_ID,
-    deletedAt: null,
-  },
-) =>
+const isAffecting = ({
+  updatedFields,
+  workspaceMemberFieldMetadataId = FIELD_ID,
+  deletedAt = null,
+}: {
+  updatedFields: string[];
+  workspaceMemberFieldMetadataId?: string | null;
+  deletedAt?: string | null;
+}) =>
   isWorkspaceMemberUpdateAffectingAccessGroups({
     updatedFields,
-    flatRowLevelPermissionPredicateMaps: buildPredicateMaps(predicate),
+    flatRowLevelPermissionPredicateMaps: {
+      byUniversalIdentifier: {
+        predicate: buildPredicate({
+          workspaceMemberFieldMetadataId,
+          deletedAt,
+        }),
+      },
+    },
     flatFieldMetadataMaps,
   });
 
 describe('isWorkspaceMemberUpdateAffectingAccessGroups', () => {
   it('should be true when a rule reads the changed field or its join column', () => {
-    expect(isAffecting(['team'])).toBe(true);
-    expect(isAffecting(['locale', 'teamId'])).toBe(true);
+    expect(isAffecting({ updatedFields: ['team'] })).toBe(true);
+    expect(isAffecting({ updatedFields: ['locale', 'teamId'] })).toBe(true);
   });
 
   it('should be false when no rule reads a changed field', () => {
-    expect(isAffecting(['locale'])).toBe(false);
+    expect(isAffecting({ updatedFields: ['locale'] })).toBe(false);
   });
 
   it('should ignore deleted predicates and predicates without a member field', () => {
+    expect(isAffecting({ updatedFields: ['team'], deletedAt: TIMESTAMP })).toBe(
+      false,
+    );
     expect(
-      isAffecting(['team'], {
-        workspaceMemberFieldMetadataId: FIELD_ID,
-        deletedAt: 'now',
-      }),
-    ).toBe(false);
-    expect(
-      isAffecting(['team'], {
+      isAffecting({
+        updatedFields: ['team'],
         workspaceMemberFieldMetadataId: null,
-        deletedAt: null,
       }),
     ).toBe(false);
   });

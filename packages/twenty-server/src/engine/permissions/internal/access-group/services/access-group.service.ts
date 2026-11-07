@@ -23,7 +23,7 @@ export class AccessGroupService {
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
-    // Any recompute happens here, so the lock below is not held through it
+    // A slow recompute under the lock would block the other syncs of this workspace
     await this.readSyncInputs(workspaceId);
 
     // Serialized so an older sync cannot delete the groups of a newer one
