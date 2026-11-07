@@ -1,3 +1,4 @@
+import { AccessGroupModule } from 'src/engine/permissions/internal/access-group/access-group.module';
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -76,6 +77,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
+    AccessGroupModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     ObjectMetadataModule,
     RecordExportModule,

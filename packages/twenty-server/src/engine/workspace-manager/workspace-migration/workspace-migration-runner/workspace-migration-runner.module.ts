@@ -3,6 +3,7 @@ import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AccessGroupSyncSchedulerModule } from 'src/engine/permissions/internal/access-group/access-group-sync-scheduler.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 
 @Module({
   imports: [
+    AccessGroupSyncSchedulerModule,
     FeatureFlagModule,
     WorkspaceMetadataVersionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

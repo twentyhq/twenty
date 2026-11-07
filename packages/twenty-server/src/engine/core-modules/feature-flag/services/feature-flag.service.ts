@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
@@ -22,6 +23,7 @@ export class FeatureFlagService {
     @InjectWorkspaceScopedRepository(FeatureFlagEntity)
     private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
   ) {}
 
   public async isFeatureEnabled(
@@ -75,6 +77,10 @@ export class FeatureFlagService {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'featureFlagsMap',
       ]);
+
+      if (keys.includes(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED)) {
+        await this.accessGroupSyncSchedulerService.scheduleSync(workspaceId);
+      }
     }
   }
 
@@ -125,6 +131,10 @@ export class FeatureFlagService {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
     ]);
+
+    if (featureFlag === FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED) {
+      await this.accessGroupSyncSchedulerService.scheduleSync(workspaceId);
+    }
 
     return result;
   }
