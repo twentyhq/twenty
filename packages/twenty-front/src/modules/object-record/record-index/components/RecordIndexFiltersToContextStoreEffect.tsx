@@ -63,8 +63,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  // The whole-view rule only carries the view filters, so it would also reach
-  // groups hidden behind other tabs or hidden from the view
+  // The whole-view rule carries only view filters, so it would reach hidden groups
   const isWholeViewTargeted =
     hasUserSelectedAllRecords &&
     (!isRecordGroupTabsDisplayed ||
