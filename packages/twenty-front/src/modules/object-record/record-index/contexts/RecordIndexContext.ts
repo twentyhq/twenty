@@ -4,7 +4,10 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { createRequiredContext } from '~/utils/createRequiredContext';
-import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+import {
+  type ObjectRecordsPermissions,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 
 export type RecordIndexContextValue = {
   indexIdentifierUrl: (recordId: string) => string;
@@ -23,7 +26,12 @@ export type RecordIndexContextValue = {
     ColumnDefinition<FieldMetadata>
   >;
   recordLimit?: number;
+  additionalFilter?: RecordGqlOperationFilter;
+  excludedRecordFilterIds?: string[];
 };
 
-export const [RecordIndexContextProvider, useRecordIndexContextOrThrow] =
-  createRequiredContext<RecordIndexContextValue>('RecordIndexContext');
+export const [
+  RecordIndexContextProvider,
+  useRecordIndexContextOrThrow,
+  useRecordIndexContextOrUndefined,
+] = createRequiredContext<RecordIndexContextValue>('RecordIndexContext');

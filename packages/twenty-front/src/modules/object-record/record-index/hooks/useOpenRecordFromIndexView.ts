@@ -5,6 +5,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexExcludedRecordFilterIds } from '@/object-record/record-index/hooks/useRecordIndexExcludedRecordFilterIds';
+import { omitRecordFiltersExcludedFromQueries } from '@/object-record/record-index/utils/omitRecordFiltersExcludedFromQueries';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -43,9 +45,14 @@ export const useOpenRecordFromIndexView = () => {
 
   const store = useStore();
 
+  const excludedRecordFilterIds = useRecordIndexExcludedRecordFilterIds();
+
   const openRecordFromIndexView = useCallback(
     ({ recordId }: { recordId: string }) => {
-      const parentViewFilters = store.get(currentRecordFilters);
+      const parentViewFilters = omitRecordFiltersExcludedFromQueries({
+        recordFilters: store.get(currentRecordFilters),
+        excludedRecordFilterIds,
+      });
 
       const parentViewSorts = store.get(currentRecordSorts);
 
@@ -111,6 +118,7 @@ export const useOpenRecordFromIndexView = () => {
     },
     [
       currentRecordFilters,
+      excludedRecordFilterIds,
       currentRecordSorts,
       currentRecordFilterGroups,
       recordIndexId,

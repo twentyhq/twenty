@@ -19,6 +19,7 @@ import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/wi
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { type ReactNode } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
@@ -29,6 +30,8 @@ type RecordTableWidgetRendererContentProps = {
   isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
+  additionalFilter?: RecordGqlOperationFilter;
+  excludedRecordFilterIds?: string[];
   instanceIdSuffix?: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
   junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
@@ -41,6 +44,8 @@ export const RecordTableWidgetRendererContent = ({
   isUIEditable = false,
   isEmptyStateHidden = false,
   recordLimit,
+  additionalFilter,
+  excludedRecordFilterIds,
   instanceIdSuffix,
   nestedRelationCreateThrough,
   junctionCreateThrough,
@@ -96,6 +101,8 @@ export const RecordTableWidgetRendererContent = ({
       viewId={viewId}
       widgetId={widgetId}
       recordLimit={recordLimit}
+      additionalFilter={additionalFilter}
+      excludedRecordFilterIds={excludedRecordFilterIds}
       instanceIdSuffix={instanceIdSuffix}
       nestedRelationCreateThrough={nestedRelationCreateThrough}
       junctionCreateThrough={junctionCreateThrough}

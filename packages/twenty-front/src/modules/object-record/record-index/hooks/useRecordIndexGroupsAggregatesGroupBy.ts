@@ -5,13 +5,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
+import { useRecordIndexQueryRecordFilters } from '@/object-record/record-index/hooks/useRecordIndexQueryRecordFilters';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -43,13 +43,10 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-  );
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-  );
+  const {
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+  } = useRecordIndexQueryRecordFilters();
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -117,6 +114,8 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       .map((recordGroupDefinition) => recordGroupDefinition.value),
   });
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const { data, loading, error } = useQuery(groupByAggregateQuery, {
     skip:
       !isDefined(objectMetadataItem) ||
@@ -128,6 +127,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
         anyFieldFilter,
         requestFilters,
         recordGroupOptionsFilter,
+        additionalFilter,
       ]),
       groupBy: {
         ...groupByGqlInput,
