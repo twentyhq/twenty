@@ -1,0 +1,279 @@
+import { randomUUID } from 'node:crypto';
+
+import {
+  ConnectedAccountProvider,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
+import { In } from 'typeorm';
+
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+
+import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
+import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
+import { findCreatedPeopleEmails } from 'test/integration/utils/find-imported-records.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+
+const HANDLE = 'microsoft-sent-draft@apple.dev';
+const KEPT_RECIPIENT = 'kept-recipient@external.test';
+const REMOVED_RECIPIENT = 'removed-recipient@external.test';
+
+const DRAFT_SUBJECT = `Microsoft scheduled message ${randomUUID()}`;
+const SENT_SUBJECT = `Microsoft sent message ${randomUUID()}`;
+
+const FOLDERS = [
+  { id: 'inbox', displayName: 'Inbox' },
+  { id: 'drafts', displayName: 'Drafts' },
+  { id: 'sentitems', displayName: 'Sent Items' },
+  { id: 'archive', displayName: 'Archive' },
+];
+
+const RECEIVED_MESSAGE_ID = 'microsoft-received-message';
+const RECEIVED_MESSAGE_HEADER_ID = `<${RECEIVED_MESSAGE_ID}@example.com>`;
+
+const RECEIVED_MESSAGE = {
+  id: RECEIVED_MESSAGE_ID,
+  subject: `Microsoft received message ${randomUUID()}`,
+  body: { contentType: 'text', content: 'Received body' },
+  receivedDateTime: '2026-08-12T00:00:00.000Z',
+  internetMessageId: RECEIVED_MESSAGE_HEADER_ID,
+  conversationId: 'microsoft-received-conversation',
+  parentFolderId: 'inbox',
+  isDraft: false,
+  from: { emailAddress: { address: KEPT_RECIPIENT, name: 'Kept Recipient' } },
+  toRecipients: [{ emailAddress: { address: HANDLE } }],
+};
+
+const SCHEDULED_MESSAGE_ID = 'microsoft-sent-draft-message';
+const SCHEDULED_MESSAGE_HEADER_ID = `<${SCHEDULED_MESSAGE_ID}@example.com>`;
+
+const SCHEDULED_MESSAGE = {
+  id: SCHEDULED_MESSAGE_ID,
+  subject: DRAFT_SUBJECT,
+  body: { contentType: 'text', content: 'Draft body' },
+  receivedDateTime: '2026-08-13T00:00:00.000Z',
+  internetMessageId: SCHEDULED_MESSAGE_HEADER_ID,
+  conversationId: 'microsoft-sent-draft-conversation',
+  parentFolderId: 'drafts',
+  isDraft: true,
+  from: { emailAddress: { address: HANDLE } },
+  toRecipients: [
+    { emailAddress: { address: KEPT_RECIPIENT } },
+    { emailAddress: { address: REMOVED_RECIPIENT } },
+  ],
+};
+
+const QUICKLY_SENT_RECIPIENT = 'quickly-sent-recipient@external.test';
+
+const QUICKLY_SENT_MESSAGE = {
+  id: 'microsoft-quickly-sent-message',
+  subject: `Microsoft quickly sent message ${randomUUID()}`,
+  body: { contentType: 'text', content: 'Quickly sent body' },
+  receivedDateTime: '2026-08-14T00:00:00.000Z',
+  internetMessageId: '<microsoft-quickly-sent-message@example.com>',
+  conversationId: 'microsoft-quickly-sent-conversation',
+  parentFolderId: 'drafts',
+  isDraft: false,
+  from: { emailAddress: { address: HANDLE } },
+  toRecipients: [{ emailAddress: { address: QUICKLY_SENT_RECIPIENT } }],
+};
+
+type ImportedMessage = {
+  id: string;
+  subject: string;
+  text: string;
+  isDraft: boolean;
+  messageThreadId: string;
+};
+
+type ImportedMessageState = {
+  message: ImportedMessage;
+  threadSubject: string;
+  associations: { id: string; messageExternalId: string }[];
+  folderExternalIds: (string | null)[];
+  recipientHandles: string[];
+  participantIds: string[];
+};
+
+const findImportedMessageState = async (
+  headerMessageId: string,
+): Promise<ImportedMessageState> => {
+  const messages = await findRecordNodesByFilter<ImportedMessage>(
+    'message',
+    'messages',
+    'id subject text isDraft messageThreadId',
+    { headerMessageId: { eq: headerMessageId } },
+  );
+
+  expect(messages).toHaveLength(1);
+
+  const [message] = messages;
+
+  const [thread] = await findRecordNodesByFilter<{ subject: string }>(
+    'messageThread',
+    'messageThreads',
+    'subject',
+    { id: { eq: message.messageThreadId } },
+  );
+
+  const associations = await findRecordNodesByFilter<{
+    id: string;
+    messageExternalId: string;
+  }>(
+    'messageChannelMessageAssociation',
+    'messageChannelMessageAssociations',
+    'id messageExternalId',
+    { messageId: { eq: message.id } },
+  );
+
+  const folderAssociations = await findRecordNodesByFilter<{
+    messageFolderId: string;
+  }>(
+    'messageChannelMessageAssociationMessageFolder',
+    'messageChannelMessageAssociationMessageFolders',
+    'messageFolderId',
+    {
+      messageChannelMessageAssociationId: {
+        in: associations.map((association) => association.id),
+      },
+    },
+  );
+
+  const linkedFolders = await getCoreRepository<MessageFolderEntity>(
+    MessageFolderEntity,
+  ).findBy({
+    id: In(
+      folderAssociations.map(
+        (folderAssociation) => folderAssociation.messageFolderId,
+      ),
+    ),
+  });
+
+  const recipients = await findRecordNodesByFilter<{
+    id: string;
+    handle: string;
+    role: string;
+  }>('messageParticipant', 'messageParticipants', 'id handle role', {
+    messageId: { eq: message.id },
+  });
+
+  return {
+    message,
+    threadSubject: thread.subject,
+    associations,
+    folderExternalIds: linkedFolders.map((folder) => folder.externalId),
+    recipientHandles: recipients
+      .filter((recipient) => recipient.role === MessageParticipantRole.TO)
+      .map((recipient) => recipient.handle)
+      .sort(),
+    participantIds: recipients.map((recipient) => recipient.id).sort(),
+  };
+};
+
+describe('Microsoft draft sent from Outlook (integration)', () => {
+  const mailbox = [SCHEDULED_MESSAGE, RECEIVED_MESSAGE];
+
+  const microsoftMock = setupMicrosoftMock({
+    handle: HANDLE,
+    folders: FOLDERS,
+    messages: mailbox,
+  });
+
+  let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let stateWhileScheduled: ImportedMessageState;
+  let stateAfterSend: ImportedMessageState;
+  let receivedStateBeforeArchive: ImportedMessageState;
+  let receivedStateAfterArchive: ImportedMessageState;
+
+  beforeAll(async () => {
+    channel = await connectMessagingAccount({
+      provider: ConnectedAccountProvider.MICROSOFT,
+      handle: HANDLE,
+    });
+
+    await runMessageChannelSync(channel.channelId);
+
+    stateWhileScheduled = await findImportedMessageState(
+      SCHEDULED_MESSAGE_HEADER_ID,
+    );
+    receivedStateBeforeArchive = await findImportedMessageState(
+      RECEIVED_MESSAGE_HEADER_ID,
+    );
+
+    mailbox.push(QUICKLY_SENT_MESSAGE);
+    microsoftMock.moveMessageToFolder(QUICKLY_SENT_MESSAGE.id, 'sentitems');
+    microsoftMock.moveMessageToFolder(RECEIVED_MESSAGE_ID, 'archive');
+    RECEIVED_MESSAGE.from.emailAddress.name = 'Renamed Recipient';
+    microsoftMock.moveMessageToFolder(SCHEDULED_MESSAGE_ID, 'sentitems');
+    SCHEDULED_MESSAGE.isDraft = false;
+    SCHEDULED_MESSAGE.subject = SENT_SUBJECT;
+    SCHEDULED_MESSAGE.body = { contentType: 'text', content: 'Sent body' };
+    SCHEDULED_MESSAGE.toRecipients = [
+      { emailAddress: { address: KEPT_RECIPIENT } },
+    ];
+
+    await runMessageChannelSync(channel.channelId);
+
+    stateAfterSend = await findImportedMessageState(
+      SCHEDULED_MESSAGE_HEADER_ID,
+    );
+    receivedStateAfterArchive = await findImportedMessageState(
+      RECEIVED_MESSAGE_HEADER_ID,
+    );
+  }, 180000);
+
+  afterAll(async () => {
+    await channel?.cleanup().catch(() => undefined);
+  });
+
+  it('imports the scheduled message as a draft', () => {
+    expect(stateWhileScheduled.message).toMatchObject({
+      subject: DRAFT_SUBJECT,
+      text: 'Draft body',
+      isDraft: true,
+    });
+    expect(stateWhileScheduled.recipientHandles).toEqual([
+      KEPT_RECIPIENT,
+      REMOVED_RECIPIENT,
+    ]);
+    expect(stateWhileScheduled.folderExternalIds).toEqual(['drafts']);
+  });
+
+  it('refreshes the same message record once Outlook sends it', () => {
+    expect(stateAfterSend.message).toMatchObject({
+      id: stateWhileScheduled.message.id,
+      subject: SENT_SUBJECT,
+      text: 'Sent body',
+      isDraft: false,
+    });
+    expect(stateAfterSend.associations).toEqual(
+      stateWhileScheduled.associations,
+    );
+  });
+
+  it('keeps only the recipients Outlook still lists', () => {
+    expect(stateAfterSend.recipientHandles).toEqual([KEPT_RECIPIENT]);
+  });
+
+  it('moves the thread to the sent subject', () => {
+    expect(stateAfterSend.threadSubject).toBe(SENT_SUBJECT);
+  });
+
+  it('links the message to Sent Items instead of Drafts', () => {
+    expect(stateAfterSend.folderExternalIds).toEqual(['sentitems']);
+  });
+
+  it('creates the contact of a draft written and sent between two syncs', async () => {
+    expect(await findCreatedPeopleEmails([QUICKLY_SENT_RECIPIENT])).toEqual([
+      QUICKLY_SENT_RECIPIENT,
+    ]);
+  });
+
+  it('moves an archived email to Archive and keeps its participants', () => {
+    expect(receivedStateAfterArchive.folderExternalIds).toEqual(['archive']);
+    expect(receivedStateAfterArchive.participantIds).toEqual(
+      receivedStateBeforeArchive.participantIds,
+    );
+  });
+});

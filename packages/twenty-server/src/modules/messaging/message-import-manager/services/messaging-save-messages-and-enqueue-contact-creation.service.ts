@@ -73,14 +73,20 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
         async (transactionScope) => {
           const {
+            movedMessageExternalIdsWithoutSend,
             messageExternalIdsAndIdsMap,
             messageExternalIdToMessageChannelMessageAssociationIdMap,
             messageExternalIdToMessageThreadIdMap,
-          } = await this.messageService.saveMessagesWithinTransaction(
-            messagesToSave,
-            messageChannel.id,
+          } = await this.messageService.saveMessagesWithinTransaction({
+            messages: messagesToSave,
+            messageChannelId: messageChannel.id,
+            messageChannelType: messageChannel.type,
             transactionScope,
             workspaceId,
+          });
+
+          const movedMessageExternalIdsWithoutSendSet = new Set(
+            movedMessageExternalIdsWithoutSend,
           );
 
           const participantsWithMessageId: (ParticipantWithMessageId & {
@@ -89,6 +95,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             const messageId = messageExternalIdsAndIdsMap.get(
               message.externalId,
             );
+
+            if (movedMessageExternalIdsWithoutSendSet.has(message.externalId)) {
+              return [];
+            }
 
             return messageId
               ? message.participants.map((participant: Participant) => {
