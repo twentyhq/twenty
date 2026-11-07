@@ -178,7 +178,7 @@ export class AgentChatInboxParticipantWriterService {
 
       await this.recordShareSystemWriteService.setRecordsPrivacy({
         workspaceId,
-        flatObjectMetadata: participantObjectMetadata,
+        objectMetadataId: participantObjectMetadata.id,
         recordIds: identifiers.map(({ id }) => id),
         isPrivate: true,
         transactionScope: scope,

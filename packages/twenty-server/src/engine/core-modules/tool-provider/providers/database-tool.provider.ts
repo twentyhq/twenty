@@ -197,12 +197,8 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
-          this.recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
+          this.recordPermissionsService.findUnreadableFields(objectQuestion),
+          this.recordPermissionsService.findUneditableFields(objectQuestion),
         ]);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,

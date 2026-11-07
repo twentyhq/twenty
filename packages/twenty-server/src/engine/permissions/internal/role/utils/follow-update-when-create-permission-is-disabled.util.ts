@@ -1,9 +1,10 @@
 import {
-  FeatureFlagKey,
+  type FeatureFlagKey,
   type ObjectRecordsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const followUpdateForCreate = (
@@ -30,7 +31,8 @@ export const followUpdateWhenCreatePermissionIsDisabled = ({
   recordsPermissions: RoleRecordsPermissions;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): RoleRecordsPermissions =>
-  featureFlagsMap[FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED] === true
+  getEnforcedOperationType({ operationType: 'create', featureFlagsMap }) ===
+  'create'
     ? recordsPermissions
     : {
         ...recordsPermissions,

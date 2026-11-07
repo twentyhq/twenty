@@ -339,7 +339,7 @@ export class RoleAssignmentWriteService {
     workspaceId: string;
   }) {
     const workspaceMembersWithAdminRole =
-      await this.rolePermissionsService.findWorkspaceMembersWithRole({
+      await this.findWorkspaceMembersWithRole({
         roleId: adminRoleId,
         workspaceId,
       });
@@ -353,5 +353,31 @@ export class RoleAssignmentWriteService {
         },
       );
     }
+  }
+
+  private async findWorkspaceMembersWithRole({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<FlatWorkspaceMember[]> {
+    const { userWorkspaceRoleMap, flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return Object.entries(userWorkspaceRoleMap)
+      .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
+      .map(([userWorkspaceId]) => {
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
+
+        return isDefined(workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+          : undefined;
+      })
+      .filter(isDefined);
   }
 }

@@ -72,9 +72,10 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       rowLevelRecordsPermissions: isDefined(rowLevelRecordsPermissions)
         ? {
             ...rowLevelRecordsPermissions,
-            canCreateRecords:
-              rowLevelRecordsPermissions.canCreateRecords ??
-              rowLevelRecordsPermissions.canUpdateRecords,
+            canCreateRecords: canReachSomeRecords({
+              objectRecordsPermissions: permissions,
+              operationType: 'create',
+            }),
           }
         : rowLevelRecordsPermissions,
     });

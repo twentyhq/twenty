@@ -24,20 +24,16 @@ export const buildCreatePermissionCommandMenuItemUpdates = ({
   COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.flatMap((universalIdentifier) => {
     const commandMenuItem =
       flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
+    const expression = commandMenuItem?.conditionalAvailabilityExpression;
 
-    if (
-      !isDefined(commandMenuItem) ||
-      commandMenuItem.conditionalAvailabilityExpression?.includes(
-        UPDATE_PERMISSION,
-      ) !== true
-    ) {
+    if (!isDefined(commandMenuItem) || !expression?.includes(UPDATE_PERMISSION)) {
       return [];
     }
 
     return [
       {
         ...commandMenuItem,
-        conditionalAvailabilityExpression: commandMenuItem.conditionalAvailabilityExpression
+        conditionalAvailabilityExpression: expression
           .split(UPDATE_PERMISSION)
           .join(CREATE_PERMISSION),
         updatedAt: now,
