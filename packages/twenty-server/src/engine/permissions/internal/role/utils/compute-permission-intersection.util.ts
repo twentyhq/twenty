@@ -80,7 +80,6 @@ const intersectObjectRecordsPermissions = (
       canReachSomeRecords({ objectRecordsPermissions, operationType }),
     );
 
-  // A role without its own create permission still limits through update, as an AI run scope does
   const isCreatePermissionEnabled = objectRecordsPermissionsPerRole.some(
     (objectRecordsPermissions) =>
       isDefined(objectRecordsPermissions?.canCreateAllRecords),

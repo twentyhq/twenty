@@ -25,6 +25,7 @@ import {
   FeatureFlagKey,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -72,9 +73,9 @@ const setPersonDisabledActions = ({
     'UPDATE core."objectMetadata" SET "disabledObjectPermissionActions" = $2 WHERE id = $1',
     [
       objectMetadataId,
-      disabledObjectPermissionActions === null
-        ? null
-        : JSON.stringify(disabledObjectPermissionActions),
+      isDefined(disabledObjectPermissionActions)
+        ? JSON.stringify(disabledObjectPermissionActions)
+        : null,
     ],
   );
 
