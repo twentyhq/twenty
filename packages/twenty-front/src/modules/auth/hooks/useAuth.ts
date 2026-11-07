@@ -672,12 +672,20 @@ export const useAuth = () => {
         }
 
         if (isDefined(redemption.provisioningUri)) {
-          return { provisioningUri: redemption.provisioningUri };
+          return {
+            provisioningUri: redemption.provisioningUri,
+            isTwoFactorAuthenticationReset:
+              redemption.isTwoFactorAuthenticationReset,
+          };
         }
 
         await handleLoadWorkspaceAfterAuthentication();
 
-        return { provisioningUri: null };
+        return {
+          provisioningUri: null,
+          isTwoFactorAuthenticationReset:
+            redemption.isTwoFactorAuthenticationReset,
+        };
       },
       [
         getAuthTokensFromTwoFactorAuthenticationRecoveryCode,

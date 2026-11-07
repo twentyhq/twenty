@@ -20,6 +20,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { TwoFactorAuthenticationExceptionCode } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
@@ -164,6 +165,13 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
               encryptedSecret: 'encrypted-replacement-secret',
               status: OTPStatus.PENDING,
             }),
+          },
+        },
+        {
+          provide: TwoFactorAuthenticationBackupCodeService,
+          useValue: {
+            consumeBackupCode: jest.fn().mockResolvedValue(false),
+            revokeBackupCodes: jest.fn(),
           },
         },
         {
@@ -384,7 +392,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     };
 
     it('consumes the code, removes the authenticator and revokes refresh tokens together, then signs out the member', async () => {
-      await expect(redeem()).resolves.toEqual({ provisioningUri: null });
+      await expect(redeem()).resolves.toEqual({
+        provisioningUri: null,
+        isTwoFactorAuthenticationReset: true,
+      });
 
       expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
         buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
@@ -444,7 +455,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     it('hands the replacement authenticator only to the redeeming request when the workspace enforces two-factor authentication', async () => {
       await expect(
         redeem({ isTwoFactorAuthenticationEnforced: true }),
-      ).resolves.toEqual({ provisioningUri: REPLACEMENT_PROVISIONING_URI });
+      ).resolves.toEqual({
+        provisioningUri: REPLACEMENT_PROVISIONING_URI,
+        isTwoFactorAuthenticationReset: true,
+      });
 
       expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
         1,

@@ -5,6 +5,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import ms from 'ms';
 import {
+  TwoFactorAuthenticationBackupCodeUsedEmail,
   TwoFactorAuthenticationRecoveryCodeIssuedEmail,
   TwoFactorAuthenticationResetEmail,
   renderEmail,
@@ -41,6 +42,7 @@ import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
   TwoFactorAuthenticationException,
@@ -83,6 +85,7 @@ export class TwoFactorAuthenticationRecoveryService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twoFactorAuthenticationBackupCodeService: TwoFactorAuthenticationBackupCodeService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userSessionService: UserSessionService,
     private readonly throttlerService: ThrottlerService,
@@ -286,7 +289,10 @@ export class TwoFactorAuthenticationRecoveryService {
       'id' | 'displayName' | 'isTwoFactorAuthenticationEnforced'
     >;
     recoveryCode: string;
-  }): Promise<{ provisioningUri: string | null }> {
+  }): Promise<{
+    provisioningUri: string | null;
+    isTwoFactorAuthenticationReset: boolean;
+  }> {
     const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
       targetUserId: userId,
       targetWorkspaceId: workspace.id,
@@ -310,6 +316,18 @@ export class TwoFactorAuthenticationRecoveryService {
         });
 
         const appTokenRepository = entityManager.getRepository(AppTokenEntity);
+
+        const isBackupCodeConsumed =
+          await this.twoFactorAuthenticationBackupCodeService.consumeBackupCode(
+            { entityManager, userWorkspace, backupCode: recoveryCode },
+          );
+
+        if (isBackupCodeConsumed) {
+          return {
+            provisioningUri: null,
+            isTwoFactorAuthenticationReset: false,
+          };
+        }
 
         // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued
         const consumeResult = await appTokenRepository.update(
@@ -340,6 +358,12 @@ export class TwoFactorAuthenticationRecoveryService {
           userWorkspaceId: userWorkspace.id,
         });
 
+        await this.twoFactorAuthenticationBackupCodeService.revokeBackupCodes({
+          userId,
+          workspaceId: workspace.id,
+          entityManager,
+        });
+
         await appTokenRepository
           .createQueryBuilder()
           .update()
@@ -362,7 +386,10 @@ export class TwoFactorAuthenticationRecoveryService {
           .execute();
 
         if (!workspace.isTwoFactorAuthenticationEnforced) {
-          return { provisioningUri: null };
+          return {
+            provisioningUri: null,
+            isTwoFactorAuthenticationReset: true,
+          };
         }
 
         const { uri, encryptedSecret, status } =
@@ -380,7 +407,7 @@ export class TwoFactorAuthenticationRecoveryService {
           strategy: TwoFactorAuthenticationStrategy.TOTP,
         });
 
-        return { provisioningUri: uri };
+        return { provisioningUri: uri, isTwoFactorAuthenticationReset: true };
       },
     );
 
@@ -389,6 +416,15 @@ export class TwoFactorAuthenticationRecoveryService {
         'Invalid recovery code',
         TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
       );
+    }
+
+    if (!redemption.isTwoFactorAuthenticationReset) {
+      await this.sendBackupCodeUsedEmail({
+        userWorkspace,
+        workspaceDisplayName: workspace.displayName,
+      });
+
+      return redemption;
     }
 
     await this.userSessionService.revokeAllSessionsForUser({
@@ -582,6 +618,37 @@ export class TwoFactorAuthenticationRecoveryService {
     });
   }
 
+  private async sendBackupCodeUsedEmail({
+    userWorkspace,
+    workspaceDisplayName,
+  }: {
+    userWorkspace: Pick<
+      UserWorkspaceEntity,
+      'userId' | 'workspaceId' | 'locale' | 'user'
+    >;
+    workspaceDisplayName: WorkspaceEntity['displayName'];
+  }): Promise<void> {
+    const locale = userWorkspace.locale ?? SOURCE_LOCALE;
+
+    await this.sendSecurityEmail({
+      to: userWorkspace.user.email,
+      locale,
+      subject: msg`A backup code was used to sign in to your account`,
+      buildEmailTemplate: async () =>
+        TwoFactorAuthenticationBackupCodeUsedEmail({
+          workspaceDisplayName: workspaceDisplayName ?? '',
+          remainingBackupCodeCount:
+            await this.twoFactorAuthenticationBackupCodeService.getRemainingBackupCodeCount(
+              {
+                userId: userWorkspace.userId,
+                workspaceId: userWorkspace.workspaceId,
+              },
+            ),
+          locale,
+        }),
+    });
+  }
+
   private async sendSecurityEmail({
     to,
     locale,
@@ -591,10 +658,12 @@ export class TwoFactorAuthenticationRecoveryService {
     to: string;
     locale: UserWorkspaceEntity['locale'];
     subject: MessageDescriptor;
-    buildEmailTemplate: () => Parameters<typeof renderEmail>[0];
+    buildEmailTemplate: () =>
+      | Parameters<typeof renderEmail>[0]
+      | Promise<Parameters<typeof renderEmail>[0]>;
   }): Promise<void> {
     try {
-      const emailTemplate = buildEmailTemplate();
+      const emailTemplate = await buildEmailTemplate();
       const html = await renderEmail(emailTemplate, { pretty: true });
       const text = await renderEmail(emailTemplate, { plainText: true });
       const i18n = this.i18nService.getI18nInstance(locale);
