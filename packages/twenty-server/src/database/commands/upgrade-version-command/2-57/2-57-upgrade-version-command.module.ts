@@ -8,6 +8,7 @@ import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/
 import { ReadCreatePermissionInCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794037630000-read-create-permission-in-command-menu-items.command';
 import { RecomputeRolesPermissionsWithCreateKeysCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794045345000-recompute-roles-permissions-with-create-keys.command';
 import { AddAccessGroupObjectMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794049115000-add-access-group-object-metadata-id.command';
+import { EnablePrivateRecordsForSharingWorkspacesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794056573000-enable-private-records-for-sharing-workspaces.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -26,6 +27,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMessageAttachmentTargetCommand,
     BackfillCanCreatePermissionsCommand,
     DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
+    EnablePrivateRecordsForSharingWorkspacesCommand,
     MoveFindRecordsSortsToRecordSortsCommand,
     ReadCreatePermissionInCommandMenuItemsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,

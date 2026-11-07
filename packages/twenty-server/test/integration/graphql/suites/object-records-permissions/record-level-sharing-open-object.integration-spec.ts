@@ -46,6 +46,13 @@ const SET_PRIVATE = parse(
   `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { ${fields} } }`,
 );
 
+const setPrivateRecordsEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
 describe('Record-level sharing on an object open by default', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
@@ -365,6 +372,7 @@ describe('Record-level sharing on an object open by default', () => {
 
   it('should keep a private record private while record sharing is off', async () => {
     await setPrivate({ isPrivate: true });
+    await setPrivateRecordsEnabled(true);
     await setRecordSharingEnabled(false);
 
     try {
@@ -375,6 +383,20 @@ describe('Record-level sharing on an object open by default', () => {
         isPrivate: true,
       });
       expect((await setPrivate({ isPrivate: true })).body.errors).toBeDefined();
+    } finally {
+      await setRecordSharingEnabled(true);
+      await setPrivateRecordsEnabled(false);
+    }
+  });
+
+  it('should stop applying private records once both flags are off', async () => {
+    await setPrivate({ isPrivate: true });
+    await setRecordSharingEnabled(false);
+
+    try {
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).not.toEqual(
+        [],
+      );
     } finally {
       await setRecordSharingEnabled(true);
     }

@@ -87,7 +87,7 @@ const metadataMaps: PermissionsMetadataMaps = {
   },
   flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
   flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
-  featureFlagsMap: {},
+  featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
 };
 const buildCondition = (
   request: Omit<
@@ -211,6 +211,20 @@ describe('buildPermissionsCondition', () => {
         flatObjectMetadata: object,
       }),
     ).toMatchObject({ kind: 'gated' });
+  });
+
+  it('adds nothing for private records and shares with both flags off', () => {
+    const company = buildObject({ id: 'company' });
+
+    expect(
+      buildCondition({
+        principals: readEverything,
+        metadataMaps: { ...metadataMaps, featureFlagsMap: {} },
+        tableAlias: 'company',
+        flatObjectMetadata: company,
+        operationType: 'read',
+      }),
+    ).toBe(true);
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
@@ -448,7 +462,8 @@ describe('buildPermissionsCondition', () => {
       );
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
-        metadataMaps,
+        operationType: 'softDelete',
+        hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.FULL,
         tableAlias: note.nameSingular,
         flatObjectMetadata: note,
       });
