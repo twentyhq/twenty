@@ -119,12 +119,18 @@ describe('Send Email Body Rendering', () => {
       ) as ReactElement;
 
       const findBrElements = (element: ReactElement): boolean => {
-        if (!element || typeof element !== 'object') return false;
-        if (element.type === 'br') return true;
+        if (!element || typeof element !== 'object') {
+          return false;
+        }
+        if (element.type === 'br') {
+          return true;
+        }
 
         const children = (element.props as { children?: unknown })?.children;
 
-        if (!children) return false;
+        if (!children) {
+          return false;
+        }
         if (Array.isArray(children)) {
           return children.some(
             (child) => isValidElement(child) && findBrElements(child),

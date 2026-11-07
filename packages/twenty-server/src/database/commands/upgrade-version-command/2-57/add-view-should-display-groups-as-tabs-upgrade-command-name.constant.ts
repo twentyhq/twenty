@@ -1,2 +1,2 @@
 export const ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME =
-  '2.57.0_AddViewShouldDisplayGroupsAsTabsFastInstanceCommand_1794064957997';
+  '2.57.0_AddViewShouldDisplayGroupsAsTabsFastInstanceCommand_1794082707264';

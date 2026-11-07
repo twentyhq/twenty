@@ -94,7 +94,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const readRepository = this.getReadRepository(queryRunnerContext);
 
-    let queryBuilder = readRepository.createQueryBuilder(objectAlias);
+    const queryBuilder = readRepository.createQueryBuilder(objectAlias);
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
@@ -110,7 +110,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectAlias,
     });
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
       args,
