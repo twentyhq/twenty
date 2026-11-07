@@ -23692,11 +23692,6 @@ msgstr "Replit linkovi za instalaciju zahtevaju HTTPS MCP URL."
 msgid "Reply"
 msgstr "Odgovori"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Odgovori..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
