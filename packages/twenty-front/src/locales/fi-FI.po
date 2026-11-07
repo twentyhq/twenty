@@ -5961,6 +5961,11 @@ msgstr "Tarkistuslista"
 msgid "Check recent runs"
 msgstr "Tarkista viimeisimmät suoritukset"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Tarkista tietueita luotaessa luontioikeus erikseen päivitysoikeuden sijaan."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8171,6 +8176,11 @@ msgstr "Luo tietue"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Luo tietue"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Tietueiden luontioikeus"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -23681,11 +23691,6 @@ msgstr "Replit-asennuslinkit edellyttävät HTTPS MCP -URL-osoitetta."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Vastaa"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Vastaa..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
