@@ -35,7 +35,9 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
   const parseTime = (timeString: string): TimeValue | null => {
     if (isHour12) {
       const match = timeString.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-      if (!match) return null;
+      if (!match) {
+        return null;
+      }
 
       const [, hoursStr, minutesStr, amPmStr] = match;
       const hours = parseInt(hoursStr, 10);
@@ -52,7 +54,9 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       return { hour: hour24, minute: minutes };
     }
     const match = timeString.match(/^(\d{1,2}):(\d{2})$/);
-    if (!match) return null;
+    if (!match) {
+      return null;
+    }
 
     const [, hoursStr, minutesStr] = match;
     const hours = parseInt(hoursStr, 10);

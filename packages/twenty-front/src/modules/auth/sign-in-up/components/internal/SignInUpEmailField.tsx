@@ -51,7 +51,9 @@ export const SignInUpEmailField = ({
               placeholder={t`Email`}
               onBlur={onBlur}
               onChange={(email: string) => {
-                if (isDefined(onInputChange)) onInputChange(email);
+                if (isDefined(onInputChange)) {
+                  onInputChange(email);
+                }
                 onChange(email);
               }}
               error={showErrors ? error?.message : undefined}

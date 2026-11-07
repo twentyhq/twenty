@@ -153,7 +153,9 @@ export const SettingsObjectIndexesSection = ({
   };
 
   const handleConfirmDelete = async () => {
-    if (pendingDelete === null) return;
+    if (pendingDelete === null) {
+      return;
+    }
     setIsDeleting(true);
 
     const result = await deleteOneIndexMetadataItem({
