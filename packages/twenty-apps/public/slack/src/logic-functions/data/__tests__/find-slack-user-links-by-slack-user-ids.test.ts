@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
@@ -8,7 +7,7 @@ const EXTERNAL_SLACK_TEAM_ID = 'T0EXTERNAL';
 
 const queryMock = vi.fn();
 
-const client = { query: queryMock } as unknown as CoreApiClient;
+const client = { query: queryMock };
 
 const buildQueryResult = (nodes: Record<string, unknown>[]) => ({
   slackUserLinks: { edges: nodes.map((node) => ({ node })) },

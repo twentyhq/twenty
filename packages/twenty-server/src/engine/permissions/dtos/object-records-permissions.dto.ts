@@ -12,6 +12,9 @@ export class ObjectRecordsPermissionsDTO {
   objectMetadataId: string;
 
   @Field(() => Boolean)
+  canCreateAllRecords: boolean;
+
+  @Field(() => Boolean)
   canReadAllRecords: boolean;
 
   @Field(() => Boolean)
@@ -27,5 +30,5 @@ export class ObjectRecordsPermissionsDTO {
   restrictedFields: RestrictedFieldsPermissions;
 
   @Field(() => RowLevelRecordsPermissionsDTO, { nullable: true })
-  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO;
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO | null;
 }

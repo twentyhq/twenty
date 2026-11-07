@@ -6,7 +6,7 @@ const LINKS_PER_PAGE = 200;
 const MAX_PAGES = 25;
 
 export const listLinkedSlackUserIds = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   {
     slackTeamId,
     slackUserIds,

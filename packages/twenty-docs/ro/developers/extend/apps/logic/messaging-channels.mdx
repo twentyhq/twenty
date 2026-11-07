@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### Ce face serverul pentru dvs.
 
-**Eliminarea duplicatelor.** `externalId` este cheia. Ingerarea aceleiași conversații de două ori nu creează și nu modifică nimic, astfel încât un webhook relivrat poate fi reluat în siguranță, iar o completare retroactivă se poate suprapune peste un flux în timp real. `messageId` returnat rămâne stabil între reluări. Apelurile către un singur canal sunt serializate, astfel încât o relivrare care sosește în timp ce originalul său este încă scris așteaptă în loc să intre în concurență cu acesta.
+**Eliminarea duplicatelor.** `externalId` este cheia. Ingerarea aceleiași entități de două ori nu creează și nu modifică nimic, cu excepția [atașamentelor](#attaching-files) unui mesaj care nu avea niciunul, astfel încât un webhook relivrat poate fi redat în siguranță, iar o completare retrospectivă se poate suprapune peste un flux live. `messageId` returnat rămâne stabil între reluări. Apelurile către un singur canal sunt serializate, astfel încât o relivrare care sosește în timp ce originalul său este încă scris așteaptă în loc să intre în concurență cu acesta.
 
 **Gruparea în fire.** Mesajele care partajează un `threadExternalId` ajung într-un singur fir de mesaje, care apare apoi în înregistrările Persoană, Companie și Oportunitate ale participanților săi.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 Un lot este totul sau nimic, iar repetarea unui `externalId` într-un singur lot este respinsă — eliminați duplicatele înainte de trimitere. Conținutul unui mesaj este limitat la 256 KB.
+
+### Atașarea fișierelor
+
+Imaginile, videoclipurile, notele vocale și alte fișiere se află în `attachments` ale unui mesaj. Încărcați mai întâi fiecare fișier cu `uploadMessageAttachment`, care necesită indicatorul de permisiune `UPLOAD_FILE` pentru rolul aplicației dvs., apoi transmiteți ceea ce returnează:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Fiecare fișier este stocat ca înregistrare de atașament în mesaj. Extensia numelui fișierului decide cum afișează conversația fișierul: imaginile sunt afișate inline, videoclipurile și fișierele audio primesc un player, orice altceva este un cip de fișier. Un mesaj conține cel mult 20 de atașamente.
+
+Atașamentele sunt stocate numai cât timp mesajul nu are niciunul, astfel încât o relivrare nu le înlocuiește niciodată. Fiecare mesaj preluat raportează `hasAttachments`: preluați mai întâi textul, apoi descărcați și încărcați fișiere numai pentru mesajele care revin fără niciunul și preluați din nou acele mesaje împreună cu `attachments`. Un fișier pe care îl încărcați, dar nu îl atașați niciodată, nu este eliminat, așadar nu încărcați pentru un mesaj care are deja atașamente.
+
+Atașamentele urmează `visibility` al canalului, la fel ca corpul mesajului: cu excepția cazului în care conversația este complet partajată, ceilalți membri primesc o listă goală.
 
 ### Asocierea participanților cu Persoane
 

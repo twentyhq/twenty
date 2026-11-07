@@ -8,7 +8,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   checkIfLeafCanCarryCursorValue,
   resolveOrderByLeaves,
@@ -100,8 +100,12 @@ export const getCursor = (
   args: FindManyResolverArgs<any, any>,
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
-  if (args.after) return decodeCursor(args.after);
-  if (args.before) return decodeCursor(args.before);
+  if (args.after) {
+    return decodeCursor(args.after);
+  }
+  if (args.before) {
+    return decodeCursor(args.before);
+  }
 
   return undefined;
 };

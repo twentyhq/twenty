@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+
+- **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
+
 ### Breaking Changes
 
 - **`MetadataApiClient.uploadFile` in `twenty-client-sdk` takes one object and no longer accepts a content type.** The file now goes straight to Twenty's file storage (the API issues an upload target, the client sends the bytes there, then the API confirms the upload) instead of being streamed through the GraphQL API, and the MIME type is detected from the bytes on completion. Update every call:
@@ -32,6 +36,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **Message attachments in `twenty-sdk/logic-function`.** `uploadMessageAttachment({ filename, content })` uploads a file for a message and returns `{ fileId, label }`, which `ingestMessages` takes in a message's `attachments`. Twenty stores each file as an attachment record on the message. Attachments are added only while the message has none, so a later delivery can add them but never replaces them, and each `IngestedMessage` now reports `hasAttachments` so a redelivery can skip downloading them again. An uploaded file that no message ends up holding is kept, so upload only for messages without attachments. Uploading needs the `UPLOAD_FILE` permission flag on the app's role. `ingestMessages` itself now reads `hasAttachments`, so every call needs a Twenty server with message attachments, not only uploads.
 - **`sendInboxMessage` in `twenty-sdk/front-component`.** A front component can post in members' inbox without a logic function in between. The message is still from your app; the call carries the component's token, so the member looking at the page needs the AI permission too, and an expired token is refreshed once before the call is retried. Open the conversation with `navigate`:
 
   ```tsx
@@ -103,6 +108,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- **`uploadMessageAttachment` sends `content` without copying it.** The bytes go to storage as they are, so uploading a file no longer holds a second copy of it in memory. `MetadataApiClient.uploadFile` in `twenty-client-sdk` now takes any `Uint8Array` as `fileBuffer`; a `Buffer` still works.
 - **`sendInboxMessage` runs like the default API clients.** It now sends through `MetadataApiClient`, so in a logic function it acts as the person who triggered the run, who then needs the AI permission, and as your application only when nobody did; it used to always use the application's access. A GraphQL error now rejects with the server's message instead of `sendInboxMessage() failed: ...`. Its input and result are unchanged.
 - **`twenty app deploy` sends the tarball straight to file storage.** The CLI reserves an upload with `createFileUpload`, PUTs the archive to storage and registers it with `completeAppTarballUpload`, so the tarball no longer transits through the API process. Deploying to a server that predates these mutations fails instead of falling back to the multipart `uploadAppTarball` mutation.
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:

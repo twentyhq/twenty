@@ -34,10 +34,7 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -137,7 +134,7 @@ const mockModelCallingFindTool = ({
     modelId: TEST_AI_MODEL_ID,
     sdkPackage: '@ai-sdk/openai',
     model,
-  } as unknown as RegisteredAiModel);
+  });
 
   return calls;
 };

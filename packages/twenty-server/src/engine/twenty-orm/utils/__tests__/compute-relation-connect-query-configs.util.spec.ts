@@ -7,10 +7,12 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
 
 describe('computeRelationConnectQueryConfigs', () => {
   const personFields: FlatFieldMetadata[] = [
-    {
+    getFlatFieldMetadataMock({
       id: 'person-id-field-id',
       name: 'id',
       type: FieldMetadataType.UUID,
@@ -18,16 +20,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'person-object-metadata-id',
       isNullable: false,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'person-id-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'person-name-field-id',
       name: 'name',
       type: FieldMetadataType.FULL_NAME,
@@ -35,16 +36,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'person-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'person-name-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'person-company-1-field-id',
       name: 'company-related-to-1',
       type: FieldMetadataType.RELATION,
@@ -52,22 +52,21 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'person-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'person-company-1-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       relationTargetObjectMetadataId: 'company-object-metadata-id',
       relationTargetFieldMetadataId: 'company-id-field-id',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         joinColumnName: 'company-related-to-1Id',
       },
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'person-company-2-field-id',
       name: 'company-related-to-2',
       type: FieldMetadataType.RELATION,
@@ -75,25 +74,24 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'person-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'person-company-2-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
       relationTargetObjectMetadataId: 'company-object-metadata-id',
       relationTargetFieldMetadataId: 'company-id-field-id',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         joinColumnName: 'company-related-to-2Id',
       },
-    } as unknown as FlatFieldMetadata,
+    }),
   ];
 
   const companyFields: FlatFieldMetadata[] = [
-    {
+    getFlatFieldMetadataMock({
       id: 'company-id-field-id',
       name: 'id',
       type: FieldMetadataType.UUID,
@@ -101,16 +99,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'company-object-metadata-id',
       isNullable: false,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'company-id-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'company-name-field-id',
       name: 'name',
       type: FieldMetadataType.TEXT,
@@ -118,16 +115,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'company-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'company-name-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'company-description-field-id',
       name: 'description',
       type: FieldMetadataType.TEXT,
@@ -135,16 +131,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'company-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'company-description-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'company-domain-name-field-id',
       name: 'domainName',
       type: FieldMetadataType.LINKS,
@@ -152,16 +147,15 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'company-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'company-domain-name-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
-    {
+    }),
+    getFlatFieldMetadataMock({
       id: 'company-address-field-id',
       name: 'address',
       type: FieldMetadataType.TEXT,
@@ -169,15 +163,14 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectMetadataId: 'company-object-metadata-id',
       isNullable: true,
       isLabelSyncedWithName: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       universalIdentifier: 'company-address-field-id',
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
-      applicationId: null,
-    } as unknown as FlatFieldMetadata,
+    }),
   ];
 
   const allFields = [...personFields, ...companyFields];
@@ -226,10 +219,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       objectPermissionIds: [],
       fieldPermissionIds: [],
       viewIds: [],
-      applicationId: null,
       isLabelSyncedWithName: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
       shortcut: null,
       description: null,
       overrides: null,
@@ -284,20 +276,24 @@ describe('computeRelationConnectQueryConfigs', () => {
     order: number,
   ) => ({
     id,
+    workspaceId: 'workspace-id',
     fieldMetadataId,
     indexMetadataId,
     order,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    subFieldName: null,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
   });
 
   const flatIndexMaps: FlatEntityMaps<FlatIndexMetadata> = {
     byUniversalIdentifier: {
-      'company-id-index-metadata-id': {
+      'company-id-index-metadata-id': getFlatIndexMetadataMock({
         id: 'company-id-index-metadata-id',
         name: 'company-id-index-metadata-name',
         isUnique: true,
         objectMetadataId: 'company-object-metadata-id',
+        objectMetadataUniversalIdentifier: 'company-object-metadata-id',
+        applicationUniversalIdentifier: 'application-id',
         universalIdentifier: 'company-id-index-metadata-id',
         flatIndexFieldMetadatas: [
           createFlatIndexFieldMetadata(
@@ -307,12 +303,14 @@ describe('computeRelationConnectQueryConfigs', () => {
             0,
           ),
         ],
-      } as unknown as FlatIndexMetadata,
-      'company-domain-index-metadata-id': {
+      }),
+      'company-domain-index-metadata-id': getFlatIndexMetadataMock({
         id: 'company-domain-index-metadata-id',
         name: 'company-domain-index-metadata-name',
         isUnique: true,
         objectMetadataId: 'company-object-metadata-id',
+        objectMetadataUniversalIdentifier: 'company-object-metadata-id',
+        applicationUniversalIdentifier: 'application-id',
         universalIdentifier: 'company-domain-index-metadata-id',
         flatIndexFieldMetadatas: [
           createFlatIndexFieldMetadata(
@@ -322,12 +320,14 @@ describe('computeRelationConnectQueryConfigs', () => {
             0,
           ),
         ],
-      } as unknown as FlatIndexMetadata,
-      'company-composite-index-metadata-id': {
+      }),
+      'company-composite-index-metadata-id': getFlatIndexMetadataMock({
         id: 'company-composite-index-metadata-id',
         name: 'company-composite-index-metadata-name',
         isUnique: true,
         objectMetadataId: 'company-object-metadata-id',
+        objectMetadataUniversalIdentifier: 'company-object-metadata-id',
+        applicationUniversalIdentifier: 'application-id',
         universalIdentifier: 'company-composite-index-metadata-id',
         flatIndexFieldMetadatas: [
           createFlatIndexFieldMetadata(
@@ -343,7 +343,7 @@ describe('computeRelationConnectQueryConfigs', () => {
             1,
           ),
         ],
-      } as unknown as FlatIndexMetadata,
+      }),
     },
     universalIdentifierById: {
       'company-id-index-metadata-id': 'company-id-index-metadata-id',

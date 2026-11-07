@@ -5,7 +5,7 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 export const recordBotScheduleAttempt = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   {
     id,
     expectedAttemptedAt,

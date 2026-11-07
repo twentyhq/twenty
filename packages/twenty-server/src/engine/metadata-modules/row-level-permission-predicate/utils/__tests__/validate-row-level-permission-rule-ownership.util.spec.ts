@@ -1,9 +1,14 @@
 /* @license Enterprise */
 
-import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import {
   type RowLevelPermissionPredicateGroupInput,
   type RowLevelPermissionPredicateInput,
@@ -20,17 +25,80 @@ const ownerFieldMetadataId = 'owner-field-metadata-id';
 const workspaceMemberIdFieldMetadataId =
   'workspace-member-id-field-metadata-id';
 
-const createFlatEntityMapsKeyedById = <TEntity extends { id: string }>(
+const createFlatEntityMapsKeyedById = <TEntity extends SyncableFlatEntity>(
   entities: TEntity[],
-) =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity.id]),
-    ),
-  }) as unknown as FlatEntityMaps<never>;
+): FlatEntityMaps<TEntity> => ({
+  byUniversalIdentifier: Object.fromEntries(
+    entities.map((entity) => [entity.id, entity]),
+  ),
+  universalIdentifierById: Object.fromEntries(
+    entities.map((entity) => [entity.id, entity.id]),
+  ),
+  universalIdentifiersByApplicationId: {},
+});
+
+const buildFlatEntityBase = (id: string) => ({
+  id,
+  universalIdentifier: id,
+  workspaceId: 'workspace-id',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  deletedAt: null,
+});
+
+const buildFlatPredicate = (
+  predicate: Pick<
+    FlatRowLevelPermissionPredicate,
+    'id' | 'roleId' | 'objectMetadataId'
+  > &
+    Partial<Pick<FlatRowLevelPermissionPredicate, 'deletedAt'>>,
+): FlatRowLevelPermissionPredicate => ({
+  ...buildFlatEntityBase(predicate.id),
+  fieldMetadataId: ownerFieldMetadataId,
+  fieldMetadataUniversalIdentifier: ownerFieldMetadataId,
+  relationFieldMetadataId: null,
+  relationFieldMetadataUniversalIdentifier: null,
+  objectMetadataUniversalIdentifier: predicate.objectMetadataId,
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  subFieldName: null,
+  workspaceMemberFieldMetadataId: null,
+  workspaceMemberFieldMetadataUniversalIdentifier: null,
+  workspaceMemberSubFieldName: null,
+  rowLevelPermissionPredicateGroupId: null,
+  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  positionInRowLevelPermissionPredicateGroup: null,
+  roleUniversalIdentifier: predicate.roleId,
+  ...predicate,
+});
+
+const buildFlatPredicateGroup = (
+  group: Pick<
+    FlatRowLevelPermissionPredicateGroup,
+    'id' | 'roleId' | 'objectMetadataId'
+  > &
+    Partial<Pick<FlatRowLevelPermissionPredicateGroup, 'deletedAt'>>,
+): FlatRowLevelPermissionPredicateGroup => ({
+  ...buildFlatEntityBase(group.id),
+  parentRowLevelPermissionPredicateGroupId: null,
+  parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  positionInRowLevelPermissionPredicateGroup: null,
+  canReadRecords: true,
+  canCreateRecords: true,
+  canUpdateRecords: true,
+  canSoftDeleteRecords: true,
+  canDestroyRecords: true,
+  objectMetadataUniversalIdentifier: group.objectMetadataId,
+  roleUniversalIdentifier: group.roleId,
+  childRowLevelPermissionPredicateGroupIds: [],
+  childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+  rowLevelPermissionPredicateIds: [],
+  rowLevelPermissionPredicateUniversalIdentifiers: [],
+  ...group,
+});
 
 const defaultFields = [
   { id: ownerFieldMetadataId, name: 'owner', objectMetadataId },
@@ -76,17 +144,20 @@ const validate = ({
     predicates: predicates as RowLevelPermissionPredicateInput[],
     predicateGroups: predicateGroups as RowLevelPermissionPredicateGroupInput[],
     flatRowLevelPermissionPredicateMaps: createFlatEntityMapsKeyedById(
-      existingPredicates.map((predicate) => ({
-        deletedAt: null,
-        ...predicate,
-      })),
-    ) as unknown as FlatEntityMaps<FlatRowLevelPermissionPredicate>,
+      existingPredicates.map(buildFlatPredicate),
+    ),
     flatRowLevelPermissionPredicateGroupMaps: createFlatEntityMapsKeyedById(
-      existingGroups.map((group) => ({ deletedAt: null, ...group })),
-    ) as unknown as FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>,
+      existingGroups.map(buildFlatPredicateGroup),
+    ),
     flatFieldMetadataMaps: createFlatEntityMapsKeyedById(
-      fields,
-    ) as unknown as FlatEntityMaps<FlatFieldMetadata>,
+      fields.map((field) =>
+        getFlatFieldMetadataMock({
+          universalIdentifier: field.id,
+          type: FieldMetadataType.TEXT,
+          ...field,
+        }),
+      ),
+    ),
     workspaceMemberObjectMetadataId,
   });
 

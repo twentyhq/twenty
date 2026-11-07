@@ -12,6 +12,7 @@ import {
   GetEmailIdentityCommand,
   NotFoundException,
   PutEmailIdentityDkimAttributesCommand,
+  PutEmailIdentityDkimSigningAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
@@ -155,6 +156,28 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     await this.awsSesRegisterDomainService.registerDomain(input.domain);
   }
 
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    try {
+      await this.awsSesClientProvider.getSESClient().send(
+        new PutEmailIdentityDkimSigningAttributesCommand({
+          EmailIdentity: input.domain,
+          SigningAttributesOrigin: 'AWS_SES',
+        }),
+      );
+
+      this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return;
+      }
+
+      this.awsSesHandleErrorService.handleAwsSesError(
+        error,
+        'retryVerification',
+      );
+    }
+  }
+
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
@@ -204,13 +227,17 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     const identity = await sesClient
       .send(new GetEmailIdentityCommand({ EmailIdentity: input.domain }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
 
         return null;
       });
@@ -231,7 +258,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     await sesClient
       .send(new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
   }
 
@@ -249,7 +278,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     await sesClient
@@ -259,13 +290,17 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     await sesClient
       .send(new DeleteTenantCommand({ TenantName: tenantName }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
   }
 

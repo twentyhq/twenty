@@ -39,7 +39,9 @@ export const parseFilterContent = (filterQuery: string): string[] => {
       shouldPersistCharacter = parenthesisCounter >= 1;
     }
 
-    if (['[', ']'].includes(c)) isWithinBrackets = !isWithinBrackets;
+    if (['[', ']'].includes(c)) {
+      isWithinBrackets = !isWithinBrackets;
+    }
 
     if (c === ',' && parenthesisCounter === 1 && !isWithinBrackets) {
       predicates.push(currentPredicates);
@@ -47,7 +49,9 @@ export const parseFilterContent = (filterQuery: string): string[] => {
       shouldPersistCharacter = false;
     }
 
-    if (shouldPersistCharacter) currentPredicates += c;
+    if (shouldPersistCharacter) {
+      currentPredicates += c;
+    }
   }
 
   predicates.push(currentPredicates);

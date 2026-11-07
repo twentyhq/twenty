@@ -64,7 +64,8 @@ import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
@@ -79,7 +80,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class RoleResolver {
   constructor(
-    private readonly userRoleService: UserRoleService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
+    private readonly rolePermissionsService: RolePermissionsService,
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly rolePermissionFlagService: RolePermissionFlagService,
@@ -127,15 +129,15 @@ export class RoleResolver {
     actingUserWorkspaceId: string,
   ): Promise<WorkspaceMemberDTO> {
     const { workspaceMember, userWorkspaceId } =
-      await this.userRoleService.assignRoleToWorkspaceMember({
+      await this.roleAssignmentWriteService.assignRoleToWorkspaceMember({
         workspaceId: workspace.id,
         workspaceMemberId,
         roleId,
         actingUserWorkspaceId,
       });
 
-    const roles = await this.userRoleService
-      .getRolesByUserWorkspaces({
+    const roles = await this.rolePermissionsService
+      .findRolesByUserWorkspaceIds({
         userWorkspaceIds: [userWorkspaceId],
         workspaceId: workspace.id,
       })
@@ -225,7 +227,7 @@ export class RoleResolver {
     }
 
     return [
-      await this.userRoleService.getRoleIdForUserWorkspace({
+      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
         workspaceId,
         userWorkspaceId: actingUserWorkspaceId,
       }),

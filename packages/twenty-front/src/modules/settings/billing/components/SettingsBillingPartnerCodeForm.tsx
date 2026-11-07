@@ -39,16 +39,7 @@ const StyledHint = styled.span<{ isError: boolean }>`
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
-type SettingsBillingPartnerCodeFormProps = {
-  instanceId: string;
-  variant: 'onboarding' | 'settings';
-};
-
-// The code only benefits the partner, so the field stays out of the way.
-export const SettingsBillingPartnerCodeForm = ({
-  instanceId,
-  variant,
-}: SettingsBillingPartnerCodeFormProps) => {
+export const SettingsBillingPartnerCodeForm = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -60,8 +51,6 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [hasAppliedCode, setHasAppliedCode] = useState(false);
 
   if (!isDefined(data)) {
     return null;
@@ -69,17 +58,14 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const { partnerCode, isEditable } = data.billingPartnerCode;
 
-  const isCodeSetBeforeOnboarding = variant === 'onboarding' && !hasAppliedCode;
-
-  if (!isEditable && (isCodeSetBeforeOnboarding || !isDefined(partnerCode))) {
-    return null;
-  }
-
-  if (variant === 'onboarding' && !isExpanded) {
+  if (!isEditable && !isDefined(partnerCode)) {
     return (
-      <Button variant="link" onClick={() => setIsExpanded(true)}>
-        {t`Referred by a Twenty partner? Add their code`}
-      </Button>
+      <Section.Root>
+        <Section.Header
+          title={t`Partner`}
+          description={t`Partner codes can only be added during the free trial.`}
+        />
+      </Section.Root>
     );
   }
 
@@ -106,7 +92,6 @@ export const SettingsBillingPartnerCodeForm = ({
       });
       setDraftPartnerCode(null);
       setErrorMessage(null);
-      setHasAppliedCode(true);
       enqueueToast({ status: 'success', children: t`Partner code applied` });
     } catch (error) {
       if (isErrorLike(error)) {
@@ -123,47 +108,38 @@ export const SettingsBillingPartnerCodeForm = ({
       ? t`Only if a Twenty partner referred you. Once applied, it can't be changed.`
       : null);
 
-  const form = (
-    <StyledContainer>
-      <StyledRow>
-        <SettingsTextInput
-          instanceId={instanceId}
-          label={t`Partner code`}
-          placeholder={t`Optional`}
-          value={displayedPartnerCode}
-          onChange={handleChange}
-          error={errorMessage ?? undefined}
-          noErrorHelper
-          onInputEnter={handleApply}
-          disabled={!isEditable}
-          autoFocusOnMount={variant === 'onboarding'}
-        />
-        {isEditable && (
-          <Button
-            variant="outline"
-            onClick={handleApply}
-            disabled={!canApply}
-            loading={loading}
-          >{t`Apply`}</Button>
-        )}
-      </StyledRow>
-      {isDefined(hint) && (
-        <StyledHint isError={isDefined(errorMessage)}>{hint}</StyledHint>
-      )}
-    </StyledContainer>
-  );
-
-  if (variant === 'onboarding') {
-    return form;
-  }
-
   return (
     <Section.Root>
       <Section.Header
         title={t`Partner`}
         description={t`The code of the Twenty partner who referred you`}
       />
-      {form}
+      <StyledContainer>
+        <StyledRow>
+          <SettingsTextInput
+            instanceId="settings-partner-code"
+            label={t`Partner code`}
+            placeholder={t`Optional`}
+            value={displayedPartnerCode}
+            onChange={handleChange}
+            error={errorMessage ?? undefined}
+            noErrorHelper
+            onInputEnter={handleApply}
+            disabled={!isEditable}
+          />
+          {isEditable && (
+            <Button
+              variant="outline"
+              onClick={handleApply}
+              disabled={!canApply}
+              loading={loading}
+            >{t`Apply`}</Button>
+          )}
+        </StyledRow>
+        {isDefined(hint) && (
+          <StyledHint isError={isDefined(errorMessage)}>{hint}</StyledHint>
+        )}
+      </StyledContainer>
     </Section.Root>
   );
 };

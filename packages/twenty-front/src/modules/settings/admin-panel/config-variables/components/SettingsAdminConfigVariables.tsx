@@ -89,13 +89,17 @@ export const SettingsAdminConfigVariables = () => {
         normalizeSearchText(v.name).includes(searchTerm) ||
         normalizeSearchText(v.description).includes(searchTerm);
 
-      if (isSearching && !matchesSearch) return false;
+      if (isSearching && !matchesSearch) {
+        return false;
+      }
 
       const matchesGroup = hasSelectedSpecificGroup
         ? v.groupName === configVariableGroupFilter
         : true;
 
-      if (hasSelectedSpecificGroup && !matchesGroup) return false;
+      if (hasSelectedSpecificGroup && !matchesGroup) {
+        return false;
+      }
 
       if (
         !isSearching &&
@@ -107,12 +111,15 @@ export const SettingsAdminConfigVariables = () => {
       }
 
       let matchesSource = true;
-      if (configVariableSourceFilter === 'database')
+      if (configVariableSourceFilter === 'database') {
         matchesSource = v.source === ConfigSource.DATABASE;
-      if (configVariableSourceFilter === 'environment')
+      }
+      if (configVariableSourceFilter === 'environment') {
         matchesSource = v.source === ConfigSource.ENVIRONMENT;
-      if (configVariableSourceFilter === 'default')
+      }
+      if (configVariableSourceFilter === 'default') {
         matchesSource = v.source === ConfigSource.DEFAULT;
+      }
 
       return matchesSource;
     });

@@ -22,6 +22,7 @@ import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
+import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
@@ -54,6 +55,7 @@ export class ToolExecutorService {
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly mergeManyRecordsService: MergeManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly mcpToolProvider: McpToolProvider,
     private readonly recordFilesResolverService: RecordFilesResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
@@ -115,7 +117,37 @@ export class ToolExecutorService {
           args,
           context,
         );
+      case 'mcp_server_tool':
+        return this.dispatchMcpServerTool({
+          toolName: descriptor.name,
+          executionRef: descriptor.executionRef,
+          args,
+          context,
+        });
     }
+  }
+
+  private async dispatchMcpServerTool({
+    toolName,
+    executionRef,
+    args,
+    context,
+  }: {
+    toolName: string;
+    executionRef: Extract<ToolExecutionRef, { kind: 'mcp_server_tool' }>;
+    args: Record<string, unknown>;
+    context: ToolProviderContext;
+  }): Promise<ToolOutput> {
+    if (!(await this.mcpToolProvider.isAvailable(context))) {
+      return buildToolNotAvailableOutput(toolName);
+    }
+
+    return this.mcpToolProvider.executeMcpServerTool({
+      toolName,
+      executionRef,
+      toolArguments: args,
+      context,
+    });
   }
 
   private async dispatchDatabaseCrud(

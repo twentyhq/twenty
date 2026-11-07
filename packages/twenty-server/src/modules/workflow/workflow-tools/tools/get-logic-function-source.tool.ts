@@ -15,8 +15,13 @@ const getLogicFunctionSourceSchema = z.object({
 });
 
 export const createGetLogicFunctionSourceTool = (
-  deps: Pick<WorkflowToolDependencies, 'logicFunctionFromSourceService'>,
-  context: WorkflowToolContext,
+  deps: {
+    logicFunctionFromSourceService: Pick<
+      WorkflowToolDependencies['logicFunctionFromSourceService'],
+      'getSourceCode'
+    >;
+  },
+  context: Pick<WorkflowToolContext, 'workspaceId'>,
 ) => ({
   name: 'get_logic_function_source' as const,
   description: `Read the current TypeScript source code of a logic function used in a legacy workflow CODE step.

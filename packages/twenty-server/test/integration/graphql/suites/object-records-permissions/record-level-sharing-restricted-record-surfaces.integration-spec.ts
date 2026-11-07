@@ -22,8 +22,8 @@ import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolv
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -294,11 +294,15 @@ describe('A restricted record on an object open by default', () => {
       throw new Error('Company object metadata is missing');
     }
 
-    const admittedRecordIds =
-      await getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      )
-        .buildEventRecordAccessGate({
+    const readableEvents =
+      await getAppProviderByClassName<RecordEventPermissionsService>(
+        'RecordEventPermissionsService',
+      ).filterReadableEvents({
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+        eventBatch: {
           name: 'company.updated',
           workspaceId,
           objectMetadata: companyObjectMetadata,
@@ -306,15 +310,12 @@ describe('A restricted record on an object open by default', () => {
             recordId,
             properties: { after: { id: recordId } },
           })) as ObjectRecordEvent[],
-        })
-        .resolveAdmittedRecordIds(
-          await resolveWorkspaceMemberAuthContext({
-            workspaceId,
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          }),
-        );
+        },
+      });
 
-    expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
+    expect(readableEvents.map(({ recordId }) => recordId)).toEqual([
+      OPEN_COMPANY_ID,
+    ]);
   });
 
   it('should leave it untouched by bulk updates and deletes that match it', async () => {

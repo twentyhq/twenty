@@ -193,7 +193,9 @@ export const ValidationStep = ({
                 column.key === 'select-row',
             ).length > 0;
 
-          if (!hasBeenImported) return null;
+          if (!hasBeenImported) {
+            return null;
+          }
           return column;
         })
         .filter(isDefined),

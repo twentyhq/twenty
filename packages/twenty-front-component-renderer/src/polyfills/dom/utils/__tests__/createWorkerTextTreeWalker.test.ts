@@ -1,9 +1,11 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { toDomWindow } from '@/testing/toDomWindow';
+
 import { createWorkerTextTreeWalker } from '../createWorkerTextTreeWalker';
 
 const createPolyfillDocument = (): Document =>
-  new Window().document as unknown as Document;
+  toDomWindow(new Window()).document;
 
 describe('createWorkerTextTreeWalker', () => {
   it('should traverse nested text in DOM order without leaving the root', () => {

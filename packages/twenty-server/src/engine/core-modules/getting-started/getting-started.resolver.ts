@@ -92,7 +92,13 @@ export class GettingStartedResolver {
     locale: I18nContext['req']['locale'];
   }): GettingStartedProgressDTO {
     const i18nInstance = this.i18nService.getI18nInstance(locale);
-    const { companyEnrichment, stepActionKeys, ...progressFields } = progress;
+    const {
+      companyEnrichment,
+      stepActionKeys,
+      chatThreadIdByStepActionKey,
+      workflowIdByStepActionKey,
+      ...progressFields
+    } = progress;
 
     return {
       ...progressFields,
@@ -100,6 +106,8 @@ export class GettingStartedResolver {
         buildGettingStartedStepDefinition({
           stepActionKey,
           companyEnrichment,
+          doneChatThreadId: chatThreadIdByStepActionKey[stepActionKey] ?? null,
+          doneWorkflowId: workflowIdByStepActionKey[stepActionKey] ?? null,
           translate: (descriptor) => i18nInstance._(descriptor),
         }),
       ),

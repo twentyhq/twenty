@@ -11,8 +11,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
@@ -354,7 +354,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -544,7 +544,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       return;
     }
 
-    await this.recordShareStorageService.insertMany({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       recordShares: CONVERSATIONS_TO_SEED.flatMap(({ threadId, sharedWith }) =>
         isDefined(sharedWith)

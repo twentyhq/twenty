@@ -2,6 +2,7 @@ import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  type ObjectRecordsPermissions,
   type RestrictedFieldsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -13,7 +14,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
@@ -28,6 +28,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
   | 'canUpdateAllObjectRecords'
   | 'canSoftDeleteAllObjectRecords'
   | 'canDestroyAllObjectRecords'
+  | 'canCreateAllObjectRecords'
 > & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
   // an AI run scope leaves system objects readable but not writable unless it grants them
@@ -35,6 +36,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
+    | 'canCreateObjectRecords'
     | 'canReadObjectRecords'
     | 'canUpdateObjectRecords'
     | 'canSoftDeleteObjectRecords'
@@ -52,6 +54,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
 };
 
 type ObjectRecordsAccess = {
+  canCreate: boolean;
   canRead: boolean;
   canUpdate: boolean;
   canSoftDelete: boolean;
@@ -61,6 +64,7 @@ type ObjectRecordsAccess = {
 const grantAllObjectRecordsAccess = (
   isGranted: boolean,
 ): ObjectRecordsAccess => ({
+  canCreate: isGranted,
   canRead: isGranted,
   canUpdate: isGranted,
   canSoftDelete: isGranted,
@@ -106,6 +110,11 @@ const resolveObjectRecordsAccess = ({
   );
 
   return {
+    canCreate: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canCreateObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords,
+      isSystemObject: isSystemObjectWritableByDefault,
+    }),
     canRead: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canReadObjectRecords,
       hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
@@ -191,6 +200,7 @@ const buildObjectRecordsPermissions = ({
 }): ObjectRecordsPermissions => {
   if (predicates.length === 0) {
     return {
+      canCreateAllRecords: objectRecordsAccess.canCreate,
       canReadAllRecords: objectRecordsAccess.canRead,
       canUpdateAllRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
@@ -200,12 +210,14 @@ const buildObjectRecordsPermissions = ({
   }
 
   return {
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
     restrictedFields,
     rowLevelRecordsPermissions: {
+      canCreateRecords: objectRecordsAccess.canCreate,
       canReadRecords: objectRecordsAccess.canRead,
       canUpdateRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,
@@ -261,6 +273,7 @@ export const computeRoleRecordsPermissions = ({
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectRecordsAccess: {
+        canCreate: objectRecordsAccess.canCreate && hasAiAccess,
         canRead: objectRecordsAccess.canRead && hasAiAccess,
         canUpdate: objectRecordsAccess.canUpdate && hasAiAccess,
         canSoftDelete: objectRecordsAccess.canSoftDelete && hasAiAccess,

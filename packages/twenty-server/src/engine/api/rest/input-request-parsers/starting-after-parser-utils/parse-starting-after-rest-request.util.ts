@@ -2,7 +2,7 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 import { type RequestContext } from 'src/engine/api/rest/types/request-context.type';
 
 export const parseStartingAfterRestRequest = (
-  request: AuthenticatedRequest | RequestContext,
+  request: Pick<AuthenticatedRequest | RequestContext, 'query'>,
 ): string | undefined => {
   const cursorQuery = request.query?.starting_after;
 

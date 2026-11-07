@@ -8,20 +8,20 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 const resolveTimelineActivityObjectColumnNames = ({
   flatObjectMetadata,
-  recordsPermissions,
+  recordReadRestrictions,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
-  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
+  recordReadRestrictions: Pick<
+    RecordReadRestrictions,
+    'unreadableFieldMetadataIds'
+  >;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string[] => {
-  const restrictedFields =
-    recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields ?? {};
-
   return flatObjectMetadata.fieldIds.flatMap((fieldId) => {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldId,
@@ -30,7 +30,7 @@ const resolveTimelineActivityObjectColumnNames = ({
 
     if (
       !isDefined(flatFieldMetadata) ||
-      restrictedFields[fieldId]?.canRead === false
+      recordReadRestrictions.unreadableFieldMetadataIds.has(fieldId)
     ) {
       return [];
     }
@@ -61,16 +61,16 @@ const resolveTimelineActivityObjectColumnNames = ({
 export const addTimelineActivityObjectColumnsToSelect = ({
   select,
   flatObjectMetadata,
-  recordsPermissions,
+  recordReadRestrictions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
-  flatObjectMetadata: Pick<
-    FlatObjectMetadata,
-    'id' | 'nameSingular' | 'fieldIds'
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'fieldIds'>;
+  recordReadRestrictions: Pick<
+    RecordReadRestrictions,
+    'unreadableFieldMetadataIds'
   >;
-  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): CommonSelectedFields => {
@@ -82,7 +82,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
   ) {
     for (const columnName of resolveTimelineActivityObjectColumnNames({
       flatObjectMetadata,
-      recordsPermissions,
+      recordReadRestrictions,
       flatFieldMetadataMaps,
     })) {
       extendedSelect[columnName] = true;
@@ -118,7 +118,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
       addTimelineActivityObjectColumnsToSelect({
         select: relationSelect,
         flatObjectMetadata: targetFlatObjectMetadata,
-        recordsPermissions,
+        recordReadRestrictions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });

@@ -6,7 +6,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import {
   isDefined,
   isNonEmptyArray,
@@ -15,6 +18,7 @@ import {
 import { In, Not } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -189,26 +193,38 @@ export class AgentChatService {
       select: ['id', 'turnId'],
     });
 
-    if (isNonEmptyArray(earlierContexts)) {
-      await this.messageRepository.delete(workspaceId, {
-        id: In(earlierContexts.map(({ id }) => id)),
-      });
-    }
-
     const earlierTurnIds = earlierContexts.flatMap(({ turnId }) =>
       isDefined(turnId) ? [turnId] : [],
     );
 
-    if (isNonEmptyArray(earlierTurnIds)) {
-      await this.turnRepository.delete(workspaceId, {
-        id: In(earlierTurnIds),
-      });
-    }
-
-    return this.conversationWriterService.insertAgentOpenedTurn({
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
       threadId,
-      context,
+      work: async (scope) => {
+        if (isNonEmptyArray(earlierContexts)) {
+          await scope.delete({
+            name: 'agentMessage',
+            where: {
+              id: In(earlierContexts.map(({ id }) => id)),
+              threadId,
+            },
+          });
+        }
+
+        if (isNonEmptyArray(earlierTurnIds)) {
+          await scope.delete({
+            name: 'agentTurn',
+            where: { id: In(earlierTurnIds), threadId },
+          });
+        }
+
+        return this.conversationWriterService.insertAgentOpenedTurn({
+          workspaceId,
+          threadId,
+          context,
+          scope,
+        });
+      },
     });
   }
 
@@ -226,15 +242,22 @@ export class AgentChatService {
   }
 
   async deleteAssistantMessagesForTurn({
+    threadId,
     turnId,
     workspaceId,
   }: {
+    threadId: string;
     turnId: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.messageRepository.delete(workspaceId, {
-      turnId,
-      role: AgentMessageRole.ASSISTANT,
+    await this.conversationWriterService.runInTransaction({
+      workspaceId,
+      threadId,
+      work: (scope) =>
+        scope.delete({
+          name: 'agentMessage',
+          where: { threadId, turnId, role: AgentMessageRole.ASSISTANT },
+        }),
     });
   }
 
@@ -351,7 +374,12 @@ export class AgentChatService {
       where: { id: threadId },
     });
 
-    if (!thread || thread.title || !messageContent) {
+    if (
+      !isDefined(thread) ||
+      isNonEmptyString(thread.title) ||
+      !isNonEmptyString(messageContent) ||
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return null;
     }
 

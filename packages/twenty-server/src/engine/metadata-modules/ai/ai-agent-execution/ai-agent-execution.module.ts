@@ -48,7 +48,6 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
@@ -67,7 +66,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MetricsModule,
     PendingWakeUpModule,
     UserWorkspaceModule,
-    UserRoleModule,
     PermissionsModule,
     SkillModule,
     ToolProviderModule,

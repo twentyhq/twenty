@@ -22,7 +22,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -47,7 +47,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
+import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
@@ -66,7 +66,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   constructor(
     private readonly recordPositionService: RecordPositionService,
-    private readonly shareWithService: ShareWithService,
+    private readonly recordSharingWriteService: RecordSharingWriteService,
   ) {
     super();
   }
@@ -78,7 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const objectSharing = resolveObjectSharing(queryRunnerContext);
 
     if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
-      await this.shareWithService.validateShareWithOrThrow({
+      await this.recordSharingWriteService.assertShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
       });
@@ -350,6 +350,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
     const existingRecords = await this.findExistingRecords({
       repository,
+      permissionsPrincipals: queryRunnerContext.permissionsPrincipals,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       args,
@@ -440,12 +441,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   private async findExistingRecords({
     repository,
+    permissionsPrincipals,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     args,
     conflictingFieldGroups,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
+    permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     args: CreateManyQueryArgs;
@@ -476,12 +479,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }),
     );
 
-    const restrictedFields =
-      repository.recordsPermissions.objects[flatObjectMetadata.id]
-        ?.restrictedFields;
+    const unreadableFieldMetadataIds =
+      await this.recordPermissionsService.findUnreadableFields({
+        principals: permissionsPrincipals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectOptions = getAllSelectableColumnNames({
-      restrictedFields: restrictedFields ?? {},
+      unreadableFieldMetadataIds,
       objectMetadata: {
         objectMetadataMapItem: flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -599,7 +604,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const { authContext, flatObjectMetadata, repository, transactionScope } =
+    const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
@@ -619,12 +624,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    await this.shareWithService.insertRecordSharesForCreatedRecords({
+    await this.recordSharingWriteService.insertRecordSharesForCreatedRecords({
       authContext,
-      flatObjectMetadata,
+      objectMetadataId: flatObjectMetadata.id,
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
-      apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       createdRecordSharing,
       transactionScope,
     });
