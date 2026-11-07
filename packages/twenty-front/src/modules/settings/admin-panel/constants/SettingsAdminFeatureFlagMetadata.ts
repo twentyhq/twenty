@@ -44,6 +44,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
+  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
+    label: msg`Create records permission`,
+    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
+  },
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
@@ -61,7 +65,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
-    label: msg`AI data policy`,
-    description: msg`Let admins restrict AI to models that meet a data residency or zero data retention policy. Enable after the instance upgrade completes.`,
+    label: msg`AI data policy and Privacy tab`,
+    description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
   },
 };

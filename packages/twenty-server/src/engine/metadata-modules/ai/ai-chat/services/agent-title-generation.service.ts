@@ -6,7 +6,6 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
-import { isAiDataPolicyActive } from 'twenty-shared/ai';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -42,6 +41,11 @@ export class AgentTitleGenerationService {
         workspaceId,
       );
 
+    const isContentRecordingAllowed =
+      await this.workspaceAiDataPolicyService.isContentRecordingAllowedOrThrow(
+        workspaceId,
+      );
+
     const defaultModel = this.aiModelRegistryService.findDefaultModelForTier({
       tier: 'fast',
       aiDataPolicy,
@@ -63,7 +67,7 @@ export class AgentTitleGenerationService {
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
         ...buildAiTelemetry({
           functionId: 'agent-title-generation',
-          isContentRecordingAllowed: !isAiDataPolicyActive(aiDataPolicy),
+          isContentRecordingAllowed,
           workspaceId,
           userWorkspaceId,
         }),

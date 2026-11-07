@@ -86,7 +86,7 @@ export class DatabaseToolProvider implements ToolProvider {
       );
 
     const principals = isDefined(context.authContext)
-      ? await this.principalPermissionsService.buildPermissionsPrincipals({
+      ? await this.principalPermissionsService.resolvePermissionsPrincipals({
           authContext: context.authContext,
         })
       : undefined;
@@ -142,29 +142,34 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canCreateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'create',
+        }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.recordPermissionsService.canReadSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'read',
+        }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.canUpdateSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'update',
+        }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.recordPermissionsService.canSoftDeleteSomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'softDelete',
+        }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.recordPermissionsService.canDestroySomeRecords(
-          objectQuestion,
-        ));
+        (await this.recordPermissionsService.canAccessSomeRecords({
+          ...objectQuestion,
+          operationType: 'destroy',
+        }));
 
       if (
         !canCreateRecords &&
@@ -192,12 +197,8 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
-          this.recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
-            objectQuestion,
-          ),
+          this.recordPermissionsService.findUnreadableFields(objectQuestion),
+          this.recordPermissionsService.findUneditableFields(objectQuestion),
         ]);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,

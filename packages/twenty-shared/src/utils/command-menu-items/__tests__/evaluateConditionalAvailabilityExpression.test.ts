@@ -14,6 +14,7 @@ const buildContext = (
   numberOfSelectedRecords: 0,
   objectPermissions: {
     objectMetadataId: '',
+    canCreateObjectRecords: true,
     canReadObjectRecords: true,
     canUpdateObjectRecords: true,
     canSoftDeleteObjectRecords: true,
@@ -399,6 +400,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
         objectPermissions: {
           objectMetadataId: '',
+          canCreateObjectRecords: true,
           canReadObjectRecords: true,
           canUpdateObjectRecords: true,
           canSoftDeleteObjectRecords: true,

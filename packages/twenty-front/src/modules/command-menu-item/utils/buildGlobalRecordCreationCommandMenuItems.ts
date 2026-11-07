@@ -37,7 +37,7 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
       return (
         canReachSomeRecords({
           objectRecordsPermissions: permissions,
-          operationType: 'select',
+          operationType: 'read',
         }) &&
         canCreateRecordsForObjectMetadataItem({
           objectMetadataItem,

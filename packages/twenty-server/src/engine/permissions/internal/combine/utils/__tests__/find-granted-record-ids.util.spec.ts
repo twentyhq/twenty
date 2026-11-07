@@ -92,6 +92,7 @@ const privateRecordStates = new Map<string, PrivateRecordState>([
 ]);
 
 const fullAccess: ObjectRecordsPermissions = {
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
@@ -168,7 +169,7 @@ const findGranted = ({
       ),
     },
     flatObjectMetadata,
-    operationType: 'select',
+    operationType: 'read',
     records,
     context,
   });

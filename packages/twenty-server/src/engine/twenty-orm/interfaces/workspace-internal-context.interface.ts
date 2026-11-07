@@ -27,9 +27,8 @@ export interface WorkspaceInternalContext {
   recordReadRestrictions: RecordReadRestrictions;
   recordPermissions: Pick<
     RecordPermissionsService,
-    | 'isOperationDisabled'
-    | 'assertObjectOperationAccessibleOrThrow'
-    | 'assertColumnsReadableAndUpdatableOrThrow'
+    | 'isReadDisabled'
+    | 'assertCanRunOperationOrThrow'
     | 'buildRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'

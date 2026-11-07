@@ -298,6 +298,23 @@ export enum AiChatAssistantMode {
   NEVER = 'NEVER'
 }
 
+export type AiChatAssistantProfile = {
+  __typename?: 'AiChatAssistantProfile';
+  avatarColor: Scalars['String']['output'];
+  avatarFace: Scalars['String']['output'];
+  avatarShape: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  isAvatarAnimated: Scalars['Boolean']['output'];
+};
+
+export type AiChatAssistantProfileInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarFace?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  isAvatarAnimated?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
@@ -315,13 +332,15 @@ export type AiChatUserCreditsUsage = {
 
 export type AiDataPolicy = {
   __typename?: 'AiDataPolicy';
-  dataResidency?: Maybe<Scalars['String']['output']>;
+  isProductImprovementDataSharingEnabled: Scalars['Boolean']['output'];
   isZeroDataRetentionRequired: Scalars['Boolean']['output'];
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
 };
 
 export type AiDataPolicyInput = {
-  dataResidency?: InputMaybe<Scalars['String']['input']>;
+  isProductImprovementDataSharingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isZeroDataRetentionRequired: Scalars['Boolean']['input'];
+  requiredDataResidencyRegion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum AiModelTier {
@@ -1440,11 +1459,14 @@ export type ClientAiModelConfig = {
   providerLabel?: Maybe<Scalars['String']['output']>;
   providerName?: Maybe<Scalars['String']['output']>;
   sdkPackage?: Maybe<Scalars['String']['output']>;
+  zeroDataRetention?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type ClientAiModelTierConfig = {
   __typename?: 'ClientAiModelTierConfig';
+  isZeroDataRetentionRequired: Scalars['Boolean']['output'];
   modelId: Scalars['String']['output'];
+  requiredDataResidencyRegion?: Maybe<Scalars['String']['output']>;
   tier: AiModelTier;
 };
 
@@ -2378,10 +2400,18 @@ export type EnqueueJobsInput = {
 
 export type EnqueueJobsResult = {
   __typename?: 'EnqueueJobsResult';
+  availableBytes?: Maybe<Scalars['Float']['output']>;
   enqueued: Scalars['Boolean']['output'];
   enqueuedJobsCount: Scalars['Int']['output'];
   jobIds: Array<Scalars['String']['output']>;
+  jobs: Array<EnqueuedJob>;
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
+};
+
+export type EnqueuedJob = {
+  __typename?: 'EnqueuedJob';
+  jobId: Scalars['String']['output'];
+  sizeBytes: Scalars['Int']['output'];
 };
 
 export type EnterpriseLicenseInfoDto = {
@@ -2495,6 +2525,7 @@ export enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
@@ -3719,6 +3750,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
+  openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
@@ -3732,6 +3764,7 @@ export type Mutation = {
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
   resendWorkspaceInvitation: SendInvitations;
+  resetAiChatAssistantProfile: AiChatAssistantProfile;
   resetCommandMenuItem: CommandMenuItem;
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;
@@ -4659,6 +4692,11 @@ export type MutationMoveAgentChatThreadToChannelArgs = {
 };
 
 
+export type MutationOpenDirectMessageArgs = {
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+
 export type MutationPrepareGettingStartedWorkflowArgs = {
   stepActionKey: GettingStartedStepActionKey;
 };
@@ -4707,6 +4745,7 @@ export type MutationReportAppConnectionAuthFailureArgs = {
 
 
 export type MutationResendEmailVerificationTokenArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   origin: Scalars['String']['input'];
 };
@@ -4890,6 +4929,7 @@ export type MutationSignOutArgs = {
 
 
 export type MutationSignUpArgs = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
@@ -5612,6 +5652,7 @@ export enum ObjectRecordGroupByDateGranularity {
 
 export type ObjectRecordsPermissions = {
   __typename?: 'ObjectRecordsPermissions';
+  canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
@@ -6936,6 +6977,7 @@ export enum RowLevelPermissionPredicateOperand {
 
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
+  canCreateRecords: Scalars['Boolean']['output'];
   canDestroyRecords: Scalars['Boolean']['output'];
   canReadRecords: Scalars['Boolean']['output'];
   canSoftDeleteRecords: Scalars['Boolean']['output'];
@@ -7191,9 +7233,9 @@ export type SignUp = {
 };
 
 export type SignUpInNewWorkspaceInput = {
+  affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -7999,6 +8041,7 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
+  aiChatAssistantProfile?: InputMaybe<AiChatAssistantProfileInput>;
   aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
@@ -8784,6 +8827,7 @@ export type Workspace = {
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
+  aiChatAssistantProfile: AiChatAssistantProfile;
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
   aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;
