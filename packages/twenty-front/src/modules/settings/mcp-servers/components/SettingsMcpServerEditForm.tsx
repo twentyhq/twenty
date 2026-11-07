@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionsSection';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
@@ -80,6 +81,9 @@ export const SettingsMcpServerEditForm = ({
         }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
+        {!isDefined(mcpServer.connectionProviderId) && (
+          <SettingsMcpServerConnectionsSection mcpServerId={mcpServer.id} />
+        )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />
       </SettingsMcpServerFormLayout>

@@ -8,7 +8,10 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
-import { mockedMcpServer } from '~/testing/mock-data/mcp-servers';
+import {
+  mockedMcpServer,
+  mockedMcpServerConnections,
+} from '~/testing/mock-data/mcp-servers';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/McpServers/SettingsAiMcpServerDetail',
@@ -23,6 +26,11 @@ const meta: Meta<PageDecoratorArgs> = {
       handlers: [
         metadataGraphql.query('FindOneMcpServer', () =>
           HttpResponse.json({ data: { mcpServer: mockedMcpServer } }),
+        ),
+        metadataGraphql.query('FindManyMcpServerConnections', () =>
+          HttpResponse.json({
+            data: { mcpServerConnections: mockedMcpServerConnections },
+          }),
         ),
         metadataGraphql.query('ApplicationConnectionProviders', () =>
           HttpResponse.json({ data: { applicationConnectionProviders: [] } }),
@@ -65,6 +73,9 @@ export const Default: Story = {
 
     expect(canvas.getByDisplayValue('linear')).toBeDisabled();
     await canvas.findByText('search_issues');
+    await canvas.findByText('tim@apple.dev');
+    expect(canvas.getByText('Sign in again')).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Connect' })).toBeVisible();
     await canvas.findByRole('button', { name: 'Deactivate' });
   },
 };

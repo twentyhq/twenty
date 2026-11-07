@@ -3165,6 +3165,15 @@ type McpServer {
   url: String!
 }
 
+type McpServerConnection {
+  authFailedAt: DateTime
+  createdAt: DateTime!
+  handle: String!
+  id: UUID!
+  isOwnedByCurrentUser: Boolean!
+  scope: String!
+}
+
 type McpServerTool {
   annotations: JSON
   description: String
@@ -3487,6 +3496,7 @@ type Mutation {
   deleteFrontComponent(id: UUID!): FrontComponent!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteMcpServer(id: UUID!): McpServer!
+  deleteMcpServerConnection(id: UUID!): McpServerConnection!
   deleteMessageSuppression(id: UUID!): Boolean!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -4351,6 +4361,7 @@ type Query {
   lineChartData(input: LineChartDataInput!): LineChartData!
   listPlans: [BillingPlan!]! @deprecated(reason: "Use billingPlans instead.")
   mcpServer(id: UUID!): McpServer
+  mcpServerConnections(mcpServerId: UUID!): [McpServerConnection!]!
   mcpServers: [McpServer!]!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!

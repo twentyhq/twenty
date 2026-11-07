@@ -3345,6 +3345,16 @@ export type McpServer = {
   url: Scalars['String']['output'];
 };
 
+export type McpServerConnection = {
+  __typename?: 'McpServerConnection';
+  authFailedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  handle: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  isOwnedByCurrentUser: Scalars['Boolean']['output'];
+  scope: Scalars['String']['output'];
+};
+
 export type McpServerTool = {
   __typename?: 'McpServerTool';
   annotations?: Maybe<Scalars['JSON']['output']>;
@@ -3679,6 +3689,7 @@ export type Mutation = {
   deleteFrontComponent: FrontComponent;
   deleteManyNavigationMenuItems: Array<NavigationMenuItem>;
   deleteMcpServer: McpServer;
+  deleteMcpServerConnection: McpServerConnection;
   deleteMessageSuppression: Scalars['Boolean']['output'];
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
@@ -4349,6 +4360,11 @@ export type MutationDeleteManyNavigationMenuItemsArgs = {
 
 
 export type MutationDeleteMcpServerArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteMcpServerConnectionArgs = {
   id: Scalars['UUID']['input'];
 };
 
@@ -6115,6 +6131,7 @@ export type Query = {
   /** @deprecated Use billingPlans instead. */
   listPlans: Array<BillingPlan>;
   mcpServer?: Maybe<McpServer>;
+  mcpServerConnections: Array<McpServerConnection>;
   mcpServers: Array<McpServer>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
@@ -6588,6 +6605,11 @@ export type QueryLineChartDataArgs = {
 
 export type QueryMcpServerArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryMcpServerConnectionsArgs = {
+  mcpServerId: Scalars['UUID']['input'];
 };
 
 
