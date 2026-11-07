@@ -9876,7 +9876,7 @@ msgstr "Το αντικείμενο για ενημέρωση δεν βρέθη�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Object whose records can belong to the group"
-msgstr ""
+msgstr "Αντικείμενο του οποίου οι εγγραφές μπορούν να ανήκουν στην ομάδα"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -11285,6 +11285,11 @@ msgstr "Η εγγραφή δεν πληροί τους περιορισμούς 
 msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "Αναγνωριστικό εγγραφής"
+
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+msgid "Record not found"
+msgstr "Η εγγραφή δεν βρέθηκε"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts

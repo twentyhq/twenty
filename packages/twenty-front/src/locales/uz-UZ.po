@@ -1728,7 +1728,7 @@ msgstr "Ushbu ish makoni uchun qabul qilingan va imzolangan DPAlar, ularning sha
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Access groups"
-msgstr ""
+msgstr "Kirish guruhlari"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3984,6 +3984,11 @@ msgstr "Quyidagilarga tegishli"
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Apply"
 msgstr "Qo‘llash"
+
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Odatiy holatda maxfiy bo'lmagan obyektlarga maxfiy yozuvlarni qo'llang. Yozuvlar ulashilishi sozlangan ish joylari uchun doimo yoqilgan. Buni o'chirish ushbu obyektlarda maxfiy qilib belgilangan yozuvlarni yana ko'rinadigan qiladi."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -6913,7 +6918,7 @@ msgstr "E-pochta yozish"
 #. js-lingui-id: xwW7YT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr ""
+msgstr "Yozuvlar ro‘yxatlari qator darajasidagi ruxsatlar uchun foydalanadigan kirish guruhlarini hisoblang. Ish maydoni yangilanishi tugallangach, yoqing."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -22355,6 +22360,11 @@ msgstr "Maxfiylik siyosati"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Shaxsiy"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Maxfiy yozuvlar"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

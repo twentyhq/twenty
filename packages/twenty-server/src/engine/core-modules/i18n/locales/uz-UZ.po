@@ -9876,7 +9876,7 @@ msgstr "Yangilanishi kerak bo‘lgan obyekt topilmadi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Object whose records can belong to the group"
-msgstr ""
+msgstr "Yozuvlari guruhga tegishli bo‘lishi mumkin bo‘lgan obyekt"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -11285,6 +11285,11 @@ msgstr "Yozuv xavfsizlik cheklovlariga javob bermaydi."
 msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "Yozuv identifikatori"
+
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+msgid "Record not found"
+msgstr "Yozuv topilmadi"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
