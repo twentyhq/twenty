@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddExportNoteToPdfCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794053379135-add-export-note-to-pdf-command-menu-item.command';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
 import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793995651000-backfill-can-create-permissions.command';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddExportNoteToPdfCommandMenuItemCommand,
     AddMessageAttachmentTargetCommand,
     BackfillCanCreatePermissionsCommand,
     DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
