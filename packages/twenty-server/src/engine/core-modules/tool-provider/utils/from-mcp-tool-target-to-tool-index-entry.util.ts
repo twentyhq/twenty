@@ -23,6 +23,10 @@ export const fromMcpToolTargetToToolIndexEntry = ({
       : []),
   ].join(' '),
   category: ToolCategory.MCP,
-  executionRef: { kind: 'static', toolId: name },
+  executionRef: {
+    kind: 'mcp_server_tool',
+    mcpServerId: mcpServer.id,
+    toolName: tool.name,
+  },
   icon: MCP_TOOL_ICON,
 });

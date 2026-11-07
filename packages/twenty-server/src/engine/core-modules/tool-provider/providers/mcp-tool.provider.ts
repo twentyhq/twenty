@@ -12,6 +12,7 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type McpToolTarget } from 'src/engine/core-modules/tool-provider/types/mcp-tool-target.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildMcpToolTargets } from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-targets.util';
 import { fromMcpToolTargetToToolIndexEntry } from 'src/engine/core-modules/tool-provider/utils/from-mcp-tool-target-to-tool-index-entry.util';
@@ -78,16 +79,36 @@ export class McpToolProvider implements ToolProvider {
     });
   }
 
+  // Unreachable: MCP descriptors carry an mcp_server_tool ref, dispatched to executeMcpServerTool.
   async executeStaticTool(
     toolName: string,
-    args: Record<string, unknown>,
-    context: ToolProviderContext,
+    _args: Record<string, unknown>,
+    _context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const target = buildMcpToolTargets(
-      await this.findReachableMcpServers(context),
-    ).find(({ name }) => name === toolName);
+    throw new Error(
+      `McpToolProvider does not emit static-kind descriptors (tool: ${toolName})`,
+    );
+  }
 
-    if (!isDefined(target)) {
+  async executeMcpServerTool({
+    toolName,
+    executionRef,
+    toolArguments,
+    context,
+  }: {
+    toolName: string;
+    executionRef: Extract<ToolExecutionRef, { kind: 'mcp_server_tool' }>;
+    toolArguments: Record<string, unknown>;
+    context: ToolProviderContext;
+  }): Promise<ToolOutput> {
+    const mcpServer = (await this.findReachableMcpServers(context)).find(
+      ({ id }) => id === executionRef.mcpServerId,
+    );
+    const tool = mcpServer?.tools.find(
+      ({ name }) => name === executionRef.toolName,
+    );
+
+    if (!isDefined(mcpServer) || !isDefined(tool)) {
       return {
         success: false,
         message: `Tool ${toolName} is not offered by any MCP server`,
@@ -95,7 +116,7 @@ export class McpToolProvider implements ToolProvider {
       };
     }
 
-    const { mcpServer, tool } = target;
+    const target: McpToolTarget = { name: toolName, mcpServer, tool };
 
     if (
       isDestructiveMcpServerTool(tool) &&
@@ -110,7 +131,7 @@ export class McpToolProvider implements ToolProvider {
 
     const { output, isToolUnknownToServer } = await this.callRemoteTool({
       target,
-      toolArguments: args,
+      toolArguments,
       userWorkspaceId: context.userWorkspaceId,
     });
 
