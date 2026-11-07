@@ -3,6 +3,7 @@ import {
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type WidgetConfiguration,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
@@ -120,6 +121,51 @@ describe('extractFieldMetadataIdsFromWidget', () => {
 
     expect(result).toHaveLength(1);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
+  });
+
+  it('should include the fields bound to dashboard filters, once each', () => {
+    const widget = createMockWidget({
+      configuration: {
+        ...TEST_AGGREGATE_CHART_CONFIGURATION,
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: 'period-filter-id',
+            fieldMetadataId: TEST_FIELD_METADATA_ID_1,
+          },
+          {
+            pageLayoutFilterId: 'signed-filter-id',
+            fieldMetadataId: TEST_FIELD_METADATA_ID_3,
+          },
+        ],
+      },
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([
+      TEST_FIELD_METADATA_ID_1,
+      TEST_FIELD_METADATA_ID_3,
+    ]);
+  });
+
+  it('should include the bound fields of a record table widget', () => {
+    const widget = createMockWidget({
+      type: WidgetType.RECORD_TABLE,
+      configuration: {
+        __typename: 'RecordTableConfiguration',
+        configurationType: WidgetConfigurationType.RECORD_TABLE,
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: 'period-filter-id',
+            fieldMetadataId: TEST_FIELD_METADATA_ID_2,
+          },
+        ],
+      },
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([
+      TEST_FIELD_METADATA_ID_2,
+    ]);
   });
 
   it('should not include undefined optional fields', () => {

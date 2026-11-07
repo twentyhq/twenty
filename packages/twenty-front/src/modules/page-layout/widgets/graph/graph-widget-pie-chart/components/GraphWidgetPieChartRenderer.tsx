@@ -1,3 +1,4 @@
+import { useDashboardFilterForWidget } from '@/page-layout/hooks/useDashboardFilterForWidget';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
@@ -49,6 +50,9 @@ export const GraphWidgetPieChartRenderer = () => {
     configuration: widget.configuration,
   });
 
+  const { recordFilters: dashboardRecordFilters } =
+    useDashboardFilterForWidget(widget);
+
   const navigate = useNavigate();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -84,6 +88,7 @@ export const GraphWidgetPieChartRenderer = () => {
       viewId: indexViewId,
       timezone: userTimezone,
       firstDayOfTheWeek: userFirstDayOfTheWeek,
+      dashboardRecordFilters,
     });
 
     const url = getAppPath(
