@@ -180,14 +180,14 @@ describe('Ask AI tools for an installed application acting for a user', () => {
   );
 
   it(
-    'does not offer the workflow tools to the application',
+    'offers the workflow tools to the application, which scope or refuse it on use',
     async () => {
       const offeredToolContexts = mockAnsweringModel();
 
       threadIds.push(await sendChatMessageAndWaitForAnswer(applicationToken));
 
       expect(offeredToolContexts).toHaveLength(1);
-      expect(offeredToolContexts[0]).not.toContain(WORKFLOW_TOOL_NAME);
+      expect(offeredToolContexts[0]).toContain(WORKFLOW_TOOL_NAME);
     },
     CHAT_TURN_TIMEOUT_MS,
   );

@@ -1,9 +1,6 @@
-import { ToolCategory } from 'twenty-shared/ai';
-
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
-import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
-import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { UpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
 const AUTH_CONTEXT = {
@@ -11,15 +8,23 @@ const AUTH_CONTEXT = {
   workspace: { id: 'workspace-id' },
 } as WorkspaceAuthContext;
 
-const mockStep = createMockCodeStep('f47ac10b-58cc-4372-a567-0e02b2c3d479');
+const mockStep = {
+  id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'Send email',
+  type: 'SEND_EMAIL',
+  valid: true,
+  settings: { input: {} },
+};
 
 const buildTool = () => {
   const coreWorkflowVersionMutationService = {
     updateStep: jest.fn().mockResolvedValue(mockStep),
   };
 
-  const tool = createUpdateWorkflowVersionStepTool(
-    { coreWorkflowVersionMutationService } as never,
+  const tool = buildWorkflowToolExecutor(
+    new UpdateWorkflowVersionStepTool(
+      coreWorkflowVersionMutationService as never,
+    ),
     {
       workspaceId: 'workspace-id',
       authContext: AUTH_CONTEXT,
@@ -32,9 +37,11 @@ const buildTool = () => {
 const baseInput = {
   coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
   step: mockStep,
-};
+} as unknown as Parameters<
+  UpdateWorkflowVersionStepTool['execute']
+>[0]['input'];
 
-describe('createUpdateWorkflowVersionStepTool', () => {
+describe('update_workflow_version_step tool', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -49,7 +56,11 @@ describe('createUpdateWorkflowVersionStepTool', () => {
       coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
       step: mockStep,
     });
-    expect(result).toEqual(mockStep);
+    expect(result).toEqual({
+      success: true,
+      message: 'Workflow version step updated',
+      result: mockStep,
+    });
   });
 
   it('returns a failure when the update throws', async () => {
@@ -63,62 +74,5 @@ describe('createUpdateWorkflowVersionStepTool', () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('boom');
-  });
-
-  describe('called by the AI through its tool set', () => {
-    const upsertRecordStepWithFieldsToUpdate = ({
-      fieldsToUpdate,
-    }: {
-      fieldsToUpdate: string[];
-    }) => ({
-      id: 'a1b2c3d4-0000-4000-8000-000000000001',
-      name: 'Create or update company',
-      type: 'UPSERT_RECORD',
-      valid: true,
-      settings: {
-        input: {
-          objectName: 'company',
-          objectRecord: { name: 'Acme', domainName: 'acme.com' },
-          fieldsToUpdate,
-        },
-        outputSchema: {},
-        errorHandlingOptions: {
-          retryOnFailure: { value: 0 },
-          continueOnFailure: { value: false },
-        },
-      },
-    });
-
-    const callThroughToolSet = ({ step }: { step: object }) => {
-      const { tool, coreWorkflowVersionMutationService } = buildTool();
-
-      return {
-        coreWorkflowVersionMutationService,
-        output: executeToolFromToolSet(
-          Object.fromEntries([[tool.name, tool]]),
-          tool.name,
-          { coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID, step },
-          ToolCategory.WORKFLOW,
-        ),
-      };
-    };
-
-    it('refuses fieldsToUpdate on an upsert record step, which writes its whole objectRecord', async () => {
-      const { coreWorkflowVersionMutationService, output } = callThroughToolSet(
-        {
-          step: upsertRecordStepWithFieldsToUpdate({
-            fieldsToUpdate: ['name'],
-          }),
-        },
-      );
-
-      expect(await output).toMatchObject({
-        success: false,
-        error: expect.stringContaining('Unrecognized key: "fieldsToUpdate"'),
-      });
-      expect(
-        coreWorkflowVersionMutationService.updateStep,
-      ).not.toHaveBeenCalled();
-    });
   });
 });

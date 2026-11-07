@@ -1,18 +1,10 @@
-import { WorkflowActionType } from 'twenty-shared/workflow';
-
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
-import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
-import {
-  type WorkflowTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { CreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000002';
@@ -23,52 +15,26 @@ const AUTH_CONTEXT = {
 } as WorkspaceAuthContext;
 const STEP_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
-const trigger: WorkflowTrigger = {
+const trigger = {
   name: 'Manual Trigger',
-  type: WorkflowTriggerType.MANUAL,
+  type: 'MANUAL',
   settings: { outputSchema: {} },
   nextStepIds: [],
 };
 
-const baseStep = {
+const buildStep = ({
+  type,
+  input = {},
+}: {
+  type: string;
+  input?: Record<string, unknown>;
+}) => ({
   id: STEP_ID,
   name: 'Step',
+  type,
   valid: true,
   nextStepIds: [],
-};
-
-const baseSettings = {
-  outputSchema: {},
-  errorHandlingOptions: {
-    continueOnFailure: { value: false },
-    retryOnFailure: { value: 0 },
-  },
-};
-
-const sendEmailStep: WorkflowAction = {
-  ...baseStep,
-  type: WorkflowActionType.SEND_EMAIL,
-  settings: {
-    ...baseSettings,
-    input: {
-      connectedAccountId: 'connected-account-id',
-      recipients: { to: 'person@example.com' },
-    },
-  },
-};
-
-const buildCodeStep = (input: WorkflowCodeActionInput): WorkflowAction => ({
-  ...baseStep,
-  type: WorkflowActionType.CODE,
-  settings: { ...baseSettings, input },
-});
-
-const buildAiAgentStep = (
-  input: WorkflowAiAgentActionInput = {},
-): WorkflowAction => ({
-  ...baseStep,
-  type: WorkflowActionType.AI_AGENT,
-  settings: { ...baseSettings, input },
+  settings: { input, outputSchema: {} },
 });
 
 const edges = [{ source: 'trigger', target: STEP_ID }];
@@ -89,17 +55,18 @@ const buildTool = () => {
   const workflowAiAgentStepAgentService = {
     findAgentRunnableByNewStepOrThrow: jest.fn(),
   };
-  const dependencies: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
-    coreWorkflowMutationService,
-    coreWorkflowLifecycleService,
-    workflowAiAgentStepAgentService,
-  };
-
-  const tool = createCreateCompleteWorkflowTool(dependencies, {
-    workspaceId: 'workspace-id',
-    userWorkspaceId: 'user-workspace-id',
-    authContext: AUTH_CONTEXT,
-  });
+  const tool = buildWorkflowToolExecutor(
+    new CreateCompleteWorkflowTool(
+      coreWorkflowMutationService as never,
+      coreWorkflowLifecycleService as never,
+      workflowAiAgentStepAgentService as never,
+    ),
+    {
+      workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
+      authContext: AUTH_CONTEXT,
+    },
+  );
 
   return {
     tool,
@@ -109,19 +76,18 @@ const buildTool = () => {
   };
 };
 
-type ToolInput = Parameters<
-  ReturnType<typeof createCreateCompleteWorkflowTool>['execute']
->[0];
+type ToolInput = Parameters<CreateCompleteWorkflowTool['execute']>[0]['input'];
 
-const buildInput = (overrides: Partial<ToolInput> = {}): ToolInput => ({
-  name: 'My workflow',
-  trigger,
-  steps: [sendEmailStep],
-  edges,
-  ...overrides,
-});
+const buildInput = (overrides: Partial<Record<string, unknown>> = {}) =>
+  ({
+    name: 'My workflow',
+    trigger,
+    steps: [buildStep({ type: 'SEND_EMAIL' })],
+    edges,
+    ...overrides,
+  }) as unknown as ToolInput;
 
-describe('createCreateCompleteWorkflowTool', () => {
+describe('create_complete_workflow tool', () => {
   it('creates the workflow with its whole content in one server call', async () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
@@ -138,7 +104,7 @@ describe('createCreateCompleteWorkflowTool', () => {
         userWorkspaceId: 'user-workspace-id',
         name: 'My workflow',
         trigger,
-        steps: [sendEmailStep],
+        steps: [buildStep({ type: 'SEND_EMAIL' })],
         edges,
       }),
     );
@@ -179,7 +145,10 @@ describe('createCreateCompleteWorkflowTool', () => {
     const result = await tool.execute(
       buildInput({
         steps: [
-          buildCodeStep({ logicFunctionId: STEP_ID, logicFunctionInput: {} }),
+          buildStep({
+            type: 'CODE',
+            input: { logicFunctionId: STEP_ID, logicFunctionInput: {} },
+          }),
         ],
       }),
     );
@@ -195,7 +164,12 @@ describe('createCreateCompleteWorkflowTool', () => {
 
     const result = await tool.execute(
       buildInput({
-        steps: [buildCodeStep({ code: '', logicFunctionInput: {} })],
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { code: '', logicFunctionInput: {} },
+          }),
+        ],
       }),
     );
 
@@ -211,7 +185,12 @@ describe('createCreateCompleteWorkflowTool', () => {
 
     const result = await tool.execute(
       buildInput({
-        steps: [buildCodeStep({ code, logicFunctionInput: {} })],
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { code, logicFunctionInput: {} },
+          }),
+        ],
       }),
     );
 
@@ -236,7 +215,7 @@ describe('createCreateCompleteWorkflowTool', () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = await tool.execute(
-      buildInput({ steps: [buildAiAgentStep()] }),
+      buildInput({ steps: [buildStep({ type: 'AI_AGENT' })] }),
     );
 
     expect(result.success).toBe(true);
@@ -261,7 +240,12 @@ describe('createCreateCompleteWorkflowTool', () => {
 
     const result = await tool.execute(
       buildInput({
-        steps: [buildAiAgentStep({ agentId: 'hidden-agent-id' })],
+        steps: [
+          buildStep({
+            type: 'AI_AGENT',
+            input: { agentId: 'hidden-agent-id' },
+          }),
+        ],
       }),
     );
 

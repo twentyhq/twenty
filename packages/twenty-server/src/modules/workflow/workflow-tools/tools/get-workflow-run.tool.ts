@@ -1,20 +1,23 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { jsonPreview } from 'src/engine/core-modules/tool/utils/json-preview.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const getWorkflowRunSchema = z.object({
   workflowRunId: z.uuid().describe('The UUID of the workflow run to inspect'),
 });
-
-type GetWorkflowRunInput = z.infer<typeof getWorkflowRunSchema>;
 
 const FAILED_STEP_STATUSES: StepStatus[] = [
   StepStatus.FAILED,
@@ -26,25 +29,34 @@ const boundStepOutput = (output: unknown) =>
     ? { output: jsonPreview(output), isOutputTruncated: true }
     : { output };
 
-export const createGetWorkflowRunTool = (
-  deps: {
-    workspaceOrmManager: Pick<
-      WorkflowToolDependencies['workspaceOrmManager'],
-      'executeInWorkspaceContext' | 'getRepository'
-    >;
-  },
-  context: WorkflowToolContext,
-) => ({
-  name: 'get_workflow_run' as const,
+@DefineTool({
+  name: 'get_workflow_run',
+  category: ToolCategory.WORKFLOW,
   description:
     'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status, output (a preview when large) and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
-  inputSchema: getWorkflowRunSchema,
-  execute: async (parameters: GetWorkflowRunInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class GetWorkflowRunTool extends BaseTool<typeof getWorkflowRunSchema> {
+  readonly inputSchema = getWorkflowRunSchema;
+
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof getWorkflowRunSchema>): Promise<ToolOutput> {
+    if (!canCallerReachEveryApplication(context)) {
+      return buildToolNotAvailableOutput('get_workflow_run');
+    }
+
     try {
-      return await deps.workspaceOrmManager.executeInWorkspaceContext(
+      return await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
             );
 
@@ -56,6 +68,7 @@ export const createGetWorkflowRunTool = (
             return {
               success: false,
               error: `Workflow run ${parameters.workflowRunId} not found`,
+              message: `Workflow run ${parameters.workflowRunId} not found`,
             };
           }
 
@@ -88,7 +101,8 @@ export const createGetWorkflowRunTool = (
 
           return {
             success: true,
-            workflowRun: {
+            message: `Workflow run ${workflowRun.id} is ${workflowRun.status}`,
+            result: {
               id: workflowRun.id,
               name: workflowRun.name,
               status: workflowRun.status,
@@ -112,5 +126,5 @@ export const createGetWorkflowRunTool = (
         message: `Failed to get workflow run: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

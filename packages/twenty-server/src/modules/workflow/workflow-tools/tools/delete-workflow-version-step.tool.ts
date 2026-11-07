@@ -1,9 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const deleteWorkflowVersionStepSchema = z.object({
   coreWorkflowVersionId: z
@@ -13,26 +18,46 @@ const deleteWorkflowVersionStepSchema = z.object({
   stepId: z.string().uuid().describe('The UUID of the step to delete'),
 });
 
-type DeleteWorkflowVersionStepInput = z.infer<
-  typeof deleteWorkflowVersionStepSchema
->;
-
-export const createDeleteWorkflowVersionStepTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'delete_workflow_version_step' as const,
+@DefineTool({
+  name: 'delete_workflow_version_step',
+  category: ToolCategory.WORKFLOW,
   description:
     'Delete a step from a workflow version. This removes the step and updates the workflow structure.',
-  inputSchema: deleteWorkflowVersionStepSchema,
-  execute: async (parameters: DeleteWorkflowVersionStepInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class DeleteWorkflowVersionStepTool extends BaseTool<
+  typeof deleteWorkflowVersionStepSchema
+> {
+  readonly inputSchema = deleteWorkflowVersionStepSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof deleteWorkflowVersionStepSchema
+  >): Promise<ToolOutput> {
+    if (!canCallerReachEveryApplication(context)) {
+      return buildToolNotAvailableOutput('delete_workflow_version_step');
+    }
+
     try {
-      return await deps.coreWorkflowVersionMutationService.deleteStep({
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        stepIdToDelete: parameters.stepId,
-      });
+      return {
+        success: true,
+        message: 'Workflow version step deleted',
+        result: await this.coreWorkflowVersionMutationService.deleteStep({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          stepIdToDelete: parameters.stepId,
+        }),
+      };
     } catch (error) {
       return {
         success: false,
@@ -40,5 +65,5 @@ export const createDeleteWorkflowVersionStepTool = (
         message: `Failed to delete workflow version step: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

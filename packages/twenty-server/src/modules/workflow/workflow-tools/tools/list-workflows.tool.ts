@@ -1,5 +1,10 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   CoreWorkflowFilterFieldKey,
   CoreWorkflowFilterLogicalOperator,
@@ -10,10 +15,9 @@ import {
   CoreWorkflowOrderByField,
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
+import { buildCoreWorkflowReadCaller } from 'src/modules/workflow/workflow-tools/utils/build-core-workflow-read-caller.util';
 
 const DEFAULT_LIST_WORKFLOWS_LIMIT = 50;
 
@@ -37,23 +41,33 @@ const listWorkflowsSchema = z.object({
     ),
 });
 
-type ListWorkflowsInput = z.infer<typeof listWorkflowsSchema>;
-
-export const createListWorkflowsTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowListService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'list_workflows' as const,
+@DefineTool({
+  name: 'list_workflows',
+  category: ToolCategory.WORKFLOW,
   description:
     'List all workflows in the workspace. Supports filtering by status and cursor pagination. Returns core workflow IDs (coreWorkflowId), which every other workflow tool expects. Use get_workflow_current_version to get the workflow current core version.',
-  inputSchema: listWorkflowsSchema,
-  execute: async (parameters: ListWorkflowsInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  icon: 'IconSettingsAutomation',
+})
+export class ListWorkflowsTool extends BaseTool<typeof listWorkflowsSchema> {
+  readonly inputSchema = listWorkflowsSchema;
+
+  constructor(
+    private readonly coreWorkflowListService: CoreWorkflowListService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof listWorkflowsSchema>): Promise<ToolOutput> {
     try {
       const { edges, pageInfo, totalCount } =
-        await deps.coreWorkflowListService.findManyByWorkspaceId({
+        await this.coreWorkflowListService.findManyByWorkspaceId({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
-          callerApplication: undefined,
+          ...buildCoreWorkflowReadCaller(context),
           first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
           after: parameters.after,
           orderBy: CoreWorkflowOrderByField.UPDATED_AT,
@@ -74,16 +88,19 @@ export const createListWorkflowsTool = (
 
       return {
         success: true,
-        workflows: edges.map(({ node }) => ({
-          coreWorkflowId: node.id,
-          name: node.name,
-          statuses: node.statuses,
-          createdAt: node.createdAt,
-          updatedAt: node.updatedAt,
-        })),
-        totalCount,
-        endCursor: pageInfo.endCursor,
-        hasNextPage: pageInfo.hasNextPage,
+        message: `Found ${totalCount} workflow(s)`,
+        result: {
+          workflows: edges.map(({ node }) => ({
+            coreWorkflowId: node.id,
+            name: node.name,
+            statuses: node.statuses,
+            createdAt: node.createdAt,
+            updatedAt: node.updatedAt,
+          })),
+          totalCount,
+          endCursor: pageInfo.endCursor,
+          hasNextPage: pageInfo.hasNextPage,
+        },
       };
     } catch (error) {
       const errorMessage =
@@ -95,5 +112,5 @@ export const createListWorkflowsTool = (
         message: `Failed to list workflows: ${errorMessage}`,
       };
     }
-  },
-});
+  }
+}

@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
+import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -457,16 +458,63 @@ describe('core workflow API with application credentials (integration)', () => {
     }
   });
 
-  it('should not offer workflow tools to an application over MCP', async () => {
+  it('should list the workflow tools to an application over MCP but refuse their use', async () => {
     const applicationCatalog = await getMcpToolCatalog(
       authorizedApplication.accessToken,
     );
-    const memberCatalog = await getMcpToolCatalog(
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+
+    expect(applicationCatalog[ToolCategory.WORKFLOW]?.length).toBeGreaterThan(
+      0,
     );
 
-    expect(applicationCatalog[ToolCategory.WORKFLOW]).toBeUndefined();
-    expect(memberCatalog[ToolCategory.WORKFLOW]?.length).toBeGreaterThan(0);
+    const output = await executeToolThroughMcp({
+      toolName: 'delete_workflow',
+      toolArguments: { coreWorkflowId: crypto.randomUUID() },
+      token: authorizedApplication.accessToken,
+    });
+
+    expect(output).toMatchObject({
+      success: false,
+      message: 'Tool "delete_workflow" is not available',
+    });
+  });
+
+  it('should scope the workflow read tools to the application over MCP', async () => {
+    const coreWorkflowId = await createCoreWorkflowAsMember(
+      `Member workflow hidden from app tools ${crypto.randomUUID()}`,
+    );
+
+    coreWorkflowIdsToDelete.push(coreWorkflowId);
+
+    const listWorkflowIds = async (token: string) => {
+      const output = await executeToolThroughMcp<{
+        workflows: { coreWorkflowId: string }[];
+      }>({ toolName: 'list_workflows', toolArguments: {}, token });
+
+      expect(output.success).toBe(true);
+
+      return output.result?.workflows.map(
+        (workflow) => workflow.coreWorkflowId,
+      );
+    };
+
+    expect(await listWorkflowIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+      coreWorkflowId,
+    );
+    expect(
+      await listWorkflowIds(authorizedApplication.accessToken),
+    ).not.toContain(coreWorkflowId);
+
+    const currentVersionOutput = await executeToolThroughMcp({
+      toolName: 'get_workflow_current_version',
+      toolArguments: { coreWorkflowId },
+      token: authorizedApplication.accessToken,
+    });
+
+    expect(currentVersionOutput).toMatchObject({
+      success: false,
+      error: `Workflow ${coreWorkflowId} not found`,
+    });
   });
 
   it('should not let the application read a workflow a member created', async () => {
