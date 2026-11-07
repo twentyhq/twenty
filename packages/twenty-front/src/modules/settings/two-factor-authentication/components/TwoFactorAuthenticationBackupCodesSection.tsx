@@ -47,13 +47,13 @@ export const TwoFactorAuthenticationBackupCodesSection = ({
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
 
-  const { data, refetch } = useQuery(
-    TwoFactorAuthenticationBackupCodeStatusDocument,
-    { fetchPolicy: 'network-only' },
-  );
+  const { data } = useQuery(TwoFactorAuthenticationBackupCodeStatusDocument, {
+    fetchPolicy: 'network-only',
+  });
 
   const [generateBackupCodes] = useMutation(
     GenerateTwoFactorAuthenticationBackupCodesDocument,
+    { refetchQueries: [TwoFactorAuthenticationBackupCodeStatusDocument] },
   );
 
   const remainingBackupCodeCount =
@@ -69,8 +69,6 @@ export const TwoFactorAuthenticationBackupCodesSection = ({
       if (isNonEmptyArray(backupCodes)) {
         onBackupCodesGenerated(backupCodes);
       }
-
-      await refetch();
     } catch (error) {
       enqueueToast(
         getTwoFactorAuthenticationErrorToastOptions({
