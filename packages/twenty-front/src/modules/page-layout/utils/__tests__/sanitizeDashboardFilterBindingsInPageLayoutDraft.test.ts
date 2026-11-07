@@ -3,6 +3,8 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sanitizeDashboardFilterBindingsInPageLayoutDraft } from '@/page-layout/utils/sanitizeDashboardFilterBindingsInPageLayoutDraft';
 import {
   type DashboardFilterBinding,
+  type PageLayoutFilter,
+  PageLayoutFilterType,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -30,6 +32,20 @@ const CLOSE_DATE_BINDING: DashboardFilterBinding = {
   fieldMetadataId: DELETED_FIELD_ID,
 };
 
+const DANGLING_FILTER_BINDING: DashboardFilterBinding = {
+  __typename: 'DashboardFilterBinding',
+  pageLayoutFilterId: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e09',
+  fieldMetadataId: EXISTING_FIELD_ID,
+};
+
+const PERIOD_FILTER: PageLayoutFilter = {
+  id: PERIOD_BINDING.pageLayoutFilterId,
+  label: 'Period',
+  type: PageLayoutFilterType.DATE,
+  position: 0,
+  defaultValue: null,
+};
+
 const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => ({
   id: 'page-layout-1',
   name: 'Test Dashboard',
@@ -55,9 +71,12 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => ({
   ],
 });
 
-const sanitizeWidget = (widget: PageLayoutWidget) =>
+const sanitizeWidget = (
+  widget: PageLayoutWidget,
+  filters?: DraftPageLayout['filters'],
+) =>
   sanitizeDashboardFilterBindingsInPageLayoutDraft({
-    pageLayoutDraft: buildDraft([widget]),
+    pageLayoutDraft: { ...buildDraft([widget]), filters },
     fieldMetadataItemsByObjectMetadataId: new Map([
       [TEST_OBJECT_METADATA_ID, [{ id: EXISTING_FIELD_ID }]],
     ]),
@@ -107,6 +126,49 @@ describe('sanitizeDashboardFilterBindingsInPageLayoutDraft', () => {
     });
 
     expect(sanitizeWidget(widget)).toBe(widget);
+  });
+
+  it('should drop the bindings to dashboard filters missing from the draft', () => {
+    const sanitizedWidget = sanitizeWidget(
+      createTestWidget({
+        configuration: {
+          ...TEST_BAR_CHART_CONFIGURATION,
+          dashboardFilterBindings: [PERIOD_BINDING, DANGLING_FILTER_BINDING],
+        },
+      }),
+      [PERIOD_FILTER],
+    );
+
+    expect(sanitizedWidget.configuration).toMatchObject({
+      dashboardFilterBindings: [PERIOD_BINDING],
+    });
+  });
+
+  it('should drop every binding when the draft has no dashboard filters', () => {
+    const sanitizedWidget = sanitizeWidget(
+      createTestWidget({
+        configuration: {
+          ...TEST_BAR_CHART_CONFIGURATION,
+          dashboardFilterBindings: [PERIOD_BINDING],
+        },
+      }),
+      null,
+    );
+
+    expect(sanitizedWidget.configuration).toMatchObject({
+      dashboardFilterBindings: [],
+    });
+  });
+
+  it('should leave a widget with only valid bindings alone', () => {
+    const widget = createTestWidget({
+      configuration: {
+        ...TEST_BAR_CHART_CONFIGURATION,
+        dashboardFilterBindings: [PERIOD_BINDING],
+      },
+    });
+
+    expect(sanitizeWidget(widget, [PERIOD_FILTER])).toBe(widget);
   });
 
   it('should leave a widget without bindings alone', () => {
