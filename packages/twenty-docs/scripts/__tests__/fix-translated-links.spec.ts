@@ -52,6 +52,20 @@ describe('localizeLinks', () => {
     );
   });
 
+  it('localizes links wrapping an image or with brackets in their text', () => {
+    const content = [
+      '[![Logo](/images/logo.png)](/user-guide/overview)',
+      '[see [billing]](/user-guide/billing)',
+    ].join('\n');
+
+    expect(localizeLinks(content, 'fr')).toBe(
+      [
+        '[![Logo](/images/logo.png)](/fr/user-guide/overview)',
+        '[see [billing]](/fr/user-guide/billing)',
+      ].join('\n'),
+    );
+  });
+
   it('leaves images and external links untouched', () => {
     const content = [
       '![Import](/images/user-guide/import.png)',
