@@ -193,16 +193,18 @@ export class WorkflowRunEnqueueWorkspaceService {
     workspaceId,
     workflowRunId,
     scope,
+    groupKeys,
   }: {
     workspaceId: string;
     workflowRunId: string;
     scope: QueueJobScope;
+    groupKeys?: string[];
   }): Promise<void> {
     try {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
         { workflowRunId, workspaceId },
-        buildRunWorkflowJobOptions({ workflowRunId, scope }),
+        buildRunWorkflowJobOptions({ workflowRunId, scope, groupKeys }),
       );
     } catch (error) {
       if (!(error instanceof MessageQueueException)) {

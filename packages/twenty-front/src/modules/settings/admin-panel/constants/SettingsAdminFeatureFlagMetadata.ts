@@ -68,4 +68,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`AI data policy and Privacy tab`,
     description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
   },
+  [FeatureFlagKey.IS_WORKFLOW_RUN_GROUP_RATE_LIMIT_ENABLED]: {
+    label: msg`Workflow run pacing`,
+    description: msg`Pace automated workflow runs with the worker group rate limit instead of the workflow run throttling.`,
+  },
 };
