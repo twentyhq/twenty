@@ -51,10 +51,10 @@ describe('BullMQDriver group rate limit', () => {
       1_000,
     ]);
     expect(
-      harness.metricsService.incrementCounterForEvent,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ key: MetricsKeys.JobGroupRatePaced }),
-    );
+      harness.metricsService.incrementCounterForEvent.mock.calls.filter(
+        ([{ key }]) => key === MetricsKeys.JobGroupRatePaced,
+      ),
+    ).toHaveLength(1);
     expect(await harness.processAll()).toEqual(['H1', 'H2']);
 
     harness.advanceTime({ milliseconds: 1_000 });

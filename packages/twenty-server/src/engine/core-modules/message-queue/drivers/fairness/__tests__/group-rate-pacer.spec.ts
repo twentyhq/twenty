@@ -181,6 +181,7 @@ describe('GroupRatePacer', () => {
     });
 
     expect(delays).toBeUndefined();
+    expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         key: MetricsKeys.JobGroupRateLimitFallback,
