@@ -303,15 +303,23 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
-    await this.coreWorkflowVersionWriteService.writeContent({
-      workspaceId,
-      coreWorkflowVersionId,
-      expectedVersion: coreWorkflowVersion,
-      trigger,
-      steps,
-    });
+    const { trigger: persistedTrigger } =
+      await this.coreWorkflowVersionWriteService.writeContent({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
+        steps,
+      });
 
-    return { trigger };
+    if (!isDefined(persistedTrigger)) {
+      throw new WorkflowVersionStepException(
+        `Core workflow version '${coreWorkflowVersionId}' lost its trigger while saving it`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    return { trigger: persistedTrigger };
   }
 
   async deleteStep({

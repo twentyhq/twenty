@@ -48,16 +48,16 @@ export const useUpdateTrigger = (instanceId?: string) => {
 
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const isSaved = await updateWorkflowVersionTrigger({
+    const savedTrigger = await updateWorkflowVersionTrigger({
       workflowVersionId,
       trigger: updatedTrigger,
     });
 
-    if (isSaved) {
-      writeTriggerToFlow(updatedTrigger);
+    if (isDefined(savedTrigger)) {
+      writeTriggerToFlow(savedTrigger);
     }
 
-    return isSaved;
+    return isDefined(savedTrigger);
   };
 
   return {

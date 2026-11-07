@@ -35,8 +35,10 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
       },
     });
 
-    if (!isDefined(data?.updateWorkflowVersionTrigger)) {
-      return false;
+    const savedTrigger = data?.updateWorkflowVersionTrigger?.trigger;
+
+    if (!isDefined(savedTrigger)) {
+      return undefined;
     }
 
     markStepForRecomputation({
@@ -46,7 +48,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
 
-    return true;
+    return savedTrigger;
   };
 
   return { updateWorkflowVersionTrigger };

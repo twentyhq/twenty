@@ -93,7 +93,7 @@ A reference Twenty can't resolve fails the install.
 
 A manual workflow without `availability` gets no command menu entry.
 
-Every trigger also takes optional `name`, `position` and `outputSchema`, which only shape how the workflow looks in the builder. Without them, Twenty uses a name such as `Manual trigger`, places the trigger at the top of the canvas and computes the output schema from the settings.
+Every trigger also takes optional `name` and `position`, which only shape how the workflow looks in the builder. Without them, Twenty uses a name such as `Manual trigger` and places the trigger at the top of the canvas. Twenty computes each trigger's and step's output schema from its settings.
 
 A webhook workflow listens on `https://<your-twenty-domain>/webhooks/workflows/<workspaceId>/<workflowId>`, where `workflowId` is the id of the installed workflow. The request body is available as `{{trigger.<path>}}`.
 
@@ -120,6 +120,7 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
     logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
   },
   ```
+- A `CODE`, `HTTP_REQUEST` or `LOGIC_FUNCTION` step exposes its output to later steps through `expectedOutputSchema`: a sample of what the step returns, as an object or an array. A `LOGIC_FUNCTION` whose function declares an output schema uses that schema instead.
 - `AI_AGENT` steps come in two kinds, which you can't mix:
   - A Generate step has no agent. It carries its own `instructions`, `modelId`, `modelConfiguration` and `scope`, and runs once: no conversation, no human input, no waiting.
   - An Agent step runs one of your app's agents, named with `agentUniversalIdentifier`, which brings its own instructions, model and permissions. Only an Agent step takes `humanInputInstructions` and `conversation`.
@@ -144,7 +145,7 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 
 The workspace Custom application owns the workflows built in the workflow builder, and code is as authoritative for them as the builder:
 - `twenty app pull` writes each one from its active version, the one the builder last published. A workflow whose active version uses settings a `defineWorkflow()` file can't express, such as a record filter on a field of a related record, is reported and left in place. So is a Code step created before steps stored their source, until it is edited once in the builder or upgraded.
-- A pulled workflow keeps what the builder stored: a trigger without a `universalIdentifier`, the trigger's builder name, a `position` of `null` for a node the builder never placed, and an `outputSchema` that differs from the computed one. These fields need twenty-sdk 2.53.0 or later, applied to a server on 2.53.0 or later: older versions reject them as unknown keys. Code steps need twenty-sdk 2.56.0 or later, applied to a server on 2.56.0 or later: older versions reject them as an unsupported step type.
+- A pulled workflow keeps what the builder stored: a trigger without a `universalIdentifier`, the trigger's builder name, and a `position` of `null` for a node the builder never placed. These fields need twenty-sdk 2.53.0 or later, applied to a server on 2.53.0 or later: older versions reject them as unknown keys. Code steps need twenty-sdk 2.56.0 or later, applied to a server on 2.56.0 or later: older versions reject them as an unsupported step type.
 - `twenty app apply` publishes like the builder. A workflow whose definition matches its active version is left alone. Otherwise the active version is archived and the definition becomes a new active version, so past runs keep the version they ran.
 - Users keep editing these workflows in the builder, and the next pull brings their changes back.
 

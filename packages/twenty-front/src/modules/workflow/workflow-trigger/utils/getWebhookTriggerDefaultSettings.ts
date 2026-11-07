@@ -15,20 +15,9 @@ export const getWebhookTriggerDefaultSettings = (
       };
     case 'POST':
       return {
-        outputSchema: {
-          message: {
-            icon: 'IconVariable',
-            type: 'string',
-            label: doNotTranslate('message'),
-            value: doNotTranslate('Workflow was started'),
-            isLeaf: true,
-          },
-        },
+        outputSchema: {},
         httpMethod: webhookHttpMethods,
         expectedBody: {
-          message: doNotTranslate('Workflow was started'),
-        },
-        expectedOutputSchema: {
           message: doNotTranslate('Workflow was started'),
         },
         authentication: null,

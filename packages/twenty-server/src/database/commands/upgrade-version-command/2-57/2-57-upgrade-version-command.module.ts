@@ -5,6 +5,7 @@ import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade
 import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
 import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793995651000-backfill-can-create-permissions.command';
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
+import { MoveStepOutputSamplesToExpectedOutputCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793966468406-move-step-output-samples-to-expected-output.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillCanCreatePermissionsCommand,
     DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
     MoveFindRecordsSortsToRecordSortsCommand,
+    MoveStepOutputSamplesToExpectedOutputCommand,
   ],
 })
 export class V2_57_UpgradeVersionCommandModule {}

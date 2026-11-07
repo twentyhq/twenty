@@ -34,21 +34,15 @@ export const generateFakeFormResponse = ({
       const objectId =
         objectIdByNameSingular[formFieldMetadata?.settings?.objectName];
 
-      if (!isDefined(objectId)) {
-        throw new Error(
-          `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
-        );
-      }
-
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
+      const flatObjectMetadata = isDefined(objectId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: objectId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
 
       if (!isDefined(flatObjectMetadata)) {
-        throw new Error(
-          `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
-        );
+        return undefined;
       }
 
       return {
@@ -70,6 +64,7 @@ export const generateFakeFormResponse = ({
           type: formFieldMetadata.type,
           label: formFieldMetadata.label,
           value: formFieldMetadata.placeholder,
+          selectedFieldId: formFieldMetadata.settings?.selectedFieldId,
         }),
       };
     }

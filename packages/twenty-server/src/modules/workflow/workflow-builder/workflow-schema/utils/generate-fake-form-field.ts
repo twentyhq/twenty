@@ -1,4 +1,5 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import {
@@ -10,17 +11,21 @@ type GenerateFakeFormFieldArgs = {
   type: FieldMetadataType;
   label: string;
   value?: string;
+  selectedFieldId?: string;
 };
 
 export const generateFakeFormField = ({
   type,
   label,
   value,
-}: GenerateFakeFormFieldArgs): Leaf | Node => {
-  return {
-    isLeaf: true,
-    type: type,
-    label: label,
-    value: value ?? generateFakeValue(type, 'FieldMetadataType'),
-  };
-};
+  selectedFieldId,
+}: GenerateFakeFormFieldArgs): Leaf | Node => ({
+  isLeaf: true,
+  type,
+  label,
+  value: value ?? generateFakeValue(type, 'FieldMetadataType'),
+  // a select field keeps its source field, which later filters read its options from
+  ...(isNonEmptyString(selectedFieldId)
+    ? { fieldMetadataId: selectedFieldId }
+    : {}),
+});

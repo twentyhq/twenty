@@ -1,52 +1,354 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS } from '@/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels';
+import {
+  type FieldOutputSchemaV2,
+  type RecordOutputSchemaV2,
+} from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
+import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import {
+  type BaseOutputSchemaV2,
+  isBaseOutputSchemaV2,
+} from 'twenty-shared/workflow';
 
-const CURRENT_ITEM_OF_OBJECT_LABEL_PATTERN = /^Current Item \((.+)\)$/;
+type TranslationContext = {
+  stepType: string;
+  labelEntries: [string, MessageDescriptor][];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  stepObjectMetadataItem?: EnrichedObjectMetadataItem;
+};
 
-const translatePersistedLabel = ({
+const findObjectMetadataItem = ({
+  objectMetadataItems,
+  objectMetadataId,
+}: {
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataId: string;
+}) => objectMetadataItems.find(({ id }) => id === objectMetadataId);
+
+const findObjectMetadataId = (value: unknown): string | undefined => {
+  if (isRecordOutputSchemaV2(value)) {
+    return value.object.objectMetadataId;
+  }
+
+  if (!isBaseOutputSchemaV2(value)) {
+    return undefined;
+  }
+
+  return Object.values(value)
+    .map((node) => findObjectMetadataId(node.value))
+    .find(isDefined);
+};
+
+const matchesPath = ({
+  labelPath,
+  path,
+}: {
+  labelPath: string;
+  path: string[];
+}) => {
+  const labelPathSegments = labelPath.split('.');
+
+  return (
+    labelPathSegments.length === path.length &&
+    labelPathSegments.every(
+      (segment, index) => segment === '*' || segment === path[index],
+    )
+  );
+};
+
+// labels naming the step's object, so the viewer sees that object's label in their language
+const translateObjectLabel = ({
   stepType,
   key,
-  label,
+  value,
+  objectMetadataItem,
 }: {
   stepType: string;
   key: string;
-  label: string;
-}): string => {
-  const persistedLabel = WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS.find(
-    (persistedLabel) =>
-      persistedLabel.stepType === stepType &&
-      persistedLabel.key === key &&
-      persistedLabel.label === label,
-  );
-
-  if (isDefined(persistedLabel)) {
-    return t(persistedLabel.message);
+  value: unknown;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
+}): string | undefined => {
+  if (stepType === 'MANUAL' && key === 'payload') {
+    return isRecordOutputSchemaV2(value) ? t`Record` : t`Records`;
   }
 
-  if (stepType !== 'ITERATOR' || key !== 'currentItem') {
-    return label;
+  if (stepType === 'ITERATOR' && key === 'currentItem') {
+    if (!isDefined(objectMetadataItem)) {
+      return t`Current Item`;
+    }
+
+    const objectLabel = objectMetadataItem.labelSingular;
+
+    return t`Current Item (${objectLabel})`;
   }
 
-  const objectLabel = CURRENT_ITEM_OF_OBJECT_LABEL_PATTERN.exec(label)?.[1];
+  if (!isDefined(objectMetadataItem)) {
+    return undefined;
+  }
 
-  return isDefined(objectLabel) ? t`Current Item (${objectLabel})` : label;
+  const { labelSingular, labelPlural } = objectMetadataItem;
+
+  if (stepType === 'FIND_RECORDS' && key === 'first') {
+    return t`First ${labelSingular}`;
+  }
+
+  if (stepType === 'FIND_RECORDS' && key === 'all') {
+    return t`All ${labelPlural}`;
+  }
+
+  if (stepType === 'WAIT_FOR_EVENT' && key === 'record') {
+    return labelSingular;
+  }
+
+  if (stepType === 'WAIT_FOR_EVENT' && key === 'before') {
+    return t`${labelSingular} Before Update`;
+  }
+
+  return undefined;
 };
 
+const translateLabel = ({
+  path,
+  node,
+  context,
+}: {
+  path: string[];
+  node: BaseOutputSchemaV2[string];
+  context: TranslationContext;
+}): string => {
+  const message = context.labelEntries.find(([labelPath]) =>
+    matchesPath({ labelPath, path }),
+  )?.[1];
+
+  // a key the user named carries itself as label, as an agent's own `response` field does
+  if (isDefined(message) && node.label !== path[path.length - 1]) {
+    return t(message);
+  }
+
+  const bulkRecordsObjectMetadataItem = findBulkRecordsObjectMetadataItem({
+    path,
+    context,
+  });
+
+  if (isDefined(bulkRecordsObjectMetadataItem)) {
+    return bulkRecordsObjectMetadataItem.labelPlural;
+  }
+
+  if (path.length !== 1) {
+    return node.label;
+  }
+
+  return (
+    translateObjectLabel({
+      stepType: context.stepType,
+      key: path[0],
+      value: node.value,
+      objectMetadataItem: context.stepObjectMetadataItem,
+    }) ?? node.label
+  );
+};
+
+const findBulkRecordsObjectMetadataItem = ({
+  path,
+  context,
+}: {
+  path: string[];
+  context: TranslationContext;
+}) =>
+  context.stepType === 'MANUAL' && path.length === 2 && path[0] === 'payload'
+    ? context.objectMetadataItems.find(
+        ({ namePlural }) => namePlural === path[1],
+      )
+    : undefined;
+
+// the example values the server writes in English for a step's own keys
+const translateLeafValue = ({
+  path,
+  value,
+  context,
+}: {
+  path: string[];
+  value: unknown;
+  context: TranslationContext;
+}): unknown => {
+  const bulkRecordsObjectMetadataItem = findBulkRecordsObjectMetadataItem({
+    path,
+    context,
+  });
+
+  if (isDefined(bulkRecordsObjectMetadataItem)) {
+    const objectLabelPlural = bulkRecordsObjectMetadataItem.labelPlural;
+
+    return t`Array of ${objectLabelPlural}`;
+  }
+
+  if (context.stepType !== 'FIND_RECORDS' || path.length !== 1) {
+    return value;
+  }
+
+  if (path[0] === 'all') {
+    return t`Returns an array of records`;
+  }
+
+  if (path[0] === 'totalCount') {
+    return t`Count of matching records`;
+  }
+
+  return value;
+};
+
+const translateRecordField = ({
+  key,
+  field,
+  objectMetadataItem,
+  context,
+}: {
+  key: string;
+  field: FieldOutputSchemaV2;
+  objectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'fields'>;
+  context: TranslationContext;
+}): FieldOutputSchemaV2 => {
+  const fieldMetadataItem = objectMetadataItem?.fields.find(
+    ({ id }) => id === field.fieldMetadataId,
+  );
+
+  // a relation id field is shown under its own label, not the relation's
+  const label =
+    isDefined(fieldMetadataItem) &&
+    key.split('.').pop() === fieldMetadataItem.name
+      ? fieldMetadataItem.label
+      : field.label;
+
+  if (field.isLeaf) {
+    return { ...field, label };
+  }
+
+  if (isRecordOutputSchemaV2(field.value)) {
+    return {
+      ...field,
+      label,
+      value: translateRecordOutputSchema({
+        recordOutputSchema: field.value,
+        context,
+      }),
+    };
+  }
+
+  return { ...field, label };
+};
+
+const translateRecordOutputSchema = ({
+  recordOutputSchema,
+  context,
+}: {
+  recordOutputSchema: RecordOutputSchemaV2;
+  context: TranslationContext;
+}): RecordOutputSchemaV2 => {
+  const objectMetadataItem = findObjectMetadataItem({
+    objectMetadataItems: context.objectMetadataItems,
+    objectMetadataId: recordOutputSchema.object.objectMetadataId,
+  });
+
+  return {
+    ...recordOutputSchema,
+    object: {
+      ...recordOutputSchema.object,
+      label:
+        objectMetadataItem?.labelSingular ?? recordOutputSchema.object.label,
+    },
+    fields: Object.fromEntries(
+      Object.entries(recordOutputSchema.fields).map(([key, field]) => [
+        key,
+        translateRecordField({ key, field, objectMetadataItem, context }),
+      ]),
+    ),
+  };
+};
+
+const translateOutputSchema = ({
+  outputSchema,
+  path,
+  context,
+}: {
+  outputSchema: Record<string, unknown>;
+  path: string[];
+  context: TranslationContext;
+}): OutputSchemaV2 => {
+  if (isRecordOutputSchemaV2(outputSchema)) {
+    return translateRecordOutputSchema({
+      recordOutputSchema: outputSchema,
+      context,
+    });
+  }
+
+  if (!isBaseOutputSchemaV2(outputSchema)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(outputSchema).map(([key, node]) => {
+      const nodePath = [...path, key];
+      const label = translateLabel({ path: nodePath, node, context });
+
+      if (node.isLeaf) {
+        return [
+          key,
+          {
+            ...node,
+            label,
+            value: translateLeafValue({
+              path: nodePath,
+              value: node.value,
+              context,
+            }),
+          },
+        ];
+      }
+
+      return [
+        key,
+        {
+          ...node,
+          label,
+          value: translateOutputSchema({
+            outputSchema: node.value,
+            path: nodePath,
+            context,
+          }),
+        },
+      ];
+    }),
+  );
+};
+
+// the server writes labels in English and stores object and field labels as they were then
 export const translatePersistedOutputSchemaLabels = ({
   stepType,
   outputSchema,
+  objectMetadataItems = [],
 }: {
-  stepType: string;
-  outputSchema: BaseOutputSchemaV2;
-}): BaseOutputSchemaV2 =>
-  Object.fromEntries(
-    Object.entries(outputSchema).map(([key, node]) => [
-      key,
-      {
-        ...node,
-        label: translatePersistedLabel({ stepType, key, label: node.label }),
-      },
-    ]),
-  );
+  stepType: keyof typeof WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS;
+  outputSchema: Record<string, unknown>;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
+}): OutputSchemaV2 => {
+  const objectMetadataId = findObjectMetadataId(outputSchema);
+
+  return translateOutputSchema({
+    outputSchema,
+    path: [],
+    context: {
+      stepType,
+      labelEntries: Object.entries(
+        WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS[stepType] ?? {},
+      ),
+      objectMetadataItems,
+      stepObjectMetadataItem: isDefined(objectMetadataId)
+        ? findObjectMetadataItem({ objectMetadataItems, objectMetadataId })
+        : undefined,
+    },
+  });
+};

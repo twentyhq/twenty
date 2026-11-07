@@ -127,4 +127,50 @@ describe('generateFakeFormResponse', () => {
       },
     });
   });
+
+  it('keeps the source field of a select field, which filters read its options from', () => {
+    const result = generateFakeFormResponse({
+      formFieldMetadataItems: [
+        {
+          id: '96939213-49ac-4dee-949d-56e6c7be98ea',
+          name: 'stage',
+          type: FieldMetadataType.SELECT,
+          label: 'Stage',
+          settings: { selectedFieldId: 'stage-field-metadata-id' },
+        },
+      ],
+      flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+      objectIdByNameSingular: mockObjectIdByNameSingular,
+    });
+
+    expect(result.stage).toMatchObject({
+      fieldMetadataId: 'stage-field-metadata-id',
+    });
+  });
+
+  it('skips a record field on a deleted object and keeps the others', () => {
+    const result = generateFakeFormResponse({
+      formFieldMetadataItems: [
+        {
+          id: '96939213-49ac-4dee-949d-56e6c7be98eb',
+          name: 'deletedRecord',
+          type: 'RECORD',
+          label: 'Deleted Record',
+          settings: { objectName: 'deletedObject' },
+        },
+        {
+          id: '96939213-49ac-4dee-949d-56e6c7be98ec',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          label: 'Name',
+        },
+      ],
+      flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+      objectIdByNameSingular: mockObjectIdByNameSingular,
+    });
+
+    expect(Object.keys(result)).toEqual(['name']);
+  });
 });

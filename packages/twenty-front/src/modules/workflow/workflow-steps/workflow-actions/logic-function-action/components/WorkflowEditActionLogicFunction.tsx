@@ -24,8 +24,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
 import { useMemo } from 'react';
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconPlayerPlay, IconSettingsAutomation } from 'twenty-ui/icon';
@@ -122,16 +121,17 @@ export const WorkflowEditActionLogicFunction = ({
     500,
   );
 
-  const updateOutputSchemaFromTestResult = (testResult: object) => {
-    if (actionOptions.readonly === true) {
+  const updateExpectedOutputFromTestResult = (testResult: object) => {
+    if (
+      actionOptions.readonly ||
+      !(isPlainObject(testResult) || Array.isArray(testResult))
+    ) {
       return;
     }
 
-    const newOutputSchema = getOutputSchemaFromValue(testResult);
-
     updateAction({
       ...action,
-      settings: { ...action.settings, outputSchema: newOutputSchema },
+      settings: { ...action.settings, expectedOutputSchema: testResult },
     });
   };
 
@@ -142,7 +142,7 @@ export const WorkflowEditActionLogicFunction = ({
     updateLogicFunctionInput,
   } = useExecuteLogicFunction({
     logicFunctionId,
-    callback: updateOutputSchemaFromTestResult,
+    callback: updateExpectedOutputFromTestResult,
   });
 
   const testInput = mergeDefaultFunctionInputAndFunctionInput({
@@ -185,6 +185,7 @@ export const WorkflowEditActionLogicFunction = ({
       settings: {
         ...action.settings,
         expectedOutputSchema: parsedValue,
+        outputSchema: {},
       },
     });
   };

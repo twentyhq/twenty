@@ -5,8 +5,11 @@ import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflow
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { setFlowNodeOutputSchema } from '@/workflow/utils/setFlowNodeOutputSchema';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +46,29 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
     useUpdateWorkflowVersionStep(instanceId);
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
+  const { markStepForRecomputation } = useStepsOutputSchema();
+
+  // only the schema is taken, as the user may have edited the step again while it saved
+  const writeSavedOutputSchemaToFlow = useCallback(
+    ({
+      workflowVersionId,
+      flowKey,
+      outputSchema,
+    }: {
+      workflowVersionId: string;
+      flowKey: string;
+      outputSchema: WorkflowStep['settings']['outputSchema'];
+    }) => {
+      store.set(flowState, (flow) =>
+        isDefined(flow)
+          ? setFlowNodeOutputSchema({ flow, flowKey, outputSchema })
+          : flow,
+      );
+      // The refetch during the save may already have recomputed from the previous schema
+      markStepForRecomputation({ stepId: flowKey, workflowVersionId });
+    },
+    [flowState, markStepForRecomputation, store],
+  );
 
   const saveFlowKeys = useCallback(
     async (flowKeys: string[]): Promise<string[]> => {
@@ -54,13 +80,22 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
         const flow = store.get(flowState);
 
         if (flowKey === TRIGGER_STEP_ID) {
-          if (
-            isDefined(flow?.trigger) &&
-            !(await updateWorkflowVersionTrigger({
+          if (!isDefined(flow?.trigger)) {
+            continue;
+          }
+
+          const savedTrigger = await updateWorkflowVersionTrigger({
+            workflowVersionId,
+            trigger: flow.trigger,
+          });
+
+          if (isDefined(savedTrigger)) {
+            writeSavedOutputSchemaToFlow({
               workflowVersionId,
-              trigger: flow.trigger,
-            }))
-          ) {
+              flowKey,
+              outputSchema: savedTrigger.settings.outputSchema,
+            });
+          } else {
             failedFlowKeys.push(flowKey);
           }
 
@@ -69,12 +104,21 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
 
         const step = flow?.steps?.find((flowStep) => flowStep.id === flowKey);
 
-        if (
-          isDefined(step) &&
-          !isDefined(
-            await updateWorkflowVersionStep({ workflowVersionId, step }),
-          )
-        ) {
+        if (!isDefined(step)) {
+          continue;
+        }
+
+        const savedStep = (
+          await updateWorkflowVersionStep({ workflowVersionId, step })
+        )?.data?.updateWorkflowVersionStep;
+
+        if (isDefined(savedStep)) {
+          writeSavedOutputSchemaToFlow({
+            workflowVersionId,
+            flowKey,
+            outputSchema: savedStep.settings.outputSchema,
+          });
+        } else {
           failedFlowKeys.push(flowKey);
         }
       }
@@ -87,6 +131,7 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
       store,
       updateWorkflowVersionStep,
       updateWorkflowVersionTrigger,
+      writeSavedOutputSchemaToFlow,
     ],
   );
 

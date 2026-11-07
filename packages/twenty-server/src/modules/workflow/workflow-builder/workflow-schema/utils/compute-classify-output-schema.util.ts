@@ -1,6 +1,4 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   type BaseOutputSchemaV2,
   type Node,
@@ -10,16 +8,11 @@ import {
 const buildProbabilitiesNode = (keys: string[]): Node => ({
   isLeaf: false,
   type: 'object',
-  label: t`Probabilities`,
+  label: 'Probabilities',
   value: Object.fromEntries(
     keys.map((key) => [
       key,
-      {
-        isLeaf: true as const,
-        type: 'number' as const,
-        label: key,
-        value: 0,
-      },
+      { isLeaf: true as const, type: 'number' as const, label: key, value: 0 },
     ]),
   ),
 });
@@ -27,23 +20,18 @@ const buildProbabilitiesNode = (keys: string[]): Node => ({
 const buildAnswerSchema = (
   question: WorkflowClassifyQuestion,
 ): BaseOutputSchemaV2 => {
-  const commonFields: BaseOutputSchemaV2 = {
-    type: {
-      isLeaf: true,
-      type: 'string',
-      label: t`Type`,
-      value: question.type,
-    },
+  const answerTypeOutputSchema: BaseOutputSchemaV2 = {
+    type: { isLeaf: true, type: 'string', label: 'Type', value: question.type },
   };
 
   switch (question.type) {
     case 'choice':
       return {
-        ...commonFields,
+        ...answerTypeOutputSchema,
         choice: {
           isLeaf: true,
           type: 'string',
-          label: t`Choice`,
+          label: 'Choice',
           value: question.criteria[0]?.name ?? '',
         },
         probabilities: buildProbabilitiesNode(
@@ -54,39 +42,33 @@ const buildAnswerSchema = (
       };
     case 'score':
       return {
-        ...commonFields,
-        score: {
-          isLeaf: true,
-          type: 'number',
-          label: t`Score`,
-          value: 0,
-        },
-        // Native scores carry a distribution over level indices, advertised like a choice's
+        ...answerTypeOutputSchema,
+        score: { isLeaf: true, type: 'number', label: 'Score', value: 0 },
         probabilities: buildProbabilitiesNode(
           question.criteria.map((_, level) => String(level)),
         ),
       };
     case 'boolean':
       return {
-        ...commonFields,
+        ...answerTypeOutputSchema,
         probability: {
           isLeaf: true,
           type: 'number',
-          label: t`Probability of true`,
+          label: 'Probability of true',
           value: 0,
         },
       };
   }
 };
 
-// Keyed by question name, so downstream steps read {{stepId.answers.<name>.choice}} whatever model answered
-export const generateClassifyOutputSchema = (
+// keyed by question name, so downstream steps read {{stepId.answers.<name>.choice}} whatever model answered
+export const computeClassifyOutputSchema = (
   questions: WorkflowClassifyQuestion[],
 ): BaseOutputSchemaV2 => ({
   answers: {
     isLeaf: false,
     type: 'object',
-    label: t`Answers`,
+    label: 'Answers',
     value: Object.fromEntries(
       questions
         .filter((question) => isNonEmptyString(question.name))
@@ -101,10 +83,5 @@ export const generateClassifyOutputSchema = (
         ]),
     ),
   },
-  modelId: {
-    isLeaf: true,
-    type: 'string',
-    label: t`Model`,
-    value: '',
-  },
+  modelId: { isLeaf: true, type: 'string', label: 'Model', value: '' },
 });

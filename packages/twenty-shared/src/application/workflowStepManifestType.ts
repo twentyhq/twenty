@@ -40,7 +40,9 @@ const baseStepShape = {
   nextStepIds: z.array(z.uuid()),
   position: workflowManifestPositionSchema.nullable().optional(),
   outputSchema: z.record(z.string(), z.unknown()).optional(),
-  expectedOutputSchema: z.record(z.string(), z.unknown()).optional(),
+  expectedOutputSchema: z
+    .union([z.record(z.string(), z.unknown()), z.array(z.unknown())])
+    .optional(),
   errorHandlingOptions:
     baseWorkflowActionSettingsSchema.shape.errorHandlingOptions.optional(),
 };

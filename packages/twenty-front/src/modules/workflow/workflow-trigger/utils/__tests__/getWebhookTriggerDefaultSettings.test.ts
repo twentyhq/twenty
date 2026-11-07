@@ -18,18 +18,7 @@ describe('getWebhookTriggerDefaultSettings', () => {
       expectedBody: {
         message: 'Workflow was started',
       },
-      expectedOutputSchema: {
-        message: 'Workflow was started',
-      },
-      outputSchema: {
-        message: {
-          icon: 'IconVariable',
-          isLeaf: true,
-          label: 'message',
-          type: 'string',
-          value: 'Workflow was started',
-        },
-      },
+      outputSchema: {},
     });
   });
 

@@ -428,7 +428,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       expectRoundTrip(buildWorkflow({ steps: BRANCHING_STEPS[type] }));
     });
 
-    it('exports a position, outputs and error handling that differ from the defaults', () => {
+    it('exports a position, an output sample and error handling that differ from the defaults', () => {
       expectRoundTrip(
         buildWorkflow({
           steps: [
@@ -436,7 +436,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
               type: 'HTTP_REQUEST',
               overrides: {
                 position: { x: 40, y: 90 },
-                outputSchema: { response: { isLeaf: true, type: 'string' } },
                 expectedOutputSchema: { ok: true },
                 errorHandlingOptions: {
                   retryOnFailure: { value: 2 },
@@ -1138,7 +1137,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     ).toBeNull();
   });
 
-  it('exports the output schema the builder wrote for a POST webhook', () => {
+  it('leaves out the output schema the server computes for a POST webhook', () => {
     const outputSchema = {
       message: {
         icon: 'IconVariable',
@@ -1166,10 +1165,14 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
       steps: [createRecordStep()],
     });
 
-    expect(trigger.outputSchema).toEqual(outputSchema);
+    expect(trigger).not.toHaveProperty('outputSchema');
+    expect(trigger.settings).toMatchObject({
+      httpMethod: 'POST',
+      expectedBody: { message: 'Workflow was started' },
+    });
   });
 
-  it('exports an empty step output schema the builder kept over the declared one', () => {
+  it('leaves out the step output schema the server computes', () => {
     const [step] = exportBuilderVersion({
       triggers: [recordCreatedTrigger()],
       steps: [
@@ -1190,7 +1193,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
       ],
     }).steps;
 
-    expect(step.outputSchema).toEqual({});
+    expect(step).not.toHaveProperty('outputSchema');
   });
 
   it('exports an agent step with the conversation and member the builder stores', () => {
@@ -1344,7 +1347,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
   });
 
-  it('exports a code step with its source and the output schema of its last test', () => {
+  it('exports a code step with its source and the output sample of its last test', () => {
     const input = {
       code: CODE_STEP_SOURCE,
       logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
@@ -1365,7 +1368,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
           type: 'CODE',
           settings: {
             outputSchema: testedOutputSchema,
-            expectedOutputSchema: {},
+            expectedOutputSchema: { greeting: 'Hello Jane' },
             errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
             input,
           },
@@ -1379,8 +1382,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
       type: 'CODE',
       nextStepIds: [],
       input,
-      outputSchema: testedOutputSchema,
-      expectedOutputSchema: {},
+      expectedOutputSchema: { greeting: 'Hello Jane' },
     });
   });
 

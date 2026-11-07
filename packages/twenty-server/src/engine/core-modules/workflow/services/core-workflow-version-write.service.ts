@@ -169,7 +169,7 @@ export class CoreWorkflowVersionWriteService {
     workspaceId,
     coreWorkflowVersionId,
     expectedVersion,
-    trigger,
+    trigger: callerTrigger,
     steps: callerSteps,
   }: {
     workspaceId: string;
@@ -183,16 +183,14 @@ export class CoreWorkflowVersionWriteService {
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
-      trigger,
+      trigger: callerTrigger,
       steps: versionedSteps,
     });
 
-    const steps =
-      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
-        trigger,
-        steps: versionedSteps,
-        workspaceId,
-      });
+    const { trigger, steps } =
+      await this.workflowSchemaWorkspaceService.enrichWorkflowVersionContentOutputSchemas(
+        { trigger: callerTrigger, steps: versionedSteps, workspaceId },
+      );
 
     // the runner cannot compare previous content inside its UPDATE, so concurrent draft edits serialize on this lock
     await this.withCoreWorkflowVersionEditLock(
@@ -300,7 +298,7 @@ export class CoreWorkflowVersionWriteService {
     workspaceId,
     coreWorkflowId,
     workspaceWorkflowId,
-    trigger,
+    trigger: callerTrigger,
     steps: callerSteps,
   }: {
     workspaceId: string;
@@ -314,16 +312,14 @@ export class CoreWorkflowVersionWriteService {
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId: 'new draft',
-      trigger,
+      trigger: callerTrigger,
       steps: versionedSteps,
     });
 
-    const steps =
-      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
-        trigger,
-        steps: versionedSteps,
-        workspaceId,
-      });
+    const { trigger, steps } =
+      await this.workflowSchemaWorkspaceService.enrichWorkflowVersionContentOutputSchemas(
+        { trigger: callerTrigger, steps: versionedSteps, workspaceId },
+      );
 
     const coreWorkflowVersionId = uuidv4();
 

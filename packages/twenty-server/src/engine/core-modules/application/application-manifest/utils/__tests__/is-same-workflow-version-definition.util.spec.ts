@@ -70,6 +70,19 @@ describe('isSameWorkflowVersionDefinition', () => {
       },
     },
     {
+      description: 'the output schema the server computes',
+      step: {
+        settings: {
+          outputSchema: { id: { isLeaf: true, type: 'string', value: '' } },
+          errorHandlingOptions: {
+            retryOnFailure: { value: 0 },
+            continueOnFailure: { value: false },
+          },
+          input: { objectName: 'ticket', objectRecord: {} },
+        },
+      },
+    },
+    {
       description: 'the objectType of a manual trigger',
       trigger: {
         settings: {

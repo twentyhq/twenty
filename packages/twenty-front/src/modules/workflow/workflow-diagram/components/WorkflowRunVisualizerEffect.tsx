@@ -9,6 +9,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { type WorkflowRunState } from '@/workflow/types/Workflow';
+import { getRunFlowWithVersionOutputSchemas } from '@/workflow/utils/getRunFlowWithVersionOutputSchemas';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
@@ -262,8 +263,10 @@ export const WorkflowRunVisualizerEffect = ({
 
     populateStepsOutputSchema({
       ...workflowVersion,
-      trigger: workflowRun.state.flow.trigger,
-      steps: workflowRun.state.flow.steps,
+      ...getRunFlowWithVersionOutputSchemas({
+        runFlow: workflowRun.state.flow,
+        version: workflowVersion,
+      }),
     });
   }, [populateStepsOutputSchema, workflowRun?.state, workflowVersion]);
 

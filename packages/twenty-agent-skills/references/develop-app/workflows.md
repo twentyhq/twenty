@@ -16,9 +16,9 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - `nextStepIds` wires the graph: the trigger points to the first steps, each step to the steps after it.
 - Trigger types: `MANUAL`, `CRON`, `DATABASE_EVENT`, `WEBHOOK`.
 - Reference objects, fields, logic functions and agents by universal identifier, never by name or id.
-- Triggers take optional `name`, `position` and `outputSchema`; steps take optional `position` and `outputSchema`. They only shape the builder view. Omit them to get the derived defaults.
-- `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
-- `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
+- Triggers take optional `name` and `position`; steps take optional `position`. They only shape the builder view. Omit them to get the derived defaults.
+- `position: null` means no position. Twenty computes output schemas from the settings; give a `CODE`, `HTTP_REQUEST` or `LOGIC_FUNCTION` step an `expectedOutputSchema` sample (an object or an array) so later steps can reference its fields.
+- `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name and positions.
 
 ## Code Steps
 

@@ -44,8 +44,7 @@ import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -149,7 +148,7 @@ export const WorkflowEditActionCode = ({
 
   const handleExpectedOutputBodyChange = (
     parsedValue: Record<string, unknown>,
-  ) => saveSettings({ expectedOutputSchema: parsedValue });
+  ) => saveSettings({ expectedOutputSchema: parsedValue, outputSchema: {} });
 
   const handleTestInputChange = async (value: any, path: string[]) => {
     if (actionOptions.readonly === true) {
@@ -175,13 +174,13 @@ export const WorkflowEditActionCode = ({
     const testResult = await testWorkflowCodeStep({ workflowVersionId, code });
 
     if (
-      !isDefined(testResult) ||
+      !(isPlainObject(testResult) || Array.isArray(testResult)) ||
       codeEditGeneration !== getCodeEditGeneration()
     ) {
       return;
     }
 
-    saveSettings({ outputSchema: getOutputSchemaFromValue(testResult) });
+    saveSettings({ expectedOutputSchema: testResult });
   };
 
   const handleEditorDidMount = async (

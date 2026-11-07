@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import {
-  inputSchemaToOutputSchema,
-  SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
-} from 'twenty-shared/logic-function';
+import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
   StepLogicalOperator,
@@ -46,7 +43,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
@@ -225,15 +221,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           flatLogicFunctionMaps,
         });
 
-        const declaredOutputSchema =
-          flatLogicFunction.workflowActionTriggerSettings?.outputSchema;
-
-        const initialOutputSchema: OutputSchema = isDefined(
-          declaredOutputSchema,
-        )
-          ? inputSchemaToOutputSchema(declaredOutputSchema)
-          : {};
-
         return {
           builtStep: {
             ...baseStep,
@@ -243,7 +230,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.LOGIC_FUNCTION,
             settings: {
               ...BASE_STEP_DEFINITION,
-              outputSchema: initialOutputSchema,
               expectedOutputSchema: {},
               input: {
                 logicFunctionId,

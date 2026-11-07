@@ -14,6 +14,7 @@ import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dt
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
+import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -27,6 +28,7 @@ export class CoreWorkflowVersionListService {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   async findManyByWorkspaceWorkflowId({
@@ -212,7 +214,35 @@ export class CoreWorkflowVersionListService {
     });
   }
 
-  async findOneByCoreWorkflowVersionId({
+  async findOneByCoreWorkflowVersionId(
+    args: CoreWorkflowReadCaller & {
+      workspaceId: string;
+      userWorkspaceId: string | undefined;
+      coreWorkflowVersionId: string;
+    },
+  ): Promise<CoreWorkflowVersionDTO | null> {
+    const storedCoreWorkflowVersion =
+      await this.findOneStoredByCoreWorkflowVersionId(args);
+
+    if (!isDefined(storedCoreWorkflowVersion)) {
+      return null;
+    }
+
+    // computed again on read, as a stored schema predates any later metadata change
+    const { trigger, steps } =
+      await this.workflowSchemaWorkspaceService.enrichWorkflowVersionContentOutputSchemas(
+        {
+          trigger: storedCoreWorkflowVersion.trigger,
+          steps: storedCoreWorkflowVersion.steps,
+          workspaceId: args.workspaceId,
+          shouldKeepStoredSchemaOnError: true,
+        },
+      );
+
+    return { ...storedCoreWorkflowVersion, trigger, steps };
+  }
+
+  async findOneStoredByCoreWorkflowVersionId({
     workspaceId,
     userWorkspaceId,
     callerApplication,
