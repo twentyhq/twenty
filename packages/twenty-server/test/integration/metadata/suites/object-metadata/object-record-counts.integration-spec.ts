@@ -79,8 +79,6 @@ describe('objectRecordCounts', () => {
   });
 });
 
-// Regression for #29416: a freshly created table is never analyzed, so
-// pg_class.reltuples stays -1 and the count read 0 despite records existing.
 describe('objectRecordCounts for a newly created object', () => {
   const OBJECT_NAME_SINGULAR = 'recordCountProbe';
   const OBJECT_NAME_PLURAL = 'recordCountProbes';
@@ -136,7 +134,6 @@ describe('objectRecordCounts for a newly created object', () => {
   });
 
   it('counts records in a never-analyzed table instead of returning 0', async () => {
-    // n_live_tup is reported asynchronously after insert, so poll until it settles
     await expectEventually(async () => {
       const response = await makeMetadataApiRequest({
         query: OBJECT_RECORD_COUNTS_QUERY,

@@ -11,7 +11,6 @@ type ObjectRecordCountsResult = {
 };
 
 export const useCombinedGetTotalCount = () => {
-  // Refetch on mount so counts reflect records added since the page was cached
   const { data } = useQuery<ObjectRecordCountsResult>(OBJECT_RECORD_COUNTS, {
     fetchPolicy: 'cache-and-network',
   });
