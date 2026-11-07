@@ -74,7 +74,7 @@ describe('MCP tools in the tool registry (e2e)', () => {
     const { data } = await getToolIndex({});
 
     expect(data.getToolIndex).toContainEqual({
-      name: `mcp_${mcpServerName}_search_docs`,
+      name: `mcp__${mcpServerName}__search_docs`,
       category: 'MCP',
     });
   });
@@ -82,7 +82,7 @@ describe('MCP tools in the tool registry (e2e)', () => {
   it('serves the cached input schema on demand', async () => {
     const response = await makeMetadataApiRequest(
       getToolInputSchemaQueryFactory({
-        toolName: `mcp_${mcpServerName}_search_docs`,
+        toolName: `mcp__${mcpServerName}__search_docs`,
       }),
     );
 
@@ -97,20 +97,20 @@ describe('MCP tools in the tool registry (e2e)', () => {
 
   it('runs the tool on the remote server and returns its content', async () => {
     const output = await getToolRegistryService().resolveAndExecute(
-      `mcp_${mcpServerName}_search_docs`,
+      `mcp__${mcpServerName}__search_docs`,
       { query: 'invoices' },
       TOOL_CONTEXT,
     );
 
     expect(output).toEqual({
       success: true,
-      message: `MCP tool mcp_${mcpServerName}_search_docs executed`,
+      message: `MCP tool mcp__${mcpServerName}__search_docs executed`,
       result: { content: [{ type: 'text', text: 'results for invoices' }] },
     });
   });
 
   it('only runs a destructive tool once the user approved it', async () => {
-    const toolName = `mcp_${mcpServerName}_delete_page`;
+    const toolName = `mcp__${mcpServerName}__delete_page`;
 
     const unapprovedOutput = await getToolRegistryService().resolveAndExecute(
       toolName,
@@ -152,13 +152,13 @@ describe('MCP tools in the tool registry (e2e)', () => {
     const { data } = await getToolIndex({});
 
     expect(data.getToolIndex).toContainEqual({
-      name: `mcp_${mcpServerName}_search_docs`,
+      name: `mcp__${mcpServerName}__search_docs`,
       category: 'MCP',
     });
   });
 
   it('refreshes the cached tools when the server no longer offers one', async () => {
-    const toolName = `mcp_${mcpServerName}_search_docs`;
+    const toolName = `mcp__${mcpServerName}__search_docs`;
 
     fakeMcpServer.stopOfferingSearchDocs();
 

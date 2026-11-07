@@ -1,4 +1,7 @@
-import { buildMcpToolTargets } from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-targets.util';
+import {
+  buildMcpToolName,
+  buildMcpToolTargets,
+} from 'src/engine/core-modules/tool-provider/utils/build-mcp-tool-targets.util';
 import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.type';
 
 const createTool = (name: string): McpServerTool => ({
@@ -25,44 +28,63 @@ const createMcpServer = ({
 });
 
 describe('buildMcpToolTargets', () => {
-  it('names each tool after its server', () => {
+  it('names each tool after its server, keeping the tool name as is', () => {
     const docs = createMcpServer({
       name: 'docs',
       toolNames: ['search_docs', 'Read-Page'],
     });
 
     expect(buildMcpToolTargets([docs])).toEqual([
-      { name: 'mcp_docs_search_docs', mcpServer: docs, tool: docs.tools[0] },
-      { name: 'mcp_docs_read_page', mcpServer: docs, tool: docs.tools[1] },
+      { name: 'mcp__docs__search_docs', mcpServer: docs, tool: docs.tools[0] },
+      { name: 'mcp__docs__Read-Page', mcpServer: docs, tool: docs.tools[1] },
     ]);
   });
 
   it('tells apart tools of different servers that read the same', () => {
-    const targets = buildMcpToolTargets([
+    const names = buildMcpToolTargets([
       createMcpServer({ name: 'docs', toolNames: ['admin_search'] }),
       createMcpServer({ name: 'docs_admin', toolNames: ['search'] }),
+    ]).map(({ name }) => name);
+
+    expect(names).toEqual([
+      'mcp__docs__admin_search',
+      'mcp__docs_admin__search',
+    ]);
+  });
+
+  it('never renames a tool when another server or tool is added', () => {
+    const docs = createMcpServer({ name: 'docs', toolNames: ['search'] });
+    const [docsTarget] = buildMcpToolTargets([docs]);
+
+    const [docsTargetAmongOthers] = buildMcpToolTargets([
+      { ...docs, tools: [...docs.tools, createTool('Search')] },
+      createMcpServer({ name: 'docs_search', toolNames: ['search'] }),
     ]);
 
-    const [docsTargetName, docsAdminTargetName] = targets.map(
-      ({ name }) => name,
-    );
+    expect(docsTargetAmongOthers.name).toBe(docsTarget.name);
+  });
 
-    expect(docsTargetName).toMatch(/^mcp_docs_admin_search_[a-f0-9]{8}$/);
-    expect(docsAdminTargetName).toMatch(/^mcp_docs_admin_search_[a-f0-9]{8}$/);
-    expect(docsTargetName).not.toBe(docsAdminTargetName);
+  it('hashes the name when the server name cannot be told apart from the tool name', () => {
+    const names = buildMcpToolTargets([
+      createMcpServer({ name: 'docs__admin', toolNames: ['search'] }),
+      createMcpServer({ name: 'docs', toolNames: ['admin__search'] }),
+      createMcpServer({ name: 'docs_', toolNames: ['_search'] }),
+    ]).map(({ name }) => name);
+
+    expect(names[0]).toMatch(/^mcp__docs__admin__search_[a-f0-9]{8}$/);
+    expect(names[1]).toBe('mcp__docs__admin__search');
+    expect(names[2]).toMatch(/^mcp__docs____search_[a-f0-9]{8}$/);
   });
 
   it('keeps names within the model provider limit', () => {
-    const [{ name }] = buildMcpToolTargets([
-      createMcpServer({
-        name: 'a_server_with_a_rather_long_name',
-        toolNames: ['a_tool_with_a_name_long_enough_to_overflow_the_limit'],
-      }),
-    ]);
+    const name = buildMcpToolName({
+      mcpServer: { id: 'server-id', name: 'a_server_with_a_rather_long_name' },
+      toolName: 'a_tool_with_a_name_long_enough_to_overflow',
+    });
 
     expect(name).toHaveLength(64);
     expect(name).toMatch(
-      /^mcp_a_server_with_a_rather_long_name_a_tool_with_a_name_[a-f0-9]{8}$/,
+      /^mcp__a_server_with_a_rather_long_name__a_tool_with_a_na_[a-f0-9]{8}$/,
     );
   });
 
@@ -75,18 +97,5 @@ describe('buildMcpToolTargets', () => {
         }),
       ]),
     ).toHaveLength(1);
-  });
-
-  it('names a tool the same way whatever the server order', () => {
-    const docs = createMcpServer({ name: 'docs', toolNames: ['admin_search'] });
-    const docsAdmin = createMcpServer({
-      name: 'docs_admin',
-      toolNames: ['search'],
-    });
-
-    const [docsTarget] = buildMcpToolTargets([docs, docsAdmin]);
-    const [, reorderedDocsTarget] = buildMcpToolTargets([docsAdmin, docs]);
-
-    expect(reorderedDocsTarget.name).toBe(docsTarget.name);
   });
 });
