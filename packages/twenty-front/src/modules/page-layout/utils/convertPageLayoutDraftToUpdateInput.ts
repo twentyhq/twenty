@@ -2,6 +2,7 @@ import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { buildPageLayoutWidgetConfigurationInput } from '@/page-layout/utils/buildPageLayoutWidgetConfigurationInput';
 import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -77,7 +78,9 @@ export const convertPageLayoutDraftToUpdateInput = (
               widgetIndex,
               tab.layoutMode ?? PageLayoutTabLayoutMode.GRID,
             ),
-            configuration: widget.configuration ?? null,
+            configuration: buildPageLayoutWidgetConfigurationInput(
+              widget.configuration,
+            ),
             conditionalAvailabilityExpression:
               widget.conditionalAvailabilityExpression ?? null,
           })),

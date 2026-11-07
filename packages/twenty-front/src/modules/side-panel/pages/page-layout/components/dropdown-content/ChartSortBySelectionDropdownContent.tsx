@@ -100,7 +100,7 @@ export const ChartSortBySelectionDropdownContent = () => {
     }
 
     if (shouldClearManualSortOrder) {
-      configToUpdate[manualSortOrderKey] = null;
+      configToUpdate[manualSortOrderKey] = undefined;
     }
 
     updateCurrentWidgetConfig({ configToUpdate });

@@ -194,4 +194,65 @@ describe('computeDiffBetweenObjects', () => {
       idsToRemove: ['1'],
     });
   });
+
+  it('should not detect an update when the received object omits a stored property', () => {
+    const existingObjects = [
+      { id: '1', name: 'Object 1', icon: null, isActive: true },
+    ];
+    const receivedObjects: {
+      id: string;
+      name: string;
+      icon?: string | null;
+    }[] = [{ id: '1', name: 'Object 1' }];
+
+    const diff = computeDiffBetweenObjects({
+      existingObjects,
+      receivedObjects,
+      propertiesToCompare: ['name', 'icon'],
+      isEntityIncluded: isEntityIncludedByIsActive,
+    });
+
+    expect(diff.toUpdate).toEqual([]);
+  });
+
+  it('should detect an update when the received object sets a stored property to null', () => {
+    const existingObjects = [
+      { id: '1', name: 'Object 1', icon: 'IconStar', isActive: true },
+    ];
+    const receivedObjects = [{ id: '1', name: 'Object 1', icon: null }];
+
+    const diff = computeDiffBetweenObjects({
+      existingObjects,
+      receivedObjects,
+      propertiesToCompare: ['name', 'icon'],
+      isEntityIncluded: isEntityIncludedByIsActive,
+    });
+
+    expect(diff.toUpdate).toEqual([{ id: '1', name: 'Object 1', icon: null }]);
+  });
+
+  it('should detect an update when an omitted property is cleared on omission and stored', () => {
+    const existingObjects = [
+      { id: '1', name: 'Object 1', icon: 'IconStar', isActive: true },
+      { id: '2', name: 'Object 2', icon: null, isActive: true },
+    ];
+    const receivedObjects: {
+      id: string;
+      name: string;
+      icon?: string | null;
+    }[] = [
+      { id: '1', name: 'Object 1' },
+      { id: '2', name: 'Object 2' },
+    ];
+
+    const diff = computeDiffBetweenObjects({
+      existingObjects,
+      receivedObjects,
+      propertiesToCompare: ['name', 'icon'],
+      propertiesClearedWhenOmitted: ['icon'],
+      isEntityIncluded: isEntityIncludedByIsActive,
+    });
+
+    expect(diff.toUpdate).toEqual([{ id: '1', name: 'Object 1' }]);
+  });
 });

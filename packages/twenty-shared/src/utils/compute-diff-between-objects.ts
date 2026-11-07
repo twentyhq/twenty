@@ -9,18 +9,6 @@ type Diff<T extends { id: string }> = {
   idsToRemove: string[];
 };
 
-const extractProperties = <T extends { id: string }>(
-  object: T,
-  properties: (keyof T)[],
-) => {
-  return properties.reduce((acc, property) => {
-    return {
-      ...acc,
-      [property]: object[property],
-    };
-  }, {});
-};
-
 type ComputeDiffBetweenObjectsParams<
   T extends { id: string },
   K extends { id: string },
@@ -28,8 +16,37 @@ type ComputeDiffBetweenObjectsParams<
   existingObjects: T[];
   receivedObjects: K[];
   propertiesToCompare: (keyof K & keyof T)[];
+  propertiesClearedWhenOmitted?: (keyof K & keyof T)[];
   isEntityIncluded: (entity: NoInfer<T>) => boolean;
 };
+
+// An omitted property keeps the stored value, unless the caller clears it on omission
+const hasReceivedObjectChanged = <
+  T extends { id: string },
+  K extends { id: string },
+>({
+  existingObject,
+  receivedObject,
+  propertiesToCompare,
+  propertiesClearedWhenOmitted,
+}: {
+  existingObject: T;
+  receivedObject: K;
+  propertiesToCompare: (keyof K & keyof T)[];
+  propertiesClearedWhenOmitted: (keyof K & keyof T)[];
+}): boolean =>
+  propertiesToCompare.some((property) => {
+    const receivedValue = receivedObject[property];
+
+    if (receivedValue !== undefined) {
+      return !fastDeepEqual(existingObject[property], receivedValue);
+    }
+
+    return (
+      propertiesClearedWhenOmitted.includes(property) &&
+      isDefined(existingObject[property])
+    );
+  });
 
 export const computeDiffBetweenObjects = <
   T extends { id: string },
@@ -38,6 +55,7 @@ export const computeDiffBetweenObjects = <
   existingObjects,
   receivedObjects,
   propertiesToCompare,
+  propertiesClearedWhenOmitted = [],
   isEntityIncluded,
 }: ComputeDiffBetweenObjectsParams<T, K>): Diff<K> => {
   const toCreate: K[] = [];
@@ -57,22 +75,15 @@ export const computeDiffBetweenObjects = <
     if (isDefined(existingEntity)) {
       if (!isEntityIncluded(existingEntity)) {
         toRestoreAndUpdate.push(receivedObject);
-      } else {
-        const comparableExistingEntity = extractProperties(
-          existingEntity,
-          propertiesToCompare,
-        );
-
-        const comparableReceivedEntity = extractProperties(
+      } else if (
+        hasReceivedObjectChanged({
+          existingObject: existingEntity,
           receivedObject,
           propertiesToCompare,
-        );
-
-        if (
-          !fastDeepEqual(comparableExistingEntity, comparableReceivedEntity)
-        ) {
-          toUpdate.push(receivedObject);
-        }
+          propertiesClearedWhenOmitted,
+        })
+      ) {
+        toUpdate.push(receivedObject);
       }
     } else {
       toCreate.push(receivedObject);

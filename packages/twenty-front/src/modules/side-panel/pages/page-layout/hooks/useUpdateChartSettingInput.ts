@@ -14,7 +14,7 @@ export const useUpdateChartSettingInput = (pageLayoutId: string) => {
 
     updateCurrentWidgetConfig({
       configToUpdate: {
-        [configKey]: value,
+        [configKey]: value ?? undefined,
       },
     });
   };
