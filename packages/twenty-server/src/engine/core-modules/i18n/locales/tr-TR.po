@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Zenginleştir"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "1 ile {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter arasında bir ad ve desteklenen asistan görünüm seçenekleri girin."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "Devam Ediyor"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Bu çalışma alanında Gelen Kutusu etkin değil."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Seçilen izinlerin bir kısmı geçerli değil. Lütfen geçerli izin ayarlarıyla tekrar deneyin."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Bazı çalışma alanı üyelikleri bulunamadı. Bu çalışma alanına artık erişimleri olmayabilir."
 
@@ -13651,6 +13657,11 @@ msgstr "Uygulamanın üretim bağımlılıkları kurulamayacak kadar büyük. Ma
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Uygulamanın talep ettiği izinler değişti. Onaylamadan önce bunları tekrar inceleyin."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Çalışma alanı etkinleştirilmeden önce asistan profili güncellenemez."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Bu indeks mevcut değil veya zaten silinmiş."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Bu örnek bir sunucu tanımlayıcısı bildirmedi. SERVER_ID değerini bu örnekte ayarlayın ve ardından tekrar deneyin."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Bu iş kuyruğa alınamayacak kadar büyük."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "Çok fazla yönetici adayı bulundu."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Çok fazla katılımcı: {attendeeCount}. İzin verilen maksimum sayı {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Çok fazla iş bekliyor. Lütfen daha sonra tekrar deneyin."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Kendiniz için kurtarma kodu oluşturamazsınız. Bunun yerine profilinizden iki faktörlü kimlik doğrulamayı sıfırlayın."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Kendi rolünüzü değiştiremezsiniz. Lütfen başka bir yöneticiden rolünüzü güncellemesini isteyin."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Kendi rolünüzden Ayarlar'a erişimi kaldıramazsınız. Başka bir yöneticiden bu değişikliği yapmasını isteyin."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Son yöneticiden yönetici rolünü kaldıramazsınız. Lütfen önce başka bir yönetici atayın."
 
@@ -18114,6 +18135,11 @@ msgstr "Bu işlemi gerçekleştirme izniniz yok."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Bu iş akışı işlemini gerçekleştirme izniniz yok."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Yardımcı profilini güncelleme izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Rolünüz bu kayıtların bazılarını silemez, bu nedenle birleştiril
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Bu çalışma alanındaki rolünüz bulunamadı. Lütfen çalışma alanı yöneticinizle iletişime geçin."
 

@@ -274,6 +274,22 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Límites de memoria de la cola de trabajos
+
+El Redis de la cola se ejecuta con `noeviction`: una vez lleno, todos los encolados fallan para todos los espacios de trabajo. Para evitar que un espacio de trabajo o una aplicación lo llene, cada uno puede usar una parte de la memoria que los demás dejan libre, y el tamaño de cada trabajo está limitado.
+
+| Variable                                                     | Predeterminado | Qué hace                                                                                    |
+| ------------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------- |
+| `IS_REDIS_MEMORY_FAIRNESS_ENABLED`                           | `falso`        | Rechazar trabajos que superen el límite de tamaño o su cuota.                               |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `5242880`      | El trabajo serializado más grande aceptado.                                                 |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.3`          | Parte de la memoria libre que puede ocupar un espacio de trabajo.                           |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4`          | Parte de la memoria libre que puede ocupar una aplicación en todos los espacios de trabajo. |
+| `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`          | Parte de `maxmemory` que nunca se asigna a los trabajos.                                    |
+
+El límite de cuota requiere que `maxmemory` esté configurado en el Redis de la cola. Los rechazos se registran y se contabilizan en `job_memory_limit_refused_total` por cola, nombre del trabajo y motivo, y `twenty_queue_memory_used_ratio` rastrea el uso de memoria. Si tu proveedor reserva parte de `maxmemory` (por ejemplo, `reserved-memory-percent` de ElastiCache), inclúyela en `JOB_QUEUE_MEMORY_RESERVE`, a menos que `maxmemory` ya la excluya.
+
+Se cobra por un trabajo hasta que se completa o falla definitivamente, y los cargos no caducan. Un trabajo eliminado de una cola fuera del worker (eliminación en el panel de administración, limpieza de cola) conserva su cargo hasta que ejecutes `yarn command:prod job-memory:reconcile`. El comando libera la carga de todos los trabajos que ya no están o han finalizado, comprobando dos veces con unos segundos de diferencia (`--grace-seconds`, 10 de forma predeterminada) para que un trabajo que se está poniendo en cola no se libere por error.
+
 ## Conexiones salientes a hosts internos
 
 De forma predeterminada, Twenty rechaza las conexiones salientes a direcciones IP privadas/internas (protección SSRF). Esto abarca las acciones de flujo de trabajo HTTP, los webhooks, los proveedores de identidad SSO y las conexiones IMAP/SMTP/CalDAV. Si su proveedor de identidad, servidor de correo o de calendario se ejecuta en una red privada, indique su nombre de host o dirección IP literal:

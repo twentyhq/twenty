@@ -10255,6 +10255,7 @@ msgid "Downgrade to monthly"
 msgstr "降級為月付方案"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -14326,6 +14327,11 @@ msgstr "帳號"
 msgid "Happy"
 msgstr "開心"
 
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "有附件"
+
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
@@ -18263,6 +18269,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "適用於進階專案的更多進階欄位"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -22156,6 +22163,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "防止用戶將相同的數值指定給不同的記錄"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
