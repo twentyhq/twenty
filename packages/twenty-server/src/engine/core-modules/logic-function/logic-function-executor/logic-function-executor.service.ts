@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
+  DEFAULT_INTERNAL_API_URL_NAME,
   DEFAULT_SERVER_ROUTES_URL_NAME,
 } from 'twenty-shared/application-runtime';
 import {
@@ -557,6 +559,9 @@ export class LogicFunctionExecutorService {
     ]);
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
+    const serverInternalUrl = this.twentyConfigService.get(
+      'SERVER_INTERNAL_URL',
+    );
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
       workspaceId,
       flatApplication,
@@ -588,6 +593,9 @@ export class LogicFunctionExecutorService {
       ...workspaceVariables,
       ...userVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
+      ...(isNonEmptyString(serverInternalUrl)
+        ? { [DEFAULT_INTERNAL_API_URL_NAME]: cleanServerUrl(serverInternalUrl) }
+        : {}),
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken
