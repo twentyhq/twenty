@@ -34,29 +34,30 @@ export const RecordShowCommandMenu = () => {
     recordShowPageWidgetHeaderCommandMenuItemsState,
   );
 
-  const hasPinnedWidgetCommandMenuItems =
-    recordShowPageWidgetHeaderCommandMenuItems.some(
-      (commandMenuItem) => commandMenuItem.isPinned !== false,
-    );
+  const widgetCommandMenuItems = isLayoutCustomizationModeEnabled
+    ? []
+    : recordShowPageWidgetHeaderCommandMenuItems;
+
+  const replacedEngineComponentKey = widgetCommandMenuItems.find(
+    (commandMenuItem) => commandMenuItem.isPinned !== false,
+  )?.replacedEngineComponentKey;
 
   return (
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
         <>
-          {hasPinnedWidgetCommandMenuItems &&
-          !isLayoutCustomizationModeEnabled ? (
-            <WidgetCommandMenuItemButtons
-              commandMenuItems={recordShowPageWidgetHeaderCommandMenuItems}
+          <CommandMenuContextProvider
+            displayType="button"
+            containerType={CommandMenuItemContainerType.ShowPageHeader}
+            isInPreviewMode={isLayoutCustomizationModeEnabled}
+          >
+            <PinnedCommandMenuItemButtons
+              hiddenEngineComponentKey={replacedEngineComponentKey}
             />
-          ) : (
-            <CommandMenuContextProvider
-              displayType="button"
-              containerType={CommandMenuItemContainerType.ShowPageHeader}
-              isInPreviewMode={isLayoutCustomizationModeEnabled}
-            >
-              <PinnedCommandMenuItemButtons />
-            </CommandMenuContextProvider>
-          )}
+          </CommandMenuContextProvider>
+          <WidgetCommandMenuItemButtons
+            commandMenuItems={widgetCommandMenuItems}
+          />
           <CommandMenuItemEditButton />
         </>
       )}

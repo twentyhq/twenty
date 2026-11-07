@@ -22,6 +22,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { PageFocusId } from '@/types/PageFocusId';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledComposerContainer = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
@@ -90,6 +91,8 @@ export const EmailThreadComposer = ({
             Icon: IconArrowBackUp,
             isPrimaryCTA: true,
             onClick: () => setIsComposerOpen(true),
+            replacedEngineComponentKey:
+              EngineComponentKey.REPLY_TO_EMAIL_THREAD,
           },
         ];
       }
@@ -100,6 +103,7 @@ export const EmailThreadComposer = ({
         Icon: IconX,
         isPinned: !isInSidePanel,
         onClick: () => setIsComposerOpen(false),
+        replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
       };
 
       const sendCommandMenuItem: SidePanelFooterCommandMenuItem = {
@@ -110,6 +114,7 @@ export const EmailThreadComposer = ({
         shortcut: ['Mod', 'Enter'],
         onClick: handleSend,
         disabled: !canSendReply,
+        replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
       };
 
       if (!isInSidePanel) {
