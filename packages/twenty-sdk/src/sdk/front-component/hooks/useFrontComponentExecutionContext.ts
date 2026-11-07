@@ -15,4 +15,10 @@ const subscribe = (listener: () => void) => {
 export const useFrontComponentExecutionContext = <TSelected>(
   selector: (context: FrontComponentExecutionContext) => TSelected,
 ): TSelected =>
-  selector(useSyncExternalStore(subscribe, getFrontComponentExecutionContext));
+  selector(
+    useSyncExternalStore(
+      subscribe,
+      getFrontComponentExecutionContext,
+      getFrontComponentExecutionContext,
+    ),
+  );
