@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupDefinition } from 'src/engine/permissions/internal/access-group/types/access-group-definition.type';
+import { type NewAccessGroup } from 'src/engine/permissions/internal/access-group/types/new-access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
@@ -55,17 +55,17 @@ export class AccessGroupRepository {
 
   async insertAccessGroups({
     workspaceId,
-    definitions,
+    newAccessGroups,
   }: {
     workspaceId: string;
-    definitions: AccessGroupDefinition[];
+    newAccessGroups: NewAccessGroup[];
   }): Promise<void> {
     for (
       let start = 0;
-      start < definitions.length;
+      start < newAccessGroups.length;
       start += INSERT_BATCH_SIZE
     ) {
-      const batch = definitions.slice(start, start + INSERT_BATCH_SIZE);
+      const batch = newAccessGroups.slice(start, start + INSERT_BATCH_SIZE);
 
       await this.recordPermissionQueryService.execute({
         workspaceId,
@@ -80,17 +80,20 @@ export class AccessGroupRepository {
               .join(', ')}
             ON CONFLICT DO NOTHING`,
           parameters: Object.fromEntries(
-            batch.flatMap((definition, index) => [
-              [`roleId${index}`, definition.roleId],
-              [`objectMetadataId${index}`, definition.objectMetadataId],
-              [`ruleId${index}`, definition.rowLevelPermissionPredicateGroupId],
+            batch.flatMap((newAccessGroup, index) => [
+              [`roleId${index}`, newAccessGroup.roleId],
+              [`objectMetadataId${index}`, newAccessGroup.objectMetadataId],
+              [
+                `ruleId${index}`,
+                newAccessGroup.rowLevelPermissionPredicateGroupId,
+              ],
               [
                 `memberFieldValues${index}`,
-                isDefined(definition.memberFieldValues)
-                  ? JSON.stringify(definition.memberFieldValues)
+                isDefined(newAccessGroup.memberFieldValues)
+                  ? JSON.stringify(newAccessGroup.memberFieldValues)
                   : null,
               ],
-              [`groupHash${index}`, definition.groupHash],
+              [`groupHash${index}`, newAccessGroup.groupHash],
             ]),
           ),
         },
