@@ -10,7 +10,7 @@ import { isPageLayoutFilterDefaultValueSupported } from '@/side-panel/pages/page
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -134,7 +134,8 @@ export const DashboardFilterSettingsCard = ({
       conditions: [
         {
           operand: ViewFilterOperand.IS_RELATIVE,
-          value: stringifyRelativeDateFilter(relativeDateFilter),
+          value:
+            stringifyRelativeDateFilterWithDetectedStartDay(relativeDateFilter),
         },
       ],
     });

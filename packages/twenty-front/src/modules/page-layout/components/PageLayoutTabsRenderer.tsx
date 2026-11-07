@@ -1,6 +1,6 @@
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
-import { DashboardFiltersEditModeButton } from '@/page-layout/components/DashboardFiltersEditModeButton';
+import { DashboardFilterBar } from '@/page-layout/components/DashboardFilterBar';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutPrerenderedTabIdsResetEffect } from '@/page-layout/components/PageLayoutPrerenderedTabIdsResetEffect';
@@ -30,7 +30,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -220,10 +220,10 @@ export const PageLayoutTabsRenderer = () => {
   const behaveAsLinks =
     workspaceSurface.type === 'main' && !isPageLayoutInEditMode;
   const hasTabPanels = shouldRenderTabList && !behaveAsLinks;
-  const shouldRenderDashboardFiltersButton =
+  const shouldRenderDashboardFilterBar =
     isDashboardFiltersEnabled &&
-    isPageLayoutInEditMode &&
-    currentPageLayout.type === PageLayoutType.DASHBOARD;
+    currentPageLayout.type === PageLayoutType.DASHBOARD &&
+    (isPageLayoutInEditMode || isNonEmptyArray(currentPageLayout.filters));
 
   const tabList = shouldRenderTabList && (
     <PageLayoutTabList
@@ -283,10 +283,10 @@ export const PageLayoutTabsRenderer = () => {
                 }
               />
               {!shouldRenderRecordIdentifierBar &&
-                (shouldRenderDashboardFiltersButton ? (
+                (shouldRenderDashboardFilterBar ? (
                   <StyledTabListRow>
                     {tabList}
-                    <DashboardFiltersEditModeButton />
+                    <DashboardFilterBar />
                   </StyledTabListRow>
                 ) : (
                   tabList

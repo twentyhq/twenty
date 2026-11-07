@@ -1,4 +1,7 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useDashboardFilterForWidget } from '@/page-layout/hooks/useDashboardFilterForWidget';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
@@ -18,6 +21,14 @@ export const RecordTableWidgetRenderer = ({
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { dashboardGqlOperationFilter } = useDashboardFilterForWidget({
+    objectMetadataItem: objectMetadataItems.find(
+      ({ id }) => id === widget.objectMetadataId,
+    ),
+    configuration,
+  });
 
   const isRecordTableConfiguration =
     configuration.configurationType === WidgetConfigurationType.RECORD_TABLE;
@@ -43,14 +54,18 @@ export const RecordTableWidgetRenderer = ({
 
   return (
     <StyledWidgetTableOutline>
-      <RecordTableWidgetRendererContent
-        objectMetadataId={widget.objectMetadataId}
-        viewId={viewId}
-        widgetId={widget.id}
-        isEmptyStateHidden
-        recordLimit={recordLimit}
-        isUIEditable={!isPageLayoutInEditMode && isUIEditable}
-      />
+      <RecordIndexDashboardFilterContext.Provider
+        value={dashboardGqlOperationFilter}
+      >
+        <RecordTableWidgetRendererContent
+          objectMetadataId={widget.objectMetadataId}
+          viewId={viewId}
+          widgetId={widget.id}
+          isEmptyStateHidden
+          recordLimit={recordLimit}
+          isUIEditable={!isPageLayoutInEditMode && isUIEditable}
+        />
+      </RecordIndexDashboardFilterContext.Provider>
     </StyledWidgetTableOutline>
   );
 };

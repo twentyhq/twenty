@@ -1,3 +1,4 @@
+import { FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID } from '@/object-record/record-field/ui/form-types/constants/FormDateFieldPickerClickOutsideId';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -30,9 +31,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-shared/types';
-
-const FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID =
-  'form-date-field-picker-floating';
 
 const StyledDateInputTextContainer = styled.div<{ isReadonly?: boolean }>`
   align-items: center;

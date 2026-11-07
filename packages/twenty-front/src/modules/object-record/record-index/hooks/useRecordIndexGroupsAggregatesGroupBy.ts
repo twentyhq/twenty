@@ -11,6 +11,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
@@ -18,7 +19,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   canReachSomeRecords,
@@ -117,6 +118,8 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       .map((recordGroupDefinition) => recordGroupDefinition.value),
   });
 
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
+
   const { data, loading, error } = useQuery(groupByAggregateQuery, {
     skip:
       !isDefined(objectMetadataItem) ||
@@ -128,6 +131,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
         anyFieldFilter,
         requestFilters,
         recordGroupOptionsFilter,
+        dashboardFilter,
       ]),
       groupBy: {
         ...groupByGqlInput,

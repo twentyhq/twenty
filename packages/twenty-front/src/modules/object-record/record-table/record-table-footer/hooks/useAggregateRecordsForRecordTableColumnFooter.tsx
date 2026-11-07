@@ -9,6 +9,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 import { useListenToJunctionRecordOperation } from '@/object-record/record-table-widget/hooks/useListenToJunctionRecordOperation';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -24,6 +25,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
+  combineFilters,
   computeRecordGqlOperationFilter,
   findById,
   isDefined,
@@ -115,14 +117,19 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
+
   const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: {
-      ...requestFilters,
-      ...recordGroupFilter,
-      ...anyFieldFilter,
-    },
+    filter: combineFilters([
+      {
+        ...requestFilters,
+        ...recordGroupFilter,
+        ...anyFieldFilter,
+      },
+      dashboardFilter,
+    ]),
     skip: !isDefined(aggregateOperationForViewField),
   });
 

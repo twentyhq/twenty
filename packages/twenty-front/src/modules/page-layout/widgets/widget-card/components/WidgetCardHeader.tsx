@@ -25,6 +25,7 @@ export type WidgetCardHeaderProps = {
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
+  filterChips?: ReactNode;
   className?: string;
   isResizing?: boolean;
 };
@@ -85,6 +86,7 @@ export const WidgetCardHeader = ({
   title,
   onRemove,
   forbiddenDisplay,
+  filterChips,
   className,
 }: WidgetCardHeaderProps) => {
   const { t } = useLingui();
@@ -113,6 +115,7 @@ export const WidgetCardHeader = ({
         )}
       </StyledTitleContainer>
       <StyledRightContainer>
+        {filterChips}
         {hasAccess && <WidgetCardHeaderActionsRenderer />}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>

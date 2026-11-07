@@ -2,9 +2,11 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { useDashboardFilterForWidget } from '@/page-layout/hooks/useDashboardFilterForWidget';
 import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
+  combineFilters,
   computeRecordGqlOperationFilter,
   isDefined,
 } from 'twenty-shared/utils';
@@ -53,7 +55,7 @@ export const useGraphWidgetQueryCommon = ({
     fieldMetadataItems: objectMetadataItem.fields,
   });
 
-  const gqlOperationFilter = computeRecordGqlOperationFilter({
+  const widgetGqlOperationFilter = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     recordFilters: (sanitizedRecordFilters ?? []).map((recordFilter) => ({
@@ -62,6 +64,16 @@ export const useGraphWidgetQueryCommon = ({
     })),
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
+
+  const { dashboardGqlOperationFilter } = useDashboardFilterForWidget({
+    objectMetadataItem,
+    configuration,
+  });
+
+  const gqlOperationFilter = combineFilters([
+    widgetGqlOperationFilter,
+    dashboardGqlOperationFilter,
+  ]);
 
   return {
     objectMetadataItem,

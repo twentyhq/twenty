@@ -2,6 +2,7 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
+import { WidgetDashboardFilterChips } from '@/page-layout/widgets/components/WidgetDashboardFilterChips';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -107,6 +108,9 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            filterChips={
+              hasAccess && <WidgetDashboardFilterChips widget={widget} />
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay

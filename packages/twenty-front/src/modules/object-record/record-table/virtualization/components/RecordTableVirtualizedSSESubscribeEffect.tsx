@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -13,7 +14,10 @@ import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
+import {
+  combineFilters,
+  computeRecordGqlOperationFilter,
+} from 'twenty-shared/utils';
 
 export const RecordTableVirtualizedSSESubscribeEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -53,18 +57,23 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
     currentRecordFilterGroupsComponentState,
   );
 
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
+
   const queryId = `record-table-virtualized-${objectMetadataItem.nameSingular}`;
 
   const operationSignature = useMemo(
     () => ({
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
-        filter: computeRecordGqlOperationFilter({
-          fieldMetadataItems: flattenedFieldMetadataItems,
-          recordFilters: currentRecordFilters,
-          recordFilterGroups: currentRecordFilterGroups,
-          filterValueDependencies,
-        }),
+        filter: combineFilters([
+          computeRecordGqlOperationFilter({
+            fieldMetadataItems: flattenedFieldMetadataItems,
+            recordFilters: currentRecordFilters,
+            recordFilterGroups: currentRecordFilterGroups,
+            filterValueDependencies,
+          }),
+          dashboardFilter,
+        ]),
         orderBy: turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts),
       },
     }),
@@ -75,6 +84,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       filterValueDependencies,
       currentRecordSorts,
       flattenedFieldMetadataItems,
+      dashboardFilter,
     ],
   );
 

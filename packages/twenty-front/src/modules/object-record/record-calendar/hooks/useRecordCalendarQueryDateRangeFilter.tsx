@@ -1,6 +1,7 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -10,6 +11,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import {
   combineFilters,
@@ -33,6 +35,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     recordIndexCalendarLayout,
   );
   const { userTimezone } = useUserTimezone();
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarInstanceId,
@@ -96,6 +99,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
       dateRangeFilterBefore,
       viewFilter,
       anyFieldFilter,
+      dashboardFilter,
     ]),
   };
 };

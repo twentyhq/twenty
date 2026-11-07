@@ -33,6 +33,6 @@ export const getRelativeDateDisplayValue = (
   }
 
   return [directionFormatted, amountFormatted, unitFormatted]
-    .filter((item) => item !== undefined)
+    .filter((item) => item !== undefined && item !== '')
     .join(' ');
 };

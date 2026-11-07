@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
@@ -9,6 +10,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -91,10 +93,13 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordGroupValues,
   });
 
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
+
   const combinedFilters = combineFilters([
     anyFieldFilter,
     requestFilters,
     recordGroupOptionsFilter,
+    dashboardFilter,
   ]);
 
   const recordGroupsLimit = visibleRecordGroupDefinitions.length;

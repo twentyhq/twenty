@@ -2,6 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useDashboardFilterForWidget } from '@/page-layout/hooks/useDashboardFilterForWidget';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
@@ -20,6 +21,15 @@ export const useWidgetPermissions = (
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const objectMetadata = objectMetadataItems.find(
+    (item) => item.id === widget.objectMetadataId,
+  );
+
+  const { unresolvedBindings } = useDashboardFilterForWidget({
+    objectMetadataItem: objectMetadata,
+    configuration: widget.configuration,
+  });
+
   if (!isDefined(widget.objectMetadataId)) {
     return {
       hasAccess: true,
@@ -28,10 +38,6 @@ export const useWidgetPermissions = (
       },
     };
   }
-
-  const objectMetadata = objectMetadataItems.find(
-    (item) => item.id === widget.objectMetadataId,
-  );
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -53,12 +59,17 @@ export const useWidgetPermissions = (
     };
   }
 
-  const nonReadableFieldMetadataIds = extractFieldMetadataIdsFromWidget(
-    widget,
-  ).filter(
-    (fieldMetadataId) =>
-      !getFieldPermissions({ objectPermissions, fieldMetadataId }).canReadField,
-  );
+  // A bound filter the viewer cannot resolve must not render as unfiltered numbers
+  const nonReadableFieldMetadataIds = [
+    ...new Set([
+      ...extractFieldMetadataIdsFromWidget(widget).filter(
+        (fieldMetadataId) =>
+          !getFieldPermissions({ objectPermissions, fieldMetadataId })
+            .canReadField,
+      ),
+      ...unresolvedBindings.map(({ fieldMetadataId }) => fieldMetadataId),
+    ]),
+  ];
 
   if (nonReadableFieldMetadataIds.length > 0) {
     const restrictedFieldNames = nonReadableFieldMetadataIds.map(

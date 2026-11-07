@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
@@ -7,6 +8,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
+import { RecordIndexDashboardFilterContext } from '@/object-record/record-index/contexts/RecordIndexDashboardFilterContext';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -84,10 +86,13 @@ export const useFindManyRecordIndexTableParams = (
     objectMetadataItems,
   );
 
+  const dashboardFilter = useContext(RecordIndexDashboardFilterContext);
+
   const combinedFilter = combineFilters([
     currentFilters,
     recordGroupFilter,
     anyFieldFilter,
+    dashboardFilter,
   ]);
 
   return {

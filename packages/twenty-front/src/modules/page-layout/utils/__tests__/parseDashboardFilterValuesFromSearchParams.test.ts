@@ -1,0 +1,98 @@
+import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/parseDashboardFilterValuesFromSearchParams';
+import { setDashboardFilterValueInSearchParams } from '@/page-layout/utils/setDashboardFilterValueInSearchParams';
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+const PERIOD_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01';
+const SIGNUP_FILTER_ID = '0d9a3c55-2b8e-4b1f-9c7a-3e5f6a7b8c90';
+
+describe('parseDashboardFilterValuesFromSearchParams', () => {
+  it('should round-trip a value written by setDashboardFilterValueInSearchParams', () => {
+    const value = {
+      conditions: [
+        { operand: ViewFilterOperand.IS_AFTER, value: '2026-01-01' },
+        { operand: ViewFilterOperand.IS_BEFORE, value: '2026-04-01' },
+      ],
+    };
+
+    const searchParams = setDashboardFilterValueInSearchParams({
+      searchParams: new URLSearchParams('viewId=abc'),
+      pageLayoutFilterId: PERIOD_FILTER_ID,
+      value,
+    });
+
+    expect(searchParams.get('viewId')).toBe('abc');
+    expect(parseDashboardFilterValuesFromSearchParams(searchParams)).toEqual({
+      [PERIOD_FILTER_ID]: value,
+    });
+  });
+
+  it('should keep relative values with their time zone intact', () => {
+    const value = {
+      conditions: [
+        {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'PAST_30_DAY;;Europe/Paris;;MONDAY;;',
+        },
+      ],
+    };
+
+    const searchParams = setDashboardFilterValueInSearchParams({
+      searchParams: new URLSearchParams(),
+      pageLayoutFilterId: PERIOD_FILTER_ID,
+      value,
+    });
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams(
+        new URLSearchParams(searchParams.toString()),
+      ),
+    ).toEqual({ [PERIOD_FILTER_ID]: value });
+  });
+
+  it('should represent an explicit "no filter" as an empty conditions list', () => {
+    const searchParams = setDashboardFilterValueInSearchParams({
+      searchParams: new URLSearchParams(),
+      pageLayoutFilterId: PERIOD_FILTER_ID,
+      value: { conditions: [] },
+    });
+
+    expect(parseDashboardFilterValuesFromSearchParams(searchParams)).toEqual({
+      [PERIOD_FILTER_ID]: { conditions: [] },
+    });
+  });
+
+  it('should only remove the reset filter from the URL', () => {
+    const searchParams = new URLSearchParams(
+      `dashboardFilter[${PERIOD_FILTER_ID}][IS_RELATIVE]=THIS_1_MONTH&dashboardFilter[${SIGNUP_FILTER_ID}][IS]=2026-01-01`,
+    );
+
+    const resetSearchParams = setDashboardFilterValueInSearchParams({
+      searchParams,
+      pageLayoutFilterId: PERIOD_FILTER_ID,
+      value: null,
+    });
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams(resetSearchParams),
+    ).toEqual({
+      [SIGNUP_FILTER_ID]: {
+        conditions: [{ operand: ViewFilterOperand.IS, value: '2026-01-01' }],
+      },
+    });
+  });
+
+  it('should ignore a filter whose operand or value is not supported', () => {
+    const searchParams = new URLSearchParams(
+      [
+        `dashboardFilter[${PERIOD_FILTER_ID}][IS_AFTER]=2026-01-01`,
+        `dashboardFilter[${PERIOD_FILTER_ID}][IS_BEFORE]=not-a-date`,
+        `dashboardFilter[${SIGNUP_FILTER_ID}][CONTAINS]=2026`,
+        `filter[closeDate][IS_AFTER]=2026-01-01`,
+      ].join('&'),
+    );
+
+    expect(parseDashboardFilterValuesFromSearchParams(searchParams)).toEqual(
+      {},
+    );
+  });
+});
