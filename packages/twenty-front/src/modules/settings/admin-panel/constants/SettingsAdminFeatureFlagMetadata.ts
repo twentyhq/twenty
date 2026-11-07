@@ -64,4 +64,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`AI data policy and Privacy tab`,
     description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
   },
+  [FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED]: {
+    label: msg`Dashboard filters`,
+    description: msg`Define date filters on a dashboard and choose which field each widget filters. Enable after the instance upgrade completes.`,
+  },
 };

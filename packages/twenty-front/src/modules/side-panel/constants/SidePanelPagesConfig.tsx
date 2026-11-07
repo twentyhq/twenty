@@ -23,6 +23,7 @@ import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/com
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
+import { SidePanelDashboardFilterSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardFilterSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
 import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings';
 import { SidePanelRecordPageFieldSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings';
@@ -86,6 +87,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [
     SidePanelPages.DashboardRecordTableSettings,
     <SidePanelDashboardRecordTableSettings />,
+  ],
+  [
+    SidePanelPages.DashboardFilterSettings,
+    <SidePanelDashboardFilterSettings />,
   ],
   [
     SidePanelPages.RecordPageFieldsSettings,
