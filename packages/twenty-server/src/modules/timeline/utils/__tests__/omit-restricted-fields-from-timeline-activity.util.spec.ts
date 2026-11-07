@@ -71,6 +71,7 @@ const flatFieldMetadataMaps = [
 const buildObjectRecordsPermissions = (
   overrides: Partial<ObjectRecordsPermissions>,
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,

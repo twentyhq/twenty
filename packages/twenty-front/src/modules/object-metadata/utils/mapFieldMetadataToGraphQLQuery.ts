@@ -92,7 +92,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
         if (
           !canReachSomeRecords({
             objectRecordsPermissions: objectPermission,
-            operationType: 'select',
+            operationType: 'read',
           })
         ) {
           continue;
@@ -178,7 +178,7 @@ ${mapObjectMetadataToGraphQLQuery({
       if (
         !canReachSomeRecords({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';
@@ -237,7 +237,7 @@ ${mapObjectMetadataToGraphQLQuery({
       if (
         !canReachSomeRecords({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';

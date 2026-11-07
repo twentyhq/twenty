@@ -55,7 +55,7 @@ export const AgentChatThreadInitializationEffect = () => {
     isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
     canReachSomeRecords({
       objectRecordsPermissions: chatObjectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     });
   // The record API builds chat queries from the chat object's fields.
   const areFieldMetadataItemsLoaded =

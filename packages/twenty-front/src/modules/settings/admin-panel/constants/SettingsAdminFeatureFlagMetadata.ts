@@ -44,6 +44,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
+  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
+    label: msg`Create records permission`,
+    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
+  },
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,

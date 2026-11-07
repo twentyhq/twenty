@@ -43,7 +43,7 @@ import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-c
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -229,8 +229,8 @@ describe('Conversation sharing through the authenticated API', () => {
         'RecordSharingPermissionsService',
       );
     const sharingWriteService =
-      getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+      getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       );
     const rollbackError = new Error('Roll back the scoped sharing regression');
 
@@ -262,13 +262,13 @@ describe('Conversation sharing through the authenticated API', () => {
           };
 
           expect(
-            await sharingPermissionsService.findRecordSharing({
+            await sharingPermissionsService.findRecordSharingPanel({
               ...target,
               authContext: ownerAuthContext,
             }),
           ).toMatchObject({ isPrivate: true, canManageSharing: true });
           expect(
-            await sharingPermissionsService.findRecordSharing({
+            await sharingPermissionsService.findRecordSharingPanel({
               ...target,
               authContext: writerAuthContext,
             }),
@@ -1088,10 +1088,10 @@ describe('Conversations through the record API', () => {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
-    const readableRecordIds =
+    const readableEvents =
       await getAppProviderByClassName<RecordEventPermissionsService>(
         'RecordEventPermissionsService',
-      ).findReadableEventRecordIds({
+      ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId,
@@ -1099,7 +1099,7 @@ describe('Conversations through the record API', () => {
         eventBatch: batch,
       });
 
-    return readableRecordIds.has(threadId);
+    return readableEvents.some(({ recordId }) => recordId === threadId);
   };
 
   it.each([false, true])(

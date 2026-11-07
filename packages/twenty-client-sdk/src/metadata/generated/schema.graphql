@@ -2270,10 +2270,17 @@ input EnqueueJobsInput {
 }
 
 type EnqueueJobsResult {
+  availableBytes: Float
   enqueued: Boolean!
   enqueuedJobsCount: Int!
   jobIds: [String!]!
+  jobs: [EnqueuedJob!]!
   logicFunctionUniversalIdentifier: String!
+}
+
+type EnqueuedJob {
+  jobId: String!
+  sizeBytes: Int!
 }
 
 type EnterpriseLicenseInfoDTO {
@@ -2381,6 +2388,7 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
+  IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
@@ -3897,6 +3905,7 @@ enum ObjectRecordGroupByDateGranularity {
 }
 
 type ObjectRecordsPermissions {
+  canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
@@ -4647,6 +4656,7 @@ enum RowLevelPermissionPredicateOperand {
 }
 
 type RowLevelRecordsPermissions {
+  canCreateRecords: Boolean!
   canDestroyRecords: Boolean!
   canReadRecords: Boolean!
   canSoftDeleteRecords: Boolean!

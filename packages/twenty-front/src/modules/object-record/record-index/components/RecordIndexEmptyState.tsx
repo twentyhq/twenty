@@ -70,7 +70,7 @@ export const RecordIndexEmptyState = ({
   if (
     !canReachSomeRecords({
       objectRecordsPermissions: objectPermissions,
-      operationType: 'update',
+      operationType: 'create',
     })
   ) {
     return (

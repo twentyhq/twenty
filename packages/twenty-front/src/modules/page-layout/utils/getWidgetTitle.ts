@@ -20,9 +20,9 @@ export const getWidgetTitle = (
     case WidgetConfigurationType.BAR_CHART:
       if (configuration.layout === BarChartLayout.VERTICAL) {
         return `${t`Vertical Bar Chart`} ${index + 1}`;
-      } else {
-        return `${t`Horizontal Bar Chart`} ${index + 1}`;
       }
+      return `${t`Horizontal Bar Chart`} ${index + 1}`;
+
     case WidgetConfigurationType.LINE_CHART:
       return `${t`Line Chart`} ${index + 1}`;
     case WidgetConfigurationType.IFRAME:

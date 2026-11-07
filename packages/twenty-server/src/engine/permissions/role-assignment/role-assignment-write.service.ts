@@ -20,7 +20,7 @@ import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manag
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
 @Injectable()
-export class RoleAssignmentService {
+export class RoleAssignmentWriteService {
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -77,9 +77,9 @@ export class RoleAssignmentService {
       return { workspaceMember, userWorkspaceId: userWorkspace.id };
     }
 
-    await this.validateRoleAssignableToUsersOrThrow({ roleId, workspaceId });
+    await this.assertRoleAssignableToUsersOrThrow({ roleId, workspaceId });
 
-    await this.assignRoleToManyUserWorkspace({
+    await this.assignRoleToUserWorkspaces({
       workspaceId,
       userWorkspaceIds: [userWorkspace.id],
       roleId,
@@ -89,7 +89,7 @@ export class RoleAssignmentService {
     return { workspaceMember, userWorkspaceId: userWorkspace.id };
   }
 
-  public async assignRoleToManyUserWorkspace({
+  public async assignRoleToUserWorkspaces({
     workspaceId,
     userWorkspaceIds,
     roleId,
@@ -132,7 +132,7 @@ export class RoleAssignmentService {
     });
   }
 
-  public async validateRoleAssignableToUsersOrThrow({
+  public async assertRoleAssignableToUsersOrThrow({
     roleId,
     workspaceId,
   }: {
@@ -294,7 +294,7 @@ export class RoleAssignmentService {
     return userWorkspaceIdsToAssign;
   }
 
-  public async validateUserWorkspaceIsNotUniqueAdminOrThrow({
+  public async assertUserWorkspaceIsNotUniqueAdminOrThrow({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -339,7 +339,7 @@ export class RoleAssignmentService {
     workspaceId: string;
   }) {
     const workspaceMembersWithAdminRole =
-      await this.rolePermissionsService.findWorkspaceMembersWithRole({
+      await this.findWorkspaceMembersWithRole({
         roleId: adminRoleId,
         workspaceId,
       });
@@ -353,5 +353,31 @@ export class RoleAssignmentService {
         },
       );
     }
+  }
+
+  private async findWorkspaceMembersWithRole({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<FlatWorkspaceMember[]> {
+    const { userWorkspaceRoleMap, flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return Object.entries(userWorkspaceRoleMap)
+      .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
+      .map(([userWorkspaceId]) => {
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
+
+        return isDefined(workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+          : undefined;
+      })
+      .filter(isDefined);
   }
 }

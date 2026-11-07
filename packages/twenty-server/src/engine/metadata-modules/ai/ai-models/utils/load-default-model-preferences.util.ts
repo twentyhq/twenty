@@ -33,9 +33,9 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
     'mistral/mistral-large-latest',
   ],
   extraSmart: [
+    'anthropic/claude-opus-5-5',
     'openai/gpt-6.1-sol',
     'google/gemini-4-argon',
-    'anthropic/claude-opus-5-5',
     'xai/grok-4.7',
     'mistral/mistral-large-latest',
   ],
