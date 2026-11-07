@@ -42,6 +42,24 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
 });
 
+const fromObjectRecordsPermissionsToRowLevelRecordsPermissionsDto = (
+  objectRecordsPermissions: ObjectRecordsPermissions,
+): ObjectRecordsPermissionsDTO['rowLevelRecordsPermissions'] => {
+  const { rowLevelRecordsPermissions } = objectRecordsPermissions;
+
+  if (!isDefined(rowLevelRecordsPermissions)) {
+    return rowLevelRecordsPermissions;
+  }
+
+  return {
+    ...rowLevelRecordsPermissions,
+    canCreateRecords: canReachSomeRecords({
+      objectRecordsPermissions,
+      operationType: 'create',
+    }),
+  };
+};
+
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
@@ -56,8 +74,6 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       continue;
     }
 
-    const { rowLevelRecordsPermissions } = permissions;
-
     objectRecordsPermissions.push({
       objectMetadataId,
       canCreateAllRecords: canReachAllRecords({
@@ -69,15 +85,10 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
       restrictedFields: permissions.restrictedFields,
-      rowLevelRecordsPermissions: isDefined(rowLevelRecordsPermissions)
-        ? {
-            ...rowLevelRecordsPermissions,
-            canCreateRecords: canReachSomeRecords({
-              objectRecordsPermissions: permissions,
-              operationType: 'create',
-            }),
-          }
-        : rowLevelRecordsPermissions,
+      rowLevelRecordsPermissions:
+        fromObjectRecordsPermissionsToRowLevelRecordsPermissionsDto(
+          permissions,
+        ),
     });
     legacyObjectPermissions.push(
       fromObjectRecordsPermissionsToLegacyObjectPermission({

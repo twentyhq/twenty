@@ -180,9 +180,9 @@ export class RecordSharingReadService {
     permissions,
     viewerAccessLevel,
   }: {
-    args: RecordSharingArgs;
+    args: Pick<RecordSharingArgs, 'authContext'>;
     sharingObject: RecordSharingObject;
-    permissions: RecordPermissionsDTO;
+    permissions: Pick<RecordPermissionsDTO, 'canUpdate'>;
     viewerAccessLevel: RecordShareAccessLevel | null;
   }): Promise<boolean> {
     return (
