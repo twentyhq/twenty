@@ -9,6 +9,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -91,10 +92,13 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordGroupValues,
   });
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const combinedFilters = combineFilters([
     anyFieldFilter,
     requestFilters,
     recordGroupOptionsFilter,
+    additionalFilter,
   ]);
 
   const recordGroupsLimit = visibleRecordGroupDefinitions.length;
