@@ -317,6 +317,8 @@ export const FormDateFieldInput = ({
                   onEscape={handlePickerEscape}
                   onClear={handlePickerClear}
                   hideHeaderInput
+                  // Inside a dropdown, the month and year lists would otherwise portal under the picker
+                  portalContainer={refs.floating}
                 />
               </OverlayContainer>
             </StyledDatePickerFloatingContainer>

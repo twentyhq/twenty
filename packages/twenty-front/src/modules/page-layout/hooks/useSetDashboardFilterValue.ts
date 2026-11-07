@@ -1,11 +1,12 @@
 import { setDashboardFilterValueInSearchParams } from '@/page-layout/utils/setDashboardFilterValueInSearchParams';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { type PageLayoutFilterValue } from 'twenty-shared/types';
 
 export const useSetDashboardFilterValue = () => {
   const navigate = useNavigate();
+  const { search, hash } = useLocation();
 
-  // Reads the URL at call time and keeps the tab hash, which setSearchParams drops
+  // Keeps the tab hash, which setSearchParams drops
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const setDashboardFilterValue = ({
     pageLayoutFilterId,
@@ -14,8 +15,6 @@ export const useSetDashboardFilterValue = () => {
     pageLayoutFilterId: string;
     value: PageLayoutFilterValue | null;
   }) => {
-    const { search, hash } = window.location;
-
     navigate(
       {
         search: setDashboardFilterValueInSearchParams({

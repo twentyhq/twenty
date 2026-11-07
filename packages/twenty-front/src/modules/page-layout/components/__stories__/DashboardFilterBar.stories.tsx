@@ -160,6 +160,48 @@ export const IgnoresAValueTheBarCannotShow: Story = {
   },
 };
 
+export const PicksAMonthInTheDatePicker: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${PERIOD_FILTER_ID}][IS_AFTER]=2026-01-10`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole(
+        'button',
+        { name: /^Period: From / },
+        FIRST_RENDER_TIMEOUT,
+      ),
+    );
+    const [startDateInput] = await body.findAllByRole('textbox', {
+      name: 'Date',
+    });
+    await userEvent.click(startDateInput);
+    await userEvent.click(await body.findByText('January'));
+
+    const marchOption = await body.findByRole('option', { name: 'March' });
+    const { left, top, width, height } = marchOption.getBoundingClientRect();
+
+    const topmostElement = canvasElement.ownerDocument.elementFromPoint(
+      left + width / 2,
+      top + height / 2,
+    );
+
+    expect(topmostElement?.closest('[role="option"]')).toBe(marchOption);
+
+    await userEvent.click(marchOption);
+    await userEvent.click(
+      await body.findByRole('gridcell', { name: /March 5th, 2026/ }),
+    );
+
+    expect(
+      await canvas.findByRole('button', { name: /^Period: From Mar 5/ }),
+    ).toBeVisible();
+  },
+};
+
 export const KeepsTheValueWhenChoosingADateRange: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

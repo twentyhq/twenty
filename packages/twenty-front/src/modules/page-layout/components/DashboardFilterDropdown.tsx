@@ -32,6 +32,7 @@ export const DashboardFilterDropdown = ({
 
   const value =
     dashboardFilters?.valueByPageLayoutFilterId[pageLayoutFilterId] ?? null;
+  const valueLabel = getValueLabel(value);
   const isOverridingDefault = isDefined(
     dashboardFilters?.urlValueByPageLayoutFilterId[pageLayoutFilterId],
   );
@@ -67,7 +68,7 @@ export const DashboardFilterDropdown = ({
       <Dropdown.Trigger
         render={
           <LightButton startIcon={<IconFilter />} endIcon={<IconChevronDown />}>
-            {t`${label}: ${getValueLabel(value)}`}
+            {t`${label}: ${valueLabel}`}
           </LightButton>
         }
       />

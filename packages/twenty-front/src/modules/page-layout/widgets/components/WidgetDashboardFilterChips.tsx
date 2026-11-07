@@ -30,14 +30,20 @@ export const WidgetDashboardFilterChips = ({
 
   return dashboardFilters?.pageLayoutFilters
     .filter(({ id }) => boundPageLayoutFilterIds.has(id))
-    .map(({ id, label }) => (
-      <Chip
-        key={id}
-        variant="soft"
-        maxWidth={DASHBOARD_FILTER_CHIP_MAX_WIDTH}
-        startElement={<IconFilter size={theme.icon.size.sm} />}
-      >
-        {t`${label}: ${getValueLabel(dashboardFilters.valueByPageLayoutFilterId[id])}`}
-      </Chip>
-    ));
+    .map(({ id, label }) => {
+      const valueLabel = getValueLabel(
+        dashboardFilters.valueByPageLayoutFilterId[id],
+      );
+
+      return (
+        <Chip
+          key={id}
+          variant="soft"
+          maxWidth={DASHBOARD_FILTER_CHIP_MAX_WIDTH}
+          startElement={<IconFilter size={theme.icon.size.sm} />}
+        >
+          {t`${label}: ${valueLabel}`}
+        </Chip>
+      );
+    });
 };
