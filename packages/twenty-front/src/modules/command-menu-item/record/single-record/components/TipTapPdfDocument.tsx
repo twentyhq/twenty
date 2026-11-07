@@ -1,5 +1,6 @@
 /* oxlint-disable twenty/no-hardcoded-colors --
    PDF documents are rendered outside the app and cannot read theme variables */
+import { PDF_FONT_FAMILIES } from '@/command-menu-item/record/single-record/constants/PdfFontFamilies';
 import { RICH_TEXT_PDF_COLORS } from '@/command-menu-item/record/single-record/constants/RichTextPdfColors';
 import {
   Document,
@@ -12,6 +13,7 @@ import {
 } from '@react-pdf/renderer';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type ComponentProps, type ReactNode } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   getSafeUrl,
   isDefined,
@@ -26,7 +28,12 @@ import {
 const HEADING_FONT_SIZES = [22, 18, 15, 13, 12, 11];
 
 const styles = StyleSheet.create({
-  page: { fontFamily: 'Helvetica', fontSize: 11, lineHeight: 1.5, padding: 48 },
+  page: {
+    fontFamily: PDF_FONT_FAMILIES.REGULAR,
+    fontSize: 11,
+    lineHeight: 1.5,
+    padding: 48,
+  },
   block: { marginBottom: 6 },
   listItem: { flexDirection: 'row', marginBottom: 2 },
   listMarker: { width: 18 },
@@ -40,7 +47,7 @@ const styles = StyleSheet.create({
   },
   codeBlock: {
     backgroundColor: '#f4f4f4',
-    fontFamily: 'Courier',
+    fontFamily: PDF_FONT_FAMILIES.MONOSPACE,
     fontSize: 10,
     marginBottom: 6,
     padding: 8,
@@ -59,7 +66,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 4,
   },
-  tableHeader: { backgroundColor: '#f4f4f4', fontFamily: 'Helvetica-Bold' },
+  tableHeader: {
+    backgroundColor: '#f4f4f4',
+    fontFamily: PDF_FONT_FAMILIES.BOLD,
+  },
   divider: { borderTopColor: '#d6d6d6', borderTopWidth: 1, marginVertical: 8 },
   image: { marginBottom: 6, maxWidth: '100%', objectFit: 'contain' },
   link: { color: '#0d74ce' },
@@ -98,18 +108,18 @@ const getMarkFontFamily = ({
   isItalic: boolean;
 }) => {
   if (isCode) {
-    return 'Courier';
+    return PDF_FONT_FAMILIES.MONOSPACE;
   }
 
   if (isBold && isItalic) {
-    return 'Helvetica-BoldOblique';
+    return PDF_FONT_FAMILIES.BOLD_ITALIC;
   }
 
   if (isBold) {
-    return 'Helvetica-Bold';
+    return PDF_FONT_FAMILIES.BOLD;
   }
 
-  return isItalic ? 'Helvetica-Oblique' : undefined;
+  return isItalic ? PDF_FONT_FAMILIES.ITALIC : undefined;
 };
 
 const getTextDecoration = ({
@@ -120,7 +130,7 @@ const getTextDecoration = ({
   isStruck: boolean;
 }) => {
   if (isUnderlined && isStruck) {
-    return 'underline line-through';
+    return doNotTranslate('underline line-through');
   }
 
   if (isUnderlined) {
@@ -246,7 +256,7 @@ const createBlockRenderer = (imageSources: Map<string, string>) => {
             style={[
               styles.block,
               {
-                fontFamily: 'Helvetica-Bold',
+                fontFamily: PDF_FONT_FAMILIES.BOLD,
                 fontSize: HEADING_FONT_SIZES[level - 1] ?? 11,
               },
             ]}
