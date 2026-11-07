@@ -510,10 +510,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return invalidatedKeys;
   }
 
-  public async clearMemoizedReads(workspaceId: string): Promise<void> {
-    await this.memoizer.clearKeys(`${workspaceId}-`);
-  }
-
   public async evictWorkspaceFromLocalCache(
     workspaceId: string,
   ): Promise<void> {
