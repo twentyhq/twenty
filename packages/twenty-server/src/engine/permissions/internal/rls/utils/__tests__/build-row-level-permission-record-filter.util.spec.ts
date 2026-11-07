@@ -16,7 +16,10 @@ import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-m
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
-import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+import {
+  buildRecordFilterForRole,
+  buildRowLevelPermissionRecordFilter,
+} from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 
 const OBJECT_ID = 'object-1';
 const WORKSPACE_MEMBER_OBJECT_ID = 'workspace-member-object';
@@ -508,5 +511,64 @@ describe('buildRowLevelPermissionRecordFilter', () => {
         ],
       });
     });
+  });
+});
+
+describe('buildRecordFilterForRole with access group member values', () => {
+  const buildForAccessGroup = ({
+    roleId,
+    memberFieldValues,
+  }: {
+    roleId: string;
+    memberFieldValues: Record<string, string | string[] | null>;
+  }) =>
+    buildRecordFilterForRole({
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      objectMetadata: flatObjectMetadata,
+      roleId,
+      memberFieldValues,
+    });
+
+  it('should filter on the group value as a member carrying it would', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'fr-FR',
+        },
+      }),
+    ).toEqual(
+      build([LOCALE_BOUND_ROLE_ID], buildWorkspaceMember({ locale: 'fr-FR' })),
+    );
+  });
+
+  it('should wrap the group value of a select member field into a list', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should use a whole list kept by the group as it is', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN'] },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should match nothing when the group holds no value', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: null },
+      }),
+    ).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 });

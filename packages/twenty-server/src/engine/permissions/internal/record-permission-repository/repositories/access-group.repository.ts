@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import {
+  type AccessGroup,
+  type AccessGroupWithoutCompactId,
+} from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
@@ -19,18 +22,37 @@ export class AccessGroupRepository {
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
-  async findGroupHashes(workspaceId: string): Promise<string[]> {
-    const rows = await this.recordPermissionQueryService.execute<{
-      groupHash: string;
-    }>({
+  async findAccessGroups(
+    workspaceId: string,
+  ): Promise<Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>[]> {
+    return this.recordPermissionQueryService.execute<
+      Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>
+    >({
       workspaceId,
       query: {
-        sql: `SELECT "groupHash" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
+        sql: `SELECT "groupHash", "objectMetadataId" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
         parameters: {},
       },
     });
+  }
 
-    return rows.map(({ groupHash }) => groupHash);
+  async findObjectAccessGroups({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<AccessGroup[]> {
+    return this.recordPermissionQueryService.execute<AccessGroup>({
+      workspaceId,
+      query: {
+        sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
+          FROM ${buildAccessGroupTableExpression(workspaceId)}
+          WHERE "objectMetadataId" = :objectMetadataId
+          ORDER BY "compactId"`,
+        parameters: { objectMetadataId },
+      },
+    });
   }
 
   async findCompactIdsByGroupHashes({

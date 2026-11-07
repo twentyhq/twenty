@@ -2,6 +2,7 @@
 
 import { Module } from '@nestjs/common';
 
+import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -12,6 +13,7 @@ import { WorkspaceQueryExecutorModule } from 'src/engine/workspace-query-executo
 @Module({
   imports: [WorkspaceQueryExecutorModule],
   providers: [
+    RecordAccessGroupRepository,
     AccessGroupRepository,
     RecordPermissionQueryService,
     RecordPermissionReadRepository,
@@ -19,6 +21,7 @@ import { WorkspaceQueryExecutorModule } from 'src/engine/workspace-query-executo
     PrivateRecordRepository,
   ],
   exports: [
+    RecordAccessGroupRepository,
     AccessGroupRepository,
     RecordPermissionReadRepository,
     RecordShareRepository,

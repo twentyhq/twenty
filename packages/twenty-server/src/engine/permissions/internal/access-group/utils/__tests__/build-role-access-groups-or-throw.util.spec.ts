@@ -206,6 +206,51 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     ]);
   });
 
+  it('should keep the whole list in one group when the rule excludes values', () => {
+    const accessGroups = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'predicate',
+            operand: RowLevelPermissionPredicateOperand.IS_NOT,
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+        ],
+      }),
+      workspaceMembers: [{ ...JANE, teams: ['support', 'sales'] }, BOB],
+    });
+
+    expect(
+      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
+    ).toEqual([
+      { [MEMBER_FIELD_KEY]: ['sales', 'support'] },
+      { [MEMBER_FIELD_KEY]: ['sales'] },
+    ]);
+  });
+
+  it('should keep the whole list in one group when two predicates read it', () => {
+    const accessGroups = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'first',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+          buildPredicate({
+            id: 'second',
+            fieldMetadataId: 'other-field-id',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+        ],
+      }),
+      workspaceMembers: [JANE],
+    });
+
+    expect(
+      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
+    ).toEqual([{ [MEMBER_FIELD_KEY]: ['sales', 'support'] }]);
+  });
+
   it('should make one rule per role and object, whatever the predicates hang on', () => {
     const accessGroups = build({
       objectRecordsPermissions: buildRowLevelPermissions({
