@@ -13,7 +13,6 @@ const StyledUpdatedFieldContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
