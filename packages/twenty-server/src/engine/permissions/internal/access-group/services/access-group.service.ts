@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,8 +17,6 @@ const SYNC_LOCK_OPTIONS = { ms: 500, maxRetries: 120 };
 
 @Injectable()
 export class AccessGroupService {
-  private readonly logger = new Logger(AccessGroupService.name);
-
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -36,7 +34,7 @@ export class AccessGroupService {
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const { newAccessGroups, failures } = buildNewWorkspaceAccessGroups(
+    const { newAccessGroups, hasFailures } = buildNewWorkspaceAccessGroups(
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
         'flatObjectMetadataMaps',
@@ -45,12 +43,6 @@ export class AccessGroupService {
         'flatWorkspaceMemberMaps',
       ]),
     );
-
-    for (const { roleId, objectMetadataId, message } of failures) {
-      this.logger.error(
-        `Could not compute access groups of role ${roleId} on object ${objectMetadataId} in workspace ${workspaceId}: ${message}`,
-      );
-    }
 
     const existingGroupHashes = new Set(
       await this.accessGroupRepository.findGroupHashes(workspaceId),
@@ -63,13 +55,7 @@ export class AccessGroupService {
       ),
     });
 
-    if (newAccessGroups.length === 0 && existingGroupHashes.size > 0) {
-      this.logger.error(
-        `Kept ${existingGroupHashes.size} access groups in workspace ${workspaceId}: the sync computed none`,
-      );
-    }
-
-    if (failures.length > 0 || newAccessGroups.length === 0) {
+    if (hasFailures || newAccessGroups.length === 0) {
       return;
     }
 

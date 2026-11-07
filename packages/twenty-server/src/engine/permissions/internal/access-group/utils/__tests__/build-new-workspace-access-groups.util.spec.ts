@@ -125,7 +125,7 @@ const workspaceMember: FlatWorkspaceMember = {
 
 describe('buildNewWorkspaceAccessGroups', () => {
   it('should report a role it cannot compute and still build the others', () => {
-    const { newAccessGroups, failures } = buildNewWorkspaceAccessGroups({
+    const { newAccessGroups, hasFailures } = buildNewWorkspaceAccessGroups({
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
@@ -137,11 +137,6 @@ describe('buildNewWorkspaceAccessGroups', () => {
     });
 
     expect(newAccessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
-    expect(failures).toEqual([
-      expect.objectContaining({
-        roleId: BROKEN_ROLE_ID,
-        objectMetadataId: OBJECT_ID,
-      }),
-    ]);
+    expect(hasFailures).toBe(true);
   });
 });

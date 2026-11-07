@@ -14,12 +14,6 @@ import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/i
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
-export type NewAccessGroupFailure = {
-  roleId: string;
-  objectMetadataId: string;
-  message: string;
-};
-
 const groupWorkspaceMembersByRoleId = ({
   userWorkspaceRoleMap,
   flatWorkspaceMemberMaps,
@@ -72,14 +66,14 @@ export const buildNewWorkspaceAccessGroups = ({
   >;
 }): {
   newAccessGroups: NewAccessGroup[];
-  failures: NewAccessGroupFailure[];
+  hasFailures: boolean;
 } => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
     flatWorkspaceMemberMaps,
   });
   const newAccessGroupByGroupHash = new Map<string, NewAccessGroup>();
-  const failures: NewAccessGroupFailure[] = [];
+  let hasFailures = false;
 
   for (const [roleId, { objects }] of Object.entries(rolesPermissions)) {
     for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
@@ -115,10 +109,13 @@ export const buildNewWorkspaceAccessGroups = ({
           throw error;
         }
 
-        failures.push({ roleId, objectMetadataId, message: error.message });
+        hasFailures = true;
       }
     }
   }
 
-  return { newAccessGroups: [...newAccessGroupByGroupHash.values()], failures };
+  return {
+    newAccessGroups: [...newAccessGroupByGroupHash.values()],
+    hasFailures,
+  };
 };
