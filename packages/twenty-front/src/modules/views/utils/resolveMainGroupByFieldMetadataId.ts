@@ -2,8 +2,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-// A relation only gets the empty group when the server builds view groups,
-// so a select field makes a better default than the first field.
 export const resolveMainGroupByFieldMetadataId = ({
   availableFieldsForGrouping,
   currentMainGroupByFieldMetadataId,
