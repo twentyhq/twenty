@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  padding: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
 

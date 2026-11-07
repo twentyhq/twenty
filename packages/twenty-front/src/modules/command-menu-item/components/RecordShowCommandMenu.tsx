@@ -1,5 +1,7 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { WidgetCommandMenuItemButtons } from '@/command-menu-item/components/WidgetCommandMenuItemButtons';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { recordShowPageWidgetHeaderCommandMenuItemsState } from '@/command-menu-item/states/recordShowPageWidgetHeaderCommandMenuItemsState';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -28,17 +30,33 @@ export const RecordShowCommandMenu = () => {
     isLayoutCustomizationModeEnabledState,
   );
 
+  const recordShowPageWidgetHeaderCommandMenuItems = useAtomStateValue(
+    recordShowPageWidgetHeaderCommandMenuItemsState,
+  );
+
+  const hasPinnedWidgetCommandMenuItems =
+    recordShowPageWidgetHeaderCommandMenuItems.some(
+      (commandMenuItem) => commandMenuItem.isPinned !== false,
+    );
+
   return (
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
         <>
-          <CommandMenuContextProvider
-            displayType="button"
-            containerType={CommandMenuItemContainerType.ShowPageHeader}
-            isInPreviewMode={isLayoutCustomizationModeEnabled}
-          >
-            <PinnedCommandMenuItemButtons />
-          </CommandMenuContextProvider>
+          {hasPinnedWidgetCommandMenuItems &&
+          !isLayoutCustomizationModeEnabled ? (
+            <WidgetCommandMenuItemButtons
+              commandMenuItems={recordShowPageWidgetHeaderCommandMenuItems}
+            />
+          ) : (
+            <CommandMenuContextProvider
+              displayType="button"
+              containerType={CommandMenuItemContainerType.ShowPageHeader}
+              isInPreviewMode={isLayoutCustomizationModeEnabled}
+            >
+              <PinnedCommandMenuItemButtons />
+            </CommandMenuContextProvider>
+          )}
           <CommandMenuItemEditButton />
         </>
       )}
