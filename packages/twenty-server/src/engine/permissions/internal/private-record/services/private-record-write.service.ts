@@ -99,7 +99,7 @@ export class PrivateRecordWriteService {
     });
   }
 
-  async setPrivate({
+  async setPrivateOrThrow({
     workspaceId,
     objectMetadataId,
     recordIds,
@@ -152,7 +152,7 @@ export class PrivateRecordWriteService {
         'flatFieldMetadataMaps',
       ]);
 
-    await this.setPrivate({
+    await this.setPrivateOrThrow({
       workspaceId,
       objectMetadataId: flatObjectMetadata.id,
       recordIds: [args.recordId],

@@ -200,7 +200,7 @@ export class RecordSharingWriteService {
     });
 
     if (isPrivate) {
-      await this.privateRecordWriteService.setPrivate({
+      await this.privateRecordWriteService.setPrivateOrThrow({
         workspaceId,
         objectMetadataId,
         recordIds,

@@ -30,20 +30,23 @@ export const followUpdateWhenCreatePermissionIsDisabled = ({
 }: {
   recordsPermissions: RoleRecordsPermissions;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-}): RoleRecordsPermissions =>
-  getEnforcedOperationType({ operationType: 'create', featureFlagsMap }) ===
-  'create'
-    ? recordsPermissions
-    : {
-        ...recordsPermissions,
-        objects: Object.fromEntries(
-          Object.entries(recordsPermissions.objects).map(
-            ([objectMetadataId, objectRecordsPermissions]) => [
-              objectMetadataId,
-              isDefined(objectRecordsPermissions)
-                ? followUpdateForCreate(objectRecordsPermissions)
-                : objectRecordsPermissions,
-            ],
-          ),
-        ),
-      };
+}): RoleRecordsPermissions => {
+  if (
+    getEnforcedOperationType({ operationType: 'create', featureFlagsMap }) ===
+    'create'
+  ) {
+    return recordsPermissions;
+  }
+
+  const objects: RoleRecordsPermissions['objects'] = {};
+
+  for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
+    recordsPermissions.objects,
+  )) {
+    objects[objectMetadataId] = isDefined(objectRecordsPermissions)
+      ? followUpdateForCreate(objectRecordsPermissions)
+      : objectRecordsPermissions;
+  }
+
+  return { ...recordsPermissions, objects };
+};
