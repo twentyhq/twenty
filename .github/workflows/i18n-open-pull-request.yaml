@@ -36,6 +36,7 @@ jobs:
           permission-pull-requests: write
 
       - name: Create a pull request
+        id: pull-request
         env:
           GH_TOKEN: ${{ steps.twenty-pr-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
@@ -46,6 +47,28 @@ jobs:
           if [ "$OPEN_PRS" = 0 ]; then
             gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
           fi
+          echo "number=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')" >> "$GITHUB_OUTPUT"
+
+      - name: Mint twenty-factory dispatch token
+        id: factory-token
+        if: inputs.branch == 'i18n' || inputs.branch == 'i18n-website'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-factory
+          permission-actions: write
+
+      - name: Trigger PR review of the latest commit
+        if: inputs.branch == 'i18n' || inputs.branch == 'i18n-website'
+        env:
+          GH_TOKEN: ${{ steps.factory-token.outputs.token }}
+          PR_NUMBER: ${{ steps.pull-request.outputs.number }}
+        run: |
+          gh workflow run pr-review.yaml --repo twentyhq/twenty-factory --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f event=synchronize
 
       - name: Mint twenty-infra dispatch token
         id: app-token
