@@ -1,6 +1,7 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
@@ -8,7 +9,10 @@ import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import {
+  type DashboardFilterBinding,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_FIELDS_CONFIGURATION,
@@ -215,5 +219,43 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([
       invalidFilter,
     ]);
+  });
+
+  it('should send dashboard filter bindings back unchanged when the draft is saved', () => {
+    const dashboardFilterBindings: DashboardFilterBinding[] = [
+      {
+        __typename: 'DashboardFilterBinding',
+        pageLayoutFilterId: 'period-filter-id',
+        fieldMetadataId: DELETED_FIELD_ID,
+      },
+    ];
+
+    const widget = createTestWidget({
+      id: 'chart-widget',
+      configuration: {
+        ...TEST_BAR_CHART_CONFIGURATION,
+        filter: buildChartFilters([
+          buildRecordFilter({
+            id: 'filter-1',
+            fieldMetadataId: DELETED_FIELD_ID,
+          }),
+        ]),
+        dashboardFilterBindings,
+      },
+    });
+
+    const updateInput = convertPageLayoutDraftToUpdateInput(
+      sanitizeChartFiltersInPageLayoutDraft({
+        pageLayoutDraft: buildDraft([widget]),
+        fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
+          ACTIVE_FIELD_ID,
+        ]),
+      }),
+    );
+
+    expect(updateInput.tabs[0].widgets[0].configuration).toMatchObject({
+      filter: { recordFilters: [] },
+      dashboardFilterBindings,
+    });
   });
 });

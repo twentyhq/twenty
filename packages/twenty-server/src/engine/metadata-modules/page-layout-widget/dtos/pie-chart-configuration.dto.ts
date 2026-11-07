@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -13,6 +14,7 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -24,6 +26,7 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -122,6 +125,13 @@ export class PieChartConfigurationDTO implements PieChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @Field(() => [DashboardFilterBindingDTO], { nullable: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DashboardFilterBindingDTO)
+  @IsOptional()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { validateTabViewportConstraints } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
+import { validatePageLayoutWidgetDashboardFilterBindings } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-page-layout-widget-dashboard-filter-bindings.util';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
@@ -145,6 +146,13 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+    validationResult.errors.push(
+      ...this.validateDashboardFilterBindings({
+        widget: updatedFlatPageLayoutWidget,
+        pageLayoutTab: referencedPageLayoutTab,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
 
     return validationResult;
   }
@@ -275,8 +283,43 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+    validationResult.errors.push(
+      ...this.validateDashboardFilterBindings({
+        widget: flatPageLayoutWidgetToValidate,
+        pageLayoutTab: referencedPageLayoutTab,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
 
     return validationResult;
+  }
+
+  private validateDashboardFilterBindings({
+    widget,
+    pageLayoutTab,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+    },
+  }: {
+    widget: UniversalFlatPageLayoutWidget;
+    pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
+  }): FlatEntityValidationError[] {
+    const pageLayout = isDefined(pageLayoutTab)
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: pageLayoutTab.pageLayoutUniversalIdentifier,
+          flatEntityMaps: flatPageLayoutMaps,
+        })
+      : undefined;
+
+    return validatePageLayoutWidgetDashboardFilterBindings({
+      widget,
+      pageLayout,
+      flatFieldMetadataMaps,
+    });
   }
 
   private getEffectiveWidget(

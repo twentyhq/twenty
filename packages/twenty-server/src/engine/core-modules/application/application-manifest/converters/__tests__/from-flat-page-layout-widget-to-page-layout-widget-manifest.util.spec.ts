@@ -15,6 +15,8 @@ const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const VIEW_UID = '33333333-3333-4333-8333-333333333333';
 const TAB_UID = '44444444-4444-4444-8444-444444444444';
 const WIDGET_UID = '55555555-5555-4555-8555-555555555555';
+const FIELD_UID = '66666666-6666-4666-8666-666666666666';
+const PAGE_LAYOUT_FILTER_ID = '77777777-7777-4777-8777-777777777777';
 const NOW = '2026-09-08T10:00:00.000Z';
 
 const WIDGET_MANIFEST: Required<
@@ -167,5 +169,33 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
         metadataName: 'pageLayoutWidget',
       }),
     ).toBeUndefined();
+  });
+
+  it('should carry dashboard filter bindings declared by universal identifier both ways', () => {
+    const boundRecordTableWidgetManifest: PageLayoutWidgetManifest = {
+      ...MINIMAL_WIDGET_MANIFEST,
+      type: WidgetType.RECORD_TABLE,
+      configuration: {
+        configurationType: 'RECORD_TABLE',
+        viewUniversalIdentifier: VIEW_UID,
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+            fieldMetadataUniversalIdentifier: FIELD_UID,
+          },
+        ],
+      },
+    };
+
+    const flatPageLayoutWidget = forward(boundRecordTableWidgetManifest);
+
+    expect(flatPageLayoutWidget.universalConfiguration).toEqual(
+      boundRecordTableWidgetManifest.configuration,
+    );
+    expect(
+      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+        flatPageLayoutWidget,
+      }).configuration,
+    ).toEqual(boundRecordTableWidgetManifest.configuration);
   });
 });

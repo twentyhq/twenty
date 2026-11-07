@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsIn,
   IsInt,
@@ -8,12 +10,14 @@ import {
   IsOptional,
   IsUUID,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import {
   type RecordTableConfiguration,
   type SerializedRelation,
 } from 'twenty-shared/types';
 
+import { DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 @ObjectType('RecordTableConfiguration')
@@ -38,4 +42,11 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @IsOptional()
   @IsBoolean()
   isUIEditable?: boolean;
+
+  @Field(() => [DashboardFilterBindingDTO], { nullable: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DashboardFilterBindingDTO)
+  @IsOptional()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 }

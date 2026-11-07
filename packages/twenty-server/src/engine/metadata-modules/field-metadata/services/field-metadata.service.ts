@@ -22,6 +22,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { computeFlatPageLayoutWidgetsUnboundFromDeletedFields } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/compute-flat-page-layout-widgets-unbound-from-deleted-fields.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -140,30 +141,37 @@ export class FieldMetadataService {
       },
     );
 
-    const deletedFieldIds = new Set(
-      flatFieldMetadatasToDelete
-        .map((f) => {
-          const resolved = findFlatEntityByUniversalIdentifier({
-            universalIdentifier: f.universalIdentifier,
-            flatEntityMaps: existingFlatFieldMetadataMaps,
-          });
+    const deletedFlatFieldMetadatas = flatFieldMetadatasToDelete
+      .map((flatFieldMetadataToDelete) =>
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: flatFieldMetadataToDelete.universalIdentifier,
+          flatEntityMaps: existingFlatFieldMetadataMaps,
+        }),
+      )
+      .filter(isDefined);
 
-          return resolved?.id;
-        })
-        .filter(isDefined),
+    const deletedFieldIds = new Set(
+      deletedFlatFieldMetadatas.map(({ id }) => id),
     );
 
-    const flatPageLayoutWidgetsToDelete = Object.values(
+    const flatPageLayoutWidgets = Object.values(
       existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (widget) =>
-          !isDefined(widget.deletedAt) &&
-          widget.configuration?.configurationType ===
-            WidgetConfigurationType.FIELD &&
-          deletedFieldIds.has(widget.configuration.fieldMetadataId),
-      );
+      .filter((widget) => !isDefined(widget.deletedAt));
+
+    const flatPageLayoutWidgetsToDelete = flatPageLayoutWidgets.filter(
+      (widget) =>
+        widget.configuration?.configurationType ===
+          WidgetConfigurationType.FIELD &&
+        deletedFieldIds.has(widget.configuration.fieldMetadataId),
+    );
+
+    const flatPageLayoutWidgetsToUpdate =
+      computeFlatPageLayoutWidgetsUnboundFromDeletedFields({
+        flatPageLayoutWidgets,
+        deletedFlatFieldMetadatas,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -179,12 +187,13 @@ export class FieldMetadataService {
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
             },
-            ...(flatPageLayoutWidgetsToDelete.length > 0
+            ...(flatPageLayoutWidgetsToDelete.length > 0 ||
+            flatPageLayoutWidgetsToUpdate.length > 0
               ? {
                   pageLayoutWidget: {
                     flatEntityToCreate: [],
                     flatEntityToDelete: flatPageLayoutWidgetsToDelete,
-                    flatEntityToUpdate: [],
+                    flatEntityToUpdate: flatPageLayoutWidgetsToUpdate,
                   },
                 }
               : {}),

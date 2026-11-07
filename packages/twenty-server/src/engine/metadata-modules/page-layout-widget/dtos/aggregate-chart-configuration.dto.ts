@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsIn,
@@ -25,6 +26,7 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/ratio-aggregate-config.dto';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -70,6 +72,13 @@ export class AggregateChartConfigurationDTO implements AggregateChartConfigurati
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @Field(() => [DashboardFilterBindingDTO], { nullable: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DashboardFilterBindingDTO)
+  @IsOptional()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

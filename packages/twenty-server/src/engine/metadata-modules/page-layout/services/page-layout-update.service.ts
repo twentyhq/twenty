@@ -37,6 +37,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { getPageLayoutFiltersToSaveOrThrow } from 'src/engine/metadata-modules/page-layout/utils/get-page-layout-filters-to-save-or-throw.util';
+import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metadata-modules/page-layout/utils/get-page-layout-widget-configuration-to-save-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
@@ -110,7 +111,7 @@ export class PageLayoutUpdateService {
         { workspaceId },
       );
 
-    const { tabs, ...updateData } = input;
+    const { tabs: tabsInput, ...updateData } = input;
 
     const filters = getPageLayoutFiltersToSaveOrThrow({
       existingPageLayout,
@@ -118,6 +119,23 @@ export class PageLayoutUpdateService {
       workspaceCustomApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
     });
+
+    const tabs = tabsInput.map((tabInput) => ({
+      ...tabInput,
+      widgets: tabInput.widgets.map((widgetInput) => ({
+        ...widgetInput,
+        configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
+          pageLayout: existingPageLayout,
+          existingConfiguration: findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: widgetInput.id,
+            flatEntityMaps: flatPageLayoutWidgetMaps,
+          })?.configuration,
+          configuration: widgetInput.configuration,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        }),
+      })),
+    }));
 
     const flatPageLayoutToUpdate: FlatPageLayout = {
       ...existingPageLayout,
