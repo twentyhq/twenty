@@ -128,10 +128,7 @@ const DELETE_MCP_SERVER_CONNECTION_MUTATION = gql`
   }
 `;
 
-export const getMcpServerConnections = (
-  mcpServerId: string,
-  token?: string,
-) =>
+export const getMcpServerConnections = (mcpServerId: string, token?: string) =>
   makeMetadataApiRequest(
     { query: GET_MCP_SERVER_CONNECTIONS_QUERY, variables: { mcpServerId } },
     token,
