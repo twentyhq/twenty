@@ -675,6 +675,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         expectedVersion: existingDraft,
         trigger: triggerToCopy,
         steps: copiedSteps,
+        sourceSteps: versionToCopy.steps,
       });
 
       return this.findCoreVersionDTOOrThrow({
@@ -692,6 +693,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
           trigger: triggerToCopy,
           steps: copiedSteps,
+          sourceSteps: versionToCopy.steps,
         },
       );
 

@@ -1,4 +1,4 @@
-import { isObject, isString } from '@sniptt/guards';
+import { isArray, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WorkflowActionType,
@@ -12,6 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getFindRecordsFilterValueIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-find-records-filter-value-issues.util';
 import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
+import { getUpdateRecordFieldsToUpdateIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-update-record-fields-to-update-issues.util';
 import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -23,18 +24,48 @@ const RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD = new Set<WorkflowActionType>(
   ],
 );
 
+const getFieldsToUpdateByObjectName = (
+  steps: WorkflowAction[],
+): Map<string, string[]> => {
+  const fieldsToUpdateByObjectName = new Map<string, string[]>();
+
+  for (const step of steps) {
+    if (
+      step.type !== WorkflowActionType.UPDATE_RECORD ||
+      !isArray(step.settings.input.fieldsToUpdate)
+    ) {
+      continue;
+    }
+
+    const { objectName, fieldsToUpdate } = step.settings.input;
+
+    fieldsToUpdateByObjectName.set(objectName, [
+      ...(fieldsToUpdateByObjectName.get(objectName) ?? []),
+      ...fieldsToUpdate,
+    ]);
+  }
+
+  return fieldsToUpdateByObjectName;
+};
+
 export const getWorkflowRecordStepMetadataIssues = ({
   steps,
+  sourceSteps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   objectIdByNameSingular,
 }: {
   steps: WorkflowAction[];
+  // The content a write starts from; omitted when checking stored content
+  sourceSteps?: WorkflowAction[];
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
 }): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
+  const sourceFieldsToUpdateByObjectName = isDefined(sourceSteps)
+    ? getFieldsToUpdateByObjectName(sourceSteps)
+    : undefined;
 
   for (const step of steps) {
     if (!OBJECT_TARGETING_ACTION_TYPES.has(step.type)) {
@@ -92,6 +123,31 @@ export const getWorkflowRecordStepMetadataIssues = ({
       );
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      continue;
+    }
+
+    if (step.type === WorkflowActionType.UPDATE_RECORD) {
+      issues.push(
+        ...getUpdateRecordFieldsToUpdateIssues({
+          step,
+          objectMetadataInfo: {
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          },
+          sourceFieldsToUpdate: isDefined(sourceFieldsToUpdateByObjectName)
+            ? (sourceFieldsToUpdateByObjectName.get(objectName) ?? [])
+            : undefined,
+        }),
+      );
+    }
+
     const objectRecord =
       RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD.has(step.type) &&
       isObject(input) &&
@@ -101,15 +157,6 @@ export const getWorkflowRecordStepMetadataIssues = ({
         : undefined;
 
     if (!isDefined(objectRecord)) {
-      continue;
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(flatObjectMetadata)) {
       continue;
     }
 

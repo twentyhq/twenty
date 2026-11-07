@@ -81,14 +81,11 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { formattedRecord: formattedObjectRecord } =
+    const filteredObjectRecord = filterValidFieldsInRecord(
       formatWorkflowRecordRelationFields(
         workflowActionInput.objectRecord,
         objectMetadataInfo,
-      );
-
-    const filteredObjectRecord = filterValidFieldsInRecord(
-      formattedObjectRecord,
+      ),
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );

@@ -193,6 +193,7 @@ export class CoreWorkflowMutationWorkspaceService {
         duplicatedCoreWorkflowId: duplicatedWorkflow.id,
         trigger: remappedTrigger,
         steps: remappedSteps,
+        sourceSteps: sourceVersion.steps,
       });
     } catch (error) {
       try {
@@ -233,18 +234,21 @@ export class CoreWorkflowMutationWorkspaceService {
     duplicatedCoreWorkflowId,
     trigger,
     steps,
+    sourceSteps,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     duplicatedCoreWorkflowId: string;
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
+    sourceSteps: WorkflowAction[] | null;
   }): Promise<CoreWorkflowDTO> {
     await this.writeInitialDraftContent({
       workspaceId,
       coreWorkflowId: duplicatedCoreWorkflowId,
       trigger,
       steps,
+      sourceSteps,
     });
 
     const duplicatedCoreWorkflow =
@@ -314,11 +318,13 @@ export class CoreWorkflowMutationWorkspaceService {
     coreWorkflowId,
     trigger,
     steps,
+    sourceSteps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
+    sourceSteps?: WorkflowAction[] | null;
   }): Promise<string> {
     const initialDraft = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -346,6 +352,7 @@ export class CoreWorkflowMutationWorkspaceService {
       expectedVersion: initialDraft,
       trigger,
       steps,
+      sourceSteps,
     });
 
     return initialDraft.id;

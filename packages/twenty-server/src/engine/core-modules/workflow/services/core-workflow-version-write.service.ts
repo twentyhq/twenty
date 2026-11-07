@@ -171,12 +171,14 @@ export class CoreWorkflowVersionWriteService {
     expectedVersion,
     trigger,
     steps: callerSteps,
+    sourceSteps = expectedVersion.steps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
     expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
+    sourceSteps?: WorkflowAction[] | null;
   }): Promise<CoreWorkflowVersionContent> {
     const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
 
@@ -185,6 +187,7 @@ export class CoreWorkflowVersionWriteService {
       coreWorkflowVersionId,
       trigger,
       steps: versionedSteps,
+      sourceSteps: sourceSteps ?? [],
     });
 
     const steps =
@@ -302,12 +305,14 @@ export class CoreWorkflowVersionWriteService {
     workspaceWorkflowId,
     trigger,
     steps: callerSteps,
+    sourceSteps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
     workspaceWorkflowId: string | null;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
+    sourceSteps?: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
     const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
 
@@ -316,6 +321,7 @@ export class CoreWorkflowVersionWriteService {
       coreWorkflowVersionId: 'new draft',
       trigger,
       steps: versionedSteps,
+      sourceSteps: sourceSteps ?? [],
     });
 
     const steps =
@@ -377,11 +383,13 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId,
     trigger,
     steps,
+    sourceSteps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
+    sourceSteps: WorkflowAction[];
   }): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -393,6 +401,7 @@ export class CoreWorkflowVersionWriteService {
       assertWorkflowVersionIsNotMalformedOrThrow({
         trigger,
         steps,
+        sourceSteps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         objectIdByNameSingular,

@@ -63,14 +63,11 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCreateRecordActionInput;
 
-    const { formattedRecord: formattedObjectRecord } =
+    const filteredObjectRecord = filterValidFieldsInRecord(
       formatWorkflowRecordRelationFields(
         workflowActionInput.objectRecord,
         objectMetadataInfo,
-      );
-
-    const filteredObjectRecord = filterValidFieldsInRecord(
-      formattedObjectRecord,
+      ),
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );

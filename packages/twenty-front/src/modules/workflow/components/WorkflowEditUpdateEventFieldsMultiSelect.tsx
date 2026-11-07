@@ -3,9 +3,13 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getWorkflowRecordKeysByFieldReference } from '@/workflow/utils/getWorkflowRecordKeysByFieldReference';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { isDefined } from 'twenty-shared/utils';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
@@ -54,38 +58,76 @@ export const WorkflowFieldsMultiSelect = ({
       )
     : [];
 
+  const recordKeysByFieldReference =
+    getWorkflowRecordKeysByFieldReference(objectMetadataItem);
+
+  // A field deleted after it was selected stays listed, so it can be unchecked
+  const missingFieldOptions: SelectOption[] = (defaultFields ?? [])
+    .filter(
+      (fieldName) =>
+        !isDefined(fieldName.match(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX)) &&
+        !recordKeysByFieldReference.has(fieldName),
+    )
+    .map((fieldName) => ({
+      label: t`Field not found: ${fieldName}`,
+      value: fieldName,
+      Icon: IconAlertTriangle,
+      color: 'red',
+    }));
+
+  const fieldOptions: SelectOption[] = inlineFieldDefinitions.map((field) => {
+    const isIdField = field.metadata.fieldName === 'id';
+
+    if (isIdField && actionType === 'UPSERT_RECORD') {
+      return {
+        label: t`ID`,
+        value: field.metadata.fieldName,
+        Icon: getIcon('IconId'),
+        color: 'gray',
+      };
+    }
+
+    const isFieldRelationManyToOne =
+      isFieldRelation(field) &&
+      field.metadata.relationType === RelationType.MANY_TO_ONE;
+
+    const value = isFieldRelationManyToOne
+      ? doNotTranslate(`${field.metadata.fieldName}Id`)
+      : field.metadata.fieldName;
+
+    return {
+      label: field.label,
+      value,
+      Icon: getIcon(field.iconName),
+      color: 'gray',
+    };
+  });
+
+  const fieldOptionValues = new Set(fieldOptions.map(({ value }) => value));
+
+  // The API and AI tools may store a relation by name; its option uses the join column
+  const toFieldOptionValue = (fieldReference: string) => {
+    if (fieldOptionValues.has(fieldReference)) {
+      return fieldReference;
+    }
+
+    const optionRecordKey = recordKeysByFieldReference
+      .get(fieldReference)
+      ?.find((recordKey) => fieldOptionValues.has(recordKey));
+
+    return optionRecordKey ?? fieldReference;
+  };
+
+  const selectedFields = [
+    ...new Set((defaultFields ?? []).map(toFieldOptionValue)),
+  ];
+
   return (
     <FormMultiSelectFieldInput
       testId="workflow-fields-multi-select"
       label={label}
-      defaultValue={defaultFields}
-      options={inlineFieldDefinitions.map((field) => {
-        const isIdField = field.metadata.fieldName === 'id';
-
-        if (isIdField && actionType === 'UPSERT_RECORD') {
-          return {
-            label: t`ID`,
-            value: field.metadata.fieldName,
-            Icon: getIcon('IconId'),
-            color: 'gray',
-          };
-        }
-
-        const isFieldRelationManyToOne =
-          isFieldRelation(field) &&
-          field.metadata.relationType === RelationType.MANY_TO_ONE;
-
-        const value = isFieldRelationManyToOne
-          ? doNotTranslate(`${field.metadata.fieldName}Id`)
-          : field.metadata.fieldName;
-
-        return {
-          label: field.label,
-          value,
-          Icon: getIcon(field.iconName),
-          color: 'gray',
-        };
-      })}
+      defaultValue={selectedFields}
+      options={[...fieldOptions, ...missingFieldOptions]}
       onChange={handleFieldsChange}
       placeholder={placeholder}
       readonly={readonly}

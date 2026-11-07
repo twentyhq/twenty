@@ -1,6 +1,10 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  buildWorkflowRecordKeysByFieldReference,
+  type WorkflowRecordFieldReferenceSource,
+} from 'twenty-shared/workflow';
+import {
   type WorkflowManifestFieldReference,
   type WorkflowManifestObjectReference,
   type WorkflowManifestReferences,
@@ -9,9 +13,59 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
-type ObjectFieldNames = {
-  fieldNames: Set<string>;
-  relationNames: Set<string>;
+const toFieldReferenceSource = ({
+  field,
+  objectByUniversalIdentifier,
+}: {
+  field: Pick<
+    WorkflowManifestFieldReference,
+    | 'name'
+    | 'type'
+    | 'universalSettings'
+    | 'relationTargetObjectMetadataUniversalIdentifier'
+  >;
+  objectByUniversalIdentifier: ReadonlyMap<
+    string,
+    WorkflowManifestObjectReference
+  >;
+}): WorkflowRecordFieldReferenceSource => {
+  const isManyToOneRelation =
+    (field.type === FieldMetadataType.RELATION ||
+      field.type === FieldMetadataType.MORPH_RELATION) &&
+    isDefined(field.universalSettings) &&
+    'relationType' in field.universalSettings &&
+    field.universalSettings.relationType === RelationType.MANY_TO_ONE;
+
+  if (!isManyToOneRelation) {
+    return { name: field.name };
+  }
+
+  const morphTarget =
+    field.type === FieldMetadataType.MORPH_RELATION &&
+    isDefined(field.relationTargetObjectMetadataUniversalIdentifier)
+      ? objectByUniversalIdentifier.get(
+          field.relationTargetObjectMetadataUniversalIdentifier,
+        )
+      : undefined;
+
+  return {
+    name: field.name,
+    manyToOneRelation: {
+      joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+        name: field.name,
+      }),
+      morphName: isDefined(morphTarget)
+        ? getMorphNameFromMorphFieldMetadataName({
+            morphRelationFlatFieldMetadata: {
+              name: field.name,
+              universalSettings: { relationType: RelationType.MANY_TO_ONE },
+            },
+            nameSingular: morphTarget.nameSingular,
+            namePlural: morphTarget.namePlural ?? morphTarget.nameSingular,
+          })
+        : undefined,
+    },
+  };
 };
 
 export const validateWorkflowManifestRecordFields = ({
@@ -31,62 +85,29 @@ export const validateWorkflowManifestRecordFields = ({
   'objectByUniversalIdentifier' | 'fieldByUniversalIdentifier'
 >): string[] => {
   const errors: string[] = [];
-  const objectFieldsByObjectName = new Map<string, ObjectFieldNames>();
-  const objectFieldsByObjectIdentifier = new Map<string, ObjectFieldNames>();
-  for (const [universalIdentifier, object] of objectByUniversalIdentifier) {
-    const objectFields = {
-      fieldNames: new Set<string>(),
-      relationNames: new Set<string>(),
-    };
-    objectFieldsByObjectName.set(object.nameSingular, objectFields);
-    objectFieldsByObjectIdentifier.set(universalIdentifier, objectFields);
-  }
+  const fieldReferenceSourcesByObjectIdentifier = new Map<
+    string,
+    WorkflowRecordFieldReferenceSource[]
+  >();
   for (const field of fieldByUniversalIdentifier.values()) {
-    const objectFields = objectFieldsByObjectIdentifier.get(
+    fieldReferenceSourcesByObjectIdentifier.set(
       field.objectUniversalIdentifier,
+      [
+        ...(fieldReferenceSourcesByObjectIdentifier.get(
+          field.objectUniversalIdentifier,
+        ) ?? []),
+        toFieldReferenceSource({ field, objectByUniversalIdentifier }),
+      ],
     );
-    if (!isDefined(objectFields)) {
-      continue;
-    }
-    const { fieldNames, relationNames } = objectFields;
-    fieldNames.add(field.name);
-    if (
-      (field.type === FieldMetadataType.RELATION ||
-        field.type === FieldMetadataType.MORPH_RELATION) &&
-      isDefined(field.universalSettings) &&
-      'relationType' in field.universalSettings &&
-      field.universalSettings.relationType === RelationType.MANY_TO_ONE
-    ) {
-      if (field.type === FieldMetadataType.RELATION) {
-        relationNames.add(field.name);
-      }
-      fieldNames.add(
-        computeMorphOrRelationFieldJoinColumnName({ name: field.name }),
-      );
-      const target = isDefined(
-        field.relationTargetObjectMetadataUniversalIdentifier,
-      )
-        ? objectByUniversalIdentifier.get(
-            field.relationTargetObjectMetadataUniversalIdentifier,
-          )
-        : undefined;
-      if (
-        field.type === FieldMetadataType.MORPH_RELATION &&
-        isDefined(target)
-      ) {
-        fieldNames.add(
-          getMorphNameFromMorphFieldMetadataName({
-            morphRelationFlatFieldMetadata: {
-              name: field.name,
-              universalSettings: { relationType: RelationType.MANY_TO_ONE },
-            },
-            nameSingular: target.nameSingular,
-            namePlural: target.namePlural ?? target.nameSingular,
-          }),
-        );
-      }
-    }
   }
+  const recordKeysByFieldReferenceByObjectName = new Map(
+    [...objectByUniversalIdentifier].map(([universalIdentifier, object]) => [
+      object.nameSingular,
+      buildWorkflowRecordKeysByFieldReference(
+        fieldReferenceSourcesByObjectIdentifier.get(universalIdentifier) ?? [],
+      ),
+    ]),
+  );
 
   for (const step of steps) {
     if (
@@ -96,18 +117,19 @@ export const validateWorkflowManifestRecordFields = ({
     ) {
       continue;
     }
-    const objectFields = objectFieldsByObjectName.get(
-      step.settings.input.objectName,
-    );
-    if (!isDefined(objectFields)) {
+    const recordKeysByFieldReference =
+      recordKeysByFieldReferenceByObjectName.get(
+        step.settings.input.objectName,
+      );
+    if (!isDefined(recordKeysByFieldReference)) {
       errors.push(
         `Workflow step ${step.name}: unknown object ${step.settings.input.objectName}`,
       );
       continue;
     }
-    const { fieldNames, relationNames } = objectFields;
-    for (const name of Object.keys(step.settings.input.objectRecord)) {
-      if (!fieldNames.has(name)) {
+    const objectRecord = step.settings.input.objectRecord;
+    for (const name of Object.keys(objectRecord)) {
+      if (!recordKeysByFieldReference.has(name)) {
         errors.push(`Workflow step ${step.name}: unknown record field ${name}`);
       }
     }
@@ -118,16 +140,17 @@ export const validateWorkflowManifestRecordFields = ({
         step.settings.input.fieldsToUpdate.length === 0 ||
         step.settings.input.fieldsToUpdate.some(
           (name) =>
-            !fieldNames.has(name) ||
-            relationNames.has(name) ||
-            !Object.prototype.hasOwnProperty.call(
-              step.settings.input.objectRecord,
-              name,
+            !(recordKeysByFieldReference.get(name) ?? []).some(
+              (objectRecordKey) =>
+                Object.prototype.hasOwnProperty.call(
+                  objectRecord,
+                  objectRecordKey,
+                ),
             ),
         ))
     ) {
       errors.push(
-        `Workflow step ${step.name}: fieldsToUpdate must select existing fields with values in objectRecord, using the join column for relations (ownerId, not owner)`,
+        `Workflow step ${step.name}: fieldsToUpdate must select existing fields with values in objectRecord`,
       );
     }
   }
