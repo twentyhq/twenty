@@ -46,6 +46,7 @@ import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import {
   getChargedGroupKeys,
+  type JobMemoryReconciliation,
   JobMemoryLimiter,
 } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { JobSizeLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-size-limiter';
@@ -120,6 +121,8 @@ export class BullMQDriver
     );
     this.jobMemoryLimiter = new JobMemoryLimiter({
       getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       twentyConfigService,
@@ -159,6 +162,17 @@ export class BullMQDriver
       },
       callback: () => this.collectQueueMemoryUsedRatio(),
     });
+  }
+
+  // charges of every queue share one Redis, so any registered queue's client can reconcile them all
+  async reconcileJobMemory(): Promise<JobMemoryReconciliation> {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return { releasedCount: 0, releasedBytes: 0 };
+    }
+
+    return this.jobMemoryLimiter.reconcile(queueName);
   }
 
   private async collectQueueMemoryUsedRatio(): Promise<

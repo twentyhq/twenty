@@ -31,6 +31,7 @@ const buildFlatRole = (
   label: 'Role',
   canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: false,
+  canCreateAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,

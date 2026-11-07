@@ -75,7 +75,7 @@ export class MessageListDuplicationService {
     userWorkspaceId: string;
   }): Promise<void> {
     const [principals, { flatObjectMetadataMaps }] = await Promise.all([
-      this.principalPermissionsService.buildUserWorkspacePermissionsPrincipalsOrThrow(
+      this.principalPermissionsService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
         { workspaceId, userWorkspaceId },
       ),
       this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -88,18 +88,18 @@ export class MessageListDuplicationService {
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier],
     );
 
-    const canReadAndUpdateDuplicatedObjects =
+    const canReadAndCreateDuplicatedObjects =
       duplicatedObjects.every(isDefined) &&
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsService.canRoleReachSomeRecords({
-              operationType: 'select',
+            this.recordPermissionsService.canRoleAccessSomeRecords({
+              operationType: 'read',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsService.canRoleReachSomeRecords({
-              operationType: 'update',
+            this.recordPermissionsService.canRoleAccessSomeRecords({
+              operationType: 'create',
               principals,
               objectMetadataId,
             }),
@@ -107,7 +107,7 @@ export class MessageListDuplicationService {
         )
       ).every((isGranted) => isGranted);
 
-    if (!canReadAndUpdateDuplicatedObjects) {
+    if (!canReadAndCreateDuplicatedObjects) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,

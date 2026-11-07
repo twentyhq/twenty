@@ -28,7 +28,7 @@ describe('resolveObjectSharing', () => {
       isShareable: true,
       isPrivateByDefault: false,
       canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['select', 'update'],
+      operationTypesGrantedBeyondRole: ['read', 'update'],
     });
   });
 
@@ -52,7 +52,7 @@ describe('resolveObjectSharing', () => {
         },
         featureFlagsMap: RECORD_SHARING,
       }).operationTypesGrantedBeyondRole,
-    ).toEqual(['select']);
+    ).toEqual(['read']);
   });
 
   it('should not share beyond the role when the object disables every operation a share could grant', () => {

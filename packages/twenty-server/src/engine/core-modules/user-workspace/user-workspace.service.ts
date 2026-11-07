@@ -39,7 +39,7 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -62,7 +62,7 @@ export class UserWorkspaceService {
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
@@ -245,7 +245,7 @@ export class UserWorkspaceService {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.roleAssignmentService.assignRoleToManyUserWorkspace({
+    await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
       roleId: resolvedRoleId,
@@ -276,7 +276,7 @@ export class UserWorkspaceService {
       );
     }
 
-    await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+    await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
       roleId: resolvedRoleId,
       workspaceId: workspace.id,
     });

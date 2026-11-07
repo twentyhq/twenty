@@ -20,7 +20,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
-@RegisteredWorkspaceCommand('2.57.0', 1793993002000)
+@RegisteredWorkspaceCommand('2.57.0', 1794061333000)
 @Command({
   name: 'upgrade:2-57:refresh-outlook-drafts',
   description:

@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Εμπλουτισμός"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Εισαγάγετε ένα όνομα από 1 έως {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} χαρακτήρες και υποστηριζόμενες επιλογές εμφάνισης βοηθού."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "Σε εξέλιξη"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Τα Εισερχόμενα δεν είναι ενεργοποιημένα για αυτόν τον χώρο εργασίας."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Μερικές από τις άδειες που επιλέξατε δεν είναι έγκυρες. Παρακαλώ δοκιμάστε ξανά με έγκυρες ρυθμίσεις άδειας."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
 
@@ -13651,6 +13657,11 @@ msgstr "Οι εξαρτήσεις παραγωγής της εφαρμογής �
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Τα δικαιώματα που ζήτησε η εφαρμογή έχουν αλλάξει. Ελέγξτε τα ξανά πριν εγκρίνετε."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Το προφίλ του βοηθού δεν μπορεί να ενημερωθεί πριν ενεργοποιηθεί ο χώρος εργασίας."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "Αυτό το ευρετήριο δεν υπάρχει ή έχει ήδ�
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Αυτό το στιγμιότυπο δεν ανέφερε αναγνωριστικό διακομιστή. Ορίστε το SERVER_ID σε αυτό το στιγμιότυπο και δοκιμάστε ξανά."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Αυτή η εργασία είναι πολύ μεγάλη για να προστεθεί στην ουρά."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "Βρέθηκαν υπερβολικά πολλοί υποψήφιοι δ
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Πάρα πολλοί συμμετέχοντες: {attendeeCount}. Το μέγιστο επιτρεπόμενο είναι {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Πάρα πολλές εργασίες βρίσκονται σε αναμονή. Δοκιμάστε ξανά αργότερα."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για τον εαυτό σας. Αντ' αυτού, επαναφέρετε τον έλεγχο ταυτότητας δύο παραγόντων από το προφίλ σας."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Δεν μπορείτε να αλλάξετε το δικό σας ρόλο. Παρακαλώ ζητήστε από άλλον διαχειριστή να ενημερώσει το ρόλο σας."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Δεν μπορείτε να αφαιρέσετε την πρόσβαση στις ρυθμίσεις από τον δικό σας ρόλο. Ζητήστε από έναν άλλο διαχειριστή να κάνει αυτή την αλλαγή."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο διαχειριστή από τον τελευταίο διαχειριστή. Παρακαλώ αναθέστε έναν άλλο διαχειριστή πρώτα."
 
@@ -18114,6 +18135,11 @@ msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν 
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν την ενέργεια ροής εργασίας."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Δεν έχετε άδεια να ενημερώσετε το προφίλ του βοηθού. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "Ο ρόλος σας δεν μπορεί να διαγράψει ορι�
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ο ρόλος σας σε αυτό το workspace δεν μπορεί να βρεθεί. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 

@@ -262,7 +262,7 @@ describe('Records shared beyond the role that can access their object', () => {
     }
 
     const buildJonyPrincipals = async () =>
-      principalPermissionsService.buildPermissionsPrincipals({
+      principalPermissionsService.resolvePermissionsPrincipals({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -270,8 +270,8 @@ describe('Records shared beyond the role that can access their object', () => {
       });
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
-        operationType: 'select',
+      await recordPermissionsService.canAccessSomeRecords({
+        operationType: 'read',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -282,35 +282,38 @@ describe('Records shared beyond the role that can access their object', () => {
     const principals = await buildJonyPrincipals();
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
-        operationType: 'select',
+      await recordPermissionsService.canAccessSomeRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
+      await recordPermissionsService.canAccessSomeRecords({
         operationType: 'update',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [OTHER_RECORD_ID],
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID],
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],

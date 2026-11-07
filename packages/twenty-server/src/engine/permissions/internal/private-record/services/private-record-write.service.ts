@@ -7,7 +7,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/private-record/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
@@ -22,6 +22,12 @@ import {
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/internal/private-record/utils/has-created-by-field.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -84,7 +90,7 @@ export class PrivateRecordWriteService {
     });
   }
 
-  changeRecordPrivacy(
+  setRecordPrivacy(
     args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
     return this.recordSharingChangeService.runChange({
@@ -93,19 +99,35 @@ export class PrivateRecordWriteService {
     });
   }
 
-  setPrivate({
+  async setPrivateOrThrow({
     workspaceId,
-    flatObjectMetadata,
+    objectMetadataId,
     recordIds,
     isPrivate,
     transactionScope,
   }: {
     workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     recordIds: string[];
     isPrivate: boolean;
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     return this.recordPrivacyWriteOrmService.setRecordsPrivate({
       workspaceId,
       flatObjectMetadata,
@@ -130,9 +152,9 @@ export class PrivateRecordWriteService {
         'flatFieldMetadataMaps',
       ]);
 
-    await this.setPrivate({
+    await this.setPrivateOrThrow({
       workspaceId,
-      flatObjectMetadata,
+      objectMetadataId: flatObjectMetadata.id,
       recordIds: [args.recordId],
       isPrivate,
       transactionScope,

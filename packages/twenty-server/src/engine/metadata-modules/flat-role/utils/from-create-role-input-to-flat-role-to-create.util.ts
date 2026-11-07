@@ -37,6 +37,8 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canAccessAllAgentChatChannels:
       createRoleInput.canAccessAllAgentChatChannels ?? false,
     canReadAllObjectRecords: createRoleInput.canReadAllObjectRecords ?? false,
+    canCreateAllObjectRecords:
+      createRoleInput.canUpdateAllObjectRecords ?? false,
     canUpdateAllObjectRecords:
       createRoleInput.canUpdateAllObjectRecords ?? false,
     canSoftDeleteAllObjectRecords:

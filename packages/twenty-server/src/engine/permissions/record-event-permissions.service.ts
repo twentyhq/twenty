@@ -51,7 +51,7 @@ export class RecordEventPermissionsService {
     events?: TEvent[];
   }): Promise<TEvent[]> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
 
@@ -181,7 +181,7 @@ export class RecordEventPermissionsService {
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
-        operationType: 'select',
+        operationType: 'read',
         records: resolveEventRecordSnapshots(events),
         context: {
           shouldIgnoreSoftDeleteDefaultFilter: true,

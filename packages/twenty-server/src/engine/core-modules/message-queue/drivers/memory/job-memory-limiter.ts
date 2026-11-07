@@ -3,10 +3,12 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  JOB_MEMORY_CHARGE_TTL_SECONDS,
   JOB_MEMORY_INFO_CACHE_MS,
+  JOB_MEMORY_RECONCILE_BATCH_SIZE,
+  JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
+import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -26,6 +28,8 @@ import {
   type RedisScriptClient,
   runRedisScript,
 } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
+import { scanRedisHashFields } from 'src/engine/core-modules/message-queue/utils/scan-redis-hash-fields.util';
+import { scanRedisKeys } from 'src/engine/core-modules/message-queue/utils/scan-redis-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -40,6 +44,11 @@ export type JobMemoryAdmission = {
   availableBytes: number | null;
 };
 
+export type JobMemoryReconciliation = {
+  releasedCount: number;
+  releasedBytes: number;
+};
+
 export type ChargedJob = {
   queueName: MessageQueue;
   jobId: string;
@@ -48,6 +57,7 @@ export type ChargedJob = {
 
 type JobMemoryLimiterOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisScriptClient>;
+  getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
@@ -130,7 +140,6 @@ export class JobMemoryLimiter {
       args: [
         capacityBytes,
         memoryInfo.usedMemoryBytes,
-        JOB_MEMORY_CHARGE_TTL_SECONDS,
         groupKeys.length,
         ...groupKeys.map((groupKey) => this.getShare(groupKey)),
         chargedJobs.length,
@@ -217,6 +226,91 @@ export class JobMemoryLimiter {
       args: [this.buildMember({ queueName, jobId })],
       action: `release the job memory of job ${jobId}`,
     });
+  }
+
+  async reconcile(queueName: MessageQueue): Promise<JobMemoryReconciliation> {
+    const client = await this.options.getClient(queueName);
+    const jobsKeyPrefix = `${this.options.keyPrefix}:jobmem:jobs:`;
+    const reconciliation: JobMemoryReconciliation = {
+      releasedCount: 0,
+      releasedBytes: 0,
+    };
+
+    const reconciledGroupKeys = new Set<string>();
+
+    for await (const jobsKey of scanRedisKeys({
+      client,
+      pattern: `${jobsKeyPrefix}*`,
+    })) {
+      const groupKey = jobsKey.slice(jobsKeyPrefix.length);
+
+      // SCAN can return a key twice, and a second pass in the same run would skip the grace period
+      if (reconciledGroupKeys.has(groupKey)) {
+        continue;
+      }
+
+      reconciledGroupKeys.add(groupKey);
+
+      const { releasedCount, releasedBytes } = await this.reconcileGroupKey({
+        client,
+        groupKey,
+      });
+
+      reconciliation.releasedCount += releasedCount;
+      reconciliation.releasedBytes += releasedBytes;
+    }
+
+    return reconciliation;
+  }
+
+  private async reconcileGroupKey({
+    client,
+    groupKey,
+  }: {
+    client: RedisScriptClient;
+    groupKey: string;
+  }): Promise<JobMemoryReconciliation> {
+    const [usedKey, jobsKey] = this.buildKeys(groupKey);
+    const previousSuspectsKey = `${this.options.keyPrefix}:jobmem:suspects:${groupKey}`;
+    const nextSuspectsKey = `${previousSuspectsKey}:next`;
+    const reconciliation: JobMemoryReconciliation = {
+      releasedCount: 0,
+      releasedBytes: 0,
+    };
+
+    for await (const members of scanRedisHashFields({
+      client,
+      key: jobsKey,
+      batchSize: JOB_MEMORY_RECONCILE_BATCH_SIZE,
+    })) {
+      const [releasedCount, releasedBytes] = String(
+        await runRedisScript({
+          client,
+          script: JOB_MEMORY_RECONCILE_SCRIPT,
+          keys: [
+            usedKey,
+            jobsKey,
+            previousSuspectsKey,
+            nextSuspectsKey,
+            ...members.map((member) => this.buildJobKeyOfMember(member)),
+          ],
+          args: [JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS, ...members],
+        }),
+      )
+        .split(' ')
+        .map(Number);
+
+      reconciliation.releasedCount += releasedCount;
+      reconciliation.releasedBytes += releasedBytes;
+    }
+
+    await client.runCommand('del', [previousSuspectsKey]);
+
+    if (Number(await client.runCommand('exists', [nextSuspectsKey])) === 1) {
+      await client.runCommand('rename', [nextSuspectsKey, previousSuspectsKey]);
+    }
+
+    return reconciliation;
   }
 
   async getUsedRatio(queueName: MessageQueue): Promise<number | undefined> {
@@ -345,6 +439,15 @@ export class JobMemoryLimiter {
       `${this.options.keyPrefix}:jobmem:used:${groupKey}`,
       `${this.options.keyPrefix}:jobmem:jobs:${groupKey}`,
     ];
+  }
+
+  private buildJobKeyOfMember(member: string): string {
+    const separatorIndex = member.indexOf(':');
+
+    return this.options.getJobKey({
+      queueName: member.slice(0, separatorIndex) as MessageQueue,
+      jobId: member.slice(separatorIndex + 1),
+    });
   }
 
   private buildMember({
