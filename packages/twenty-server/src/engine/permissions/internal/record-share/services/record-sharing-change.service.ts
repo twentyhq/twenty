@@ -41,11 +41,11 @@ export class RecordSharingChangeService {
   async runChange({
     args,
     write,
-    isChangeEnabled = ({ isShareable }) => isShareable,
+    requiredCapability,
   }: {
     args: RecordSharingArgs;
     write: (change: RecordSharingChange) => Promise<void>;
-    isChangeEnabled?: (sharingObject: RecordSharingObject) => boolean;
+    requiredCapability: 'isShareable' | 'canSetRecordPrivacy';
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
@@ -60,7 +60,7 @@ export class RecordSharingChangeService {
     const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (!isChangeEnabled(sharingObject)) {
+    if (!sharingObject[requiredCapability]) {
       throw new NotFoundError('Record not found');
     }
 

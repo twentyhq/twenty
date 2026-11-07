@@ -2,7 +2,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { arePrivateRecordsEnabled } from 'src/engine/permissions/private-record/utils/are-private-records-enabled.util';
-import { PRIVATE_BY_DEFAULT_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/internal/private-record/constants/private-by-default-object-universal-identifiers.constant';
 
 const ORDINARY_OBJECT = {
   universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
@@ -31,15 +30,18 @@ describe('arePrivateRecordsEnabled', () => {
     ).toBe(true);
   });
 
-  it('should stay on for a private by default object', () => {
-    expect(
-      arePrivateRecordsEnabled({
-        flatObjectMetadata: {
-          universalIdentifier:
-            PRIVATE_BY_DEFAULT_OBJECT_UNIVERSAL_IDENTIFIERS[0],
-        },
-        featureFlagsMap: {},
-      }),
-    ).toBe(true);
-  });
+  it.each([
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+  ])(
+    'should stay on for AI chat object %s with both flags off',
+    (universalIdentifier) => {
+      expect(
+        arePrivateRecordsEnabled({
+          flatObjectMetadata: { universalIdentifier },
+          featureFlagsMap: {},
+        }),
+      ).toBe(true);
+    },
+  );
 });
