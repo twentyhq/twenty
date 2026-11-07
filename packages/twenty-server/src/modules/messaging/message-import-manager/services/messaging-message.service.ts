@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -57,18 +56,15 @@ export class MessagingMessageService {
   public async saveMessagesWithinTransaction({
     messages,
     messageChannelId,
-    messageChannelType,
     transactionScope,
     workspaceId,
   }: {
     messages: MessageWithParticipants[];
     messageChannelId: string;
-    messageChannelType: MessageChannelType;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
-    movedMessageExternalIdsWithoutSend: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -77,7 +73,6 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
-    const movedMessageExternalIdsWithoutSend: string[] = [];
     const messageChannelMessageAssociationIdsToRelink: string[] = [];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
@@ -154,18 +149,6 @@ export class MessagingMessageService {
           messageAccumulatorMap,
         );
 
-        // Apps redeliver on purpose: their folders add up and their participants merge
-        const storedFolderIdsByAssociationId =
-          messageChannelType === MessageChannelType.APP
-            ? undefined
-            : await this.findStoredFolderIdsByAssociationId(
-                [
-                  ...existingMessageChannelMessageAssociations,
-                  ...messageChannelMessageAssociationsReferencingMessageThread,
-                ],
-                transactionScope,
-              );
-
         const associationToCreateByMessageId = new Map<
           string,
           NonNullable<
@@ -217,38 +200,25 @@ export class MessagingMessageService {
           const existingAssociation =
             messageAccumulator.existingMessageChannelMessageAssociationInDB;
 
-          if (
-            isDefined(storedFolderIdsByAssociationId) &&
+          const isSentDraft =
             isDefined(existingAssociation) &&
-            existingAssociation.messageExternalId === message.externalId
-          ) {
-            const isSentDraft =
-              messageAccumulator.existingMessageInDB?.isDraft === true &&
-              !message.isDraft;
+            existingAssociation.messageExternalId === message.externalId &&
+            messageAccumulator.existingMessageInDB?.isDraft === true &&
+            !message.isDraft;
 
-            const hasMoved = this.hasMovedBetweenFolders(
-              storedFolderIdsByAssociationId.get(existingAssociation.id) ?? [],
-              message.messageFolderIds ?? [],
-            );
+          if (isSentDraft) {
+            messageAccumulator.sentDraftToRefresh = {
+              id: newOrExistingMessageId,
+              subject: message.subject,
+              receivedAt: message.receivedAt,
+              text: message.text,
+              isDraft: message.isDraft,
+            };
 
-            if (hasMoved) {
+            if (isNonEmptyArray(message.messageFolderIds)) {
               messageChannelMessageAssociationIdsToRelink.push(
                 existingAssociation.id,
               );
-            }
-
-            if (hasMoved && !isSentDraft) {
-              movedMessageExternalIdsWithoutSend.push(message.externalId);
-            }
-
-            if (isSentDraft) {
-              messageAccumulator.sentDraftToRefresh = {
-                id: newOrExistingMessageId,
-                subject: message.subject,
-                receivedAt: message.receivedAt,
-                text: message.text,
-                isDraft: message.isDraft,
-              };
             }
           }
 
@@ -407,7 +377,6 @@ export class MessagingMessageService {
 
         return {
           createdMessages: messagesToCreate,
-          movedMessageExternalIdsWithoutSend,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,
@@ -415,63 +384,6 @@ export class MessagingMessageService {
       },
       authContext,
       { lite: true },
-    );
-  }
-
-  private async findStoredFolderIdsByAssociationId(
-    messageChannelMessageAssociations: Pick<
-      MessageChannelMessageAssociationWorkspaceEntity,
-      'id'
-    >[],
-    transactionScope: WorkspaceTransactionScope,
-  ): Promise<Map<string, string[]>> {
-    const storedFolderIdsByAssociationId = new Map<string, string[]>();
-
-    if (messageChannelMessageAssociations.length === 0) {
-      return storedFolderIdsByAssociationId;
-    }
-
-    const folderLinks = await transactionScope
-      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-        'messageChannelMessageAssociationMessageFolder',
-      )
-      .find({
-        where: {
-          messageChannelMessageAssociationId: In(
-            messageChannelMessageAssociations.map(({ id }) => id),
-          ),
-        },
-      });
-
-    for (const {
-      messageChannelMessageAssociationId,
-      messageFolderId,
-    } of folderLinks) {
-      storedFolderIdsByAssociationId.set(messageChannelMessageAssociationId, [
-        ...(storedFolderIdsByAssociationId.get(
-          messageChannelMessageAssociationId,
-        ) ?? []),
-        messageFolderId,
-      ]);
-    }
-
-    return storedFolderIdsByAssociationId;
-  }
-
-  private hasMovedBetweenFolders(
-    storedFolderIds: string[],
-    fetchedFolderIds: string[],
-  ): boolean {
-    if (!isNonEmptyArray(fetchedFolderIds)) {
-      return false;
-    }
-
-    const storedFolderIdsSet = new Set(storedFolderIds);
-    const fetchedFolderIdsSet = new Set(fetchedFolderIds);
-
-    return (
-      storedFolderIdsSet.size !== fetchedFolderIdsSet.size ||
-      fetchedFolderIds.some((folderId) => !storedFolderIdsSet.has(folderId))
     );
   }
 

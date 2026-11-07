@@ -26,6 +26,7 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessageFolderMoveService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-move.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
@@ -48,6 +49,7 @@ export class MessagingMessagesImportService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
+    private readonly messageFolderMoveService: MessagingMessageFolderMoveService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -200,10 +202,19 @@ export class MessagingMessagesImportService {
             workspace?.isInternalMessagesImportEnabled ?? false,
           );
 
-          if (messagesToSave.length > 0) {
+          const messagesLeftToSave =
+            messagesToSave.length > 0
+              ? await this.messageFolderMoveService.relinkMovedMessages({
+                  messages: messagesToSave,
+                  messageChannelId: messageChannel.id,
+                  workspaceId,
+                })
+              : [];
+
+          if (messagesLeftToSave.length > 0) {
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
               {
-                messagesToSave,
+                messagesToSave: messagesLeftToSave,
                 messageChannel,
                 connectedAccount,
                 workspaceId,
