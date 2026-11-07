@@ -100,15 +100,14 @@ const updateParentStep = ({
       trigger,
       nextStepId,
     });
-  } else {
-    return updateParentStepNextStepIds({
-      steps,
-      trigger,
-      parentStepId,
-      insertedStepId,
-      nextStepId,
-    });
   }
+  return updateParentStepNextStepIds({
+    steps,
+    trigger,
+    parentStepId,
+    insertedStepId,
+    nextStepId,
+  });
 };
 
 const updateParentStepNextStepIds = ({

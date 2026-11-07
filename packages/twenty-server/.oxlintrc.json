@@ -31,6 +31,7 @@
     ],
     "no-control-regex": "off",
     "no-debugger": "error",
+    "no-else-return": "error",
     "no-duplicate-imports": "error",
     "no-undef": "off",
     "no-unused-vars": "off",
