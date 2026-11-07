@@ -135,7 +135,7 @@ export const buildAccessGroupStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconBuildingSkyscraper',
       isSystem: true,
-      isNullable: false,
+      isNullable: true,
       isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
