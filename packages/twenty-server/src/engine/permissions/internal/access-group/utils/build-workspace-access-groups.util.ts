@@ -14,15 +14,17 @@ import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/i
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
+type AccessGroupWorkspaceMemberMaps = Pick<
+  FlatWorkspaceMemberMaps,
+  'idByUserWorkspaceId' | 'byId'
+>;
+
 const groupWorkspaceMembersByRoleId = ({
   userWorkspaceRoleMap,
   flatWorkspaceMemberMaps,
 }: {
   userWorkspaceRoleMap: Record<string, string>;
-  flatWorkspaceMemberMaps: Pick<
-    FlatWorkspaceMemberMaps,
-    'idByUserWorkspaceId' | 'byId'
-  >;
+  flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): Map<string, RowLevelPermissionWorkspaceMember[]> => {
   const workspaceMembersByRoleId = new Map<
     string,
@@ -60,10 +62,7 @@ export const buildWorkspaceAccessGroups = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   userWorkspaceRoleMap: Record<string, string>;
-  flatWorkspaceMemberMaps: Pick<
-    FlatWorkspaceMemberMaps,
-    'idByUserWorkspaceId' | 'byId'
-  >;
+  flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
 }): {
   accessGroups: AccessGroupWithoutCompactId[];
   hasFailures: boolean;
