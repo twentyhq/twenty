@@ -5078,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "إثراء"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "أدخل اسمًا يتراوح طوله بين 1 و{AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} حرفًا، وحدد خيارات مظهر المساعد المدعومة."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6646,6 +6651,7 @@ msgid "In progress"
 msgstr "قيد التقدم"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "البريد الوارد غير مفعّل في مساحة العمل هذه."
@@ -12791,7 +12797,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "بعض الأذونات التي اخترتها غير صالحة. يرجى المحاولة مرة أخرى بإعدادات أذونات صالحة."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "تعذر العثور على بعض عضويات مساحة العمل. قد لا يملكون حق الوصول إلى مساحة العمل هذه بعد الآن."
 
@@ -13651,6 +13657,11 @@ msgstr "تبعيات الإنتاج الخاصة بالتطبيق كبيرة ج�
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "تغيّرت الأذونات التي طلبها التطبيق. راجعها مرة أخرى قبل الموافقة."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "لا يمكن تحديث ملف تعريف المساعد قبل تنشيط مساحة العمل."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14814,6 +14825,11 @@ msgstr "هذا الفهرس غير موجود أو تم حذفه بالفعل."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "لم يبلّغ هذا المثيل عن معرّف للخادم. عيّن SERVER_ID على هذا المثيل ثم حاول مرة أخرى."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "هذه المهمة كبيرة جدًا بحيث لا يمكن إضافتها إلى قائمة الانتظار."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15557,6 +15573,11 @@ msgstr "تم العثور على عدد كبير جداً من المرشحين 
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "عدد الحاضرين كبير جدًا: {attendeeCount}. الحد الأقصى المسموح به هو {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "هناك عدد كبير جدًا من المهام قيد الانتظار. يُرجى المحاولة مرة أخرى لاحقًا."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17972,7 +17993,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "لا يمكنك إنشاء رمز استرداد لنفسك. أعد تعيين المصادقة الثنائية من ملفك الشخصي بدلًا من ذلك."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "لا يمكنك تغيير دورك الخاص. يُرجى طلب من مسؤول آخر تحديث دورك."
 
@@ -17993,7 +18014,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "لا يمكنك إزالة صلاحية الوصول إلى الإعدادات من دورك أنت. اطلب من مسؤول آخر إجراء هذا التغيير."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "لا يمكنك إزالة دور المسؤول من المسؤول الأخير. يُرجى تعيين مسؤول آخر أولاً."
 
@@ -18114,6 +18135,11 @@ msgstr "ليس لديك إذن لتنفيذ هذا الإجراء."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "ليس لديك إذن لتنفيذ إجراء سير العمل هذا."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "ليس لديك إذن لتحديث ملف تعريف المساعد. يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18266,7 @@ msgstr "لا يمكن لدورك حذف بعض هذه السجلات، لذا ل
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "لم يتم العثور على دورك في مساحة العمل هذه. يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 

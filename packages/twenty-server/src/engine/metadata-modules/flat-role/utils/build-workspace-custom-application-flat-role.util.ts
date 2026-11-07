@@ -32,6 +32,7 @@ export const buildWorkspaceCustomApplicationFlatRole = ({
     canAccessAllTools: true,
     canAccessAllAgentChatChannels: true,
     canReadAllObjectRecords: true,
+    canCreateAllObjectRecords: true,
     canUpdateAllObjectRecords: true,
     canSoftDeleteAllObjectRecords: true,
     canDestroyAllObjectRecords: true,
