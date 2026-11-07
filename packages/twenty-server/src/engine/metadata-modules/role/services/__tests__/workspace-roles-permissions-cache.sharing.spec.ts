@@ -25,7 +25,6 @@ const compute = ({
             STANDARD_OBJECTS.agentChatThread.universalIdentifier,
         },
       ],
-      featureFlag: [],
       objectPermission: {
         byRoleId: new Map([
           ['role', [{ objectMetadataId: 'thread', canUpdateObjectRecords }]],

@@ -4,7 +4,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG } from 'src/engine/core-modules/feature-flag/constants/workspace-caches-computed-from-feature-flag.constant';
 import { type FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -75,9 +74,6 @@ export class FeatureFlagService {
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'featureFlagsMap',
-        ...keys.flatMap(
-          (key) => WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG[key] ?? [],
-        ),
       ]);
     }
   }
@@ -128,7 +124,6 @@ export class FeatureFlagService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
-      ...(WORKSPACE_CACHES_COMPUTED_FROM_FEATURE_FLAG[featureFlag] ?? []),
     ]);
 
     return result;

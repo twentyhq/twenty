@@ -37,11 +37,9 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
 
   return {
     ...objectRecordsPermissions,
-    ...(isDefined(objectRecordsPermissions.canCreateAllRecords) && {
-      canCreateAllRecords:
-        objectRecordsPermissions.canCreateAllRecords &&
-        isEnabled('canCreateObjectRecords'),
-    }),
+    canCreateAllRecords:
+      objectRecordsPermissions.canCreateAllRecords &&
+      isEnabled('canCreateObjectRecords'),
     canReadAllRecords:
       objectRecordsPermissions.canReadAllRecords &&
       isEnabled('canReadObjectRecords'),
@@ -57,11 +55,9 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
     ...(isDefined(rowLevelRecordsPermissions) && {
       rowLevelRecordsPermissions: {
         ...rowLevelRecordsPermissions,
-        ...(isDefined(rowLevelRecordsPermissions.canCreateRecords) && {
-          canCreateRecords:
-            rowLevelRecordsPermissions.canCreateRecords &&
-            isEnabled('canCreateObjectRecords'),
-        }),
+        canCreateRecords:
+          rowLevelRecordsPermissions.canCreateRecords &&
+          isEnabled('canCreateObjectRecords'),
         canReadRecords:
           rowLevelRecordsPermissions.canReadRecords &&
           isEnabled('canReadObjectRecords'),

@@ -55,6 +55,7 @@ const buildRoleRecordsPermissions = (
 
 const agentRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: true,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
@@ -65,6 +66,7 @@ const agentRolePermissions = buildRoleRecordsPermissions({
 
 const defaultRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,

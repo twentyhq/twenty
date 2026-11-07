@@ -80,21 +80,14 @@ const intersectObjectRecordsPermissions = (
       canReachSomeRecords({ objectRecordsPermissions, operationType }),
     );
 
-  const isCreatePermissionEnabled = objectRecordsPermissionsPerRole.some(
-    (objectRecordsPermissions) =>
-      isDefined(objectRecordsPermissions?.canCreateAllRecords),
-  );
-
   const intersectedObjectRecordsPermissions: ObjectRecordsPermissions = {
-    ...(isCreatePermissionEnabled && {
-      canCreateAllRecords: isGrantedToAllRecordsByEveryRole(
-        (objectRecordsPermissions) =>
-          canReachAllRecords({
-            objectRecordsPermissions,
-            operationType: 'create',
-          }),
-      ),
-    }),
+    canCreateAllRecords: isGrantedToAllRecordsByEveryRole(
+      (objectRecordsPermissions) =>
+        canReachAllRecords({
+          objectRecordsPermissions,
+          operationType: 'create',
+        }),
+    ),
     canReadAllRecords: isGrantedToAllRecordsByEveryRole(
       ({ canReadAllRecords }) => canReadAllRecords,
     ),
@@ -124,9 +117,7 @@ const intersectObjectRecordsPermissions = (
   return {
     ...intersectedObjectRecordsPermissions,
     rowLevelRecordsPermissions: {
-      ...(isCreatePermissionEnabled && {
-        canCreateRecords: isReachingSomeRecordsForEveryRole('create'),
-      }),
+      canCreateRecords: isReachingSomeRecordsForEveryRole('create'),
       canReadRecords: isReachingSomeRecordsForEveryRole('read'),
       canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
       canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('softDelete'),

@@ -29,6 +29,7 @@ const buildAllRecordsPermissions = ({
 }: AllRecordsGrants & {
   restrictedFields?: RestrictedFieldsPermissions;
 }): ObjectRecordsPermissions => ({
+  canCreateAllRecords: grants.canUpdate,
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
@@ -61,17 +62,6 @@ describe('computePermissionIntersection', () => {
         },
       });
 
-    it('should stay absent when no role sets it', () => {
-      const result = computePermissionIntersection([
-        buildRole({}),
-        buildRole({}),
-      ]);
-
-      expect(result.objects[objectMetadataId1]).not.toHaveProperty(
-        'canCreateAllRecords',
-      );
-    });
-
     it('should deny when one role denies it', () => {
       const result = computePermissionIntersection([
         buildRole({ canCreateAllRecords: true }),
@@ -103,6 +93,7 @@ describe('computePermissionIntersection', () => {
           },
         }),
         buildRole({
+          canCreateAllRecords: undefined,
           canUpdateAllRecords: false,
           rowLevelRecordsPermissions: {
             ...rowLevelRecordsPermissions,
@@ -120,7 +111,10 @@ describe('computePermissionIntersection', () => {
     it('should limit through update for a role that does not set it', () => {
       const result = computePermissionIntersection([
         buildRole({ canCreateAllRecords: true }),
-        buildRole({ canUpdateAllRecords: false }),
+        buildRole({
+          canCreateAllRecords: undefined,
+          canUpdateAllRecords: false,
+        }),
       ]);
 
       expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
@@ -494,6 +488,7 @@ describe('computePermissionIntersection', () => {
           canDestroy: false,
         }),
         rowLevelRecordsPermissions: {
+          canCreateRecords: true,
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,

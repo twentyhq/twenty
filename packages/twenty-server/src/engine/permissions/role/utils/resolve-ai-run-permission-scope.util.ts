@@ -44,6 +44,9 @@ const narrowRecordsPermissionsToExplicitDenies = ({
     }
 
     objects[objectPermission.objectMetadataId] = {
+      canCreateAllRecords:
+        grantedObjectRecordsPermissions.canCreateAllRecords &&
+        objectPermission.canUpdateObjectRecords !== false,
       canReadAllRecords:
         grantedObjectRecordsPermissions.canReadAllRecords &&
         objectPermission.canReadObjectRecords !== false,
@@ -123,6 +126,7 @@ export const resolveAiRunPermissionScope = ({
       objectMetadataId: findObjectMetadataIdOrThrow(
         objectPermission.objectUniversalIdentifier,
       ),
+      canCreateObjectRecords: objectPermission.canUpdateObjectRecords,
       canReadObjectRecords: objectPermission.canReadObjectRecords,
       canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
       canSoftDeleteObjectRecords: objectPermission.canSoftDeleteObjectRecords,
@@ -136,6 +140,7 @@ export const resolveAiRunPermissionScope = ({
 
   const flagGrantedRecordsPermissions = computeRoleRecordsPermissions({
     roleDefinition: {
+      canCreateAllObjectRecords: scope.canUpdateAllObjectRecords ?? false,
       canReadAllObjectRecords: scope.canReadAllObjectRecords ?? false,
       canUpdateAllObjectRecords: scope.canUpdateAllObjectRecords ?? false,
       canSoftDeleteAllObjectRecords:

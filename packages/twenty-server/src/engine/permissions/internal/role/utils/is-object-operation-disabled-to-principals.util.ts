@@ -1,8 +1,7 @@
 /* @license Enterprise */
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { isPermissionsPrincipalsOwningObject } from 'src/engine/permissions/internal/principal/utils/is-permissions-principals-owning-object.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled.util';
 
@@ -14,11 +13,10 @@ export const isObjectOperationDisabledToPrincipals = ({
 }: PermissionsObjectAccessRequest): boolean =>
   isObjectOperationDisabled({
     objectMetadata: flatObjectMetadata,
-    operationType,
-    isCreatePermissionEnabled:
-      metadataMaps.featureFlagsMap[
-        FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED
-      ] ?? false,
+    operationType: getEnforcedOperationType({
+      operationType,
+      featureFlagsMap: metadataMaps.featureFlagsMap,
+    }),
   }) &&
   !isPermissionsPrincipalsOwningObject({
     principals,

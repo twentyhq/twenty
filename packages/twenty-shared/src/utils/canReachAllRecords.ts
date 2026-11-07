@@ -27,7 +27,7 @@ export const canReachAllRecords = ({
     case 'read':
       return objectRecordsPermissions.canReadAllRecords;
     case 'create':
-      // Only set when create is enforced on its own: otherwise it follows update
+      // Entries cached before this key existed lack it until they are recomputed
       return (
         objectRecordsPermissions.canCreateAllRecords ??
         objectRecordsPermissions.canUpdateAllRecords
