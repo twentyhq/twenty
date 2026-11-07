@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -155,7 +156,9 @@ export class PrivateRecordWriteService {
       !isShareable &&
       args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
     ) {
-      throw new NotFoundError('Record not found');
+      throw new NotFoundError('Record not found', {
+        userFriendlyMessage: msg`Record not found`,
+      });
     }
 
     const { flatFieldMetadataMaps } =
