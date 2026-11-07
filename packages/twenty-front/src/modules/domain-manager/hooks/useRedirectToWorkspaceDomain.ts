@@ -20,7 +20,9 @@ export const useRedirectToWorkspaceDomain = () => {
     searchParams?: Record<string, string | boolean>,
     target?: string,
   ) => {
-    if (!isMultiWorkspaceEnabled) return;
+    if (!isMultiWorkspaceEnabled) {
+      return;
+    }
     redirect(
       buildWorkspaceUrl(baseUrl, pathname, {
         ...searchParams,

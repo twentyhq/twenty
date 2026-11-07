@@ -23,7 +23,7 @@ export const buildRecordReadRestrictions = ({
     if (
       !canReachSomeRecords({
         objectRecordsPermissions,
-        operationType: 'select',
+        operationType: 'read',
       })
     ) {
       unreadableObjectMetadataIds.add(objectMetadataId);

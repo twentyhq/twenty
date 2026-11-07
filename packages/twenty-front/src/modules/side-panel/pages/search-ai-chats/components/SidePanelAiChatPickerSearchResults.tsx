@@ -1,16 +1,22 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
 import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
 import { AI_CHAT_PICKER_RECORD_GQL_FIELDS } from '@/side-panel/pages/search-ai-chats/constants/AiChatPickerRecordGqlFields';
 import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAiChatThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/utils/getAiChatThreadSearchFilter';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SidePanelAiChatPickerSearchResultsProps = {
   searchTerm: string;
@@ -22,6 +28,13 @@ export const SidePanelAiChatPickerSearchResults = ({
   isSearchPending,
 }: SidePanelAiChatPickerSearchResultsProps) => {
   const { t } = useLingui();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const isDirectMessageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+  );
   const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
     aiChatPickerOpeningThreadIdComponentState,
   );
@@ -30,7 +43,12 @@ export const SidePanelAiChatPickerSearchResults = ({
     useFindManyRecords<AgentChatThreadRecord>({
       objectNameSingular: StandardObjectNameSingular.AgentChatThread,
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
-      filter: { title: { ilike: `%${escapeForIlike(searchTerm)}%` } },
+      filter: getAiChatThreadSearchFilter({
+        searchTerm,
+        workspaceMembers: currentWorkspaceMembers,
+        currentWorkspaceMemberId: currentWorkspaceMember?.id,
+        isDirectMessageEnabled,
+      }),
       orderBy: [{ lastActivityAt: 'DescNullsLast' }],
       fetchPolicy: 'network-only',
     });

@@ -26,7 +26,7 @@ const buildInput = (
 
 describe('formatSentMessage', () => {
   it('should mark the message as OUTGOING with the sender as FROM participant', () => {
-    const message = formatSentMessage(buildInput());
+    const message = formatSentMessage({ input: buildInput() });
 
     expect(message.direction).toBe(MessageDirection.OUTGOING);
     expect(message.participants).toContainEqual({
@@ -37,15 +37,15 @@ describe('formatSentMessage', () => {
   });
 
   it('should emit one participant per to/cc/bcc recipient with correct roles', () => {
-    const message = formatSentMessage(
-      buildInput({
+    const message = formatSentMessage({
+      input: buildInput({
         recipients: {
           to: ['alice@example.com'],
           cc: ['bob@example.com', 'carol@example.com'],
           bcc: ['dave@example.com'],
         },
       }),
-    );
+    });
 
     const rolesByHandle = Object.fromEntries(
       message.participants.map((participant) => [
@@ -64,15 +64,15 @@ describe('formatSentMessage', () => {
   });
 
   it('should fall back to the headerMessageId when the provider omits external ids so unrelated sends do not collide on a shared empty thread key', () => {
-    const message = formatSentMessage(
-      buildInput({
+    const message = formatSentMessage({
+      input: buildInput({
         sendResult: {
           headerMessageId: '<msg-2@mail.example>',
           messageExternalId: undefined,
           threadExternalId: undefined,
         },
       }),
-    );
+    });
 
     expect(message.externalId).toBe('<msg-2@mail.example>');
     expect(message.messageThreadExternalId).toBe('<msg-2@mail.example>');
@@ -80,8 +80,8 @@ describe('formatSentMessage', () => {
   });
 
   it('should persist IMAP/SMTP replies under the parent thread external id rather than the immediate parent Message-ID', () => {
-    const message = formatSentMessage(
-      buildInput({
+    const message = formatSentMessage({
+      input: buildInput({
         sendResult: {
           headerMessageId: '<reply@mail.example>',
           messageExternalId: undefined,
@@ -90,17 +90,25 @@ describe('formatSentMessage', () => {
         inReplyTo: '<parent@mail.example>',
         parentThreadExternalId: '<root@mail.example>',
       }),
-    );
+    });
 
     expect(message.messageThreadExternalId).toBe('<root@mail.example>');
   });
 
   it('should copy subject and body verbatim and start with no folder associations', () => {
-    const message = formatSentMessage(buildInput());
+    const message = formatSentMessage({ input: buildInput() });
 
     expect(message.subject).toBe('Quarterly review');
     expect(message.text).toBe('See attached.');
     expect(message.attachments).toEqual([]);
     expect(message.messageFolderIds).toBeUndefined();
+  });
+
+  it('should carry the uploaded attachment files so they are saved as message attachments', () => {
+    const attachmentFiles = [{ fileId: 'file-1', label: 'report.pdf' }];
+
+    const message = formatSentMessage({ input: buildInput(), attachmentFiles });
+
+    expect(message.attachmentFiles).toEqual(attachmentFiles);
   });
 });

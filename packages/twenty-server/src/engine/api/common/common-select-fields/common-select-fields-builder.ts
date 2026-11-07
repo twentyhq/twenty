@@ -40,9 +40,11 @@ export class CommonSelectFieldsBuilder {
     unreadableFieldMetadataIds: Set<string>;
   }> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
+      await this.principalPermissionsService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
+      );
 
     const flatObjectMetadatas = shouldIncludeRelationTargets
       ? Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
@@ -51,8 +53,8 @@ export class CommonSelectFieldsBuilder {
       : [];
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((relationTargetObjectMetadata) =>
-        this.recordPermissionsService.hasAccessToSomeRecords({
-          operationType: 'select',
+        this.recordPermissionsService.canAccessSomeRecords({
+          operationType: 'read',
           principals,
           objectMetadataId: relationTargetObjectMetadata.id,
         }),
@@ -67,7 +69,7 @@ export class CommonSelectFieldsBuilder {
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
         (selectedObjectMetadataId) =>
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow({
+          this.recordPermissionsService.findUnreadableFields({
             principals,
             objectMetadataId: selectedObjectMetadataId,
           }),
@@ -180,7 +182,9 @@ export class CommonSelectFieldsBuilder {
     objectNameSingular: string;
     fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
-    if (!isDefined(requestedFields)) return undefined;
+    if (!isDefined(requestedFields)) {
+      return undefined;
+    }
 
     if (requestedFields.size === 0) {
       throw new CommonSelectFieldsException(

@@ -51,7 +51,9 @@ export class AdminPanelHealthService {
 
   // oxlint-disable-next-line typescript/no-explicit-any
   private transformServiceDetails(details: any) {
-    if (!details) return details;
+    if (!details) {
+      return details;
+    }
 
     if (details.details) {
       if (details.details.messageSync) {

@@ -143,7 +143,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         return;
       }
 
-      if (visibleRecordGroupIds.length === 0) return;
+      if (visibleRecordGroupIds.length === 0) {
+        return;
+      }
 
       const currentGroupId =
         visibleRecordGroupIds[currentFocusedBoardCardIndexes.columnIndex];

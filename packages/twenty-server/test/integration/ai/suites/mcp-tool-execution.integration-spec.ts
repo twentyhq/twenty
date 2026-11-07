@@ -154,7 +154,9 @@ describe('MCP tool execution (integration)', () => {
       const resolveProperty = (
         prop: { type?: string; format?: string; $ref?: string } | undefined,
       ) => {
-        if (!prop) return undefined;
+        if (!prop) {
+          return undefined;
+        }
         if (prop.$ref && schema.$defs) {
           const defKey = prop.$ref.replace('#/$defs/', '');
 

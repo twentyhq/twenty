@@ -264,54 +264,51 @@ export class AgentChatChannelService {
     }
 
     const { threadsBefore, threadsAfter } =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager.runInWorkspaceTransaction(
-            async (transactionScope) => {
-              await lockAgentChatChannelForThreadWriteOrThrow({
-                transactionScope,
-                channelRepository: this.channelRepository,
-                workspaceId,
-                channelId: destinationChannelId,
-              });
+      await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          await lockAgentChatChannelForThreadWriteOrThrow({
+            transactionScope,
+            channelRepository: this.channelRepository,
+            workspaceId,
+            channelId: destinationChannelId,
+          });
 
-              const threadRepository =
-                transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-                  'agentChatThread',
-                  { shouldSkipEventEmission: true },
-                );
-              const threadsBefore = await threadRepository.find({
-                where: { channelId },
-                withDeleted: true,
-              });
-              const movedThreadIds = threadsBefore.map(({ id }) => id);
+          const threadRepository =
+            transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+              'agentChatThread',
+              { shouldSkipEventEmission: true },
+            );
+          const threadsBefore = await threadRepository.find({
+            where: { channelId },
+            withDeleted: true,
+          });
+          const movedThreadIds = threadsBefore.map(({ id }) => id);
 
-              await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
-                threadRepository
-                  .createQueryBuilder()
-                  .where({ channelId })
-                  .withDeleted(),
-                'update',
-              )
-                .set({ channelId: destinationChannelId })
-                .returning(['id'])
-                .execute();
+          await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+            threadRepository
+              .createQueryBuilder()
+              .where({ channelId })
+              .withDeleted(),
+            'update',
+          )
+            .set({ channelId: destinationChannelId })
+            .returning(['id'])
+            .execute();
 
-              const threadsAfter = await threadRepository.find({
-                where: { id: Any(movedThreadIds) },
-                withDeleted: true,
-              });
+          const threadsAfter = await threadRepository.find({
+            where: { id: Any(movedThreadIds) },
+            withDeleted: true,
+          });
 
-              await this.channelGrantService.rewriteThreadGrantsInTransaction({
-                transactionScope,
-                workspaceId,
-                threadIds: movedThreadIds,
-                affectedChannelIds: [channelId, destinationChannelId],
-              });
+          await this.channelGrantService.rewriteThreadGrantsInTransaction({
+            transactionScope,
+            workspaceId,
+            threadIds: movedThreadIds,
+            affectedChannelIds: [channelId, destinationChannelId],
+          });
 
-              return { threadsBefore, threadsAfter };
-            },
-          ),
+          return { threadsBefore, threadsAfter };
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

@@ -1,4 +1,9 @@
-import { createServer, request, type Server } from 'node:http';
+import {
+  createServer,
+  type IncomingHttpHeaders,
+  request,
+  type Server,
+} from 'node:http';
 import { type AddressInfo } from 'node:net';
 
 export type CalDavProxy = {
@@ -10,10 +15,14 @@ export const startCalDavResponseRewritingProxy = async ({
   targetHost,
   targetPort,
   rewriteResponseBody,
+  rewriteResponseHeaders = (headers) => headers,
 }: {
   targetHost: string;
   targetPort: number;
   rewriteResponseBody: (body: string) => string;
+  rewriteResponseHeaders?: (
+    headers: IncomingHttpHeaders,
+  ) => IncomingHttpHeaders;
 }): Promise<CalDavProxy> => {
   const server: Server = createServer((incoming, outgoing) => {
     const requestChunks: Buffer[] = [];
@@ -48,7 +57,7 @@ export const startCalDavResponseRewritingProxy = async ({
             } = upstream.headers;
 
             outgoing.writeHead(upstream.statusCode ?? 502, {
-              ...headers,
+              ...rewriteResponseHeaders(headers),
               'content-length': Buffer.byteLength(body),
             });
             outgoing.end(body);
