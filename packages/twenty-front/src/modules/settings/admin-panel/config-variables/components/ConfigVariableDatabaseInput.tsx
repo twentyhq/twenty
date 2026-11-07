@@ -103,7 +103,7 @@ export const ConfigVariableDatabaseInput = ({
       return (
         <TextInput
           label={label}
-          value={value !== null && value !== undefined ? String(value) : ''}
+          value={isDefined(value) ? String(value) : ''}
           onChange={(text) => {
             const num = Number(text);
             onChange(isNaN(num) ? text : num);
@@ -201,7 +201,7 @@ export const ConfigVariableDatabaseInput = ({
           value={
             typeof value === 'string'
               ? value
-              : value !== null && value !== undefined
+              : isDefined(value)
                 ? JSON.stringify(value)
                 : ''
           }
@@ -220,7 +220,7 @@ export const ConfigVariableDatabaseInput = ({
             value={
               typeof value === 'string'
                 ? value
-                : value !== null && value !== undefined
+                : isDefined(value)
                   ? JSON.stringify(value, null, 2)
                   : ''
             }
