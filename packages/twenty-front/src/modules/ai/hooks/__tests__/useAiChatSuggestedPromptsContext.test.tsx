@@ -5,6 +5,7 @@ import { ContextStorePageType } from 'twenty-shared/types';
 
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -96,7 +97,7 @@ describe('useAiChatSuggestedPromptsContext', () => {
     setMainContextStore({
       pageType: ContextStorePageType.Index,
       viewType: ContextStoreViewType.Table,
-      objectNameSingular: 'workflow',
+      objectNameSingular: 'person',
     });
 
     const { result } = renderHook(() => useAiChatSuggestedPromptsContext(), {
@@ -105,6 +106,25 @@ describe('useAiChatSuggestedPromptsContext', () => {
 
     expect(result.current).toEqual({
       browsingContextType: 'listView',
+      objectNameSingular: 'person',
+    });
+  });
+
+  it('should report the core workflow being browsed in the main page', () => {
+    setMainContextStore({ pageType: ContextStorePageType.Record });
+    jotaiStore.set(
+      contextStoreCurrentCoreObjectNameComponentState.atomFamily({
+        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
+      'workflow',
+    );
+
+    const { result } = renderHook(() => useAiChatSuggestedPromptsContext(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current).toEqual({
+      browsingContextType: 'recordPage',
       objectNameSingular: 'workflow',
     });
   });

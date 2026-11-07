@@ -7,6 +7,7 @@ import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgra
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
 import { ReadCreatePermissionInCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794037630000-read-create-permission-in-command-menu-items.command';
 import { RecomputeRolesPermissionsWithCreateKeysCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794045345000-recompute-roles-permissions-with-create-keys.command';
+import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794048404076-drop-workspace-workflow-object.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MoveFindRecordsSortsToRecordSortsCommand,
     ReadCreatePermissionInCommandMenuItemsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,
+    DropWorkspaceWorkflowObjectCommand,
   ],
 })
 export class V2_57_UpgradeVersionCommandModule {}

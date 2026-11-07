@@ -192,8 +192,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   const createAiStepWorkflow = async (
     stepInput: Partial<WorkflowAiAgentAction['settings']['input']> = {},
   ): Promise<string> => {
-    const { coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowId } =
-      await createCoreWorkflow({ name: 'AI step run roles' });
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+      name: 'AI step run roles',
+    });
 
     coreWorkflowIds.push(coreWorkflowId);
 
@@ -238,10 +239,6 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
         JSON.stringify(trigger),
         JSON.stringify([step]),
       ],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = $2 WHERE id = $1`,
-      [workspaceWorkflowId, workspaceWorkflowVersionId],
     );
     await global.testDataSource.query(
       `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
