@@ -7,8 +7,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
-import { buildNewRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-new-role-access-groups-or-throw.util';
-import { buildNewWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-new-workspace-access-groups.util';
+import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
+import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -34,15 +34,16 @@ export class AccessGroupService {
   private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const { newAccessGroups, hasFailures } = buildNewWorkspaceAccessGroups(
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'userWorkspaceRoleMap',
-        'flatWorkspaceMemberMaps',
-      ]),
-    );
+    const { accessGroups: newAccessGroups, hasFailures } =
+      buildWorkspaceAccessGroups(
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'rolesPermissions',
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+          'userWorkspaceRoleMap',
+          'flatWorkspaceMemberMaps',
+        ]),
+      );
 
     const existingGroupHashes = new Set(
       await this.accessGroupRepository.findGroupHashes(workspaceId),
@@ -98,7 +99,7 @@ export class AccessGroupService {
     )
       ? flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
       : undefined;
-    const callerAccessGroups = buildNewRoleAccessGroupsOrThrow({
+    const callerAccessGroups = buildRoleAccessGroupsOrThrow({
       roleId: mainPrincipal.roleId,
       objectMetadataId,
       objectRecordsPermissions:

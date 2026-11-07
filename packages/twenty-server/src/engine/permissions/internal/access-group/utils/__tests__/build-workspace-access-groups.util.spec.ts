@@ -8,7 +8,7 @@ import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/fla
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { buildNewWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-new-workspace-access-groups.util';
+import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_ID = 'object-id';
@@ -123,9 +123,9 @@ const workspaceMember: FlatWorkspaceMember = {
   ownedOpportunities: [],
 };
 
-describe('buildNewWorkspaceAccessGroups', () => {
+describe('buildWorkspaceAccessGroups', () => {
   it('should report a role it cannot compute and still build the others', () => {
-    const { newAccessGroups, hasFailures } = buildNewWorkspaceAccessGroups({
+    const { accessGroups, hasFailures } = buildWorkspaceAccessGroups({
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
@@ -136,7 +136,7 @@ describe('buildNewWorkspaceAccessGroups', () => {
       },
     });
 
-    expect(newAccessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
+    expect(accessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
     expect(hasFailures).toBe(true);
   });
 });

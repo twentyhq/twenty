@@ -7,8 +7,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type NewAccessGroup } from 'src/engine/permissions/internal/access-group/types/new-access-group.type';
-import { buildNewRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-new-role-access-groups-or-throw.util';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -49,7 +49,7 @@ const groupWorkspaceMembersByRoleId = ({
   return workspaceMembersByRoleId;
 };
 
-export const buildNewWorkspaceAccessGroups = ({
+export const buildWorkspaceAccessGroups = ({
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -65,14 +65,14 @@ export const buildNewWorkspaceAccessGroups = ({
     'idByUserWorkspaceId' | 'byId'
   >;
 }): {
-  newAccessGroups: NewAccessGroup[];
+  accessGroups: AccessGroup[];
   hasFailures: boolean;
 } => {
   const workspaceMembersByRoleId = groupWorkspaceMembersByRoleId({
     userWorkspaceRoleMap,
     flatWorkspaceMemberMaps,
   });
-  const newAccessGroupByGroupHash = new Map<string, NewAccessGroup>();
+  const accessGroupByGroupHash = new Map<string, AccessGroup>();
   let hasFailures = false;
 
   for (const [roleId, { objects }] of Object.entries(rolesPermissions)) {
@@ -92,17 +92,14 @@ export const buildNewWorkspaceAccessGroups = ({
       }
 
       try {
-        for (const newAccessGroup of buildNewRoleAccessGroupsOrThrow({
+        for (const accessGroup of buildRoleAccessGroupsOrThrow({
           roleId,
           objectMetadataId,
           objectRecordsPermissions,
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
           flatFieldMetadataMaps,
         })) {
-          newAccessGroupByGroupHash.set(
-            newAccessGroup.groupHash,
-            newAccessGroup,
-          );
+          accessGroupByGroupHash.set(accessGroup.groupHash, accessGroup);
         }
       } catch (error) {
         if (!(error instanceof PermissionsException)) {
@@ -115,7 +112,7 @@ export const buildNewWorkspaceAccessGroups = ({
   }
 
   return {
-    newAccessGroups: [...newAccessGroupByGroupHash.values()],
+    accessGroups: [...accessGroupByGroupHash.values()],
     hasFailures,
   };
 };
