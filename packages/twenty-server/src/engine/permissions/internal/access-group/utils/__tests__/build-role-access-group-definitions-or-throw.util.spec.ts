@@ -64,15 +64,15 @@ const buildRowLevelPermissions = (
 });
 
 const build = (
-  objectRecordsPermissions: ObjectRecordsPermissions | undefined,
-  overrides: Partial<
-    Parameters<typeof buildRoleAccessGroupDefinitionsOrThrow>[0]
-  > = {},
+  overrides: Pick<
+    Parameters<typeof buildRoleAccessGroupDefinitionsOrThrow>[0],
+    'objectRecordsPermissions'
+  > &
+    Partial<Parameters<typeof buildRoleAccessGroupDefinitionsOrThrow>[0]>,
 ) =>
   buildRoleAccessGroupDefinitionsOrThrow({
     roleId: ROLE_ID,
     objectMetadataId: OBJECT_METADATA_ID,
-    objectRecordsPermissions,
     workspaceMembers: [],
     flatFieldMetadataMaps,
     ...overrides,
@@ -80,16 +80,18 @@ const build = (
 
 describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
   it('should make no group for a role with no access', () => {
-    expect(build(noAccess)).toEqual([]);
-    expect(build(undefined)).toEqual([]);
+    expect(build({ objectRecordsPermissions: noAccess })).toEqual([]);
+    expect(build({ objectRecordsPermissions: undefined })).toEqual([]);
   });
 
   it('should make one all records group, different for each object', () => {
-    const [definition] = build({ ...noAccess, canReadAllRecords: true });
-    const [otherObjectDefinition] = build(
-      { ...noAccess, canReadAllRecords: true },
-      { objectMetadataId: 'other-object-metadata-id' },
-    );
+    const [definition] = build({
+      objectRecordsPermissions: { ...noAccess, canReadAllRecords: true },
+    });
+    const [otherObjectDefinition] = build({
+      objectRecordsPermissions: { ...noAccess, canReadAllRecords: true },
+      objectMetadataId: 'other-object-metadata-id',
+    });
 
     expect(definition.rowLevelPermissionPredicateGroupId).toBeNull();
     expect(definition.memberFieldValues).toBeNull();
@@ -99,16 +101,26 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
   it('should only count the asked operation', () => {
     const permissions = { ...noAccess, canReadAllRecords: true };
 
-    expect(build(permissions, { operationTypes: ['read'] })).toHaveLength(1);
-    expect(build(permissions, { operationTypes: ['update'] })).toEqual([]);
+    expect(
+      build({
+        objectRecordsPermissions: permissions,
+        operationTypes: ['read'],
+      }),
+    ).toHaveLength(1);
+    expect(
+      build({
+        objectRecordsPermissions: permissions,
+        operationTypes: ['update'],
+      }),
+    ).toEqual([]);
   });
 
   it('should make one group for a root rule without member values', () => {
-    const definitions = build(
-      buildRowLevelPermissions([
+    const definitions = build({
+      objectRecordsPermissions: buildRowLevelPermissions([
         { id: 'predicate', rowLevelPermissionPredicateGroupId: RULE_ID },
       ]),
-    );
+    });
 
     expect(definitions).toHaveLength(1);
     expect(definitions[0].rowLevelPermissionPredicateGroupId).toBe(RULE_ID);
@@ -116,21 +128,19 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
   });
 
   it('should make one group per list value, shared by members with the same value', () => {
-    const definitions = build(
-      buildRowLevelPermissions([
+    const definitions = build({
+      objectRecordsPermissions: buildRowLevelPermissions([
         {
           id: 'predicate',
           workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
           rowLevelPermissionPredicateGroupId: RULE_ID,
         },
       ]),
-      {
-        workspaceMembers: [
-          { id: 'jane', teams: ['sales', 'support'] },
-          { id: 'bob', teams: ['sales'] },
-        ] as never,
-      },
-    );
+      workspaceMembers: [
+        { id: 'jane', teams: ['sales', 'support'] },
+        { id: 'bob', teams: ['sales'] },
+      ] as never,
+    });
     const uniqueGroupHashes = new Set(definitions.map((d) => d.groupHash));
 
     expect(uniqueGroupHashes.size).toBe(2);
@@ -156,7 +166,8 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
       parentRowLevelPermissionPredicateGroupId: null,
     } as RowLevelPermissionPredicateGroup);
 
-    const definitions = build(permissions, {
+    const definitions = build({
+      objectRecordsPermissions: permissions,
       workspaceMembers: [{ id: 'jane', teams: ['sales', 'support'] }] as never,
     });
 
@@ -181,7 +192,7 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
     }
 
     expect(
-      build(permissions).map(
+      build({ objectRecordsPermissions: permissions }).map(
         (definition) => definition.rowLevelPermissionPredicateGroupId,
       ),
     ).toEqual([null]);
@@ -189,15 +200,15 @@ describe('buildRoleAccessGroupDefinitionsOrThrow', () => {
 
   it('should make no member group when no member holds the role', () => {
     expect(
-      build(
-        buildRowLevelPermissions([
+      build({
+        objectRecordsPermissions: buildRowLevelPermissions([
           {
             id: 'predicate',
             workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
             rowLevelPermissionPredicateGroupId: RULE_ID,
           },
         ]),
-      ),
+      }),
     ).toEqual([]);
   });
 });
