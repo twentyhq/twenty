@@ -1,32 +1,32 @@
 import { GettingStartedChatThreadDoneButton } from '@/getting-started/components/GettingStartedChatThreadDoneButton';
-import { GettingStartedInviteDoneButton } from '@/getting-started/components/GettingStartedInviteDoneButton';
 import { GettingStartedWorkflowDoneButton } from '@/getting-started/components/GettingStartedWorkflowDoneButton';
-import { type GettingStartedStepDoneCta } from '@/getting-started/types/GettingStartedStepDoneCta';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_BUTTONS } from '@/getting-started/constants/GettingStartedCustomStepDoneButtons';
+import { type GettingStartedStepDoneButtonProps } from '@/getting-started/types/GettingStartedStepDoneButtonProps';
+import { isDefined } from 'twenty-shared/utils';
 
-type GettingStartedStepDoneButtonProps = {
-  doneCta: GettingStartedStepDoneCta;
-};
+import { GettingStartedStepKind } from '~/generated-metadata/graphql';
 
 export const GettingStartedStepDoneButton = ({
-  doneCta,
+  stepDefinition,
 }: GettingStartedStepDoneButtonProps) => {
-  switch (doneCta.type) {
-    case 'chatThread':
+  switch (stepDefinition.kind) {
+    case GettingStartedStepKind.PROMPT:
       return (
-        <GettingStartedChatThreadDoneButton
-          chatThreadId={doneCta.chatThreadId}
-        />
+        <GettingStartedChatThreadDoneButton stepDefinition={stepDefinition} />
       );
-    case 'workflow':
+    case GettingStartedStepKind.WORKFLOW:
       return (
         <GettingStartedWorkflowDoneButton
-          stepActionKey={doneCta.stepActionKey}
+          stepActionKey={stepDefinition.actionKey}
         />
       );
-    case 'invite':
-      return <GettingStartedInviteDoneButton />;
-    default:
-      return assertUnreachable(doneCta);
+    case GettingStartedStepKind.CUSTOM: {
+      const CustomStepDoneButton =
+        GETTING_STARTED_CUSTOM_STEP_DONE_BUTTONS[stepDefinition.actionKey];
+
+      return isDefined(CustomStepDoneButton) ? (
+        <CustomStepDoneButton stepDefinition={stepDefinition} />
+      ) : null;
+    }
   }
 };

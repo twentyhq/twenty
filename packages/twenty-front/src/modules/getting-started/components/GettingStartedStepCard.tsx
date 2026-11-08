@@ -3,7 +3,6 @@ import { GettingStartedStepAction } from '@/getting-started/components/GettingSt
 import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
-import { getGettingStartedStepDoneCta } from '@/getting-started/utils/getGettingStartedStepDoneCta';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleCheck } from 'twenty-ui/icon';
@@ -93,6 +92,14 @@ const StyledDoneIcon = styled.span`
   }
 `;
 
+const StyledHeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
 const StyledTitle = styled.div`
   display: flex;
   flex: 1;
@@ -104,11 +111,6 @@ const StyledTitle = styled.div`
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-`;
-
-const StyledDoneButton = styled.div`
-  align-self: center;
-  flex-shrink: 0;
 `;
 
 const StyledBody = styled.div`
@@ -139,9 +141,6 @@ export const GettingStartedStepCard = ({
   const DoneAction = isCompleted
     ? GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey]
     : undefined;
-  const doneCta = isCompleted
-    ? getGettingStartedStepDoneCta(stepDefinition)
-    : null;
 
   return (
     <StyledCard
@@ -163,27 +162,27 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledTitle>
-          <Heading size="lg">
-            <GettingStartedRollingText
-              text={
-                isCompleted ? stepDefinition.doneTitle : stepDefinition.title
-              }
-            />
-          </Heading>
-          <StyledDescription>
-            {isDefined(DoneDescription) ? (
-              <DoneDescription description={description} />
-            ) : (
-              description
-            )}
-          </StyledDescription>
-        </StyledTitle>
-        {isDefined(doneCta) && (
-          <StyledDoneButton>
-            <GettingStartedStepDoneButton doneCta={doneCta} />
-          </StyledDoneButton>
-        )}
+        <StyledHeadingContent>
+          <StyledTitle>
+            <Heading size="lg">
+              <GettingStartedRollingText
+                text={
+                  isCompleted ? stepDefinition.doneTitle : stepDefinition.title
+                }
+              />
+            </Heading>
+            <StyledDescription>
+              {isDefined(DoneDescription) ? (
+                <DoneDescription description={description} />
+              ) : (
+                description
+              )}
+            </StyledDescription>
+          </StyledTitle>
+          {isCompleted && (
+            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+          )}
+        </StyledHeadingContent>
       </StyledHeading>
       {!isCompleted && (
         <StyledBody>

@@ -309,6 +309,7 @@ const createDoneStepsProgress =
       GettingStartedStepActionKey.IMPORT_DATA,
       GettingStartedStepActionKey.INSTALL_APP,
       GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
       GettingStartedStepActionKey.FOLLOW_UP_DEALS,
     ],
     selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
@@ -394,15 +395,41 @@ export const DoneSteps: Story = {
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Deal follow-ups on track' }),
-    );
-
-    const continueThreadButton = await canvas.findByRole('button', {
-      name: 'Continue thread',
+    const steps = canvas.getByRole('navigation', {
+      name: 'Getting started steps',
     });
 
-    await waitFor(() => expect(continueThreadButton).toBeVisible());
+    for (const { stepTitle, doneTitle, doneButtonName } of [
+      {
+        stepTitle: 'Import your data',
+        doneTitle: 'Data imported',
+        doneButtonName: 'Continue thread',
+      },
+      {
+        stepTitle: 'Hand over won deals',
+        doneTitle: 'Handover ready',
+        doneButtonName: 'Go to workflow',
+      },
+      {
+        stepTitle: 'Follow up on closing deals',
+        doneTitle: 'Deal follow-ups on track',
+        doneButtonName: 'Continue thread',
+      },
+    ]) {
+      await userEvent.click(
+        within(steps).getByRole('button', { name: stepTitle }),
+      );
+
+      const doneStepCard = await canvas.findByRole('region', {
+        name: doneTitle,
+      });
+
+      await waitFor(() =>
+        expect(
+          within(doneStepCard).getByRole('button', { name: doneButtonName }),
+        ).toBeVisible(),
+      );
+    }
   },
 };
 
