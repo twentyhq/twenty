@@ -1846,7 +1846,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       for (const {
         fieldMetadataIds,
-        condition,
+        sqlCondition,
       } of unreadableFieldsWithSqlCondition) {
         queryBuilder.nullifyColumnsWhen({
           alias,
@@ -1855,7 +1855,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition,
+          condition: sqlCondition,
         });
       }
     }
