@@ -4386,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Avatar asistenta"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Jméno asistenta"
 
@@ -11302,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Zadejte hodnotu JSON"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Zadejte název o délce 1 až {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znaků na jednom řádku. Hranaté závorky musí být párové a nesmějí být vnořené."
 
@@ -12774,6 +12774,11 @@ msgstr "Nepodařilo se odvolat podpisový klíč. Zkuste to prosím znovu pozdě
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Obnovovací kód se nepodařilo zneplatnit."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr ""
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts

@@ -4386,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Avatar pomoćnika"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Ime pomoćnika"
 
@@ -11302,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Unesite JSON vrednost"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Unesite naziv od 1 do {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znakova u jednom redu. Uglaste zagrade moraju biti uparene i ne mogu biti ugnježdene."
 
@@ -12774,6 +12774,11 @@ msgstr "Nije uspelo opozivanje ključa za potpisivanje. Pokušajte ponovo kasnij
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Nije uspelo opozivanje koda za oporavak."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr ""
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
