@@ -40,8 +40,9 @@ export class RecomputeRecordAccessGroupsCommand extends ProvisionedWorkspaceComm
       return;
     }
 
-    await this.accessGroupService.syncAccessGroupsAndRecomputeEveryRecord(
+    await this.accessGroupService.syncAccessGroups({
       workspaceId,
-    );
+      shouldRecomputeEveryRecord: true,
+    });
   }
 }

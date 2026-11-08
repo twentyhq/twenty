@@ -12,18 +12,7 @@ export class SyncAccessGroupsJob {
   constructor(private readonly accessGroupService: AccessGroupService) {}
 
   @Process(SYNC_ACCESS_GROUPS_JOB_NAME)
-  async handle({
-    workspaceId,
-    shouldRecomputeEveryRecord,
-  }: SyncAccessGroupsJobData): Promise<void> {
-    if (shouldRecomputeEveryRecord) {
-      await this.accessGroupService.syncAccessGroupsAndRecomputeEveryRecord(
-        workspaceId,
-      );
-
-      return;
-    }
-
-    await this.accessGroupService.syncAccessGroups(workspaceId);
+  async handle(jobData: SyncAccessGroupsJobData): Promise<void> {
+    await this.accessGroupService.syncAccessGroups(jobData);
   }
 }
