@@ -115,11 +115,11 @@ export class AccessGroupService {
       workspaceId,
       objectMetadataIds: new Set(
         objectMetadataIdsToRecompute.filter((objectMetadataId) =>
-            isObjectUsingRecordAccessGroups({
-              rolesPermissions: workspaceCache.rolesPermissions,
-              objectMetadataId,
-            }),
-          ),
+          isObjectUsingRecordAccessGroups({
+            rolesPermissions: workspaceCache.rolesPermissions,
+            objectMetadataId,
+          }),
+        ),
       ),
     });
 
