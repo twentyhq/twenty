@@ -18,6 +18,7 @@ import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'sr
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
+import { filterFieldPermissionsOfInput } from 'src/engine/metadata-modules/object-permission/utils/filter-field-permissions-of-input.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -66,28 +67,6 @@ const toUniversalFlatFieldPermissionToDelete = (
   createdAt: fieldPermission.createdAt,
   updatedAt: fieldPermission.updatedAt,
 });
-
-const filterFieldPermissionsOfInput = ({
-  fieldPermissions,
-  input,
-}: {
-  fieldPermissions: FlatFieldPermission[];
-  input: UpsertFieldPermissionsInput;
-}): FlatFieldPermission[] => {
-  const inputScopes = new Set(
-    input.fieldPermissions.map(
-      ({ objectMetadataId, rowLevelPermissionPredicateGroupId }) =>
-        `${objectMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`,
-    ),
-  );
-
-  return fieldPermissions.filter(
-    ({ objectMetadataId, rowLevelPermissionPredicateGroupId }) =>
-      inputScopes.has(
-        `${objectMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`,
-      ),
-  );
-};
 
 @Injectable()
 export class FieldPermissionService {

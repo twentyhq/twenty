@@ -1,5 +1,4 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
@@ -8,7 +7,6 @@ import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permiss
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-// Object level lists apply to every record, and an RLS rule's list adds up on the records it matches
 export const composeRecordFieldMetadataIds = ({
   principals,
   metadataMaps,
@@ -46,10 +44,9 @@ export const composeRecordFieldMetadataIds = ({
       );
     }
 
-    const rlsRuleFilter = rlsRuleFilterByRoleId.get(rlsRuleFields.roleId);
+    const rlsRuleFilter = rlsRuleFilterByRoleId.get(rlsRuleFields.roleId) ?? {};
 
     if (
-      isDefined(rlsRuleFilter) &&
       records.some((record) =>
         isRecordMatchingFilter({
           record,

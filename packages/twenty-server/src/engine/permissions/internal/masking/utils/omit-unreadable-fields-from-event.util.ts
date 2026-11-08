@@ -13,6 +13,29 @@ import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 
+const omitFieldNamesFromEvent = <TEvent extends ObjectRecordEvent>({
+  event,
+  fieldNames,
+}: {
+  event: TEvent;
+  fieldNames: Set<string>;
+}): TEvent => {
+  if (fieldNames.size === 0) {
+    return event;
+  }
+
+  return {
+    ...event,
+    properties: {
+      ...event.properties,
+      ...filterFieldNamesInEventProperties({
+        properties: event.properties,
+        isFieldNameKept: (fieldName) => !fieldNames.has(fieldName),
+      }),
+    },
+  };
+};
+
 export const omitUnreadableFieldsFromEvent = <
   TEvent extends ObjectRecordEvent,
 >({
@@ -60,27 +83,19 @@ export const omitUnreadableFieldsFromEvent = <
         : [];
     }),
   );
-  const eventWithoutUnreadableFields =
-    unreadableFieldNames.size === 0
-      ? event
-      : {
-          ...event,
-          properties: {
-            ...properties,
-            ...filterFieldNamesInEventProperties({
-              properties,
-              isFieldNameKept: (fieldName) =>
-                !unreadableFieldNames.has(fieldName),
-            }),
-          },
-        };
+  const eventWithoutUnreadableFields = omitFieldNamesFromEvent({
+    event,
+    fieldNames: unreadableFieldNames,
+  });
 
-  return objectMetadata.nameSingular === 'timelineActivity'
-    ? omitRestrictedFieldsFromTimelineActivityEvent({
-        event: eventWithoutUnreadableFields,
-        recordReadRestrictions,
-        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-      })
-    : eventWithoutUnreadableFields;
+  if (objectMetadata.nameSingular !== 'timelineActivity') {
+    return eventWithoutUnreadableFields;
+  }
+
+  return omitRestrictedFieldsFromTimelineActivityEvent({
+    event: eventWithoutUnreadableFields,
+    recordReadRestrictions,
+    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+  });
 };
